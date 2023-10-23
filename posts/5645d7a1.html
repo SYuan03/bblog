@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>强化学习记录 | 淡水鱼的蔚蓝之海</title><meta name="author" content="奔跑的淡水鱼"><meta name="copyright" content="奔跑的淡水鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280  Transition与ReplayMemory Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（actio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强化学习记录">
+<meta property="og:url" content="https://bblog.031105.xyz/posts/5645d7a1.html">
+<meta property="og:site_name" content="淡水鱼的蔚蓝之海">
+<meta property="og:description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280  Transition与ReplayMemory Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（actio">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png">
+<meta property="article:published_time" content="2023-10-23T03:23:50.000Z">
+<meta property="article:modified_time" content="2023-10-23T06:46:20.330Z">
+<meta property="article:author" content="奔跑的淡水鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png"><link rel="shortcut icon" href="https://s2.loli.net/2023/04/16/tMOaugB8XjSAF1n.png"><link rel="canonical" href="https://bblog.031105.xyz/posts/5645d7a1.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '强化学习记录',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-23 14:46:20'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="referrer" content="no-referrer"/><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/wx_avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png')"><nav id="nav"><span id="blog-info"><a href="/" title="淡水鱼的蔚蓝之海"><span class="site-name">淡水鱼的蔚蓝之海</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">强化学习记录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-23T03:23:50.000Z" title="发表于 2023-10-23 11:23:50">2023-10-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-23T06:46:20.330Z" title="更新于 2023-10-23 14:46:20">2023-10-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/2023-Fall-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">2023-Fall-机器学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="强化学习记录"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>参考链接</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_51545953/article/details/127466280">https://blog.csdn.net/weixin_51545953/article/details/127466280</a></p>
+</blockquote>
+<h1 id="Transition与ReplayMemory"><a href="#Transition与ReplayMemory" class="headerlink" title="Transition与ReplayMemory"></a>Transition与ReplayMemory</h1><ol>
+<li><strong>Transition</strong>（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（action），以及随后的情境（next_state）和奖励（reward）结果。这个概念用来记录代理在环境中的互动和反馈，有助于后续的学习和决策。</li>
+<li><strong>ReplayMemory</strong>（经验回放记忆）：ReplayMemory 是一个有限大小的循环缓冲区，用来存储代理观察到的过渡。它的目的是为了重复使用这些数据。通过从中随机采样，可以获得一批不相关的过渡数据，用于训练深度强化学习模型，特别是DQN。经验回放记忆的存在对于稳定和改进DQN的训练过程非常重要，因为它有助于减少训练中的数据相关性问题，提高模型的效率和性能。</li>
+</ol>
+<p>总之，这段文字描述了在深度强化学习中使用经验回放记忆的概念，以及它的两个组成部分：Transition 用于记录单个情境转换，ReplayMemory 用于存储这些过渡数据并支持随机采样以进行训练。这一技术有助于提高深度强化学习模型的训练效果。</p>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><p>当我们训练一个深度强化学习模型（比如一个控制机器人玩游戏的模型），这个模型需要不断地学习如何在特定情境下采取正确的行动。经验回放记忆就像是这个模型的记忆系统。</p>
+<p><strong>Transition</strong>（过渡）是一种方式来记录代理在环境中的经历。假设我们正在训练一个智能机器人玩一个视频游戏。每个Transition可以看作是一条记录，记录了机器人在游戏中的一次互动。这个记录包括了机器人看到的游戏画面（情境），机器人采取的行动（比如移动、跳跃），以及之后获得的奖励（分数增加或减少）以及下一个情境。这些记录可以帮助机器人学习如何在不同情境下做出正确的决策。</p>
+<p><strong>ReplayMemory</strong>（经验回放记忆）就像是机器人的记忆库。它保存了很多过去的互动记录，而且它不仅仅是保存，还会不断更新。这个记忆库的好处在于，当我们要教机器人如何玩游戏的时候，我们可以随机挑选一些过去的记录，而不是只用最新的记录。这就好像是在学习一门新技能时，我们不仅仅会记住最近的练习，还会反复回顾过去的练习，这样我们的学习更加稳定。</p>
+<p>举个例子，如果机器人曾经在游戏中遇到过一个特殊的敌人，但是很长时间没有再遇到，如果我们只用最新的记录来训练它，它可能会忘记如何应对这个敌人。但是如果我们从ReplayMemory中随机挑选过去的记录，就可以让机器人不断回顾之前的经验，从而更好地应对各种情况。</p>
+<p>总之，经验回放记忆是一种方法，让深度强化学习模型能够从过去的经验中学习，而不仅仅依赖于最新的互动数据，从而提高模型的稳定性和性能。</p>
+<h1 id="DQN"><a href="#DQN" class="headerlink" title="DQN"></a>DQN</h1><p>DQN（Deep Q-Network）是一种深度强化学习模型，旨在解决强化学习问题，特别是在离散动作空间中的问题。它是由DeepMind开发的，最初被广泛应用于训练智能代理来玩视频游戏，如Atari 2600游戏。DQN以其在处理高维度状态空间和复杂任务中的出色表现而著名。</p>
+<p>DQN的核心原理包括以下要点：</p>
+<ol>
+<li><strong>Q-Value Function</strong>（Q-值函数）：DQN的目标是学习一个称为Q-值函数的函数，通常用Q(s, a)表示。这个函数估计在给定状态s下采取动作a所获得的累积奖励的期望值。换句话说，它告诉代理在不同状态下采取不同动作的好坏程度。</li>
+<li><strong>深度神经网络</strong>：DQN使用深度神经网络来估计Q-值函数。这个神经网络通常是卷积神经网络（CNN），因为它能够有效地处理高维度的图像输入。神经网络的输入是环境状态的表示，输出是每个可能动作的Q-值。</li>
+<li><strong>经验回放</strong>：DQN引入了经验回放记忆（Experience Replay）的概念。经验回放是一种数据存储和随机采样方法，它允许代理存储和重用过去的经验，以减少数据的相关性，从而提高训练的稳定性。代理会在每个时间步将经验（状态、动作、奖励、下一个状态）存储在一个经验回放缓冲区中，并从中随机抽样小批量数据来进行训练。</li>
+<li><strong>目标网络</strong>：为了提高稳定性，DQN还使用了两个神经网络：一个是用来选择动作的主网络，另一个是用来估计目标Q值的目标网络。目标网络的参数是固定的一段时间，然后逐渐更新以逼近主网络的估计值。这有助于减轻训练中的不稳定性问题。</li>
+</ol>
+<p><strong>DQN的训练目标是最小化Q-值函数的均方误差，以使其逼近真实的Q值。通过与环境互动并不断优化神经网络参数，DQN可以学习在不同情境下采取什么动作来最大化长期奖励。</strong></p>
+<p>总之，DQN是深度强化学习的一种方法，它使用深度神经网络来学习代理在不同情境下如何做出最佳决策。它在处理高维状态空间和离散动作空间的问题中表现出色，使得智能代理能够在各种环境中表现出色。</p>
+<h1 id="ReplayMemory"><a href="#ReplayMemory" class="headerlink" title="ReplayMemory"></a>ReplayMemory</h1><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Transition = namedtuple(<span class="string">&#x27;Transition&#x27;</span>,</span><br><span class="line">                        (<span class="string">&#x27;state&#x27;</span>, <span class="string">&#x27;action&#x27;</span>, <span class="string">&#x27;next_state&#x27;</span>, <span class="string">&#x27;reward&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReplayMemory</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, capacity</span>):</span><br><span class="line">        self.memory = deque([], maxlen=capacity)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">push</span>(<span class="params">self, *args</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Save a transition&quot;&quot;&quot;</span></span><br><span class="line">        self.memory.append(Transition(*args))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sample</span>(<span class="params">self, batch_size</span>):</span><br><span class="line">        <span class="keyword">return</span> random.sample(self.memory, batch_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.memory)</span><br></pre></td></tr></table></figure>
+
+<p>这是一个Python类<code>ReplayMemory</code>，它似乎是为了实现经验回放记忆（Replay Memory）的功能而设计的。经验回放记忆是在深度强化学习中用于存储和随机采样代理与环境互动的记录的数据结构。以下是该类及其方法的简要解释：</p>
+<ol>
+<li><code>__init__(self, capacity)</code>：这是类的构造函数，它初始化ReplayMemory对象。它接受一个<code>capacity</code>参数，表示Replay Memory的最大容量，即可以存储多少条记录。</li>
+<li><code>push(self, *args)</code>：这是一个方法，用于将代理与环境互动的记录（Transition）保存到Replay Memory中。它接受不定数量的参数<code>*args</code>，这些参数将被传递给Transition的构造函数以创建一个新的Transition对象，然后将其添加到Replay Memory中。</li>
+<li><code>sample(self, batch_size)</code>：这是一个方法，用于从Replay Memory中随机采样一批记录。它接受一个<code>batch_size</code>参数，表示要采样的记录数量。它使用<code>random.sample</code>函数从Replay Memory中随机选择指定数量的记录，并以列表的形式返回这些记录。</li>
+<li><code>__len__(self)</code>：这是一个特殊方法，用于获取Replay Memory中当前存储的记录数量。它可以通过内置的<code>len</code>函数来访问，以确定Replay Memory中的记录数。</li>
+</ol>
+<p>下面是一个使用示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建ReplayMemory对象，容量为1000</span></span><br><span class="line">capacity = <span class="number">1000</span></span><br><span class="line">memory = ReplayMemory(capacity)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将一条记录添加到Replay Memory</span></span><br><span class="line">state = [<span class="number">0.1</span>, <span class="number">0.2</span>, <span class="number">0.3</span>]</span><br><span class="line">action = <span class="number">1</span></span><br><span class="line">next_state = [<span class="number">0.2</span>, <span class="number">0.3</span>, <span class="number">0.4</span>]</span><br><span class="line">reward = <span class="number">0.5</span></span><br><span class="line">memory.push(state, action, next_state, reward)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从Replay Memory中随机采样一批记录</span></span><br><span class="line">batch_size = <span class="number">32</span></span><br><span class="line">sampled_batch = memory.sample(batch_size)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取Replay Memory中记录的数量</span></span><br><span class="line">memory_length = <span class="built_in">len</span>(memory)</span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，首先创建了一个<code>ReplayMemory</code>对象，然后将一条记录添加到Replay Memory中。接着，使用<code>sample</code>方法随机采样了一批记录，最后使用<code>__len__</code>方法获取了Replay Memory中记录的数量。这个类有助于管理和维护强化学习中所需的经验回放数据。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://bblog.031105.xyz">奔跑的淡水鱼</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://bblog.031105.xyz/posts/5645d7a1.html">https://bblog.031105.xyz/posts/5645d7a1.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://bblog.031105.xyz" target="_blank">淡水鱼的蔚蓝之海</a>！</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat-pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat-pay.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/749ad7d8.html" title="docker常用命令"><img class="cover" src="https://s2.loli.net/2023/10/12/54d1YtI3KwlCoZW.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">docker常用命令</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/wx_avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">奔跑的淡水鱼</div><div class="author-info__description">如果大海能够唤回曾经滴爱，我会</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/SYuan03"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/SYuan03" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:tu3344606@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my horse!!!</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Transition%E4%B8%8EReplayMemory"><span class="toc-number">1.</span> <span class="toc-text">Transition与ReplayMemory</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B"><span class="toc-number">1.1.</span> <span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DQN"><span class="toc-number">2.</span> <span class="toc-text">DQN</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ReplayMemory"><span class="toc-number">3.</span> <span class="toc-text">ReplayMemory</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/5645d7a1.html" title="强化学习记录"><img src="https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="强化学习记录"/></a><div class="content"><a class="title" href="/posts/5645d7a1.html" title="强化学习记录">强化学习记录</a><time datetime="2023-10-23T03:23:50.000Z" title="发表于 2023-10-23 11:23:50">2023-10-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/749ad7d8.html" title="docker常用命令"><img src="https://s2.loli.net/2023/10/12/54d1YtI3KwlCoZW.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker常用命令"/></a><div class="content"><a class="title" href="/posts/749ad7d8.html" title="docker常用命令">docker常用命令</a><time datetime="2023-10-12T03:46:19.000Z" title="发表于 2023-10-12 11:46:19">2023-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/145deab9.html" title="《凤凰项目》人物关系"><img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="《凤凰项目》人物关系"/></a><div class="content"><a class="title" href="/posts/145deab9.html" title="《凤凰项目》人物关系">《凤凰项目》人物关系</a><time datetime="2023-09-11T00:34:36.000Z" title="发表于 2023-09-11 08:34:36">2023-09-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a5ffca44.html" title="kotlin-learn"><img src="https://s2.loli.net/2023/07/24/NsAn8BtIVudU6yj.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kotlin-learn"/></a><div class="content"><a class="title" href="/posts/a5ffca44.html" title="kotlin-learn">kotlin-learn</a><time datetime="2023-07-24T02:26:50.000Z" title="发表于 2023-07-24 10:26:50">2023-07-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/58dba31.html" title="2023百度移动端lec5-lec6"><img src="https://s2.loli.net/2023/07/23/ju3yULRqcB7KPYe.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023百度移动端lec5-lec6"/></a><div class="content"><a class="title" href="/posts/58dba31.html" title="2023百度移动端lec5-lec6">2023百度移动端lec5-lec6</a><time datetime="2023-07-23T14:33:10.000Z" title="发表于 2023-07-23 22:33:10">2023-07-23</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://s2.loli.net/2023/04/16/nbNQGpDPwrmBLYy.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2023 By 奔跑的淡水鱼</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hey, welcome to my blog!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
