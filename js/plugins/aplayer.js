@@ -18,6 +18,7 @@ if (isMini) {
   const ap = new APlayer({
     container: document.getElementById("aplayer"),
     mini: true,
+    preload: 'metadata',
     audio: audioList,
   });
 } else if (isFixed) {
@@ -25,6 +26,7 @@ if (isMini) {
     container: document.getElementById("aplayer"),
     fixed: true,
     lrcType: 3,
+    preload: 'metadata',
     audio: audioList,
   });
   document.querySelector(".aplayer-icon-lrc").click();
