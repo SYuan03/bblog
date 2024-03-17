@@ -18,12 +18,12 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="伪指令与基本指令伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li 就是说向li这种指令，其实并不直接对硬件进行操作   实际上他就是一个addi指令 加法、减法1234567891011121314151617li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制li t1, 22add t2, t0, t1li t0, 32addi t0,">
+        <meta name="description" content="伪指令与基本指令伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li 就是说向li这种指令，其实并不直接对硬件进行操作  实际上他就是一个addi指令 加法、减法1234567891011121314151617li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制li t1, 22add t2, t0, t1li t0, 32addi t0,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="note-RISC-V">
 <meta property="og:url" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v.html">
 <meta property="og:site_name" content="淡水鱼的蔚蓝之海">
-<meta property="og:description" content="伪指令与基本指令伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li 就是说向li这种指令，其实并不直接对硬件进行操作   实际上他就是一个addi指令 加法、减法1234567891011121314151617li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制li t1, 22add t2, t0, t1li t0, 32addi t0,">
+<meta property="og:description" content="伪指令与基本指令伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li 就是说向li这种指令，其实并不直接对硬件进行操作  实际上他就是一个addi指令 加法、减法1234567891011121314151617li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制li t1, 22add t2, t0, t1li t0, 32addi t0,">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230602151643461.png">
 <meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230604172502658.png">
@@ -669,13 +669,7 @@
         <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
             <h3 id="伪指令与基本指令"><a href="#伪指令与基本指令" class="headerlink" title="伪指令与基本指令"></a>伪指令与基本指令</h3><p>伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li</p>
 <p>就是说向li这种指令，其实并不直接对硬件进行操作</p>
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230602151643461.png"
-                      class="" title="image-20230602151643461"
-                >
-
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230602151643461.png" alt="image-20230602151643461"></p>
 <p>实际上他就是一个addi指令</p>
 <h3 id="加法、减法"><a href="#加法、减法" class="headerlink" title="加法、减法"></a>加法、减法</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制</span><br><span class="line">li t1, 22</span><br><span class="line">add t2, t0, t1</span><br><span class="line"></span><br><span class="line">li t0, 32</span><br><span class="line">addi t0, t0, 32 	# addi: add immediate</span><br><span class="line">addi t0, t0, -16	# 没有subi指令，所以只能这样，但是sub还是有的</span><br><span class="line"></span><br><span class="line"># f = (g + h) - (i + j)</span><br><span class="line"># t6 = (t0 + t1) - (t3 + t4)</span><br><span class="line">li t0, 0</span><br><span class="line">li t1, 10</span><br><span class="line">add t2, t0, t1</span><br><span class="line">li t3, 30</span><br><span class="line">li t4, 40</span><br><span class="line">add t5, t3, t4</span><br><span class="line">sub t6, t2, t5</span><br></pre></td></tr></table></figure></div>
 
@@ -687,13 +681,7 @@
 <blockquote>
 <p>mv其实是cp并不是会把原来的地方的数据就清空了的</p>
 </blockquote>
-<h3 id="data-text"><a href="#data-text" class="headerlink" title=".data .text"></a>.data .text</h3><img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230604172502658.png"
-                      class="" title="image-20230604172502658"
-                > 
-
+<h3 id="data-text"><a href="#data-text" class="headerlink" title=".data .text"></a>.data .text</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230604172502658.png" alt="image-20230604172502658"> </p>
 <p>.text就是代码指令开始的地方</p>
 <p>带<code>.</code>的就是写给汇编器看的，比如.data编译器就会放到.data的块的地方</p>
 <p>.text就会放到存放代码的地方(如0x0040 0000)</p>
@@ -731,13 +719,7 @@
 </ul>
 <h3 id="proc-fact-asm递归"><a href="#proc-fact-asm递归" class="headerlink" title="proc-fact.asm递归"></a>proc-fact.asm递归</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">.text</span><br><span class="line">.global main</span><br><span class="line"></span><br><span class="line">factorial:</span><br><span class="line">beqz a0, base_case  # 为0跳转，f(0) = 1</span><br><span class="line"></span><br><span class="line"># 先改变栈指针，再保存寄存器的值，先保存参数寄存器的值，再保存ra的值</span><br><span class="line">addi sp, sp, -8     # 栈空间高地址往低地址增长，所以先减8</span><br><span class="line">sw a0, 4(sp)        # 先保存a0的值，即n</span><br><span class="line">sw ra, 0(sp)        # 还需要再保存ra的值</span><br><span class="line"></span><br><span class="line"># n &gt; 0: n * f(n-1)</span><br><span class="line">addi a0, a0, -1     # 此时a0为n-1</span><br><span class="line">call factorial      # a0为f(n-1)</span><br><span class="line">mv t0, a0			# t0:f(n-1)</span><br><span class="line"></span><br><span class="line">lw ra, 0(sp)        # 恢复ra的值</span><br><span class="line">lw a0, 4(sp)        # 恢复a0的值</span><br><span class="line">addi sp, sp, 8      # 恢复栈指针</span><br><span class="line"></span><br><span class="line">mul a0, a0, t0      # a0 = n * f(n-1)</span><br><span class="line">j end               # 返回, a0还要用来保存返回值</span><br><span class="line"></span><br><span class="line">base_case:</span><br><span class="line">    li a0, 1</span><br><span class="line"></span><br><span class="line">end:</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">### main ###</span><br><span class="line">.data</span><br><span class="line">n: .word 5</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">main:</span><br><span class="line">lw a0, n</span><br><span class="line">call factorial</span><br></pre></td></tr></table></figure></div>
 
-<img  
-                     lazyload
-                     src="/images/loading.svg"
-                     data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230607153022783.png"
-                      class="" title="image-20230607153022783"
-                > 
-
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230607153022783.png" alt="image-20230607153022783"> </p>
 <p>注意ra的值会变</p>
 
         </div>
