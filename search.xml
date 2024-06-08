@@ -1,6 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>docker常用命令</title>
+    <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.html</url>
+    <content><![CDATA[<h1 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h1><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --network mongo-net-1012 --<span class="built_in">rm</span> mongo mongosh --host my-mongo-1012</span><br></pre></td></tr></table></figure></div>
+
+<ol>
+<li><code>docker run</code>: 这是Docker的运行容器命令，用于创建和启动一个新的容器。</li>
+<li><code>-it</code>: 这两个选项组合表示以交互式模式运行容器并分配一个伪终端（TTY）。这允许你在容器内部与终端进行交互。</li>
+<li><code>--network mongo-net-1012</code>: 这个选项将容器连接到名为 <code>mongo-net-1012</code> 的Docker网络，以便容器之间可以相互通信。</li>
+<li><code>--rm</code>: 这个选项指示Docker在容器退出时自动删除容器。这是为了确保容器不会留在系统中，以避免占用存储空间。</li>
+<li><code>mongo</code>: 这是要运行的Docker镜像的名称，它表示你要使用MongoDB官方镜像来创建容器。（这里也可以用image:tag，不加的话默认latest)</li>
+<li><code>mongosh --host my-mongo-1012</code>: 这是要在容器内运行的命令。<code>mongosh</code> 是MongoDB的官方命令行客户端，<code>--host my-mongo-1012</code> 指定了MongoDB服务器的主机名为 <code>my-mongo-1012</code>，以便连接到该服务器。</li>
+</ol>
+<h1 id="docker-ps"><a href="#docker-ps" class="headerlink" title="docker ps"></a>docker ps</h1><p>ps即Process Status</p>
+<h1 id="启动-停止容器"><a href="#启动-停止容器" class="headerlink" title="启动&#x2F;停止容器"></a>启动&#x2F;停止容器</h1><p>要启动和停止Docker容器，你可以使用以下两个常用的Docker命令：</p>
+<ol>
+<li><p><strong>启动容器</strong>：</p>
+<p>使用 <code>docker start</code> 命令可以启动一个已经创建的但是已经停止的容器。你需要提供容器的名称或容器ID作为参数。例如：</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker start CONTAINER_NAME_OR_ID</span><br></pre></td></tr></table></figure></div>
+
+<p>例如，如果你有一个名为 <code>my-container</code> 的容器，要启动它，可以运行：</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker start my-container</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><strong>停止容器</strong>：</p>
+<p>使用 <code>docker stop</code> 命令可以停止一个正在运行的容器。你同样需要提供容器的名称或容器ID作为参数。例如：</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker stop CONTAINER_NAME_OR_ID</span><br></pre></td></tr></table></figure></div>
+
+<p>例如，如果你有一个名为 <code>my-container</code> 的容器，要停止它，可以运行：</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker stop my-container</span><br></pre></td></tr></table></figure></div></li>
+</ol>
+<p>这些命令允许你在需要时启动或停止容器，以便有效地管理你的Docker容器。</p>
+<blockquote>
+<p>使用names来停止也是可以的</p>
+<p>比如docker stop my-mongo-1012</p>
+</blockquote>
+<p>停止所有容器</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker stop $(docker ps -q)</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<ol>
+<li><p><code>docker ps -q</code>:</p>
+<ul>
+<li>这个命令用于列出运行中的容器的容器ID，而不包括已经停止的容器。</li>
+<li><code>-q</code> 选项代表 “quiet”，它仅返回容器的ID而不显示容器的详细信息。</li>
+</ul>
+<p>例如，执行 <code>docker ps -q</code> 将列出当前正在运行的容器的ID列表。</p>
+</li>
+<li><p><code>docker ps -a</code>:</p>
+<ul>
+<li>这个命令用于列出所有容器，包括正在运行和已经停止的容器。</li>
+<li><code>-a</code> 选项代表 “all”，它显示所有容器的详细信息，包括容器ID、镜像、创建时间、状态等。</li>
+</ul>
+<p>例如，执行 <code>docker ps -a</code> 将列出所有容器的详细信息，无论它们是运行中的还是已经停止的。</p>
+</li>
+</ol>
+</blockquote>
+<h1 id="使用redis"><a href="#使用redis" class="headerlink" title="使用redis"></a>使用redis</h1><p>创建网络</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker network create redis-net-1012</span><br></pre></td></tr></table></figure></div>
+
+<p>启动server</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name my-redis-1012 --network redis-net-1012 -p 6379:6379 -d redis:latest</span><br></pre></td></tr></table></figure></div>
+
+<p>客户端访问</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --network redis-net-1012 --<span class="built_in">rm</span> redis redis-cli -h my-redis-1012</span><br></pre></td></tr></table></figure></div>
+
+<p>启动成功</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/image-20231012144424264.png" alt="image-20231012144424264"></p>
+<p>测试</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/image-20231012144958421.png" alt="image-20231012144958421"></p>
+<h1 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h1><p>为了区分，映射了一个51001端口，注意容器端口还得是3306，不然好像连接不上</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql</span><br><span class="line"></span><br><span class="line">docker network create mysql-net-1026</span><br><span class="line"></span><br><span class="line">docker run --name my-mysql-1026 --network mysql-net-1026 -e MYSQL_ROOT_PASSWORD=root1234 -d -p 51001:3306 mysql:latest</span><br><span class="line"></span><br><span class="line">docker run -it --network mysql-net-1026 --<span class="built_in">rm</span> mysql:latest mysql -h my-mysql-1026 -u root -p</span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li><p><code>docker run</code>: 启动一个 Docker 容器。</p>
+</li>
+<li><p><code>-it</code>: 这是两个参数的组合，<code>-i</code> 表示交互式模式，允许您与容器交互，<code>-t</code> 分配一个终端。</p>
+</li>
+<li><p><code>--network mysql-net-1026</code>: 指定容器连接的网络。在这里，容器将连接到名为 <code>mysql-net-1026</code> 的 Docker 网络，这使得容器可以与该网络中的其他容器进行通信。</p>
+</li>
+<li><p><code>--rm</code>: 表示容器退出时自动删除容器。这有助于确保在容器退出后不会留下残留的容器。</p>
+</li>
+<li><p><code>mysql:latest</code>: 指定要运行的 Docker 镜像。在这里，使用了 MySQL 的最新版本。</p>
+</li>
+<li><p><code>mysql -h my-mysql-1026 -u root -p</code>:</p>
+<p>这是在容器内运行的命令。它执行了以下操作：</p>
+<ul>
+<li><code>mysql</code>: 启动 MySQL 客户端。</li>
+<li><code>-h my-mysql-1026</code>: 指定要连接的 MySQL 服务器的主机名。在这里，<code>my-mysql-1026</code> 是您 MySQL 容器的主机名，它连接到该容器的 MySQL 服务器。</li>
+<li><code>-u root</code>: 指定 MySQL 用户名，这里是 root。</li>
+<li><code>-p</code>: 要求输入密码，这样您可以输入 MySQL 的密码以连接到 MySQL 服务器。</li>
+</ul>
+</li>
+</ul>
+<h1 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h1><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it &lt;container_name_or_id&gt; bash</span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+      <categories>
+        <category>工具学习</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>how-to-use-AI-painting</title>
+    <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/how-to-use-ai-painting.html</url>
+    <content><![CDATA[<h2 id="1-使用Midjourney（目前已无法试用？"><a href="#1-使用Midjourney（目前已无法试用？" class="headerlink" title="1. 使用Midjourney（目前已无法试用？"></a>1. 使用Midjourney（目前已无法试用？</h2><p>试了几次发现没法用，估计得充值，订阅个计划才能用了</p>
+<p>但也可以考虑找点免费的共享服务器？或者获取到别人的邀请链接？</p>
+<p>登录<a class="link" href="https://www.midjourney.com/home/?callbackUrl=/app/">Midjourney <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后左下角三个点展开，选择“Go to discord”</p>
+<p>找个频道向机器人输入&#x2F;image，自动会弹出让输入prompt</p>
+<p>然后就用不了（以前还是可以，也许有限额</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/24/Q3LOZR5wGWoJq2C.png" alt="image-20230424162300993"></p>
+<h2 id="2-考虑一些替代网站"><a href="#2-考虑一些替代网站" class="headerlink" title="2. 考虑一些替代网站"></a>2. 考虑一些替代网站</h2><p>我在油管上找了个视频<a class="link" href="https://www.youtube.com/watch?v=NAScnKW1N1I">https://www.youtube.com/watch?v=NAScnKW1N1I <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>从评论区知道了这个<a class="link" href="https://www.bluewillow.ai/">BlueWillow | Free AI Art Generator <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/24/FvVwUeM65GhpdBS.png" alt="image-20230424162425993"></p>
+<p>感觉效果一般般，也可能是描述太少</p>
+<p><strong>记得把机器人加到自己的服务器频道</strong></p>
+<blockquote>
+<p>使用帮助：基本来自官网的教程</p>
+<p><a class="link" href="https://www.bluewillow.ai/blog/mastering-the-art-of-prompting-seeds-weights-and-beyond">https://www.bluewillow.ai/blog/mastering-the-art-of-prompting-seeds-weights-and-beyond <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>这篇里面有关于 <code>--ar 3:2</code>，就是aspect ration，图片比例</p>
+<p><a class="link" href="https://www.bluewillow.ai/prompt-glossary">https://www.bluewillow.ai/prompt-glossary <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>这是prompt词汇表</p>
+</blockquote>
+<p>随便试了个某个视频里看来的prompt:</p>
+<p>underwater photograph of a reef, beautiful reef on the ocean floor, clear blue water, rays of light shining through the ocean, travel photography, highly detailed, 4k, cinematic photography –ar 3:2 </p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/24/9FW4gnfs1CryHxL.png" alt="image-20230424165038386"></p>
+<h2 id="3-一些其他的网站"><a href="#3-一些其他的网站" class="headerlink" title="3. 一些其他的网站"></a>3. 一些其他的网站</h2><p><a class="link" href="https://6pen.art/">6pen Art <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>最早别人推给我的，手机上也有app（来自青梧道人，咳咳</p>
+]]></content>
+      <categories>
+        <category>工具学习</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>AI绘画</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>latex-learning</title>
+    <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/latex-learning.html</url>
+    <content><![CDATA[<p>记录下一些latex的用法</p>
+<p>收藏夹太满了</p>
+<p>并且懒得每次都因为同样的问题去查</p>
+<h3 id="1-图片插入相关-单张"><a href="#1-图片插入相关-单张" class="headerlink" title="1.图片插入相关-单张"></a>1.图片插入相关-单张</h3><div class="highlight-container" data-rel="Latex"><figure class="iseeu highlight latex"><table><tr><td class="code"><pre><span class="line"><span class="keyword">\begin</span>&#123;figure&#125;[h]</span><br><span class="line">  <span class="keyword">\centering</span></span><br><span class="line">  <span class="keyword">\includegraphics</span>[width=0.8<span class="keyword">\textwidth</span>]&#123;1.jpg&#125;</span><br><span class="line">  <span class="keyword">\caption</span>&#123;question1<span class="keyword">\\</span>文法一是LL(1)文法&#125;</span><br><span class="line"><span class="keyword">\end</span>&#123;figure&#125;</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>就写个[h]得了，[htp]反而不太对</p>
+<p><strong>最好写[H]吧，保证在当前位置，编译原理那个环境怪怪的，大H用不了，引了宏包还是不行…</strong></p>
+</blockquote>
+<p>图片因为排版而位置不受控制<br>在LaTex中，\begin{figure}[~]是图片环境，常用选择项[htbp]是浮动格式：<br>[h] ~ here，当前位置。将图形放置在正文文本中给出该图形环境的地方。如果本页所剩页面不够，这一参数将不起作用。<br>[t] ~ top，顶部。将图形放置在页面的顶部。<br>[b] ~ bottom，底部。将图形放置在页面的底部。<br>[p] ~ page of its own，浮动页。将图形放置在一个允许有浮动对象的页面上。<br>一般使用[htb]这样的组合，只用[h]是没有用的。这样组合的意思就是LaTex会尽量满足排在前面的浮动格式，就是h-t-b这个顺序，让排版的效果尽量好。<br>[!h]只是试图放在当前位置。如果页面剩下的部分放不下，还是会跑到下一页的。一般而言，用[!h]选项通常会出现不能正确放置的问题，所以常用[ht]、[htbp]等。<br>这里加感叹号的意思是 忽略 “美学” 标准。</p>
+<blockquote>
+<p>参数详解链接：<a class="link" href="https://blog.csdn.net/king0406/article/details/51252298">https://blog.csdn.net/king0406/article/details/51252298 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>工具学习</category>
+      </categories>
+      <tags>
+        <tag>latex</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>前端康复训练</title>
+    <url>/posts/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/%E5%89%8D%E7%AB%AF%E5%BA%B7%E5%A4%8D%E8%AE%AD%E7%BB%83.html</url>
+    <content><![CDATA[<h2 id="上传并修改图片（适用于头像"><a href="#上传并修改图片（适用于头像" class="headerlink" title="上传并修改图片（适用于头像"></a>上传并修改图片（适用于头像</h2><p><a class="link" href="https://github.com/dai-siki/vue-image-crop-upload?tab=readme-ov-file">https://github.com/dai-siki/vue-image-crop-upload?tab=readme-ov-file <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>修改头像，效果如下</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/%E5%89%8D%E7%AB%AF%E5%BA%B7%E5%A4%8D%E8%AE%AD%E7%BB%83/image-20231218205829320.png" alt="image-20231218205829320"></p>
+<h2 id="商品上传界面"><a href="#商品上传界面" class="headerlink" title="商品上传界面"></a>商品上传界面</h2><h2 id="计算属性和ref"><a href="#计算属性和ref" class="headerlink" title="计算属性和ref"></a>计算属性和ref</h2><p>ref是页面和数据绑定的那种意思</p>
+<p>computed则是某个数据可以根据依赖的ref数据进行改变</p>
+<h2 id="ref和reactive"><a href="#ref和reactive" class="headerlink" title="ref和reactive"></a>ref和reactive</h2><p>在 Vue 3 的 Composition API 中，<code>reactive</code> 创建的响应式对象的属性可以直接访问，不需要 <code>.value</code>。</p>
+<p>例如，如果你有一个 <code>reactive</code> 创建的响应式对象 <code>submitGoodsForm</code>：</p>
+<div class="highlight-container" data-rel="Ts"><figure class="iseeu highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> submitGoodsForm = <span class="title function_">reactive</span>(&#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">price</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">goodsLevel</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">dscrip</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">userId</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">goodsId</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></div>
+
+<p>你可以直接访问它的 <code>name</code> 属性，如 <code>submitGoodsForm.name</code>，不需要使用 <code>submitGoodsForm.name.value</code>。</p>
+<p>然而，如果你使用 <code>ref</code> 创建响应式引用，那么你需要使用 <code>.value</code> 来访问或修改它的值。例如：</p>
+<div class="highlight-container" data-rel="Ts"><figure class="iseeu highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> count = <span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(count.<span class="property">value</span>)  <span class="comment">// 输出 0</span></span><br><span class="line">count.<span class="property">value</span> = <span class="number">1</span>  <span class="comment">// 修改 count 的值为 1</span></span><br></pre></td></tr></table></figure></div>
+
+<p>所以，是否需要使用 <code>.value</code> 取决于你是使用 <code>reactive</code> 还是 <code>ref</code> 创建的响应式数据。</p>
+<h2 id="安装模块"><a href="#安装模块" class="headerlink" title="安装模块"></a>安装模块</h2><p><code>npm i --save-dev @types/vuelidate</code>和之前的<code>npm install vuelidate --save</code>命令是有区别的。</p>
+<ol>
+<li><code>npm install vuelidate --save</code>：这个命令是用来安装vuelidate库的，这是一个Vue.js的表单验证库。<code>--save</code>选项会将vuelidate添加到你的项目的<code>package.json</code>文件的<code>dependencies</code>中。</li>
+<li><code>npm i --save-dev @types/vuelidate</code>：这个命令是用来安装@types&#x2F;vuelidate的，这是一个为vuelidate库提供TypeScript类型定义的第三方库。<code>--save-dev</code>选项会将@types&#x2F;vuelidate添加到你的项目的<code>package.json</code>文件的<code>devDependencies</code>中，这意味着这个库只在开发环境中需要，而在生产环境中不需要。</li>
+</ol>
+<p>然而，我需要指出的是，@types&#x2F;vuelidate可能并不存在。@types库是由社区提供的，用于为没有提供TypeScript类型定义的JavaScript库提供类型定义。并不是所有的JavaScript库都有对应的@types库。如果@types&#x2F;vuelidate不存在，你可能需要自己为vuelidate库编写类型定义，或者在你的代码中使用JavaScript而不是TypeScript。</p>
+<p>后者有用，不知道为啥，可能是因为用的ts?</p>
+<h2 id="表单验证"><a href="#表单验证" class="headerlink" title="表单验证"></a>表单验证</h2><p><a class="link" href="https://github.com/vuelidate/vuelidate/tree/next">https://github.com/vuelidate/vuelidate/tree/next <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="异步函数"><a href="#异步函数" class="headerlink" title="异步函数"></a>异步函数</h2><p>在 TypeScript（以及现代 JavaScript）中，<code>let</code> 和 <code>const</code> 是用于声明变量的关键字，它们都提供了块级作用域（block scope），这是与传统的 <code>var</code> 关键字（提供函数级作用域或全局作用域）的主要区别。以下是 <code>let</code> 和 <code>const</code> 的区别：</p>
+<ol>
+<li><strong>let</strong>: 使用 <code>let</code> 声明的变量可以在声明之后重新赋值。这意味着变量的值是可以改变的。</li>
+<li><strong>const</strong>: 使用 <code>const</code> 声明的是常量，一旦赋值后就不能再改变。尝试重新赋值 <code>const</code> 声明的变量将导致一个错误。注意，对于对象或数组，<code>const</code> 确保变量标识符不能重新赋值指向另一个引用，但对象或数组的内容仍然可以被修改。</li>
+</ol>
+<p>关于异步函数，如果 <code>uploadPhoto</code> 函数是 <code>async</code> 的，这意味着它会返回一个 <code>Promise</code>。当你调用这个函数时，你可以使用 <code>await</code> 关键字来等待 <code>Promise</code> 完成，或者使用 <code>.then()</code> 和 <code>.catch()</code> 方法来处理完成（或拒绝）的 <code>Promise</code>。</p>
+<p>这里有一个例子：</p>
+<div class="highlight-container" data-rel="Typescript"><figure class="iseeu highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">uploadPhoto</span>(<span class="params">file: File</span>): <span class="title class_">Promise</span>&lt;<span class="built_in">any</span>&gt; &#123;</span><br><span class="line">  <span class="comment">// 异步操作，例如上传文件</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 await</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">handleUpload</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> <span class="title function_">uploadPhoto</span>(someFile);</span><br><span class="line">    <span class="comment">// 在这里处理 result</span></span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="comment">// 处理错误</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者使用 .then() 和 .catch()</span></span><br><span class="line"><span class="title function_">uploadPhoto</span>(someFile)</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 在这里处理 result</span></span><br><span class="line">  &#125;)</span><br><span class="line">  .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 处理错误</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure></div>
+
+<p>如果函数是 <code>async</code> 的，你必须理解其返回值将总是一个 <code>Promise</code>，并且你需要相应地处理这个 <code>Promise</code>。例如，如果你在一个非异步函数中调用 <code>uploadPhoto</code> 并尝试直接访问返回值，你将得到一个 <code>Promise</code> 对象，而不是 <code>uploadPhoto</code> 操作完成后的结果。这就是为什么通常在调用 <code>async</code> 函数时使用 <code>await</code> 关键字，或者使用 <code>.then()</code> 和 <code>.catch()</code> 方法来处理异步结果。</p>
+]]></content>
+      <categories>
+        <category>前端开发记录</category>
+      </categories>
+      <tags>
+        <tag>前端开发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>copilot个人使用记录</title>
     <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/copilot%E4%B8%AA%E4%BA%BA%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95.html</url>
     <content><![CDATA[
@@ -22,6 +227,34 @@
       <tags>
         <tag>摸鱼</tag>
         <tag>猎奇</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《天空之城》观感</title>
+    <url>/posts/%E8%A7%82%E5%BD%B1%E8%AE%B0%E5%BD%95/%E3%80%8A%E5%A4%A9%E7%A9%BA%E4%B9%8B%E5%9F%8E%E3%80%8B%E8%A7%82%E6%84%9F.html</url>
+    <content><![CDATA[<h3 id="啥时候看的？"><a href="#啥时候看的？" class="headerlink" title="啥时候看的？"></a>啥时候看的？</h3><p>应该是2022年9月23号（应该是礼拜四）和24号看的了，23号开始看的晚了，就没看完。至于为啥会看，因为当时发现每天看短视频的时间有点长，与其越刷越造成所谓信息茧房的困境，不如抽点时间看部电影。所以就去找了这部电影看看。</p>
+<h3 id="观感"><a href="#观感" class="headerlink" title="观感"></a>观感</h3><h4 id="配乐"><a href="#配乐" class="headerlink" title="配乐"></a>配乐</h4><p>原来配乐也是出自久石让之手</p>
+<p>这首配乐很久以前我就听过了（又想起一句诗“青灯有味似儿时”），还是存在现在已经被称作老年机的手机里的，当时还小，只觉得这歌很有故事，好听是好听，可就总让人觉得有点伤感。现在再听，伤感依旧，因为添了许多怀念和想念，既是空间上的，亦是时间上的。</p>
+<h4 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h4><p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/15/higCmGaNVSywB8n.png" alt="屏幕截图 2022-09-23 191425"></p>
+<p>说实话看完电影，最大的感触是希望，以及美好，但又很难说哪些情节给了我这种感觉，因为它似乎是一种贯穿始终的东西。即使天空之城崩塌，但依旧拾起希望，抬头望向天空，闭上双眼感受着风的轻抚。</p>
+<p>另一方面，又觉得这样的奇遇终究是不可能的，有种幻想破灭的感觉，尤其是这空空荡荡的天空之城，让我感到有些无奈和迷茫。</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/15/3Dh2i7rPbHf5FJS.png" alt="屏幕截图 2022-09-23 191450"></p>
+<p>“伴随着音乐的响起，我感受到远古文明的没落带来的追远的淡淡忧伤，但同时又无比庆幸世间的美好永驻心间，不觉间泪水划过眼角。那种无法言语的复杂情感恕我无法言说，她好比清晨山林间回荡的鸟鸣，幽邃深沉的黑夜中闪亮的星辰，又或像淡蓝的天空初亮时第一束晨曦，一切都是新生，告别了过往，憧憬着未来，带着那份爱与感动重新踏上新的旅程，希望永远都在前方。”（南风古居）</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
+<li><p>这里面的机器人有点哈人，我感觉跟迪迦里面有一集的怪兽有点像</p>
+<p>【迪迦奥特曼.19.-奔向宇宙（上）】  <a class="link" href="https://www.bilibili.com/video/BV18t41197x2/?share_source=copy_web&vd_source=26ebf8878a6450d881a22145eebf9c9f&t=244">https://www.bilibili.com/video/BV18t41197x2/?share_source=copy_web&amp;vd_source=26ebf8878a6450d881a22145eebf9c9f&amp;t=244 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</li>
+<li><p>毁灭咒语：巴鲁斯 </p>
+<p>记住了（2023.4.15考证，并没有记住…</p>
+</li>
+</ol>
+<h4 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h4><p>2023年4月15看到这篇文章感慨自己当时还能看几部电影，最近感觉一直刷刷B站短视频，切片之类的有点颓废，貌似跟开头说的一样，樂</p>
+]]></content>
+      <categories>
+        <category>观影记录</category>
+      </categories>
+      <tags>
+        <tag>电影</tag>
       </tags>
   </entry>
   <entry>
@@ -77,30 +310,6 @@
       </categories>
       <tags>
         <tag>规范学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>3月14日心情日记</title>
-    <url>/posts/%E6%99%B4%E9%9B%A8%E5%BD%95/3%E6%9C%8814%E6%97%A5%E5%BF%83%E6%83%85%E6%97%A5%E8%AE%B0.html</url>
-    <content><![CDATA[
-<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="fd7373dc12f33ba91625ce59fd0b9d48852e9fd738ee825bd2c044b043b62b83">859c29499e97b37e25280a7293bbe1870fb0069f4e3c381cf2cff805e582fe3192a8f96918a8a26fce049b74818c0f396c3293e72d268e805bc10c1ed8358cea3acc452b5a4b7095c5564e0a0132780cdc4a66de3445dcb7ac97b1886d2bf8383d94abcdea75dd2358e2c5f2aa3db512d49f4de7fdae4c4483c7ffafac1ec4d51591deaec1abbac7b2b6fca9564f29a7c388d2aa16a1cfc44164f1705c2bbc179c5ad8ed0e2bb7a0260d6f974596e336690cada93d183e87430b6a418430b77329293a35406a7f3bed1aefe20923530068bc867006b5f10320cb48704d6b72ae65f51fbf3a68a2a257ca357401767deff46329bb95f8776cd538fb37fe8f524c02b1085dcb9b36a9a4cf0bfe0d7f33096cb0720b027c5e67a95c0f026e4eefb077cf818ca90c916c080843da54526c6400f8625b9004e5382cb36af8d79d69f754f7de711e3eeffe4e020c6b5254f8e42ba0293638c739ff354f58445833bac6f339fa3697243dd2d4d66601d87c287a28bddc9c6a8a37a193d66d99e8901ce8ee25ace6637040176eec2384081cb79538d2dc21b0223611413178b3c4083be5be1e5f66877c610b80c92cf10eafd8e258eb6937828792deeb0b9e74906c8fea2bb310386d1800593fe007dae184cb91ad946bfc8dace5950a28f90d9dcd561226926a6a331667ba2371d10cb3706b41c27bcf5cfcf44cb6d2dd8dede67b1b1b87e273df036e072a565e7ce31e7f6b34ac901fca790d7974565e975aafe27a514ec1becc7286549802e1fbefe207932360a644605e571d5e0ebbb7d629e0c059260ad762768c69edb5c84ec6097972f8738bad3cfc5d2f3efd474e7347c5d549c6d8d1a0b9e924ab6c60abc4118560383ca2d149ac754bdedd7d80d81c709d6179c2cba4fc8f1ef467a2ce226f8fc603dbdf086b01480494b9d6c5c2aaed7bbe9e523d2bc735115139225079a9e819d50f3f14886afef49defc2b442976743029414da09794ad5d0cc1f40548b67ac2440479b79ac703efc8658e74586d49b8e50709802921b79295a6f08ff9236a16108a2dd1a6eda7982bb49ce9af04b3b9ab79134651f615ccb36bc0ccbb3f18bd6a3cb8aedba060d6f52bc26d3b5e670b70e7aae141de21e2aa7120a2c2d5db3ef71c228cfba987fd05ef3198d8f8f4fb57c67a54f8fac312f8abef889550f1d6fead52fe93c9146e71faa23b2e066b141efa80ed5a8d6fd89d9e3d9334728eaf5a227b74ab80441cc4e19fda22c5479b8f0271cedfc22c1d39f2010f3b63a90c39c65e8a3ffa1c361f7b9545c7a5ff4996547d500401e6dbc9a31778a55702b11fbcafc7124a86ba56ccfb60309b612622f51969a0b3f337bf37f876da290064a53902da4bf7f8796215e62fc8e6fe8765c860173bafd2314335f737950286998dfbf19c162addb1f89a952afe1ea11d33b2a6edb28bc22192d4ee95083cbc614adc4458065d71ef695f254675f9853898324c67aebad81ffa6a9431294b885ff59770a0ede04d8cfea157d9d7de705bbceb2221ae9d9f40c464e83fe8c6e1bd8251caa34bd130094b8c97a15601df897e783088235c77e665020449cf2ac636d11ffefc6e8e4783730504872a3175cc7650d579bf13546693a2128682ed120e30533f3298c89e94068d6885c948f4bb412a275ce563be6b285840d974bdc9448933e41ae6b33a53261c5c701d02369bb617b9bc7298aa5dd07fb8d3c03e9aba4901c4cbd14208e982bb3efb8b6d6b06e49935fb00290cf739d8b997e0e84499fc343df0ad0cd6ec7ab721f149b9edd34aa36c311854f12d0750388d2508f88d9303846390620e780abe2b60a169ee6c58ec4806aef04028aeeffbc6592078071</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-swup-reload-script src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>晴雨录</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-        <tag>多云</tag>
       </tags>
   </entry>
   <entry>
@@ -269,6 +478,63 @@
       </tags>
   </entry>
   <entry>
+    <title>3月14日心情日记</title>
+    <url>/posts/%E6%99%B4%E9%9B%A8%E5%BD%95/3%E6%9C%8814%E6%97%A5%E5%BF%83%E6%83%85%E6%97%A5%E8%AE%B0.html</url>
+    <content><![CDATA[
+<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="fd7373dc12f33ba91625ce59fd0b9d48852e9fd738ee825bd2c044b043b62b83">859c29499e97b37e25280a7293bbe1870fb0069f4e3c381cf2cff805e582fe3192a8f96918a8a26fce049b74818c0f396c3293e72d268e805bc10c1ed8358cea3acc452b5a4b7095c5564e0a0132780cdc4a66de3445dcb7ac97b1886d2bf8383d94abcdea75dd2358e2c5f2aa3db512d49f4de7fdae4c4483c7ffafac1ec4d51591deaec1abbac7b2b6fca9564f29a7c388d2aa16a1cfc44164f1705c2bbc179c5ad8ed0e2bb7a0260d6f974596e336690cada93d183e87430b6a418430b77329293a35406a7f3bed1aefe20923530068bc867006b5f10320cb48704d6b72ae65f51fbf3a68a2a257ca357401767deff46329bb95f8776cd538fb37fe8f524c02b1085dcb9b36a9a4cf0bfe0d7f33096cb0720b027c5e67a95c0f026e4eefb077cf818ca90c916c080843da54526c6400f8625b9004e5382cb36af8d79d69f754f7de711e3eeffe4e020c6b5254f8e42ba0293638c739ff354f58445833bac6f339fa3697243dd2d4d66601d87c287a28bddc9c6a8a37a193d66d99e8901ce8ee25ace6637040176eec2384081cb79538d2dc21b0223611413178b3c4083be5be1e5f66877c610b80c92cf10eafd8e258eb6937828792deeb0b9e74906c8fea2bb310386d1800593fe007dae184cb91ad946bfc8dace5950a28f90d9dcd561226926a6a331667ba2371d10cb3706b41c27bcf5cfcf44cb6d2dd8dede67b1b1b87e273df036e072a565e7ce31e7f6b34ac901fca790d7974565e975aafe27a514ec1becc7286549802e1fbefe207932360a644605e571d5e0ebbb7d629e0c059260ad762768c69edb5c84ec6097972f8738bad3cfc5d2f3efd474e7347c5d549c6d8d1a0b9e924ab6c60abc4118560383ca2d149ac754bdedd7d80d81c709d6179c2cba4fc8f1ef467a2ce226f8fc603dbdf086b01480494b9d6c5c2aaed7bbe9e523d2bc735115139225079a9e819d50f3f14886afef49defc2b442976743029414da09794ad5d0cc1f40548b67ac2440479b79ac703efc8658e74586d49b8e50709802921b79295a6f08ff9236a16108a2dd1a6eda7982bb49ce9af04b3b9ab79134651f615ccb36bc0ccbb3f18bd6a3cb8aedba060d6f52bc26d3b5e670b70e7aae141de21e2aa7120a2c2d5db3ef71c228cfba987fd05ef3198d8f8f4fb57c67a54f8fac312f8abef889550f1d6fead52fe93c9146e71faa23b2e066b141efa80ed5a8d6fd89d9e3d9334728eaf5a227b74ab80441cc4e19fda22c5479b8f0271cedfc22c1d39f2010f3b63a90c39c65e8a3ffa1c361f7b9545c7a5ff4996547d500401e6dbc9a31778a55702b11fbcafc7124a86ba56ccfb60309b612622f51969a0b3f337bf37f876da290064a53902da4bf7f8796215e62fc8e6fe8765c860173bafd2314335f737950286998dfbf19c162addb1f89a952afe1ea11d33b2a6edb28bc22192d4ee95083cbc614adc4458065d71ef695f254675f9853898324c67aebad81ffa6a9431294b885ff59770a0ede04d8cfea157d9d7de705bbceb2221ae9d9f40c464e83fe8c6e1bd8251caa34bd130094b8c97a15601df897e783088235c77e665020449cf2ac636d11ffefc6e8e4783730504872a3175cc7650d579bf13546693a2128682ed120e30533f3298c89e94068d6885c948f4bb412a275ce563be6b285840d974bdc9448933e41ae6b33a53261c5c701d02369bb617b9bc7298aa5dd07fb8d3c03e9aba4901c4cbd14208e982bb3efb8b6d6b06e49935fb00290cf739d8b997e0e84499fc343df0ad0cd6ec7ab721f149b9edd34aa36c311854f12d0750388d2508f88d9303846390620e780abe2b60a169ee6c58ec4806aef04028aeeffbc6592078071</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-swup-reload-script src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>晴雨录</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+        <tag>多云</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java反射机制</title>
+    <url>/posts/%E8%BD%AF%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html</url>
+    <content><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a class="link" href="https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/">https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="演示使用"><a href="#演示使用" class="headerlink" title="演示使用"></a>演示使用</h2><p>如何能利用反射机制来实现OCP</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214021.png"></p>
+<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214108.png"></p>
+<blockquote>
+<p>generated by GPT</p>
+</blockquote>
+<p>这里给出一个简化的例子以演示如何使用<code>config.xml</code>文件和反射来动态创建对象。假设我们有一个<code>Button</code>接口和两个实现了该接口的类：<code>RoundButton</code>和<code>SquareButton</code>。我们还有一个<code>ButtonHandler</code>接口和一个实现了该接口的类：<code>MyButtonHandler</code>。</p>
+<p>首先，我们定义<code>Button</code>接口和<code>ButtonHandler</code>接口：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后，我们定义<code>RoundButton</code>、<code>SquareButton</code>和<code>MyButtonHandler</code>：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RoundButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SquareButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SquareButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyButtonHandler</span> <span class="keyword">implements</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Button clicked!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>接下来，我们创建<code>config.xml</code>文件：</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>com.example.RoundButton<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span>&gt;</span>com.example.MyButtonHandler<span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>最后，我们使用Java的反射机制来读取<code>config.xml</code>文件并创建对象：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 解析XML文件（这里为了简化，我们假设已经获取到了type和handler）</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> <span class="string">&quot;com.example.RoundButton&quot;</span>;</span><br><span class="line">            <span class="type">String</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="string">&quot;com.example.MyButtonHandler&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建ButtonHandler对象</span></span><br><span class="line">            Class&lt;?&gt; handlerClass = Class.forName(handler);</span><br><span class="line">            <span class="type">ButtonHandler</span> <span class="variable">buttonHandler</span> <span class="operator">=</span> (ButtonHandler) handlerClass.getDeclaredConstructor().newInstance();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建Button对象</span></span><br><span class="line">            Class&lt;?&gt; buttonClass = Class.forName(type);</span><br><span class="line">            <span class="type">Button</span> <span class="variable">button</span> <span class="operator">=</span> (Button) buttonClass.getDeclaredConstructor(ButtonHandler.class).newInstance(buttonHandler);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 点击按钮</span></span><br><span class="line">            button.click();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>当你运行这个程序时，它会输出：”Button clicked!”。这就是我们通过读取<code>config.xml</code>文件和使用反射来动态创建<code>Button</code>和<code>ButtonHandler</code>对象的例子。</p>
+<p>注意：这个例子非常简化，实际的XML解析和错误处理会更复杂。此外，确保你的类路径（classpath）正确设置，以便Java可以找到你的类。</p>
+]]></content>
+      <categories>
+        <category>软件系统设计</category>
+      </categories>
+      <tags>
+        <tag>设计原则</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>LLM相关术语理解</title>
     <url>/posts/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/llm%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<blockquote>
@@ -304,39 +570,6 @@
       </categories>
       <tags>
         <tag>LLM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java反射机制</title>
-    <url>/posts/%E8%BD%AF%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html</url>
-    <content><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a class="link" href="https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/">https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="演示使用"><a href="#演示使用" class="headerlink" title="演示使用"></a>演示使用</h2><p>如何能利用反射机制来实现OCP</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214021.png"></p>
-<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214108.png"></p>
-<blockquote>
-<p>generated by GPT</p>
-</blockquote>
-<p>这里给出一个简化的例子以演示如何使用<code>config.xml</code>文件和反射来动态创建对象。假设我们有一个<code>Button</code>接口和两个实现了该接口的类：<code>RoundButton</code>和<code>SquareButton</code>。我们还有一个<code>ButtonHandler</code>接口和一个实现了该接口的类：<code>MyButtonHandler</code>。</p>
-<p>首先，我们定义<code>Button</code>接口和<code>ButtonHandler</code>接口：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>然后，我们定义<code>RoundButton</code>、<code>SquareButton</code>和<code>MyButtonHandler</code>：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RoundButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SquareButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SquareButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyButtonHandler</span> <span class="keyword">implements</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Button clicked!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>接下来，我们创建<code>config.xml</code>文件：</p>
-<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>com.example.RoundButton<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span>&gt;</span>com.example.MyButtonHandler<span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>最后，我们使用Java的反射机制来读取<code>config.xml</code>文件并创建对象：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 解析XML文件（这里为了简化，我们假设已经获取到了type和handler）</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> <span class="string">&quot;com.example.RoundButton&quot;</span>;</span><br><span class="line">            <span class="type">String</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="string">&quot;com.example.MyButtonHandler&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建ButtonHandler对象</span></span><br><span class="line">            Class&lt;?&gt; handlerClass = Class.forName(handler);</span><br><span class="line">            <span class="type">ButtonHandler</span> <span class="variable">buttonHandler</span> <span class="operator">=</span> (ButtonHandler) handlerClass.getDeclaredConstructor().newInstance();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建Button对象</span></span><br><span class="line">            Class&lt;?&gt; buttonClass = Class.forName(type);</span><br><span class="line">            <span class="type">Button</span> <span class="variable">button</span> <span class="operator">=</span> (Button) buttonClass.getDeclaredConstructor(ButtonHandler.class).newInstance(buttonHandler);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 点击按钮</span></span><br><span class="line">            button.click();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>当你运行这个程序时，它会输出：”Button clicked!”。这就是我们通过读取<code>config.xml</code>文件和使用反射来动态创建<code>Button</code>和<code>ButtonHandler</code>对象的例子。</p>
-<p>注意：这个例子非常简化，实际的XML解析和错误处理会更复杂。此外，确保你的类路径（classpath）正确设置，以便Java可以找到你的类。</p>
-]]></content>
-      <categories>
-        <category>软件系统设计</category>
-      </categories>
-      <tags>
-        <tag>设计原则</tag>
       </tags>
   </entry>
   <entry>
@@ -385,236 +618,16 @@
       </tags>
   </entry>
   <entry>
-    <title>前端康复训练</title>
-    <url>/posts/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/%E5%89%8D%E7%AB%AF%E5%BA%B7%E5%A4%8D%E8%AE%AD%E7%BB%83.html</url>
-    <content><![CDATA[<h2 id="上传并修改图片（适用于头像"><a href="#上传并修改图片（适用于头像" class="headerlink" title="上传并修改图片（适用于头像"></a>上传并修改图片（适用于头像</h2><p><a class="link" href="https://github.com/dai-siki/vue-image-crop-upload?tab=readme-ov-file">https://github.com/dai-siki/vue-image-crop-upload?tab=readme-ov-file <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>修改头像，效果如下</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/%E5%89%8D%E7%AB%AF%E5%BA%B7%E5%A4%8D%E8%AE%AD%E7%BB%83/image-20231218205829320.png" alt="image-20231218205829320"></p>
-<h2 id="商品上传界面"><a href="#商品上传界面" class="headerlink" title="商品上传界面"></a>商品上传界面</h2><h2 id="计算属性和ref"><a href="#计算属性和ref" class="headerlink" title="计算属性和ref"></a>计算属性和ref</h2><p>ref是页面和数据绑定的那种意思</p>
-<p>computed则是某个数据可以根据依赖的ref数据进行改变</p>
-<h2 id="ref和reactive"><a href="#ref和reactive" class="headerlink" title="ref和reactive"></a>ref和reactive</h2><p>在 Vue 3 的 Composition API 中，<code>reactive</code> 创建的响应式对象的属性可以直接访问，不需要 <code>.value</code>。</p>
-<p>例如，如果你有一个 <code>reactive</code> 创建的响应式对象 <code>submitGoodsForm</code>：</p>
-<div class="highlight-container" data-rel="Ts"><figure class="iseeu highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> submitGoodsForm = <span class="title function_">reactive</span>(&#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">price</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">goodsLevel</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">dscrip</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">userId</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">  <span class="attr">goodsId</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></div>
-
-<p>你可以直接访问它的 <code>name</code> 属性，如 <code>submitGoodsForm.name</code>，不需要使用 <code>submitGoodsForm.name.value</code>。</p>
-<p>然而，如果你使用 <code>ref</code> 创建响应式引用，那么你需要使用 <code>.value</code> 来访问或修改它的值。例如：</p>
-<div class="highlight-container" data-rel="Ts"><figure class="iseeu highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> count = <span class="title function_">ref</span>(<span class="number">0</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(count.<span class="property">value</span>)  <span class="comment">// 输出 0</span></span><br><span class="line">count.<span class="property">value</span> = <span class="number">1</span>  <span class="comment">// 修改 count 的值为 1</span></span><br></pre></td></tr></table></figure></div>
-
-<p>所以，是否需要使用 <code>.value</code> 取决于你是使用 <code>reactive</code> 还是 <code>ref</code> 创建的响应式数据。</p>
-<h2 id="安装模块"><a href="#安装模块" class="headerlink" title="安装模块"></a>安装模块</h2><p><code>npm i --save-dev @types/vuelidate</code>和之前的<code>npm install vuelidate --save</code>命令是有区别的。</p>
-<ol>
-<li><code>npm install vuelidate --save</code>：这个命令是用来安装vuelidate库的，这是一个Vue.js的表单验证库。<code>--save</code>选项会将vuelidate添加到你的项目的<code>package.json</code>文件的<code>dependencies</code>中。</li>
-<li><code>npm i --save-dev @types/vuelidate</code>：这个命令是用来安装@types&#x2F;vuelidate的，这是一个为vuelidate库提供TypeScript类型定义的第三方库。<code>--save-dev</code>选项会将@types&#x2F;vuelidate添加到你的项目的<code>package.json</code>文件的<code>devDependencies</code>中，这意味着这个库只在开发环境中需要，而在生产环境中不需要。</li>
-</ol>
-<p>然而，我需要指出的是，@types&#x2F;vuelidate可能并不存在。@types库是由社区提供的，用于为没有提供TypeScript类型定义的JavaScript库提供类型定义。并不是所有的JavaScript库都有对应的@types库。如果@types&#x2F;vuelidate不存在，你可能需要自己为vuelidate库编写类型定义，或者在你的代码中使用JavaScript而不是TypeScript。</p>
-<p>后者有用，不知道为啥，可能是因为用的ts?</p>
-<h2 id="表单验证"><a href="#表单验证" class="headerlink" title="表单验证"></a>表单验证</h2><p><a class="link" href="https://github.com/vuelidate/vuelidate/tree/next">https://github.com/vuelidate/vuelidate/tree/next <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="异步函数"><a href="#异步函数" class="headerlink" title="异步函数"></a>异步函数</h2><p>在 TypeScript（以及现代 JavaScript）中，<code>let</code> 和 <code>const</code> 是用于声明变量的关键字，它们都提供了块级作用域（block scope），这是与传统的 <code>var</code> 关键字（提供函数级作用域或全局作用域）的主要区别。以下是 <code>let</code> 和 <code>const</code> 的区别：</p>
-<ol>
-<li><strong>let</strong>: 使用 <code>let</code> 声明的变量可以在声明之后重新赋值。这意味着变量的值是可以改变的。</li>
-<li><strong>const</strong>: 使用 <code>const</code> 声明的是常量，一旦赋值后就不能再改变。尝试重新赋值 <code>const</code> 声明的变量将导致一个错误。注意，对于对象或数组，<code>const</code> 确保变量标识符不能重新赋值指向另一个引用，但对象或数组的内容仍然可以被修改。</li>
-</ol>
-<p>关于异步函数，如果 <code>uploadPhoto</code> 函数是 <code>async</code> 的，这意味着它会返回一个 <code>Promise</code>。当你调用这个函数时，你可以使用 <code>await</code> 关键字来等待 <code>Promise</code> 完成，或者使用 <code>.then()</code> 和 <code>.catch()</code> 方法来处理完成（或拒绝）的 <code>Promise</code>。</p>
-<p>这里有一个例子：</p>
-<div class="highlight-container" data-rel="Typescript"><figure class="iseeu highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">uploadPhoto</span>(<span class="params">file: File</span>): <span class="title class_">Promise</span>&lt;<span class="built_in">any</span>&gt; &#123;</span><br><span class="line">  <span class="comment">// 异步操作，例如上传文件</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 await</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">handleUpload</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> <span class="title function_">uploadPhoto</span>(someFile);</span><br><span class="line">    <span class="comment">// 在这里处理 result</span></span><br><span class="line">  &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">    <span class="comment">// 处理错误</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或者使用 .then() 和 .catch()</span></span><br><span class="line"><span class="title function_">uploadPhoto</span>(someFile)</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">result</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 在这里处理 result</span></span><br><span class="line">  &#125;)</span><br><span class="line">  .<span class="title function_">catch</span>(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 处理错误</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure></div>
-
-<p>如果函数是 <code>async</code> 的，你必须理解其返回值将总是一个 <code>Promise</code>，并且你需要相应地处理这个 <code>Promise</code>。例如，如果你在一个非异步函数中调用 <code>uploadPhoto</code> 并尝试直接访问返回值，你将得到一个 <code>Promise</code> 对象，而不是 <code>uploadPhoto</code> 操作完成后的结果。这就是为什么通常在调用 <code>async</code> 函数时使用 <code>await</code> 关键字，或者使用 <code>.then()</code> 和 <code>.catch()</code> 方法来处理异步结果。</p>
+    <title>凤凰项目人物关系</title>
+    <url>/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB.html</url>
+    <content><![CDATA[<p>看的时候老是忘记，所以找个地方放一下</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB/image-20230911084052789.png" alt="image-20230911084052789"></p>
 ]]></content>
       <categories>
-        <category>前端开发记录</category>
+        <category>23-Fall-Courses-DevOps</category>
       </categories>
       <tags>
-        <tag>前端开发</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>docker常用命令</title>
-    <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.html</url>
-    <content><![CDATA[<h1 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h1><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --network mongo-net-1012 --<span class="built_in">rm</span> mongo mongosh --host my-mongo-1012</span><br></pre></td></tr></table></figure></div>
-
-<ol>
-<li><code>docker run</code>: 这是Docker的运行容器命令，用于创建和启动一个新的容器。</li>
-<li><code>-it</code>: 这两个选项组合表示以交互式模式运行容器并分配一个伪终端（TTY）。这允许你在容器内部与终端进行交互。</li>
-<li><code>--network mongo-net-1012</code>: 这个选项将容器连接到名为 <code>mongo-net-1012</code> 的Docker网络，以便容器之间可以相互通信。</li>
-<li><code>--rm</code>: 这个选项指示Docker在容器退出时自动删除容器。这是为了确保容器不会留在系统中，以避免占用存储空间。</li>
-<li><code>mongo</code>: 这是要运行的Docker镜像的名称，它表示你要使用MongoDB官方镜像来创建容器。（这里也可以用image:tag，不加的话默认latest)</li>
-<li><code>mongosh --host my-mongo-1012</code>: 这是要在容器内运行的命令。<code>mongosh</code> 是MongoDB的官方命令行客户端，<code>--host my-mongo-1012</code> 指定了MongoDB服务器的主机名为 <code>my-mongo-1012</code>，以便连接到该服务器。</li>
-</ol>
-<h1 id="docker-ps"><a href="#docker-ps" class="headerlink" title="docker ps"></a>docker ps</h1><p>ps即Process Status</p>
-<h1 id="启动-停止容器"><a href="#启动-停止容器" class="headerlink" title="启动&#x2F;停止容器"></a>启动&#x2F;停止容器</h1><p>要启动和停止Docker容器，你可以使用以下两个常用的Docker命令：</p>
-<ol>
-<li><p><strong>启动容器</strong>：</p>
-<p>使用 <code>docker start</code> 命令可以启动一个已经创建的但是已经停止的容器。你需要提供容器的名称或容器ID作为参数。例如：</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker start CONTAINER_NAME_OR_ID</span><br></pre></td></tr></table></figure></div>
-
-<p>例如，如果你有一个名为 <code>my-container</code> 的容器，要启动它，可以运行：</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker start my-container</span><br></pre></td></tr></table></figure></div>
-</li>
-<li><p><strong>停止容器</strong>：</p>
-<p>使用 <code>docker stop</code> 命令可以停止一个正在运行的容器。你同样需要提供容器的名称或容器ID作为参数。例如：</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker stop CONTAINER_NAME_OR_ID</span><br></pre></td></tr></table></figure></div>
-
-<p>例如，如果你有一个名为 <code>my-container</code> 的容器，要停止它，可以运行：</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker stop my-container</span><br></pre></td></tr></table></figure></div></li>
-</ol>
-<p>这些命令允许你在需要时启动或停止容器，以便有效地管理你的Docker容器。</p>
-<blockquote>
-<p>使用names来停止也是可以的</p>
-<p>比如docker stop my-mongo-1012</p>
-</blockquote>
-<p>停止所有容器</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker stop $(docker ps -q)</span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<ol>
-<li><p><code>docker ps -q</code>:</p>
-<ul>
-<li>这个命令用于列出运行中的容器的容器ID，而不包括已经停止的容器。</li>
-<li><code>-q</code> 选项代表 “quiet”，它仅返回容器的ID而不显示容器的详细信息。</li>
-</ul>
-<p>例如，执行 <code>docker ps -q</code> 将列出当前正在运行的容器的ID列表。</p>
-</li>
-<li><p><code>docker ps -a</code>:</p>
-<ul>
-<li>这个命令用于列出所有容器，包括正在运行和已经停止的容器。</li>
-<li><code>-a</code> 选项代表 “all”，它显示所有容器的详细信息，包括容器ID、镜像、创建时间、状态等。</li>
-</ul>
-<p>例如，执行 <code>docker ps -a</code> 将列出所有容器的详细信息，无论它们是运行中的还是已经停止的。</p>
-</li>
-</ol>
-</blockquote>
-<h1 id="使用redis"><a href="#使用redis" class="headerlink" title="使用redis"></a>使用redis</h1><p>创建网络</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker network create redis-net-1012</span><br></pre></td></tr></table></figure></div>
-
-<p>启动server</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name my-redis-1012 --network redis-net-1012 -p 6379:6379 -d redis:latest</span><br></pre></td></tr></table></figure></div>
-
-<p>客户端访问</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --network redis-net-1012 --<span class="built_in">rm</span> redis redis-cli -h my-redis-1012</span><br></pre></td></tr></table></figure></div>
-
-<p>启动成功</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/image-20231012144424264.png" alt="image-20231012144424264"></p>
-<p>测试</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/image-20231012144958421.png" alt="image-20231012144958421"></p>
-<h1 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h1><p>为了区分，映射了一个51001端口，注意容器端口还得是3306，不然好像连接不上</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull mysql</span><br><span class="line"></span><br><span class="line">docker network create mysql-net-1026</span><br><span class="line"></span><br><span class="line">docker run --name my-mysql-1026 --network mysql-net-1026 -e MYSQL_ROOT_PASSWORD=root1234 -d -p 51001:3306 mysql:latest</span><br><span class="line"></span><br><span class="line">docker run -it --network mysql-net-1026 --<span class="built_in">rm</span> mysql:latest mysql -h my-mysql-1026 -u root -p</span><br></pre></td></tr></table></figure></div>
-
-<ul>
-<li><p><code>docker run</code>: 启动一个 Docker 容器。</p>
-</li>
-<li><p><code>-it</code>: 这是两个参数的组合，<code>-i</code> 表示交互式模式，允许您与容器交互，<code>-t</code> 分配一个终端。</p>
-</li>
-<li><p><code>--network mysql-net-1026</code>: 指定容器连接的网络。在这里，容器将连接到名为 <code>mysql-net-1026</code> 的 Docker 网络，这使得容器可以与该网络中的其他容器进行通信。</p>
-</li>
-<li><p><code>--rm</code>: 表示容器退出时自动删除容器。这有助于确保在容器退出后不会留下残留的容器。</p>
-</li>
-<li><p><code>mysql:latest</code>: 指定要运行的 Docker 镜像。在这里，使用了 MySQL 的最新版本。</p>
-</li>
-<li><p><code>mysql -h my-mysql-1026 -u root -p</code>:</p>
-<p>这是在容器内运行的命令。它执行了以下操作：</p>
-<ul>
-<li><code>mysql</code>: 启动 MySQL 客户端。</li>
-<li><code>-h my-mysql-1026</code>: 指定要连接的 MySQL 服务器的主机名。在这里，<code>my-mysql-1026</code> 是您 MySQL 容器的主机名，它连接到该容器的 MySQL 服务器。</li>
-<li><code>-u root</code>: 指定 MySQL 用户名，这里是 root。</li>
-<li><code>-p</code>: 要求输入密码，这样您可以输入 MySQL 的密码以连接到 MySQL 服务器。</li>
-</ul>
-</li>
-</ul>
-<h1 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h1><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it &lt;container_name_or_id&gt; bash</span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-      <categories>
-        <category>工具学习</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>how-to-use-AI-painting</title>
-    <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/how-to-use-ai-painting.html</url>
-    <content><![CDATA[<h2 id="1-使用Midjourney（目前已无法试用？"><a href="#1-使用Midjourney（目前已无法试用？" class="headerlink" title="1. 使用Midjourney（目前已无法试用？"></a>1. 使用Midjourney（目前已无法试用？</h2><p>试了几次发现没法用，估计得充值，订阅个计划才能用了</p>
-<p>但也可以考虑找点免费的共享服务器？或者获取到别人的邀请链接？</p>
-<p>登录<a class="link" href="https://www.midjourney.com/home/?callbackUrl=/app/">Midjourney <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后左下角三个点展开，选择“Go to discord”</p>
-<p>找个频道向机器人输入&#x2F;image，自动会弹出让输入prompt</p>
-<p>然后就用不了（以前还是可以，也许有限额</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/24/Q3LOZR5wGWoJq2C.png" alt="image-20230424162300993"></p>
-<h2 id="2-考虑一些替代网站"><a href="#2-考虑一些替代网站" class="headerlink" title="2. 考虑一些替代网站"></a>2. 考虑一些替代网站</h2><p>我在油管上找了个视频<a class="link" href="https://www.youtube.com/watch?v=NAScnKW1N1I">https://www.youtube.com/watch?v=NAScnKW1N1I <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>从评论区知道了这个<a class="link" href="https://www.bluewillow.ai/">BlueWillow | Free AI Art Generator <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/24/FvVwUeM65GhpdBS.png" alt="image-20230424162425993"></p>
-<p>感觉效果一般般，也可能是描述太少</p>
-<p><strong>记得把机器人加到自己的服务器频道</strong></p>
-<blockquote>
-<p>使用帮助：基本来自官网的教程</p>
-<p><a class="link" href="https://www.bluewillow.ai/blog/mastering-the-art-of-prompting-seeds-weights-and-beyond">https://www.bluewillow.ai/blog/mastering-the-art-of-prompting-seeds-weights-and-beyond <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>这篇里面有关于 <code>--ar 3:2</code>，就是aspect ration，图片比例</p>
-<p><a class="link" href="https://www.bluewillow.ai/prompt-glossary">https://www.bluewillow.ai/prompt-glossary <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>这是prompt词汇表</p>
-</blockquote>
-<p>随便试了个某个视频里看来的prompt:</p>
-<p>underwater photograph of a reef, beautiful reef on the ocean floor, clear blue water, rays of light shining through the ocean, travel photography, highly detailed, 4k, cinematic photography –ar 3:2 </p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/24/9FW4gnfs1CryHxL.png" alt="image-20230424165038386"></p>
-<h2 id="3-一些其他的网站"><a href="#3-一些其他的网站" class="headerlink" title="3. 一些其他的网站"></a>3. 一些其他的网站</h2><p><a class="link" href="https://6pen.art/">6pen Art <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>最早别人推给我的，手机上也有app（来自青梧道人，咳咳</p>
-]]></content>
-      <categories>
-        <category>工具学习</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
-        <tag>AI绘画</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《天空之城》观感</title>
-    <url>/posts/%E8%A7%82%E5%BD%B1%E8%AE%B0%E5%BD%95/%E3%80%8A%E5%A4%A9%E7%A9%BA%E4%B9%8B%E5%9F%8E%E3%80%8B%E8%A7%82%E6%84%9F.html</url>
-    <content><![CDATA[<h3 id="啥时候看的？"><a href="#啥时候看的？" class="headerlink" title="啥时候看的？"></a>啥时候看的？</h3><p>应该是2022年9月23号（应该是礼拜四）和24号看的了，23号开始看的晚了，就没看完。至于为啥会看，因为当时发现每天看短视频的时间有点长，与其越刷越造成所谓信息茧房的困境，不如抽点时间看部电影。所以就去找了这部电影看看。</p>
-<h3 id="观感"><a href="#观感" class="headerlink" title="观感"></a>观感</h3><h4 id="配乐"><a href="#配乐" class="headerlink" title="配乐"></a>配乐</h4><p>原来配乐也是出自久石让之手</p>
-<p>这首配乐很久以前我就听过了（又想起一句诗“青灯有味似儿时”），还是存在现在已经被称作老年机的手机里的，当时还小，只觉得这歌很有故事，好听是好听，可就总让人觉得有点伤感。现在再听，伤感依旧，因为添了许多怀念和想念，既是空间上的，亦是时间上的。</p>
-<h4 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h4><p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/15/higCmGaNVSywB8n.png" alt="屏幕截图 2022-09-23 191425"></p>
-<p>说实话看完电影，最大的感触是希望，以及美好，但又很难说哪些情节给了我这种感觉，因为它似乎是一种贯穿始终的东西。即使天空之城崩塌，但依旧拾起希望，抬头望向天空，闭上双眼感受着风的轻抚。</p>
-<p>另一方面，又觉得这样的奇遇终究是不可能的，有种幻想破灭的感觉，尤其是这空空荡荡的天空之城，让我感到有些无奈和迷茫。</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/15/3Dh2i7rPbHf5FJS.png" alt="屏幕截图 2022-09-23 191450"></p>
-<p>“伴随着音乐的响起，我感受到远古文明的没落带来的追远的淡淡忧伤，但同时又无比庆幸世间的美好永驻心间，不觉间泪水划过眼角。那种无法言语的复杂情感恕我无法言说，她好比清晨山林间回荡的鸟鸣，幽邃深沉的黑夜中闪亮的星辰，又或像淡蓝的天空初亮时第一束晨曦，一切都是新生，告别了过往，憧憬着未来，带着那份爱与感动重新踏上新的旅程，希望永远都在前方。”（南风古居）</p>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
-<li><p>这里面的机器人有点哈人，我感觉跟迪迦里面有一集的怪兽有点像</p>
-<p>【迪迦奥特曼.19.-奔向宇宙（上）】  <a class="link" href="https://www.bilibili.com/video/BV18t41197x2/?share_source=copy_web&vd_source=26ebf8878a6450d881a22145eebf9c9f&t=244">https://www.bilibili.com/video/BV18t41197x2/?share_source=copy_web&amp;vd_source=26ebf8878a6450d881a22145eebf9c9f&amp;t=244 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-</li>
-<li><p>毁灭咒语：巴鲁斯 </p>
-<p>记住了（2023.4.15考证，并没有记住…</p>
-</li>
-</ol>
-<h4 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h4><p>2023年4月15看到这篇文章感慨自己当时还能看几部电影，最近感觉一直刷刷B站短视频，切片之类的有点颓废，貌似跟开头说的一样，樂</p>
-]]></content>
-      <categories>
-        <category>观影记录</category>
-      </categories>
-      <tags>
-        <tag>电影</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>latex-learning</title>
-    <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/latex-learning.html</url>
-    <content><![CDATA[<p>记录下一些latex的用法</p>
-<p>收藏夹太满了</p>
-<p>并且懒得每次都因为同样的问题去查</p>
-<h3 id="1-图片插入相关-单张"><a href="#1-图片插入相关-单张" class="headerlink" title="1.图片插入相关-单张"></a>1.图片插入相关-单张</h3><div class="highlight-container" data-rel="Latex"><figure class="iseeu highlight latex"><table><tr><td class="code"><pre><span class="line"><span class="keyword">\begin</span>&#123;figure&#125;[h]</span><br><span class="line">  <span class="keyword">\centering</span></span><br><span class="line">  <span class="keyword">\includegraphics</span>[width=0.8<span class="keyword">\textwidth</span>]&#123;1.jpg&#125;</span><br><span class="line">  <span class="keyword">\caption</span>&#123;question1<span class="keyword">\\</span>文法一是LL(1)文法&#125;</span><br><span class="line"><span class="keyword">\end</span>&#123;figure&#125;</span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<p>就写个[h]得了，[htp]反而不太对</p>
-<p><strong>最好写[H]吧，保证在当前位置，编译原理那个环境怪怪的，大H用不了，引了宏包还是不行…</strong></p>
-</blockquote>
-<p>图片因为排版而位置不受控制<br>在LaTex中，\begin{figure}[~]是图片环境，常用选择项[htbp]是浮动格式：<br>[h] ~ here，当前位置。将图形放置在正文文本中给出该图形环境的地方。如果本页所剩页面不够，这一参数将不起作用。<br>[t] ~ top，顶部。将图形放置在页面的顶部。<br>[b] ~ bottom，底部。将图形放置在页面的底部。<br>[p] ~ page of its own，浮动页。将图形放置在一个允许有浮动对象的页面上。<br>一般使用[htb]这样的组合，只用[h]是没有用的。这样组合的意思就是LaTex会尽量满足排在前面的浮动格式，就是h-t-b这个顺序，让排版的效果尽量好。<br>[!h]只是试图放在当前位置。如果页面剩下的部分放不下，还是会跑到下一页的。一般而言，用[!h]选项通常会出现不能正确放置的问题，所以常用[ht]、[htbp]等。<br>这里加感叹号的意思是 忽略 “美学” 标准。</p>
-<blockquote>
-<p>参数详解链接：<a class="link" href="https://blog.csdn.net/king0406/article/details/51252298">https://blog.csdn.net/king0406/article/details/51252298 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>工具学习</category>
-      </categories>
-      <tags>
-        <tag>latex</tag>
+        <tag>Books</tag>
       </tags>
   </entry>
   <entry>
@@ -748,62 +761,6 @@
       <tags>
         <tag>嵌入式开发</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>凤凰项目人物关系</title>
-    <url>/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB.html</url>
-    <content><![CDATA[<p>看的时候老是忘记，所以找个地方放一下</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB/image-20230911084052789.png" alt="image-20230911084052789"></p>
-]]></content>
-      <categories>
-        <category>23-Fall-Courses-DevOps</category>
-      </categories>
-      <tags>
-        <tag>Books</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>软工二第一次代码作业</title>
-    <url>/posts/2023-Spring-Courses-%E8%BD%AF%E5%B7%A5%E4%BA%8C/%E8%BD%AF%E5%B7%A5%E4%BA%8C%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E4%BD%9C%E4%B8%9A.html</url>
-    <content><![CDATA[<h2 id="什么是kwic"><a href="#什么是kwic" class="headerlink" title="什么是kwic?"></a>什么是kwic?</h2><p>KWIC是”Keyword in Context”（关键词上下文）的缩写。 KWIC是一种文本分析方法，用于提取文本中的关键词并在其周围显示一定数量的上下文信息。这通常被用于索引和搜索系统中的文本数据，以便用户可以快速找到与其关注的关键词相关的文本。KWIC索引通常显示在一个表格或网格中，其中每一行都是一个关键词及其周围的文本片段，让用户可以快速浏览文本内容，快速找到感兴趣的信息。</p>
-<blockquote>
-<p>貌似还有些相关网站？</p>
-<p><a class="link" href="https://www.bilibili.com/video/BV1Ke4y1i7jb/?spm_id_from=333.337.search-card.all.click&vd_source=6be38b36e75fc2dd932ed882233a8a39">语料库网站介绍之KWiC Finder_哔哩哔哩_bilibili <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link" href="http://kwicfinder.com/KWiCFinder.html">KWiCFinder Web Concordancer &amp; Online Research Tool <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-</blockquote>
-<br>
-
-<h2 id="直接看点资料"><a href="#直接看点资料" class="headerlink" title="直接看点资料"></a>直接看点资料</h2><blockquote>
-<p><a class="link" href="https://www.cnblogs.com/youxin/p/3514594.html">软件体系结构经典问题——KWIC的分析和解决 - youxin - 博客园 (cnblogs.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>含代码：<a class="link" href="https://blog.csdn.net/weixin_43853097/article/details/110943379">主程序-子程序、面向对象、事件系统和管道-过滤软件体系结构实现KWIC_Himit_ZH的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-</blockquote>
-<h3 id="要做什么？"><a href="#要做什么？" class="headerlink" title="要做什么？"></a>要做什么？</h3><p><strong>问题陈述：</strong>KWIC(Key Word In Context)，Parnas (1972)</p>
-<p>KWIC索引系统接受一些行，每行有若干字，每个字由若干字符组成；每行都可以循环移位，亦即重复地把第一个字删除，然后接到行末； KWIC把所有行的各种移位情况按照字母表顺序输出</p>
-<p><strong>例子如下：</strong></p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/30/MlSmV6HC58NPLhD.png" alt="image-20230430220928676"></p>
-<blockquote>
-<p>原来的还是要输出的，所以一共3+2+3&#x3D;8个</p>
-</blockquote>
-<h2 id="如何实现？"><a href="#如何实现？" class="headerlink" title="如何实现？"></a>如何实现？</h2><h3 id="使用ms（主程序与子程序）实现"><a href="#使用ms（主程序与子程序）实现" class="headerlink" title="使用ms（主程序与子程序）实现"></a>使用ms（主程序与子程序）实现</h3><p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/30/7ya4TzAIBjoqvVZ.png" alt="image-20230430225702377"></p>
-<p>KWIC类：</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/30/tWIfxOB7jsG2NVd.png" alt="image-20230430231140471"></p>
-<p>直接使用这四个成员变量多少有点过于困难了，什么年代还在用char数组？</p>
-<p>果断放弃了，按照上面的要求的话，一个input函数写了这么多行属实难蚌</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Input function reads the raw data from the specified file and stores it in the core storage.</span></span><br><span class="line"><span class="comment"> * If some system I/O error occurs the program exits with an error message.</span></span><br><span class="line"><span class="comment"> * The format of raw data is as follows. Lines are separated by the line separator</span></span><br><span class="line"><span class="comment"> * character(s) (on Unix &#x27;\n&#x27;, on Windows &#x27;\r\n&#x27;). Each line consists of a number of</span></span><br><span class="line"><span class="comment"> * words. Words are delimited by any number and combination of the space chracter (&#x27; &#x27;)</span></span><br><span class="line"><span class="comment"> * and the horizontal tabulation chracter (&#x27;\t&#x27;). The entered data is parsed in the</span></span><br><span class="line"><span class="comment"> * following way. All line separators are removed from the data, all horizontal tabulation</span></span><br><span class="line"><span class="comment"> * word delimiters are replaced by a single space character, and all multiple word</span></span><br><span class="line"><span class="comment"> * delimiters are replaced by a single space character. Then the parsed data is represented</span></span><br><span class="line"><span class="comment"> * in the core as two arrays: chars_ array and line_index_ array.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> file Name of input file</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">input</span><span class="params">(String file)</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现input</span></span><br><span class="line">    <span class="comment">// 期望处理后的目标</span></span><br><span class="line">    <span class="comment">// All line separators are removed from the data, all horizontal tabulation</span></span><br><span class="line">    <span class="comment">// word delimiters are replaced by a single space character, and all multiple word</span></span><br><span class="line">    <span class="comment">// delimiters are replaced by a single space character.</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">FileReader</span> <span class="variable">inputFileReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileReader</span>(file);</span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">inputFileBufferedReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(inputFileReader);</span><br><span class="line"></span><br><span class="line">        <span class="type">CharArrayWriter</span> <span class="variable">caw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CharArrayWriter</span>(); <span class="comment">// 用来向chars中写入数据</span></span><br><span class="line">        String line;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> ((line = inputFileBufferedReader.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            caw.write(line);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        chars_ = caw.toCharArray();</span><br><span class="line">        caw.close();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需要按照要求进一步处理chars_</span></span><br><span class="line">        <span class="comment">// 把所有分隔符都换成单个空格，除了换行符</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">text1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(chars_);</span><br><span class="line">        text1 = text1.replaceAll(<span class="string">&quot; +&quot;</span>, <span class="string">&quot; &quot;</span>);</span><br><span class="line">        text1 = text1.replaceAll(<span class="string">&quot;\t&quot;</span>, <span class="string">&quot; &quot;</span>);</span><br><span class="line">        text1 = text1.replaceAll(<span class="string">&quot;\r&quot;</span>, <span class="string">&quot;&quot;</span>);</span><br><span class="line">        chars_ = text1.toCharArray();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 没明白为什么要All line separators are removed from the data</span></span><br><span class="line">        line_index_ = <span class="keyword">new</span> <span class="title class_">int</span>[chars_.length];</span><br><span class="line">        <span class="type">int</span> <span class="variable">line_index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; chars_.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (chars_[i] == <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                line_index_[i] = line_index;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (chars_[i] == <span class="string">&#x27;\n&#x27;</span>) &#123; <span class="comment">//只判断“/n”，不用判断“/r/n”，已经涵盖了</span></span><br><span class="line">                line_index_[i] = line_index;</span><br><span class="line">                line_index++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;File not found!&quot;</span>);</span><br><span class="line">        System.exit(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;IO error!&quot;</span>);</span><br><span class="line">        System.exit(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="使用OO实现"><a href="#使用OO实现" class="headerlink" title="使用OO实现"></a>使用OO实现</h3><h4 id="Alphabetizer类"><a href="#Alphabetizer类" class="headerlink" title="Alphabetizer类"></a>Alphabetizer类</h4><p>用于排序</p>
-<p>为了便于修改排序算法</p>
-<p>在该类中新建一个内部类，对按行进行排序</p>
-<blockquote>
-<p>单纯实现某两个类的自定义排序，直接使用Comparator</p>
-<p><Type>就行</Type></p>
-<p><a class="link" href="https://blog.csdn.net/kendleo/article/details/105298680">使用Comparator比较接口实现ArrayList集合排序_惟念依的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>但如果像这道题一样还要获取排序后的Index就不行了，需要使用comparable接口</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>2023-Spring-Courses-软工二</category>
-      </categories>
   </entry>
   <entry>
     <title>一文带你慢且不通SEOSLab2</title>
@@ -1523,6 +1480,34 @@
       </tags>
   </entry>
   <entry>
+    <title>hw2学习记录</title>
+    <url>/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html</url>
+    <content><![CDATA[<h1 id="P1"><a href="#P1" class="headerlink" title="P1"></a>P1</h1><h3 id="电梯调度算法"><a href="#电梯调度算法" class="headerlink" title="电梯调度算法"></a>电梯调度算法</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530152123129.png" alt="image-20230530152123129"></p>
+<p>简单说明下</p>
+<h4 id="SCAN"><a href="#SCAN" class="headerlink" title="SCAN"></a>SCAN</h4><p>扫到头就换方向扫，所以是双向的</p>
+<h4 id="C-SCAN"><a href="#C-SCAN" class="headerlink" title="C-SCAN"></a>C-SCAN</h4><p>扫到头就回到起始点，期间不扫描，所以是单向的</p>
+<p>只会按照一个方向</p>
+<h4 id="LOOK"><a href="#LOOK" class="headerlink" title="LOOK"></a>LOOK</h4><p>扫到最左&#x2F;右的请求就换方向扫，双向</p>
+<h4 id="C-LOOK"><a href="#C-LOOK" class="headerlink" title="C-LOOK"></a>C-LOOK</h4><p>单向的，同理</p>
+<h1 id="P2"><a href="#P2" class="headerlink" title="P2"></a>P2</h1><h3 id="位示图"><a href="#位示图" class="headerlink" title="位示图"></a>位示图</h3><p>每个磁盘块都对应位示图上的一位，位的状态可以是0或1，表示该磁盘块是否已被占用或空闲</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530163816669.png" alt="image-20230530163816669"></p>
+<h1 id="P3"><a href="#P3" class="headerlink" title="P3"></a>P3</h1><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530170510167.png" alt="image-20230530170510167"></p>
+<h1 id="P5"><a href="#P5" class="headerlink" title="P5"></a>P5</h1><h3 id="PV操作原语"><a href="#PV操作原语" class="headerlink" title="PV操作原语"></a>PV操作原语</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530232905494.png" alt="image-20230530232905494"></p>
+<p>牢记！</p>
+<h3 id="并发进程的无关性：Bernstein条件"><a href="#并发进程的无关性：Bernstein条件" class="headerlink" title="并发进程的无关性：Bernstein条件"></a>并发进程的无关性：Bernstein条件</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230531111311817.png" alt="image-20230531111311817"></p>
+<p>其实感觉3、7语句无关肉眼也能看出来吧其实，不用这个什么条件算也行</p>
+<p>PV操作其实就是在做一定量的同步</p>
+<p>P（S1)想要继续执行下去，一定是V（S1）执行之后才行</p>
+<h1 id="P10-银行家算法"><a href="#P10-银行家算法" class="headerlink" title="P10 银行家算法"></a>P10 银行家算法</h1><p>看看视频（<a class="link" href="https://www.bilibili.com/video/BV1rJ411p7au/">操作系统-银行家算法_哔哩哔哩_bilibili <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>）+书 就行了</p>
+]]></content>
+      <categories>
+        <category>23-Spring-Courses-操作系统</category>
+      </categories>
+      <tags>
+        <tag>homework</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>notes-dbms</title>
     <url>/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms.html</url>
     <content><![CDATA[<h2 id="chap1-绪论"><a href="#chap1-绪论" class="headerlink" title="chap1 绪论"></a>chap1 绪论</h2><h3 id="SQL数据库与NoSQL数据库"><a href="#SQL数据库与NoSQL数据库" class="headerlink" title="SQL数据库与NoSQL数据库"></a>SQL数据库与NoSQL数据库</h3><p>其实就是NoSQL主要是面向单一的大量数据（比如一个人每天的定位数据这种，显然那比较适合NoSQL</p>
@@ -2092,247 +2077,6 @@
       </tags>
   </entry>
   <entry>
-    <title>hw2学习记录</title>
-    <url>/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html</url>
-    <content><![CDATA[<h1 id="P1"><a href="#P1" class="headerlink" title="P1"></a>P1</h1><h3 id="电梯调度算法"><a href="#电梯调度算法" class="headerlink" title="电梯调度算法"></a>电梯调度算法</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530152123129.png" alt="image-20230530152123129"></p>
-<p>简单说明下</p>
-<h4 id="SCAN"><a href="#SCAN" class="headerlink" title="SCAN"></a>SCAN</h4><p>扫到头就换方向扫，所以是双向的</p>
-<h4 id="C-SCAN"><a href="#C-SCAN" class="headerlink" title="C-SCAN"></a>C-SCAN</h4><p>扫到头就回到起始点，期间不扫描，所以是单向的</p>
-<p>只会按照一个方向</p>
-<h4 id="LOOK"><a href="#LOOK" class="headerlink" title="LOOK"></a>LOOK</h4><p>扫到最左&#x2F;右的请求就换方向扫，双向</p>
-<h4 id="C-LOOK"><a href="#C-LOOK" class="headerlink" title="C-LOOK"></a>C-LOOK</h4><p>单向的，同理</p>
-<h1 id="P2"><a href="#P2" class="headerlink" title="P2"></a>P2</h1><h3 id="位示图"><a href="#位示图" class="headerlink" title="位示图"></a>位示图</h3><p>每个磁盘块都对应位示图上的一位，位的状态可以是0或1，表示该磁盘块是否已被占用或空闲</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530163816669.png" alt="image-20230530163816669"></p>
-<h1 id="P3"><a href="#P3" class="headerlink" title="P3"></a>P3</h1><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530170510167.png" alt="image-20230530170510167"></p>
-<h1 id="P5"><a href="#P5" class="headerlink" title="P5"></a>P5</h1><h3 id="PV操作原语"><a href="#PV操作原语" class="headerlink" title="PV操作原语"></a>PV操作原语</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230530232905494.png" alt="image-20230530232905494"></p>
-<p>牢记！</p>
-<h3 id="并发进程的无关性：Bernstein条件"><a href="#并发进程的无关性：Bernstein条件" class="headerlink" title="并发进程的无关性：Bernstein条件"></a>并发进程的无关性：Bernstein条件</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/image-20230531111311817.png" alt="image-20230531111311817"></p>
-<p>其实感觉3、7语句无关肉眼也能看出来吧其实，不用这个什么条件算也行</p>
-<p>PV操作其实就是在做一定量的同步</p>
-<p>P（S1)想要继续执行下去，一定是V（S1）执行之后才行</p>
-<h1 id="P10-银行家算法"><a href="#P10-银行家算法" class="headerlink" title="P10 银行家算法"></a>P10 银行家算法</h1><p>看看视频（<a class="link" href="https://www.bilibili.com/video/BV1rJ411p7au/">操作系统-银行家算法_哔哩哔哩_bilibili <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>）+书 就行了</p>
-]]></content>
-      <categories>
-        <category>23-Spring-Courses-操作系统</category>
-      </categories>
-      <tags>
-        <tag>homework</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Review-CompilePrinciple</title>
-    <url>/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple.html</url>
-    <content><![CDATA[<h2 id="题目1-正则表达式与自动机"><a href="#题目1-正则表达式与自动机" class="headerlink" title="题目1 正则表达式与自动机"></a>题目1 正则表达式与自动机</h2><h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><h4 id="自动机："><a href="#自动机：" class="headerlink" title="自动机："></a>自动机：</h4><p>Automaton&#x2F;Automata 状态集+转移函数</p>
-<h4 id="RE："><a href="#RE：" class="headerlink" title="RE："></a>RE：</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622172316744.png" alt="image-20230622172316744"></p>
-<p>RE与DFA与NFA表达能力是等价的，所以可以相互转换  </p>
-<h4 id="DFA与NFA："><a href="#DFA与NFA：" class="headerlink" title="DFA与NFA："></a>DFA与NFA：</h4><p>确定性和非确定性有穷自动机</p>
-<p>DFA一个状态通过一个字符转移只能有一个确定的状态（也就是隐含了无法使用空串进行转移</p>
-<p><strong>NFA 简洁易于理解, 便于描述语言 <em>L</em>(<em>A</em>)</strong></p>
-<p><strong>DFA 易于判断 <em>x</em> <em>∈</em> <em>L</em>(<em>A</em>), 适合产生词法分析器</strong></p>
-<p>用 NFA 描述语言, 用 DFA 实现词法分析器</p>
-<p>RE &#x3D;<em>⇒</em> NFA &#x3D;<em>⇒</em> DFA &#x3D;<em>⇒</em> 词法分析器</p>
-<h4 id="DFA的死状态："><a href="#DFA的死状态：" class="headerlink" title="DFA的死状态："></a>DFA的死状态：</h4><blockquote>
-<p>死状态的画法：圈里面套个类似空集的符号</p>
-</blockquote>
-<h3 id="Thompson-构造法-从RE到-NFA"><a href="#Thompson-构造法-从RE到-NFA" class="headerlink" title="Thompson 构造法 (从RE到 NFA)"></a>Thompson 构造法 (从RE到 NFA)</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622171006623.png" alt="image-20230622171006623"></p>
-<blockquote>
-<p>外面的q&#x2F;f是新增的开始和截止状态</p>
-</blockquote>
-<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622173337939.png" alt="image-20230622173337939"></p>
-<blockquote>
-<p>画完记得重标下状态序号</p>
-</blockquote>
-<h3 id="子集构造法-NFA-到-DFA"><a href="#子集构造法-NFA-到-DFA" class="headerlink" title="子集构造法 (NFA 到 DFA)"></a>子集构造法 (NFA 到 DFA)</h3><p>一开始的状态可以是0,1,2,4,7</p>
-<p>再看通过a,b可以转移到哪里，注意空串转移也算可到</p>
-<p>某个状态包含NFA的某一个结束状态，就是DFA的结束状态</p>
-<blockquote>
-<p>可以有多个结束状态，2022-hw2甚至全是结束状态</p>
-<p>做的时候直接看某个节点有没有通过某个字符的路径，不需要考虑他空串转移了再继续，因为他空串转移能到的那个状态本身也会在这个集合里</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194807211.png" alt="image-20230622194807211"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194743475.png" alt="image-20230622194743475"></p>
-<h3 id="DFA-最小化"><a href="#DFA-最小化" class="headerlink" title="DFA 最小化"></a>DFA 最小化</h3><p>一开始分成接受状态，非接受状态，死状态<strong>三类</strong></p>
-<blockquote>
-<p>课上的例子遗漏了补充死状态</p>
-</blockquote>
-<p>这三者肯定不等价，然后就是回到死状态的肯定跟不到的不一样，所以要补上死状态</p>
-<ol>
-<li>先划分等价类</li>
-<li>再合并状态</li>
-</ol>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201739476.png" alt="image-20230622201739476"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201828915.png" alt="image-20230622201828915"> </p>
-<h2 id="题目2-LL语法分析"><a href="#题目2-LL语法分析" class="headerlink" title="题目2 LL语法分析"></a>题目2 LL语法分析</h2><h3 id="前置知识-1"><a href="#前置知识-1" class="headerlink" title="前置知识"></a>前置知识</h3><h4 id="LL1文法："><a href="#LL1文法：" class="headerlink" title="LL1文法："></a>LL1文法：</h4><p>L的含义：</p>
-<p>第一个L表示 从左向右读入词法单元</p>
-<p>第二个L表示 总是选择最左边的非终结符进行展开</p>
-<p>语法分析的算法主要有两大类LR和LL，LL自顶向下，LR自底向上，我们只考虑无二义性的文法</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203259136.png" alt="image-20230622203259136"></p>
-<h4 id="预测分析表：用于选择产生式"><a href="#预测分析表：用于选择产生式" class="headerlink" title="预测分析表：用于选择产生式"></a>预测分析表：用于选择产生式</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203820425.png" alt="image-20230622203820425"></p>
-<blockquote>
-<p>当前读到某个非终结符，该选用那条产生式展开，这就是预测分析表的作用</p>
-</blockquote>
-<h4 id="First集合：对所有产生式的右部求"><a href="#First集合：对所有产生式的右部求" class="headerlink" title="First集合：对所有产生式的右部求"></a>First集合：对所有产生式的右部求</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622204247007.png" alt="image-20230622204247007"></p>
-<blockquote>
-<p>参照上例</p>
-<p>如果当前指针指向的是a2，A有三条展开式，只有第一条的右部的FIRST中包含a2，那么选用第一条产生式</p>
-<p>FIRST集合可能会有空串符号</p>
-</blockquote>
-<h4 id="Follow集合：对所有非终结符"><a href="#Follow集合：对所有非终结符" class="headerlink" title="Follow集合：对所有非终结符"></a>Follow集合：对所有非终结符</h4><p>其实FOLLOW集合就是对FIRST集合做了进一步补充和防备？</p>
-<p>因为FIRST可能推出空串，所以需要FOLLOW集合辅助判断</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622205655897.png" alt="image-20230622205655897"></p>
-<blockquote>
-<p>FOLLOW集合可能有结束符$</p>
-</blockquote>
-<h3 id="•-First-集合与-Follow-集合"><a href="#•-First-集合与-Follow-集合" class="headerlink" title="• First 集合与 Follow 集合"></a>• First 集合与 Follow 集合</h3><h4 id="计算FIRST"><a href="#计算FIRST" class="headerlink" title="计算FIRST"></a>计算FIRST</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210009638.png" alt="image-20230622210009638"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210107455.png" alt="image-20230622210107455"></p>
-<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622211046488.png" alt="image-20230622211046488"></p>
-<p>看一眼右边所有的可能性，发现要先计算FIRST(X) FIRST(Y) FIRST(Z)，仔细想想这是显然的</p>
-<blockquote>
-<p>推到FIRSTZ 包含于 FIRSTZ，这句显然是废话</p>
-<p>继续考虑FIRSTZ集合有没有空串就行了</p>
-<p>大致看一下，发现是不行的</p>
-</blockquote>
-<h4 id="计算FOLLOW"><a href="#计算FOLLOW" class="headerlink" title="计算FOLLOW"></a>计算FOLLOW</h4><p>注意下图说的是对X，不是对A</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622212559227.png" alt="image-20230622212559227"></p>
-<blockquote>
-<p>如果是开始符号，FOLLOW集合中就加入$</p>
-</blockquote>
-<h5 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h5><p><strong>先看X会在右侧哪里出现和是否是开始符号</strong></p>
-<p>X是初始符，放入$</p>
-<p>然后发现X会在Z-&gt;XYZ中</p>
-<p>那么FLX就会包含**FIRST(YZ)**，先加入FIRSTY，加入了c，发现Y有可能是空串，那么FLX就会包含FIRSTZ，加入a,c,d</p>
-<p>然后判断<strong>YZ</strong>整体会不会空，如果空了就要按照第二条把FOLLOWZ加到FOLLOWX里面</p>
-<blockquote>
-<p>FLZ是空，因为推到了FLZ包含FLZ，不再变化了</p>
-</blockquote>
-<h3 id="•-构造预测分析表"><a href="#•-构造预测分析表" class="headerlink" title="• 构造预测分析表"></a>• 构造预测分析表</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232028397.png" alt="image-20230622232028397"></p>
-<blockquote>
-<p>上下两种表述等价，推导符号上面加个*表示经过多次推导（多次推导得到空串和空串属于FIRST alpha是等价的表述</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232036113.png" alt="image-20230622232036113"></p>
-<blockquote>
-<p>满足两者之一，即可填入</p>
-</blockquote>
-<p><strong>行是终结符和$，列是非终结符</strong></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622235125782.png" alt="image-20230622235125782"></p>
-<h3 id="•-判断文法是否是LL-1-文法"><a href="#•-判断文法是否是LL-1-文法" class="headerlink" title="• 判断文法是否是LL(1)文法"></a>• 判断文法是否是LL(1)文法</h3><p>预测分析表无冲突，即为LL1文法</p>
-<h2 id="题目3-LR语法分析"><a href="#题目3-LR语法分析" class="headerlink" title="题目3 LR语法分析"></a>题目3 LR语法分析</h2><blockquote>
-<p>考试时会给出 LR(0) 自动机</p>
-</blockquote>
-<h3 id="•-掌握-LR-0-自动机的构造方法以及-SLR-1-表格的构造方法"><a href="#•-掌握-LR-0-自动机的构造方法以及-SLR-1-表格的构造方法" class="headerlink" title="• 掌握 LR(0) 自动机的构造方法以及 SLR(1) 表格的构造方法"></a>• 掌握 LR(0) 自动机的构造方法以及 SLR(1) 表格的构造方法</h3><h3 id="•-掌握-LR-0-自动机与栈之间的交互运行过程"><a href="#•-掌握-LR-0-自动机与栈之间的交互运行过程" class="headerlink" title="• 掌握 LR(0) 自动机与栈之间的交互运行过程"></a>• 掌握 LR(0) 自动机与栈之间的交互运行过程</h3><h2 id="题目4-ANTLR4与“优先级上升算法”"><a href="#题目4-ANTLR4与“优先级上升算法”" class="headerlink" title="题目4 ANTLR4与“优先级上升算法”"></a>题目4 ANTLR4与“优先级上升算法”</h2><h3 id="前置知识-2"><a href="#前置知识-2" class="headerlink" title="前置知识"></a>前置知识</h3><p>消除左递归：</p>
-<p>因为自顶向下的算法如LL1没法处理左递归，所以需要先改写一下</p>
-<p>书P134</p>
-<blockquote>
-<p>不考查 ANTLR 4 AllStar 算法的其余内容</p>
-<p>不考查LR1、LALR1</p>
-</blockquote>
-<h3 id="•-能够根据优先级上升算法改造给定文法"><a href="#•-能够根据优先级上升算法改造给定文法" class="headerlink" title="• 能够根据优先级上升算法改造给定文法"></a>• 能够根据优先级上升算法改造给定文法</h3><h3 id="•-能够给出给定输入在改造后的文法下对应的语法分析树"><a href="#•-能够给出给定输入在改造后的文法下对应的语法分析树" class="headerlink" title="• 能够给出给定输入在改造后的文法下对应的语法分析树"></a>• 能够给出给定输入在改造后的文法下对应的语法分析树</h3><p><strong>antlr4不能处理间接左递归</strong>，但是<code>直接左递归</code>可以，并且处理的很好</p>
-<blockquote>
-<p>注意是非左递归，不是像我们前面一样写成右递归，右递归不太好看，且存在一定问题（结合性问题好像是）</p>
-</blockquote>
-<h4 id="重点：antlr如何处理优先级和直接左递归？"><a href="#重点：antlr如何处理优先级和直接左递归？" class="headerlink" title="重点：antlr如何处理优先级和直接左递归？"></a>重点：antlr如何<code>处理优先级</code>和<code>直接左递归</code>？</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211520448.png" alt="image-20230410211520448"> </p>
-<p>使用该命令可看到antlr把上述语法改写成什么样</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211927751.png" alt="image-20230410211927751"></p>
-<p>看上去大体上是把递归改写成了循环</p>
-<p>对应一段带参数的递归函数</p>
-<blockquote>
-<p>&#x3D;&#x3D;这张图上的算法是有助于理解的&#x3D;&#x3D;</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212354906.png" alt="image-20230410212354906"></p>
-<h4 id="优先级怎么定的"><a href="#优先级怎么定的" class="headerlink" title="优先级怎么定的"></a>优先级怎么定的</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212636567.png" alt="image-20230410212636567"></p>
-<h4 id="例子1-2-3"><a href="#例子1-2-3" class="headerlink" title="例子1+2+3"></a>例子1+2+3</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213228783.png" alt="image-20230410213228783"></p>
-<p>匹配加法展开后参数_p变成4，目的是为了让加法优先级高的才能继续向下深入展开，因为语法树的优先级越往下展开越高，乘法同理，_p相当于一个判断能否展开的当前优先级</p>
-<h4 id="例子1-2-3-1"><a href="#例子1-2-3-1" class="headerlink" title="例子1+2*3"></a>例子1+2*3</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213708956.png" alt="image-20230410213708956"></p>
-<h4 id="根本问题"><a href="#根本问题" class="headerlink" title="根本问题"></a>根本问题</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213741515.png" alt="image-20230410213741515"></p>
-<h4 id="另一个例子"><a href="#另一个例子" class="headerlink" title="另一个例子"></a>另一个例子</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213934203.png" alt="image-20230410213934203"></p>
-<h4 id="优先级一定就是要上升-1吗"><a href="#优先级一定就是要上升-1吗" class="headerlink" title="优先级一定就是要上升+1吗"></a>优先级一定就是要上升+1吗</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214150813.png" alt="image-20230410214150813"></p>
-<p><code>-</code>右结合</p>
-<p><code>!</code>左结合</p>
-<p>改写：</p>
-<p> <img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214820860.png" alt="image-20230410214820860"></p>
-<p><code>-</code>是右结合，不是左递归的，所以放在上面的部分，并且优先级不变</p>
-<p><code>!</code>左结合左递归但是是一元的左结合运算符，不需要再调用expr[]递归函数</p>
-<h4 id="例子：-a-b"><a href="#例子：-a-b" class="headerlink" title="例子：-a+b!"></a>例子：-a+b!</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215257229.png" alt="image-20230410215257229"></p>
-<p><strong>注意</strong>从E[4]返回时代码中是返回到第一个括号后，而不是回到最开始，所以开始匹配加号（进入了带*的那个循环里</p>
-<h4 id="二元左递归运算符想要右结合"><a href="#二元左递归运算符想要右结合" class="headerlink" title="二元左递归运算符想要右结合"></a>二元左递归运算符想要右结合</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215713340.png" alt="image-20230410215713340"></p>
-<p>&#x3D;&#x3D;反正就是右结合不升级，左结合升一级&#x3D;&#x3D;</p>
-<h2 id="题目5-语法制导的翻译"><a href="#题目5-语法制导的翻译" class="headerlink" title="题目5 语法制导的翻译"></a>题目5 语法制导的翻译</h2><blockquote>
-<p>不考查 ANTLR 4 中的写法</p>
-</blockquote>
-<h3 id="•-语法制导的翻译"><a href="#•-语法制导的翻译" class="headerlink" title="• 语法制导的翻译"></a>• 语法制导的翻译</h3><h2 id="题目6-目标代码生成"><a href="#题目6-目标代码生成" class="headerlink" title="题目6 目标代码生成"></a>题目6 目标代码生成</h2><h3 id="•-给定一段-C-语言程序-含过程调用-与对应的-RISC-V-代码片段-填充缺失的代码行。"><a href="#•-给定一段-C-语言程序-含过程调用-与对应的-RISC-V-代码片段-填充缺失的代码行。" class="headerlink" title="• 给定一段 C 语言程序 (含过程调用) 与对应的 RISC-V 代码片段, 填充缺失的代码行。"></a>• 给定一段 C 语言程序 (含过程调用) 与对应的 RISC-V 代码片段, 填充缺失的代码行。</h3>]]></content>
-      <categories>
-        <category>2023-Spring-Courses-编译原理</category>
-      </categories>
-      <tags>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>note-RISC-V</title>
-    <url>/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v.html</url>
-    <content><![CDATA[<h3 id="伪指令与基本指令"><a href="#伪指令与基本指令" class="headerlink" title="伪指令与基本指令"></a>伪指令与基本指令</h3><p>伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li</p>
-<p>就是说向li这种指令，其实并不直接对硬件进行操作</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230602151643461.png" alt="image-20230602151643461"></p>
-<p>实际上他就是一个addi指令</p>
-<h3 id="加法、减法"><a href="#加法、减法" class="headerlink" title="加法、减法"></a>加法、减法</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制</span><br><span class="line">li t1, 22</span><br><span class="line">add t2, t0, t1</span><br><span class="line"></span><br><span class="line">li t0, 32</span><br><span class="line">addi t0, t0, 32 	# addi: add immediate</span><br><span class="line">addi t0, t0, -16	# 没有subi指令，所以只能这样，但是sub还是有的</span><br><span class="line"></span><br><span class="line"># f = (g + h) - (i + j)</span><br><span class="line"># t6 = (t0 + t1) - (t3 + t4)</span><br><span class="line">li t0, 0</span><br><span class="line">li t1, 10</span><br><span class="line">add t2, t0, t1</span><br><span class="line">li t3, 30</span><br><span class="line">li t4, 40</span><br><span class="line">add t5, t3, t4</span><br><span class="line">sub t6, t2, t5</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>一共4步</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Step 1. Load the service number in register a7. </span><br><span class="line"># Step 2. Load argument values, if any, in a0, a1, a2, a3, fa0, ... as specified. </span><br><span class="line"># Step 3. Issue the ECALL instruction. </span><br><span class="line"># Step 4. Retrieve return values, if any, from result registers as specified.</span><br><span class="line"></span><br><span class="line">li t0, 16</span><br><span class="line">li t1, 32</span><br><span class="line">add t2, t0, t1</span><br><span class="line"></span><br><span class="line">li a7, 1	# a7存放系统调用号，此处为输出</span><br><span class="line">mv a0, t2	# argument1，伪指令，实际上是add a0, zero, t2</span><br><span class="line">ecall</span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<p>mv其实是cp并不是会把原来的地方的数据就清空了的</p>
-</blockquote>
-<h3 id="data-text"><a href="#data-text" class="headerlink" title=".data .text"></a>.data .text</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230604172502658.png" alt="image-20230604172502658"> </p>
-<p>.text就是代码指令开始的地方</p>
-<p>带<code>.</code>的就是写给汇编器看的，比如.data编译器就会放到.data的块的地方</p>
-<p>.text就会放到存放代码的地方(如0x0040 0000)</p>
-<p>.word &#x3D; 4byte</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data </span><br><span class="line">g: .word 16</span><br><span class="line">h: .word 48</span><br><span class="line">i: .word 0</span><br><span class="line">j: .word 0</span><br><span class="line">result: .word 0</span><br><span class="line">msg: .string &quot;Hello world!:&quot;	# .string会在末尾加&#x27;\0&#x27;而.ascii不会</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">la t0, g		# load address to t0</span><br><span class="line">lw t0, 0(t0)	# load word t0中的地址+偏移量0</span><br><span class="line">la t1, h		# load address to t0</span><br><span class="line">lw t1, 0(t1)	# load word t0中的地址+偏移量0</span><br><span class="line"></span><br><span class="line">add t5, t0, t1</span><br><span class="line"></span><br><span class="line">la t0, result</span><br><span class="line">sw t5, 0(t0)	# t5的结果保存到t0的地址中</span><br><span class="line"></span><br><span class="line"># la t1, msg</span><br><span class="line"># li a7, 4</span><br><span class="line"># mv a0, t1</span><br><span class="line"># ecall</span><br><span class="line"></span><br><span class="line">li a7, 4	# 打印字符串</span><br><span class="line">la a0, msg	# 其实可以直接la到a0里面就行，不需要再经过寄存器中转了，本身就是地址</span><br><span class="line">ecall</span><br><span class="line"></span><br><span class="line">li a7, 1	# 打印数字</span><br><span class="line">mv a0, t5</span><br><span class="line">ecall</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">nums: .word -30, -40, -50, -60, 60, 100</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">la t0, nums</span><br><span class="line">lw t1, 8(t0)</span><br><span class="line">addi t1, t1, 50</span><br><span class="line">sw t1, 8(t0)	# 把-50变成了0</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="branch-max-asm"><a href="#branch-max-asm" class="headerlink" title="branch-max.asm"></a>branch-max.asm</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 实现c = max(a,b)</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">a: .word 100</span><br><span class="line">b: .word 200</span><br><span class="line">c: .word 0</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"># la t0, a</span><br><span class="line"># lw t0, 0(t0)</span><br><span class="line">lw t0, a	# 该RARS支持的一个语法糖，并不是RISC-V的语法，考试应该不能用</span><br><span class="line">lw t1, b</span><br><span class="line"></span><br><span class="line">bge t0, t1, greater_equal	# t0 &gt;= t1 就跳转到greater_equal</span><br><span class="line">mv t2, t1</span><br><span class="line">j end				# 伪指令, 防止再执行到greater_equal</span><br><span class="line"></span><br><span class="line">greater_equal:</span><br><span class="line">mv t2, t0</span><br><span class="line"></span><br><span class="line">end:</span><br><span class="line">la t3, c</span><br><span class="line">sw t2, 0(t3)	# 存到c的地方，同样也有简便写法 sw t2, c, t3</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="array-index-bit-asm求一个数组正数的和与负数的和"><a href="#array-index-bit-asm求一个数组正数的和与负数的和" class="headerlink" title="array-index-bit.asm求一个数组正数的和与负数的和"></a>array-index-bit.asm求一个数组正数的和与负数的和</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">numbers: .word -30, 30, -20, 20, -10, 10, 0</span><br><span class="line">size: .word 7</span><br><span class="line">positive_sum: .word 0</span><br><span class="line">negative_sum: .word 0</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">la t0, numbers 	# t0: the address of the current array</span><br><span class="line">lw t1, size</span><br><span class="line">mv t2, zero 	# counter, initially 0</span><br><span class="line">li t3, 0	 	# t3: sum of positive numbers &lt;- 0</span><br><span class="line">li t4, 0 		# t4: sum of negative numbers &lt;- 0</span><br><span class="line"></span><br><span class="line">loop: </span><br><span class="line">bge t2, t1, end_loop	#计数器大于等于size就跳转到end_loop</span><br><span class="line"># number[t2]</span><br><span class="line"># mul t5, t2, 4</span><br><span class="line">slli t5, t2, 2 	# 逻辑左移，即t5*4</span><br><span class="line">add t5, t0, t5</span><br><span class="line">lw t5, 0(t5)</span><br><span class="line">addi t2, t2, 1</span><br><span class="line">bltz t5, negative # bltz: branch if less than zero</span><br><span class="line">add t3, t3, t5</span><br><span class="line">j loop</span><br><span class="line">negative:</span><br><span class="line">add t4, t4, t5</span><br><span class="line">j loop</span><br><span class="line">end_loop:</span><br><span class="line">sw, t3, positive_sum, t5</span><br><span class="line">sw, t3, positive_sum, t5</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="proc-max-asm函数调用"><a href="#proc-max-asm函数调用" class="headerlink" title="proc-max.asm函数调用"></a>proc-max.asm函数调用</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">max_result: .word 0</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.global main</span><br><span class="line"></span><br><span class="line">max:</span><br><span class="line">	# a0 argument 0</span><br><span class="line">	# a1 argument 1</span><br><span class="line">	# 同时a0-a7的前两个寄存器也可以用来返回值的保存</span><br><span class="line">    blt a0, a1, smaller</span><br><span class="line">    # 没跳转说明a0 &gt;= a1</span><br><span class="line">    # mv a0, a0 正好省略不用写</span><br><span class="line">    j end_max</span><br><span class="line"></span><br><span class="line">smaller:</span><br><span class="line">    mv a0, a1</span><br><span class="line">    </span><br><span class="line">end_max:</span><br><span class="line">	ret		# 等同</span><br><span class="line">	# jr ra	# 等同</span><br><span class="line">    # jalr zero 0(ra) 	# jalr: jump and link register</span><br><span class="line">                    	# zero的作用：jalr会将下一条指令的地址存入</span><br><span class="line"></span><br><span class="line">### main ###</span><br><span class="line">.data</span><br><span class="line">a: .word 100</span><br><span class="line">b: .word 200</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">main:</span><br><span class="line">    lw a0, a    # 并非risc-v的指令，而是汇编器的伪指令，将a的地址存入a0</span><br><span class="line">    lw a1, b</span><br><span class="line"></span><br><span class="line">    # jal ra, max 	# jal: jump and link  ra: Return Address register</span><br><span class="line">             		# ra保存了返回地址，jal会将下一条指令的地址存入ra</span><br><span class="line">    # jal max</span><br><span class="line">    call max 	# 三种写法都一样</span><br><span class="line">    sw a0, max_result, t0</span><br></pre></td></tr></table></figure></div>
-
-
-
-<h3 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h3><p>参数多了可以考虑用栈来传递</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">jalr zero 0(ra) # jalr: jump and link register</span><br><span class="line">                # zero的作用：jalr会将下一条指令的地址存入</span><br></pre></td></tr></table></figure></div>
-
-<p>zero的作用：</p>
-<p>jalr会做两件事情</p>
-<ul>
-<li><p>一是按照后面给的0(ra)进行跳转</p>
-</li>
-<li><p>二是会把目前所在位置的下一条指令的地址存入给出的寄存器中，如果把zero换成t0就会保存到t0，写zero的话就表示不想存这个下一条地址（用不到），因为写到zero的东西都会被清零</p>
-</li>
-</ul>
-<h3 id="proc-fact-asm递归"><a href="#proc-fact-asm递归" class="headerlink" title="proc-fact.asm递归"></a>proc-fact.asm递归</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.text</span><br><span class="line">.global main</span><br><span class="line"></span><br><span class="line">factorial:</span><br><span class="line">beqz a0, base_case  # 为0跳转，f(0) = 1</span><br><span class="line"></span><br><span class="line"># 先改变栈指针，再保存寄存器的值，先保存参数寄存器的值，再保存ra的值</span><br><span class="line">addi sp, sp, -8     # 栈空间高地址往低地址增长，所以先减8</span><br><span class="line">sw a0, 4(sp)        # 先保存a0的值，即n</span><br><span class="line">sw ra, 0(sp)        # 还需要再保存ra的值</span><br><span class="line"></span><br><span class="line"># n &gt; 0: n * f(n-1)</span><br><span class="line">addi a0, a0, -1     # 此时a0为n-1</span><br><span class="line">call factorial      # a0为f(n-1)</span><br><span class="line">mv t0, a0			# t0:f(n-1)</span><br><span class="line"></span><br><span class="line">lw ra, 0(sp)        # 恢复ra的值</span><br><span class="line">lw a0, 4(sp)        # 恢复a0的值</span><br><span class="line">addi sp, sp, 8      # 恢复栈指针</span><br><span class="line"></span><br><span class="line">mul a0, a0, t0      # a0 = n * f(n-1)</span><br><span class="line">j end               # 返回, a0还要用来保存返回值</span><br><span class="line"></span><br><span class="line">base_case:</span><br><span class="line">    li a0, 1</span><br><span class="line"></span><br><span class="line">end:</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">### main ###</span><br><span class="line">.data</span><br><span class="line">n: .word 5</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">main:</span><br><span class="line">lw a0, n</span><br><span class="line">call factorial</span><br></pre></td></tr></table></figure></div>
-
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230607153022783.png" alt="image-20230607153022783"> </p>
-<p>注意ra的值会变</p>
-]]></content>
-      <categories>
-        <category>2023-Spring-Courses-编译原理</category>
-      </categories>
-      <tags>
-        <tag>编译原理</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Day2-HTTP</title>
     <url>/posts/2023-Summer-Courses-CloudWeGo/day2-http.html</url>
     <content><![CDATA[<h2 id="Day2-1-HTTP基础"><a href="#Day2-1-HTTP基础" class="headerlink" title="Day2-1 HTTP基础"></a>Day2-1 HTTP基础</h2><h3 id="为什么需要协议"><a href="#为什么需要协议" class="headerlink" title="为什么需要协议"></a>为什么需要协议</h3><ol>
@@ -2552,6 +2296,262 @@
 ]]></content>
       <categories>
         <category>2023-Summer-CloudWeGo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Review-CompilePrinciple</title>
+    <url>/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple.html</url>
+    <content><![CDATA[<h2 id="题目1-正则表达式与自动机"><a href="#题目1-正则表达式与自动机" class="headerlink" title="题目1 正则表达式与自动机"></a>题目1 正则表达式与自动机</h2><h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><h4 id="自动机："><a href="#自动机：" class="headerlink" title="自动机："></a>自动机：</h4><p>Automaton&#x2F;Automata 状态集+转移函数</p>
+<h4 id="RE："><a href="#RE：" class="headerlink" title="RE："></a>RE：</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622172316744.png" alt="image-20230622172316744"></p>
+<p>RE与DFA与NFA表达能力是等价的，所以可以相互转换  </p>
+<h4 id="DFA与NFA："><a href="#DFA与NFA：" class="headerlink" title="DFA与NFA："></a>DFA与NFA：</h4><p>确定性和非确定性有穷自动机</p>
+<p>DFA一个状态通过一个字符转移只能有一个确定的状态（也就是隐含了无法使用空串进行转移</p>
+<p><strong>NFA 简洁易于理解, 便于描述语言 <em>L</em>(<em>A</em>)</strong></p>
+<p><strong>DFA 易于判断 <em>x</em> <em>∈</em> <em>L</em>(<em>A</em>), 适合产生词法分析器</strong></p>
+<p>用 NFA 描述语言, 用 DFA 实现词法分析器</p>
+<p>RE &#x3D;<em>⇒</em> NFA &#x3D;<em>⇒</em> DFA &#x3D;<em>⇒</em> 词法分析器</p>
+<h4 id="DFA的死状态："><a href="#DFA的死状态：" class="headerlink" title="DFA的死状态："></a>DFA的死状态：</h4><blockquote>
+<p>死状态的画法：圈里面套个类似空集的符号</p>
+</blockquote>
+<h3 id="Thompson-构造法-从RE到-NFA"><a href="#Thompson-构造法-从RE到-NFA" class="headerlink" title="Thompson 构造法 (从RE到 NFA)"></a>Thompson 构造法 (从RE到 NFA)</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622171006623.png" alt="image-20230622171006623"></p>
+<blockquote>
+<p>外面的q&#x2F;f是新增的开始和截止状态</p>
+</blockquote>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622173337939.png" alt="image-20230622173337939"></p>
+<blockquote>
+<p>画完记得重标下状态序号</p>
+</blockquote>
+<h3 id="子集构造法-NFA-到-DFA"><a href="#子集构造法-NFA-到-DFA" class="headerlink" title="子集构造法 (NFA 到 DFA)"></a>子集构造法 (NFA 到 DFA)</h3><p>一开始的状态可以是0,1,2,4,7</p>
+<p>再看通过a,b可以转移到哪里，注意空串转移也算可到</p>
+<p>某个状态包含NFA的某一个结束状态，就是DFA的结束状态</p>
+<blockquote>
+<p>可以有多个结束状态，2022-hw2甚至全是结束状态</p>
+<p>做的时候直接看某个节点有没有通过某个字符的路径，不需要考虑他空串转移了再继续，因为他空串转移能到的那个状态本身也会在这个集合里</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194807211.png" alt="image-20230622194807211"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194743475.png" alt="image-20230622194743475"></p>
+<h3 id="DFA-最小化"><a href="#DFA-最小化" class="headerlink" title="DFA 最小化"></a>DFA 最小化</h3><p>一开始分成接受状态，非接受状态，死状态<strong>三类</strong></p>
+<blockquote>
+<p>课上的例子遗漏了补充死状态</p>
+</blockquote>
+<p>这三者肯定不等价，然后就是回到死状态的肯定跟不到的不一样，所以要补上死状态</p>
+<ol>
+<li>先划分等价类</li>
+<li>再合并状态</li>
+</ol>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201739476.png" alt="image-20230622201739476"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201828915.png" alt="image-20230622201828915"> </p>
+<h2 id="题目2-LL语法分析"><a href="#题目2-LL语法分析" class="headerlink" title="题目2 LL语法分析"></a>题目2 LL语法分析</h2><h3 id="前置知识-1"><a href="#前置知识-1" class="headerlink" title="前置知识"></a>前置知识</h3><h4 id="LL1文法："><a href="#LL1文法：" class="headerlink" title="LL1文法："></a>LL1文法：</h4><p>L的含义：</p>
+<p>第一个L表示 从左向右读入词法单元</p>
+<p>第二个L表示 总是选择最左边的非终结符进行展开</p>
+<p>语法分析的算法主要有两大类LR和LL，LL自顶向下，LR自底向上，我们只考虑无二义性的文法</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203259136.png" alt="image-20230622203259136"></p>
+<h4 id="预测分析表：用于选择产生式"><a href="#预测分析表：用于选择产生式" class="headerlink" title="预测分析表：用于选择产生式"></a>预测分析表：用于选择产生式</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203820425.png" alt="image-20230622203820425"></p>
+<blockquote>
+<p>当前读到某个非终结符，该选用那条产生式展开，这就是预测分析表的作用</p>
+</blockquote>
+<h4 id="First集合：对所有产生式的右部求"><a href="#First集合：对所有产生式的右部求" class="headerlink" title="First集合：对所有产生式的右部求"></a>First集合：对所有产生式的右部求</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622204247007.png" alt="image-20230622204247007"></p>
+<blockquote>
+<p>参照上例</p>
+<p>如果当前指针指向的是a2，A有三条展开式，只有第一条的右部的FIRST中包含a2，那么选用第一条产生式</p>
+<p>FIRST集合可能会有空串符号</p>
+</blockquote>
+<h4 id="Follow集合：对所有非终结符"><a href="#Follow集合：对所有非终结符" class="headerlink" title="Follow集合：对所有非终结符"></a>Follow集合：对所有非终结符</h4><p>其实FOLLOW集合就是对FIRST集合做了进一步补充和防备？</p>
+<p>因为FIRST可能推出空串，所以需要FOLLOW集合辅助判断</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622205655897.png" alt="image-20230622205655897"></p>
+<blockquote>
+<p>FOLLOW集合可能有结束符$</p>
+</blockquote>
+<h3 id="•-First-集合与-Follow-集合"><a href="#•-First-集合与-Follow-集合" class="headerlink" title="• First 集合与 Follow 集合"></a>• First 集合与 Follow 集合</h3><h4 id="计算FIRST"><a href="#计算FIRST" class="headerlink" title="计算FIRST"></a>计算FIRST</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210009638.png" alt="image-20230622210009638"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210107455.png" alt="image-20230622210107455"></p>
+<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622211046488.png" alt="image-20230622211046488"></p>
+<p>看一眼右边所有的可能性，发现要先计算FIRST(X) FIRST(Y) FIRST(Z)，仔细想想这是显然的</p>
+<blockquote>
+<p>推到FIRSTZ 包含于 FIRSTZ，这句显然是废话</p>
+<p>继续考虑FIRSTZ集合有没有空串就行了</p>
+<p>大致看一下，发现是不行的</p>
+</blockquote>
+<h4 id="计算FOLLOW"><a href="#计算FOLLOW" class="headerlink" title="计算FOLLOW"></a>计算FOLLOW</h4><p>注意下图说的是对X，不是对A</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622212559227.png" alt="image-20230622212559227"></p>
+<blockquote>
+<p>如果是开始符号，FOLLOW集合中就加入$</p>
+</blockquote>
+<h5 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h5><p><strong>先看X会在右侧哪里出现和是否是开始符号</strong></p>
+<p>X是初始符，放入$</p>
+<p>然后发现X会在Z-&gt;XYZ中</p>
+<p>那么FLX就会包含**FIRST(YZ)**，先加入FIRSTY，加入了c，发现Y有可能是空串，那么FLX就会包含FIRSTZ，加入a,c,d</p>
+<p>然后判断<strong>YZ</strong>整体会不会空，如果空了就要按照第二条把FOLLOWZ加到FOLLOWX里面</p>
+<blockquote>
+<p>FLZ是空，因为推到了FLZ包含FLZ，不再变化了</p>
+</blockquote>
+<h3 id="•-构造预测分析表"><a href="#•-构造预测分析表" class="headerlink" title="• 构造预测分析表"></a>• 构造预测分析表</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232028397.png" alt="image-20230622232028397"></p>
+<blockquote>
+<p>上下两种表述等价，推导符号上面加个*表示经过多次推导（多次推导得到空串和空串属于FIRST alpha是等价的表述</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232036113.png" alt="image-20230622232036113"></p>
+<blockquote>
+<p>满足两者之一，即可填入</p>
+</blockquote>
+<p><strong>行是终结符和$，列是非终结符</strong></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622235125782.png" alt="image-20230622235125782"></p>
+<h3 id="•-判断文法是否是LL-1-文法"><a href="#•-判断文法是否是LL-1-文法" class="headerlink" title="• 判断文法是否是LL(1)文法"></a>• 判断文法是否是LL(1)文法</h3><p>预测分析表无冲突，即为LL1文法</p>
+<h2 id="题目3-LR语法分析"><a href="#题目3-LR语法分析" class="headerlink" title="题目3 LR语法分析"></a>题目3 LR语法分析</h2><blockquote>
+<p>考试时会给出 LR(0) 自动机</p>
+</blockquote>
+<h3 id="•-掌握-LR-0-自动机的构造方法以及-SLR-1-表格的构造方法"><a href="#•-掌握-LR-0-自动机的构造方法以及-SLR-1-表格的构造方法" class="headerlink" title="• 掌握 LR(0) 自动机的构造方法以及 SLR(1) 表格的构造方法"></a>• 掌握 LR(0) 自动机的构造方法以及 SLR(1) 表格的构造方法</h3><h3 id="•-掌握-LR-0-自动机与栈之间的交互运行过程"><a href="#•-掌握-LR-0-自动机与栈之间的交互运行过程" class="headerlink" title="• 掌握 LR(0) 自动机与栈之间的交互运行过程"></a>• 掌握 LR(0) 自动机与栈之间的交互运行过程</h3><h2 id="题目4-ANTLR4与“优先级上升算法”"><a href="#题目4-ANTLR4与“优先级上升算法”" class="headerlink" title="题目4 ANTLR4与“优先级上升算法”"></a>题目4 ANTLR4与“优先级上升算法”</h2><h3 id="前置知识-2"><a href="#前置知识-2" class="headerlink" title="前置知识"></a>前置知识</h3><p>消除左递归：</p>
+<p>因为自顶向下的算法如LL1没法处理左递归，所以需要先改写一下</p>
+<p>书P134</p>
+<blockquote>
+<p>不考查 ANTLR 4 AllStar 算法的其余内容</p>
+<p>不考查LR1、LALR1</p>
+</blockquote>
+<h3 id="•-能够根据优先级上升算法改造给定文法"><a href="#•-能够根据优先级上升算法改造给定文法" class="headerlink" title="• 能够根据优先级上升算法改造给定文法"></a>• 能够根据优先级上升算法改造给定文法</h3><h3 id="•-能够给出给定输入在改造后的文法下对应的语法分析树"><a href="#•-能够给出给定输入在改造后的文法下对应的语法分析树" class="headerlink" title="• 能够给出给定输入在改造后的文法下对应的语法分析树"></a>• 能够给出给定输入在改造后的文法下对应的语法分析树</h3><p><strong>antlr4不能处理间接左递归</strong>，但是<code>直接左递归</code>可以，并且处理的很好</p>
+<blockquote>
+<p>注意是非左递归，不是像我们前面一样写成右递归，右递归不太好看，且存在一定问题（结合性问题好像是）</p>
+</blockquote>
+<h4 id="重点：antlr如何处理优先级和直接左递归？"><a href="#重点：antlr如何处理优先级和直接左递归？" class="headerlink" title="重点：antlr如何处理优先级和直接左递归？"></a>重点：antlr如何<code>处理优先级</code>和<code>直接左递归</code>？</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211520448.png" alt="image-20230410211520448"> </p>
+<p>使用该命令可看到antlr把上述语法改写成什么样</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211927751.png" alt="image-20230410211927751"></p>
+<p>看上去大体上是把递归改写成了循环</p>
+<p>对应一段带参数的递归函数</p>
+<blockquote>
+<p>&#x3D;&#x3D;这张图上的算法是有助于理解的&#x3D;&#x3D;</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212354906.png" alt="image-20230410212354906"></p>
+<h4 id="优先级怎么定的"><a href="#优先级怎么定的" class="headerlink" title="优先级怎么定的"></a>优先级怎么定的</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212636567.png" alt="image-20230410212636567"></p>
+<h4 id="例子1-2-3"><a href="#例子1-2-3" class="headerlink" title="例子1+2+3"></a>例子1+2+3</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213228783.png" alt="image-20230410213228783"></p>
+<p>匹配加法展开后参数_p变成4，目的是为了让加法优先级高的才能继续向下深入展开，因为语法树的优先级越往下展开越高，乘法同理，_p相当于一个判断能否展开的当前优先级</p>
+<h4 id="例子1-2-3-1"><a href="#例子1-2-3-1" class="headerlink" title="例子1+2*3"></a>例子1+2*3</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213708956.png" alt="image-20230410213708956"></p>
+<h4 id="根本问题"><a href="#根本问题" class="headerlink" title="根本问题"></a>根本问题</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213741515.png" alt="image-20230410213741515"></p>
+<h4 id="另一个例子"><a href="#另一个例子" class="headerlink" title="另一个例子"></a>另一个例子</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213934203.png" alt="image-20230410213934203"></p>
+<h4 id="优先级一定就是要上升-1吗"><a href="#优先级一定就是要上升-1吗" class="headerlink" title="优先级一定就是要上升+1吗"></a>优先级一定就是要上升+1吗</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214150813.png" alt="image-20230410214150813"></p>
+<p><code>-</code>右结合</p>
+<p><code>!</code>左结合</p>
+<p>改写：</p>
+<p> <img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214820860.png" alt="image-20230410214820860"></p>
+<p><code>-</code>是右结合，不是左递归的，所以放在上面的部分，并且优先级不变</p>
+<p><code>!</code>左结合左递归但是是一元的左结合运算符，不需要再调用expr[]递归函数</p>
+<h4 id="例子：-a-b"><a href="#例子：-a-b" class="headerlink" title="例子：-a+b!"></a>例子：-a+b!</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215257229.png" alt="image-20230410215257229"></p>
+<p><strong>注意</strong>从E[4]返回时代码中是返回到第一个括号后，而不是回到最开始，所以开始匹配加号（进入了带*的那个循环里</p>
+<h4 id="二元左递归运算符想要右结合"><a href="#二元左递归运算符想要右结合" class="headerlink" title="二元左递归运算符想要右结合"></a>二元左递归运算符想要右结合</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215713340.png" alt="image-20230410215713340"></p>
+<p>&#x3D;&#x3D;反正就是右结合不升级，左结合升一级&#x3D;&#x3D;</p>
+<h2 id="题目5-语法制导的翻译"><a href="#题目5-语法制导的翻译" class="headerlink" title="题目5 语法制导的翻译"></a>题目5 语法制导的翻译</h2><blockquote>
+<p>不考查 ANTLR 4 中的写法</p>
+</blockquote>
+<h3 id="•-语法制导的翻译"><a href="#•-语法制导的翻译" class="headerlink" title="• 语法制导的翻译"></a>• 语法制导的翻译</h3><h2 id="题目6-目标代码生成"><a href="#题目6-目标代码生成" class="headerlink" title="题目6 目标代码生成"></a>题目6 目标代码生成</h2><h3 id="•-给定一段-C-语言程序-含过程调用-与对应的-RISC-V-代码片段-填充缺失的代码行。"><a href="#•-给定一段-C-语言程序-含过程调用-与对应的-RISC-V-代码片段-填充缺失的代码行。" class="headerlink" title="• 给定一段 C 语言程序 (含过程调用) 与对应的 RISC-V 代码片段, 填充缺失的代码行。"></a>• 给定一段 C 语言程序 (含过程调用) 与对应的 RISC-V 代码片段, 填充缺失的代码行。</h3>]]></content>
+      <categories>
+        <category>2023-Spring-Courses-编译原理</category>
+      </categories>
+      <tags>
+        <tag>编译原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>note-RISC-V</title>
+    <url>/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v.html</url>
+    <content><![CDATA[<h3 id="伪指令与基本指令"><a href="#伪指令与基本指令" class="headerlink" title="伪指令与基本指令"></a>伪指令与基本指令</h3><p>伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li</p>
+<p>就是说向li这种指令，其实并不直接对硬件进行操作</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230602151643461.png" alt="image-20230602151643461"></p>
+<p>实际上他就是一个addi指令</p>
+<h3 id="加法、减法"><a href="#加法、减法" class="headerlink" title="加法、减法"></a>加法、减法</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">li t0, 20	# li: load immediate 加载立即数，现在这种写法是10进制</span><br><span class="line">li t1, 22</span><br><span class="line">add t2, t0, t1</span><br><span class="line"></span><br><span class="line">li t0, 32</span><br><span class="line">addi t0, t0, 32 	# addi: add immediate</span><br><span class="line">addi t0, t0, -16	# 没有subi指令，所以只能这样，但是sub还是有的</span><br><span class="line"></span><br><span class="line"># f = (g + h) - (i + j)</span><br><span class="line"># t6 = (t0 + t1) - (t3 + t4)</span><br><span class="line">li t0, 0</span><br><span class="line">li t1, 10</span><br><span class="line">add t2, t0, t1</span><br><span class="line">li t3, 30</span><br><span class="line">li t4, 40</span><br><span class="line">add t5, t3, t4</span><br><span class="line">sub t6, t2, t5</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>一共4步</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Step 1. Load the service number in register a7. </span><br><span class="line"># Step 2. Load argument values, if any, in a0, a1, a2, a3, fa0, ... as specified. </span><br><span class="line"># Step 3. Issue the ECALL instruction. </span><br><span class="line"># Step 4. Retrieve return values, if any, from result registers as specified.</span><br><span class="line"></span><br><span class="line">li t0, 16</span><br><span class="line">li t1, 32</span><br><span class="line">add t2, t0, t1</span><br><span class="line"></span><br><span class="line">li a7, 1	# a7存放系统调用号，此处为输出</span><br><span class="line">mv a0, t2	# argument1，伪指令，实际上是add a0, zero, t2</span><br><span class="line">ecall</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>mv其实是cp并不是会把原来的地方的数据就清空了的</p>
+</blockquote>
+<h3 id="data-text"><a href="#data-text" class="headerlink" title=".data .text"></a>.data .text</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230604172502658.png" alt="image-20230604172502658"> </p>
+<p>.text就是代码指令开始的地方</p>
+<p>带<code>.</code>的就是写给汇编器看的，比如.data编译器就会放到.data的块的地方</p>
+<p>.text就会放到存放代码的地方(如0x0040 0000)</p>
+<p>.word &#x3D; 4byte</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data </span><br><span class="line">g: .word 16</span><br><span class="line">h: .word 48</span><br><span class="line">i: .word 0</span><br><span class="line">j: .word 0</span><br><span class="line">result: .word 0</span><br><span class="line">msg: .string &quot;Hello world!:&quot;	# .string会在末尾加&#x27;\0&#x27;而.ascii不会</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">la t0, g		# load address to t0</span><br><span class="line">lw t0, 0(t0)	# load word t0中的地址+偏移量0</span><br><span class="line">la t1, h		# load address to t0</span><br><span class="line">lw t1, 0(t1)	# load word t0中的地址+偏移量0</span><br><span class="line"></span><br><span class="line">add t5, t0, t1</span><br><span class="line"></span><br><span class="line">la t0, result</span><br><span class="line">sw t5, 0(t0)	# t5的结果保存到t0的地址中</span><br><span class="line"></span><br><span class="line"># la t1, msg</span><br><span class="line"># li a7, 4</span><br><span class="line"># mv a0, t1</span><br><span class="line"># ecall</span><br><span class="line"></span><br><span class="line">li a7, 4	# 打印字符串</span><br><span class="line">la a0, msg	# 其实可以直接la到a0里面就行，不需要再经过寄存器中转了，本身就是地址</span><br><span class="line">ecall</span><br><span class="line"></span><br><span class="line">li a7, 1	# 打印数字</span><br><span class="line">mv a0, t5</span><br><span class="line">ecall</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">nums: .word -30, -40, -50, -60, 60, 100</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">la t0, nums</span><br><span class="line">lw t1, 8(t0)</span><br><span class="line">addi t1, t1, 50</span><br><span class="line">sw t1, 8(t0)	# 把-50变成了0</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="branch-max-asm"><a href="#branch-max-asm" class="headerlink" title="branch-max.asm"></a>branch-max.asm</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 实现c = max(a,b)</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">a: .word 100</span><br><span class="line">b: .word 200</span><br><span class="line">c: .word 0</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line"># la t0, a</span><br><span class="line"># lw t0, 0(t0)</span><br><span class="line">lw t0, a	# 该RARS支持的一个语法糖，并不是RISC-V的语法，考试应该不能用</span><br><span class="line">lw t1, b</span><br><span class="line"></span><br><span class="line">bge t0, t1, greater_equal	# t0 &gt;= t1 就跳转到greater_equal</span><br><span class="line">mv t2, t1</span><br><span class="line">j end				# 伪指令, 防止再执行到greater_equal</span><br><span class="line"></span><br><span class="line">greater_equal:</span><br><span class="line">mv t2, t0</span><br><span class="line"></span><br><span class="line">end:</span><br><span class="line">la t3, c</span><br><span class="line">sw t2, 0(t3)	# 存到c的地方，同样也有简便写法 sw t2, c, t3</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="array-index-bit-asm求一个数组正数的和与负数的和"><a href="#array-index-bit-asm求一个数组正数的和与负数的和" class="headerlink" title="array-index-bit.asm求一个数组正数的和与负数的和"></a>array-index-bit.asm求一个数组正数的和与负数的和</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">numbers: .word -30, 30, -20, 20, -10, 10, 0</span><br><span class="line">size: .word 7</span><br><span class="line">positive_sum: .word 0</span><br><span class="line">negative_sum: .word 0</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">la t0, numbers 	# t0: the address of the current array</span><br><span class="line">lw t1, size</span><br><span class="line">mv t2, zero 	# counter, initially 0</span><br><span class="line">li t3, 0	 	# t3: sum of positive numbers &lt;- 0</span><br><span class="line">li t4, 0 		# t4: sum of negative numbers &lt;- 0</span><br><span class="line"></span><br><span class="line">loop: </span><br><span class="line">bge t2, t1, end_loop	#计数器大于等于size就跳转到end_loop</span><br><span class="line"># number[t2]</span><br><span class="line"># mul t5, t2, 4</span><br><span class="line">slli t5, t2, 2 	# 逻辑左移，即t5*4</span><br><span class="line">add t5, t0, t5</span><br><span class="line">lw t5, 0(t5)</span><br><span class="line">addi t2, t2, 1</span><br><span class="line">bltz t5, negative # bltz: branch if less than zero</span><br><span class="line">add t3, t3, t5</span><br><span class="line">j loop</span><br><span class="line">negative:</span><br><span class="line">add t4, t4, t5</span><br><span class="line">j loop</span><br><span class="line">end_loop:</span><br><span class="line">sw, t3, positive_sum, t5</span><br><span class="line">sw, t3, positive_sum, t5</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="proc-max-asm函数调用"><a href="#proc-max-asm函数调用" class="headerlink" title="proc-max.asm函数调用"></a>proc-max.asm函数调用</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.data</span><br><span class="line">max_result: .word 0</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.global main</span><br><span class="line"></span><br><span class="line">max:</span><br><span class="line">	# a0 argument 0</span><br><span class="line">	# a1 argument 1</span><br><span class="line">	# 同时a0-a7的前两个寄存器也可以用来返回值的保存</span><br><span class="line">    blt a0, a1, smaller</span><br><span class="line">    # 没跳转说明a0 &gt;= a1</span><br><span class="line">    # mv a0, a0 正好省略不用写</span><br><span class="line">    j end_max</span><br><span class="line"></span><br><span class="line">smaller:</span><br><span class="line">    mv a0, a1</span><br><span class="line">    </span><br><span class="line">end_max:</span><br><span class="line">	ret		# 等同</span><br><span class="line">	# jr ra	# 等同</span><br><span class="line">    # jalr zero 0(ra) 	# jalr: jump and link register</span><br><span class="line">                    	# zero的作用：jalr会将下一条指令的地址存入</span><br><span class="line"></span><br><span class="line">### main ###</span><br><span class="line">.data</span><br><span class="line">a: .word 100</span><br><span class="line">b: .word 200</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">main:</span><br><span class="line">    lw a0, a    # 并非risc-v的指令，而是汇编器的伪指令，将a的地址存入a0</span><br><span class="line">    lw a1, b</span><br><span class="line"></span><br><span class="line">    # jal ra, max 	# jal: jump and link  ra: Return Address register</span><br><span class="line">             		# ra保存了返回地址，jal会将下一条指令的地址存入ra</span><br><span class="line">    # jal max</span><br><span class="line">    call max 	# 三种写法都一样</span><br><span class="line">    sw a0, max_result, t0</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h3><p>参数多了可以考虑用栈来传递</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">jalr zero 0(ra) # jalr: jump and link register</span><br><span class="line">                # zero的作用：jalr会将下一条指令的地址存入</span><br></pre></td></tr></table></figure></div>
+
+<p>zero的作用：</p>
+<p>jalr会做两件事情</p>
+<ul>
+<li><p>一是按照后面给的0(ra)进行跳转</p>
+</li>
+<li><p>二是会把目前所在位置的下一条指令的地址存入给出的寄存器中，如果把zero换成t0就会保存到t0，写zero的话就表示不想存这个下一条地址（用不到），因为写到zero的东西都会被清零</p>
+</li>
+</ul>
+<h3 id="proc-fact-asm递归"><a href="#proc-fact-asm递归" class="headerlink" title="proc-fact.asm递归"></a>proc-fact.asm递归</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.text</span><br><span class="line">.global main</span><br><span class="line"></span><br><span class="line">factorial:</span><br><span class="line">beqz a0, base_case  # 为0跳转，f(0) = 1</span><br><span class="line"></span><br><span class="line"># 先改变栈指针，再保存寄存器的值，先保存参数寄存器的值，再保存ra的值</span><br><span class="line">addi sp, sp, -8     # 栈空间高地址往低地址增长，所以先减8</span><br><span class="line">sw a0, 4(sp)        # 先保存a0的值，即n</span><br><span class="line">sw ra, 0(sp)        # 还需要再保存ra的值</span><br><span class="line"></span><br><span class="line"># n &gt; 0: n * f(n-1)</span><br><span class="line">addi a0, a0, -1     # 此时a0为n-1</span><br><span class="line">call factorial      # a0为f(n-1)</span><br><span class="line">mv t0, a0			# t0:f(n-1)</span><br><span class="line"></span><br><span class="line">lw ra, 0(sp)        # 恢复ra的值</span><br><span class="line">lw a0, 4(sp)        # 恢复a0的值</span><br><span class="line">addi sp, sp, 8      # 恢复栈指针</span><br><span class="line"></span><br><span class="line">mul a0, a0, t0      # a0 = n * f(n-1)</span><br><span class="line">j end               # 返回, a0还要用来保存返回值</span><br><span class="line"></span><br><span class="line">base_case:</span><br><span class="line">    li a0, 1</span><br><span class="line"></span><br><span class="line">end:</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line">### main ###</span><br><span class="line">.data</span><br><span class="line">n: .word 5</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">main:</span><br><span class="line">lw a0, n</span><br><span class="line">call factorial</span><br></pre></td></tr></table></figure></div>
+
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v/image-20230607153022783.png" alt="image-20230607153022783"> </p>
+<p>注意ra的值会变</p>
+]]></content>
+      <categories>
+        <category>2023-Spring-Courses-编译原理</category>
+      </categories>
+      <tags>
+        <tag>编译原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>软工二第一次代码作业</title>
+    <url>/posts/2023-Spring-Courses-%E8%BD%AF%E5%B7%A5%E4%BA%8C/%E8%BD%AF%E5%B7%A5%E4%BA%8C%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E4%BD%9C%E4%B8%9A.html</url>
+    <content><![CDATA[<h2 id="什么是kwic"><a href="#什么是kwic" class="headerlink" title="什么是kwic?"></a>什么是kwic?</h2><p>KWIC是”Keyword in Context”（关键词上下文）的缩写。 KWIC是一种文本分析方法，用于提取文本中的关键词并在其周围显示一定数量的上下文信息。这通常被用于索引和搜索系统中的文本数据，以便用户可以快速找到与其关注的关键词相关的文本。KWIC索引通常显示在一个表格或网格中，其中每一行都是一个关键词及其周围的文本片段，让用户可以快速浏览文本内容，快速找到感兴趣的信息。</p>
+<blockquote>
+<p>貌似还有些相关网站？</p>
+<p><a class="link" href="https://www.bilibili.com/video/BV1Ke4y1i7jb/?spm_id_from=333.337.search-card.all.click&vd_source=6be38b36e75fc2dd932ed882233a8a39">语料库网站介绍之KWiC Finder_哔哩哔哩_bilibili <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link" href="http://kwicfinder.com/KWiCFinder.html">KWiCFinder Web Concordancer &amp; Online Research Tool <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<br>
+
+<h2 id="直接看点资料"><a href="#直接看点资料" class="headerlink" title="直接看点资料"></a>直接看点资料</h2><blockquote>
+<p><a class="link" href="https://www.cnblogs.com/youxin/p/3514594.html">软件体系结构经典问题——KWIC的分析和解决 - youxin - 博客园 (cnblogs.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>含代码：<a class="link" href="https://blog.csdn.net/weixin_43853097/article/details/110943379">主程序-子程序、面向对象、事件系统和管道-过滤软件体系结构实现KWIC_Himit_ZH的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h3 id="要做什么？"><a href="#要做什么？" class="headerlink" title="要做什么？"></a>要做什么？</h3><p><strong>问题陈述：</strong>KWIC(Key Word In Context)，Parnas (1972)</p>
+<p>KWIC索引系统接受一些行，每行有若干字，每个字由若干字符组成；每行都可以循环移位，亦即重复地把第一个字删除，然后接到行末； KWIC把所有行的各种移位情况按照字母表顺序输出</p>
+<p><strong>例子如下：</strong></p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/30/MlSmV6HC58NPLhD.png" alt="image-20230430220928676"></p>
+<blockquote>
+<p>原来的还是要输出的，所以一共3+2+3&#x3D;8个</p>
+</blockquote>
+<h2 id="如何实现？"><a href="#如何实现？" class="headerlink" title="如何实现？"></a>如何实现？</h2><h3 id="使用ms（主程序与子程序）实现"><a href="#使用ms（主程序与子程序）实现" class="headerlink" title="使用ms（主程序与子程序）实现"></a>使用ms（主程序与子程序）实现</h3><p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/30/7ya4TzAIBjoqvVZ.png" alt="image-20230430225702377"></p>
+<p>KWIC类：</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/30/tWIfxOB7jsG2NVd.png" alt="image-20230430231140471"></p>
+<p>直接使用这四个成员变量多少有点过于困难了，什么年代还在用char数组？</p>
+<p>果断放弃了，按照上面的要求的话，一个input函数写了这么多行属实难蚌</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Input function reads the raw data from the specified file and stores it in the core storage.</span></span><br><span class="line"><span class="comment"> * If some system I/O error occurs the program exits with an error message.</span></span><br><span class="line"><span class="comment"> * The format of raw data is as follows. Lines are separated by the line separator</span></span><br><span class="line"><span class="comment"> * character(s) (on Unix &#x27;\n&#x27;, on Windows &#x27;\r\n&#x27;). Each line consists of a number of</span></span><br><span class="line"><span class="comment"> * words. Words are delimited by any number and combination of the space chracter (&#x27; &#x27;)</span></span><br><span class="line"><span class="comment"> * and the horizontal tabulation chracter (&#x27;\t&#x27;). The entered data is parsed in the</span></span><br><span class="line"><span class="comment"> * following way. All line separators are removed from the data, all horizontal tabulation</span></span><br><span class="line"><span class="comment"> * word delimiters are replaced by a single space character, and all multiple word</span></span><br><span class="line"><span class="comment"> * delimiters are replaced by a single space character. Then the parsed data is represented</span></span><br><span class="line"><span class="comment"> * in the core as two arrays: chars_ array and line_index_ array.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> file Name of input file</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">input</span><span class="params">(String file)</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现input</span></span><br><span class="line">    <span class="comment">// 期望处理后的目标</span></span><br><span class="line">    <span class="comment">// All line separators are removed from the data, all horizontal tabulation</span></span><br><span class="line">    <span class="comment">// word delimiters are replaced by a single space character, and all multiple word</span></span><br><span class="line">    <span class="comment">// delimiters are replaced by a single space character.</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">FileReader</span> <span class="variable">inputFileReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileReader</span>(file);</span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">inputFileBufferedReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(inputFileReader);</span><br><span class="line"></span><br><span class="line">        <span class="type">CharArrayWriter</span> <span class="variable">caw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CharArrayWriter</span>(); <span class="comment">// 用来向chars中写入数据</span></span><br><span class="line">        String line;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> ((line = inputFileBufferedReader.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            caw.write(line);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        chars_ = caw.toCharArray();</span><br><span class="line">        caw.close();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需要按照要求进一步处理chars_</span></span><br><span class="line">        <span class="comment">// 把所有分隔符都换成单个空格，除了换行符</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">text1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(chars_);</span><br><span class="line">        text1 = text1.replaceAll(<span class="string">&quot; +&quot;</span>, <span class="string">&quot; &quot;</span>);</span><br><span class="line">        text1 = text1.replaceAll(<span class="string">&quot;\t&quot;</span>, <span class="string">&quot; &quot;</span>);</span><br><span class="line">        text1 = text1.replaceAll(<span class="string">&quot;\r&quot;</span>, <span class="string">&quot;&quot;</span>);</span><br><span class="line">        chars_ = text1.toCharArray();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 没明白为什么要All line separators are removed from the data</span></span><br><span class="line">        line_index_ = <span class="keyword">new</span> <span class="title class_">int</span>[chars_.length];</span><br><span class="line">        <span class="type">int</span> <span class="variable">line_index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; chars_.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (chars_[i] == <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">                line_index_[i] = line_index;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (chars_[i] == <span class="string">&#x27;\n&#x27;</span>) &#123; <span class="comment">//只判断“/n”，不用判断“/r/n”，已经涵盖了</span></span><br><span class="line">                line_index_[i] = line_index;</span><br><span class="line">                line_index++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;File not found!&quot;</span>);</span><br><span class="line">        System.exit(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;IO error!&quot;</span>);</span><br><span class="line">        System.exit(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="使用OO实现"><a href="#使用OO实现" class="headerlink" title="使用OO实现"></a>使用OO实现</h3><h4 id="Alphabetizer类"><a href="#Alphabetizer类" class="headerlink" title="Alphabetizer类"></a>Alphabetizer类</h4><p>用于排序</p>
+<p>为了便于修改排序算法</p>
+<p>在该类中新建一个内部类，对按行进行排序</p>
+<blockquote>
+<p>单纯实现某两个类的自定义排序，直接使用Comparator</p>
+<p><Type>就行</Type></p>
+<p><a class="link" href="https://blog.csdn.net/kendleo/article/details/105298680">使用Comparator比较接口实现ArrayList集合排序_惟念依的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>但如果像这道题一样还要获取排序后的Index就不行了，需要使用comparable接口</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>2023-Spring-Courses-软工二</category>
       </categories>
   </entry>
   <entry>
