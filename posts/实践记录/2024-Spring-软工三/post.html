@@ -26,8 +26,9 @@
 <meta property="og:description" content="SE3赶工ing">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bblog.031105.xyz/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/post/image-20240609213451239.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/post/image-20240609215501808.png">
 <meta property="article:published_time" content="2024-06-09T13:18:29.000Z">
-<meta property="article:modified_time" content="2024-06-09T13:35:00.724Z">
+<meta property="article:modified_time" content="2024-06-10T06:16:34.742Z">
 <meta property="article:author" content="奔跑的淡水鱼">
 <meta property="article:tag" content="Langchain">
 <meta property="article:tag" content="急急国王系列">
@@ -621,8 +622,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-06-09 21:35</span>
-            <span class="mobile">2024-06-09 21:35</span>
+            <span class="desktop">2024-06-10 14:16:34</span>
+            <span class="mobile">2024-06-10 14:16:34</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -711,8 +712,33 @@
 <p>改了之后终于连好了</p>
 <img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/post/image-20240609213451239.png" alt="image-20240609213451239" style="zoom:50%;"> 
 
+<h3 id="StrOutputParser"><a href="#StrOutputParser" class="headerlink" title="StrOutputParser"></a>StrOutputParser</h3><p>OutputParser that parses LLMResult into the top likely <strong>string</strong>.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">db = SQLDatabase.from_uri(uri)</span><br><span class="line"></span><br><span class="line">llm = Tongyi(model=<span class="string">&#x27;qwen-max-1201&#x27;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义回答问题的模板，把前面的问题、查询和结果传给LLM，然后解析输出</span></span><br><span class="line">answer_prompt = PromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    根据以下用户问题、对应的SQL查询以及SQL查询结果，回答用户的问题。</span></span><br><span class="line"><span class="string">    问题: &#123;question&#125;</span></span><br><span class="line"><span class="string">    SQL 查询: &#123;query&#125;</span></span><br><span class="line"><span class="string">    SQL 查询结果: &#123;result&#125;</span></span><br><span class="line"><span class="string">    答案:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 创建SQL查询链</span></span><br><span class="line">write_query = create_sql_query_chain(llm, db)</span><br><span class="line"><span class="comment"># 创建SQL查询工具</span></span><br><span class="line">execute_query = QuerySQLDataBaseTool(db=db)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义链再传给LLM，然后使用StrOutputParser解析输出</span></span><br><span class="line">answer = answer_prompt | llm | StrOutputParser()</span><br><span class="line">chain = (</span><br><span class="line">        RunnablePassthrough.assign(query=write_query).assign(</span><br><span class="line">            result=itemgetter(<span class="string">&quot;query&quot;</span>) | execute_query</span><br><span class="line">        )</span><br><span class="line">        | answer</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">res = chain.invoke(&#123;<span class="string">&quot;question&quot;</span>: <span class="string">&quot;一共有多少仓库？有多少trending？&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">There are 703 repositories.</span><br></pre></td></tr></table></figure></div>
 
 
+
+<p>Cool，验证下</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/post/image-20240609215501808.png" alt="image-20240609215501808"></p>
+<p>想看下用了多少token的，结果好像数据没刷新</p>
+<h2 id="NextSteps"><a href="#NextSteps" class="headerlink" title="NextSteps"></a>NextSteps</h2><p>只试了下few shot</p>
+<h3 id="Prompting-strategies"><a href="#Prompting-strategies" class="headerlink" title="Prompting strategies"></a>Prompting strategies</h3><p><a class="link" target="_blank" rel="noopener" href="https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/">https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>看了下可以把表结构也一起传下，增强一下，加点描述之类的</p>
+<h3 id="Few-shot-examples"><a href="#Few-shot-examples" class="headerlink" title="Few-shot examples"></a>Few-shot examples</h3><p><a class="link" target="_blank" rel="noopener" href="https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/#few-shot-examples">https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/#few-shot-examples <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>还可以搞点few shot</p>
+<h2 id="补充：StreamForHttps"><a href="#补充：StreamForHttps" class="headerlink" title="补充：StreamForHttps"></a>补充：StreamForHttps</h2><p>部署接口在服务器上的时候发现</p>
+<p><a class="link" target="_blank" rel="noopener" href="http://ip:8000/dbchat/stream%E8%83%BD%E6%AD%A3%E5%B8%B8%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94">http://ip:8000/dbchat/stream能正常流式响应 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>但是经过nginx反向代理的https的<a class="link" target="_blank" rel="noopener" href="https://ip:8001/dbchat/stream%E6%B2%A1%E6%B3%95%E6%AD%A3%E5%B8%B8%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94%EF%BC%8C%E7%9B%B4%E6%8E%A5~~%E4%BE%9D%E5%A4%A7%E6%89%98~~%E5%87%BA%E6%9D%A5">https://ip:8001/dbchat/stream没法正常流式响应，直接~~依大托~~出来 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>之前的nginx配置如下</p>
+<div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8001</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> &lt;ip&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/certificate.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/private.key;</span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /etc/nginx/ssl/ca_bundle.crt;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> <span class="string">&quot;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8000;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>经过GPT指点后修改如下</p>
+<div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8001</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> &lt;ip&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/certificate.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/private.key;</span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /etc/nginx/ssl/ca_bundle.crt;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> <span class="string">&quot;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> /stream &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8000/stream;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">proxy_buffering</span> <span class="literal">off</span>;  <span class="comment"># 关键配置，确保禁用代理缓冲</span></span><br><span class="line">        <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">chunked_transfer_encoding</span> <span class="literal">on</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>发现解决了问题</p>
 <h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>Paying tribute to the legendary software engineering warrior ——<strong>SEBugMaker</strong>！</p>
 
         </div>
@@ -728,7 +754,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-06-09 21:35:00
+                    :</strong> 2024-06-10 14:16:34
             </li>
         
         <li>
@@ -770,27 +796,27 @@
     <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
      <i aria-hidden="true"></i><span>推荐阅读</span>
     </div>
-    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/杂记/服务器配置ssl-域名解析.html" title="服务器配置ssl&域名解析" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="服务器配置ssl&域名解析" class="!max-w-none">
+  <span class="title">服务器配置ssl&域名解析</span>
+</a><a class="recommended-article-item" href="/posts/实践记录/不知道花了多久但我就要说很快速的docker部署前后端项目.html" title="不知道花了多久但我就要说很快速的docker部署前后端项目" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="不知道花了多久但我就要说很快速的docker部署前后端项目" class="!max-w-none">
+  <span class="title">不知道花了多久但我就要说很快速的docker部署前后端项目</span>
+</a><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
   <img src="/images/wallhaven-wqery6-light.webp" alt="LLM相关术语理解" class="!max-w-none">
   <span class="title">LLM相关术语理解</span>
-</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-操作系统/notes-os.html" title="notes-os" rel="bookmark">
-  <img src="https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg" alt="notes-os" class="!max-w-none">
-  <span class="title">notes-os</span>
-</a><a class="recommended-article-item" href="/posts/23-Fall-Courses-MachineLearning/强化学习记录.html" title="强化学习记录" rel="bookmark">
-  <img src="https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png" alt="强化学习记录" class="!max-w-none">
-  <span class="title">强化学习记录</span>
 </a></div>
    </div>
    <div class="recommended-mobile">
    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
      <i aria-hidden="true"></i><span>推荐阅读</span>
    </div>
-   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
-  <img src="/images/wallhaven-wqery6-light.webp" alt="LLM相关术语理解" class="!max-w-none">
-  <span class="title">LLM相关术语理解</span>
-</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-操作系统/notes-os.html" title="notes-os" rel="bookmark">
-  <img src="https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg" alt="notes-os" class="!max-w-none">
-  <span class="title">notes-os</span>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/杂记/服务器配置ssl-域名解析.html" title="服务器配置ssl&域名解析" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="服务器配置ssl&域名解析" class="!max-w-none">
+  <span class="title">服务器配置ssl&域名解析</span>
+</a><a class="recommended-article-item" href="/posts/实践记录/不知道花了多久但我就要说很快速的docker部署前后端项目.html" title="不知道花了多久但我就要说很快速的docker部署前后端项目" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="不知道花了多久但我就要说很快速的docker部署前后端项目" class="!max-w-none">
+  <span class="title">不知道花了多久但我就要说很快速的docker部署前后端项目</span>
 </a></div>
    </div>
   </div>
@@ -869,7 +895,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">post</div>
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Github%E9%93%BE%E6%8E%A5"><span class="nav-text">Github链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Process"><span class="nav-text">Process</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%AF%86%E7%A0%81%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6"><span class="nav-text">处理密码特殊字符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%B4%E8%B0%A2"><span class="nav-text">致谢</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Github%E9%93%BE%E6%8E%A5"><span class="nav-text">Github链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Process"><span class="nav-text">Process</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%AF%86%E7%A0%81%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6"><span class="nav-text">处理密码特殊字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StrOutputParser"><span class="nav-text">StrOutputParser</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo"><span class="nav-text">demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NextSteps"><span class="nav-text">NextSteps</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prompting-strategies"><span class="nav-text">Prompting strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Few-shot-examples"><span class="nav-text">Few-shot examples</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9AStreamForHttps"><span class="nav-text">补充：StreamForHttps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%B4%E8%B0%A2"><span class="nav-text">致谢</span></a></li></ol>
 
     </div>
 </div>
