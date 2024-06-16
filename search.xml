@@ -1,6 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>基于Langchain的SQL交互Agent</title>
+    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent.html</url>
+    <content><![CDATA[<h2 id="Github链接"><a href="#Github链接" class="headerlink" title="Github链接"></a>Github链接</h2><p>代码已开源，点点❤家人们，顶着一堆作业写的QAQ</p>
+<p><a class="link" href="https://github.com/SYuan03/llm4db">https://github.com/SYuan03/llm4db <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p>官网</p>
+<ol>
+<li><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/">https://python.langchain.com/v0.1/docs/use_cases/sql/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+<li><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/quickstart/">https://python.langchain.com/v0.1/docs/use_cases/sql/quickstart/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
+</ol>
+<p>DashScope（阿里云）API</p>
+<p><a class="link" href="https://dashscope.console.aliyun.com/dashboard">https://dashscope.console.aliyun.com/dashboard <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<blockquote>
+<p>好多地方都用了gpt-3.5-turbo的模型，4o又太贵，所以体验下Qwen的模型，体验额度还挺大的</p>
+</blockquote>
+<h2 id="Process"><a href="#Process" class="headerlink" title="Process"></a>Process</h2><p>以下记录几个问题点</p>
+<h3 id="处理密码特殊字符"><a href="#处理密码特殊字符" class="headerlink" title="处理密码特殊字符"></a>处理密码特殊字符</h3><p>这步有点气人咳咳</p>
+<p>了解到密码中含有@等特殊词汇需要使用</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote_plus</span><br></pre></td></tr></table></figure></div>
+
+<p>然后用了发现还是连不上，OK排查了一番后发现填成服务器密码了QAQ</p>
+<p>改了之后终于连好了</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/image-20240609213451239.png" alt="image-20240609213451239" style="zoom:50%;"> 
+
+<h3 id="StrOutputParser"><a href="#StrOutputParser" class="headerlink" title="StrOutputParser"></a>StrOutputParser</h3><p>OutputParser that parses LLMResult into the top likely <strong>string</strong>.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">db = SQLDatabase.from_uri(uri)</span><br><span class="line"></span><br><span class="line">llm = Tongyi(model=<span class="string">&#x27;qwen-max-1201&#x27;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义回答问题的模板，把前面的问题、查询和结果传给LLM，然后解析输出</span></span><br><span class="line">answer_prompt = PromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    根据以下用户问题、对应的SQL查询以及SQL查询结果，回答用户的问题。</span></span><br><span class="line"><span class="string">    问题: &#123;question&#125;</span></span><br><span class="line"><span class="string">    SQL 查询: &#123;query&#125;</span></span><br><span class="line"><span class="string">    SQL 查询结果: &#123;result&#125;</span></span><br><span class="line"><span class="string">    答案:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 创建SQL查询链</span></span><br><span class="line">write_query = create_sql_query_chain(llm, db)</span><br><span class="line"><span class="comment"># 创建SQL查询工具</span></span><br><span class="line">execute_query = QuerySQLDataBaseTool(db=db)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义链再传给LLM，然后使用StrOutputParser解析输出</span></span><br><span class="line">answer = answer_prompt | llm | StrOutputParser()</span><br><span class="line">chain = (</span><br><span class="line">        RunnablePassthrough.assign(query=write_query).assign(</span><br><span class="line">            result=itemgetter(<span class="string">&quot;query&quot;</span>) | execute_query</span><br><span class="line">        )</span><br><span class="line">        | answer</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">res = chain.invoke(&#123;<span class="string">&quot;question&quot;</span>: <span class="string">&quot;一共有多少仓库？有多少trending？&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">There are 703 repositories.</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>Cool，验证下</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/image-20240609215501808.png" alt="image-20240609215501808"></p>
+<p>想看下用了多少token的，结果好像数据没刷新</p>
+<h2 id="NextSteps"><a href="#NextSteps" class="headerlink" title="NextSteps"></a>NextSteps</h2><p>只试了下few shot</p>
+<h3 id="Prompting-strategies"><a href="#Prompting-strategies" class="headerlink" title="Prompting strategies"></a>Prompting strategies</h3><p><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/">https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>看了下可以把表结构也一起传下，增强一下，加点描述之类的</p>
+<h3 id="Few-shot-examples"><a href="#Few-shot-examples" class="headerlink" title="Few-shot examples"></a>Few-shot examples</h3><p><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/#few-shot-examples">https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/#few-shot-examples <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>还可以搞点few shot</p>
+<h2 id="补充：StreamForHttps"><a href="#补充：StreamForHttps" class="headerlink" title="补充：StreamForHttps"></a>补充：StreamForHttps</h2><p>部署接口在服务器上的时候发现</p>
+<p><a class="link" href="http://ip:8000/dbchat/stream%E8%83%BD%E6%AD%A3%E5%B8%B8%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94">http://ip:8000/dbchat/stream能正常流式响应 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>但是经过nginx反向代理的https的<a class="link" href="https://ip:8001/dbchat/stream%E6%B2%A1%E6%B3%95%E6%AD%A3%E5%B8%B8%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94%EF%BC%8C%E7%9B%B4%E6%8E%A5~~%E4%BE%9D%E5%A4%A7%E6%89%98~~%E5%87%BA%E6%9D%A5">https://ip:8001/dbchat/stream没法正常流式响应，直接~~依大托~~出来 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>之前的nginx配置如下</p>
+<div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8001</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> &lt;ip&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/certificate.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/private.key;</span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /etc/nginx/ssl/ca_bundle.crt;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> <span class="string">&quot;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8000;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>关闭缓存后修改如下</p>
+<div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8001</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> &lt;ip&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/certificate.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/private.key;</span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /etc/nginx/ssl/ca_bundle.crt;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> <span class="string">&quot;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> /stream &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8000/stream;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">proxy_buffering</span> <span class="literal">off</span>;  <span class="comment"># 关键配置，确保禁用代理缓冲</span></span><br><span class="line">        <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">chunked_transfer_encoding</span> <span class="literal">on</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>发现解决了问题</p>
+<h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>Paying tribute to the legendary software engineering warrior ——<a href="https://github.com/SEBugMaker"><strong>SEBugMaker</strong></a>！</p>
+<p>And <a href="https://github.com/SYuan03"><strong>SYuan03</strong></a> as well. (Ahem, paying tribute to oneself might seem a bit odd)</p>
+]]></content>
+      <categories>
+        <category>实践记录</category>
+        <category>2024-Spring-软工三</category>
+      </categories>
+      <tags>
+        <tag>Langchain</tag>
+        <tag>急急国王系列</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>copilot个人使用记录</title>
+    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/copilot%E4%B8%AA%E4%BA%BA%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95.html</url>
+    <content><![CDATA[
+<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="111df20b6e47a0327967deb3e98a098c696ff5bd4edd6ce2b58208892f0c1135">859c29499e97b37e25280a7293bbe1870fb0069f4e3c381cf2cff805e582fe31739e43321907583e506a19e6bebc888be69aaa2dfddf0128fdcfde64df953addeb033c04706eb3c58ffb92b873c9d825f7ce13bf5c060c1a6badea3234709abc6c6ba915ffb256f806eecc99a1961c4151174377c8227bd1c9cf3564127cd5a79dc59bece0fd2b3bb43e4633421c5c5429f327063203985a968951478654bb7fb1eb5011bca502a499b8862076c72a61dce3ac1d02489e38ab88d863f1e922ebef5c6c1636eee5b1433a0d070091b9567a2403f78c998a61df0f05b4c15a3a7a3dbc4bdb39d15852c467b9a7016ee8b8518b77ba9f8a2361eb6de95ddee4628038e5cd330b1684e3d7896e1bdedb4457d4f38f29e07dd7748108bf357e8258eb7d6d9c9ddd7b13afaeaca5b8b9c7234e72e045c1fc7314e61b6deaa8795edd3ada7c9ba3ca60df905a39b4aff7789b408d4e287d8a53690b689218610c0d584eba665c6bb4aae5c28333023612c31dac194bd0408ce82491f65e5e94833441d9fb55acc8be5929517ab0c15871face1c96197fc93ee753760e0fb16421500b514a5c4779af2a53824c34898e843c140a4d5eb8e7d11e38dde7a2bab9828c612a1cf66b0d95f7750fdc75a064cad52c074db982212f07f7a54abd9d7e5a2a0ae24d394b05dbbd92322bc8e9504d67b97e85ef8bfff47a1614538d9a1af6ba7dfa61e6765fb228c5285171446b55f8290f4fa68605a10519c9a8df2d2a33ad287ab92c08b840d3a9eca85f4c49e36e720bd1fbf1771ffd4c6a13dd04c4a79985dbe9585114abd673a085ba1c44e45221a41ab5eea8c839d77d78ff7a24f3c20e93267dec17c5b225bc99683e5157b689cb8d48b296dd04415a5db203a07055ac5238d622223e0f40adb3c9d7eedafad06fe775e66fd81da529f1a2b4d36fc4e2e74e807272f5b817cc756f564cf6f181d73a1f62bf30dd7a38e0b531eb96d0e643ad5390396bc302a1120e5f8f1287b7999c722713938f50ab3e243ca110d2973e2d1e8f3370d105561acec5921a014f6e2919b4f66caa45cd13ffeadf842cb963457e258bcac42efc42c62bed447d4280c9067a225a1fff31c0c42560d68245845a620789778f26b84bf5bf4e6c68b459b7897a568a7994420a6122b48d5ae3f9a13e63f8ac2df437bde0bcbf95a4975f9436d2d1e52bef47d6923edc6d600e984350af92e718eb70ca91dfd79c67e34cf8fa67e9d29777b3c4ca9b13a12393550ba26560a2b743ee1466a5081af3218bfa9597a8d08e8b3915ca33e0a37d3f47ee5b1d51a35e75d7aded42d3ae3ea26194db3d763c35f5e8f2b9dd97b273c859393abf3d29e7027555de70f28caee079ab834868a1f74b23d77c8d70d2bd312942c6add54923301cd5aa7dd0ef0ddb22d1e22feab89b97b25773a3e270bc266b00c64b06961c20dfe5e54dafcf90181d271c8241a7600bbfe07ea3d1ae11d5ca4325fbe912c7449afcf246fe9bf59310cd6338860795935d1ddde7d897cc56c6869184b1b727335826b65a6da5b91add31abf50791dad7e61924f75760ac90ed3abf33ddaf65816c0fe9cee88b3dd2f241178d8a11f3a0887866ef10a3efb14c99d42c361f95492f832348650b6dd74b47e893e97f7794b9d3cce429749e43af0c7035d9dcc31636bbe5c2c98e387449dc69a0c2a1c41fa5dc5a4e6f636c8086a17e2141b4be6697852269360be7ac85e868d167b58e77d50cdec4acfef909e19ef5164ad8e5b60d8a752acae0540f8507ae99a5955cc5231a002aaa5c1eeef1ac804712e49a03af0630047f75c6e332e022299c4d8e8f925eee548f40ca824312df11ab8834627952c1c2ab88a35d73ba7cec7545d05ed8f372293eb4a195fc97c78081fc3da18686fa138f1cd666d198843af23c9c90517b0b275f1e98bf071eb3a2e3b1dc9075a821cdeef96ea9e62278f9e9f09931a717ce032b9b0cebf05bb3338e8b845cffc1a36751a06939bda2473c342e57cc41acba3e68d3e5a2f1b28c9867913b5540b782dfa69597f5184d9b94d119a1f38bbff37117865b3b67de20c689e822564be941fc5b9dc1a3325f4ed9e94af847a3268daf1789dd08d521073112049ed8bd1ffa4221571aced12cbd58c3474b2bbe65edc0ed35c17c8d1aecab450e88df164e7f6ad8d9b56f4d1d19986fda185e52bd6aafdb8405890a546d2ca7e1e34e91d1b5c644c34d073e071369eca8b41fdefb54f19ea1105479d7f66947a7c13db7e67d10b2b4ef476c80373e580345654d27a34768926a2940d9657ae0066fd999406e9415ad91189e8daf1cef7b6e5471ca4dc85230c8ed6688a8ad407da9b87c91714cd01447a45d4ea5af0d45e344e4e3fce0c79114b55ec8f90e87a6f0fbff185002a94529e95cdd0edaa95d24946db92ef6bad487b96b2f4755ab86f5db760770287114dfbdeffe298c1c831108f355d4557fecf0e14ebaeca19df07c248518dc2baf9f1342a161072f35fe26c6a8ae0007af0febc66d4d74e0a6a009f86670403c107dc92eca4d28a9ad2dc66bfc208c939c313bdd97</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-swup-reload-script src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>实践记录</category>
+      </categories>
+      <tags>
+        <tag>摸鱼</tag>
+        <tag>猎奇</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ZeroSSL-域名SSL配置说明</title>
+    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/zerossl-%E5%9F%9F%E5%90%8Dssl%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.html</url>
+    <content><![CDATA[<blockquote>
+<p>待完善，先记录下，好不容易理清楚我干了什么</p>
+</blockquote>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>收到了ZeroSSL证书即将过期的通知</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/zerossl-%E5%9F%9F%E5%90%8Dssl%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/image-20240613164048436.png" alt="image-20240613164048436"></p>
+<p>于是不得不回顾下当时搞了啥</p>
+<h2 id="流水线配置"><a href="#流水线配置" class="headerlink" title="流水线配置"></a>流水线配置</h2><p>先看下流水线干了啥</p>
+<div class="highlight-container" data-rel="Yml"><figure class="iseeu highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">VITE_API_URL:</span> <span class="string">&quot;https://49.235.142.226:8701/api&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">stages:</span> <span class="comment"># List of stages for jobs, and their order of execution</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">docker-build-job:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">--build-arg</span> <span class="string">VITE_API_URL=&quot;$VITE_API_URL&quot;</span> <span class="string">-t</span> <span class="string">front:latest</span> <span class="string">-f</span> <span class="string">INeedGithub/Dockerfile</span> <span class="string">INeedGithub</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">save</span> <span class="string">-o</span> <span class="string">front.tar</span> <span class="string">front:latest</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">untracked:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attr">unit-test-job-data-center:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Running unit tests for data-center... This will take about 10 seconds.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">lint-test-job:</span> <span class="comment"># This job also runs in the test stage.</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span> <span class="comment"># It can run at the same time as unit-test-job (in parallel).</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Linting code... This will take about 10 seconds.&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sleep</span> <span class="number">1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;No lint issues found.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-job:</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">production</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">scp</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">front.tar</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;:~</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">ssh</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;</span> <span class="string">&#x27;docker container rm -f front-v2; docker load -i front.tar; docker run -d --name front-v2 -p 8700:80 -p 8701:443 -v /usr/share/mynginxconf/certificate.crt:/etc/nginx/ssl/your_domain.crt -v /usr/share/mynginxconf/private.key:/etc/nginx/ssl/your_domain.key front:latest /bin/bash -c &quot;nginx; tail -f /dev/null&quot;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>主要是</p>
+<div class="highlight-container" data-rel="Yml"><figure class="iseeu highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy-job:</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">production</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">scp</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">front.tar</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;:~</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">ssh</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;</span> <span class="string">&#x27;docker container rm -f front-v2; docker load -i front.tar; docker run -d --name front-v2 -p 8700:80 -p 8701:443 -v /usr/share/mynginxconf/certificate.crt:/etc/nginx/ssl/your_domain.crt -v /usr/share/mynginxconf/private.key:/etc/nginx/ssl/your_domain.key front:latest /bin/bash -c &quot;nginx; tail -f /dev/null&quot;&#x27;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>这部分涉及我当时docker都搞了些啥，OK</p>
+<ol>
+<li>将docker内的80和443分别映射到了服务器的8700和8701</li>
+<li>配置文件从本机&#x2F;usr&#x2F;share&#x2F;mynginxconf&#x2F;certificate.crt和&#x2F;usr&#x2F;share&#x2F;mynginxconf&#x2F;private.key映射过去</li>
+</ol>
+<h2 id="前端容器内的nginx-conf"><a href="#前端容器内的nginx-conf" class="headerlink" title="前端容器内的nginx.conf"></a>前端容器内的nginx.conf</h2><div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">user</span> nginx;</span><br><span class="line"><span class="attribute">worker_processes</span> <span class="number">1</span>;</span><br><span class="line"><span class="attribute">error_log</span> /var/log/nginx/<span class="literal">error</span>.log <span class="literal">warn</span>;</span><br><span class="line"><span class="attribute">pid</span> /var/run/nginx.pid;</span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span> <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span> /etc/nginx/mime.types;</span><br><span class="line">    <span class="attribute">default_type</span> application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">log_format</span> main <span class="string">&#x27;<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] &quot;<span class="variable">$request</span>&quot; &#x27;</span></span><br><span class="line">    <span class="string">&#x27;<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> &quot;<span class="variable">$http_referer</span>&quot; &#x27;</span></span><br><span class="line">    <span class="string">&#x27;&quot;<span class="variable">$http_user_agent</span>&quot; &quot;<span class="variable">$http_x_forwarded_for</span>&quot;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">access_log</span> /var/log/nginx/access.log main;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">keepalive_timeout</span> <span class="number">65</span>;</span><br><span class="line">    <span class="attribute">client_max_body_size</span> <span class="number">100m</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span> /app;</span><br><span class="line">            <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /api/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://&lt;后端服务器ip&gt;:8080/;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">error_page</span> <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span> /50x.html;</span><br><span class="line">        <span class="section">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span> /usr/share/nginx/html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/your_domain.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/your_domain.key;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span> /app;</span><br><span class="line">            <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /api/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://&lt;后端服务器ip&gt;:8080/;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">error_page</span> <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span> /50x.html;</span><br><span class="line">        <span class="section">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span> /usr/share/nginx/html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="renew过程"><a href="#renew过程" class="headerlink" title="renew过程"></a>renew过程</h2><p>To Be Co</p>
+]]></content>
+      <categories>
+        <category>实践记录</category>
+      </categories>
+      <tags>
+        <tag>服务器</tag>
+        <tag>SSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>不知道花了多久但我就要说很快速的docker部署前后端项目</title>
+    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE.html</url>
+    <content><![CDATA[<blockquote>
+<p>首先感谢LLM4SE小组的所有成员的付出！</p>
+</blockquote>
+<h2 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h2><h3 id="扔到github仓库"><a href="#扔到github仓库" class="headerlink" title="扔到github仓库"></a>扔到github仓库</h3><p>主要是原先不在github上</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240416234307784.png" alt="image-20240416234307784"></p>
+<h3 id="前端该点东西you-know-what"><a href="#前端该点东西you-know-what" class="headerlink" title="前端该点东西you know what"></a>前端该点东西you know what</h3><p>诸如api_url之类的</p>
+<blockquote>
+<p>Tips</p>
+<p>其实可以用nginx反代把后端api隐藏</p>
+<p>但这里懒得搞了，可以参考我软工3的CI&#x2F;CD</p>
+<p><a class="link" href="https://git.nju.edu.cn/2024seiii-19-ineedoffer/frontend-nju2">frontend-nju2 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h3 id="邀请gpt4撰写一份前端的Dockerfile"><a href="#邀请gpt4撰写一份前端的Dockerfile" class="headerlink" title="邀请gpt4撰写一份前端的Dockerfile"></a>邀请gpt4撰写一份前端的Dockerfile</h3><p>本地跑了下18能跑</p>
+<div class="highlight-container" data-rel="Dockerfile"><figure class="iseeu highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用官方的 Node.js 18 镜像作为基础镜像</span></span><br><span class="line"><span class="keyword">FROM</span> node:<span class="number">18</span> AS build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置工作目录</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /usr/src/app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制 package.json 和 package-lock.json 到工作目录</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> package*.json ./</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装项目依赖</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> npm install</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制项目文件到工作目录</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建项目</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> npm run build</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 nginx 镜像作为基础镜像</span></span><br><span class="line"><span class="keyword">FROM</span> nginx:stable-alpine</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 vim</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apk add vim</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将构建产物复制到 nginx 的网页目录</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=build /usr/src/app/dist /usr/share/nginx/html</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对外暴露 80 端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 nginx</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（可选）自定义nginx-conf"><a href="#（可选）自定义nginx-conf" class="headerlink" title="（可选）自定义nginx.conf"></a>（可选）自定义nginx.conf</h3><p>可以把自己的nginx.conf复制到容器内运行</p>
+<h3 id="打包运行"><a href="#打包运行" class="headerlink" title="打包运行"></a>打包运行</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t llm4se_frontend:1.0 .</span><br><span class="line">docker run -p 7001:80 -d llm4se_frontend:1.0</span><br></pre></td></tr></table></figure></div>
+
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240417003432802.png" alt="image-20240417003432802"></p>
+<p>打包打了117.3秒</p>
+<h3 id="（必选）域名配置"><a href="#（必选）域名配置" class="headerlink" title="（必选）域名配置"></a>（<del>必选</del>）域名配置</h3><p>改下服务器上的nginx配置就行（注意不是容器内部的那个）</p>
+<p>ip+端口先测下成功没<strong>（似乎比我本地npm run dev之后第一次访问快多了</strong></p>
+<p>配域名A记录</p>
+]]></content>
+      <categories>
+        <category>实践记录</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>前端康复训练</title>
     <url>/posts/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/%E5%89%8D%E7%AB%AF%E5%BA%B7%E5%A4%8D%E8%AE%AD%E7%BB%83.html</url>
     <content><![CDATA[<h2 id="上传并修改图片（适用于头像"><a href="#上传并修改图片（适用于头像" class="headerlink" title="上传并修改图片（适用于头像"></a>上传并修改图片（适用于头像</h2><p><a class="link" href="https://github.com/dai-siki/vue-image-crop-upload?tab=readme-ov-file">https://github.com/dai-siki/vue-image-crop-upload?tab=readme-ov-file <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
@@ -206,69 +359,6 @@
       </tags>
   </entry>
   <entry>
-    <title>基于Langchain的SQL交互Agent</title>
-    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent.html</url>
-    <content><![CDATA[<h2 id="Github链接"><a href="#Github链接" class="headerlink" title="Github链接"></a>Github链接</h2><p>代码已开源，点点❤家人们，顶着一堆作业写的QAQ</p>
-<p><a class="link" href="https://github.com/SYuan03/llm4db">https://github.com/SYuan03/llm4db <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p>官网</p>
-<ol>
-<li><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/">https://python.langchain.com/v0.1/docs/use_cases/sql/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-<li><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/quickstart/">https://python.langchain.com/v0.1/docs/use_cases/sql/quickstart/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></li>
-</ol>
-<p>DashScope（阿里云）API</p>
-<p><a class="link" href="https://dashscope.console.aliyun.com/dashboard">https://dashscope.console.aliyun.com/dashboard <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<blockquote>
-<p>好多地方都用了gpt-3.5-turbo的模型，4o又太贵，所以体验下Qwen的模型，体验额度还挺大的</p>
-</blockquote>
-<h2 id="Process"><a href="#Process" class="headerlink" title="Process"></a>Process</h2><p>以下记录几个问题点</p>
-<h3 id="处理密码特殊字符"><a href="#处理密码特殊字符" class="headerlink" title="处理密码特殊字符"></a>处理密码特殊字符</h3><p>这步有点气人咳咳</p>
-<p>了解到密码中含有@等特殊词汇需要使用</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote_plus</span><br></pre></td></tr></table></figure></div>
-
-<p>然后用了发现还是连不上，OK排查了一番后发现填成服务器密码了QAQ</p>
-<p>改了之后终于连好了</p>
-<img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/image-20240609213451239.png" alt="image-20240609213451239" style="zoom:50%;"> 
-
-<h3 id="StrOutputParser"><a href="#StrOutputParser" class="headerlink" title="StrOutputParser"></a>StrOutputParser</h3><p>OutputParser that parses LLMResult into the top likely <strong>string</strong>.</p>
-<p>Create a new model by parsing and validating input data from keyword arguments.</p>
-<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
-<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line">db = SQLDatabase.from_uri(uri)</span><br><span class="line"></span><br><span class="line">llm = Tongyi(model=<span class="string">&#x27;qwen-max-1201&#x27;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义回答问题的模板，把前面的问题、查询和结果传给LLM，然后解析输出</span></span><br><span class="line">answer_prompt = PromptTemplate.from_template(</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    根据以下用户问题、对应的SQL查询以及SQL查询结果，回答用户的问题。</span></span><br><span class="line"><span class="string">    问题: &#123;question&#125;</span></span><br><span class="line"><span class="string">    SQL 查询: &#123;query&#125;</span></span><br><span class="line"><span class="string">    SQL 查询结果: &#123;result&#125;</span></span><br><span class="line"><span class="string">    答案:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 创建SQL查询链</span></span><br><span class="line">write_query = create_sql_query_chain(llm, db)</span><br><span class="line"><span class="comment"># 创建SQL查询工具</span></span><br><span class="line">execute_query = QuerySQLDataBaseTool(db=db)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义链再传给LLM，然后使用StrOutputParser解析输出</span></span><br><span class="line">answer = answer_prompt | llm | StrOutputParser()</span><br><span class="line">chain = (</span><br><span class="line">        RunnablePassthrough.assign(query=write_query).assign(</span><br><span class="line">            result=itemgetter(<span class="string">&quot;query&quot;</span>) | execute_query</span><br><span class="line">        )</span><br><span class="line">        | answer</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">res = chain.invoke(&#123;<span class="string">&quot;question&quot;</span>: <span class="string">&quot;一共有多少仓库？有多少trending？&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure></div>
-
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">There are 703 repositories.</span><br></pre></td></tr></table></figure></div>
-
-
-
-<p>Cool，验证下</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/image-20240609215501808.png" alt="image-20240609215501808"></p>
-<p>想看下用了多少token的，结果好像数据没刷新</p>
-<h2 id="NextSteps"><a href="#NextSteps" class="headerlink" title="NextSteps"></a>NextSteps</h2><p>只试了下few shot</p>
-<h3 id="Prompting-strategies"><a href="#Prompting-strategies" class="headerlink" title="Prompting strategies"></a>Prompting strategies</h3><p><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/">https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>看了下可以把表结构也一起传下，增强一下，加点描述之类的</p>
-<h3 id="Few-shot-examples"><a href="#Few-shot-examples" class="headerlink" title="Few-shot examples"></a>Few-shot examples</h3><p><a class="link" href="https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/#few-shot-examples">https://python.langchain.com/v0.1/docs/use_cases/sql/prompting/#few-shot-examples <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>还可以搞点few shot</p>
-<h2 id="补充：StreamForHttps"><a href="#补充：StreamForHttps" class="headerlink" title="补充：StreamForHttps"></a>补充：StreamForHttps</h2><p>部署接口在服务器上的时候发现</p>
-<p><a class="link" href="http://ip:8000/dbchat/stream%E8%83%BD%E6%AD%A3%E5%B8%B8%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94">http://ip:8000/dbchat/stream能正常流式响应 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>但是经过nginx反向代理的https的<a class="link" href="https://ip:8001/dbchat/stream%E6%B2%A1%E6%B3%95%E6%AD%A3%E5%B8%B8%E6%B5%81%E5%BC%8F%E5%93%8D%E5%BA%94%EF%BC%8C%E7%9B%B4%E6%8E%A5~~%E4%BE%9D%E5%A4%A7%E6%89%98~~%E5%87%BA%E6%9D%A5">https://ip:8001/dbchat/stream没法正常流式响应，直接~~依大托~~出来 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>之前的nginx配置如下</p>
-<div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8001</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> &lt;ip&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/certificate.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/private.key;</span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /etc/nginx/ssl/ca_bundle.crt;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> <span class="string">&quot;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8000;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>关闭缓存后修改如下</p>
-<div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8001</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> &lt;ip&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/certificate.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/private.key;</span><br><span class="line">    <span class="attribute">ssl_trusted_certificate</span> /etc/nginx/ssl/ca_bundle.crt;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> <span class="string">&quot;EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> /stream &#123;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:8000/stream;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">proxy_buffering</span> <span class="literal">off</span>;  <span class="comment"># 关键配置，确保禁用代理缓冲</span></span><br><span class="line">        <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">chunked_transfer_encoding</span> <span class="literal">on</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>发现解决了问题</p>
-<h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>Paying tribute to the legendary software engineering warrior ——<a href="https://github.com/SEBugMaker"><strong>SEBugMaker</strong></a>！</p>
-<p>And <a href="https://github.com/SYuan03"><strong>SYuan03</strong></a> as well. (Ahem, paying tribute to oneself might seem a bit odd)</p>
-]]></content>
-      <categories>
-        <category>实践记录</category>
-        <category>2024-Spring-软工三</category>
-      </categories>
-      <tags>
-        <tag>Langchain</tag>
-        <tag>急急国王系列</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《天空之城》观感</title>
     <url>/posts/%E8%A7%82%E5%BD%B1%E8%AE%B0%E5%BD%95/%E3%80%8A%E5%A4%A9%E7%A9%BA%E4%B9%8B%E5%9F%8E%E3%80%8B%E8%A7%82%E6%84%9F.html</url>
     <content><![CDATA[<h3 id="啥时候看的？"><a href="#啥时候看的？" class="headerlink" title="啥时候看的？"></a>啥时候看的？</h3><p>应该是2022年9月23号（应该是礼拜四）和24号看的了，23号开始看的晚了，就没看完。至于为啥会看，因为当时发现每天看短视频的时间有点长，与其越刷越造成所谓信息茧房的困境，不如抽点时间看部电影。所以就去找了这部电影看看。</p>
@@ -297,96 +387,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ZeroSSL-域名SSL配置说明</title>
-    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/zerossl-%E5%9F%9F%E5%90%8Dssl%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E.html</url>
-    <content><![CDATA[<blockquote>
-<p>待完善，先记录下，好不容易理清楚我干了什么</p>
-</blockquote>
-<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>收到了ZeroSSL证书即将过期的通知</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/zerossl-%E5%9F%9F%E5%90%8Dssl%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/image-20240613164048436.png" alt="image-20240613164048436"></p>
-<p>于是不得不回顾下当时搞了啥</p>
-<h2 id="流水线配置"><a href="#流水线配置" class="headerlink" title="流水线配置"></a>流水线配置</h2><p>先看下流水线干了啥</p>
-<div class="highlight-container" data-rel="Yml"><figure class="iseeu highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">variables:</span></span><br><span class="line">  <span class="attr">VITE_API_URL:</span> <span class="string">&quot;https://49.235.142.226:8701/api&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">stages:</span> <span class="comment"># List of stages for jobs, and their order of execution</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">docker-build-job:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">--build-arg</span> <span class="string">VITE_API_URL=&quot;$VITE_API_URL&quot;</span> <span class="string">-t</span> <span class="string">front:latest</span> <span class="string">-f</span> <span class="string">INeedGithub/Dockerfile</span> <span class="string">INeedGithub</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span> <span class="string">save</span> <span class="string">-o</span> <span class="string">front.tar</span> <span class="string">front:latest</span></span><br><span class="line">  <span class="attr">artifacts:</span></span><br><span class="line">    <span class="attr">untracked:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attr">unit-test-job-data-center:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Running unit tests for data-center... This will take about 10 seconds.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">lint-test-job:</span> <span class="comment"># This job also runs in the test stage.</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span> <span class="comment"># It can run at the same time as unit-test-job (in parallel).</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;Linting code... This will take about 10 seconds.&quot;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sleep</span> <span class="number">1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&quot;No lint issues found.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy-job:</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">production</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">scp</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">front.tar</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;:~</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">ssh</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;</span> <span class="string">&#x27;docker container rm -f front-v2; docker load -i front.tar; docker run -d --name front-v2 -p 8700:80 -p 8701:443 -v /usr/share/mynginxconf/certificate.crt:/etc/nginx/ssl/your_domain.crt -v /usr/share/mynginxconf/private.key:/etc/nginx/ssl/your_domain.key front:latest /bin/bash -c &quot;nginx; tail -f /dev/null&quot;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>主要是</p>
-<div class="highlight-container" data-rel="Yml"><figure class="iseeu highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy-job:</span></span><br><span class="line">  <span class="attr">tags:</span> [ <span class="string">nancy</span> ]</span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">production</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">scp</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">front.tar</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;:~</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">sshpass</span> <span class="string">-p</span> <span class="string">&quot;$APP_SERVER_PWD&quot;</span> <span class="string">ssh</span> <span class="string">-o</span> <span class="string">StrictHostKeyChecking=no</span> <span class="string">ubuntu@&quot;$APP_SERVER_IP&quot;</span> <span class="string">&#x27;docker container rm -f front-v2; docker load -i front.tar; docker run -d --name front-v2 -p 8700:80 -p 8701:443 -v /usr/share/mynginxconf/certificate.crt:/etc/nginx/ssl/your_domain.crt -v /usr/share/mynginxconf/private.key:/etc/nginx/ssl/your_domain.key front:latest /bin/bash -c &quot;nginx; tail -f /dev/null&quot;&#x27;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>这部分涉及我当时docker都搞了些啥，OK</p>
-<ol>
-<li>将docker内的80和443分别映射到了服务器的8700和8701</li>
-<li>配置文件从本机&#x2F;usr&#x2F;share&#x2F;mynginxconf&#x2F;certificate.crt和&#x2F;usr&#x2F;share&#x2F;mynginxconf&#x2F;private.key映射过去</li>
-</ol>
-<h2 id="前端容器内的nginx-conf"><a href="#前端容器内的nginx-conf" class="headerlink" title="前端容器内的nginx.conf"></a>前端容器内的nginx.conf</h2><div class="highlight-container" data-rel="Nginx"><figure class="iseeu highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">user</span> nginx;</span><br><span class="line"><span class="attribute">worker_processes</span> <span class="number">1</span>;</span><br><span class="line"><span class="attribute">error_log</span> /var/log/nginx/<span class="literal">error</span>.log <span class="literal">warn</span>;</span><br><span class="line"><span class="attribute">pid</span> /var/run/nginx.pid;</span><br><span class="line"></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span> <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="attribute">include</span> /etc/nginx/mime.types;</span><br><span class="line">    <span class="attribute">default_type</span> application/octet-stream;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">log_format</span> main <span class="string">&#x27;<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] &quot;<span class="variable">$request</span>&quot; &#x27;</span></span><br><span class="line">    <span class="string">&#x27;<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> &quot;<span class="variable">$http_referer</span>&quot; &#x27;</span></span><br><span class="line">    <span class="string">&#x27;&quot;<span class="variable">$http_user_agent</span>&quot; &quot;<span class="variable">$http_x_forwarded_for</span>&quot;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">access_log</span> /var/log/nginx/access.log main;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">sendfile</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">keepalive_timeout</span> <span class="number">65</span>;</span><br><span class="line">    <span class="attribute">client_max_body_size</span> <span class="number">100m</span>;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span> /app;</span><br><span class="line">            <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /api/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://&lt;后端服务器ip&gt;:8080/;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">error_page</span> <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span> /50x.html;</span><br><span class="line">        <span class="section">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span> /usr/share/nginx/html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/your_domain.crt;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/your_domain.key;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span> /app;</span><br><span class="line">            <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ /index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> /api/ &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://&lt;后端服务器ip&gt;:8080/;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">            <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">error_page</span> <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span> /50x.html;</span><br><span class="line">        <span class="section">location</span> = /50x.html &#123;</span><br><span class="line">            <span class="attribute">root</span> /usr/share/nginx/html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h2 id="renew过程"><a href="#renew过程" class="headerlink" title="renew过程"></a>renew过程</h2><p>To Be Co</p>
-]]></content>
-      <categories>
-        <category>实践记录</category>
-      </categories>
-      <tags>
-        <tag>服务器</tag>
-        <tag>SSL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>copilot个人使用记录</title>
-    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/copilot%E4%B8%AA%E4%BA%BA%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95.html</url>
-    <content><![CDATA[
-<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="111df20b6e47a0327967deb3e98a098c696ff5bd4edd6ce2b58208892f0c1135">859c29499e97b37e25280a7293bbe1870fb0069f4e3c381cf2cff805e582fe31739e43321907583e506a19e6bebc888be69aaa2dfddf0128fdcfde64df953addeb033c04706eb3c58ffb92b873c9d825f7ce13bf5c060c1a6badea3234709abc6c6ba915ffb256f806eecc99a1961c4151174377c8227bd1c9cf3564127cd5a79dc59bece0fd2b3bb43e4633421c5c5429f327063203985a968951478654bb7fb1eb5011bca502a499b8862076c72a61dce3ac1d02489e38ab88d863f1e922ebef5c6c1636eee5b1433a0d070091b9567a2403f78c998a61df0f05b4c15a3a7a3dbc4bdb39d15852c467b9a7016ee8b8518b77ba9f8a2361eb6de95ddee4628038e5cd330b1684e3d7896e1bdedb4457d4f38f29e07dd7748108bf357e8258eb7d6d9c9ddd7b13afaeaca5b8b9c7234e72e045c1fc7314e61b6deaa8795edd3ada7c9ba3ca60df905a39b4aff7789b408d4e287d8a53690b689218610c0d584eba665c6bb4aae5c28333023612c31dac194bd0408ce82491f65e5e94833441d9fb55acc8be5929517ab0c15871face1c96197fc93ee753760e0fb16421500b514a5c4779af2a53824c34898e843c140a4d5eb8e7d11e38dde7a2bab9828c612a1cf66b0d95f7750fdc75a064cad52c074db982212f07f7a54abd9d7e5a2a0ae24d394b05dbbd92322bc8e9504d67b97e85ef8bfff47a1614538d9a1af6ba7dfa61e6765fb228c5285171446b55f8290f4fa68605a10519c9a8df2d2a33ad287ab92c08b840d3a9eca85f4c49e36e720bd1fbf1771ffd4c6a13dd04c4a79985dbe9585114abd673a085ba1c44e45221a41ab5eea8c839d77d78ff7a24f3c20e93267dec17c5b225bc99683e5157b689cb8d48b296dd04415a5db203a07055ac5238d622223e0f40adb3c9d7eedafad06fe775e66fd81da529f1a2b4d36fc4e2e74e807272f5b817cc756f564cf6f181d73a1f62bf30dd7a38e0b531eb96d0e643ad5390396bc302a1120e5f8f1287b7999c722713938f50ab3e243ca110d2973e2d1e8f3370d105561acec5921a014f6e2919b4f66caa45cd13ffeadf842cb963457e258bcac42efc42c62bed447d4280c9067a225a1fff31c0c42560d68245845a620789778f26b84bf5bf4e6c68b459b7897a568a7994420a6122b48d5ae3f9a13e63f8ac2df437bde0bcbf95a4975f9436d2d1e52bef47d6923edc6d600e984350af92e718eb70ca91dfd79c67e34cf8fa67e9d29777b3c4ca9b13a12393550ba26560a2b743ee1466a5081af3218bfa9597a8d08e8b3915ca33e0a37d3f47ee5b1d51a35e75d7aded42d3ae3ea26194db3d763c35f5e8f2b9dd97b273c859393abf3d29e7027555de70f28caee079ab834868a1f74b23d77c8d70d2bd312942c6add54923301cd5aa7dd0ef0ddb22d1e22feab89b97b25773a3e270bc266b00c64b06961c20dfe5e54dafcf90181d271c8241a7600bbfe07ea3d1ae11d5ca4325fbe912c7449afcf246fe9bf59310cd6338860795935d1ddde7d897cc56c6869184b1b727335826b65a6da5b91add31abf50791dad7e61924f75760ac90ed3abf33ddaf65816c0fe9cee88b3dd2f241178d8a11f3a0887866ef10a3efb14c99d42c361f95492f832348650b6dd74b47e893e97f7794b9d3cce429749e43af0c7035d9dcc31636bbe5c2c98e387449dc69a0c2a1c41fa5dc5a4e6f636c8086a17e2141b4be6697852269360be7ac85e868d167b58e77d50cdec4acfef909e19ef5164ad8e5b60d8a752acae0540f8507ae99a5955cc5231a002aaa5c1eeef1ac804712e49a03af0630047f75c6e332e022299c4d8e8f925eee548f40ca824312df11ab8834627952c1c2ab88a35d73ba7cec7545d05ed8f372293eb4a195fc97c78081fc3da18686fa138f1cd666d198843af23c9c90517b0b275f1e98bf071eb3a2e3b1dc9075a821cdeef96ea9e62278f9e9f09931a717ce032b9b0cebf05bb3338e8b845cffc1a36751a06939bda2473c342e57cc41acba3e68d3e5a2f1b28c9867913b5540b782dfa69597f5184d9b94d119a1f38bbff37117865b3b67de20c689e822564be941fc5b9dc1a3325f4ed9e94af847a3268daf1789dd08d521073112049ed8bd1ffa4221571aced12cbd58c3474b2bbe65edc0ed35c17c8d1aecab450e88df164e7f6ad8d9b56f4d1d19986fda185e52bd6aafdb8405890a546d2ca7e1e34e91d1b5c644c34d073e071369eca8b41fdefb54f19ea1105479d7f66947a7c13db7e67d10b2b4ef476c80373e580345654d27a34768926a2940d9657ae0066fd999406e9415ad91189e8daf1cef7b6e5471ca4dc85230c8ed6688a8ad407da9b87c91714cd01447a45d4ea5af0d45e344e4e3fce0c79114b55ec8f90e87a6f0fbff185002a94529e95cdd0edaa95d24946db92ef6bad487b96b2f4755ab86f5db760770287114dfbdeffe298c1c831108f355d4557fecf0e14ebaeca19df07c248518dc2baf9f1342a161072f35fe26c6a8ae0007af0febc66d4d74e0a6a009f86670403c107dc92eca4d28a9ad2dc66bfc208c939c313bdd97</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-swup-reload-script src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>实践记录</category>
-      </categories>
-      <tags>
-        <tag>摸鱼</tag>
-        <tag>猎奇</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>不知道花了多久但我就要说很快速的docker部署前后端项目</title>
-    <url>/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE.html</url>
-    <content><![CDATA[<blockquote>
-<p>首先感谢LLM4SE小组的所有成员的付出！</p>
-</blockquote>
-<h2 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h2><h3 id="扔到github仓库"><a href="#扔到github仓库" class="headerlink" title="扔到github仓库"></a>扔到github仓库</h3><p>主要是原先不在github上</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240416234307784.png" alt="image-20240416234307784"></p>
-<h3 id="前端该点东西you-know-what"><a href="#前端该点东西you-know-what" class="headerlink" title="前端该点东西you know what"></a>前端该点东西you know what</h3><p>诸如api_url之类的</p>
-<blockquote>
-<p>Tips</p>
-<p>其实可以用nginx反代把后端api隐藏</p>
-<p>但这里懒得搞了，可以参考我软工3的CI&#x2F;CD</p>
-<p><a class="link" href="https://git.nju.edu.cn/2024seiii-19-ineedoffer/frontend-nju2">frontend-nju2 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-</blockquote>
-<h3 id="邀请gpt4撰写一份前端的Dockerfile"><a href="#邀请gpt4撰写一份前端的Dockerfile" class="headerlink" title="邀请gpt4撰写一份前端的Dockerfile"></a>邀请gpt4撰写一份前端的Dockerfile</h3><p>本地跑了下18能跑</p>
-<div class="highlight-container" data-rel="Dockerfile"><figure class="iseeu highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用官方的 Node.js 18 镜像作为基础镜像</span></span><br><span class="line"><span class="keyword">FROM</span> node:<span class="number">18</span> AS build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置工作目录</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /usr/src/app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制 package.json 和 package-lock.json 到工作目录</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> package*.json ./</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装项目依赖</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> npm install</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制项目文件到工作目录</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建项目</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> npm run build</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 nginx 镜像作为基础镜像</span></span><br><span class="line"><span class="keyword">FROM</span> nginx:stable-alpine</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 vim</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apk add vim</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将构建产物复制到 nginx 的网页目录</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=build /usr/src/app/dist /usr/share/nginx/html</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对外暴露 80 端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 nginx</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;nginx&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;daemon off;&quot;</span>]</span></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="（可选）自定义nginx-conf"><a href="#（可选）自定义nginx-conf" class="headerlink" title="（可选）自定义nginx.conf"></a>（可选）自定义nginx.conf</h3><p>可以把自己的nginx.conf复制到容器内运行</p>
-<h3 id="打包运行"><a href="#打包运行" class="headerlink" title="打包运行"></a>打包运行</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t llm4se_frontend:1.0 .</span><br><span class="line">docker run -p 7001:80 -d llm4se_frontend:1.0</span><br></pre></td></tr></table></figure></div>
-
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240417003432802.png" alt="image-20240417003432802"></p>
-<p>打包打了117.3秒</p>
-<h3 id="（必选）域名配置"><a href="#（必选）域名配置" class="headerlink" title="（必选）域名配置"></a>（<del>必选</del>）域名配置</h3><p>改下服务器上的nginx配置就行（注意不是容器内部的那个）</p>
-<p>ip+端口先测下成功没<strong>（似乎比我本地npm run dev之后第一次访问快多了</strong></p>
-<p>配域名A记录</p>
-]]></content>
-      <categories>
-        <category>实践记录</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Commit规范学习记录</title>
     <url>/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/commit%E8%A7%84%E8%8C%83%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html</url>
     <content><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a class="link" href="https://www.conventionalcommits.org/zh-hans/v1.0.0/#%e7%ba%a6%e5%ae%9a%e5%bc%8f%e6%8f%90%e4%ba%a4%e8%a7%84%e8%8c%83">https://www.conventionalcommits.org/zh-hans/v1.0.0/#%e7%ba%a6%e5%ae%9a%e5%bc%8f%e6%8f%90%e4%ba%a4%e8%a7%84%e8%8c%83 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
@@ -405,6 +405,64 @@
       </categories>
       <tags>
         <tag>规范学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>24-Spring-数据库开发期末复习</title>
+    <url>/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0.html</url>
+    <content><![CDATA[<blockquote>
+<p>24 Spring 数据库开发期末复习 </p>
+<p>ChrisDing1105 version1.1</p>
+<p>Salute to the Legendary Software Workers <a class="link" href="https://github.com/SEBugMaker">SEBugMaker <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> <a class="link" href="https://github.com/ZUOHS">ZUOHS <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>文字版复习录音转写：<a class="link" href="https://d412hlgjpp.feishu.cn/docx/YsHfdpdljomhApx3kOlcutVQnRf?from=from_copylink">https://d412hlgjpp.feishu.cn/docx/YsHfdpdljomhApx3kOlcutVQnRf?from=from_copylink <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h2 id="1-题型"><a href="#1-题型" class="headerlink" title="1. 题型"></a>1. 题型</h2><h3 id="1-1-难点：三道SQL"><a href="#1-1-难点：三道SQL" class="headerlink" title="1.1. 难点：三道SQL"></a>1.1. 难点：三道SQL</h3><h4 id="1-1-1-时间、字符串、数值三选二"><a href="#1-1-1-时间、字符串、数值三选二" class="headerlink" title="1.1.1. 时间、字符串、数值三选二"></a>1.1.1. 时间、字符串、数值三选二</h4><p>代码行数不会超过15-20</p>
+<p>关键是要记得常见的函数:replace等</p>
+<p>数值要考虑空值(平均值) COALESCE 中位数、众数不考</p>
+<p>日期要知道使用索引有三种写法(前一天后一天范围怎么写、算日期之间的差 practice on class7.7)</p>
+<p>标注用的mysql还是oracle</p>
+<h4 id="1-1-2-会考一个递归-withas-树状结构自顶向下查询"><a href="#1-1-2-会考一个递归-withas-树状结构自顶向下查询" class="headerlink" title="1.1.2. 会考一个递归(withas) 树状结构自顶向下查询"></a>1.1.2. 会考一个递归(withas) 树状结构自顶向下查询</h4><p>起始体，union all，递归体，合并成一个视图的形式，最后写一句sql</p>
+<h4 id="1-1-3-有一道可能会使用外连接"><a href="#1-1-3-有一道可能会使用外连接" class="headerlink" title="1.1.3. 有一道可能会使用外连接"></a>1.1.3. 有一道可能会使用外连接</h4><p>会把外连接和那几个sql的计算变量融在一起</p>
+<p>结构合理、关键字合理，函数用对都有分，细节对了全分</p>
+<p>实在不会就写select from，不要空</p>
+<h3 id="1-2-索引结构一定会考"><a href="#1-2-索引结构一定会考" class="headerlink" title="1.2. 索引结构一定会考"></a>1.2. 索引结构一定会考</h3><p>n n+1个link</p>
+<p>B树？对枝叶节点插入，如果满了会造成分裂，删除可能造成合并 在叶节点和内部节点不一样，是什么逻辑，怎么影响上面的节点(那两张图)</p>
+<p>讲过例子，看下PPT</p>
+<h3 id="1-3-日志"><a href="#1-3-日志" class="headerlink" title="1.3. 日志"></a>1.3. 日志</h3><p>redo undo 怎么完成、区别，怎么实现(物理组织的PPT里写清楚了)</p>
+<h3 id="1-4-分区分表分库"><a href="#1-4-分区分表分库" class="headerlink" title="1.4. 分区分表分库"></a>1.4. 分区分表分库</h3><p>也是在物理组织部分</p>
+<p>原因是什么，能够解决什么问题，会遇到什么问题（又怎么解决）</p>
+<h3 id="1-5-SQL解释器：基于成本和基于规则"><a href="#1-5-SQL解释器：基于成本和基于规则" class="headerlink" title="1.5. SQL解释器：基于成本和基于规则"></a>1.5. SQL解释器：基于成本和基于规则</h3><p>可能会考一个，关于SQL基于成本呢解释器的成本计算，成本优化？</p>
+<p>（知道sql优化的基本逻辑）怎么计算优化路径的成本呢</p>
+<p>等价变化，算出多个路径，估算每个路径的成本，哪些估算哪些是实际的，，有什么问题，为什么要改写sql</p>
+<h3 id="1-6-送分题"><a href="#1-6-送分题" class="headerlink" title="1.6. 送分题?"></a>1.6. 送分题?</h3><p>可能还会再出一道题，自己思考，有什么建议和想法，纯粹的主观题</p>
+<blockquote>
+<p>以下为复习部分</p>
+</blockquote>
+<h2 id="2-SQL"><a href="#2-SQL" class="headerlink" title="2. SQL"></a>2. SQL</h2><h3 id="2-1-聚合函数"><a href="#2-1-聚合函数" class="headerlink" title="2.1. 聚合函数"></a>2.1. 聚合函数</h3><p>注意：当使用聚合函数（如 MAX, SUM, AVG 等）时，所有非聚合字段必须出现在 GROUP BY ⼦句中。否则，SQL 引擎无法确定如何处理这些字段。</p>
+<p>Select后面接的结果集字段只有两种</p>
+<ul>
+<li>要么是group by出现的字段</li>
+<li>要么是group by后出现的字段+聚合函数的组合</li>
+</ul>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616154704762.png" alt="image-20240616154704762"></p>
+<blockquote>
+<p>但实际运行好像无论MySQL5.7还是8.0也能选没group的</p>
+</blockquote>
+<h3 id="2-2-NULL如何成组"><a href="#2-2-NULL如何成组" class="headerlink" title="2.2. NULL如何成组?"></a>2.2. NULL如何成组?</h3><p>利用coalesce函数</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616155109877.png" alt="image-20240616155109877"></p>
+<h3 id="2-3-coalesce函数"><a href="#2-3-coalesce函数" class="headerlink" title="2.3. coalesce函数"></a>2.3. coalesce函数</h3><p><code>COALESCE</code> 是 SQL 中的一个函数，它的作用是返回第一个非空表达式的结果。如果所有的表达式都是空（NULL），则 <code>COALESCE</code> 函数返回 NULL。这个函数常用于处理可能为 NULL 的数据列，确保查询结果中不会出现 NULL 值，而是使用一个默认的值。</p>
+<p>语法：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="built_in">COALESCE</span>(expression1, expression2, ..., expressionN)</span><br></pre></td></tr></table></figure></div>
+
+<p>参数：</p>
+<p><code>expression1, expression2, ..., expressionN</code>：可以是列名或值，<code>COALESCE</code> 会从左到右检查这些表达式，返回第一个非 NULL 的结果。</p>
+<h3 id="2-4-字符串"><a href="#2-4-字符串" class="headerlink" title="2.4. 字符串"></a>2.4. 字符串</h3>]]></content>
+      <categories>
+        <category>期末复习</category>
+        <category>数据库开发</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
@@ -432,61 +490,96 @@
       </tags>
   </entry>
   <entry>
-    <title>24-Spring-数据库开发期末复习</title>
-    <url>/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0.html</url>
-    <content><![CDATA[<blockquote>
-<p>24 Spring 数据库开发期末复习 </p>
-<p>ChrisDing1105 version1.1</p>
-<p>Salute to the Legendary Software Workers <a class="link" href="https://github.com/SEBugMaker">SEBugMaker <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> <a class="link" href="https://github.com/ZUOHS">ZUOHS <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>文字版复习录音转写：<a class="link" href="https://d412hlgjpp.feishu.cn/docx/YsHfdpdljomhApx3kOlcutVQnRf?from=from_copylink">https://d412hlgjpp.feishu.cn/docx/YsHfdpdljomhApx3kOlcutVQnRf?from=from_copylink <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-</blockquote>
-<h2 id="题型"><a href="#题型" class="headerlink" title="题型"></a>题型</h2><h3 id="难点：三道SQL"><a href="#难点：三道SQL" class="headerlink" title="难点：三道SQL"></a>难点：三道SQL</h3><h4 id="时间、字符串、数值三选二"><a href="#时间、字符串、数值三选二" class="headerlink" title="时间、字符串、数值三选二"></a>时间、字符串、数值三选二</h4><p>代码行数不会超过15-20</p>
-<p>关键是要记得常见的函数:replace等</p>
-<p>数值要考虑空值(平均值) COALESCE 中位数、众数不考</p>
-<p>日期要知道使用索引有三种写法(前一天后一天范围怎么写、算日期之间的差 practice on class7.7)</p>
-<p>标注用的mysql还是oracle</p>
-<h4 id="会考一个递归-withas-树状结构自顶向下查询"><a href="#会考一个递归-withas-树状结构自顶向下查询" class="headerlink" title="会考一个递归(withas) 树状结构自顶向下查询"></a>会考一个递归(withas) 树状结构自顶向下查询</h4><p>起始体，union all，递归体，合并成一个视图的形式，最后写一句sql</p>
-<h4 id="有一道可能会使用外连接"><a href="#有一道可能会使用外连接" class="headerlink" title="有一道可能会使用外连接"></a>有一道可能会使用外连接</h4><p>会把外连接和那几个sql的计算变量融在一起</p>
-<p>结构合理、关键字合理，函数用对都有分，细节对了全分</p>
-<p>实在不会就写select from，不要空</p>
-<h3 id="索引结构一定会考"><a href="#索引结构一定会考" class="headerlink" title="索引结构一定会考"></a>索引结构一定会考</h3><p>n n+1个link</p>
-<p>B树？对枝叶节点插入，如果满了会造成分裂，删除可能造成合并 在叶节点和内部节点不一样，是什么逻辑，怎么影响上面的节点(那两张图)</p>
-<p>讲过例子，看下PPT</p>
-<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><p>redo undo 怎么完成、区别，怎么实现(物理组织的PPT里写清楚了)</p>
-<h3 id="分区分表分库"><a href="#分区分表分库" class="headerlink" title="分区分表分库"></a>分区分表分库</h3><p>也是在物理组织部分</p>
-<p>原因是什么，能够解决什么问题，会遇到什么问题（又怎么解决）</p>
-<h3 id="SQL解释器：基于成本和基于规则"><a href="#SQL解释器：基于成本和基于规则" class="headerlink" title="SQL解释器：基于成本和基于规则"></a>SQL解释器：基于成本和基于规则</h3><p>可能会考一个，关于SQL基于成本呢解释器的成本计算，成本优化？</p>
-<p>（知道sql优化的基本逻辑）怎么计算优化路径的成本呢</p>
-<p>等价变化，算出多个路径，估算每个路径的成本，哪些估算哪些是实际的，，有什么问题，为什么要改写sql</p>
-<h3 id="送分题"><a href="#送分题" class="headerlink" title="送分题?"></a>送分题?</h3><p>可能还会再出一道题，自己思考，有什么建议和想法，纯粹的主观题</p>
-<blockquote>
-<p>以下为复习部分</p>
-</blockquote>
-<h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><h3 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h3><p>注意：当使用聚合函数（如 MAX, SUM, AVG 等）时，所有非聚合字段必须出现在 GROUP BY ⼦句中。否则，SQL 引擎⽆法确定如何处理这些字段。</p>
-<p>Select后面接的结果集字段只有两种</p>
-<ul>
-<li>要么是group by出现的字段</li>
-<li>要么是group by后出现的字段+聚合函数的组合</li>
-</ul>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616154704762.png" alt="image-20240616154704762"></p>
-<blockquote>
-<p>但实际运行好像无论MySQL5.7还是8.0也能选没group的</p>
-</blockquote>
-<h3 id="NULL如何成组"><a href="#NULL如何成组" class="headerlink" title="NULL如何成组?"></a>NULL如何成组?</h3><p>利用coalesce函数</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616155109877.png" alt="image-20240616155109877"></p>
-<h3 id="coalesce函数"><a href="#coalesce函数" class="headerlink" title="coalesce函数"></a>coalesce函数</h3><p><code>COALESCE</code> 是 SQL 中的一个函数，它的作用是返回第一个非空表达式的结果。如果所有的表达式都是空（NULL），则 <code>COALESCE</code> 函数返回 NULL。这个函数常用于处理可能为 NULL 的数据列，确保查询结果中不会出现 NULL 值，而是使用一个默认的值。</p>
-<p>语法：</p>
-<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="built_in">COALESCE</span>(expression1, expression2, ..., expressionN)</span><br></pre></td></tr></table></figure></div>
-
-<p>参数：</p>
-<p><code>expression1, expression2, ..., expressionN</code>：可以是列名或值，<code>COALESCE</code> 会从左到右检查这些表达式，返回第一个非 NULL 的结果。</p>
+    <title>周处除三害</title>
+    <url>/posts/%E8%A7%82%E5%BD%B1%E8%AE%B0%E5%BD%95/%E5%91%A8%E5%A4%84%E9%99%A4%E4%B8%89%E5%AE%B3.html</url>
+    <content><![CDATA[<h2 id="观看之前"><a href="#观看之前" class="headerlink" title="观看之前"></a>观看之前</h2><p>难得花钱看流媒体上有的电影，在Netflix观感还是不错的（除了字幕大的有点哈人</p>
+<p>6块钱一个月还算值，可惜我只看了一部ww</p>
+<h2 id="电影内容"><a href="#电影内容" class="headerlink" title="电影内容"></a>电影内容</h2><p>一开始看到电影名都震惊我了，因为我以为这故事仅限于在宜兴流传hh</p>
 ]]></content>
       <categories>
-        <category>期末复习</category>
-        <category>数据库开发</category>
+        <category>观影记录</category>
       </categories>
       <tags>
-        <tag>数据库</tag>
+        <tag>电影</tag>
+        <tag>生活</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>工厂模式内容补充理解</title>
+    <url>/posts/%E8%BD%AF%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E5%86%85%E5%AE%B9%E8%A1%A5%E5%85%85%E7%90%86%E8%A7%A3.html</url>
+    <content><![CDATA[<h2 id="简单工厂模式的扩展"><a href="#简单工厂模式的扩展" class="headerlink" title="简单工厂模式的扩展"></a>简单工厂模式的扩展</h2><p><strong>Q</strong></p>
+<ol>
+<li>简单工厂模式的简化：在有些情况下工厂类可以由抽象产品角色扮演，一个抽象产品类同时也是子类的工厂，也就是说把静态工厂方法写到抽象产品类中。</li>
+<li>有些情况下，产品本身只提供一两个方法，此时抽象产品可以和简单工厂进行角色合并。<br>啥意思？举个例子，没理解</li>
+</ol>
+<p>这两段话描述的是简单工厂模式的一种变体，也就是说在一些特定的情况下，简单工厂模式的结构可以进一步简化。具体来说，就是将工厂方法放入抽象产品类中，让抽象产品类既扮演产品角色，也扮演工厂角色。这种做法通常适用于产品类结构简单，功能相对单一的场景。下面通过一个例子来解释这个概念。</p>
+<p><strong>A</strong></p>
+<h3 id="示例：图形绘制"><a href="#示例：图形绘制" class="headerlink" title="示例：图形绘制"></a>示例：图形绘制</h3><p>假设我们有一个绘图应用，需要绘制不同类型的图形，如圆形、正方形等。每种图形都有自己特定的绘制方法。这里，图形（Shape）是一个抽象概念，具体的圆形（Circle）和正方形（Square）是具体的实现。</p>
+<h4 id="不使用简化的简单工厂模式"><a href="#不使用简化的简单工厂模式" class="headerlink" title="不使用简化的简单工厂模式"></a>不使用简化的简单工厂模式</h4><p>首先看传统的简单工厂模式实现：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 抽象产品类</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：圆形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a circle&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：正方形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Square</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a square&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 简单工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ShapeFactory</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> Shape <span class="title function_">getShape</span><span class="params">(String type)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;CIRCLE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Circle</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;SQUARE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Square</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="使用简化的简单工厂模式"><a href="#使用简化的简单工厂模式" class="headerlink" title="使用简化的简单工厂模式"></a>使用简化的简单工厂模式</h4><p>现在，按照你提到的简化，我们将工厂方法直接放入抽象产品类中：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 抽象产品类同时扮演工厂角色</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 静态工厂方法</span></span><br><span class="line">    <span class="keyword">static</span> Shape <span class="title function_">getShape</span><span class="params">(String type)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;CIRCLE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Circle</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;SQUARE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Square</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：圆形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a circle&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：正方形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Square</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a square&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>在这个简化后的模式中，<code>Shape</code> 类既定义了产品的接口（<code>draw</code> 方法），也提供了一个静态的工厂方法（<code>getShape</code> 方法）来根据类型创建具体的产品实例。这种做法简化了结构，减少了类的数量，特别适合那些产品类比较简单、数量不多的场景。这样，客户端只需要与<code>Shape</code>类交互即可获取具体的图形实例并调用其绘制方法，无需直接与具体的图形类或单独的工厂类交互，从而简化了客户端的使用复杂度。</p>
+<p><strong>Q</strong></p>
+<p>我有两个问题，那Square也会有getShape这个方法吗？那不是乱了吗？另外实体类可以调用静态方法吗？Shape是抽象类可以被实例化吗？</p>
+<p><strong>A</strong></p>
+<p>你提出的问题非常好，让我们逐一解答：</p>
+<ol>
+<li><strong><code>Square</code>类会有<code>getShape</code>这个方法吗？</strong></li>
+</ol>
+<p>在Java中（以及很多其他面向对象的编程语言中），静态方法属于类级别的方法，而不是实例级别的方法。当我们在抽象类中定义一个静态方法时，这个方法可以被类直接调用，而不是由类的实例调用。因此，虽然<code>Square</code>继承自<code>Shape</code>，它继承的是<code>Shape</code>的非静态行为和属性。静态方法<code>getShape</code>可以通过类名直接调用，如<code>Shape.getShape(&quot;CIRCLE&quot;)</code>，而不是通过一个<code>Shape</code>或<code>Square</code>的实例来调用。</p>
+<p>所以，从概念上讲，<code>Square</code>类并不会“拥有”<code>getShape</code>方法。<code>getShape</code>是属于<code>Shape</code>类的，尽管<code>Square</code>是<code>Shape</code>的一个子类。这并不会导致混乱，因为静态方法的调用总是明确指向它们所属的类。</p>
+<ol>
+<li><strong>实体类可以调用静态方法吗？</strong></li>
+</ol>
+<p>实体类（或者说任何类）可以调用静态方法，但调用方式与实例方法不同。静态方法通过类本身来调用，而不是通过类的实例。这意味着，即使你有一个<code>Shape</code>类的实例，你也应该使用类名来调用静态方法，比如<code>Shape.getShape(&quot;CIRCLE&quot;)</code>，而不是使用实例来调用。这是因为静态方法不依赖于类的任何特定实例。</p>
+<ol>
+<li><strong><code>Shape</code>是抽象类可以被实例化吗？</strong></li>
+</ol>
+<p>抽象类不能被直接实例化。抽象类的目的是为其他类提供一个共同的、被继承的类型框架，定义一些可以在多个子类中共享的方法和属性。你不能创建一个抽象类<code>Shape</code>的实例，但你可以创建它的子类（如<code>Circle</code>和<code>Square</code>）的实例，这些子类提供了抽象方法的具体实现。静态方法<code>getShape</code>提供了一种机制，允许你根据输入的参数类型创建并返回具体子类的实例，而无需直接实例化抽象类。</p>
+<p>简而言之，虽然<code>Shape</code>是一个抽象类且不能被实例化，但<code>Shape</code>类中的静态方法<code>getShape</code>提供了一种创建和返回<code>Shape</code>子类实例的方式，而这一切并不需要直接实例化抽象类<code>Shape</code>本身。</p>
+]]></content>
+      <categories>
+        <category>软件系统设计</category>
+      </categories>
+      <tags>
+        <tag>设计模式</tag>
+        <tag>工厂模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java反射机制</title>
+    <url>/posts/%E8%BD%AF%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html</url>
+    <content><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a class="link" href="https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/">https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="演示使用"><a href="#演示使用" class="headerlink" title="演示使用"></a>演示使用</h2><p>如何能利用反射机制来实现OCP</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214021.png"></p>
+<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214108.png"></p>
+<blockquote>
+<p>generated by GPT</p>
+</blockquote>
+<p>这里给出一个简化的例子以演示如何使用<code>config.xml</code>文件和反射来动态创建对象。假设我们有一个<code>Button</code>接口和两个实现了该接口的类：<code>RoundButton</code>和<code>SquareButton</code>。我们还有一个<code>ButtonHandler</code>接口和一个实现了该接口的类：<code>MyButtonHandler</code>。</p>
+<p>首先，我们定义<code>Button</code>接口和<code>ButtonHandler</code>接口：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后，我们定义<code>RoundButton</code>、<code>SquareButton</code>和<code>MyButtonHandler</code>：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RoundButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SquareButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SquareButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyButtonHandler</span> <span class="keyword">implements</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Button clicked!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>接下来，我们创建<code>config.xml</code>文件：</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>com.example.RoundButton<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span>&gt;</span>com.example.MyButtonHandler<span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>最后，我们使用Java的反射机制来读取<code>config.xml</code>文件并创建对象：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 解析XML文件（这里为了简化，我们假设已经获取到了type和handler）</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> <span class="string">&quot;com.example.RoundButton&quot;</span>;</span><br><span class="line">            <span class="type">String</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="string">&quot;com.example.MyButtonHandler&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建ButtonHandler对象</span></span><br><span class="line">            Class&lt;?&gt; handlerClass = Class.forName(handler);</span><br><span class="line">            <span class="type">ButtonHandler</span> <span class="variable">buttonHandler</span> <span class="operator">=</span> (ButtonHandler) handlerClass.getDeclaredConstructor().newInstance();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建Button对象</span></span><br><span class="line">            Class&lt;?&gt; buttonClass = Class.forName(type);</span><br><span class="line">            <span class="type">Button</span> <span class="variable">button</span> <span class="operator">=</span> (Button) buttonClass.getDeclaredConstructor(ButtonHandler.class).newInstance(buttonHandler);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 点击按钮</span></span><br><span class="line">            button.click();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>当你运行这个程序时，它会输出：”Button clicked!”。这就是我们通过读取<code>config.xml</code>文件和使用反射来动态创建<code>Button</code>和<code>ButtonHandler</code>对象的例子。</p>
+<p>注意：这个例子非常简化，实际的XML解析和错误处理会更复杂。此外，确保你的类路径（classpath）正确设置，以便Java可以找到你的类。</p>
+]]></content>
+      <categories>
+        <category>软件系统设计</category>
+      </categories>
+      <tags>
+        <tag>设计原则</tag>
       </tags>
   </entry>
   <entry>
@@ -640,21 +733,6 @@
       </tags>
   </entry>
   <entry>
-    <title>周处除三害</title>
-    <url>/posts/%E8%A7%82%E5%BD%B1%E8%AE%B0%E5%BD%95/%E5%91%A8%E5%A4%84%E9%99%A4%E4%B8%89%E5%AE%B3.html</url>
-    <content><![CDATA[<h2 id="观看之前"><a href="#观看之前" class="headerlink" title="观看之前"></a>观看之前</h2><p>难得花钱看流媒体上有的电影，在Netflix观感还是不错的（除了字幕大的有点哈人</p>
-<p>6块钱一个月还算值，可惜我只看了一部ww</p>
-<h2 id="电影内容"><a href="#电影内容" class="headerlink" title="电影内容"></a>电影内容</h2><p>一开始看到电影名都震惊我了，因为我以为这故事仅限于在宜兴流传hh</p>
-]]></content>
-      <categories>
-        <category>观影记录</category>
-      </categories>
-      <tags>
-        <tag>电影</tag>
-        <tag>生活</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LLM相关术语理解</title>
     <url>/posts/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/llm%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<blockquote>
@@ -693,81 +771,16 @@
       </tags>
   </entry>
   <entry>
-    <title>Java反射机制</title>
-    <url>/posts/%E8%BD%AF%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6.html</url>
-    <content><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a class="link" href="https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/">https://sunweiguo.github.io/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<h2 id="演示使用"><a href="#演示使用" class="headerlink" title="演示使用"></a>演示使用</h2><p>如何能利用反射机制来实现OCP</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214021.png"></p>
-<p><img lazyload src="/images/loading.svg" data-src="https://imgss.s3.bitiful.net/2024/03/19/20240319214108.png"></p>
-<blockquote>
-<p>generated by GPT</p>
-</blockquote>
-<p>这里给出一个简化的例子以演示如何使用<code>config.xml</code>文件和反射来动态创建对象。假设我们有一个<code>Button</code>接口和两个实现了该接口的类：<code>RoundButton</code>和<code>SquareButton</code>。我们还有一个<code>ButtonHandler</code>接口和一个实现了该接口的类：<code>MyButtonHandler</code>。</p>
-<p>首先，我们定义<code>Button</code>接口和<code>ButtonHandler</code>接口：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>然后，我们定义<code>RoundButton</code>、<code>SquareButton</code>和<code>MyButtonHandler</code>：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RoundButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SquareButton</span> <span class="keyword">implements</span> <span class="title class_">Button</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ButtonHandler handler;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SquareButton</span><span class="params">(ButtonHandler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.handler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">click</span><span class="params">()</span> &#123;</span><br><span class="line">        handler.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyButtonHandler</span> <span class="keyword">implements</span> <span class="title class_">ButtonHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Button clicked!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>接下来，我们创建<code>config.xml</code>文件：</p>
-<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>com.example.RoundButton<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">handler</span>&gt;</span>com.example.MyButtonHandler<span class="tag">&lt;/<span class="name">handler</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>最后，我们使用Java的反射机制来读取<code>config.xml</code>文件并创建对象：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 解析XML文件（这里为了简化，我们假设已经获取到了type和handler）</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> <span class="string">&quot;com.example.RoundButton&quot;</span>;</span><br><span class="line">            <span class="type">String</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="string">&quot;com.example.MyButtonHandler&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建ButtonHandler对象</span></span><br><span class="line">            Class&lt;?&gt; handlerClass = Class.forName(handler);</span><br><span class="line">            <span class="type">ButtonHandler</span> <span class="variable">buttonHandler</span> <span class="operator">=</span> (ButtonHandler) handlerClass.getDeclaredConstructor().newInstance();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 使用反射创建Button对象</span></span><br><span class="line">            Class&lt;?&gt; buttonClass = Class.forName(type);</span><br><span class="line">            <span class="type">Button</span> <span class="variable">button</span> <span class="operator">=</span> (Button) buttonClass.getDeclaredConstructor(ButtonHandler.class).newInstance(buttonHandler);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 点击按钮</span></span><br><span class="line">            button.click();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>当你运行这个程序时，它会输出：”Button clicked!”。这就是我们通过读取<code>config.xml</code>文件和使用反射来动态创建<code>Button</code>和<code>ButtonHandler</code>对象的例子。</p>
-<p>注意：这个例子非常简化，实际的XML解析和错误处理会更复杂。此外，确保你的类路径（classpath）正确设置，以便Java可以找到你的类。</p>
+    <title>凤凰项目人物关系</title>
+    <url>/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB.html</url>
+    <content><![CDATA[<p>看的时候老是忘记，所以找个地方放一下</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB/image-20230911084052789.png" alt="image-20230911084052789"></p>
 ]]></content>
       <categories>
-        <category>软件系统设计</category>
+        <category>23-Fall-Courses-DevOps</category>
       </categories>
       <tags>
-        <tag>设计原则</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>工厂模式内容补充理解</title>
-    <url>/posts/%E8%BD%AF%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E5%86%85%E5%AE%B9%E8%A1%A5%E5%85%85%E7%90%86%E8%A7%A3.html</url>
-    <content><![CDATA[<h2 id="简单工厂模式的扩展"><a href="#简单工厂模式的扩展" class="headerlink" title="简单工厂模式的扩展"></a>简单工厂模式的扩展</h2><p><strong>Q</strong></p>
-<ol>
-<li>简单工厂模式的简化：在有些情况下工厂类可以由抽象产品角色扮演，一个抽象产品类同时也是子类的工厂，也就是说把静态工厂方法写到抽象产品类中。</li>
-<li>有些情况下，产品本身只提供一两个方法，此时抽象产品可以和简单工厂进行角色合并。<br>啥意思？举个例子，没理解</li>
-</ol>
-<p>这两段话描述的是简单工厂模式的一种变体，也就是说在一些特定的情况下，简单工厂模式的结构可以进一步简化。具体来说，就是将工厂方法放入抽象产品类中，让抽象产品类既扮演产品角色，也扮演工厂角色。这种做法通常适用于产品类结构简单，功能相对单一的场景。下面通过一个例子来解释这个概念。</p>
-<p><strong>A</strong></p>
-<h3 id="示例：图形绘制"><a href="#示例：图形绘制" class="headerlink" title="示例：图形绘制"></a>示例：图形绘制</h3><p>假设我们有一个绘图应用，需要绘制不同类型的图形，如圆形、正方形等。每种图形都有自己特定的绘制方法。这里，图形（Shape）是一个抽象概念，具体的圆形（Circle）和正方形（Square）是具体的实现。</p>
-<h4 id="不使用简化的简单工厂模式"><a href="#不使用简化的简单工厂模式" class="headerlink" title="不使用简化的简单工厂模式"></a>不使用简化的简单工厂模式</h4><p>首先看传统的简单工厂模式实现：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 抽象产品类</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：圆形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a circle&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：正方形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Square</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a square&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 简单工厂类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ShapeFactory</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> Shape <span class="title function_">getShape</span><span class="params">(String type)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;CIRCLE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Circle</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;SQUARE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Square</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<h4 id="使用简化的简单工厂模式"><a href="#使用简化的简单工厂模式" class="headerlink" title="使用简化的简单工厂模式"></a>使用简化的简单工厂模式</h4><p>现在，按照你提到的简化，我们将工厂方法直接放入抽象产品类中：</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 抽象产品类同时扮演工厂角色</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 静态工厂方法</span></span><br><span class="line">    <span class="keyword">static</span> Shape <span class="title function_">getShape</span><span class="params">(String type)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (type == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;CIRCLE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Circle</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type.equalsIgnoreCase(<span class="string">&quot;SQUARE&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Square</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：圆形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Circle</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a circle&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 具体产品类：正方形</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Square</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">draw</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Drawing a square&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>在这个简化后的模式中，<code>Shape</code> 类既定义了产品的接口（<code>draw</code> 方法），也提供了一个静态的工厂方法（<code>getShape</code> 方法）来根据类型创建具体的产品实例。这种做法简化了结构，减少了类的数量，特别适合那些产品类比较简单、数量不多的场景。这样，客户端只需要与<code>Shape</code>类交互即可获取具体的图形实例并调用其绘制方法，无需直接与具体的图形类或单独的工厂类交互，从而简化了客户端的使用复杂度。</p>
-<p><strong>Q</strong></p>
-<p>我有两个问题，那Square也会有getShape这个方法吗？那不是乱了吗？另外实体类可以调用静态方法吗？Shape是抽象类可以被实例化吗？</p>
-<p><strong>A</strong></p>
-<p>你提出的问题非常好，让我们逐一解答：</p>
-<ol>
-<li><strong><code>Square</code>类会有<code>getShape</code>这个方法吗？</strong></li>
-</ol>
-<p>在Java中（以及很多其他面向对象的编程语言中），静态方法属于类级别的方法，而不是实例级别的方法。当我们在抽象类中定义一个静态方法时，这个方法可以被类直接调用，而不是由类的实例调用。因此，虽然<code>Square</code>继承自<code>Shape</code>，它继承的是<code>Shape</code>的非静态行为和属性。静态方法<code>getShape</code>可以通过类名直接调用，如<code>Shape.getShape(&quot;CIRCLE&quot;)</code>，而不是通过一个<code>Shape</code>或<code>Square</code>的实例来调用。</p>
-<p>所以，从概念上讲，<code>Square</code>类并不会“拥有”<code>getShape</code>方法。<code>getShape</code>是属于<code>Shape</code>类的，尽管<code>Square</code>是<code>Shape</code>的一个子类。这并不会导致混乱，因为静态方法的调用总是明确指向它们所属的类。</p>
-<ol>
-<li><strong>实体类可以调用静态方法吗？</strong></li>
-</ol>
-<p>实体类（或者说任何类）可以调用静态方法，但调用方式与实例方法不同。静态方法通过类本身来调用，而不是通过类的实例。这意味着，即使你有一个<code>Shape</code>类的实例，你也应该使用类名来调用静态方法，比如<code>Shape.getShape(&quot;CIRCLE&quot;)</code>，而不是使用实例来调用。这是因为静态方法不依赖于类的任何特定实例。</p>
-<ol>
-<li><strong><code>Shape</code>是抽象类可以被实例化吗？</strong></li>
-</ol>
-<p>抽象类不能被直接实例化。抽象类的目的是为其他类提供一个共同的、被继承的类型框架，定义一些可以在多个子类中共享的方法和属性。你不能创建一个抽象类<code>Shape</code>的实例，但你可以创建它的子类（如<code>Circle</code>和<code>Square</code>）的实例，这些子类提供了抽象方法的具体实现。静态方法<code>getShape</code>提供了一种机制，允许你根据输入的参数类型创建并返回具体子类的实例，而无需直接实例化抽象类。</p>
-<p>简而言之，虽然<code>Shape</code>是一个抽象类且不能被实例化，但<code>Shape</code>类中的静态方法<code>getShape</code>提供了一种创建和返回<code>Shape</code>子类实例的方式，而这一切并不需要直接实例化抽象类<code>Shape</code>本身。</p>
-]]></content>
-      <categories>
-        <category>软件系统设计</category>
-      </categories>
-      <tags>
-        <tag>设计模式</tag>
-        <tag>工厂模式</tag>
+        <tag>Books</tag>
       </tags>
   </entry>
   <entry>
@@ -852,220 +865,6 @@
       <categories>
         <category>23-Fall-Courses-MachineLearning</category>
       </categories>
-  </entry>
-  <entry>
-    <title>凤凰项目人物关系</title>
-    <url>/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB.html</url>
-    <content><![CDATA[<p>看的时候老是忘记，所以找个地方放一下</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/23-Fall-Courses-DevOps/%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%E4%BA%BA%E7%89%A9%E5%85%B3%E7%B3%BB/image-20230911084052789.png" alt="image-20230911084052789"></p>
-]]></content>
-      <categories>
-        <category>23-Fall-Courses-DevOps</category>
-      </categories>
-      <tags>
-        <tag>Books</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>智能系统中的嵌入式应用-I2C及7段数码管</title>
-    <url>/posts/2023-Summer-Courses-%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BA%94%E7%94%A8-i2c%E5%8F%8A7%E6%AE%B5%E6%95%B0%E7%A0%81%E7%AE%A1.html</url>
-    <content><![CDATA[<p>今天的内容主要是I2C的学习和使用</p>
-<blockquote>
-<p>很多地方不太专业，全凭个人胡乱理解</p>
-</blockquote>
-<h2 id="Python异常处理"><a href="#Python异常处理" class="headerlink" title="Python异常处理"></a>Python异常处理</h2><p>老规矩还是先讲了会python</p>
-<p>这部分没怎么听，虽然不太记得了但感觉可能用处不大</p>
-<p>课上讲了个os和给程序传args比较有用</p>
-<br>
-
-<h2 id="7位数码管的使用"><a href="#7位数码管的使用" class="headerlink" title="7位数码管的使用"></a>7位数码管的使用</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>一开始就只有7段，所以叫7位数码管，后来右下角加了个<code>.</code>成了8段了，但已经叫习惯了</p>
-<h3 id="如何接线"><a href="#如何接线" class="headerlink" title="如何接线"></a>如何接线</h3><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/25/Cls67fJ9XIchNPq.png" alt="image-20230425233924548" style="zoom: 33%;"> 
-
-<img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/25/vNHQRLeBIwpS4Vs.png" alt="image-20230425233757865" style="zoom: 25%;"> 
-
-<blockquote>
-<p>老师课上画的图</p>
-</blockquote>
-<p>用4根两头孔的线连接，2根电源，1根SDA，1根SCL</p>
-<p>VCC接5V&#x2F;3.3V（5V会好一点</p>
-<p>GND接地（树莓派上的GND</p>
-<p>SDA-&gt;SDA1</p>
-<p>SCL-&gt;SCL1</p>
-<h3 id="树莓派引脚"><a href="#树莓派引脚" class="headerlink" title="树莓派引脚"></a>树莓派引脚</h3><p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/28/vY4fDjdPmxiFLlZ.png" alt="image-20230428094607658"></p>
-<blockquote>
-<p>尽量不要使用GPIO14和GPIO15，为什么我也不知道</p>
-<p>VCC尽量选5V的</p>
-</blockquote>
-<h3 id="终端使用注意（写代码前先检测下驱动"><a href="#终端使用注意（写代码前先检测下驱动" class="headerlink" title="终端使用注意（写代码前先检测下驱动"></a>终端使用注意（写代码前先检测下驱动</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 首先安装驱动</span></span><br><span class="line">modprobe i2c-dev</span><br><span class="line">modprobe i2c-bcm2835</span><br><span class="line">ls /dev/i2c-<span class="number">1</span></span><br><span class="line"><span class="comment"># 显示/dev/i2c-1</span></span><br><span class="line"></span><br><span class="line">i2cdetect -y <span class="number">1</span> <span class="comment"># 能显示出控制寄存器及对应设备的地址</span></span><br></pre></td></tr></table></figure></div>
-
-<h3 id="控制寄存器和对应设备"><a href="#控制寄存器和对应设备" class="headerlink" title="控制寄存器和对应设备"></a>控制寄存器和对应设备</h3><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/05/09/wNJPAcILlijZFR8.png" alt="image-20230509165656273" style="zoom: 67%;"> 
-
-<p>24所在行就是下一行设备对应的控制器</p>
-<p>1.使用方法就是先向控制寄存器输入写入一些内容，就将其开启（或者关闭，还能控制显示亮度）</p>
-<p>具体如下：</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/05/09/GpaJMtdVw9gbUl1.png" alt="image-20230509165944792"> </p>
-<p>2.然后就可以向下面他对应的控制的设备写入内容来控制显示什么内容了</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> smbus2 <span class="keyword">import</span> SMBus</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">inputNumber = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getInputNumber</span>():</span><br><span class="line">    <span class="keyword">global</span> inputNumber</span><br><span class="line">    inputNumber = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;Please input a number: &quot;</span>))</span><br><span class="line"></span><br><span class="line">my_table = <span class="built_in">dict</span>()</span><br><span class="line">my_table[<span class="string">&#x27;0&#x27;</span>] = <span class="number">0x3f</span></span><br><span class="line">my_table[<span class="string">&#x27;1&#x27;</span>] = <span class="number">0x06</span></span><br><span class="line">my_table[<span class="string">&#x27;2&#x27;</span>] = <span class="number">0x5b</span></span><br><span class="line">my_table[<span class="string">&#x27;3&#x27;</span>] = <span class="number">0x4f</span></span><br><span class="line">my_table[<span class="string">&#x27;4&#x27;</span>] = <span class="number">0x66</span></span><br><span class="line">my_table[<span class="string">&#x27;5&#x27;</span>] = <span class="number">0x6d</span></span><br><span class="line">my_table[<span class="string">&#x27;6&#x27;</span>] = <span class="number">0x7d</span></span><br><span class="line">my_table[<span class="string">&#x27;7&#x27;</span>] = <span class="number">0x07</span></span><br><span class="line">my_table[<span class="string">&#x27;8&#x27;</span>] = <span class="number">0x7f</span></span><br><span class="line">my_table[<span class="string">&#x27;9&#x27;</span>] = <span class="number">0x6f</span></span><br><span class="line"></span><br><span class="line">led = SMBus(bus=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># quan liang</span></span><br><span class="line">led.write_byte(<span class="number">0x24</span>, <span class="number">0x01</span>)</span><br><span class="line">led.write_byte(<span class="number">0x25</span>, <span class="number">0x11</span>)</span><br><span class="line">led.write_byte(<span class="number">0x26</span>, <span class="number">0x21</span>)</span><br><span class="line">led.write_byte(<span class="number">0x27</span>, <span class="number">0x31</span>)</span><br><span class="line"></span><br><span class="line">led.write_byte(<span class="number">0x34</span>, my_table[<span class="string">&#x27;0&#x27;</span>])</span><br><span class="line">led.write_byte(<span class="number">0x35</span>, my_table[<span class="string">&#x27;5&#x27;</span>])</span><br><span class="line">led.write_byte(<span class="number">0x36</span>, my_table[<span class="string">&#x27;2&#x27;</span>])</span><br><span class="line">led.write_byte(<span class="number">0x37</span>, my_table[<span class="string">&#x27;0&#x27;</span>])</span><br><span class="line"></span><br><span class="line">getInputNumber()</span><br><span class="line"></span><br><span class="line">seconds_left = inputNumber</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="comment"># xianshi</span></span><br><span class="line">    <span class="built_in">min</span> = seconds_left // <span class="number">60</span></span><br><span class="line">    sec = seconds_left % <span class="number">60</span></span><br><span class="line">    min_str1 = <span class="built_in">str</span>(<span class="built_in">min</span>)</span><br><span class="line">    min_str2 = min_str1.zfill(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    sec_str1 = <span class="built_in">str</span>(sec)</span><br><span class="line">    sec_str2 = sec_str1.zfill(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    led.write_byte(<span class="number">0x34</span>, my_table[min_str2[<span class="number">0</span>]])</span><br><span class="line">    led.write_byte(<span class="number">0x35</span>, my_table[min_str2[<span class="number">1</span>]])</span><br><span class="line">    led.write_byte(<span class="number">0x36</span>, my_table[sec_str2[<span class="number">0</span>]])</span><br><span class="line">    led.write_byte(<span class="number">0x37</span>, my_table[sec_str2[<span class="number">1</span>]])</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    seconds_left -= <span class="number">1</span></span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-      <categories>
-        <category>2023-Summer-Courses-嵌入式开发</category>
-      </categories>
-      <tags>
-        <tag>嵌入式开发</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Day2-HTTP</title>
-    <url>/posts/2023-Summer-Courses-CloudWeGo/day2-http.html</url>
-    <content><![CDATA[<h2 id="Day2-1-HTTP基础"><a href="#Day2-1-HTTP基础" class="headerlink" title="Day2-1 HTTP基础"></a>Day2-1 HTTP基础</h2><h3 id="为什么需要协议"><a href="#为什么需要协议" class="headerlink" title="为什么需要协议"></a>为什么需要协议</h3><ol>
-<li>明确的边界</li>
-<li>信息解析</li>
-<li>（预留拓展）</li>
-</ol>
-<h3 id="HTTP最早版本"><a href="#HTTP最早版本" class="headerlink" title="HTTP最早版本"></a>HTTP最早版本</h3><p>0.9</p>
-<p>HTTP协议的最初版本是HTTP&#x2F;0.9，它于1991年问世。这个版本非常简单，只支持无格式的文本数据传输，没有请求头、响应头等结构化信息。</p>
-<p>HTTP&#x2F;0.9的主要特点如下：</p>
-<ol>
-<li>请求方式：只支持GET请求方法，即通过GET方法请求服务器上的资源。</li>
-<li>URL：只能包含请求的路径，没有主机名、端口号、查询参数等。</li>
-<li>响应格式：服务器返回的响应只包含请求资源的纯文本内容，没有响应头、状态码等。</li>
-<li>连接：每次请求都会关闭连接，无法保持持久连接。</li>
-<li>内容类型：响应的内容类型默认为HTML。</li>
-</ol>
-<h3 id="HTTP协议里有什么"><a href="#HTTP协议里有什么" class="headerlink" title="HTTP协议里有什么"></a>HTTP协议里有什么</h3><p>0.9到1.1的版本变化</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711105619899.png" alt="image-20230711105619899"></p>
-<h3 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h3><ul>
-<li>1xx（信息性状态码）：表示请求已被接收，正在处理中。<ul>
-<li>100 Continue：服务器已收到请求的初始部分，客户端应继续发送剩余部分。</li>
-<li>101 Switching Protocols：服务器已经理解请求，将切换到不同的协议进行通信。</li>
-</ul>
-</li>
-<li>2xx（成功状态码）：表示请求已成功处理。<ul>
-<li>200 OK：请求成功，返回对应的资源。</li>
-<li>201 Created：请求已成功处理，并在服务器上创建了新资源。</li>
-<li>204 No Content：请求成功，但响应不包含实体主体内容。</li>
-</ul>
-</li>
-<li>3xx（重定向状态码）：表示需要进行进一步操作以完成请求。<ul>
-<li>301 Moved Permanently：资源的URI已永久移动到新位置。</li>
-<li>302 Found：资源的URI已临时移动到新位置。</li>
-<li>304 Not Modified：客户端的缓存副本仍然有效，可以使用缓存的版本。</li>
-</ul>
-</li>
-<li>4xx（客户端错误状态码）：表示请求包含语法错误或无法完成请求。<ul>
-<li>400 Bad Request：请求无效，服务器无法理解请求。</li>
-<li>401 Unauthorized：请求要求身份验证。</li>
-<li>404 Not Found：请求的资源不存在。</li>
-</ul>
-</li>
-<li>5xx（服务器错误状态码）：表示服务器在处理请求时发生错误。<ul>
-<li>500 Internal Server Error：服务器遇到意外错误，无法完成请求。</li>
-<li>502 Bad Gateway：服务器作为网关或代理，从上游服务器收到无效响应。</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711111350794.png" alt="image-20230711111350794"></p>
-</blockquote>
-<h3 id="HTTP报文结构"><a href="#HTTP报文结构" class="headerlink" title="HTTP报文结构"></a>HTTP报文结构</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112326548.png" alt="image-20230711112326548"></p>
-<h4 id="1、请求行和响应行（状态行）"><a href="#1、请求行和响应行（状态行）" class="headerlink" title="1、请求行和响应行（状态行）"></a>1、请求行和响应行（状态行）</h4><p>请求行：请求方法，url，HTTP版本</p>
-<p>相应行：HTTP版本，状态码，状态描述</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112540419.png" alt="image-20230711112540419"></p>
-<h4 id="2、请求头和响应头"><a href="#2、请求头和响应头" class="headerlink" title="2、请求头和响应头"></a>2、请求头和响应头</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112702967.png" alt="image-20230711112702967"></p>
-<blockquote>
-<p>不止有图上这些</p>
-</blockquote>
-<h5 id="1-请求头"><a href="#1-请求头" class="headerlink" title="1.请求头"></a>1.请求头</h5><p><strong>Accept:MIME</strong> 可选项，不一定有</p>
-<p>指明了期望返回的类型</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711113256917.png" alt="image-20230711113256917"></p>
-<p><strong>Host</strong></p>
-<p>请求头中的 “Host” 字段用于指定目标服务器的主机名或 IP 地址。它是 HTTP&#x2F;1.1 协议中的一个必需字段，在发送请求时应该包含在请求头部中。</p>
-<h5 id="2-响应头"><a href="#2-响应头" class="headerlink" title="2.响应头"></a>2.响应头</h5><p>Content-Length</p>
-<p>Content-Type</p>
-<h4 id="3、空行"><a href="#3、空行" class="headerlink" title="3、空行"></a>3、空行</h4><h4 id="4、请求体和响应体"><a href="#4、请求体和响应体" class="headerlink" title="4、请求体和响应体"></a>4、请求体和响应体</h4><h3 id="Day2-2-Hertz-应用篇"><a href="#Day2-2-Hertz-应用篇" class="headerlink" title="Day2-2 Hertz 应用篇"></a>Day2-2 Hertz 应用篇</h3><h4 id="hz和thriftgo"><a href="#hz和thriftgo" class="headerlink" title="hz和thriftgo"></a>hz和thriftgo</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151253162.png" alt="image-20230711151253162"></p>
-<h4 id="IDL-Interface-Definition-Language"><a href="#IDL-Interface-Definition-Language" class="headerlink" title="IDL Interface Definition Language"></a>IDL Interface Definition Language</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151516937.png" alt="image-20230711151516937"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151635573.png" alt="image-20230711151635573"></p>
-<h3 id="Hz实战1"><a href="#Hz实战1" class="headerlink" title="Hz实战1"></a>Hz实战1</h3><p><a class="link" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>创建hello.thrift文件</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> idl</span><br><span class="line">vim hello.thrift</span><br></pre></td></tr></table></figure></div>
-
-<p><code>hello.thrift</code>文件内容</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// idl/hello.thrift</span></span><br><span class="line">namespace go nju.dsy.example </span><br><span class="line"><span class="comment">// 指明目标代码语言是go</span></span><br><span class="line"><span class="comment">// 命名空间是nju.dsy.example</span></span><br><span class="line"></span><br><span class="line">struct HelloReq &#123;</span><br><span class="line">    <span class="number">1</span>: string <span class="title function_">Name</span> <span class="params">(api.query=<span class="string">&quot;name&quot;</span>)</span>; </span><br><span class="line">    <span class="comment">// 添加 api 注解为方便进行参数绑定</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct HelloResp &#123;</span><br><span class="line">    <span class="number">1</span>: string RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">service HelloService &#123;</span><br><span class="line">    HelloResp <span class="title function_">HelloMethod</span><span class="params">(<span class="number">1</span>: HelloReq request)</span> (api.get=<span class="string">&quot;/hello&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">hz new -module github.com/SYuan03/thrift/example -idl idl/hello.thrift</span><br><span class="line">go mod tidy	<span class="comment"># 整理 &amp; 拉取依赖</span></span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<p>namespace里面就是对应的多级目录结构</p>
-</blockquote>
-<blockquote>
-<p>执行go mod tidy后，爆红消失</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711231931491.png" alt="image-20230711231931491"></p>
-</blockquote>
-<p>修改 handler，添加自己的逻辑</p>
-<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// handler path: biz/handler/hello/example/hello_service.go</span></span><br><span class="line"><span class="comment">// 其中 &quot;hello/example&quot; 是 thrift idl 的 namespace</span></span><br><span class="line"><span class="comment">// &quot;hello_service.go&quot; 是 thrift idl 中 service 的名字，所有 HelloService 定义的方法都会生成在这个文件中</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// HelloMethod .</span></span><br><span class="line"><span class="comment">// @router /hello [GET]</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloMethod</span><span class="params">(ctx context.Context, c *app.RequestContext)</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">        <span class="keyword">var</span> req example.HelloReq</span><br><span class="line">        err = c.BindAndValidate(&amp;req)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                c.String(<span class="number">400</span>, err.Error())</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        resp := <span class="built_in">new</span>(example.HelloResp)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 你可以修改整个函数的逻辑，而不仅仅局限于当前模板</span></span><br><span class="line">        resp.RespBody = <span class="string">&quot;hello,&quot;</span> + req.Name <span class="comment">// 添加的逻辑</span></span><br><span class="line"></span><br><span class="line">        c.JSON(<span class="number">200</span>, resp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">go build</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line">./example</span><br><span class="line">curl http://127.0.0.1:8888/hello?name=dsy -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233040123.png" alt="image-20230711233040123"></p>
-<p>成功</p>
-<h3 id="Hz实战2"><a href="#Hz实战2" class="headerlink" title="Hz实战2"></a>Hz实战2</h3><p><a class="link" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>更新一个已有的项目</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233626785.png" alt="image-20230711233626785"></p>
-<p>根据需求重写hello.thrift的内容</p>
-<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// idl/hello.thrift</span></span><br><span class="line">namespace go nju.dsy.example </span><br><span class="line"><span class="comment">// 指明目标代码语言是go</span></span><br><span class="line"><span class="comment">// 命名空间是nju.dsy.example</span></span><br><span class="line"></span><br><span class="line">struct GetStudentInfoReq &#123;</span><br><span class="line">    <span class="number">1</span>: i32 <span class="title function_">ID</span> <span class="params">(api.query=<span class="string">&quot;id&quot;</span>)</span>; <span class="comment">// 添加 api 注解为方便进行参数绑定</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct GetStudentInfoResp &#123;</span><br><span class="line">    <span class="number">1</span>: i32 ID;</span><br><span class="line">    <span class="number">2</span>: string Name;</span><br><span class="line">    <span class="number">3</span>: string Favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct PostStudentInfoReq &#123;</span><br><span class="line">    <span class="number">1</span>: i32 ID;</span><br><span class="line">    <span class="number">2</span>: string Name;</span><br><span class="line">    <span class="number">3</span>: string Favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct PostStudentInfoResp &#123;</span><br><span class="line">    <span class="number">1</span>: string RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service StudentService &#123;</span><br><span class="line">    GetStudentInfoResp <span class="title function_">GetStudentInfoMethod</span><span class="params">(<span class="number">1</span>: GetStudentInfoReq request)</span> (api.get=<span class="string">&quot;/query&quot;</span>);</span><br><span class="line"></span><br><span class="line">    PostStudentInfoResp <span class="title function_">PostStudentInfoMethod</span><span class="params">(<span class="number">1</span>: PostStudentInfoReq request)</span> (api.post=<span class="string">&quot;/add-student-info&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<blockquote>
-<p>thrift的idl的结构体需要标序号，参数也要标序号，以指明顺序</p>
-<p>int用不了，要用i32</p>
-</blockquote>
-<p>执行</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">hz update -idl idl/hello.thrift</span><br></pre></td></tr></table></figure></div>
-
-<p>关于make</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711235734655.png" alt="image-20230711235734655"></p>
-<p>成功</p>
-<p>post</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://127.0.0.1:8888/add-student-info -X POST -H <span class="string">&#x27;Content-Type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;ID&quot;:666,&quot;Name&quot;: &quot;dsy&quot;, &quot;Favorite&quot;: &quot;peach&quot;&#125;&#x27;</span> -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<p>get</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://127.0.0.1:8888/query?<span class="built_in">id</span>=10 -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
-
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712001708832.png" alt="image-20230712001708832"></p>
-<h3 id="Hz实战3"><a href="#Hz实战3" class="headerlink" title="Hz实战3"></a>Hz实战3</h3><p><a class="link" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/more-feature/client/">hz client 代码生成 | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>参考</p>
-<p><a class="link" href="https://github.com/cloudwego/hertz-examples/tree/main/hz/hz_client">hertz-examples&#x2F;hz&#x2F;hz_client at main · cloudwego&#x2F;hertz-examples · GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>啥玩意？</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712002635960.png" alt="image-20230712002635960"></p>
-<blockquote>
-<ul>
-<li><p>IDL（Interface Definition Language）：接口定义语言，用于定义分布式系统中服务接口的规范和格式。IDL 可以用于生成客户端和服务器端的代码，以便它们可以相互通信和交互数据。Thrift 和 gRPC 等框架都支持使用 IDL 进行服务定义和代码生成。</p>
-</li>
-<li><p>RPC（Remote Procedure Call）：远程过程调用，是一种跨网络的分布式系统通信方式，允许客户端应用程序调用远程服务器上的过程或方法，并接收返回结果。RPC 可以使用 HTTP、TCP、UDP 等协议进行通信，常用的框架包括 Thrift、gRPC、Dubbo 等。</p>
-</li>
-<li><p>HTTP 请求：超文本传输协议（HTTP）定义了客户端和服务器之间的通信协议。HTTP 请求是客户端向服务器发送的请求，包括请求方法、URL、请求头、请求体等信息。服务器根据这些信息来处理请求，并返回响应结果。</p>
-</li>
-<li><p>Hertz client：Hertz 是一个开源的 RPC 框架，支持使用 IDL 进行服务定义和代码生成。Hertz client 是客户端程序，用于向 Hertz server 发送 RPC 请求，并接收响应结果。</p>
-</li>
-<li><p>Hertz server：Hertz server 是服务端程序，用于接收 Hertz client 发送的 RPC 请求，并处理请求，返回响应结果。</p>
-</li>
-</ul>
-<p>它提到了一种工具或框架，可以根据 IDL 文件生成客户端代码，并自动屏蔽创建和初始化 Hertz client 的繁琐操作。生成的客户端代码可以直接使用 HTTP 请求调用 Hertz server 提供的服务，并接收响应结果。使用这种工具或框架，可以大大简化分布式系统中的开发和调试过程，提高开发效率。</p>
-</blockquote>
-<p>先把之前的idl搬过来</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> server</span><br><span class="line"><span class="built_in">cd</span> server</span><br><span class="line">hz new -mod=github.com/SYuan03/thrift/example2 --idl=../idl/hello.thrift --handler_by_method -t=template=slim</span><br></pre></td></tr></table></figure></div>
-
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 同理，略</span></span><br><span class="line">hz client -mod=github.com/SYuan03/thrift/client --idl=../idl/hello.thrift --model_dir=hertz_gen -t</span><br><span class="line">=template=slim --client_dir=hz_client</span><br></pre></td></tr></table></figure></div>
-
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712004622251.png" alt="image-20230712004622251"></p>
-<p>成功！</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712012317679.png" alt="image-20230712012317679"></p>
-]]></content>
-      <categories>
-        <category>2023-Summer-Courses-CloudWeGo</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
   </entry>
   <entry>
     <title>notes-dbms</title>
@@ -1637,74 +1436,53 @@
       </tags>
   </entry>
   <entry>
-    <title>Day3-RPC</title>
-    <url>/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html</url>
-    <content><![CDATA[<h2 id="Day2-1"><a href="#Day2-1" class="headerlink" title="Day2-1"></a>Day2-1</h2><h3 id="RPC的定义"><a href="#RPC的定义" class="headerlink" title="RPC的定义"></a>RPC的定义</h3><p>From wiki:  远程过程调用是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一个地址空间（通常为一个开放网络的一台计算机）的子程序。</p>
-<p>可以像调用本地方法一样调用远程方法。</p>
-<p>解决跨进程间&#x2F;远程通信问题。</p>
-<h3 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h3><h4 id="Thrift-一个FaceBook开发的框架"><a href="#Thrift-一个FaceBook开发的框架" class="headerlink" title="Thrift-一个FaceBook开发的框架"></a>Thrift-一个FaceBook开发的框架</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712111928707.png" alt="image-20230712111928707"></p>
-<h4 id="IDL"><a href="#IDL" class="headerlink" title="IDL"></a>IDL</h4><p>跨语言，规范性，代码生成</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712113858288.png" alt="image-20230712113858288"></p>
-<h4 id="Thrift-IDL"><a href="#Thrift-IDL" class="headerlink" title="Thrift IDL"></a>Thrift IDL</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712114126789.png" alt="image-20230712114126789"></p>
-<p>基本语法</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712114436233.png" alt="image-20230712114436233"></p>
-<p>Field Requiredness</p>
-<p>optional required optional</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712114634069.png" alt="image-20230712114634069"></p>
-<p>default未赋值也会编码</p>
-<h3 id="快速入门-ppt上的使用入门案例复现"><a href="#快速入门-ppt上的使用入门案例复现" class="headerlink" title="快速入门-ppt上的使用入门案例复现"></a>快速入门-ppt上的使用入门案例复现</h3><p>第三步，生成服务端代码</p>
-<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">kitex -module github.com/SYuan03/Day3-kitex1 -service nju.dsy.kitex.demo1 ./idl/kitex_greet.thrift</span><br><span class="line">go mod tidy</span><br></pre></td></tr></table></figure></div>
+    <title>智能系统中的嵌入式应用-I2C及7段数码管</title>
+    <url>/posts/2023-Summer-Courses-%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BA%94%E7%94%A8-i2c%E5%8F%8A7%E6%AE%B5%E6%95%B0%E7%A0%81%E7%AE%A1.html</url>
+    <content><![CDATA[<p>今天的内容主要是I2C的学习和使用</p>
+<blockquote>
+<p>很多地方不太专业，全凭个人胡乱理解</p>
+</blockquote>
+<h2 id="Python异常处理"><a href="#Python异常处理" class="headerlink" title="Python异常处理"></a>Python异常处理</h2><p>老规矩还是先讲了会python</p>
+<p>这部分没怎么听，虽然不太记得了但感觉可能用处不大</p>
+<p>课上讲了个os和给程序传args比较有用</p>
+<br>
 
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712155853571.png" alt="image-20230712155853571"></p>
-<p>第四步，生成调用端代码</p>
-<p>成功</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712165547865.png" alt="image-20230712165547865"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712165558739.png" alt="image-20230712165558739"></p>
-<h3 id="进阶特性-泛化调用"><a href="#进阶特性-泛化调用" class="headerlink" title="进阶特性-泛化调用"></a>进阶特性-泛化调用</h3><h3 id="Day3-随堂练习"><a href="#Day3-随堂练习" class="headerlink" title="Day3-随堂练习"></a>Day3-随堂练习</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">hz new -mod github.com/SYuan03/Day3/HertzServer -idl idl/student.thrift</span><br><span class="line">go mod tidy</span><br><span class="line"></span><br><span class="line">kitex -service kitex.demo -module github.go mod tidycom/SYuan03/Day3/KitexServer idl/student.thrift</span><br><span class="line">go mod tidy</span><br></pre></td></tr></table></figure></div>
+<h2 id="7位数码管的使用"><a href="#7位数码管的使用" class="headerlink" title="7位数码管的使用"></a>7位数码管的使用</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>一开始就只有7段，所以叫7位数码管，后来右下角加了个<code>.</code>成了8段了，但已经叫习惯了</p>
+<h3 id="如何接线"><a href="#如何接线" class="headerlink" title="如何接线"></a>如何接线</h3><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/25/Cls67fJ9XIchNPq.png" alt="image-20230425233924548" style="zoom: 33%;"> 
 
-<h4 id="Hertz-Server"><a href="#Hertz-Server" class="headerlink" title="Hertz-Server"></a>Hertz-Server</h4><p>修改Kitex Server的main.go，配置监听端口，修改 main.go。（Kitex 与 Hertz 默认端口均是 8888，需要修改端口）</p>
-<p>修改student.service，用client作一下转发</p>
-<h4 id="Kitex-Server"><a href="#Kitex-Server" class="headerlink" title="Kitex-Server"></a>Kitex-Server</h4><p>修改main.go</p>
-<p>修改handler.go</p>
+<img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/25/vNHQRLeBIwpS4Vs.png" alt="image-20230425233757865" style="zoom: 25%;"> 
+
+<blockquote>
+<p>老师课上画的图</p>
+</blockquote>
+<p>用4根两头孔的线连接，2根电源，1根SDA，1根SCL</p>
+<p>VCC接5V&#x2F;3.3V（5V会好一点</p>
+<p>GND接地（树莓派上的GND</p>
+<p>SDA-&gt;SDA1</p>
+<p>SCL-&gt;SCL1</p>
+<h3 id="树莓派引脚"><a href="#树莓派引脚" class="headerlink" title="树莓派引脚"></a>树莓派引脚</h3><p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/04/28/vY4fDjdPmxiFLlZ.png" alt="image-20230428094607658"></p>
+<blockquote>
+<p>尽量不要使用GPIO14和GPIO15，为什么我也不知道</p>
+<p>VCC尽量选5V的</p>
+</blockquote>
+<h3 id="终端使用注意（写代码前先检测下驱动"><a href="#终端使用注意（写代码前先检测下驱动" class="headerlink" title="终端使用注意（写代码前先检测下驱动"></a>终端使用注意（写代码前先检测下驱动</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 首先安装驱动</span></span><br><span class="line">modprobe i2c-dev</span><br><span class="line">modprobe i2c-bcm2835</span><br><span class="line">ls /dev/i2c-<span class="number">1</span></span><br><span class="line"><span class="comment"># 显示/dev/i2c-1</span></span><br><span class="line"></span><br><span class="line">i2cdetect -y <span class="number">1</span> <span class="comment"># 能显示出控制寄存器及对应设备的地址</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="控制寄存器和对应设备"><a href="#控制寄存器和对应设备" class="headerlink" title="控制寄存器和对应设备"></a>控制寄存器和对应设备</h3><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/05/09/wNJPAcILlijZFR8.png" alt="image-20230509165656273" style="zoom: 67%;"> 
+
+<p>24所在行就是下一行设备对应的控制器</p>
+<p>1.使用方法就是先向控制寄存器输入写入一些内容，就将其开启（或者关闭，还能控制显示亮度）</p>
+<p>具体如下：</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://s2.loli.net/2023/05/09/GpaJMtdVw9gbUl1.png" alt="image-20230509165944792"> </p>
+<p>2.然后就可以向下面他对应的控制的设备写入内容来控制显示什么内容了</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> smbus2 <span class="keyword">import</span> SMBus</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">inputNumber = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getInputNumber</span>():</span><br><span class="line">    <span class="keyword">global</span> inputNumber</span><br><span class="line">    inputNumber = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;Please input a number: &quot;</span>))</span><br><span class="line"></span><br><span class="line">my_table = <span class="built_in">dict</span>()</span><br><span class="line">my_table[<span class="string">&#x27;0&#x27;</span>] = <span class="number">0x3f</span></span><br><span class="line">my_table[<span class="string">&#x27;1&#x27;</span>] = <span class="number">0x06</span></span><br><span class="line">my_table[<span class="string">&#x27;2&#x27;</span>] = <span class="number">0x5b</span></span><br><span class="line">my_table[<span class="string">&#x27;3&#x27;</span>] = <span class="number">0x4f</span></span><br><span class="line">my_table[<span class="string">&#x27;4&#x27;</span>] = <span class="number">0x66</span></span><br><span class="line">my_table[<span class="string">&#x27;5&#x27;</span>] = <span class="number">0x6d</span></span><br><span class="line">my_table[<span class="string">&#x27;6&#x27;</span>] = <span class="number">0x7d</span></span><br><span class="line">my_table[<span class="string">&#x27;7&#x27;</span>] = <span class="number">0x07</span></span><br><span class="line">my_table[<span class="string">&#x27;8&#x27;</span>] = <span class="number">0x7f</span></span><br><span class="line">my_table[<span class="string">&#x27;9&#x27;</span>] = <span class="number">0x6f</span></span><br><span class="line"></span><br><span class="line">led = SMBus(bus=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># quan liang</span></span><br><span class="line">led.write_byte(<span class="number">0x24</span>, <span class="number">0x01</span>)</span><br><span class="line">led.write_byte(<span class="number">0x25</span>, <span class="number">0x11</span>)</span><br><span class="line">led.write_byte(<span class="number">0x26</span>, <span class="number">0x21</span>)</span><br><span class="line">led.write_byte(<span class="number">0x27</span>, <span class="number">0x31</span>)</span><br><span class="line"></span><br><span class="line">led.write_byte(<span class="number">0x34</span>, my_table[<span class="string">&#x27;0&#x27;</span>])</span><br><span class="line">led.write_byte(<span class="number">0x35</span>, my_table[<span class="string">&#x27;5&#x27;</span>])</span><br><span class="line">led.write_byte(<span class="number">0x36</span>, my_table[<span class="string">&#x27;2&#x27;</span>])</span><br><span class="line">led.write_byte(<span class="number">0x37</span>, my_table[<span class="string">&#x27;0&#x27;</span>])</span><br><span class="line"></span><br><span class="line">getInputNumber()</span><br><span class="line"></span><br><span class="line">seconds_left = inputNumber</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="comment"># xianshi</span></span><br><span class="line">    <span class="built_in">min</span> = seconds_left // <span class="number">60</span></span><br><span class="line">    sec = seconds_left % <span class="number">60</span></span><br><span class="line">    min_str1 = <span class="built_in">str</span>(<span class="built_in">min</span>)</span><br><span class="line">    min_str2 = min_str1.zfill(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    sec_str1 = <span class="built_in">str</span>(sec)</span><br><span class="line">    sec_str2 = sec_str1.zfill(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    led.write_byte(<span class="number">0x34</span>, my_table[min_str2[<span class="number">0</span>]])</span><br><span class="line">    led.write_byte(<span class="number">0x35</span>, my_table[min_str2[<span class="number">1</span>]])</span><br><span class="line">    led.write_byte(<span class="number">0x36</span>, my_table[sec_str2[<span class="number">0</span>]])</span><br><span class="line">    led.write_byte(<span class="number">0x37</span>, my_table[sec_str2[<span class="number">1</span>]])</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    seconds_left -= <span class="number">1</span></span><br></pre></td></tr></table></figure></div>
+
 ]]></content>
       <categories>
-        <category>2023-Summer-Courses-CloudWeGo</category>
+        <category>2023-Summer-Courses-嵌入式开发</category>
       </categories>
-  </entry>
-  <entry>
-    <title>Day5-APIGateway</title>
-    <url>/posts/2023-Summer-CloudWeGo/day5-apigateway.html</url>
-    <content><![CDATA[<h2 id="正向-反向代理"><a href="#正向-反向代理" class="headerlink" title="正向&#x2F;反向代理"></a>正向&#x2F;反向代理</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714102358455.png" alt="image-20230714102358455"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714102453866.png" alt="image-20230714102453866"></p>
-<p>正向代理是客户端主动知道要找一个代理：VPN</p>
-<p>反向代理是客户端并不知道，是服务端的一些代理：基本的服务网关如Nginx</p>
-<h2 id="反向代理服务器就是服务网关，那-API-网关是什么？"><a href="#反向代理服务器就是服务网关，那-API-网关是什么？" class="headerlink" title="反向代理服务器就是服务网关，那 API 网关是什么？"></a>反向代理服务器就是服务网关，那 API 网关是什么？</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714103405605.png" alt="image-20230714103405605"></p>
-<p>比如大门只控制学校的进出控制（流量网关，如nginx，其实还是不太一样，因为基本网关是有URL路由转发到不同服务器的），但是某个特定的事务处理，显然不能都交给流量网关，需要对于业务有特定的了解，相当于有了业务属性（业务网关，即API网关）</p>
-<h2 id="反向代理-Nginx-基本功能"><a href="#反向代理-Nginx-基本功能" class="headerlink" title="反向代理-Nginx-基本功能"></a>反向代理-Nginx-基本功能</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714104026842.png" alt="image-20230714104026842"></p>
-<h2 id="网关分类"><a href="#网关分类" class="headerlink" title="网关分类"></a>网关分类</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714104230191.png" alt="image-20230714104230191"></p>
-<h2 id="API网关形态"><a href="#API网关形态" class="headerlink" title="API网关形态"></a>API网关形态</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714104757280.png" alt="image-20230714104757280"></p>
-<p>可以把与服务端更耦合的流量分给Sidecar来处理</p>
-]]></content>
-      <categories>
-        <category>2023-Summer-CloudWeGo</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Day4-服务发现与负载均衡</title>
-    <url>/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.html</url>
-    <content><![CDATA[<h2 id="Day4-2-服务发现和负载均衡"><a href="#Day4-2-服务发现和负载均衡" class="headerlink" title="Day4-2 服务发现和负载均衡"></a>Day4-2 服务发现和负载均衡</h2><h3 id="引入本地缓存"><a href="#引入本地缓存" class="headerlink" title="引入本地缓存"></a>引入本地缓存</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713141618044.png" alt="image-20230713141618044"></p>
-<p>解决了注册中心压力过大的问题</p>
-<p>但是也带来了可能与注册中心对应数据不一致的问题</p>
-<h3 id="etcd"><a href="#etcd" class="headerlink" title="etcd"></a>etcd</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713141732362.png" alt="image-20230713141732362"></p>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>一个终端启动，另一个写和读</p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713143859890.png" alt="image-20230713143859890"></p>
-<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713144904773.png" alt="image-20230713144904773"></p>
-<p>Server发起Put请求</p>
-<p>Client会发一个Range请求给Server</p>
-]]></content>
-      <categories>
-        <category>2023-Summer-Courses-CloudWeGo</category>
-      </categories>
+      <tags>
+        <tag>嵌入式开发</tag>
+      </tags>
   </entry>
   <entry>
     <title>一文带你慢且不通SEOSLab2</title>
@@ -2665,6 +2443,210 @@
       </tags>
   </entry>
   <entry>
+    <title>Day2-HTTP</title>
+    <url>/posts/2023-Summer-Courses-CloudWeGo/day2-http.html</url>
+    <content><![CDATA[<h2 id="Day2-1-HTTP基础"><a href="#Day2-1-HTTP基础" class="headerlink" title="Day2-1 HTTP基础"></a>Day2-1 HTTP基础</h2><h3 id="为什么需要协议"><a href="#为什么需要协议" class="headerlink" title="为什么需要协议"></a>为什么需要协议</h3><ol>
+<li>明确的边界</li>
+<li>信息解析</li>
+<li>（预留拓展）</li>
+</ol>
+<h3 id="HTTP最早版本"><a href="#HTTP最早版本" class="headerlink" title="HTTP最早版本"></a>HTTP最早版本</h3><p>0.9</p>
+<p>HTTP协议的最初版本是HTTP&#x2F;0.9，它于1991年问世。这个版本非常简单，只支持无格式的文本数据传输，没有请求头、响应头等结构化信息。</p>
+<p>HTTP&#x2F;0.9的主要特点如下：</p>
+<ol>
+<li>请求方式：只支持GET请求方法，即通过GET方法请求服务器上的资源。</li>
+<li>URL：只能包含请求的路径，没有主机名、端口号、查询参数等。</li>
+<li>响应格式：服务器返回的响应只包含请求资源的纯文本内容，没有响应头、状态码等。</li>
+<li>连接：每次请求都会关闭连接，无法保持持久连接。</li>
+<li>内容类型：响应的内容类型默认为HTML。</li>
+</ol>
+<h3 id="HTTP协议里有什么"><a href="#HTTP协议里有什么" class="headerlink" title="HTTP协议里有什么"></a>HTTP协议里有什么</h3><p>0.9到1.1的版本变化</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711105619899.png" alt="image-20230711105619899"></p>
+<h3 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h3><ul>
+<li>1xx（信息性状态码）：表示请求已被接收，正在处理中。<ul>
+<li>100 Continue：服务器已收到请求的初始部分，客户端应继续发送剩余部分。</li>
+<li>101 Switching Protocols：服务器已经理解请求，将切换到不同的协议进行通信。</li>
+</ul>
+</li>
+<li>2xx（成功状态码）：表示请求已成功处理。<ul>
+<li>200 OK：请求成功，返回对应的资源。</li>
+<li>201 Created：请求已成功处理，并在服务器上创建了新资源。</li>
+<li>204 No Content：请求成功，但响应不包含实体主体内容。</li>
+</ul>
+</li>
+<li>3xx（重定向状态码）：表示需要进行进一步操作以完成请求。<ul>
+<li>301 Moved Permanently：资源的URI已永久移动到新位置。</li>
+<li>302 Found：资源的URI已临时移动到新位置。</li>
+<li>304 Not Modified：客户端的缓存副本仍然有效，可以使用缓存的版本。</li>
+</ul>
+</li>
+<li>4xx（客户端错误状态码）：表示请求包含语法错误或无法完成请求。<ul>
+<li>400 Bad Request：请求无效，服务器无法理解请求。</li>
+<li>401 Unauthorized：请求要求身份验证。</li>
+<li>404 Not Found：请求的资源不存在。</li>
+</ul>
+</li>
+<li>5xx（服务器错误状态码）：表示服务器在处理请求时发生错误。<ul>
+<li>500 Internal Server Error：服务器遇到意外错误，无法完成请求。</li>
+<li>502 Bad Gateway：服务器作为网关或代理，从上游服务器收到无效响应。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711111350794.png" alt="image-20230711111350794"></p>
+</blockquote>
+<h3 id="HTTP报文结构"><a href="#HTTP报文结构" class="headerlink" title="HTTP报文结构"></a>HTTP报文结构</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112326548.png" alt="image-20230711112326548"></p>
+<h4 id="1、请求行和响应行（状态行）"><a href="#1、请求行和响应行（状态行）" class="headerlink" title="1、请求行和响应行（状态行）"></a>1、请求行和响应行（状态行）</h4><p>请求行：请求方法，url，HTTP版本</p>
+<p>相应行：HTTP版本，状态码，状态描述</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112540419.png" alt="image-20230711112540419"></p>
+<h4 id="2、请求头和响应头"><a href="#2、请求头和响应头" class="headerlink" title="2、请求头和响应头"></a>2、请求头和响应头</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112702967.png" alt="image-20230711112702967"></p>
+<blockquote>
+<p>不止有图上这些</p>
+</blockquote>
+<h5 id="1-请求头"><a href="#1-请求头" class="headerlink" title="1.请求头"></a>1.请求头</h5><p><strong>Accept:MIME</strong> 可选项，不一定有</p>
+<p>指明了期望返回的类型</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711113256917.png" alt="image-20230711113256917"></p>
+<p><strong>Host</strong></p>
+<p>请求头中的 “Host” 字段用于指定目标服务器的主机名或 IP 地址。它是 HTTP&#x2F;1.1 协议中的一个必需字段，在发送请求时应该包含在请求头部中。</p>
+<h5 id="2-响应头"><a href="#2-响应头" class="headerlink" title="2.响应头"></a>2.响应头</h5><p>Content-Length</p>
+<p>Content-Type</p>
+<h4 id="3、空行"><a href="#3、空行" class="headerlink" title="3、空行"></a>3、空行</h4><h4 id="4、请求体和响应体"><a href="#4、请求体和响应体" class="headerlink" title="4、请求体和响应体"></a>4、请求体和响应体</h4><h3 id="Day2-2-Hertz-应用篇"><a href="#Day2-2-Hertz-应用篇" class="headerlink" title="Day2-2 Hertz 应用篇"></a>Day2-2 Hertz 应用篇</h3><h4 id="hz和thriftgo"><a href="#hz和thriftgo" class="headerlink" title="hz和thriftgo"></a>hz和thriftgo</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151253162.png" alt="image-20230711151253162"></p>
+<h4 id="IDL-Interface-Definition-Language"><a href="#IDL-Interface-Definition-Language" class="headerlink" title="IDL Interface Definition Language"></a>IDL Interface Definition Language</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151516937.png" alt="image-20230711151516937"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151635573.png" alt="image-20230711151635573"></p>
+<h3 id="Hz实战1"><a href="#Hz实战1" class="headerlink" title="Hz实战1"></a>Hz实战1</h3><p><a class="link" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>创建hello.thrift文件</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> idl</span><br><span class="line">vim hello.thrift</span><br></pre></td></tr></table></figure></div>
+
+<p><code>hello.thrift</code>文件内容</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// idl/hello.thrift</span></span><br><span class="line">namespace go nju.dsy.example </span><br><span class="line"><span class="comment">// 指明目标代码语言是go</span></span><br><span class="line"><span class="comment">// 命名空间是nju.dsy.example</span></span><br><span class="line"></span><br><span class="line">struct HelloReq &#123;</span><br><span class="line">    <span class="number">1</span>: string <span class="title function_">Name</span> <span class="params">(api.query=<span class="string">&quot;name&quot;</span>)</span>; </span><br><span class="line">    <span class="comment">// 添加 api 注解为方便进行参数绑定</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct HelloResp &#123;</span><br><span class="line">    <span class="number">1</span>: string RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">service HelloService &#123;</span><br><span class="line">    HelloResp <span class="title function_">HelloMethod</span><span class="params">(<span class="number">1</span>: HelloReq request)</span> (api.get=<span class="string">&quot;/hello&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">hz new -module github.com/SYuan03/thrift/example -idl idl/hello.thrift</span><br><span class="line">go mod tidy	<span class="comment"># 整理 &amp; 拉取依赖</span></span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>namespace里面就是对应的多级目录结构</p>
+</blockquote>
+<blockquote>
+<p>执行go mod tidy后，爆红消失</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711231931491.png" alt="image-20230711231931491"></p>
+</blockquote>
+<p>修改 handler，添加自己的逻辑</p>
+<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// handler path: biz/handler/hello/example/hello_service.go</span></span><br><span class="line"><span class="comment">// 其中 &quot;hello/example&quot; 是 thrift idl 的 namespace</span></span><br><span class="line"><span class="comment">// &quot;hello_service.go&quot; 是 thrift idl 中 service 的名字，所有 HelloService 定义的方法都会生成在这个文件中</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// HelloMethod .</span></span><br><span class="line"><span class="comment">// @router /hello [GET]</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloMethod</span><span class="params">(ctx context.Context, c *app.RequestContext)</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">        <span class="keyword">var</span> req example.HelloReq</span><br><span class="line">        err = c.BindAndValidate(&amp;req)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                c.String(<span class="number">400</span>, err.Error())</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        resp := <span class="built_in">new</span>(example.HelloResp)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 你可以修改整个函数的逻辑，而不仅仅局限于当前模板</span></span><br><span class="line">        resp.RespBody = <span class="string">&quot;hello,&quot;</span> + req.Name <span class="comment">// 添加的逻辑</span></span><br><span class="line"></span><br><span class="line">        c.JSON(<span class="number">200</span>, resp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">go build</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line">./example</span><br><span class="line">curl http://127.0.0.1:8888/hello?name=dsy -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233040123.png" alt="image-20230711233040123"></p>
+<p>成功</p>
+<h3 id="Hz实战2"><a href="#Hz实战2" class="headerlink" title="Hz实战2"></a>Hz实战2</h3><p><a class="link" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>更新一个已有的项目</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233626785.png" alt="image-20230711233626785"></p>
+<p>根据需求重写hello.thrift的内容</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// idl/hello.thrift</span></span><br><span class="line">namespace go nju.dsy.example </span><br><span class="line"><span class="comment">// 指明目标代码语言是go</span></span><br><span class="line"><span class="comment">// 命名空间是nju.dsy.example</span></span><br><span class="line"></span><br><span class="line">struct GetStudentInfoReq &#123;</span><br><span class="line">    <span class="number">1</span>: i32 <span class="title function_">ID</span> <span class="params">(api.query=<span class="string">&quot;id&quot;</span>)</span>; <span class="comment">// 添加 api 注解为方便进行参数绑定</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct GetStudentInfoResp &#123;</span><br><span class="line">    <span class="number">1</span>: i32 ID;</span><br><span class="line">    <span class="number">2</span>: string Name;</span><br><span class="line">    <span class="number">3</span>: string Favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct PostStudentInfoReq &#123;</span><br><span class="line">    <span class="number">1</span>: i32 ID;</span><br><span class="line">    <span class="number">2</span>: string Name;</span><br><span class="line">    <span class="number">3</span>: string Favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct PostStudentInfoResp &#123;</span><br><span class="line">    <span class="number">1</span>: string RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service StudentService &#123;</span><br><span class="line">    GetStudentInfoResp <span class="title function_">GetStudentInfoMethod</span><span class="params">(<span class="number">1</span>: GetStudentInfoReq request)</span> (api.get=<span class="string">&quot;/query&quot;</span>);</span><br><span class="line"></span><br><span class="line">    PostStudentInfoResp <span class="title function_">PostStudentInfoMethod</span><span class="params">(<span class="number">1</span>: PostStudentInfoReq request)</span> (api.post=<span class="string">&quot;/add-student-info&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>thrift的idl的结构体需要标序号，参数也要标序号，以指明顺序</p>
+<p>int用不了，要用i32</p>
+</blockquote>
+<p>执行</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">hz update -idl idl/hello.thrift</span><br></pre></td></tr></table></figure></div>
+
+<p>关于make</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711235734655.png" alt="image-20230711235734655"></p>
+<p>成功</p>
+<p>post</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://127.0.0.1:8888/add-student-info -X POST -H <span class="string">&#x27;Content-Type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;ID&quot;:666,&quot;Name&quot;: &quot;dsy&quot;, &quot;Favorite&quot;: &quot;peach&quot;&#125;&#x27;</span> -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p>get</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">curl http://127.0.0.1:8888/query?<span class="built_in">id</span>=10 -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712001708832.png" alt="image-20230712001708832"></p>
+<h3 id="Hz实战3"><a href="#Hz实战3" class="headerlink" title="Hz实战3"></a>Hz实战3</h3><p><a class="link" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/more-feature/client/">hz client 代码生成 | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>参考</p>
+<p><a class="link" href="https://github.com/cloudwego/hertz-examples/tree/main/hz/hz_client">hertz-examples&#x2F;hz&#x2F;hz_client at main · cloudwego&#x2F;hertz-examples · GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>啥玩意？</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712002635960.png" alt="image-20230712002635960"></p>
+<blockquote>
+<ul>
+<li><p>IDL（Interface Definition Language）：接口定义语言，用于定义分布式系统中服务接口的规范和格式。IDL 可以用于生成客户端和服务器端的代码，以便它们可以相互通信和交互数据。Thrift 和 gRPC 等框架都支持使用 IDL 进行服务定义和代码生成。</p>
+</li>
+<li><p>RPC（Remote Procedure Call）：远程过程调用，是一种跨网络的分布式系统通信方式，允许客户端应用程序调用远程服务器上的过程或方法，并接收返回结果。RPC 可以使用 HTTP、TCP、UDP 等协议进行通信，常用的框架包括 Thrift、gRPC、Dubbo 等。</p>
+</li>
+<li><p>HTTP 请求：超文本传输协议（HTTP）定义了客户端和服务器之间的通信协议。HTTP 请求是客户端向服务器发送的请求，包括请求方法、URL、请求头、请求体等信息。服务器根据这些信息来处理请求，并返回响应结果。</p>
+</li>
+<li><p>Hertz client：Hertz 是一个开源的 RPC 框架，支持使用 IDL 进行服务定义和代码生成。Hertz client 是客户端程序，用于向 Hertz server 发送 RPC 请求，并接收响应结果。</p>
+</li>
+<li><p>Hertz server：Hertz server 是服务端程序，用于接收 Hertz client 发送的 RPC 请求，并处理请求，返回响应结果。</p>
+</li>
+</ul>
+<p>它提到了一种工具或框架，可以根据 IDL 文件生成客户端代码，并自动屏蔽创建和初始化 Hertz client 的繁琐操作。生成的客户端代码可以直接使用 HTTP 请求调用 Hertz server 提供的服务，并接收响应结果。使用这种工具或框架，可以大大简化分布式系统中的开发和调试过程，提高开发效率。</p>
+</blockquote>
+<p>先把之前的idl搬过来</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> server</span><br><span class="line"><span class="built_in">cd</span> server</span><br><span class="line">hz new -mod=github.com/SYuan03/thrift/example2 --idl=../idl/hello.thrift --handler_by_method -t=template=slim</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 同理，略</span></span><br><span class="line">hz client -mod=github.com/SYuan03/thrift/client --idl=../idl/hello.thrift --model_dir=hertz_gen -t</span><br><span class="line">=template=slim --client_dir=hz_client</span><br></pre></td></tr></table></figure></div>
+
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712004622251.png" alt="image-20230712004622251"></p>
+<p>成功！</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712012317679.png" alt="image-20230712012317679"></p>
+]]></content>
+      <categories>
+        <category>2023-Summer-Courses-CloudWeGo</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Day3-RPC</title>
+    <url>/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html</url>
+    <content><![CDATA[<h2 id="Day2-1"><a href="#Day2-1" class="headerlink" title="Day2-1"></a>Day2-1</h2><h3 id="RPC的定义"><a href="#RPC的定义" class="headerlink" title="RPC的定义"></a>RPC的定义</h3><p>From wiki:  远程过程调用是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一个地址空间（通常为一个开放网络的一台计算机）的子程序。</p>
+<p>可以像调用本地方法一样调用远程方法。</p>
+<p>解决跨进程间&#x2F;远程通信问题。</p>
+<h3 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h3><h4 id="Thrift-一个FaceBook开发的框架"><a href="#Thrift-一个FaceBook开发的框架" class="headerlink" title="Thrift-一个FaceBook开发的框架"></a>Thrift-一个FaceBook开发的框架</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712111928707.png" alt="image-20230712111928707"></p>
+<h4 id="IDL"><a href="#IDL" class="headerlink" title="IDL"></a>IDL</h4><p>跨语言，规范性，代码生成</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712113858288.png" alt="image-20230712113858288"></p>
+<h4 id="Thrift-IDL"><a href="#Thrift-IDL" class="headerlink" title="Thrift IDL"></a>Thrift IDL</h4><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712114126789.png" alt="image-20230712114126789"></p>
+<p>基本语法</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712114436233.png" alt="image-20230712114436233"></p>
+<p>Field Requiredness</p>
+<p>optional required optional</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712114634069.png" alt="image-20230712114634069"></p>
+<p>default未赋值也会编码</p>
+<h3 id="快速入门-ppt上的使用入门案例复现"><a href="#快速入门-ppt上的使用入门案例复现" class="headerlink" title="快速入门-ppt上的使用入门案例复现"></a>快速入门-ppt上的使用入门案例复现</h3><p>第三步，生成服务端代码</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">kitex -module github.com/SYuan03/Day3-kitex1 -service nju.dsy.kitex.demo1 ./idl/kitex_greet.thrift</span><br><span class="line">go mod tidy</span><br></pre></td></tr></table></figure></div>
+
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712155853571.png" alt="image-20230712155853571"></p>
+<p>第四步，生成调用端代码</p>
+<p>成功</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712165547865.png" alt="image-20230712165547865"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc/image-20230712165558739.png" alt="image-20230712165558739"></p>
+<h3 id="进阶特性-泛化调用"><a href="#进阶特性-泛化调用" class="headerlink" title="进阶特性-泛化调用"></a>进阶特性-泛化调用</h3><h3 id="Day3-随堂练习"><a href="#Day3-随堂练习" class="headerlink" title="Day3-随堂练习"></a>Day3-随堂练习</h3><div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">hz new -mod github.com/SYuan03/Day3/HertzServer -idl idl/student.thrift</span><br><span class="line">go mod tidy</span><br><span class="line"></span><br><span class="line">kitex -service kitex.demo -module github.go mod tidycom/SYuan03/Day3/KitexServer idl/student.thrift</span><br><span class="line">go mod tidy</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="Hertz-Server"><a href="#Hertz-Server" class="headerlink" title="Hertz-Server"></a>Hertz-Server</h4><p>修改Kitex Server的main.go，配置监听端口，修改 main.go。（Kitex 与 Hertz 默认端口均是 8888，需要修改端口）</p>
+<p>修改student.service，用client作一下转发</p>
+<h4 id="Kitex-Server"><a href="#Kitex-Server" class="headerlink" title="Kitex-Server"></a>Kitex-Server</h4><p>修改main.go</p>
+<p>修改handler.go</p>
+]]></content>
+      <categories>
+        <category>2023-Summer-Courses-CloudWeGo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Day4-服务发现与负载均衡</title>
+    <url>/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.html</url>
+    <content><![CDATA[<h2 id="Day4-2-服务发现和负载均衡"><a href="#Day4-2-服务发现和负载均衡" class="headerlink" title="Day4-2 服务发现和负载均衡"></a>Day4-2 服务发现和负载均衡</h2><h3 id="引入本地缓存"><a href="#引入本地缓存" class="headerlink" title="引入本地缓存"></a>引入本地缓存</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713141618044.png" alt="image-20230713141618044"></p>
+<p>解决了注册中心压力过大的问题</p>
+<p>但是也带来了可能与注册中心对应数据不一致的问题</p>
+<h3 id="etcd"><a href="#etcd" class="headerlink" title="etcd"></a>etcd</h3><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713141732362.png" alt="image-20230713141732362"></p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>一个终端启动，另一个写和读</p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713143859890.png" alt="image-20230713143859890"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day4-%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/image-20230713144904773.png" alt="image-20230713144904773"></p>
+<p>Server发起Put请求</p>
+<p>Client会发一个Range请求给Server</p>
+]]></content>
+      <categories>
+        <category>2023-Summer-Courses-CloudWeGo</category>
+      </categories>
+  </entry>
+  <entry>
     <title>软工二第一次代码作业</title>
     <url>/posts/2023-Spring-Courses-%E8%BD%AF%E5%B7%A5%E4%BA%8C/%E8%BD%AF%E5%B7%A5%E4%BA%8C%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E4%BD%9C%E4%B8%9A.html</url>
     <content><![CDATA[<h2 id="什么是kwic"><a href="#什么是kwic" class="headerlink" title="什么是kwic?"></a>什么是kwic?</h2><p>KWIC是”Keyword in Context”（关键词上下文）的缩写。 KWIC是一种文本分析方法，用于提取文本中的关键词并在其周围显示一定数量的上下文信息。这通常被用于索引和搜索系统中的文本数据，以便用户可以快速找到与其关注的关键词相关的文本。KWIC索引通常显示在一个表格或网格中，其中每一行都是一个关键词及其周围的文本片段，让用户可以快速浏览文本内容，快速找到感兴趣的信息。</p>
@@ -2705,6 +2687,24 @@
 ]]></content>
       <categories>
         <category>2023-Spring-Courses-软工二</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Day5-APIGateway</title>
+    <url>/posts/2023-Summer-CloudWeGo/day5-apigateway.html</url>
+    <content><![CDATA[<h2 id="正向-反向代理"><a href="#正向-反向代理" class="headerlink" title="正向&#x2F;反向代理"></a>正向&#x2F;反向代理</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714102358455.png" alt="image-20230714102358455"></p>
+<p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714102453866.png" alt="image-20230714102453866"></p>
+<p>正向代理是客户端主动知道要找一个代理：VPN</p>
+<p>反向代理是客户端并不知道，是服务端的一些代理：基本的服务网关如Nginx</p>
+<h2 id="反向代理服务器就是服务网关，那-API-网关是什么？"><a href="#反向代理服务器就是服务网关，那-API-网关是什么？" class="headerlink" title="反向代理服务器就是服务网关，那 API 网关是什么？"></a>反向代理服务器就是服务网关，那 API 网关是什么？</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714103405605.png" alt="image-20230714103405605"></p>
+<p>比如大门只控制学校的进出控制（流量网关，如nginx，其实还是不太一样，因为基本网关是有URL路由转发到不同服务器的），但是某个特定的事务处理，显然不能都交给流量网关，需要对于业务有特定的了解，相当于有了业务属性（业务网关，即API网关）</p>
+<h2 id="反向代理-Nginx-基本功能"><a href="#反向代理-Nginx-基本功能" class="headerlink" title="反向代理-Nginx-基本功能"></a>反向代理-Nginx-基本功能</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714104026842.png" alt="image-20230714104026842"></p>
+<h2 id="网关分类"><a href="#网关分类" class="headerlink" title="网关分类"></a>网关分类</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714104230191.png" alt="image-20230714104230191"></p>
+<h2 id="API网关形态"><a href="#API网关形态" class="headerlink" title="API网关形态"></a>API网关形态</h2><p><img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-CloudWeGo/day5-apigateway/image-20230714104757280.png" alt="image-20230714104757280"></p>
+<p>可以把与服务端更耦合的流量分给Sidecar来处理</p>
+]]></content>
+      <categories>
+        <category>2023-Summer-CloudWeGo</category>
       </categories>
   </entry>
   <entry>
