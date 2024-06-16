@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://bblog.031105.xyz/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616154704762.png">
 <meta property="og:image" content="https://bblog.031105.xyz/posts/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91/24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616155109877.png">
 <meta property="article:published_time" content="2024-06-15T15:21:51.000Z">
-<meta property="article:modified_time" content="2024-06-16T08:33:07.431Z">
+<meta property="article:modified_time" content="2024-06-16T08:53:09.619Z">
 <meta property="article:author" content="奔跑的淡水鱼">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
@@ -617,8 +617,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-06-16 16:33:07</span>
-            <span class="mobile">2024-06-16 16:33:07</span>
+            <span class="desktop">2024-06-16 16:53:09</span>
+            <span class="mobile">2024-06-16 16:53:09</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -728,7 +728,31 @@
 
 <p>参数：</p>
 <p><code>expression1, expression2, ..., expressionN</code>：可以是列名或值，<code>COALESCE</code> 会从左到右检查这些表达式，返回第一个非 NULL 的结果。</p>
-<h3 id="2-4-字符串"><a href="#2-4-字符串" class="headerlink" title="2.4. 字符串"></a>2.4. 字符串</h3>
+<h3 id="2-4-字符串"><a href="#2-4-字符串" class="headerlink" title="2.4. 字符串"></a>2.4. 字符串</h3><h4 id="2-4-1-substr-完整str-pos-长度"><a href="#2-4-1-substr-完整str-pos-长度" class="headerlink" title="2.4.1. substr(完整str, pos, 长度)"></a>2.4.1. substr(完整str, pos, 长度)</h4><p>Q：把EMP表中的ENAME&#x3D;KING的字符串拆开显示为4行，每行一个字符</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> substr(e.ename, iter.pos, <span class="number">1</span>) <span class="keyword">as</span> C</span><br><span class="line"><span class="keyword">from</span> (<span class="keyword">select</span> ename <span class="keyword">from</span> emp <span class="keyword">where</span> ename <span class="operator">=</span> <span class="string">&#x27;KING&#x27;</span>) e,</span><br><span class="line">(<span class="keyword">select</span> id <span class="keyword">as</span> pos <span class="keyword">from</span> t10) iter</span><br><span class="line"><span class="keyword">where</span> iter.pos <span class="operator">&lt;=</span> length(e.ename)</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>t10表</strong></p>
+<p><code>t10</code> 表：这是一个特殊的表，通常在 Oracle 数据库中用来生成一个从 1 到 10 的数字序列。这个表的每一行都有一个 <code>id</code> 列，包含一个数字，用于表示序列中的一个位置。</p>
+<blockquote>
+<p>在 MySQL 数据库中，并没有像 Oracle 中的 <code>t10</code> 表这样的内置表来直接生成数字序列。不过，MySQL 可以通过其他方式来生成数字序列，例如使用递归的公用表表达式（Common Table Expressions, CTE）或者临时表。</p>
+<p>以下是使用递归 CTE 生成数字序列的一个例子：</p>
+<div class="highlight-container" data-rel="Pgsql"><figure class="iseeu highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">复制<span class="keyword">WITH</span> <span class="keyword">RECURSIVE</span> num(n) <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">  <span class="keyword">UNION</span> <span class="keyword">ALL</span></span><br><span class="line">  <span class="keyword">SELECT</span> n + <span class="number">1</span> <span class="keyword">FROM</span> num <span class="keyword">WHERE</span> n &lt; <span class="number">10</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> num;</span><br></pre></td></tr></table></figure></div>
+
+<p>这个递归 CTE 会生成从 1 到 10 的数字序列。你可以调整 <code>n &lt; 10</code> 的条件来改变生成的序列长度。</p>
+</blockquote>
+<h4 id="2-4-2-replace函数"><a href="#2-4-2-replace函数" class="headerlink" title="2.4.2. replace函数"></a>2.4.2. replace函数</h4><div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REPLACE(string, <span class="keyword">search</span>, replace)</span><br></pre></td></tr></table></figure></div>
+
+<p>参数（会替换所有的）</p>
+<ul>
+<li><code>string</code>：要搜索和替换的原始字符串。</li>
+<li><code>search</code>：要在 <code>string</code> 中搜索的子字符串。</li>
+<li><code>replace</code>：用于替换 <code>search</code> 子字符串的新字符串。</li>
+</ul>
+<p><strong>使用 <code>REPLACE</code> 统计字符出现次数</strong></p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> (length(<span class="string">&#x27;10,CLARK,MANAGER&#x27;</span>) <span class="operator">-</span> length(REPLACE(<span class="string">&#x27;10,CLARK,MANAGER&#x27;</span>, <span class="string">&#x27;,&#x27;</span>, <span class="string">&#x27;&#x27;</span>))) <span class="operator">/</span> length(<span class="string">&#x27;,&#x27;</span>) <span class="keyword">as</span> cnt;</span><br></pre></td></tr></table></figure></div>
+
+<p>思路：把找到的字符串换成空，再计算长度差</p>
+
         </div>
 
         
@@ -742,7 +766,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2024-06-16 16:33:07
+                    :</strong> 2024-06-16 16:53:09
             </li>
         
         <li>
@@ -783,12 +807,12 @@
     <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/2023-Spring-Courses-数据库管理/notes-dbms.html" title="notes-dbms" rel="bookmark">
   <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="!max-w-none">
   <span class="title">notes-dbms</span>
+</a><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="LLM相关术语理解" class="!max-w-none">
+  <span class="title">LLM相关术语理解</span>
 </a><a class="recommended-article-item" href="/posts/2023-Summer-Courses-百度移动端/kotlin-learn.html" title="kotlin-learn" rel="bookmark">
   <img src="https://s2.loli.net/2023/07/24/NsAn8BtIVudU6yj.jpg" alt="kotlin-learn" class="!max-w-none">
   <span class="title">kotlin-learn</span>
-</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-操作系统/notes-os.html" title="notes-os" rel="bookmark">
-  <img src="https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg" alt="notes-os" class="!max-w-none">
-  <span class="title">notes-os</span>
 </a></div>
    </div>
    <div class="recommended-mobile">
@@ -798,9 +822,9 @@
    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/2023-Spring-Courses-数据库管理/notes-dbms.html" title="notes-dbms" rel="bookmark">
   <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="!max-w-none">
   <span class="title">notes-dbms</span>
-</a><a class="recommended-article-item" href="/posts/2023-Summer-Courses-百度移动端/kotlin-learn.html" title="kotlin-learn" rel="bookmark">
-  <img src="https://s2.loli.net/2023/07/24/NsAn8BtIVudU6yj.jpg" alt="kotlin-learn" class="!max-w-none">
-  <span class="title">kotlin-learn</span>
+</a><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="LLM相关术语理解" class="!max-w-none">
+  <span class="title">LLM相关术语理解</span>
 </a></div>
    </div>
   </div>
@@ -879,7 +903,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">24-Spring-数据库开发期末复习</div>
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A2%98%E5%9E%8B"><span class="nav-text">1. 题型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%9A%BE%E7%82%B9%EF%BC%9A%E4%B8%89%E9%81%93SQL"><span class="nav-text">1.1. 难点：三道SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%97%B6%E9%97%B4%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E6%95%B0%E5%80%BC%E4%B8%89%E9%80%89%E4%BA%8C"><span class="nav-text">1.1.1. 时间、字符串、数值三选二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E4%BC%9A%E8%80%83%E4%B8%80%E4%B8%AA%E9%80%92%E5%BD%92-withas-%E6%A0%91%E7%8A%B6%E7%BB%93%E6%9E%84%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E6%9F%A5%E8%AF%A2"><span class="nav-text">1.1.2. 会考一个递归(withas) 树状结构自顶向下查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E6%9C%89%E4%B8%80%E9%81%93%E5%8F%AF%E8%83%BD%E4%BC%9A%E4%BD%BF%E7%94%A8%E5%A4%96%E8%BF%9E%E6%8E%A5"><span class="nav-text">1.1.3. 有一道可能会使用外连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84%E4%B8%80%E5%AE%9A%E4%BC%9A%E8%80%83"><span class="nav-text">1.2. 索引结构一定会考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%97%A5%E5%BF%97"><span class="nav-text">1.3. 日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%88%86%E5%8C%BA%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93"><span class="nav-text">1.4. 分区分表分库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-SQL%E8%A7%A3%E9%87%8A%E5%99%A8%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%88%90%E6%9C%AC%E5%92%8C%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99"><span class="nav-text">1.5. SQL解释器：基于成本和基于规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-%E9%80%81%E5%88%86%E9%A2%98"><span class="nav-text">1.6. 送分题?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SQL"><span class="nav-text">2. SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0"><span class="nav-text">2.1. 聚合函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-NULL%E5%A6%82%E4%BD%95%E6%88%90%E7%BB%84"><span class="nav-text">2.2. NULL如何成组?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-coalesce%E5%87%BD%E6%95%B0"><span class="nav-text">2.3. coalesce函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">2.4. 字符串</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A2%98%E5%9E%8B"><span class="nav-text">1. 题型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%9A%BE%E7%82%B9%EF%BC%9A%E4%B8%89%E9%81%93SQL"><span class="nav-text">1.1. 难点：三道SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%97%B6%E9%97%B4%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%81%E6%95%B0%E5%80%BC%E4%B8%89%E9%80%89%E4%BA%8C"><span class="nav-text">1.1.1. 时间、字符串、数值三选二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E4%BC%9A%E8%80%83%E4%B8%80%E4%B8%AA%E9%80%92%E5%BD%92-withas-%E6%A0%91%E7%8A%B6%E7%BB%93%E6%9E%84%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E6%9F%A5%E8%AF%A2"><span class="nav-text">1.1.2. 会考一个递归(withas) 树状结构自顶向下查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E6%9C%89%E4%B8%80%E9%81%93%E5%8F%AF%E8%83%BD%E4%BC%9A%E4%BD%BF%E7%94%A8%E5%A4%96%E8%BF%9E%E6%8E%A5"><span class="nav-text">1.1.3. 有一道可能会使用外连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84%E4%B8%80%E5%AE%9A%E4%BC%9A%E8%80%83"><span class="nav-text">1.2. 索引结构一定会考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%97%A5%E5%BF%97"><span class="nav-text">1.3. 日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%88%86%E5%8C%BA%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93"><span class="nav-text">1.4. 分区分表分库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-SQL%E8%A7%A3%E9%87%8A%E5%99%A8%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%88%90%E6%9C%AC%E5%92%8C%E5%9F%BA%E4%BA%8E%E8%A7%84%E5%88%99"><span class="nav-text">1.5. SQL解释器：基于成本和基于规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-%E9%80%81%E5%88%86%E9%A2%98"><span class="nav-text">1.6. 送分题?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SQL"><span class="nav-text">2. SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0"><span class="nav-text">2.1. 聚合函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-NULL%E5%A6%82%E4%BD%95%E6%88%90%E7%BB%84"><span class="nav-text">2.2. NULL如何成组?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-coalesce%E5%87%BD%E6%95%B0"><span class="nav-text">2.3. coalesce函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">2.4. 字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-1-substr-%E5%AE%8C%E6%95%B4str-pos-%E9%95%BF%E5%BA%A6"><span class="nav-text">2.4.1. substr(完整str, pos, 长度)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-2-replace%E5%87%BD%E6%95%B0"><span class="nav-text">2.4.2. replace函数</span></a></li></ol></li></ol></li></ol>
 
     </div>
 </div>
