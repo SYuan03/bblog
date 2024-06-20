@@ -18,12 +18,12 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280  Transition与ReplayMemory·  Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（act">
+        <meta name="description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280  Transition与ReplayMemory  Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（acti">
 <meta property="og:type" content="article">
 <meta property="og:title" content="强化学习记录">
 <meta property="og:url" content="https://bblog.031105.xyz/posts/23-Fall-Courses-MachineLearning/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html">
 <meta property="og:site_name" content="淡水鱼的蔚蓝之海">
-<meta property="og:description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280  Transition与ReplayMemory·  Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（act">
+<meta property="og:description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280  Transition与ReplayMemory  Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（acti">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-23T03:23:50.000Z">
 <meta property="article:modified_time" content="2024-03-10T11:37:13.606Z">
@@ -665,19 +665,19 @@
 <p>参考链接</p>
 <p>https://blog.csdn.net/weixin_51545953/article/details/127466280</p>
 </blockquote>
-<h1 id="Transition与ReplayMemory">Transition与ReplayMemory<a class="anchor" href="#Transition与ReplayMemory">·</a></h1>
+<h1>Transition与ReplayMemory</h1>
 <ol>
 <li><strong>Transition</strong>（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（action），以及随后的情境（next_state）和奖励（reward）结果。这个概念用来记录代理在环境中的互动和反馈，有助于后续的学习和决策。</li>
 <li><strong>ReplayMemory</strong>（经验回放记忆）：ReplayMemory 是一个有限大小的循环缓冲区，用来存储代理观察到的过渡。它的目的是为了重复使用这些数据。通过从中随机采样，可以获得一批不相关的过渡数据，用于训练深度强化学习模型，特别是DQN。经验回放记忆的存在对于稳定和改进DQN的训练过程非常重要，因为它有助于减少训练中的数据相关性问题，提高模型的效率和性能。</li>
 </ol>
 <p>总之，这段文字描述了在深度强化学习中使用经验回放记忆的概念，以及它的两个组成部分：Transition 用于记录单个情境转换，ReplayMemory 用于存储这些过渡数据并支持随机采样以进行训练。这一技术有助于提高深度强化学习模型的训练效果。</p>
-<h2 id="举例">举例<a class="anchor" href="#举例">·</a></h2>
+<h2 id="举例">举例</h2>
 <p>当我们训练一个深度强化学习模型（比如一个控制机器人玩游戏的模型），这个模型需要不断地学习如何在特定情境下采取正确的行动。经验回放记忆就像是这个模型的记忆系统。</p>
 <p><strong>Transition</strong>（过渡）是一种方式来记录代理在环境中的经历。假设我们正在训练一个智能机器人玩一个视频游戏。每个Transition可以看作是一条记录，记录了机器人在游戏中的一次互动。这个记录包括了机器人看到的游戏画面（情境），机器人采取的行动（比如移动、跳跃），以及之后获得的奖励（分数增加或减少）以及下一个情境。这些记录可以帮助机器人学习如何在不同情境下做出正确的决策。</p>
 <p><strong>ReplayMemory</strong>（经验回放记忆）就像是机器人的记忆库。它保存了很多过去的互动记录，而且它不仅仅是保存，还会不断更新。这个记忆库的好处在于，当我们要教机器人如何玩游戏的时候，我们可以随机挑选一些过去的记录，而不是只用最新的记录。这就好像是在学习一门新技能时，我们不仅仅会记住最近的练习，还会反复回顾过去的练习，这样我们的学习更加稳定。</p>
 <p>举个例子，如果机器人曾经在游戏中遇到过一个特殊的敌人，但是很长时间没有再遇到，如果我们只用最新的记录来训练它，它可能会忘记如何应对这个敌人。但是如果我们从ReplayMemory中随机挑选过去的记录，就可以让机器人不断回顾之前的经验，从而更好地应对各种情况。</p>
 <p>总之，经验回放记忆是一种方法，让深度强化学习模型能够从过去的经验中学习，而不仅仅依赖于最新的互动数据，从而提高模型的稳定性和性能。</p>
-<h1 id="DQN">DQN<a class="anchor" href="#DQN">·</a></h1>
+<h1>DQN</h1>
 <p>DQN（Deep Q-Network）是一种深度强化学习模型，旨在解决强化学习问题，特别是在离散动作空间中的问题。它是由DeepMind开发的，最初被广泛应用于训练智能代理来玩视频游戏，如Atari 2600游戏。DQN以其在处理高维度状态空间和复杂任务中的出色表现而著名。</p>
 <p>DQN的核心原理包括以下要点：</p>
 <ol>
@@ -688,7 +688,7 @@
 </ol>
 <p><strong>DQN的训练目标是最小化Q-值函数的均方误差，以使其逼近真实的Q值。通过与环境互动并不断优化神经网络参数，DQN可以学习在不同情境下采取什么动作来最大化长期奖励。</strong></p>
 <p>总之，DQN是深度强化学习的一种方法，它使用深度神经网络来学习代理在不同情境下如何做出最佳决策。它在处理高维状态空间和离散动作空间的问题中表现出色，使得智能代理能够在各种环境中表现出色。</p>
-<h1 id="ReplayMemory">ReplayMemory<a class="anchor" href="#ReplayMemory">·</a></h1>
+<h1>ReplayMemory</h1>
 <div class="highlight-container" data-rel="Py"><figure class="iseeu highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Transition = namedtuple(<span class="string">&#x27;Transition&#x27;</span>,</span><br><span class="line">                        (<span class="string">&#x27;state&#x27;</span>, <span class="string">&#x27;action&#x27;</span>, <span class="string">&#x27;next_state&#x27;</span>, <span class="string">&#x27;reward&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReplayMemory</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, capacity</span>):</span><br><span class="line">        self.memory = deque([], maxlen=capacity)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">push</span>(<span class="params">self, *args</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Save a transition&quot;&quot;&quot;</span></span><br><span class="line">        self.memory.append(Transition(*args))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sample</span>(<span class="params">self, batch_size</span>):</span><br><span class="line">        <span class="keyword">return</span> random.sample(self.memory, batch_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.memory)</span><br></pre></td></tr></table></figure></div>
 <p>这是一个Python类<code>ReplayMemory</code>，它似乎是为了实现经验回放记忆（Replay Memory）的功能而设计的。经验回放记忆是在深度强化学习中用于存储和随机采样代理与环境互动的记录的数据结构。以下是该类及其方法的简要解释：</p>
 <ol>
@@ -700,11 +700,11 @@
 <p>下面是一个使用示例：</p>
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建ReplayMemory对象，容量为1000</span></span><br><span class="line">capacity = <span class="number">1000</span></span><br><span class="line">memory = ReplayMemory(capacity)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将一条记录添加到Replay Memory</span></span><br><span class="line">state = [<span class="number">0.1</span>, <span class="number">0.2</span>, <span class="number">0.3</span>]</span><br><span class="line">action = <span class="number">1</span></span><br><span class="line">next_state = [<span class="number">0.2</span>, <span class="number">0.3</span>, <span class="number">0.4</span>]</span><br><span class="line">reward = <span class="number">0.5</span></span><br><span class="line">memory.push(state, action, next_state, reward)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从Replay Memory中随机采样一批记录</span></span><br><span class="line">batch_size = <span class="number">32</span></span><br><span class="line">sampled_batch = memory.sample(batch_size)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取Replay Memory中记录的数量</span></span><br><span class="line">memory_length = <span class="built_in">len</span>(memory)</span><br></pre></td></tr></table></figure></div>
 <p>在上述示例中，首先创建了一个<code>ReplayMemory</code>对象，然后将一条记录添加到Replay Memory中。接着，使用<code>sample</code>方法随机采样了一批记录，最后使用<code>__len__</code>方法获取了Replay Memory中记录的数量。这个类有助于管理和维护强化学习中所需的经验回放数据。</p>
-<h1 id="select-action">select_action<a class="anchor" href="#select-action">·</a></h1>
+<h1>select_action</h1>
 <p><strong>select_action</strong> 函数：这个函数用于选择代理在给定状态下采取的动作，通常遵循 ε-贪心策略（epsilon-greedy policy）。 ε-贪心策略是一种平衡探索和利用的策略，其中有一个 ε（epsilon）的概率用于随机选择一个动作，以便代理可以探索新的动作，而 1-ε 的概率用于根据模型的Q值选择一个最优动作。初始时，ε 的值为 EPS_START，然后随着时间逐渐以指数方式衰减至 EPS_END。EPS_DECAY 控制衰减速率。</p>
-<h1 id="plot-duration">plot_duration<a class="anchor" href="#plot-duration">·</a></h1>
+<h1>plot_duration</h1>
 <p><strong>plot_durations</strong> 函数：这个函数是用于绘制训练过程中每一轮（episode）的持续时间，并计算最近100轮的平均值。在强化学习中，通常使用“滚动平均”来评估模型性能，因为这可以平滑不稳定的训练过程。这个函数将在训练的主循环中调用，用于绘制和更新训练进展的图表。最后的评估通常基于最近100个episode的平均表现。</p>
-<h1 id="折扣因子GAMMA">折扣因子GAMMA<a class="anchor" href="#折扣因子GAMMA">·</a></h1>
+<h1>折扣因子GAMMA</h1>
 <p><code>GAMMA</code> 是折扣因子（discount factor），在强化学习中用于计算折扣回报（discounted return）。折扣回报是一个代理在一系列时间步内获得的奖励的折扣总和。</p>
 <p>具体来说，折扣回报是通过以下方式计算的：</p>
 <ol>
@@ -720,7 +720,7 @@
 <li>当 <code>GAMMA</code> 接近 0 时，未来奖励的影响几乎被忽略，代理更关注即时奖励。</li>
 </ul>
 <p>在实际的强化学习任务中，选择合适的 <code>GAMMA</code> 值取决于任务的性质，例如，如果任务需要代理长期规划和考虑未来奖励，那么较高的 <code>GAMMA</code> 值可能更合适。然而，它也可以根据任务的要求进行调整，以权衡长期和短期奖励的重要性。</p>
-<h1 id="目标网络">目标网络<a class="anchor" href="#目标网络">·</a></h1>
+<h1>目标网络</h1>
 <p>目标网络即target_net</p>
 <p>policy_net是参数一直在变化的</p>
 <p><code>policy_net</code> 和 <code>target_net</code> 是DQN算法中的两个神经网络，它们有不同的作用，并协同工作以稳定学习过程。让我更详细地解释它们的作用：</p>
@@ -734,7 +734,7 @@
 </ol>
 <p>具体来说，<code>target_net</code>的参数不会像<code>policy_net</code>那样频繁更新，而是定期进行更新，例如每隔一定数量的步骤。这使得目标Q值更稳定，有助于减小训练中的振荡和不稳定性。</p>
 <p>总之，<code>policy_net</code>用于估计当前状态下的Q值，而<code>target_net</code>用于估计未来状态下的最大Q值，通过这两个网络的协同工作，DQN算法能够更稳定地学习并提高智能体的性能。</p>
-<h1 id="关于优化器">关于优化器<a class="anchor" href="#关于优化器">·</a></h1>
+<h1>关于优化器</h1>
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化模型，首先将梯度置为0，然后进行反向传播，最后进行梯度裁剪</span></span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">loss.backward()</span><br><span class="line">torch.nn.utils.clip_grad_value_(policy_net.parameters(), <span class="number">100</span>)</span><br><span class="line"><span class="comment"># 使用优化器来更新模型参数，使得梯度下降</span></span><br><span class="line">optimizer.step()</span><br></pre></td></tr></table></figure></div>
 <p>这段代码是深度学习模型训练的标准步骤，用于优化模型的权重以减小损失函数的值。以下是对每个步骤的解释：</p>
 <ol>
@@ -902,7 +902,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">强化学习记录</div>
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Transition%E4%B8%8EReplayMemory"><span class="nav-number">1.</span> <span class="nav-text">Transition与ReplayMemory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DQN"><span class="nav-number">2.</span> <span class="nav-text">DQN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ReplayMemory"><span class="nav-number">3.</span> <span class="nav-text">ReplayMemory</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#select-action"><span class="nav-number">4.</span> <span class="nav-text">select_action</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#plot-duration"><span class="nav-number">5.</span> <span class="nav-text">plot_duration</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%98%E6%89%A3%E5%9B%A0%E5%AD%90GAMMA"><span class="nav-number">6.</span> <span class="nav-text">折扣因子GAMMA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E7%BD%91%E7%BB%9C"><span class="nav-number">7.</span> <span class="nav-text">目标网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">8.</span> <span class="nav-text">关于优化器</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Transition与ReplayMemory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">DQN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">ReplayMemory</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">select_action</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">plot_duration</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">折扣因子GAMMA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">目标网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">关于优化器</span></a></li></ol>
 
     </div>
 </div>
