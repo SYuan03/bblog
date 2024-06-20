@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="SYuan03">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://bblog.031105.xyz/posts/2023-summer-courses-百度移动端/2023百度移动端lec2-lec4.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="Day 7.11-第二讲  大作业UI示意稿：见Gitee平台-UI_Resources 7.11-7.13课程中的Demo工程：见Gitee平台-UI Lesson Demo  运行环境搭建 AndroidStudio Kotlin语言简介  文件结构介绍  运行 跟平板练了下 跑了整整6m40s额  日志logcat  退到后台显示onPause 再回去就onResume 现在的过滤器方式已经">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023百度移动端lec2-lec4">
+<meta property="og:url" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4.html">
+<meta property="og:site_name" content="淡水鱼的蔚蓝之海">
+<meta property="og:description" content="Day 7.11-第二讲  大作业UI示意稿：见Gitee平台-UI_Resources 7.11-7.13课程中的Demo工程：见Gitee平台-UI Lesson Demo  运行环境搭建 AndroidStudio Kotlin语言简介  文件结构介绍  运行 跟平板练了下 跑了整整6m40s额  日志logcat  退到后台显示onPause 再回去就onResume 现在的过滤器方式已经">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230712115616707.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230712143119713.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713131321745.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713132025681.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713132403278.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713132800152.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713133050648.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713133855953.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714091741502.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092151466.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092427546.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092805440.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092843215.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092921275.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714093011204.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714093159275.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714234028176.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718151135107.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718152043186.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718154131995.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718154606335.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718160008721.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718160548915.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718171905870.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718173117187.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718173146005.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718174203032.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230719133121193.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720103536788.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720173427188.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720173612196.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720174105895.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720194540007.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720194743039.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720194951539.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723153626924.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723181501426.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723182251984.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723211715910.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723212513538.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723214214546.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723220825113.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723221222248.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222647084.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222733287.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222917599.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222933356.png">
+<meta property="article:published_time" content="2023-07-11T10:57:37.000Z">
+<meta property="article:modified_time" content="2024-03-10T12:02:52.002Z">
+<meta property="article:author" content="奔跑的淡水鱼">
+<meta property="article:tag" content="移动端开发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230712115616707.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/MyImgs/icon1.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/MyImgs/icon1.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/MyImgs/icon1.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            2023百度移动端lec2-lec4 -
+        
+        ChrisDing&#39;s bblog
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script>document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("busuanzi_value_site_uv"),t=document.getElementById("busuanzi_value_site_pv"),n=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){n.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+1782;break}}),i=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){i.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+3784;break}}),r={childList:!0};n.observe(e,r),i.observe(t,r)});</script>
+                
+    
+
+    
+        <style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    
+<script src="/js/libs/anime.min.js"></script>
+
+    <h1 class="ml13">
+        ChrisDing&#39;s bblog
+    </h1>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+
+        anime.timeline({loop: true})
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [100,0],
+                translateZ: 0,
+                opacity: [0,1],
+                easing: "easeOutExpo",
+                duration: 1400,
+                delay: (el, i) => 300 + 30 * i
+            }).add({
+            targets: '.ml13 .letter',
+            translateY: [0,-100],
+            opacity: [1,0],
+            easing: "easeInExpo",
+            duration: 1200,
+            delay: (el, i) => 100 + 30 * i
+        });
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            hidePreloaderAfterTimeout(1000); // Hide after 1000 milliseconds once the window has loaded
+        });
+
+        // Backup failsafe: Hide preloader after a maximum of 5000 milliseconds, regardless of the window load event
+        hidePreloaderAfterTimeout(5000);
+
+        function hidePreloaderAfterTimeout(delay) {
+            setTimeout(function () {
+                var preloader = document.querySelector('.preloader');
+                preloader.style.opacity = '0';
+                setTimeout(function () {
+                    preloader.style.display = 'none';
+                }, 200);
+            }, delay);
+        }
+    </script>
+</div>
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"bblog.031105.xyz","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":true,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/MyImgs/home-bg-light.png","dark":"/MyImgs/home-bg-dark.png"},"title":"Welcome to my bblog !","subtitle":{"text":["画凌烟，上甘泉，自古功名属少年!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#6B3E99"},"text_style":{"title_size":"3.8rem","subtitle_size":"2.1rem","line_height":1.5},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/SYuan03","instagram":null,"zhihu":null,"twitter":null,"email":"tu3344606@gmail.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"绿光","artist":"孙燕姿","url":"https://box.nju.edu.cn/f/6cb53c50b68441cb9df9/?dl=1","cover":"https://s2.loli.net/2024/03/13/4dGBWbposnzfeOv.png","lrc":"/MyLRCs/LvGuang.lrc"},{"name":"黑色柳丁","artist":"陶喆","url":"https://box.nju.edu.cn/f/73c03bfd86f64670b2d0/?dl=1","cover":"https://s2.loli.net/2024/03/13/aVRZuNlzgF2CeBX.png"},{"name":"听","artist":"方大同","url":"https://box.nju.edu.cn/f/99a456f7d933420ead28/?dl=1","cover":"https://s2.loli.net/2024/03/13/UC4ZXvGsmJPwVSz.png"},{"name":"Exile","artist":"Taylor Swift","url":"https://box.nju.edu.cn/f/67b6f94a1994497ba3b0/?dl=1","cover":"https://s2.loli.net/2024/03/13/L31UtycDV4FbYfv.png"},{"name":"Blowin' in the Wind","artist":"Bob Dylan","url":"https://box.nju.edu.cn/f/fbad6214b7c5457f9b34/?dl=1","cover":"https://s2.loli.net/2024/03/13/mw52W3hDnvEAd8P.png"},{"name":"日落大道","artist":"梁博","url":"https://box.nju.edu.cn/f/c21c2403884a4451b751/?dl=1","cover":"https://s2.loli.net/2024/03/13/qOtwhWycx1JYve4.png"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.2","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about","Github":"https://github.com/SYuan03"}},"Shuoshuo":{"path":"/shuoshuo","icon":"fa-regular fa-bullhorn"}},"search":{"enable":true,"preload":true},"tags":{"Tags":{"icon":"fa-solid fa-tags","path":"/tags"}},"categories":{"Categories":{"icon":"fa-solid fa-folder","path":"/categories"}},"shuoshuo":{"Shuoshuo":{"icon":"fa-regular fa-bullhorn","path":"/shuoshuo"}}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":5},"tags":{"enable":true,"limit":5}},"footerStart":"2023/04/14 20:57:49"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/MyImgs/icon1.svg">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                ChrisDing&#39;s bblog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/about">
+                                                    ME
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/SYuan03">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/shuoshuo"
+                                        >
+                                    <i class="fa-regular fa-bullhorn fa-fw"></i>
+                                    说说
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-About"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-About">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/about">ME</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/SYuan03">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/shuoshuo"
+                        >
+                            <span>
+                                说说
+                            </span>
+                            
+                                <i class="fa-regular fa-bullhorn fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">39</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">23</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">40</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://s2.loli.net/2023/07/18/a9uVJURpKeHPLoq.webp" alt="2023百度移动端lec2-lec4" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-start">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-bold backdrop-blur-lg rounded-xl border border-border-color ">2023百度移动端lec2-lec4</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/MyImgs/avatar1.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">SYuan03</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-07-11 18:57:37</span>
+        <span class="mobile">2023-07-11 18:57:37</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-03-10 20:02:52</span>
+            <span class="mobile">2024-03-10 20:02:52</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/">2023-Summer-Courses-百度移动端</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91/">移动端开发</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h1>Day 7.11-第二讲</h1>
+<blockquote>
+<p>大作业UI示意稿：见Gitee平台-UI_Resources<br>
+7.11-7.13课程中的Demo工程：见Gitee平台-UI Lesson Demo</p>
+</blockquote>
+<h3 id="运行环境搭建">运行环境搭建</h3>
+<p>AndroidStudio</p>
+<h3 id="Kotlin语言简介">Kotlin语言简介</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230712115616707.png" class title="image-20230712115616707">
+<h3 id="文件结构介绍">文件结构介绍</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230712143119713.png" class title="image-20230712143119713">
+<h3 id="运行">运行</h3>
+<p>跟平板练了下</p>
+<p>跑了整整6m40s额</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713131321745.png" class title="image-20230713131321745">
+<h3 id="日志logcat">日志logcat</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713132025681.png" class title="image-20230713132025681">
+<p>退到后台显示onPause</p>
+<p>再回去就onResume</p>
+<p>现在的过滤器方式已经改变了</p>
+<blockquote>
+<p>参考<a class="link" target="_blank" rel="noopener" href="https://blog.csdn.net/baoolong/article/details/127572422">Android Studio2022年10月更新Logcat配置过滤_android studio logcat 过滤_baoolong的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<p>可以这样写，与老师上课所讲基本相当</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713132403278.png" class title="image-20230713132403278">
+<h3 id="APK包组成">APK包组成</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713132800152.png" class title="image-20230713132800152">
+<p>两个资源文件一个是运行时参与编译，一个就是单纯的素材存储</p>
+<p>渠道信息：比如小米应用商店，谷歌商店等信息</p>
+<h3 id="APK包构建过程">APK包构建过程</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713133050648.png" class title="image-20230713133050648">
+<h3 id="Design-Code">Design&amp;&amp;Code</h3>
+<p>一般不直接使用Design的方式</p>
+<p>拖拽的方式不太精准</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230713133855953.png" class title="image-20230713133855953">
+<h1>Day 7.12-第三讲-UI开发初探</h1>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714091741502.png" class title="image-20230714091741502"> 
+<blockquote>
+<p>图标： <a class="link" target="_blank" rel="noopener" href="https://icons8.com/icons/material">https://icons8.com/icons/material <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br>
+主题：<a class="link" target="_blank" rel="noopener" href="https://m3.material.io/theme-builder#/custom">https://m3.material.io/theme-builder#/custom <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h2 id="View组件">View组件</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092151466.png" class title="image-20230714092151466">
+<h3 id></h3>
+<h3 id="View的属性">View的属性</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092427546.png" class title="image-20230714092427546">
+<h3 id="ViewGroup">ViewGroup</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092805440.png" class title="image-20230714092805440">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092843215.png" class title="image-20230714092843215">
+<p>例子</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714092921275.png" class title="image-20230714092921275">
+<h2 id="常见的布局">常见的布局</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714093011204.png" class title="image-20230714093011204">
+<p>RelativeLayout相对用的比较少了</p>
+<h3 id="LinearLayout">LinearLayout</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714093159275.png" class title="image-20230714093159275">
+<h3 id="LinearLayout例子">LinearLayout例子</h3>
+<p>关于weight和layout_width和layout_height：理解是如果使用weight来分配，最好把对应的就设为0dp，如果不设置为0，可能是按比例分配后再增加</p>
+<p>当然也可以抛弃weight，直接就单纯使用数值dp为单位</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230714234028176.png" class title="image-20230714234028176"> 
+<p>可以让内部的TextView居中</p>
+<h3 id="FrameLayout">FrameLayout</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718151135107.png" class title="image-20230718151135107">
+<p>左上角为原点，堆叠</p>
+<p><strong>堆叠顺序</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718152043186.png" class title="image-20230718152043186">
+<p><strong>wrap_content</strong></p>
+<ol>
+<li><code>android:layout_width</code>：这个属性指定了视图的宽度。它可以采用不同的值，包括：
+<ul>
+<li><code>&quot;wrap_content&quot;</code>：视图的宽度将根据其内容自适应。换句话说，视图的宽度将根据其内容的尺寸来确定。</li>
+</ul>
+</li>
+<li><code>android:layout_height</code>：这个属性指定了视图的高度。它可以采用不同的值，包括：
+<ul>
+<li><code>&quot;wrap_content&quot;</code>：视图的高度将根据其内容自适应。换句话说，视图的高度将根据其内容的尺寸来确定。</li>
+</ul>
+</li>
+</ol>
+<h3 id="FrameLayout-2">FrameLayout</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718154131995.png" class title="image-20230718154131995">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718154606335.png" class title="image-20230718154606335">
+<blockquote>
+<ul>
+<li>
+<p>bias: 偏差，对相对位置进行调整，通常<strong>设置0到1之间的值</strong>，可以改变组件在水平或垂直方向上的偏移。如，<strong>水平</strong>偏差<strong>设置为0</strong>时候，组件靠近<strong>左侧</strong>约束，而<strong>设置为1</strong>时，组件靠近<strong>右侧</strong>约束</p>
+</li>
+<li>
+<p>chains: 链，链的作用是在水平或垂直方向上分配组件的控件。可以设置链的样式，“spread”(均匀分布空间)、“spread_inside”(在组件内部均匀分布空间)、和&quot;packed&quot;(将组件紧密相连)</p>
+<p><strong>spread</strong> 和<strong>spread_inside</strong> 的区别，以三个控件举例，<strong>spread</strong> 的第二个控件在中间，第一个和第三个则分别分布在左右<strong>剩余区域的中间位置</strong>，而<strong>spread_inside</strong> 的第二个控件在中间，第一个和第三个控件则分别<strong>紧贴父容器的左右两侧</strong></p>
+</li>
+<li>
+<p>dimension ratio: 尺寸比例，设置组件的<strong>宽度与高度之间的比例</strong>。</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="bias">bias</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718160008721.png" class title="image-20230718160008721">
+<p>相对位置进行调整</p>
+<blockquote>
+<p>为什么要用四个parent?，不直接center?</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718160548915.png" class title="image-20230718160548915">
+<p>感觉是这种布局没gravity的概念，也许只能在linearlayout或者framelayout用，而且bias也用不了，只能像上面注释掉的这么用</p>
+</blockquote>
+<h3 id="chains">chains</h3>
+<p>“spread”(均匀分布空间)、“spread_inside”(在组件内部均匀分布空间)、和&quot;packed&quot;(将组件紧密相连)</p>
+<h3 id="DimensionRatio">DimensionRatio</h3>
+<p>指定height或者width，另一个指定为0，通过ration确定另一个</p>
+<h3 id="常用控件">常用控件</h3>
+<p>常用控件：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">控件名称</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">TextView</td>
+<td style="text-align:center">文本显示控件</td>
+</tr>
+<tr>
+<td style="text-align:center">Button</td>
+<td style="text-align:center">按钮控件</td>
+</tr>
+<tr>
+<td style="text-align:center">EditText</td>
+<td style="text-align:center">文本编辑框控件</td>
+</tr>
+<tr>
+<td style="text-align:center">ImageView</td>
+<td style="text-align:center">图片显示控件</td>
+</tr>
+<tr>
+<td style="text-align:center">ImageButton</td>
+<td style="text-align:center">图片作为按钮的控件</td>
+</tr>
+<tr>
+<td style="text-align:center">RadioGroup</td>
+<td style="text-align:center">单选按钮控件</td>
+</tr>
+<tr>
+<td style="text-align:center">CheckBox</td>
+<td style="text-align:center">复选框控件</td>
+</tr>
+<tr>
+<td style="text-align:center">Spiner</td>
+<td style="text-align:center">下拉列表控件</td>
+</tr>
+<tr>
+<td style="text-align:center">SeekBar</td>
+<td style="text-align:center">拖动条控件</td>
+</tr>
+<tr>
+<td style="text-align:center">ProgressBar</td>
+<td style="text-align:center">进度条控件</td>
+</tr>
+<tr>
+<td style="text-align:center">ScrollView</td>
+<td style="text-align:center">可滚动视图控件</td>
+</tr>
+<tr>
+<td style="text-align:center">DatePicker</td>
+<td style="text-align:center">日期显示控件</td>
+</tr>
+<tr>
+<td style="text-align:center">TimePicker</td>
+<td style="text-align:center">事件显示控件</td>
+</tr>
+<tr>
+<td style="text-align:center">Dialog</td>
+<td style="text-align:center">对话框控件</td>
+</tr>
+<tr>
+<td style="text-align:center">Toast</td>
+<td style="text-align:center">信息提示框控件</td>
+</tr>
+</tbody>
+</table>
+<p>属性需要的时候在网上搜就好了</p>
+<h2 id="Context">Context</h2>
+<p>简单了解</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718171905870.png" class title="image-20230718171905870">
+<h2 id="布局管理器">布局管理器</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718173117187.png" class title="image-20230718173117187">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718173146005.png" class title="image-20230718173146005">
+<h2 id="实践">实践</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230718174203032.png" class title="image-20230718174203032">
+<p>先连接箭头对齐（或者说贴紧）</p>
+<p>再调整右侧属性控制偏移量</p>
+<h3 id="方法一：设置onClick属性">方法一：设置onClick属性</h3>
+<p>有报红，但能跑。</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230719133121193.png" class title="image-20230719133121193">
+<h3 id="方法二：使用代码的方法">方法二：使用代码的方法</h3>
+<p>见代码LessonThreeActivity</p>
+<h2 id="随堂练习">随堂练习</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720103536788.png" class title="image-20230720103536788">
+<h1>Day 7.13-第四讲-UI开发详解</h1>
+<blockquote>
+<p>动画模拟的网站<a class="link" target="_blank" rel="noopener" href="http://inloop.github.io/interpolator/">http://inloop.github.io/interpolator/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h2 id="TextView">TextView</h2>
+<h3 id="简单介绍">简单介绍</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720173427188.png" class title="image-20230720173427188">
+<h3 id="常用属性">常用属性</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720173612196.png" class title="image-20230720173612196">
+<blockquote>
+<p>省略方式: <code>...</code>出现的位置可控</p>
+</blockquote>
+<h3 id="Autolink">Autolink</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720174105895.png" class title="image-20230720174105895">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720194540007.png" class title="image-20230720194540007">
+<blockquote>
+<p>基本用不到</p>
+</blockquote>
+<h3 id="Spannable：处理文本样式">Spannable：处理文本样式</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720194743039.png" class title="image-20230720194743039">
+<p>代码实现：</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SpannableString</span> <span class="variable">span</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Spannablestring</span>(<span class="string">&quot;红色打电话斜体删除线绿色下划线图片：.&quot;</span>)；</span><br><span class="line"><span class="comment">//1.设置背景色，setspan时需要指定的flag,Spanned .SPAN_EXCLUSIVE_EXCLUSIVE(前后都不包括）</span></span><br><span class="line">span.setspan(<span class="keyword">new</span> <span class="title class_">Foregroundcolorspan</span>(Color.RED)， <span class="number">0</span>, <span class="number">2</span>, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line"><span class="comment">//2.用超链接标记文本</span></span><br><span class="line">span.setSpan (<span class="keyword">new</span> <span class="title class_">URLSpan</span>(<span class="string">&quot;tel: 4155551212&quot;</span>), <span class="number">2</span>, <span class="number">5</span>, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line"><span class="comment">//3.用样式标记文本（斜体）</span></span><br><span class="line">span.setSpan (<span class="keyword">new</span> <span class="title class_">StyleSpan</span>(Typeface.BOLD_ITALIC), <span class="number">5</span>, <span class="number">7</span>, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line"><span class="comment">//4.用删除线标记文本</span></span><br><span class="line">span.setSpan (<span class="keyword">new</span> <span class="title class_">StrikethroughSpan</span>(), <span class="number">7</span>, <span class="number">10</span>, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line"><span class="comment">//5. 用下划线标记文本</span></span><br><span class="line">span.setSpan (<span class="keyword">new</span> <span class="title class_">UnderlineSpan</span>(), <span class="number">10</span>, <span class="number">16</span>, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) ;</span><br><span class="line"><span class="comment">//6. 用颜色标记</span></span><br><span class="line">span.setSpan (<span class="keyword">new</span> <span class="title class_">ForegroundColorSpan</span>(Color. GREEN), <span class="number">10</span>, <span class="number">13</span>, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);</span><br><span class="line"><span class="comment">//7.1/获取Drawable资源</span></span><br><span class="line"><span class="type">Drawable</span> <span class="variable">d</span> <span class="operator">=</span> getResources().getDrawable(R.drawable.icon);</span><br><span class="line">d.setBounds(<span class="number">0</span>, <span class="number">0</span>, d.getIntrinsicWidth(), d.getIntrinsicHeight ());</span><br><span class="line"><span class="comment">//8.创建Imagespan,然后用Imagespan来替换文本</span></span><br><span class="line"><span class="type">ImageSpan</span> <span class="variable">imgspan</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ImageSpan</span>(d, ImageSpan. ALIGN_BASELINE);</span><br><span class="line">span.setSpan(imgspan, <span class="number">18</span>, <span class="number">19</span>, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);</span><br><span class="line">ti.setText(span);</span><br></pre></td></tr></table></figure></div>
+<h2 id="RecycleView：可滑动的列表UI组件">RecycleView：可滑动的列表UI组件</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230720194951539.png" class title="image-20230720194951539">
+<h3 id="基本组成">基本组成</h3>
+<ul>
+<li>
+<p>Data：数据，需要展示的内容</p>
+</li>
+<li>
+<p>RecycleView：一个可滑动的列表View</p>
+</li>
+<li>
+<p>Layout：XML文件</p>
+<blockquote>
+<p>布局（Layout）：布局是指定义RecyclerView中每个项目的外观和结构的XML文件。它定义了表示列表中单个项目的视图的布局。</p>
+</blockquote>
+</li>
+<li>
+<p>Layout manager：负责处理View 的UI组件</p>
+<ul>
+<li>每个ViewGroup 都有一个LayoutManager</li>
+<li>用于排列展示RecycleView 中的每一个item</li>
+<li><strong>回收/复用</strong> 离开屏幕对于用户不可见的item</li>
+<li>内置的布局管理器：
+<ul>
+<li>LinearLayoutManager(线性)</li>
+<li>GridLayoutManager(网格)</li>
+<li>StaggeredGridLayoutManager(瀑布流)</li>
+</ul>
+</li>
+<li>可以自定义，继承：RecycleView.LayoutManager</li>
+</ul>
+</li>
+<li>
+<p>Adapter：将数据和RecycleView进行<strong>关联</strong></p>
+<ul>
+<li>
+<p>负责提供数据和<strong>创建列表项(Item) 视图</strong>。</p>
+<ul>
+<li>比如：从数据中读取string, 将文字设置到item的view上</li>
+</ul>
+</li>
+<li>
+<p>数据和视图的媒介</p>
+</li>
+<li>
+<p>当数据发生变化时，管理数据的创建、更新、添加、删除</p>
+</li>
+<li>
+<p>RecyclerView.Adapter</p>
+<blockquote>
+<p>适配器充当数据和RecyclerView之间的桥梁。它负责为数据集中的每个项目创建和管理视图。它为每个项目视图创建视图持有者（ViewHolder），以便在用户滚动列表时高效地重用视图。</p>
+<p>适配器对于处理数据的变化、更新、添加和删除非常重要。它在数据集发生变化时通知RecyclerView，以便RecyclerView相应地更新显示。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>
+<p>Viewholder：持有显示1个item的视图信息</p>
+<ul>
+<li><strong>负责保存列表项视图的引用，以便在需要时快速访问视图</strong></li>
+<li>Layout在xml文件中进行声明</li>
+<li>可以包含可以点击的元素</li>
+<li>由LayoutManager进行摆放</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用步骤">使用步骤</h3>
+<ol>
+<li>
+<p>添加RecycleV的依赖到build.gradle文件中。</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies&#123;</span><br><span class="line">	...</span><br><span class="line">	compile &#x27;com.android.support:recyclerview-v7:26.1.0&#x27;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>Layout在xml文件中进行声明</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">androidx.recyclerview.widget.RecyclerView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">&quot;@+id/rv_demo&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    /&gt;</span></span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>为每一个Item创建xml布局</p>
+<p>recycleview_item2.xml文件</p>
+<p>定义了其中的一行</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723153626924.png" class title="image-20230723153626924">
+</li>
+<li>
+<p>继承RecyclerView.Adapter<br>
+三个必须实现的方法：<br>
+onCreateViewHolder()	表示布局需要创建的viewHolder是哪个</p>
+<p>inBindViewHolder()		表示在绑定的时候如何去设置文案</p>
+<p>getItemCount()			表示这个列表的大小是多少</p>
+<div class="highlight-container" data-rel="Kotlin"><figure class="iseeu highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">DemoAdapter</span> : <span class="type">RecyclerView.Adapter</span>&lt;<span class="type">DemoViewHolder</span>&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 保存数据的列表 */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> demoList: List&lt;ItemBean&gt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(demoList: List&lt;ItemBean&gt;) &#123;</span><br><span class="line">        <span class="keyword">this</span>.demoList = demoList</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreateViewHolder</span><span class="params">(parent: <span class="type">ViewGroup</span>, viewType: <span class="type">Int</span>)</span></span>: DemoViewHolder &#123;</span><br><span class="line">        <span class="keyword">val</span> view: View =</span><br><span class="line">            LayoutInflater.from(parent.context).inflate(R.layout.recycleview_item, parent, <span class="literal">false</span>)</span><br><span class="line">        <span class="keyword">return</span> DemoViewHolder(view)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">DemoViewHolder</span>, position: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> itemBean = demoList[position]</span><br><span class="line"></span><br><span class="line">        itemBean.coverUrl?.let &#123;</span><br><span class="line">            holder.ivCover?.setImageResource(it)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        itemBean.title?.let &#123;</span><br><span class="line">            holder.tvTitle.text = it</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        itemBean.content?.let &#123;</span><br><span class="line">            holder.tvContent.text = it</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getItemCount</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> demoList.size</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>继承RecyclerView.ViewHolder(看实例代码的DemoViewHolder <strong>每个属性对应单个item的属性</strong>)</p>
+</li>
+<li>
+<p>在Activity的onCreate()中，获取RecycleView，并且为它设置Adapter和LayoutParams</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 找到获取RecyclerView</span></span><br><span class="line">mRecyclerView = findViewById(R.id.recyclerview);</span><br><span class="line"><span class="comment">// 2. new一个adapter,第二个参数为构造的数据</span></span><br><span class="line">mAdapter = <span class="keyword">new</span> <span class="title class_">WordListAdapter</span>(<span class="built_in">this</span>, mWordList);</span><br><span class="line"><span class="comment">// 3. 创建的adapter设置给RecyclerView</span></span><br><span class="line">mRecyclerView.setAdapter(mAdapter);</span><br><span class="line"><span class="comment">// 4. 设置LayoutManager</span></span><br><span class="line">mRecyclerView.setLayoutManager(<span class="keyword">new</span> <span class="title class_">LinearLayoutManager</span>(<span class="built_in">this</span>));</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<h3 id="ellipsize和maxLines">ellipsize和maxLines</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723181501426.png" class title="image-20230723181501426">
+<p>控制<code>...</code>出现的位置</p>
+<h3 id="短文字也能居中的方法">短文字也能居中的方法</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723182251984.png" class title="image-20230723182251984">
+<p>将demo的wrap_content改成match_parent</p>
+<h2 id="动画">动画</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723211715910.png" class title="image-20230723211715910">
+<h3 id="帧动画">帧动画</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723212513538.png" class title="image-20230723212513538">
+<p>1.在XML中创建帧动画(frame_anim.xml)</p>
+<blockquote>
+<p>oneshot属性控制是否循环播放</p>
+</blockquote>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">animation-list</span> <span class="attr">mins:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span> <span class="attr">android:oneshot</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:</span> <span class="attr">drawable</span>=<span class="string">&quot;@drawable/framel&quot;</span> <span class="attr">android:duration</span>=<span class="string">&quot;200&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">&quot;@drawable/frame2&quot;</span> <span class="attr">android:duration</span>=<span class="string">&quot;200&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:</span> <span class="attr">drawable</span>=<span class="string">&quot;@drawable/frame3&quot;</span> <span class="attr">android:duration</span>=<span class="string">&quot;200&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">animation-list</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>2.将动画设置给指定的View</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ImageView</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:id</span>=<span class="string">&quot;@+id/imageView&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:layout_width</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:src</span>=<span class="string">&quot;@drawable/frame_anim&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>3.通过代码控制播放</p>
+<div class="highlight-container" data-rel="Kotlin"><figure class="iseeu highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// java</span></span><br><span class="line">ImageView imageView = findViewById(R.id.imageView);</span><br><span class="line">imageView.setBackgroundResource(R.drawable.frame animation);</span><br><span class="line">AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getBackground()</span><br><span class="line">animationDrawable.start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// kotlin</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">showFrameAnimLoading</span><span class="params">()</span></span> &#123;</span><br><span class="line">    frameAnimLoading = findViewById(R.id.iv_loading)</span><br><span class="line">    (frameAnimLoading?.background <span class="keyword">as</span>? AnimationDrawable)?.start()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h3 id="补间动画">补间动画</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723214214546.png" class title="image-20230723214214546">
+<p>平移动画</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">translate</span> <span class="attr">mIns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:fromXDelta</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:toXDelta</span>=<span class="string">&quot;100&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:duration</span>=<span class="string">&quot;1000&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>缩放动画</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">scale</span> <span class="attr">mIns:</span> <span class="attr">android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:fromXScale</span>=<span class="string">&quot;1&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:toXScale</span>=<span class="string">&quot;2&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:fromYScale</span>=<span class="string">&quot;1&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:toYScale</span>=<span class="string">&quot;2&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:pivotX</span>=<span class="string">&quot;50%&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:pivotY</span>=<span class="string">&quot;50%&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">android:duration</span>=<span class="string">&quot;1000&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- from/to 从那放缩到哪 --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- pivotX/Y 表示图的中心点位置 --&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>动画集合（旋转、位移、透明度、缩放动画的集合）</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">set</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:interpolator</span>=<span class="string">&quot;@android:anim/decelerate interpolator&quot;</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:shareInterpolator</span>=<span class="string">&quot;true&quot;</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">rotate</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">android:duration</span>=<span class="string">&quot;1000&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:fromDegrees</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:repeatCount</span>=<span class="string">&quot;1&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:repeatMode</span>=<span class="string">&quot;reverse&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:toDegrees</span>=<span class="string">&quot;360&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 从多少度旋转到多少度 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">alpha</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:duration</span>=<span class="string">&quot;2000&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:fromAlpha</span>=<span class="string">&quot;1.0&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">android:toAlpha</span>=<span class="string">&quot;0.1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 从多少消失到多少持续时间多久 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>监听器AnimationListener</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Animation</span> <span class="variable">animation</span> <span class="operator">=</span> AnimationUtils.loadAnimation(MainActivity.<span class="built_in">this</span>, R.anim.translate_animation)</span><br><span class="line">animation.setAnimationListener(<span class="keyword">new</span> <span class="title class_">Animation</span>.AnimationListener () &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onAnimationStart</span><span class="params">(Animation animation)</span> &#123;</span><br><span class="line">        <span class="comment">// 动画开始时执行的操作</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onAnimationEnd</span><span class="params">(Animation animation)</span> &#123;</span><br><span class="line">        <span class="comment">// 动画结束时执行的操作</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onAnimationRepeat</span><span class="params">(Animation animation)</span> &#123;</span><br><span class="line">        <span class="comment">// 动画重复时执行的操作</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">imageView.startAnimation(animation);</span><br></pre></td></tr></table></figure></div>
+<h3 id="属性动画">属性动画</h3>
+<p>直接对组件的属性进行改变</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723220825113.png" class title="image-20230723220825113">
+<p>**定义：**改变对象的属性值来实现动画效果。需要一个属性名称(如&quot;alpha&quot;, &quot;translationX&quot;等)，一个或多个关键帧(表示属性值在某个时间点的取值)以及一个插值器(用于控制属性值在关键帧之间的变化规律)</p>
+<p>**范围：**可以作用于任何对象</p>
+<h4 id="ValueAnimator">ValueAnimator</h4>
+<ul>
+<li>
+<p>不直接操作对象的属性，而是计算一系列值，这些值可以用于为对象的属性提供动画效果。ValueAnimator通过设定起始值、结束值、持续时间和插值器等参数，实现值的动态变化。</p>
+</li>
+<li>
+<p>使用方法</p>
+<ol>
+<li>
+<p>​	调用ofInt(), ofFloat()或ofObject()静态方法创建ValueAnimator实例</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ValueAnimator</span> <span class="variable">valueAnimator</span> <span class="operator">=</span> ValueAnimator.ofInt(<span class="number">0</span>, <span class="number">100</span>);</span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>配置动画：时间、动画次数、动画速度等</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valueAnimator.setDuration(<span class="number">1000</span>);	<span class="comment">// 设置动画持续时间为1s</span></span><br><span class="line">valueAnimator.setInterpolator(<span class="keyword">new</span> <span class="title class_">LInearInterpolator</span>());	<span class="comment">// 设置插值器为线性插值器</span></span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>监听值的变化</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">valueAnimator.addUpdateListener(<span class="keyword">new</span> <span class="title class_">ValueAnimator</span>.AnimatorUpdateListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onAnimatonUpdate</span><span class="params">(ValueAnimator animator)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">currentValue</span> <span class="operator">=</span> (<span class="type">int</span>) animaton.getAnimatedValue();</span><br><span class="line">        <span class="comment">// 将 currentValue 应用到对象的属性上，例如更行 ProgressBar 的进度</span></span><br><span class="line">        progressBar.setProgress(currentValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="ObjectAnimator（简单了解即可">ObjectAnimator（简单了解即可</h4>
+<ul>
+<li>
+<p>继承自ValueAnimator，并添加了对目标对象属性的支持。它可以对目标对象的属性进行动画操作，例如平移、旋转、缩放等。</p>
+</li>
+<li>
+<p>使用方法</p>
+<ol>
+<li>
+<p>target: 需要动画的View; translationX：需要修改的属性；初始值、结束值</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ObjectAnimator</span> <span class="variable">animator</span> <span class="operator">=</span> ObjectAnimator.ofFloat(target, <span class="string">&quot;translatonX&quot;</span>, <span class="number">0f</span>, <span class="number">200f</span>);</span><br><span class="line">animator.setDuration(<span class="number">500</span>);</span><br><span class="line">animator.setInterpolator(<span class="keyword">new</span> <span class="title class_">AccelerateDecelerateInterpolator</span>());</span><br><span class="line">animator.start();</span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>给自定义View添加</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyView</span> <span class="keyword">extends</span> <span class="title class_">View</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> floate myProperty;</span><br><span class="line">    get...</span><br><span class="line">    set...&#123;</span><br><span class="line">        ...</span><br><span class="line">        invalidate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">ObjectAnimator</span> <span class="variable">animator</span> <span class="operator">=</span> ObjectAnimator.ofFloat(myView, <span class="string">&quot;myProperty&quot;</span>, <span class="number">0f</span>, <span class="number">100f</span>);</span><br><span class="line">animator.setDuration(<span class="number">500</span>);</span><br><span class="line">animator.start();</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="插值器（51-38">插值器（51:38</h4>
+<p>体验插值器的网站<a class="link" target="_blank" rel="noopener" href="https://inloop.github.io/interpolator/">Interpolator (inloop.github.io) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723221222248.png" class title="image-20230723221222248">
+<h2 id="过度绘制-布局优化">过度绘制&amp;布局优化</h2>
+<h3 id="布局显示的过程">布局显示的过程</h3>
+<ol>
+<li>
+<p>inflate</p>
+<p>将XML格式的layout文件实例化为相应的View对象</p>
+</li>
+<li>
+<p>measure</p>
+<p>从根节点开始计算所有VIew的尺寸。会调用每个View的measure方法(可能会调用多次)。</p>
+</li>
+<li>
+<p>layout</p>
+<p>从根节点开始计算所有View的位置。(根据measure中确定的尺寸)</p>
+</li>
+<li>
+<p>draw</p>
+<p>绘制View</p>
+</li>
+</ol>
+<h3 id="影响UI效率的因素">影响UI效率的因素</h3>
+<ol>
+<li>
+<p>View太多</p>
+<p>更多的inflate</p>
+<p>更长的drawing时间</p>
+</li>
+<li>
+<p>布局太深</p>
+<p>更多的measure和layout</p>
+</li>
+<li>
+<p>图片&amp;背景</p>
+<p>图片资源过大</p>
+<p>图片缩放耗时</p>
+<p>过度绘制</p>
+</li>
+<li>
+<p>频繁刷新UI</p>
+<p>占用cpu资源</p>
+<p>界面卡顿，交互反应慢，甚至造成ANR</p>
+</li>
+</ol>
+<h3 id="过度绘制">过度绘制</h3>
+<ul>
+<li><strong>真彩色</strong>：没有过度绘制</li>
+<li><strong>蓝色</strong>：过度绘制1次</li>
+<li><strong>绿色</strong>：2次</li>
+<li><strong>粉色</strong>：3次</li>
+<li><strong>红色</strong>：4次或更多</li>
+</ul>
+<h3 id="优化实践">优化实践</h3>
+<ol>
+<li>
+<p>优化布局：减少View</p>
+<p>尽可能减的减少控件的使用，(使用drawbleLeft)</p>
+</li>
+<li>
+<p>使用更合适的布局容器</p>
+</li>
+<li>
+<p>使用&lt;ViewStub&gt;标签</p>
+<p><strong>不需要立即显示的视图</strong>，可以使用该标签对其进行延迟加载(在代码中判断)</p>
+<div class="highlight-container" data-rel="Xml"><figure class="iseeu highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ViewStub</span></span></span><br><span class="line"><span class="tag">          <span class="attr">android:id</span>=<span class="string">&quot;@+id/vs&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">android:layout</span>=<span class="string">&quot;@layout/layout_example&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">anroid:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">anroid:layout_height</span>=<span class="string">&quot;match_parent&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取ViewStub</span></span><br><span class="line"><span class="type">ViewStub</span> <span class="variable">viewStub</span> <span class="operator">=</span> findViewById(R.id.vs);</span><br><span class="line"><span class="keyword">if</span>(<span class="comment">/* 某个条件成立*/</span>) &#123;</span><br><span class="line">    <span class="type">View</span> <span class="variable">inflatedView</span> <span class="operator">=</span> viewStub.inflate();</span><br><span class="line">    <span class="comment">// 此时， ViewStub已经替换为Layout_example.xml中定义的布局</span></span><br><span class="line">    <span class="comment">// inflatedView 是替换后的布局的根视图</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li>
+<p>使用&lt;inclued&gt; 标签</p>
+<p>将公共布局抽取到独立的文件中，并通过该标签进行引用，以减少视图层级和代码重复</p>
+</li>
+<li>
+<p>使用&lt;merge&gt; 标签</p>
+<p>对于包含多个子视图的自定义视图，可以在根布局中使用该标签，减少视图层级，从而减少过度绘制。</p>
+</li>
+</ol>
+<h3 id="过度绘制-2">过度绘制</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222647084.png" class title="image-20230723222647084">
+<h3 id="检查工具">检查工具</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222733287.png" class title="image-20230723222733287">
+<h2 id="作业">作业</h2>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222917599.png" class title="image-20230723222917599">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4/image-20230723222933356.png" class title="image-20230723222933356">
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 2023百度移动端lec2-lec4</li>
+        <li><strong>作者:</strong> SYuan03</li>
+        <li><strong>创建于
+                :</strong> 2023-07-11 18:57:37</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-03-10 20:02:52
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://bblog.031105.xyz/posts/2023-Summer-Courses-百度移动端/2023百度移动端lec2-lec4.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91/">#移动端开发</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/2023-Summer-Courses-百度移动端/2023baiduandroidlec5-lec6.html" title="2023BaiduAndroidlec5-lec6" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/23/ju3yULRqcB7KPYe.png" alt="2023BaiduAndroidlec5-lec6" class="!max-w-none">
+  <span class="title">2023BaiduAndroidlec5-lec6</span>
+</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-数据库管理/notes-dbms.html" title="notes-dbms" rel="bookmark">
+  <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="!max-w-none">
+  <span class="title">notes-dbms</span>
+</a><a class="recommended-article-item" href="/posts/2023-Summer-Courses-百度移动端/kotlin-learn.html" title="kotlin-learn" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/24/NsAn8BtIVudU6yj.jpg" alt="kotlin-learn" class="!max-w-none">
+  <span class="title">kotlin-learn</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/2023-Summer-Courses-百度移动端/2023baiduandroidlec5-lec6.html" title="2023BaiduAndroidlec5-lec6" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/23/ju3yULRqcB7KPYe.png" alt="2023BaiduAndroidlec5-lec6" class="!max-w-none">
+  <span class="title">2023BaiduAndroidlec5-lec6</span>
+</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-数据库管理/notes-dbms.html" title="notes-dbms" rel="bookmark">
+  <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="!max-w-none">
+  <span class="title">notes-dbms</span>
+</a></div>
+   </div>
+  </div>
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">Day3-RPC</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/posts/2023-Summer-Courses-CloudWeGo/day2-http.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">Day2-HTTP</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdn.staticfile.org/twikoo/1.6.31/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://api.twikoo.031105.xyz',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">2023百度移动端lec2-lec4</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Day 7.11-第二讲</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.0.1.</span> <span class="nav-text">运行环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kotlin%E8%AF%AD%E8%A8%80%E7%AE%80%E4%BB%8B"><span class="nav-number">1.0.2.</span> <span class="nav-text">Kotlin语言简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.0.3.</span> <span class="nav-text">文件结构介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">1.0.4.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97logcat"><span class="nav-number">1.0.5.</span> <span class="nav-text">日志logcat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#APK%E5%8C%85%E7%BB%84%E6%88%90"><span class="nav-number">1.0.6.</span> <span class="nav-text">APK包组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#APK%E5%8C%85%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-number">1.0.7.</span> <span class="nav-text">APK包构建过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Design-Code"><span class="nav-number">1.0.8.</span> <span class="nav-text">Design&amp;&amp;Code</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Day 7.12-第三讲-UI开发初探</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#View%E7%BB%84%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">View组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.1.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#View%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-number">2.1.2.</span> <span class="nav-text">View的属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewGroup"><span class="nav-number">2.1.3.</span> <span class="nav-text">ViewGroup</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B8%83%E5%B1%80"><span class="nav-number">2.2.</span> <span class="nav-text">常见的布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LinearLayout"><span class="nav-number">2.2.1.</span> <span class="nav-text">LinearLayout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinearLayout%E4%BE%8B%E5%AD%90"><span class="nav-number">2.2.2.</span> <span class="nav-text">LinearLayout例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FrameLayout"><span class="nav-number">2.2.3.</span> <span class="nav-text">FrameLayout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FrameLayout-2"><span class="nav-number">2.2.4.</span> <span class="nav-text">FrameLayout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bias"><span class="nav-number">2.2.5.</span> <span class="nav-text">bias</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chains"><span class="nav-number">2.2.6.</span> <span class="nav-text">chains</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DimensionRatio"><span class="nav-number">2.2.7.</span> <span class="nav-text">DimensionRatio</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6"><span class="nav-number">2.2.8.</span> <span class="nav-text">常用控件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context"><span class="nav-number">2.3.</span> <span class="nav-text">Context</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B1%80%E7%AE%A1%E7%90%86%E5%99%A8"><span class="nav-number">2.4.</span> <span class="nav-text">布局管理器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5"><span class="nav-number">2.5.</span> <span class="nav-text">实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E8%AE%BE%E7%BD%AEonClick%E5%B1%9E%E6%80%A7"><span class="nav-number">2.5.1.</span> <span class="nav-text">方法一：设置onClick属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%A0%81%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.5.2.</span> <span class="nav-text">方法二：使用代码的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E5%A0%82%E7%BB%83%E4%B9%A0"><span class="nav-number">2.6.</span> <span class="nav-text">随堂练习</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">Day 7.13-第四讲-UI开发详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TextView"><span class="nav-number">3.1.</span> <span class="nav-text">TextView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.1.</span> <span class="nav-text">简单介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7"><span class="nav-number">3.1.2.</span> <span class="nav-text">常用属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Autolink"><span class="nav-number">3.1.3.</span> <span class="nav-text">Autolink</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spannable%EF%BC%9A%E5%A4%84%E7%90%86%E6%96%87%E6%9C%AC%E6%A0%B7%E5%BC%8F"><span class="nav-number">3.1.4.</span> <span class="nav-text">Spannable：处理文本样式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RecycleView%EF%BC%9A%E5%8F%AF%E6%BB%91%E5%8A%A8%E7%9A%84%E5%88%97%E8%A1%A8UI%E7%BB%84%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">RecycleView：可滑动的列表UI组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90"><span class="nav-number">3.2.1.</span> <span class="nav-text">基本组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.2.2.</span> <span class="nav-text">使用步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ellipsize%E5%92%8CmaxLines"><span class="nav-number">3.2.3.</span> <span class="nav-text">ellipsize和maxLines</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%AD%E6%96%87%E5%AD%97%E4%B9%9F%E8%83%BD%E5%B1%85%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.4.</span> <span class="nav-text">短文字也能居中的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E7%94%BB"><span class="nav-number">3.3.</span> <span class="nav-text">动画</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A7%E5%8A%A8%E7%94%BB"><span class="nav-number">3.3.1.</span> <span class="nav-text">帧动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E9%97%B4%E5%8A%A8%E7%94%BB"><span class="nav-number">3.3.2.</span> <span class="nav-text">补间动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E5%8A%A8%E7%94%BB"><span class="nav-number">3.3.3.</span> <span class="nav-text">属性动画</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ValueAnimator"><span class="nav-number">3.3.3.1.</span> <span class="nav-text">ValueAnimator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ObjectAnimator%EF%BC%88%E7%AE%80%E5%8D%95%E4%BA%86%E8%A7%A3%E5%8D%B3%E5%8F%AF"><span class="nav-number">3.3.3.2.</span> <span class="nav-text">ObjectAnimator（简单了解即可</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%80%BC%E5%99%A8%EF%BC%8851-38"><span class="nav-number">3.3.3.3.</span> <span class="nav-text">插值器（51:38</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6-%E5%B8%83%E5%B1%80%E4%BC%98%E5%8C%96"><span class="nav-number">3.4.</span> <span class="nav-text">过度绘制&amp;布局优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B1%80%E6%98%BE%E7%A4%BA%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">3.4.1.</span> <span class="nav-text">布局显示的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%B1%E5%93%8DUI%E6%95%88%E7%8E%87%E7%9A%84%E5%9B%A0%E7%B4%A0"><span class="nav-number">3.4.2.</span> <span class="nav-text">影响UI效率的因素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6"><span class="nav-number">3.4.3.</span> <span class="nav-text">过度绘制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5"><span class="nav-number">3.4.4.</span> <span class="nav-text">优化实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6-2"><span class="nav-number">3.4.5.</span> <span class="nav-text">过度绘制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">3.4.6.</span> <span class="nav-text">检查工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A"><span class="nav-number">3.5.</span> <span class="nav-text">作业</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">SYuan03</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共 40 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.2</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+<script>
+    // Tag: 自己新增
+    document.addEventListener('DOMContentLoaded', function() {
+        if (theme.global.single_page !== false) {
+            document.addEventListener('click', function(e) {
+                let target = e.target;
+                while (target && !target.href) {
+                    target = target.parentNode;
+                }
+                if (target && target.href) {
+                    const url = new URL(target.href);
+                    if (url.pathname.includes('/shuoshuo')) {
+                        e.preventDefault(); // 阻止链接默认的导航行为
+                        window.location.href = target.href; // 通过传统方式加载 `/shuoshuo` 页面
+                    }
+                    // 对于其他链接，什么都不做，让 swup 接管
+                }
+            });
+        }
+    });
+</script>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>
