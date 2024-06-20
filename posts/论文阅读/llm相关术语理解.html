@@ -18,12 +18,12 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="读论文时有好多模型或者专业名词不理解，有时候问了GPT又记不住，故此记录  BiLSTM &amp; MLP是的，抱歉之前的回答可能有些混淆。在这个上下文中，”a continuous sequence of numbers”指的是通过Prompt Encoder中的BiLSTM生成的隐藏状态序列，而”the embedding layer”指的是MLP（多层感知机）。 具体来说：  BiLST">
+        <meta name="description" content="读论文时有好多模型或者专业名词不理解，有时候问了GPT又记不住，故此记录  BiLSTM &amp; MLP 是的，抱歉之前的回答可能有些混淆。在这个上下文中，&quot;a continuous sequence of numbers&quot;指的是通过Prompt Encoder中的BiLSTM生成的隐藏状态序列，而&quot;the embedding layer&quot;指的是MLP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LLM相关术语理解">
 <meta property="og:url" content="https://bblog.031105.xyz/posts/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/llm%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD%E7%90%86%E8%A7%A3.html">
 <meta property="og:site_name" content="淡水鱼的蔚蓝之海">
-<meta property="og:description" content="读论文时有好多模型或者专业名词不理解，有时候问了GPT又记不住，故此记录  BiLSTM &amp; MLP是的，抱歉之前的回答可能有些混淆。在这个上下文中，”a continuous sequence of numbers”指的是通过Prompt Encoder中的BiLSTM生成的隐藏状态序列，而”the embedding layer”指的是MLP（多层感知机）。 具体来说：  BiLST">
+<meta property="og:description" content="读论文时有好多模型或者专业名词不理解，有时候问了GPT又记不住，故此记录  BiLSTM &amp; MLP 是的，抱歉之前的回答可能有些混淆。在这个上下文中，&quot;a continuous sequence of numbers&quot;指的是通过Prompt Encoder中的BiLSTM生成的隐藏状态序列，而&quot;the embedding layer&quot;指的是MLP">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-03-10T16:08:16.000Z">
 <meta property="article:modified_time" content="2024-04-07T05:32:47.881Z">
@@ -672,26 +672,31 @@
             <blockquote>
 <p>读论文时有好多模型或者专业名词不理解，有时候问了GPT又记不住，故此记录</p>
 </blockquote>
-<h1 id="BiLSTM-MLP"><a href="#BiLSTM-MLP" class="headerlink" title="BiLSTM &amp; MLP"></a>BiLSTM &amp; MLP</h1><p>是的，抱歉之前的回答可能有些混淆。在这个上下文中，”a continuous sequence of numbers”指的是通过Prompt Encoder中的BiLSTM生成的隐藏状态序列，而”the embedding layer”指的是MLP（多层感知机）。</p>
+<h1>BiLSTM &amp; MLP</h1>
+<p>是的，抱歉之前的回答可能有些混淆。在这个上下文中，&quot;a continuous sequence of numbers&quot;指的是通过Prompt Encoder中的BiLSTM生成的隐藏状态序列，而&quot;the embedding layer&quot;指的是MLP（多层感知机）。</p>
 <p>具体来说：</p>
 <ol>
-<li><p><strong>BiLSTM（双向长短时记忆网络）</strong>：Prompt Encoder中的BiLSTM负责将伪提示( p )转换为一个连续的数值序列，即隐藏状态序列。这个序列是通过在两个方向（前向和后向）处理输入来捕获上下文信息和令牌之间的关系。</p>
+<li>
+<p><strong>BiLSTM（双向长短时记忆网络）</strong>：Prompt Encoder中的BiLSTM负责将伪提示( p )转换为一个连续的数值序列，即隐藏状态序列。这个序列是通过在两个方向（前向和后向）处理输入来捕获上下文信息和令牌之间的关系。</p>
 </li>
-<li><p><strong>MLP（多层感知机）</strong>：隐藏状态序列（a continuous sequence of numbers）通过ReLU激活的MLP作为最后一个步骤进行处理。MLP将隐藏状态序列作为输入，并进一步转换为最终的提示嵌入（( e_P )）。MLP可以看作是一个神经网络层，它通过一系列非线性变换来提取和组合隐藏状态中的高级特征，并生成用于指导语言模型生成代码摘要的最终嵌入向量。</p>
+<li>
+<p><strong>MLP（多层感知机）</strong>：隐藏状态序列（a continuous sequence of numbers）通过ReLU激活的MLP作为最后一个步骤进行处理。MLP将隐藏状态序列作为输入，并进一步转换为最终的提示嵌入（( e_P )）。MLP可以看作是一个神经网络层，它通过一系列非线性变换来提取和组合隐藏状态中的高级特征，并生成用于指导语言模型生成代码摘要的最终嵌入向量。</p>
 </li>
 </ol>
 <p>因此，BiLSTM和MLP分别对应了生成连续数值序列和最终嵌入向量的过程。BiLSTM通过处理输入生成连续数值序列，然后这个序列通过MLP进行进一步处理，生成最终的提示嵌入向量，用于指导语言模型生成代码摘要。</p>
-<h1 id="Early-stopping"><a href="#Early-stopping" class="headerlink" title="Early stopping"></a>Early stopping</h1><p>在机器学习中，早停策略（early stopping）是一种防止过拟合的技术。它的工作方式是在训练时监视模型在验证集上的表现。如果在连续的若干轮次（epochs）中，模型在验证集上的表现没有改善，那么训练就会提前停止。这种策略可以帮助我们避免在训练数据上过度训练模型，从而导致在未知数据（如测试集）上表现不佳。</p>
-<p>“Early stopping patience”是早停策略中的一个参数，表示我们愿意容忍模型在验证集上的表现在多少轮次内没有改善。在你提到的这个例子中，早停耐心被设置为4，这意味着如果模型在连续的4个轮次中，验证集上的BLEU得分没有改善，那么训练将提前结束。</p>
+<h1>Early stopping</h1>
+<p>在机器学习中，早停策略（early stopping）是一种防止过拟合的技术。它的工作方式是在训练时监视模型在验证集上的表现。如果在连续的若干轮次（epochs）中，模型在验证集上的表现没有改善，那么训练就会提前停止。这种策略可以帮助我们避免在训练数据上过度训练模型，从而导致在未知数据（如测试集）上表现不佳。</p>
+<p>&quot;Early stopping patience&quot;是早停策略中的一个参数，表示我们愿意容忍模型在验证集上的表现在多少轮次内没有改善。在你提到的这个例子中，早停耐心被设置为4，这意味着如果模型在连续的4个轮次中，验证集上的BLEU得分没有改善，那么训练将提前结束。</p>
 <p>BLEU（Bilingual Evaluation Understudy）得分是一种常用于评估机器翻译或文本生成任务的度量标准，它比较了机器生成的文本和人工编写的参考文本之间的相似性。在这个情况下，它被用来衡量代码摘要生成的质量。</p>
-<h1 id="LLM-Agent"><a href="#LLM-Agent" class="headerlink" title="LLM Agent"></a>LLM Agent</h1><p>“Agent”这个词在计算机科学和人工智能领域中通常被用来表示一个自主的、可以执行某种任务的实体。这个实体可以是一个软件程序，也可以是一个硬件设备，它具有一定的智能，可以根据环境的变化调整自己的行为。</p>
-<p>在你提供的这段文本中，“RepairAgent”是一个基于机器学习的自主代理，用于自动修复程序。这意味着它是一个可以自主运行的软件实体，能够学习如何修复编程错误，并在检测到这些错误时自动进行修复。这个代理的”智能”来自于机器学习模型，该模型可以从大量的数据中学习到如何有效地进行程序修复。</p>
-<p>总的来说，”Agent”在这种上下文中的含义是一个具有一定智能，能够执行特定任务的实体。</p>
+<h1>LLM Agent</h1>
+<p>&quot;Agent&quot;这个词在计算机科学和人工智能领域中通常被用来表示一个自主的、可以执行某种任务的实体。这个实体可以是一个软件程序，也可以是一个硬件设备，它具有一定的智能，可以根据环境的变化调整自己的行为。</p>
+<p>在你提供的这段文本中，“RepairAgent”是一个基于机器学习的自主代理，用于自动修复程序。这意味着它是一个可以自主运行的软件实体，能够学习如何修复编程错误，并在检测到这些错误时自动进行修复。这个代理的&quot;智能&quot;来自于机器学习模型，该模型可以从大量的数据中学习到如何有效地进行程序修复。</p>
+<p>总的来说，&quot;Agent&quot;在这种上下文中的含义是一个具有一定智能，能够执行特定任务的实体。</p>
 <blockquote>
 <p>generateed by gpt-4</p>
 </blockquote>
 <p>A promising way of using these abilities are LLM-based agents that autonomously plan and execute actions to achieve a goal. The basic idea is to query the LLM with a prompt that contains the current state of the world, the goal to be achieved, and a set of actions that could be performed next. The model than decides which action to perform, and the feedback from performing the action is integrated into the next prompt. One way to represent “actions” is through tools that the model can invoke to interact with the world [26], [27]</p>
-<p>利用这些能力的一种有前途的方法是基于 LLM 的代理，它可以自主规划和执行行动以实现目标。其基本思路是向 LLM 询问一个提示，其中包含当前世界的状态、要实现的目标以及下一步可以执行的一系列行动。然后由模型决定执行哪项操作，并将执行操作的反馈整合到下一个提示中。表示 “行动 “的一种方法是通过模型可以调用的工具与世界进行交互[26]，[27]。</p>
+<p>利用这些能力的一种有前途的方法是基于 LLM 的代理，它可以自主规划和执行行动以实现目标。其基本思路是向 LLM 询问一个提示，其中包含当前世界的状态、要实现的目标以及下一步可以执行的一系列行动。然后由模型决定执行哪项操作，并将执行操作的反馈整合到下一个提示中。表示 &quot;行动 &quot;的一种方法是通过模型可以调用的工具与世界进行交互[26]，[27]。</p>
 <blockquote>
 <p>摘自某篇论文</p>
 </blockquote>
@@ -862,7 +867,7 @@
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">LLM相关术语理解</div>
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#BiLSTM-MLP"><span class="nav-number">1.</span> <span class="nav-text">BiLSTM &amp; MLP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Early-stopping"><span class="nav-number">2.</span> <span class="nav-text">Early stopping</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LLM-Agent"><span class="nav-number">3.</span> <span class="nav-text">LLM Agent</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">BiLSTM &amp; MLP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">Early stopping</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">LLM Agent</span></a></li></ol>
 
     </div>
 </div>
