@@ -1524,46 +1524,18 @@ bindService(intent, serviceConnection, Context. BIND_AUTO_CREATE)</p>
 
 
         
-            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8 vp-raw">
-                <div class="comments-container mt-10 w-full ">
-    <div id="comment-anchor" class="w-full h-2.5"></div>
-    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
-        评论
-    </div>
-    
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                if (hexo-config('comment.enable') == true && hexo-config('comment.system') != "") {
+  if (hexo-config('comment.system') == "waline") {
+    @require "./waline.styl"
 
-        
-            
-    <div class="twikoo-container">
-        <script data-swup-reload-script
-                src='https://cdn.staticfile.org/twikoo/1.6.36/twikoo.all.min.js'
-        ></script>
-        <div id="twikoo-comment"></div>
-        <script data-swup-reload-script>
-            function loadTwikoo() {
-                twikoo.init({
-                    el: '#twikoo-comment',
-                    envId: 'https://api.twikoo.031105.xyz',
-                });
-            }
+  } else if (hexo-config('comment.system') == "gitalk") {
+    @require "./gitalk.styl"
 
-            if ('true') {
-                const loadTwikooTimeout = setTimeout(() => {
-                    loadTwikoo();
-                    clearTimeout(loadTwikooTimeout);
-                }, 1000);
-            } else {
-                window.addEventListener('DOMContentLoaded', loadTwikoo);
-            }
-        </script>
-    </div>
-
-
-        
-        
-    
-</div>
-
+  } else if (hexo-config('comment.system') == "twikoo") {
+    @require "./twikoo.styl"
+  }
+}
             </div>
         
     </div>
