@@ -225,31 +225,16 @@ export default function initUtils() {
     },
     // go comment anchor
     goComment() {
-      // 查找.go-comment元素并打印日志
       this.goComment_dom = document.querySelector(".go-comment");
-      console.log('goComment_dom:', this.goComment_dom);  // 打印找到的元素
-
       if (this.goComment_dom) {
-        this.goComment_dom.addEventListener("click", (event) => {
-          // 防止链接默认行为
-          event.preventDefault();
-
-          // 查找目标元素并打印日志
+        this.goComment_dom.addEventListener("click", () => {
           const target = document.querySelector("#comment-anchor");
-          console.log('Target element:', target);  // 打印目标元素
-
           if (target) {
-            // 计算并打印目标位置
-            const rect = target.getBoundingClientRect();
-            const offset = rect.top + window.scrollY;
-            console.log('Target position:', rect.top, 'Scroll Y:', window.scrollY, 'Calculated offset:', offset);
-
-            // 执行滚动并打印滚动行为
+            const offset = target.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({
               top: offset,
               behavior: "smooth",
             });
-            console.log('Scrolled to:', offset);
           }
         });
       }
