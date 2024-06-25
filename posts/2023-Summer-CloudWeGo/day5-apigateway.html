@@ -799,7 +799,7 @@
             
     <!--TAG: 新增lightgallery的使用-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery.css">
-    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2lightgallery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
     <div class="twikoo-container">
         <script 
                 src='https://cdn.staticfile.org/twikoo/1.6.36/twikoo.all.min.js'
@@ -820,9 +820,10 @@
                         for (var i = 0; i < commentContents.length; i++) {
                             var commentItem = commentContents[i];
                             var imgEls = commentItem.getElementsByTagName('img');
-                            if (imgEls.length > 0) {
-                                for (var j = 0; j < imgEls.length; j++) {
-                                    var imgEl = imgEls[j];
+                            for (var j = 0; j < imgEls.length; j++) {
+                                var imgEl = imgEls[j];
+                                // 检查图片是否已经被处理过
+                                if (!imgEl.classList.contains('processed')) {
                                     var aEl = document.createElement('a');
                                     aEl.setAttribute('class', 'tk-lg-link');
                                     aEl.setAttribute('href', imgEl.getAttribute('src'));
@@ -830,11 +831,19 @@
                                     aEl.appendChild(imgEl.cloneNode(false));
                                     imgEl.parentNode.insertBefore(aEl, imgEl.nextSibling);
                                     imgEl.remove();
+                                    // 标记图片已经被处理
+                                    aEl.firstChild.classList.add('processed');
                                 }
-                                lightGallery(commentItem, {
-                                    selector: '.tk-lg-link',
-                                    share: false
-                                });
+                            }
+                            // 初始化 lightGallery 只对新添加的链接
+                            lightGallery(commentItem, {
+                                selector: '.tk-lg-link:not(.lightGallery-inited)',
+                                share: false
+                            });
+                            // 标记链接已初始化 lightGallery
+                            var links = commentItem.querySelectorAll('.tk-lg-link');
+                            for (var link of links) {
+                                link.classList.add('lightGallery-inited');
                             }
                         }
                     }
