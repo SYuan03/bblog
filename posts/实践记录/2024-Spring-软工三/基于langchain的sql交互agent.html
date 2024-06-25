@@ -709,7 +709,7 @@
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote_plus</span><br></pre></td></tr></table></figure></div>
 <p>然后用了发现还是连不上，OK排查了一番后发现填成服务器密码了QAQ</p>
 <p>改了之后终于连好了</p>
-<style>.dntpplglwqbu{zoom:50%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/image-20240609213451239.png" class="dntpplglwqbu" alt="image-20240609213451239"> 
+<style>.spencgqnnipv{zoom:50%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95/2024-Spring-%E8%BD%AF%E5%B7%A5%E4%B8%89/%E5%9F%BA%E4%BA%8Elangchain%E7%9A%84sql%E4%BA%A4%E4%BA%92agent/image-20240609213451239.png" class="spencgqnnipv" alt="image-20240609213451239"> 
 <h3 id="StrOutputParser">StrOutputParser</h3>
 <p>OutputParser that parses LLMResult into the top likely <strong>string</strong>.</p>
 <p>Create a new model by parsing and validating input data from keyword arguments.</p>
@@ -870,6 +870,9 @@
 
         
             
+    <!--TAG: 新增lightgallery的使用-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery.css">
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2lightgallery.min.js"></script>
     <div class="twikoo-container">
         <script 
                 src='https://cdn.staticfile.org/twikoo/1.6.36/twikoo.all.min.js'
@@ -877,9 +880,37 @@
         <div id="twikoo-comment"></div>
         <script >
             function loadTwikoo() {
+                <!--twikoo.init({-->
+                <!--    el: '#twikoo-comment',-->
+                <!--    envId: 'https://api.twikoo.031105.xyz',-->
+                <!--});-->
+                <!--TAG: 新增lightgallery的使用-->
                 twikoo.init({
                     el: '#twikoo-comment',
                     envId: 'https://api.twikoo.031105.xyz',
+                    onCommentLoaded: function () {
+                        var commentContents = document.getElementsByClassName('tk-content');
+                        for (var i = 0; i < commentContents.length; i++) {
+                            var commentItem = commentContents[i];
+                            var imgEls = commentItem.getElementsByTagName('img');
+                            if (imgEls.length > 0) {
+                                for (var j = 0; j < imgEls.length; j++) {
+                                    var imgEl = imgEls[j];
+                                    var aEl = document.createElement('a');
+                                    aEl.setAttribute('class', 'tk-lg-link');
+                                    aEl.setAttribute('href', imgEl.getAttribute('src'));
+                                    aEl.setAttribute('data-src', imgEl.getAttribute('src'));
+                                    aEl.appendChild(imgEl.cloneNode(false));
+                                    imgEl.parentNode.insertBefore(aEl, imgEl.nextSibling);
+                                    imgEl.remove();
+                                }
+                                lightGallery(commentItem, {
+                                    selector: '.tk-lg-link',
+                                    share: false
+                                });
+                            }
+                        }
+                    }
                 });
             }
 
