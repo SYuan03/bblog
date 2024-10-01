@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="SYuan03">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://bblog.031105.xyz/posts/23-fall-courses-machinelearning/强化学习记录.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280   Transition与ReplayMemory  Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（act">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强化学习记录">
+<meta property="og:url" content="https://bblog.031105.xyz/posts/23-Fall-Courses-MachineLearning/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html">
+<meta property="og:site_name" content="淡水鱼的蔚蓝之海">
+<meta property="og:description" content="参考链接 https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_51545953&#x2F;article&#x2F;details&#x2F;127466280   Transition与ReplayMemory  Transition（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（act">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-23T03:23:50.000Z">
+<meta property="article:modified_time" content="2024-09-30T12:52:38.944Z">
+<meta property="article:author" content="奔跑的淡水鱼">
+<meta name="twitter:card" content="summary">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/MyImgs/icon1.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/MyImgs/icon1.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/MyImgs/icon1.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            强化学习记录 -
+        
+        ChrisDing&#39;s bblog
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script>document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("busuanzi_value_site_uv"),t=document.getElementById("busuanzi_value_site_pv"),n=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){n.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+1782;break}}),i=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){i.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+3784;break}}),r={childList:!0};n.observe(e,r),i.observe(t,r)});</script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"bblog.031105.xyz","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":true,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/MyImgs/home-bg2-light.jpg","dark":"/MyImgs/home-bg-dark.png"},"title":"Welcome to my bblog !","subtitle":{"text":["画凌烟，上甘泉，自古功名属少年!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#6B3E99"},"text_style":{"title_size":"3.8rem","subtitle_size":"2.1rem","line_height":1.5},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/SYuan03","instagram":null,"zhihu":null,"twitter":null,"email":"tu3344606@gmail.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":true,"type":["atom"],"path":["atom.xml"],"limit":0,"hub":null,"content":null,"content_limit":200,"content_limit_delim":" ","order_by":"-date","icon":"fa-solid fa-rss"},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"绿光","artist":"孙燕姿","url":"https://box.nju.edu.cn/f/6cb53c50b68441cb9df9/?dl=1","cover":"https://s2.loli.net/2024/03/13/4dGBWbposnzfeOv.png","lrc":"/MyLRCs/LvGuang.lrc"},{"name":"黑色柳丁","artist":"陶喆","url":"https://box.nju.edu.cn/f/73c03bfd86f64670b2d0/?dl=1","cover":"https://s2.loli.net/2024/03/13/aVRZuNlzgF2CeBX.png"},{"name":"听","artist":"方大同","url":"https://box.nju.edu.cn/f/99a456f7d933420ead28/?dl=1","cover":"https://s2.loli.net/2024/03/13/UC4ZXvGsmJPwVSz.png"},{"name":"Exile","artist":"Taylor Swift","url":"https://box.nju.edu.cn/f/67b6f94a1994497ba3b0/?dl=1","cover":"https://s2.loli.net/2024/03/13/L31UtycDV4FbYfv.png"},{"name":"Blowin' in the Wind","artist":"Bob Dylan","url":"https://box.nju.edu.cn/f/fbad6214b7c5457f9b34/?dl=1","cover":"https://s2.loli.net/2024/03/13/mw52W3hDnvEAd8P.png"},{"name":"日落大道","artist":"梁博","url":"https://box.nju.edu.cn/f/c21c2403884a4451b751/?dl=1","cover":"https://s2.loli.net/2024/03/13/qOtwhWycx1JYve4.png"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.4","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about","Github":"https://github.com/SYuan03"}},"Shuoshuo":{"path":"/shuoshuo","icon":"fa-regular fa-bullhorn"}},"search":{"enable":true,"preload":true},"tags":{"Tags":{"icon":"fa-solid fa-tags","path":"/tags"}},"categories":{"Categories":{"icon":"fa-solid fa-folder","path":"/categories"}},"shuoshuo":{"Shuoshuo":{"icon":"fa-regular fa-bullhorn","path":"/shuoshuo"}}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":5},"tags":{"enable":true,"limit":5}},"footerStart":"2023/04/14 20:57:49"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="淡水鱼的蔚蓝之海" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+    <style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        ChrisDing&#39;s bblog
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({loop: true})
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [40,0],
+                translateZ: 0,
+                opacity: [0,1],
+                filter: ['blur(5px)', 'blur(0px)'], // Starting from blurred to unblurred
+                easing: "easeOutExpo",
+                duration: 1400,
+                delay: (el, i) => 300 + 30 * i,
+            }).add({
+                targets: '.ml13 .letter',
+                translateY: [0,-40],
+                opacity: [1,0],
+                filter: ['blur(0px)', 'blur(5px)'], // Ending from unblurred to blurred
+                easing: "easeInExpo",
+                duration: 1200,
+                delay: (el, i) => 100 + 30 * i,
+                complete: function() {
+                    hidePreloader(); // Call hidePreloader after the animation completes
+                }
+            });
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/MyImgs/icon1.svg">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                ChrisDing&#39;s bblog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/about">
+                                                    ME
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/SYuan03">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/shuoshuo"
+                                        >
+                                    <i class="fa-regular fa-bullhorn fa-fw"></i>
+                                    说说
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-About"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-About">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/about">ME</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/SYuan03">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/shuoshuo"
+                        >
+                            <span>
+                                说说
+                            </span>
+                            
+                                <i class="fa-regular fa-bullhorn fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">24</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://s2.loli.net/2023/10/23/STwFXCbryI3pEMo.png" alt="强化学习记录" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-start">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">强化学习记录</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/MyImgs/avatar1.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">SYuan03</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-10-23 11:23:50</span>
+        <span class="mobile">2023-10-23 11:23:50</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-09-30 20:52:38</span>
+            <span class="mobile">2024-09-30 20:52:38</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/23-Fall-Courses-MachineLearning/">23-Fall-Courses-MachineLearning</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <blockquote>
+<p>参考链接</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_51545953/article/details/127466280">https://blog.csdn.net/weixin_51545953/article/details/127466280 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h1>Transition与ReplayMemory</h1>
+<ol>
+<li><strong>Transition</strong>（过渡）：Transition 是一个命名元组（named tuple），用来表示在环境中发生的一个单一的过渡。这个过渡包括了代理（智能体）观察到的情境（state）和采取的动作（action），以及随后的情境（next_state）和奖励（reward）结果。这个概念用来记录代理在环境中的互动和反馈，有助于后续的学习和决策。</li>
+<li><strong>ReplayMemory</strong>（经验回放记忆）：ReplayMemory 是一个有限大小的循环缓冲区，用来存储代理观察到的过渡。它的目的是为了重复使用这些数据。通过从中随机采样，可以获得一批不相关的过渡数据，用于训练深度强化学习模型，特别是DQN。经验回放记忆的存在对于稳定和改进DQN的训练过程非常重要，因为它有助于减少训练中的数据相关性问题，提高模型的效率和性能。</li>
+</ol>
+<p>总之，这段文字描述了在深度强化学习中使用经验回放记忆的概念，以及它的两个组成部分：Transition 用于记录单个情境转换，ReplayMemory 用于存储这些过渡数据并支持随机采样以进行训练。这一技术有助于提高深度强化学习模型的训练效果。</p>
+<h2 id="举例">举例</h2>
+<p>当我们训练一个深度强化学习模型（比如一个控制机器人玩游戏的模型），这个模型需要不断地学习如何在特定情境下采取正确的行动。经验回放记忆就像是这个模型的记忆系统。</p>
+<p><strong>Transition</strong>（过渡）是一种方式来记录代理在环境中的经历。假设我们正在训练一个智能机器人玩一个视频游戏。每个Transition可以看作是一条记录，记录了机器人在游戏中的一次互动。这个记录包括了机器人看到的游戏画面（情境），机器人采取的行动（比如移动、跳跃），以及之后获得的奖励（分数增加或减少）以及下一个情境。这些记录可以帮助机器人学习如何在不同情境下做出正确的决策。</p>
+<p><strong>ReplayMemory</strong>（经验回放记忆）就像是机器人的记忆库。它保存了很多过去的互动记录，而且它不仅仅是保存，还会不断更新。这个记忆库的好处在于，当我们要教机器人如何玩游戏的时候，我们可以随机挑选一些过去的记录，而不是只用最新的记录。这就好像是在学习一门新技能时，我们不仅仅会记住最近的练习，还会反复回顾过去的练习，这样我们的学习更加稳定。</p>
+<p>举个例子，如果机器人曾经在游戏中遇到过一个特殊的敌人，但是很长时间没有再遇到，如果我们只用最新的记录来训练它，它可能会忘记如何应对这个敌人。但是如果我们从ReplayMemory中随机挑选过去的记录，就可以让机器人不断回顾之前的经验，从而更好地应对各种情况。</p>
+<p>总之，经验回放记忆是一种方法，让深度强化学习模型能够从过去的经验中学习，而不仅仅依赖于最新的互动数据，从而提高模型的稳定性和性能。</p>
+<h1>DQN</h1>
+<p>DQN（Deep Q-Network）是一种深度强化学习模型，旨在解决强化学习问题，特别是在离散动作空间中的问题。它是由DeepMind开发的，最初被广泛应用于训练智能代理来玩视频游戏，如Atari 2600游戏。DQN以其在处理高维度状态空间和复杂任务中的出色表现而著名。</p>
+<p>DQN的核心原理包括以下要点：</p>
+<ol>
+<li><strong>Q-Value Function</strong>（Q-值函数）：DQN的目标是学习一个称为Q-值函数的函数，通常用Q(s, a)表示。这个函数估计在给定状态s下采取动作a所获得的累积奖励的期望值。换句话说，它告诉代理在不同状态下采取不同动作的好坏程度。</li>
+<li><strong>深度神经网络</strong>：DQN使用深度神经网络来估计Q-值函数。这个神经网络通常是卷积神经网络（CNN），因为它能够有效地处理高维度的图像输入。神经网络的输入是环境状态的表示，输出是每个可能动作的Q-值。</li>
+<li><strong>经验回放</strong>：DQN引入了经验回放记忆（Experience Replay）的概念。经验回放是一种数据存储和随机采样方法，它允许代理存储和重用过去的经验，以减少数据的相关性，从而提高训练的稳定性。代理会在每个时间步将经验（状态、动作、奖励、下一个状态）存储在一个经验回放缓冲区中，并从中随机抽样小批量数据来进行训练。</li>
+<li><strong>目标网络</strong>：为了提高稳定性，DQN还使用了两个神经网络：一个是用来选择动作的主网络，另一个是用来估计目标Q值的目标网络。目标网络的参数是固定的一段时间，然后逐渐更新以逼近主网络的估计值。这有助于减轻训练中的不稳定性问题。</li>
+</ol>
+<p><strong>DQN的训练目标是最小化Q-值函数的均方误差，以使其逼近真实的Q值。通过与环境互动并不断优化神经网络参数，DQN可以学习在不同情境下采取什么动作来最大化长期奖励。</strong></p>
+<p>总之，DQN是深度强化学习的一种方法，它使用深度神经网络来学习代理在不同情境下如何做出最佳决策。它在处理高维状态空间和离散动作空间的问题中表现出色，使得智能代理能够在各种环境中表现出色。</p>
+<h1>ReplayMemory</h1>
+<div class="highlight-container" data-rel="Py"><figure class="iseeu highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Transition = namedtuple(<span class="string">&#x27;Transition&#x27;</span>,</span><br><span class="line">                        (<span class="string">&#x27;state&#x27;</span>, <span class="string">&#x27;action&#x27;</span>, <span class="string">&#x27;next_state&#x27;</span>, <span class="string">&#x27;reward&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReplayMemory</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, capacity</span>):</span><br><span class="line">        self.memory = deque([], maxlen=capacity)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">push</span>(<span class="params">self, *args</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Save a transition&quot;&quot;&quot;</span></span><br><span class="line">        self.memory.append(Transition(*args))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sample</span>(<span class="params">self, batch_size</span>):</span><br><span class="line">        <span class="keyword">return</span> random.sample(self.memory, batch_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.memory)</span><br></pre></td></tr></table></figure></div>
+<p>这是一个Python类<code>ReplayMemory</code>，它似乎是为了实现经验回放记忆（Replay Memory）的功能而设计的。经验回放记忆是在深度强化学习中用于存储和随机采样代理与环境互动的记录的数据结构。以下是该类及其方法的简要解释：</p>
+<ol>
+<li><code>__init__(self, capacity)</code>：这是类的构造函数，它初始化ReplayMemory对象。它接受一个<code>capacity</code>参数，表示Replay Memory的最大容量，即可以存储多少条记录。</li>
+<li><code>push(self, *args)</code>：这是一个方法，用于将代理与环境互动的记录（Transition）保存到Replay Memory中。它接受不定数量的参数<code>*args</code>，这些参数将被传递给Transition的构造函数以创建一个新的Transition对象，然后将其添加到Replay Memory中。</li>
+<li><code>sample(self, batch_size)</code>：这是一个方法，用于从Replay Memory中随机采样一批记录。它接受一个<code>batch_size</code>参数，表示要采样的记录数量。它使用<code>random.sample</code>函数从Replay Memory中随机选择指定数量的记录，并以列表的形式返回这些记录。</li>
+<li><code>__len__(self)</code>：这是一个特殊方法，用于获取Replay Memory中当前存储的记录数量。它可以通过内置的<code>len</code>函数来访问，以确定Replay Memory中的记录数。</li>
+</ol>
+<p>下面是一个使用示例：</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建ReplayMemory对象，容量为1000</span></span><br><span class="line">capacity = <span class="number">1000</span></span><br><span class="line">memory = ReplayMemory(capacity)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将一条记录添加到Replay Memory</span></span><br><span class="line">state = [<span class="number">0.1</span>, <span class="number">0.2</span>, <span class="number">0.3</span>]</span><br><span class="line">action = <span class="number">1</span></span><br><span class="line">next_state = [<span class="number">0.2</span>, <span class="number">0.3</span>, <span class="number">0.4</span>]</span><br><span class="line">reward = <span class="number">0.5</span></span><br><span class="line">memory.push(state, action, next_state, reward)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从Replay Memory中随机采样一批记录</span></span><br><span class="line">batch_size = <span class="number">32</span></span><br><span class="line">sampled_batch = memory.sample(batch_size)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取Replay Memory中记录的数量</span></span><br><span class="line">memory_length = <span class="built_in">len</span>(memory)</span><br></pre></td></tr></table></figure></div>
+<p>在上述示例中，首先创建了一个<code>ReplayMemory</code>对象，然后将一条记录添加到Replay Memory中。接着，使用<code>sample</code>方法随机采样了一批记录，最后使用<code>__len__</code>方法获取了Replay Memory中记录的数量。这个类有助于管理和维护强化学习中所需的经验回放数据。</p>
+<h1>select_action</h1>
+<p><strong>select_action</strong> 函数：这个函数用于选择代理在给定状态下采取的动作，通常遵循 ε-贪心策略（epsilon-greedy policy）。 ε-贪心策略是一种平衡探索和利用的策略，其中有一个 ε（epsilon）的概率用于随机选择一个动作，以便代理可以探索新的动作，而 1-ε 的概率用于根据模型的Q值选择一个最优动作。初始时，ε 的值为 EPS_START，然后随着时间逐渐以指数方式衰减至 EPS_END。EPS_DECAY 控制衰减速率。</p>
+<h1>plot_duration</h1>
+<p><strong>plot_durations</strong> 函数：这个函数是用于绘制训练过程中每一轮（episode）的持续时间，并计算最近100轮的平均值。在强化学习中，通常使用“滚动平均”来评估模型性能，因为这可以平滑不稳定的训练过程。这个函数将在训练的主循环中调用，用于绘制和更新训练进展的图表。最后的评估通常基于最近100个episode的平均表现。</p>
+<h1>折扣因子GAMMA</h1>
+<p><code>GAMMA</code> 是折扣因子（discount factor），在强化学习中用于计算折扣回报（discounted return）。折扣回报是一个代理在一系列时间步内获得的奖励的折扣总和。</p>
+<p>具体来说，折扣回报是通过以下方式计算的：</p>
+<ol>
+<li>代理在每个时间步 t 处获得奖励 r(t)。</li>
+<li>这些奖励 r(t) 从当前时间步 t 开始向未来的时间步 t+1, t+2, … 进行折扣。</li>
+<li>折扣的过程通过乘以折扣因子 <code>GAMMA</code> 来实现。</li>
+</ol>
+<p>折扣回报 G(t) 在时间步 t 处的计算方式是：</p>
+<p>G(t) = r(t) + GAMMA * r(t+1) + GAMMA^2 * r(t+2) + GAMMA^3 * r(t+3) + …</p>
+<p><code>GAMMA</code> 的值通常在 0 到 1 之间，控制了对未来奖励的重要性。具体来说：</p>
+<ul>
+<li>当 <code>GAMMA</code> 接近 1 时，未来奖励具有较高的重要性，代理更关注长期回报。</li>
+<li>当 <code>GAMMA</code> 接近 0 时，未来奖励的影响几乎被忽略，代理更关注即时奖励。</li>
+</ul>
+<p>在实际的强化学习任务中，选择合适的 <code>GAMMA</code> 值取决于任务的性质，例如，如果任务需要代理长期规划和考虑未来奖励，那么较高的 <code>GAMMA</code> 值可能更合适。然而，它也可以根据任务的要求进行调整，以权衡长期和短期奖励的重要性。</p>
+<h1>目标网络</h1>
+<p>目标网络即target_net</p>
+<p>policy_net是参数一直在变化的</p>
+<p><code>policy_net</code> 和 <code>target_net</code> 是DQN算法中的两个神经网络，它们有不同的作用，并协同工作以稳定学习过程。让我更详细地解释它们的作用：</p>
+<ol>
+<li>
+<p><strong><code>policy_net</code></strong>：这是DQN算法中的主要神经网络，它用于估计每个状态下采取每个动作的Q值。具体来说，对于给定的状态，<code>policy_net</code>会输出一个Q值向量，其中每个元素对应一个可能的动作，表示采取该动作时的Q值。智能体根据这些Q值来选择最佳的动作。<code>policy_net</code>的参数会在训练中不断更新，以使其能够更准确地估计Q值。</p>
+</li>
+<li>
+<p><strong><code>target_net</code></strong>：这是一个目标神经网络，其主要作用是用于估计未来状态下的最大Q值。在Q-learning的更新公式中，需要估计下一个状态（s’）下的最大Q值，但由于在训练中不断变化的<code>policy_net</code>的参数，这可能导致目标值不稳定。因此，引入了<code>target_net</code>，它的参数是一个<code>policy_net</code>在某个时刻的快照，不会频繁更新。在训练中，可以使用<code>target_net</code>来计算目标Q值，以减小目标值的不稳定性，从而使学习过程更稳定。</p>
+</li>
+</ol>
+<p>具体来说，<code>target_net</code>的参数不会像<code>policy_net</code>那样频繁更新，而是定期进行更新，例如每隔一定数量的步骤。这使得目标Q值更稳定，有助于减小训练中的振荡和不稳定性。</p>
+<p>总之，<code>policy_net</code>用于估计当前状态下的Q值，而<code>target_net</code>用于估计未来状态下的最大Q值，通过这两个网络的协同工作，DQN算法能够更稳定地学习并提高智能体的性能。</p>
+<h1>关于优化器</h1>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化模型，首先将梯度置为0，然后进行反向传播，最后进行梯度裁剪</span></span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">loss.backward()</span><br><span class="line">torch.nn.utils.clip_grad_value_(policy_net.parameters(), <span class="number">100</span>)</span><br><span class="line"><span class="comment"># 使用优化器来更新模型参数，使得梯度下降</span></span><br><span class="line">optimizer.step()</span><br></pre></td></tr></table></figure></div>
+<p>这段代码是深度学习模型训练的标准步骤，用于优化模型的权重以减小损失函数的值。以下是对每个步骤的解释：</p>
+<ol>
+<li><code>optimizer.zero_grad()</code>: 这一行代码的目的是将模型参数的梯度（gradients）清零。在反向传播算法中，梯度是损失函数相对于模型参数的导数，用来指示如何更新模型参数以减小损失。在每一次训练迭代之前，都需要清零梯度，以避免累积的梯度影响后续迭代。</li>
+<li><code>loss.backward()</code>: 这是反向传播的步骤，用于计算模型参数相对于损失函数的梯度。它分析模型的预测和真实目标之间的差距，然后反向传播这个误差，以计算每个参数的梯度。这一步是为了计算出如何调整模型参数以减小损失。</li>
+<li><code>torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)</code>: 这行代码进行了梯度裁剪（gradient clipping）。梯度裁剪是一种处理梯度爆炸问题的技巧，它限制了梯度的最大值，防止梯度变得过大，从而导致训练不稳定。在这里，梯度的值被裁剪到最大值为100，即如果任何梯度的绝对值大于100，它们将被截断为100。这有助于防止梯度爆炸问题。</li>
+<li><code>optimizer.step()</code>: 最后，这一行代码使用优化器来更新模型参数。根据计算的梯度，优化器会根据指定的优化算法（如随机梯度下降或Adam）来微调模型的参数，以减小损失函数的值。这个步骤是用来实际更新模型权重，使模型更好地拟合训练数据。</li>
+</ol>
+<p>综上所述，这些步骤组成了深度学习模型的训练过程，其中包括了清零梯度、反向传播计算梯度、梯度裁剪以处理梯度爆炸问题，以及使用优化器来更新模型参数。这些步骤循环迭代，直到模型达到满意的性能或训练停止的条件被满足。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 强化学习记录</li>
+        <li><strong>作者:</strong> SYuan03</li>
+        <li><strong>创建于
+                :</strong> 2023-10-23 11:23:50</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-09-30 20:52:38
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://bblog.031105.xyz/posts/23-Fall-Courses-MachineLearning/强化学习记录.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="LLM相关术语理解" class="!max-w-none">
+  <span class="title">LLM相关术语理解</span>
+</a><a class="recommended-article-item" href="/posts/期末复习/24-spring-软件质量与管理期末复习.html" title="24-Spring-软件质量与管理期末复习" rel="bookmark">
+  <img src="https://imgss.s3.bitiful.net/2024/06/26/20240626000213.png" alt="24-Spring-软件质量与管理期末复习" class="!max-w-none">
+  <span class="title">24-Spring-软件质量与管理期末复习</span>
+</a><a class="recommended-article-item" href="/posts/期末复习/软件系统设计/24-spring-软件系统设计期末复习.html" title="24-Spring-软件系统设计期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-软件系统设计期末复习" class="!max-w-none">
+  <span class="title">24-Spring-软件系统设计期末复习</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/论文阅读/llm相关术语理解.html" title="LLM相关术语理解" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="LLM相关术语理解" class="!max-w-none">
+  <span class="title">LLM相关术语理解</span>
+</a><a class="recommended-article-item" href="/posts/期末复习/24-spring-软件质量与管理期末复习.html" title="24-Spring-软件质量与管理期末复习" rel="bookmark">
+  <img src="https://imgss.s3.bitiful.net/2024/06/26/20240626000213.png" alt="24-Spring-软件质量与管理期末复习" class="!max-w-none">
+  <span class="title">24-Spring-软件质量与管理期末复习</span>
+</a></div>
+   </div>
+  </div>
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/posts/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/%E5%89%8D%E7%AB%AF%E5%BA%B7%E5%A4%8D%E8%AE%AD%E7%BB%83.html"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">前端康复训练</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/posts/%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">docker常用命令</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <!--TAG: 新增lightgallery的使用-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery.css">
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://imgss.s3.bitiful.net/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                <!--twikoo.init({-->
+                <!--    el: '#twikoo-comment',-->
+                <!--    envId: 'https://api.twikoo.031105.xyz',-->
+                <!--});-->
+                <!--TAG: 新增lightgallery的使用-->
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://api.twikoo.031105.xyz',
+                    onCommentLoaded: function () {
+                        var commentContents = document.getElementsByClassName('tk-content');
+                        for (var i = 0; i < commentContents.length; i++) {
+                            var commentItem = commentContents[i];
+                            var imgEls = commentItem.getElementsByTagName('img');
+                            for (var j = 0; j < imgEls.length; j++) {
+                                var imgEl = imgEls[j];
+                                // 检查图片是否已经被处理过
+                                if (!imgEl.classList.contains('processed')) {
+                                    var aEl = document.createElement('a');
+                                    aEl.setAttribute('class', 'tk-lg-link');
+                                    aEl.setAttribute('href', imgEl.getAttribute('src'));
+                                    aEl.setAttribute('data-src', imgEl.getAttribute('src'));
+                                    aEl.appendChild(imgEl.cloneNode(false));
+                                    imgEl.parentNode.insertBefore(aEl, imgEl.nextSibling);
+                                    imgEl.remove();
+                                    // 标记图片已经被处理
+                                    aEl.firstChild.classList.add('processed');
+                                }
+                            }
+                            // 初始化 lightGallery 只对新添加的链接
+                            lightGallery(commentItem, {
+                                selector: '.tk-lg-link:not(.lightGallery-inited)',
+                                share: false
+                            });
+                            // 标记链接已初始化 lightGallery
+                            var links = commentItem.querySelectorAll('.tk-lg-link');
+                            for (var link of links) {
+                                link.classList.add('lightGallery-inited');
+                            }
+                        }
+                    }
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">强化学习记录</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Transition与ReplayMemory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">DQN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">ReplayMemory</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">select_action</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">plot_duration</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">折扣因子GAMMA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">目标网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">关于优化器</span></a></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">SYuan03</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共 45 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.4</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+<script>
+    // Tag: 自己新增
+    document.addEventListener('DOMContentLoaded', function() {
+        if (theme.global.single_page !== false) {
+            document.addEventListener('click', function(e) {
+                let target = e.target;
+                while (target && !target.href) {
+                    target = target.parentNode;
+                }
+                if (target && target.href) {
+                    const url = new URL(target.href);
+                    if (url.pathname.includes('/shuoshuo')) {
+                        e.preventDefault(); // 阻止链接默认的导航行为
+                        window.location.href = target.href; // 通过传统方式加载 `/shuoshuo` 页面
+                    }
+                    // 对于其他链接，什么都不做，让 swup 接管
+                }
+            });
+        }
+    });
+</script>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>

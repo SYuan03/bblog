@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="SYuan03">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://bblog.031105.xyz/posts/2023-spring-courses-编译原理/review-compileprinciple.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="题目1 正则表达式与自动机 前置知识 自动机： Automaton&#x2F;Automata 状态集+转移函数 RE：  RE与DFA与NFA表达能力是等价的，所以可以相互转换 DFA与NFA： 确定性和非确定性有穷自动机 DFA一个状态通过一个字符转移只能有一个确定的状态（也就是隐含了无法使用空串进行转移 NFA 简洁易于理解, 便于描述语言 L(A) DFA 易于判断 x ∈ L(A), 适合产生词法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Review-CompilePrinciple">
+<meta property="og:url" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple.html">
+<meta property="og:site_name" content="淡水鱼的蔚蓝之海">
+<meta property="og:description" content="题目1 正则表达式与自动机 前置知识 自动机： Automaton&#x2F;Automata 状态集+转移函数 RE：  RE与DFA与NFA表达能力是等价的，所以可以相互转换 DFA与NFA： 确定性和非确定性有穷自动机 DFA一个状态通过一个字符转移只能有一个确定的状态（也就是隐含了无法使用空串进行转移 NFA 简洁易于理解, 便于描述语言 L(A) DFA 易于判断 x ∈ L(A), 适合产生词法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622172316744.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622171006623.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622173337939.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194807211.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194743475.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201739476.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201828915.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203259136.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203820425.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622204247007.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622205655897.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210009638.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210107455.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622211046488.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622212559227.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232028397.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232036113.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622235125782.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211520448.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211927751.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212354906.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212636567.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213228783.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213708956.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213741515.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213934203.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214150813.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214820860.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215257229.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215713340.png">
+<meta property="article:published_time" content="2023-06-22T08:00:22.000Z">
+<meta property="article:modified_time" content="2024-09-30T12:52:04.678Z">
+<meta property="article:author" content="奔跑的淡水鱼">
+<meta property="article:tag" content="编译原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622172316744.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/MyImgs/icon1.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/MyImgs/icon1.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/MyImgs/icon1.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            Review-CompilePrinciple -
+        
+        ChrisDing&#39;s bblog
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script>document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("busuanzi_value_site_uv"),t=document.getElementById("busuanzi_value_site_pv"),n=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){n.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+1782;break}}),i=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){i.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+3784;break}}),r={childList:!0};n.observe(e,r),i.observe(t,r)});</script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"bblog.031105.xyz","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":true,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/MyImgs/home-bg2-light.jpg","dark":"/MyImgs/home-bg-dark.png"},"title":"Welcome to my bblog !","subtitle":{"text":["画凌烟，上甘泉，自古功名属少年!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#6B3E99"},"text_style":{"title_size":"3.8rem","subtitle_size":"2.1rem","line_height":1.5},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/SYuan03","instagram":null,"zhihu":null,"twitter":null,"email":"tu3344606@gmail.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":true,"type":["atom"],"path":["atom.xml"],"limit":0,"hub":null,"content":null,"content_limit":200,"content_limit_delim":" ","order_by":"-date","icon":"fa-solid fa-rss"},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"绿光","artist":"孙燕姿","url":"https://box.nju.edu.cn/f/6cb53c50b68441cb9df9/?dl=1","cover":"https://s2.loli.net/2024/03/13/4dGBWbposnzfeOv.png","lrc":"/MyLRCs/LvGuang.lrc"},{"name":"黑色柳丁","artist":"陶喆","url":"https://box.nju.edu.cn/f/73c03bfd86f64670b2d0/?dl=1","cover":"https://s2.loli.net/2024/03/13/aVRZuNlzgF2CeBX.png"},{"name":"听","artist":"方大同","url":"https://box.nju.edu.cn/f/99a456f7d933420ead28/?dl=1","cover":"https://s2.loli.net/2024/03/13/UC4ZXvGsmJPwVSz.png"},{"name":"Exile","artist":"Taylor Swift","url":"https://box.nju.edu.cn/f/67b6f94a1994497ba3b0/?dl=1","cover":"https://s2.loli.net/2024/03/13/L31UtycDV4FbYfv.png"},{"name":"Blowin' in the Wind","artist":"Bob Dylan","url":"https://box.nju.edu.cn/f/fbad6214b7c5457f9b34/?dl=1","cover":"https://s2.loli.net/2024/03/13/mw52W3hDnvEAd8P.png"},{"name":"日落大道","artist":"梁博","url":"https://box.nju.edu.cn/f/c21c2403884a4451b751/?dl=1","cover":"https://s2.loli.net/2024/03/13/qOtwhWycx1JYve4.png"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.4","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about","Github":"https://github.com/SYuan03"}},"Shuoshuo":{"path":"/shuoshuo","icon":"fa-regular fa-bullhorn"}},"search":{"enable":true,"preload":true},"tags":{"Tags":{"icon":"fa-solid fa-tags","path":"/tags"}},"categories":{"Categories":{"icon":"fa-solid fa-folder","path":"/categories"}},"shuoshuo":{"Shuoshuo":{"icon":"fa-regular fa-bullhorn","path":"/shuoshuo"}}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":5},"tags":{"enable":true,"limit":5}},"footerStart":"2023/04/14 20:57:49"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="淡水鱼的蔚蓝之海" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+    <style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        ChrisDing&#39;s bblog
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({loop: true})
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [40,0],
+                translateZ: 0,
+                opacity: [0,1],
+                filter: ['blur(5px)', 'blur(0px)'], // Starting from blurred to unblurred
+                easing: "easeOutExpo",
+                duration: 1400,
+                delay: (el, i) => 300 + 30 * i,
+            }).add({
+                targets: '.ml13 .letter',
+                translateY: [0,-40],
+                opacity: [1,0],
+                filter: ['blur(0px)', 'blur(5px)'], // Ending from unblurred to blurred
+                easing: "easeInExpo",
+                duration: 1200,
+                delay: (el, i) => 100 + 30 * i,
+                complete: function() {
+                    hidePreloader(); // Call hidePreloader after the animation completes
+                }
+            });
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/MyImgs/icon1.svg">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                ChrisDing&#39;s bblog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/about">
+                                                    ME
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/SYuan03">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/shuoshuo"
+                                        >
+                                    <i class="fa-regular fa-bullhorn fa-fw"></i>
+                                    说说
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-About"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-About">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/about">ME</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/SYuan03">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/shuoshuo"
+                        >
+                            <span>
+                                说说
+                            </span>
+                            
+                                <i class="fa-regular fa-bullhorn fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">24</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://s2.loli.net/2023/06/22/ESvOUMFbak2VYRj.jpg" alt="Review-CompilePrinciple" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-start">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">Review-CompilePrinciple</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/MyImgs/avatar1.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">SYuan03</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-06-22 16:22</span>
+        <span class="mobile">2023-06-22 16:22</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-09-30 20:52:04</span>
+            <span class="mobile">2024-09-30 20:52:04</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">2023-Spring-Courses-编译原理</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h2 id="题目1-正则表达式与自动机">题目1 正则表达式与自动机</h2>
+<h3 id="前置知识">前置知识</h3>
+<h4 id="自动机：">自动机：</h4>
+<p>Automaton/Automata 状态集+转移函数</p>
+<h4 id="RE：">RE：</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622172316744.png" class title="image-20230622172316744">
+<p>RE与DFA与NFA表达能力是等价的，所以可以相互转换</p>
+<h4 id="DFA与NFA：">DFA与NFA：</h4>
+<p>确定性和非确定性有穷自动机</p>
+<p>DFA一个状态通过一个字符转移只能有一个确定的状态（也就是隐含了无法使用空串进行转移</p>
+<p><strong>NFA 简洁易于理解, 便于描述语言 <em>L</em>(<em>A</em>)</strong></p>
+<p><strong>DFA 易于判断 <em>x</em> <em>∈</em> <em>L</em>(<em>A</em>), 适合产生词法分析器</strong></p>
+<p>用 NFA 描述语言, 用 DFA 实现词法分析器</p>
+<p>RE =<em>⇒</em> NFA =<em>⇒</em> DFA =<em>⇒</em> 词法分析器</p>
+<h4 id="DFA的死状态：">DFA的死状态：</h4>
+<blockquote>
+<p>死状态的画法：圈里面套个类似空集的符号</p>
+</blockquote>
+<h3 id="Thompson-构造法-从RE到-NFA">Thompson 构造法 (从RE到 NFA)</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622171006623.png" class title="image-20230622171006623">
+<blockquote>
+<p>外面的q/f是新增的开始和截止状态</p>
+</blockquote>
+<h4 id="一个例子">一个例子</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622173337939.png" class title="image-20230622173337939">
+<blockquote>
+<p>画完记得重标下状态序号</p>
+</blockquote>
+<h3 id="子集构造法-NFA-到-DFA">子集构造法 (NFA 到 DFA)</h3>
+<p>一开始的状态可以是0,1,2,4,7</p>
+<p>再看通过a,b可以转移到哪里，注意空串转移也算可到</p>
+<p>某个状态包含NFA的某一个结束状态，就是DFA的结束状态</p>
+<blockquote>
+<p>可以有多个结束状态，2022-hw2甚至全是结束状态</p>
+<p>做的时候直接看某个节点有没有通过某个字符的路径，不需要考虑他空串转移了再继续，因为他空串转移能到的那个状态本身也会在这个集合里</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194807211.png" class title="image-20230622194807211">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622194743475.png" class title="image-20230622194743475">
+<h3 id="DFA-最小化">DFA 最小化</h3>
+<p>一开始分成接受状态，非接受状态，死状态<strong>三类</strong></p>
+<blockquote>
+<p>课上的例子遗漏了补充死状态</p>
+</blockquote>
+<p>这三者肯定不等价，然后就是回到死状态的肯定跟不到的不一样，所以要补上死状态</p>
+<ol>
+<li>先划分等价类</li>
+<li>再合并状态</li>
+</ol>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201739476.png" class title="image-20230622201739476">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622201828915.png" class title="image-20230622201828915"> 
+<h2 id="题目2-LL语法分析">题目2 LL语法分析</h2>
+<h3 id="前置知识-2">前置知识</h3>
+<h4 id="LL1文法：">LL1文法：</h4>
+<p>L的含义：</p>
+<p>第一个L表示 从左向右读入词法单元</p>
+<p>第二个L表示 总是选择最左边的非终结符进行展开</p>
+<p>语法分析的算法主要有两大类LR和LL，LL自顶向下，LR自底向上，我们只考虑无二义性的文法</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203259136.png" class title="image-20230622203259136">
+<h4 id="预测分析表：用于选择产生式">预测分析表：用于选择产生式</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622203820425.png" class title="image-20230622203820425">
+<blockquote>
+<p>当前读到某个非终结符，该选用那条产生式展开，这就是预测分析表的作用</p>
+</blockquote>
+<h4 id="First集合：对所有产生式的右部求">First集合：对所有产生式的右部求</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622204247007.png" class title="image-20230622204247007">
+<blockquote>
+<p>参照上例</p>
+<p>如果当前指针指向的是a2，A有三条展开式，只有第一条的右部的FIRST中包含a2，那么选用第一条产生式</p>
+<p>FIRST集合可能会有空串符号</p>
+</blockquote>
+<h4 id="Follow集合：对所有非终结符">Follow集合：对所有非终结符</h4>
+<p>其实FOLLOW集合就是对FIRST集合做了进一步补充和防备？</p>
+<p>因为FIRST可能推出空串，所以需要FOLLOW集合辅助判断</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622205655897.png" class title="image-20230622205655897">
+<blockquote>
+<p>FOLLOW集合可能有结束符$</p>
+</blockquote>
+<h3 id="•-First-集合与-Follow-集合">• First 集合与 Follow 集合</h3>
+<h4 id="计算FIRST">计算FIRST</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210009638.png" class title="image-20230622210009638">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622210107455.png" class title="image-20230622210107455">
+<h5 id="例子">例子</h5>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622211046488.png" class title="image-20230622211046488">
+<p>看一眼右边所有的可能性，发现要先计算FIRST(X) FIRST(Y) FIRST(Z)，仔细想想这是显然的</p>
+<blockquote>
+<p>推到FIRSTZ 包含于 FIRSTZ，这句显然是废话</p>
+<p>继续考虑FIRSTZ集合有没有空串就行了</p>
+<p>大致看一下，发现是不行的</p>
+</blockquote>
+<h4 id="计算FOLLOW">计算FOLLOW</h4>
+<p>注意下图说的是对X，不是对A</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622212559227.png" class title="image-20230622212559227">
+<blockquote>
+<p>如果是开始符号，FOLLOW集合中就加入$</p>
+</blockquote>
+<h5 id="例子：">例子：</h5>
+<p><strong>先看X会在右侧哪里出现和是否是开始符号</strong></p>
+<p>X是初始符，放入$</p>
+<p>然后发现X会在Z-&gt;XYZ中</p>
+<p>那么FLX就会包含<strong>FIRST(YZ)</strong>，先加入FIRSTY，加入了c，发现Y有可能是空串，那么FLX就会包含FIRSTZ，加入a,c,d</p>
+<p>然后判断<strong>YZ</strong>整体会不会空，如果空了就要按照第二条把FOLLOWZ加到FOLLOWX里面</p>
+<blockquote>
+<p>FLZ是空，因为推到了FLZ包含FLZ，不再变化了</p>
+</blockquote>
+<h3 id="•-构造预测分析表">• 构造预测分析表</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232028397.png" class title="image-20230622232028397">
+<blockquote>
+<p>上下两种表述等价，推导符号上面加个*表示经过多次推导（多次推导得到空串和空串属于FIRST alpha是等价的表述</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622232036113.png" class title="image-20230622232036113">
+<blockquote>
+<p>满足两者之一，即可填入</p>
+</blockquote>
+<p><strong>行是终结符和$，列是非终结符</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230622235125782.png" class title="image-20230622235125782">
+<h3 id="•-判断文法是否是LL-1-文法">• 判断文法是否是LL(1)文法</h3>
+<p>预测分析表无冲突，即为LL1文法</p>
+<h2 id="题目3-LR语法分析">题目3 LR语法分析</h2>
+<blockquote>
+<p>考试时会给出 LR(0) 自动机</p>
+</blockquote>
+<h3 id="•-掌握-LR-0-自动机的构造方法以及-SLR-1-表格的构造方法">• 掌握 LR(0) 自动机的构造方法以及 SLR(1) 表格的构造方法</h3>
+<h3 id="•-掌握-LR-0-自动机与栈之间的交互运行过程">• 掌握 LR(0) 自动机与栈之间的交互运行过程</h3>
+<h2 id="题目4-ANTLR4与“优先级上升算法”">题目4 ANTLR4与“优先级上升算法”</h2>
+<h3 id="前置知识-3">前置知识</h3>
+<p>消除左递归：</p>
+<p>因为自顶向下的算法如LL1没法处理左递归，所以需要先改写一下</p>
+<p>书P134</p>
+<blockquote>
+<p>不考查 ANTLR 4 AllStar 算法的其余内容</p>
+<p>不考查LR1、LALR1</p>
+</blockquote>
+<h3 id="•-能够根据优先级上升算法改造给定文法">• 能够根据优先级上升算法改造给定文法</h3>
+<h3 id="•-能够给出给定输入在改造后的文法下对应的语法分析树">• 能够给出给定输入在改造后的文法下对应的语法分析树</h3>
+<p><strong>antlr4不能处理间接左递归</strong>，但是<code>直接左递归</code>可以，并且处理的很好</p>
+<blockquote>
+<p>注意是非左递归，不是像我们前面一样写成右递归，右递归不太好看，且存在一定问题（结合性问题好像是）</p>
+</blockquote>
+<h4 id="重点：antlr如何处理优先级和直接左递归？">重点：antlr如何<code>处理优先级</code>和<code>直接左递归</code>？</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211520448.png" class title="image-20230410211520448"> 
+<p>使用该命令可看到antlr把上述语法改写成什么样</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410211927751.png" class title="image-20230410211927751">
+<p>看上去大体上是把递归改写成了循环</p>
+<p>对应一段带参数的递归函数</p>
+<blockquote>
+<p><mark>这张图上的算法是有助于理解的</mark></p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212354906.png" class title="image-20230410212354906">
+<h4 id="优先级怎么定的">优先级怎么定的</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410212636567.png" class title="image-20230410212636567">
+<h4 id="例子1-2-3">例子1+2+3</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213228783.png" class title="image-20230410213228783">
+<p>匹配加法展开后参数_p变成4，目的是为了让加法优先级高的才能继续向下深入展开，因为语法树的优先级越往下展开越高，乘法同理，_p相当于一个判断能否展开的当前优先级</p>
+<h4 id="例子1-2-3-2">例子1+2*3</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213708956.png" class title="image-20230410213708956">
+<h4 id="根本问题">根本问题</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213741515.png" class title="image-20230410213741515">
+<h4 id="另一个例子">另一个例子</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410213934203.png" class title="image-20230410213934203">
+<h4 id="优先级一定就是要上升-1吗">优先级一定就是要上升+1吗</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214150813.png" class title="image-20230410214150813">
+<p><code>-</code>右结合</p>
+<p><code>!</code>左结合</p>
+<p>改写：</p>
+ <img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410214820860.png" class title="image-20230410214820860">
+<p><code>-</code>是右结合，不是左递归的，所以放在上面的部分，并且优先级不变</p>
+<p><code>!</code>左结合左递归但是是一元的左结合运算符，不需要再调用expr[]递归函数</p>
+<h4 id="例子：-a-b">例子：-a+b!</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215257229.png" class title="image-20230410215257229">
+<p><strong>注意</strong>从E[4]返回时代码中是返回到第一个括号后，而不是回到最开始，所以开始匹配加号（进入了带*的那个循环里</p>
+<h4 id="二元左递归运算符想要右结合">二元左递归运算符想要右结合</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/review-compileprinciple/image-20230410215713340.png" class title="image-20230410215713340">
+<p><mark>反正就是右结合不升级，左结合升一级</mark></p>
+<h2 id="题目5-语法制导的翻译">题目5 语法制导的翻译</h2>
+<blockquote>
+<p>不考查 ANTLR 4 中的写法</p>
+</blockquote>
+<h3 id="•-语法制导的翻译">• 语法制导的翻译</h3>
+<h2 id="题目6-目标代码生成">题目6 目标代码生成</h2>
+<h3 id="•-给定一段-C-语言程序-含过程调用-与对应的-RISC-V-代码片段-填充缺失的代码行。">• 给定一段 C 语言程序 (含过程调用) 与对应的 RISC-V 代码片段, 填充缺失的代码行。</h3>
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> Review-CompilePrinciple</li>
+        <li><strong>作者:</strong> SYuan03</li>
+        <li><strong>创建于
+                :</strong> 2023-06-22 16:00:22</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-09-30 20:52:04
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://bblog.031105.xyz/posts/2023-Spring-Courses-编译原理/review-compileprinciple.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">#编译原理</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/期末复习/数据库开发/24-spring-数据库开发期末复习.html" title="24-Spring-数据库开发期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-数据库开发期末复习" class="!max-w-none">
+  <span class="title">24-Spring-数据库开发期末复习</span>
+</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-数据库管理/notes-dbms.html" title="notes-dbms" rel="bookmark">
+  <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="!max-w-none">
+  <span class="title">notes-dbms</span>
+</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-操作系统/notes-os.html" title="notes-os" rel="bookmark">
+  <img src="https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg" alt="notes-os" class="!max-w-none">
+  <span class="title">notes-os</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/期末复习/数据库开发/24-spring-数据库开发期末复习.html" title="24-Spring-数据库开发期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-数据库开发期末复习" class="!max-w-none">
+  <span class="title">24-Spring-数据库开发期末复习</span>
+</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-数据库管理/notes-dbms.html" title="notes-dbms" rel="bookmark">
+  <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="!max-w-none">
+  <span class="title">notes-dbms</span>
+</a></div>
+   </div>
+  </div>
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v.html"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">note-RISC-V</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">notes-os</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <!--TAG: 新增lightgallery的使用-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery.css">
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://imgss.s3.bitiful.net/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                <!--twikoo.init({-->
+                <!--    el: '#twikoo-comment',-->
+                <!--    envId: 'https://api.twikoo.031105.xyz',-->
+                <!--});-->
+                <!--TAG: 新增lightgallery的使用-->
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://api.twikoo.031105.xyz',
+                    onCommentLoaded: function () {
+                        var commentContents = document.getElementsByClassName('tk-content');
+                        for (var i = 0; i < commentContents.length; i++) {
+                            var commentItem = commentContents[i];
+                            var imgEls = commentItem.getElementsByTagName('img');
+                            for (var j = 0; j < imgEls.length; j++) {
+                                var imgEl = imgEls[j];
+                                // 检查图片是否已经被处理过
+                                if (!imgEl.classList.contains('processed')) {
+                                    var aEl = document.createElement('a');
+                                    aEl.setAttribute('class', 'tk-lg-link');
+                                    aEl.setAttribute('href', imgEl.getAttribute('src'));
+                                    aEl.setAttribute('data-src', imgEl.getAttribute('src'));
+                                    aEl.appendChild(imgEl.cloneNode(false));
+                                    imgEl.parentNode.insertBefore(aEl, imgEl.nextSibling);
+                                    imgEl.remove();
+                                    // 标记图片已经被处理
+                                    aEl.firstChild.classList.add('processed');
+                                }
+                            }
+                            // 初始化 lightGallery 只对新添加的链接
+                            lightGallery(commentItem, {
+                                selector: '.tk-lg-link:not(.lightGallery-inited)',
+                                share: false
+                            });
+                            // 标记链接已初始化 lightGallery
+                            var links = commentItem.querySelectorAll('.tk-lg-link');
+                            for (var link of links) {
+                                link.classList.add('lightGallery-inited');
+                            }
+                        }
+                    }
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">Review-CompilePrinciple</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE1-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">1.</span> <span class="nav-text">题目1 正则表达式与自动机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%9C%BA%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">自动机：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RE%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">RE：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DFA%E4%B8%8ENFA%EF%BC%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">DFA与NFA：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DFA%E7%9A%84%E6%AD%BB%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="nav-number">1.1.4.</span> <span class="nav-text">DFA的死状态：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Thompson-%E6%9E%84%E9%80%A0%E6%B3%95-%E4%BB%8ERE%E5%88%B0-NFA"><span class="nav-number">1.2.</span> <span class="nav-text">Thompson 构造法 (从RE到 NFA)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90"><span class="nav-number">1.2.1.</span> <span class="nav-text">一个例子</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E9%9B%86%E6%9E%84%E9%80%A0%E6%B3%95-NFA-%E5%88%B0-DFA"><span class="nav-number">1.3.</span> <span class="nav-text">子集构造法 (NFA 到 DFA)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DFA-%E6%9C%80%E5%B0%8F%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">DFA 最小化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE2-LL%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">题目2 LL语法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86-2"><span class="nav-number">2.1.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LL1%E6%96%87%E6%B3%95%EF%BC%9A"><span class="nav-number">2.1.1.</span> <span class="nav-text">LL1文法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E5%88%86%E6%9E%90%E8%A1%A8%EF%BC%9A%E7%94%A8%E4%BA%8E%E9%80%89%E6%8B%A9%E4%BA%A7%E7%94%9F%E5%BC%8F"><span class="nav-number">2.1.2.</span> <span class="nav-text">预测分析表：用于选择产生式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#First%E9%9B%86%E5%90%88%EF%BC%9A%E5%AF%B9%E6%89%80%E6%9C%89%E4%BA%A7%E7%94%9F%E5%BC%8F%E7%9A%84%E5%8F%B3%E9%83%A8%E6%B1%82"><span class="nav-number">2.1.3.</span> <span class="nav-text">First集合：对所有产生式的右部求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Follow%E9%9B%86%E5%90%88%EF%BC%9A%E5%AF%B9%E6%89%80%E6%9C%89%E9%9D%9E%E7%BB%88%E7%BB%93%E7%AC%A6"><span class="nav-number">2.1.4.</span> <span class="nav-text">Follow集合：对所有非终结符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-First-%E9%9B%86%E5%90%88%E4%B8%8E-Follow-%E9%9B%86%E5%90%88"><span class="nav-number">2.2.</span> <span class="nav-text">• First 集合与 Follow 集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97FIRST"><span class="nav-number">2.2.1.</span> <span class="nav-text">计算FIRST</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97FOLLOW"><span class="nav-number">2.2.2.</span> <span class="nav-text">计算FOLLOW</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E6%9E%84%E9%80%A0%E9%A2%84%E6%B5%8B%E5%88%86%E6%9E%90%E8%A1%A8"><span class="nav-number">2.3.</span> <span class="nav-text">• 构造预测分析表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E5%88%A4%E6%96%AD%E6%96%87%E6%B3%95%E6%98%AF%E5%90%A6%E6%98%AFLL-1-%E6%96%87%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">• 判断文法是否是LL(1)文法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE3-LR%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">题目3 LR语法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E6%8E%8C%E6%8F%A1-LR-0-%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%9A%84%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E4%BB%A5%E5%8F%8A-SLR-1-%E8%A1%A8%E6%A0%BC%E7%9A%84%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">• 掌握 LR(0) 自动机的构造方法以及 SLR(1) 表格的构造方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E6%8E%8C%E6%8F%A1-LR-0-%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E6%A0%88%E4%B9%8B%E9%97%B4%E7%9A%84%E4%BA%A4%E4%BA%92%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">• 掌握 LR(0) 自动机与栈之间的交互运行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE4-ANTLR4%E4%B8%8E%E2%80%9C%E4%BC%98%E5%85%88%E7%BA%A7%E4%B8%8A%E5%8D%87%E7%AE%97%E6%B3%95%E2%80%9D"><span class="nav-number">4.</span> <span class="nav-text">题目4 ANTLR4与“优先级上升算法”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86-3"><span class="nav-number">4.1.</span> <span class="nav-text">前置知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E8%83%BD%E5%A4%9F%E6%A0%B9%E6%8D%AE%E4%BC%98%E5%85%88%E7%BA%A7%E4%B8%8A%E5%8D%87%E7%AE%97%E6%B3%95%E6%94%B9%E9%80%A0%E7%BB%99%E5%AE%9A%E6%96%87%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">• 能够根据优先级上升算法改造给定文法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E8%83%BD%E5%A4%9F%E7%BB%99%E5%87%BA%E7%BB%99%E5%AE%9A%E8%BE%93%E5%85%A5%E5%9C%A8%E6%94%B9%E9%80%A0%E5%90%8E%E7%9A%84%E6%96%87%E6%B3%95%E4%B8%8B%E5%AF%B9%E5%BA%94%E7%9A%84%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%E6%A0%91"><span class="nav-number">4.3.</span> <span class="nav-text">• 能够给出给定输入在改造后的文法下对应的语法分析树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9%EF%BC%9Aantlr%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E7%9B%B4%E6%8E%A5%E5%B7%A6%E9%80%92%E5%BD%92%EF%BC%9F"><span class="nav-number">4.3.1.</span> <span class="nav-text">重点：antlr如何处理优先级和直接左递归？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E6%80%8E%E4%B9%88%E5%AE%9A%E7%9A%84"><span class="nav-number">4.3.2.</span> <span class="nav-text">优先级怎么定的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%901-2-3"><span class="nav-number">4.3.3.</span> <span class="nav-text">例子1+2+3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%901-2-3-2"><span class="nav-number">4.3.4.</span> <span class="nav-text">例子1+2*3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B9%E6%9C%AC%E9%97%AE%E9%A2%98"><span class="nav-number">4.3.5.</span> <span class="nav-text">根本问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%A6%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90"><span class="nav-number">4.3.6.</span> <span class="nav-text">另一个例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E4%B8%80%E5%AE%9A%E5%B0%B1%E6%98%AF%E8%A6%81%E4%B8%8A%E5%8D%87-1%E5%90%97"><span class="nav-number">4.3.7.</span> <span class="nav-text">优先级一定就是要上升+1吗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A-a-b"><span class="nav-number">4.3.8.</span> <span class="nav-text">例子：-a+b!</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%85%83%E5%B7%A6%E9%80%92%E5%BD%92%E8%BF%90%E7%AE%97%E7%AC%A6%E6%83%B3%E8%A6%81%E5%8F%B3%E7%BB%93%E5%90%88"><span class="nav-number">4.3.9.</span> <span class="nav-text">二元左递归运算符想要右结合</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE5-%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC%E7%9A%84%E7%BF%BB%E8%AF%91"><span class="nav-number">5.</span> <span class="nav-text">题目5 语法制导的翻译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC%E7%9A%84%E7%BF%BB%E8%AF%91"><span class="nav-number">5.1.</span> <span class="nav-text">• 语法制导的翻译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE6-%E7%9B%AE%E6%A0%87%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="nav-number">6.</span> <span class="nav-text">题目6 目标代码生成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%A2-%E7%BB%99%E5%AE%9A%E4%B8%80%E6%AE%B5-C-%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F-%E5%90%AB%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8-%E4%B8%8E%E5%AF%B9%E5%BA%94%E7%9A%84-RISC-V-%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5-%E5%A1%AB%E5%85%85%E7%BC%BA%E5%A4%B1%E7%9A%84%E4%BB%A3%E7%A0%81%E8%A1%8C%E3%80%82"><span class="nav-number">6.1.</span> <span class="nav-text">• 给定一段 C 语言程序 (含过程调用) 与对应的 RISC-V 代码片段, 填充缺失的代码行。</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">SYuan03</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共 45 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.4</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+<script>
+    // Tag: 自己新增
+    document.addEventListener('DOMContentLoaded', function() {
+        if (theme.global.single_page !== false) {
+            document.addEventListener('click', function(e) {
+                let target = e.target;
+                while (target && !target.href) {
+                    target = target.parentNode;
+                }
+                if (target && target.href) {
+                    const url = new URL(target.href);
+                    if (url.pathname.includes('/shuoshuo')) {
+                        e.preventDefault(); // 阻止链接默认的导航行为
+                        window.location.href = target.href; // 通过传统方式加载 `/shuoshuo` 页面
+                    }
+                    // 对于其他链接，什么都不做，让 swup 接管
+                }
+            });
+        }
+    });
+</script>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>

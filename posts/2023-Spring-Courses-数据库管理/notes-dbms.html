@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="SYuan03">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://bblog.031105.xyz/posts/2023-spring-courses-数据库管理/notes-dbms.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="chap1 绪论 SQL数据库与NoSQL数据库 其实就是NoSQL主要是面向单一的大量数据（比如一个人每天的定位数据这种，显然那比较适合NoSQL 但是那种需要经常读写的，就需要关系型数据库来维持ACID的性质 .lbmrysfxbesb{zoom: 33%;}   SQL 结构化查询语言   三级模式结构-例子 GPT: 让我们以一个简单的学生信息管理系统为例来说明外模式-模式-内模式的概念。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="notes-dbms">
+<meta property="og:url" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms.html">
+<meta property="og:site_name" content="淡水鱼的蔚蓝之海">
+<meta property="og:description" content="chap1 绪论 SQL数据库与NoSQL数据库 其实就是NoSQL主要是面向单一的大量数据（比如一个人每天的定位数据这种，显然那比较适合NoSQL 但是那种需要经常读写的，就需要关系型数据库来维持ACID的性质 .lbmrysfxbesb{zoom: 33%;}   SQL 结构化查询语言   三级模式结构-例子 GPT: 让我们以一个简单的学生信息管理系统为例来说明外模式-模式-内模式的概念。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230606145656080.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230606145744392.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230607093402503.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230607094521264.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230607130030167.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608223932854.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608224113186.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608232225767.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608234525154.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608234659179.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230609223622182.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230609230314911.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610113136034.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610113942910.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610114303292.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610114454170.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610130713351.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610132105603.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610152056054.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610152855646.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610153601736.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610153638308.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610153855101.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610160403928.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610160614668.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610160736743.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165125024.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165149459.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165235728.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165642818.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165742294.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165827484.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610170017449.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184540328.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184746158.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184755985.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184910472.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610185757457.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190521113.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190621422.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190652007.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190808522.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610193319187.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610193354768.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610193927385.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610194023534.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610194721442.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610194850051.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610195159214.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610195232494.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610200130535.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610200341268.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610200404711.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610213750498.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610214138860.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610214809590.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610215237850.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610222733548.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610223048974.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610223748591.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610224944849.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230614220209386.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610230200735.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232027629.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232142373.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232505906.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230614220229006.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232940543.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610233628746.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610233812701.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610233955791.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610234017147.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611223918842.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611103438269.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611103720282.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611104036019.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611104712457.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611105330946.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611110509370.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611110559465.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611125725981.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611125829451.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611130015952.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611140356001.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611141116947.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611141055207.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611141343015.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611142343528.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611143648711.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611143708189.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611145518615.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611151855601.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611151917472.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152520080.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152639167.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152826795.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152914464.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611153052561.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611153716106.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611154352614.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611154431578.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611154533909.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611155101043.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611155606670.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611155826245.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611160014880.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611160227449.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611160359028.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611162121086.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611162252101.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611162404663.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611163854720.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165012425.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165346315.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165525925.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165649840.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165721350.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165937973.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170318483.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170410197.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170906433.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170913063.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611171635704.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611172133121.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611172712784.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611172739476.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612134242791.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612142553431.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612142813057.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612142843495.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143003438.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143237450.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143414907.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143549455.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143752017.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143825578.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143917410.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153437885.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153605130.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153732379.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153832744.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154302917.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154629419.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154646743.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154857301.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155105439.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155244493.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155328096.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155835375.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160125271.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160525864.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160604161.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160754358.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160854540.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161347266.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161458253.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161514500.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161704463.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161837298.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161847115.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161940076.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612162828851.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612162958300.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163220847.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163102314.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163335089.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163452173.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612165226372.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170010908.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170120631.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170250578.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170302699.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170442391.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612172602170.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612172617900.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612173202725.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612173139839.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174053238.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174206336.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174252132.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174324233.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612184556826.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612185725296.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612185846853.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190015596.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190041353.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190423127.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190524530.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190649405.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190741530.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190757867.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191103318.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191131578.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191438951.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191647028.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191853109.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612192429335.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612192552557.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612201130858.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612204205658.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612201752496.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612204327913.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612202818656.png">
+<meta property="og:image" content="https://bblog.031105.xyz/NJUer-dsy/2023-Spring/Devens_Yuan/%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%25E5%259F%25BA%25E7%25A1%2580-dsy/%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%25E5%259F%25BA%25E7%25A1%2580%25E6%259C%259F%25E6%259C%25AB%25E5%25A4%258D%25E4%25B9%25A0-dsy/%25E8%25AF%25BB%25E4%25B9%25A6%25E5%25A4%258D%25E4%25B9%25A0%25E7%25AC%2594%25E8%25AE%25B0/image-20230612205211355.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612205304934.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612221537514.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612221630548.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611233327926.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611233533751.png">
+<meta property="article:published_time" content="2023-06-14T14:04:35.000Z">
+<meta property="article:modified_time" content="2024-09-30T12:52:21.056Z">
+<meta property="article:author" content="奔跑的淡水鱼">
+<meta property="article:tag" content="数据库管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bblog.031105.xyz/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230606145656080.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/MyImgs/icon1.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/MyImgs/icon1.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/MyImgs/icon1.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            notes-dbms -
+        
+        ChrisDing&#39;s bblog
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script>document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("busuanzi_value_site_uv"),t=document.getElementById("busuanzi_value_site_pv"),n=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){n.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+1782;break}}),i=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){i.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+3784;break}}),r={childList:!0};n.observe(e,r),i.observe(t,r)});</script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"bblog.031105.xyz","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":true,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/MyImgs/home-bg2-light.jpg","dark":"/MyImgs/home-bg-dark.png"},"title":"Welcome to my bblog !","subtitle":{"text":["画凌烟，上甘泉，自古功名属少年!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#6B3E99"},"text_style":{"title_size":"3.8rem","subtitle_size":"2.1rem","line_height":1.5},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/SYuan03","instagram":null,"zhihu":null,"twitter":null,"email":"tu3344606@gmail.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":true,"type":["atom"],"path":["atom.xml"],"limit":0,"hub":null,"content":null,"content_limit":200,"content_limit_delim":" ","order_by":"-date","icon":"fa-solid fa-rss"},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"绿光","artist":"孙燕姿","url":"https://box.nju.edu.cn/f/6cb53c50b68441cb9df9/?dl=1","cover":"https://s2.loli.net/2024/03/13/4dGBWbposnzfeOv.png","lrc":"/MyLRCs/LvGuang.lrc"},{"name":"黑色柳丁","artist":"陶喆","url":"https://box.nju.edu.cn/f/73c03bfd86f64670b2d0/?dl=1","cover":"https://s2.loli.net/2024/03/13/aVRZuNlzgF2CeBX.png"},{"name":"听","artist":"方大同","url":"https://box.nju.edu.cn/f/99a456f7d933420ead28/?dl=1","cover":"https://s2.loli.net/2024/03/13/UC4ZXvGsmJPwVSz.png"},{"name":"Exile","artist":"Taylor Swift","url":"https://box.nju.edu.cn/f/67b6f94a1994497ba3b0/?dl=1","cover":"https://s2.loli.net/2024/03/13/L31UtycDV4FbYfv.png"},{"name":"Blowin' in the Wind","artist":"Bob Dylan","url":"https://box.nju.edu.cn/f/fbad6214b7c5457f9b34/?dl=1","cover":"https://s2.loli.net/2024/03/13/mw52W3hDnvEAd8P.png"},{"name":"日落大道","artist":"梁博","url":"https://box.nju.edu.cn/f/c21c2403884a4451b751/?dl=1","cover":"https://s2.loli.net/2024/03/13/qOtwhWycx1JYve4.png"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.4","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about","Github":"https://github.com/SYuan03"}},"Shuoshuo":{"path":"/shuoshuo","icon":"fa-regular fa-bullhorn"}},"search":{"enable":true,"preload":true},"tags":{"Tags":{"icon":"fa-solid fa-tags","path":"/tags"}},"categories":{"Categories":{"icon":"fa-solid fa-folder","path":"/categories"}},"shuoshuo":{"Shuoshuo":{"icon":"fa-regular fa-bullhorn","path":"/shuoshuo"}}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":5},"tags":{"enable":true,"limit":5}},"footerStart":"2023/04/14 20:57:49"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="淡水鱼的蔚蓝之海" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+    <style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        ChrisDing&#39;s bblog
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({loop: true})
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [40,0],
+                translateZ: 0,
+                opacity: [0,1],
+                filter: ['blur(5px)', 'blur(0px)'], // Starting from blurred to unblurred
+                easing: "easeOutExpo",
+                duration: 1400,
+                delay: (el, i) => 300 + 30 * i,
+            }).add({
+                targets: '.ml13 .letter',
+                translateY: [0,-40],
+                opacity: [1,0],
+                filter: ['blur(0px)', 'blur(5px)'], // Ending from unblurred to blurred
+                easing: "easeInExpo",
+                duration: 1200,
+                delay: (el, i) => 100 + 30 * i,
+                complete: function() {
+                    hidePreloader(); // Call hidePreloader after the animation completes
+                }
+            });
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/MyImgs/icon1.svg">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                ChrisDing&#39;s bblog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/about">
+                                                    ME
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/SYuan03">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/shuoshuo"
+                                        >
+                                    <i class="fa-regular fa-bullhorn fa-fw"></i>
+                                    说说
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-About"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-About">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/about">ME</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/SYuan03">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/shuoshuo"
+                        >
+                            <span>
+                                说说
+                            </span>
+                            
+                                <i class="fa-regular fa-bullhorn fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">24</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg" alt="notes-dbms" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-start">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">notes-dbms</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/MyImgs/avatar1.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">SYuan03</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-06-14 22:04:35</span>
+        <span class="mobile">2023-06-14 22:04:35</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-09-30 20:52:21</span>
+            <span class="mobile">2024-09-30 20:52:21</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/">2023-Spring-Courses-数据库管理</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/">数据库管理</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h2 id="chap1-绪论">chap1 绪论</h2>
+<h3 id="SQL数据库与NoSQL数据库">SQL数据库与NoSQL数据库</h3>
+<p>其实就是NoSQL主要是面向单一的大量数据（比如一个人每天的定位数据这种，显然那比较适合NoSQL</p>
+<p>但是那种需要经常读写的，就需要关系型数据库来维持ACID的性质</p>
+<style>.lbmrysfxbesb{zoom: 33%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230606145656080.png" class="lbmrysfxbesb" alt="image-20230606145656080"> 
+<blockquote>
+<p>SQL 结构化查询语言</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230606145744392.png" class title="image-20230606145744392">
+</blockquote>
+<h3 id="三级模式结构-例子">三级模式结构-例子</h3>
+<p>GPT:</p>
+<p>让我们以一个简单的学生信息管理系统为例来说明外模式-模式-内模式的概念。</p>
+<p>假设我们有一个学生信息管理系统，其中包含以下数据：</p>
+<ul>
+<li>**内模式（Internal Schema）：**在底层，数据库的内模式定义了数据在物理存储介质上的实际存储方式和结构。假设我们使用关系型数据库，并使用MySQL的InnoDB存储引擎，数据以表格的形式存储在磁盘上，包括学生表（Student table）、课程表（Course table）和成绩表（Grade table）等。内模式定义了表的存储方式、索引结构、数据分区等底层实现细节。</li>
+<li>**模式（Conceptual Schema）：**在中间层，数据库的模式定义了整个数据库的逻辑结构和关系。假设我们的模式包括学生表（Student table）、课程表（Course table）和成绩表（Grade table）之间的关系。它描述了表之间的主键-外键关系、表的属性和约束等信息。模式是对整个数据库的全局视图，独立于具体的应用程序。</li>
+<li>**外模式（External Schema）：**在最高层，数据库的外模式定义了特定用户或应用程序对数据库的部分可见视图。假设我们有两个外模式：
+<ol>
+<li>学生用户外模式（Student User External Schema）：学生用户只对学生表（Student table）感兴趣，他们可以访问学生的基本信息，如学号、姓名、年龄等。其他表（如课程表和成绩表）对他们不可见。</li>
+<li>教师用户外模式（Teacher User External Schema）：教师用户对课程表（Course table）和成绩表（Grade table）感兴趣，他们可以访问课程的信息和学生的成绩。其他表（如学生表）对他们不可见。</li>
+</ol>
+</li>
+</ul>
+<p>通过这个案例，可以看到：</p>
+<ul>
+<li>内模式定义了数据在底层存储介质上的物理结构和存储方式。</li>
+<li>模式定义了整个数据库的逻辑结构和表之间的关系。</li>
+<li><mark>外模式定义了特定用户或应用程序对数据库的部分可见视图，根据用户的需求定义了他们可以访问的数据集合。</mark></li>
+</ul>
+<p>这种外模式-模式-内模式的层次结构帮助实现数据的抽象和分离，使得不同用户或应用程序可以根据自己的需求访问数据库中的数据，而不需要了解底层的物理存储细节或其他用户不可见的数据。</p>
+<h2 id="chap2-关系数据库">chap2 关系数据库</h2>
+<h3 id="规范条件">规范条件</h3>
+<p>最基本的一条，不允许“表中有表”</p>
+<h3 id="关系模式">关系模式</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230607093402503.png" class title="image-20230607093402503">
+<p>D就是域的集合</p>
+<p>DOM是指明属性的域是哪个</p>
+<h3 id="外码">外码</h3>
+<p>参照关系和被参照关系不一定是不同的关系</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230607094521264.png" class title="image-20230607094521264">
+<h3 id="主键和主属性">主键和主属性</h3>
+<p>个人感觉任一候选码的属性都是主属性</p>
+<p>主键就是人为选定的一个候选码，应该等同于主码的概念</p>
+<h3 id="五种基本关系代数运算">五种基本关系代数运算</h3>
+<p>并 差 笛卡尔积 选 投</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230607130030167.png" class title="image-20230607130030167">
+<h3 id="连接操作">连接操作</h3>
+<p>分类众多</p>
+<p>连接：</p>
+<ul>
+<li>等值连接
+<ul>
+<li>自然连接
+<ul>
+<li>内连接</li>
+<li>外连接
+<ul>
+<li>外连接</li>
+<li>左外连接</li>
+<li>右外连接</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>普通等值连接</li>
+</ul>
+</li>
+<li>非等值连接</li>
+</ul>
+<h2 id="chap3-SQL">chap3 SQL</h2>
+<blockquote>
+<div class="highlight-container" data-rel="Html"><figure class="iseeu highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">embed</span> <span class="attr">src</span>=<span class="string">&quot;https://box.nju.edu.cn/f/e58b4ec1bf54441eb433/&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100%&quot;</span> <span class="attr">height</span>=<span class="string">&quot;700&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+</blockquote>
+<center><embed src="https://box.nju.edu.cn/f/69dba853072a483ea525/" width="100%" height="700"></center>
+<h3 id="MySQL中没有模式Schema的概念吗？">MySQL中没有模式Schema的概念吗？</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608223932854.png" class title="image-20230608223932854">
+<blockquote>
+<p>比如PostgreSQL中一个数据库下还是有Schema的概念的</p>
+<style>.wnrwnogwbxph{zoom:33%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608224113186.png" class="wnrwnogwbxph" alt="image-20230608224113186"> 
+</blockquote>
+<h3 id="Show-search-path-语句">Show search_path; 语句</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608232225767.png" class title="image-20230608232225767">
+<h3 id="索引">索引</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608234525154.png" class title="image-20230608234525154">
+<blockquote>
+<p>以及数据字典</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230608234659179.png" class title="image-20230608234659179">
+</blockquote>
+<h3 id="涉及空串的查询-P96">涉及空串的查询 P96</h3>
+<p>必须用IS NULL 或者IS NOT NULL</p>
+<p>用=NULL永远返回False</p>
+<h3 id="派生表">派生表</h3>
+<p>AS关键字可以省略，但是必须起一个别名</p>
+<h3 id="空值">空值</h3>
+<style>.ulqpqultlxhu{zoom: 50%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230609223622182.png" class="ulqpqultlxhu" alt="image-20230609223622182"> 
+<h3 id="行列子集视图">行列子集视图</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230609230314911.png" class title="image-20230609230314911">
+<h3 id="视图消解">视图消解</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610113136034.png" class title="image-20230610113136034">
+<p>意思就是转换成对基本表的操作</p>
+<h3 id="视图的作用-更清晰的表达">视图的作用-更清晰的表达</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610113942910.png" class title="image-20230610113942910">
+<blockquote>
+<p>感觉也可以用嵌套查询</p>
+<p>比如使用派生表，感觉差不太多</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610114303292.png" class title="image-20230610114303292">
+</blockquote>
+<h3 id="join关键字">join关键字</h3>
+<p>ppt貌似只有这里出现过</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610114454170.png" class title="image-20230610114454170">
+<h3 id="视图的作用">视图的作用</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610130713351.png" class title="image-20230610130713351">
+<h3 id="SQL语言的两种使用方式">SQL语言的两种使用方式</h3>
+<p><strong>交互式</strong>和<strong>嵌入式</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610132105603.png" class title="image-20230610132105603">
+<h3 id="GROUP-BY-多个字段">GROUP BY 多个字段</h3>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/zhuchenglin/p/9732612.html">group by 多个字段 - lin_zone - 博客园 (cnblogs.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="chap4-数据库安全性">chap4 数据库安全性</h2>
+<h3 id="不安全因素">不安全因素</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610152056054.png" class title="image-20230610152056054">
+<h3 id="用户身份鉴别">用户身份鉴别</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610152855646.png" class title="image-20230610152855646">
+<h3 id="存取控制">存取控制</h3>
+<p>• <strong>用户权限定义</strong>，并将用户权限登记到数据字典中</p>
+<p>​	<strong>–</strong> 用户对某一数据对象的操作权力称为权限</p>
+<p>​	<strong>–</strong> DBMS 提供适当的语言来定义用户权限，存放在数据字典中，称做安全规则或授权规则</p>
+<p>• <strong>合法权限检查</strong></p>
+<p>• 用户权限定义和合法权检查机制一起组成了数据库管理系统的存取控制子系统</p>
+<h3 id="两种存取控制方法">两种存取控制方法</h3>
+<p>C2 级的数据库管理系统支持自主存取控制（Discretionary Access Control，DAC），B1 级的数据库管理系统支持强制存取控制（Mandatory Access Control，MAC）</p>
+<p><strong>–</strong> 在<strong>自主存取控制</strong>方法中，用户对不同的数据对象有不同的存取权限，不同的用户对同一对象也</p>
+<p>有不同的权限，而且用户还可将其拥有的存取权限转授给其他用户</p>
+<p><strong>–</strong> 在<strong>强制存取控制</strong>方法中，每一个数据对象被标以一定的密级，每一个用户也被授予某一个级别</p>
+<p>的许可证，对于任意一个对象，只有具有合法许可证的用户才可以存取</p>
+<h3 id="DAC-自主存取控制">DAC 自主存取控制</h3>
+<h3 id="PUBLIC">PUBLIC</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610153601736.png" class title="image-20230610153601736">
+<h3 id="WITH-GRANT-OPTION">WITH GRANT OPTION</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610153638308.png" class title="image-20230610153638308">
+<h3 id="REVOKE">REVOKE</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610153855101.png" class title="image-20230610153855101">
+<h3 id="创建数据库模式的权限">创建数据库模式的权限</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610160403928.png" class title="image-20230610160403928">
+<h3 id="数据库角色">数据库角色</h3>
+<p>先给角色grant权限再把角色grant给用户，能稍微简便点</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610160614668.png" class title="image-20230610160614668">
+<h3 id="自主存取控制的缺点">自主存取控制的缺点</h3>
+<p>优点就是灵活吧，并且达到了C级别的安全级别（C2？）</p>
+<p>缺点如下</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610160736743.png" class title="image-20230610160736743">
+<h3 id="MAC？强取存取控制">MAC？强取存取控制</h3>
+<blockquote>
+<p>解释</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165125024.png" class title="image-20230610165125024">
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165149459.png" class title="image-20230610165149459">
+<h3 id="视图机制">视图机制</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165235728.png" class title="image-20230610165235728">
+<blockquote>
+<p>这个间接有点迷，背背吧</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165642818.png" class title="image-20230610165642818">
+</blockquote>
+<h3 id="审计">审计</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165742294.png" class title="image-20230610165742294">
+<h4 id="审计语句AUDIT">审计语句AUDIT</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610165827484.png" class title="image-20230610165827484">
+<h3 id="数据加密">数据加密</h3>
+<p>存储加密，传输加密等</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610170017449.png" class title="image-20230610170017449">
+<h2 id="chap5-数据库完整性">chap5 数据库完整性</h2>
+<h3 id="完整性机制">完整性机制</h3>
+<p>三类</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184540328.png" class title="image-20230610184540328">
+<h3 id="实体完整性">实体完整性</h3>
+<p>PRIMARY KEY</p>
+<p>列级和表级说明</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184746158.png" class title="image-20230610184746158">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184755985.png" class title="image-20230610184755985">
+<h3 id="实体完整性检查">实体完整性检查</h3>
+<p>唯一 + 主码各属性非空</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610184910472.png" class title="image-20230610184910472">
+<h4 id="全表扫描-或-索引（如B-树）">全表扫描 或 索引（如B+树）</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610185757457.png" class title="image-20230610185757457">
+<h3 id="参照完整性">参照完整性</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190521113.png" class title="image-20230610190521113">
+<h4 id="处理">处理</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190621422.png" class title="image-20230610190621422">
+<h4 id="例：SET-NULL">例：SET-NULL</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190652007.png" class title="image-20230610190652007">
+<h3 id="显示说明参照完整性的违约处理">显示说明参照完整性的违约处理</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610190808522.png" class title="image-20230610190808522">
+<h3 id="用户定义的完整性">用户定义的完整性</h3>
+<h4 id="属性上">属性上</h4>
+<p>非空 唯一等</p>
+<p>或者使用CHECK关键字</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610193319187.png" class title="image-20230610193319187">
+<h4 id="元组上">元组上</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610193354768.png" class title="image-20230610193354768">
+<h3 id="还可以使用完整性命名子句CONSTRAINT">还可以使用完整性命名子句CONSTRAINT</h3>
+<p>这样约束就能有名字了，同时也便于删去</p>
+<p>主码约束也可以成为Constraint的一部分</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610193927385.png" class title="image-20230610193927385">
+<h3 id="删除（修改）CONSTARINT">删除（修改）CONSTARINT</h3>
+<p>似乎没有修改语句</p>
+<p>只能先DROP掉，再ADD</p>
+<p>注意要配合<strong>alter table</strong>使用</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610194023534.png" class title="image-20230610194023534">
+<h3 id="断言">断言</h3>
+<p>可以定义更具一般性的约束，比如涉及聚合操作等比较复杂的完整性约束</p>
+<h4 id="例子">例子</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610194721442.png" class title="image-20230610194721442">
+<h3 id="触发器">触发器</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610194850051.png" class title="image-20230610194850051">
+<h4 id="定义">定义</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610195159214.png" class title="image-20230610195159214">
+<h4 id="触发器类型">触发器类型</h4>
+<p>行级，语句级</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610195232494.png" class title="image-20230610195232494">
+<h4 id="例子-2">例子</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610200130535.png" class title="image-20230610200130535">
+<blockquote>
+<p>这是一个<strong>行级触发器</strong>，有FOR EACH ROW</p>
+<p>这例子有点绕，OLDROW（或者OLD）和NEWROW（或者NEW）是保留字，不随题目变化而变化，Oldgrade和Newgrade只是该题恰好要的两个属性</p>
+</blockquote>
+<h4 id="触发器激活顺序">触发器激活顺序</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610200341268.png" class title="image-20230610200341268">
+<h4 id="删除触发器">删除触发器</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610200404711.png" class title="image-20230610200404711">
+<h2 id="chap6-关系数据理论">chap6 关系数据理论</h2>
+<h3 id="1NF">1NF</h3>
+<p>First Normal Form</p>
+<p>通俗理解</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610213750498.png" class title="image-20230610213750498">
+<blockquote>
+<p>虽然chatgpt说理解为“表中有表”并不完全正确</p>
+</blockquote>
+<h3 id="数据依赖">数据依赖</h3>
+<p>有很多类型</p>
+<p>主要是<strong>函数依赖</strong>和<strong>多值依赖</strong></p>
+<h3 id="函数依赖-FD-Function-Dependency">函数依赖 FD Function Dependency</h3>
+<p>很字面的意思，就是像y=fx一样，y由x决定</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610214138860.png" class title="image-20230610214138860">
+<h3 id="1NF：F的表示">1NF：F的表示</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610214809590.png" class title="image-20230610214809590">
+<h3 id="范式">范式</h3>
+<p>模式分解</p>
+<p>规范化</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610215237850.png" class title="image-20230610215237850">
+<h3 id="函数依赖的标准定义">函数依赖的标准定义</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610222733548.png" class title="image-20230610222733548">
+<blockquote>
+<p>简单说就是X一样，Y一定一样，所以X-&gt;Y</p>
+<p>X 函数确定 Y</p>
+<p>Y 函数依赖于 X</p>
+</blockquote>
+<h3 id="平凡函数依赖与非平凡函数依赖">平凡函数依赖与非平凡函数依赖</h3>
+<p>关键在于Y是否被包含于X</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610223048974.png" class title="image-20230610223048974">
+<blockquote>
+<p>显然平凡函数依赖没什么意义</p>
+</blockquote>
+<h3 id="完全函数依赖和部分函数依赖">完全函数依赖和部分函数依赖</h3>
+<p>看例子就懂意思了，定义削微有点晦涩</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610223748591.png" class title="image-20230610223748591">
+<h3 id="传递函数依赖">传递函数依赖</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610224944849.png" class title="image-20230610224944849">
+<p>Y非平凡依赖于X，Z非平凡依赖于Y，同时X不依赖与Y（否则Z就直接函数依赖于X了）</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230614220209386.png" class title="image-20230614220209386"> 
+<h3 id="码">码</h3>
+<blockquote>
+<p>书P181：</p>
+<p>在后面的章节中<strong>主码</strong>或<strong>候选码</strong>都简称为<strong>码</strong></p>
+<p>书上这段文字很清晰</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610230200735.png" class title="image-20230610230200735">
+<h3 id="外码-2">外码</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232027629.png" class title="image-20230610232027629">
+<h3 id="1NF-2">1NF</h3>
+<p>关系数据库的最基本要求</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232142373.png" class title="image-20230610232142373">
+<h3 id="2NF">2NF</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232505906.png" class title="image-20230610232505906">
+<style>.aeolkwsfifxm{zoom:50%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230614220229006.png" class="aeolkwsfifxm" alt="image-20230614220229006"> 
+<blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610232940543.png" class title="image-20230610232940543">
+</blockquote>
+<p>1NF + 没有非主属性对码的部分依赖</p>
+<h3 id="分解成2NF">分解成2NF</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610233628746.png" class title="image-20230610233628746">
+<h3 id="3NF">3NF</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610233812701.png" class title="image-20230610233812701">
+<blockquote>
+<p>为什么不分解成S(Student)-D(Department)和S-L？这样会使得函数依赖关系丢失？不太好</p>
+</blockquote>
+<blockquote>
+<p>消除了非主属性对码的传递函数依赖</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610233955791.png" class title="image-20230610233955791">
+<p>辨析</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230610234017147.png" class title="image-20230610234017147">
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611223918842.png" class title="image-20230611223918842">
+<h3 id="1NF-2NF-3NF-依赖关系图对比">1NF 2NF 3NF 依赖关系图对比</h3>
+<p>看图更容易判断</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611103438269.png" class title="image-20230611103438269">
+<p>存在非主属性对码的<strong>部分函数依赖</strong>，所以不是2NF</p>
+<p>也有非主属性对码的<strong>传递函数依赖</strong>，所以不是3NF</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611103720282.png" class title="image-20230611103720282">
+<p>存在非主属性对码的<strong>传递函数依赖</strong>，所以不是3NF</p>
+<h3 id="BCNF-Boyce-Codd-NF">BCNF Boyce Codd NF</h3>
+<p>修正的第三范式，扩充的第三范式</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611104036019.png" class title="image-20230611104036019">
+<p>决定属性集就是指X</p>
+<p>1NF + 所有决定属性集都包含候选码/没有主属性对码的部分和传递依赖</p>
+<h3 id="BCNF：消除了插入异常和删除异常">BCNF：消除了<strong>插入异常</strong>和<strong>删除异常</strong></h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611104712457.png" class title="image-20230611104712457">
+<h3 id="BCNF与3NF">BCNF与3NF</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611105330946.png" class title="image-20230611105330946">
+<h3 id="多值依赖">多值依赖</h3>
+<p>简单看了下</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611110509370.png" class title="image-20230611110509370">
+<h4 id="例子：">例子：</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611110559465.png" class title="image-20230611110559465">
+<h2 id="chap7-数据库设计">chap7 数据库设计</h2>
+<h3 id="数据库设计6个阶段">数据库设计6个阶段</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611125725981.png" class title="image-20230611125725981">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611125829451.png" class title="image-20230611125829451">
+<h3 id="各级模式">各级模式</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611130015952.png" class title="image-20230611130015952">
+<h3 id="需求分析">需求分析</h3>
+<h4 id="需求分析过程">需求分析过程</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611140356001.png" class title="image-20230611140356001">
+<h3 id="数据字典">数据字典</h3>
+<blockquote>
+<p>注意区分之前的“数据字典”</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611141116947.png" class title="image-20230611141116947">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611141055207.png" class title="image-20230611141055207">
+<h3 id="需求分析小结">需求分析小结</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611141343015.png" class title="image-20230611141343015">
+<h3 id="概念模型">概念模型</h3>
+<p>真实反映现实世界，易于理解，可以用于和不熟悉计算机的用户交换意见</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611142343528.png" class title="image-20230611142343528">
+<blockquote>
+<p>1.2.2节 概念模型</p>
+<p>实体：学生</p>
+<p>属性：学号、姓名</p>
+<p>码：学号</p>
+<p>实体型：实体名+属性名集合，如<code>学生（学号，姓名）</code></p>
+<p>实体集：全体学生</p>
+<p>联系：</p>
+<p>概念模型的一种表示方法：实体E-联系R方法 <strong>E-R方法</strong> <strong>使用 E-R图</strong></p>
+</blockquote>
+<h3 id="联系-Relation">联系 Relation</h3>
+<h4 id="两个实体性之间">两个实体性之间</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611143648711.png" class title="image-20230611143648711">
+<h4 id="两个以上实体型之间">两个以上实体型之间</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611143708189.png" class title="image-20230611143708189">
+<h4 id="单个实体型内部">单个实体型内部</h4>
+<p>员工之间存在领导和被领导的关系</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611145518615.png" class title="image-20230611145518615">
+<h3 id="联系的度">联系的度</h3>
+<p>几个实体型就是几元联系</p>
+<h3 id="E-R图">E-R图</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611151855601.png" class title="image-20230611151855601">
+<h4 id="联系也可以有属性">联系也可以有属性</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611151917472.png" class title="image-20230611151917472">
+<h3 id="ISA联系">ISA联系</h3>
+<p>三角形，代表继承父类所有属性，并且子类可以有自己的属性</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152520080.png" class title="image-20230611152520080">
+<h4 id="分类属性">分类属性</h4>
+<p>比如学生类别</p>
+<p>可用于进行实体分派</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152639167.png" class title="image-20230611152639167">
+<h4 id="不相交-可重叠约束">不相交/可重叠约束</h4>
+<p>既是，又是</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152826795.png" class title="image-20230611152826795">
+<p>能否属于子类中的过多个实体集</p>
+<h4 id="完备性约束：是否必须是其中之一？">完备性约束：是否必须是其中之一？</h4>
+<p>要么是，要么是</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611152914464.png" class title="image-20230611152914464">
+<h4 id="基数约束">基数约束</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611153052561.png" class title="image-20230611153052561">
+<p>左到右 学生 可以选修 20-30门 课程</p>
+<p>右到左 课程 可以<strong>被</strong>0-*个学生选修</p>
+<h4 id="Part-Of-联系">Part Of 联系</h4>
+<p>非独占(的Part Of)联系：整体实体如果被破坏，另一部分实体仍然可以独立存在</p>
+<p>独占(的Part Of)联系：整体实体如果被破坏，部分实体不能存在**（整体没了，部分就没了）**</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611153716106.png" class title="image-20230611153716106">
+<h3 id="概念结构设计的方法">概念结构设计的方法</h3>
+<blockquote>
+<p>这部分书上没有？</p>
+</blockquote>
+<p>自顶向下：先全局概念结构</p>
+<p>自底向上：先子需求</p>
+<p>逐步扩张</p>
+<p>混合策略</p>
+<h3 id="自底向上的概念结构设计的步骤">自底向上的概念结构设计的步骤</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611154352614.png" class title="image-20230611154352614">
+<h3 id="实体与属性的划分原则">实体与属性的划分原则</h3>
+<ul>
+<li>
+<p>属性不可再有属性</p>
+</li>
+<li>
+<p>属性不能再与其他实体有联系</p>
+</li>
+</ul>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611154431578.png" class title="image-20230611154431578">
+<h4 id="例子：职工和职称">例子：职工和职称</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611154533909.png" class title="image-20230611154533909">
+<blockquote>
+<p>ppt有好多例子</p>
+</blockquote>
+<h3 id="E-R图的集成">E-R图的集成</h3>
+<p>合并 + 重构去除冗余</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611155101043.png" class title="image-20230611155101043">
+<h3 id="三类冲突">三类冲突</h3>
+<p>1属性冲突：整数类型和字符串类型，单位冲突</p>
+<p>2命名冲突：同名异义，异名同义（一义多名）</p>
+<blockquote>
+<p>讨论协商解决</p>
+</blockquote>
+<h4 id="3结构冲突">3结构冲突</h4>
+<p>合并</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611155606670.png" class title="image-20230611155606670">
+<h3 id="E-R图集成之二：修改和重构">E-R图集成之二：修改和重构</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611155826245.png" class title="image-20230611155826245">
+<h3 id="第三步：逻辑结构设计">第三步：逻辑结构设计</h3>
+<h4 id="任务">任务</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611160014880.png" class title="image-20230611160014880">
+<h4 id="转换">转换</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611160227449.png" class title="image-20230611160227449">
+<h4 id="对于实体型">对于实体型</h4>
+<p>很直接的转换</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611160359028.png" class title="image-20230611160359028">
+<h4 id="对于联系">对于联系</h4>
+<p>• 一个 1 ∶ 1 联系可以转换为一个独立的关系模式，也可以与任意一端对应的关系模式合并</p>
+<p>• 一个 1 ∶ 𝑛 联系可以转换为一个独立的关系模式，也可以与 𝑛 端对应的关系模式合并</p>
+<p>• 一个 𝑚 ∶ 𝑛 联系转换为一个关系模式，与该联系相连的各实体部分的码以及联系本身的属性均转换为关系的属性，各实体的码组成关系的码或关系码的一部分</p>
+<p>• 三个或三个以上实体间的一个多元联系转换为一个关系模式</p>
+<p>• 具有相同码的关系模式可合并</p>
+<h3 id="数据模型的优化">数据模型的优化</h3>
+<p>关系数据模型的优化通常以<strong>规范化理论</strong>为指导，方法为：</p>
+<ul>
+<li>
+<p>确定数据依赖</p>
+</li>
+<li>
+<p>对于各个关系模式之间的数据依赖进行极小化处理，消除冗余的联系</p>
+</li>
+<li>
+<p>按照数据依赖的理论对关系模式进行分析，考察是否存在部分函数依赖、传递函数依赖、多值依赖等，确定各关系模式分别属于第几范式</p>
+</li>
+<li>
+<p>按照需求分析阶段得到的各种应用对数据处理的要求，分析对于这样的应用环境这些模式是否合适，确定是否要对它们进行合并或分解</p>
+</li>
+<li>
+<p>对关系模式进行必要<strong>分解</strong>，提高数据操作效率和存储空间的利用率</p>
+</li>
+</ul>
+<h4 id="并不是规范化程度越高的关系就越优">并不是规范化程度越高的关系就越优</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611162121086.png" class title="image-20230611162121086">
+<h3 id="关系模式的分解">关系模式的分解</h3>
+<h4 id="水平分解">水平分解</h4>
+<p>元组分解，例如分解出经常用的</p>
+<p>80/20原则</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611162252101.png" class title="image-20230611162252101">
+<h4 id="垂直分解">垂直分解</h4>
+<p>对常用属性分解</p>
+<p>风险是可能有时必须进行连接操作了</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611162404663.png" class title="image-20230611162404663">
+<h3 id="设计用户子模式">设计用户子模式</h3>
+<p>应该还是自底向上设计过程中的一部分</p>
+<p>现在已经有全局逻辑模型了</p>
+<p>现在是根据局部需求，设计用户的外模式</p>
+<p>但应该还是处于<code>逻辑结构设计</code>的部分</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611163854720.png" class title="image-20230611163854720">
+<p>别名、视图、简化使用</p>
+<h3 id="第四步：物理结构设计">第四步：物理结构设计</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165012425.png" class title="image-20230611165012425">
+<h4 id="存取方法的选择">存取方法的选择</h4>
+<h5 id="B-树索引存取">B+树索引存取</h5>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165346315.png" class title="image-20230611165346315">
+<h5 id="Hash索引存取">Hash索引存取</h5>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165525925.png" class title="image-20230611165525925">
+<h5 id="聚簇存取">聚簇存取</h5>
+<p>Cluster</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165649840.png" class title="image-20230611165649840">
+<h5 id="例如：">例如：</h5>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165721350.png" class title="image-20230611165721350">
+<h5 id="聚簇存取方法的选择">聚簇存取方法的选择</h5>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611165937973.png" class title="image-20230611165937973">
+<h3 id="数据库的重组织">数据库的重组织</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170318483.png" class title="image-20230611170318483">
+<h3 id="数据库的重构造">数据库的重构造</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170410197.png" class title="image-20230611170410197">
+<h2 id="chap8-数据库编程">chap8 数据库编程</h2>
+<h3 id="JDBC驱动">JDBC驱动</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170906433.png" class title="image-20230611170906433">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611170913063.png" class title="image-20230611170913063">
+<blockquote>
+<p>可以看某次实验的代码</p>
+</blockquote>
+<h3 id="过程化SQL">过程化SQL</h3>
+<p>SQL的扩展</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611171635704.png" class title="image-20230611171635704">
+<blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611172133121.png" class title="image-20230611172133121">
+</blockquote>
+<h3 id="游标">游标</h3>
+<p>类似于指针吧</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611172712784.png" class title="image-20230611172712784">
+<h3 id="SQL块的概念">SQL块的概念</h3>
+<p>主要就是两种</p>
+<p>命名块有名字，能存储在数据库中供调用</p>
+<p><code>过程</code>和<code>函数</code>的区别在于函数必须制定返回的类型</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611172739476.png" class title="image-20230611172739476">
+<blockquote>
+<p>没太懂存储过程和过程的区别在哪</p>
+</blockquote>
+<h2 id="chap10-数据库恢复技术">chap10 数据库恢复技术</h2>
+<h3 id="事务Transaction">事务Transaction</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612134242791.png" class title="image-20230612134242791">
+<h3 id="ACID特性">ACID特性</h3>
+<p>事物的ACID特性：</p>
+<p><strong>原子性Atomicity</strong>：事务是数据库的逻辑工作单位，事务中包括的诸操作要么都做，要么都不做</p>
+<p><strong>一致性Consistency</strong>：</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612142553431.png" class title="image-20230612142553431">
+<p><strong>隔离性Isolation</strong>：</p>
+<p>隔离性是指多个并发事务同时运行时，每个事务都被隔离并互不干扰的特性。</p>
+<p>隔离性确保了并发事务之间的独立性，以防止出现干扰、数据损坏或不一致的情况。当多个事务同时访问和修改数据库时，隔离性保证每个事务都感觉不到其他事务的存在，就好像它们是按顺序执行的一样。这意味着每个事务将以一种隔离的方式运行，不会受到其他事务的干扰。</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612142813057.png" class title="image-20230612142813057">
+<p><strong>持续性Durability</strong>：</p>
+<p>也称永久性</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612142843495.png" class title="image-20230612142843495">
+<h3 id="恢复子系统">恢复子系统</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143003438.png" class title="image-20230612143003438">
+<h3 id="故障的种类">故障的种类</h3>
+<h4 id="故障1-事务内部的故障">故障1-事务内部的故障</h4>
+<p>非预期的</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143237450.png" class title="image-20230612143237450">
+<p>恢复操作是进行<strong>事务撤销（UNDO）</strong>，即强行回滚事务</p>
+<h4 id="故障2-系统故障">故障2-系统故障</h4>
+<p>又称为“软故障”</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143414907.png" class title="image-20230612143414907">
+<h5 id="恢复">恢复</h5>
+<p>既要UNDO，又要REDO</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143549455.png" class title="image-20230612143549455">
+<h4 id="故障3-介质故障">故障3-介质故障</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143752017.png" class title="image-20230612143752017">
+<h4 id="故障4-计算机病毒">故障4-计算机病毒</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143825578.png" class title="image-20230612143825578">
+<h3 id="恢复的基本原理">恢复的基本原理</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612143917410.png" class title="image-20230612143917410">
+<h3 id="数据转储">数据转储</h3>
+<p>简单说就是定期保存下</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153437885.png" class title="image-20230612153437885">
+<h4 id="转储方法1-静态转储">转储方法1-静态转储</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153605130.png" class title="image-20230612153605130">
+<h4 id="转储方法2-动态转储">转储方法2-动态转储</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153732379.png" class title="image-20230612153732379">
+<h3 id="转储分类2-海量与增量">转储分类2-海量与增量</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612153832744.png" class title="image-20230612153832744">
+<blockquote>
+<p>所以排列组合后一共可以有4种转储方式</p>
+</blockquote>
+<h3 id="日志文件">日志文件</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154302917.png" class title="image-20230612154302917">
+<blockquote>
+<p>协助动态转储的后备副本进行数据库恢复至某一正确状态</p>
+</blockquote>
+<h4 id="以记录为单位的日志文件">以记录为单位的日志文件</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154629419.png" class title="image-20230612154629419">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154646743.png" class title="image-20230612154646743">
+<h4 id="以数据块为单位的日志文件">以数据块为单位的日志文件</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612154857301.png" class title="image-20230612154857301">
+<blockquote>
+<p>均要记录事务标识</p>
+</blockquote>
+<h3 id="日志文件的作用">日志文件的作用</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155105439.png" class title="image-20230612155105439">
+<blockquote>
+<p>最后一点的意思是不需要运行<strong>程序</strong>，直接根据日志文件记录的一步步操作即可</p>
+</blockquote>
+<h3 id="先日志，后改数据库">先日志，后改数据库</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155244493.png" class title="image-20230612155244493">
+<h4 id="原因">原因</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155328096.png" class title="image-20230612155328096">
+<h3 id="恢复策略">恢复策略</h3>
+<h4 id="事务故障的恢复">事务故障的恢复</h4>
+<p>事务故障是指未正常运行到commit或者rollback</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612155835375.png" class title="image-20230612155835375">
+<h4 id="事务故障的恢复步骤">事务故障的恢复步骤</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160125271.png" class title="image-20230612160125271">
+<blockquote>
+<p>细读这段可以明白究竟日志文件里面记了些什么</p>
+<p>反正开始结束标志肯定记了，然后每个事物都有ID（事务标识），然后有增删改查的操作就记一条（所谓的更新操作，这种记录就会包括上面讲的五个部分）</p>
+<p>反向扫描</p>
+</blockquote>
+<h4 id="系统故障的恢复">系统故障的恢复</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160525864.png" class title="image-20230612160525864">
+<h4 id="系统故障的恢复步骤">系统故障的恢复步骤</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160604161.png" class title="image-20230612160604161">
+<h4 id="介质故障的恢复">介质故障的恢复</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160754358.png" class title="image-20230612160754358">
+<h4 id="介质故障的恢复步骤">介质故障的恢复步骤</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612160854540.png" class title="image-20230612160854540">
+<h3 id="检查点技术">检查点技术</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161347266.png" class title="image-20230612161347266">
+<h3 id="日志文件加入检查点记录">日志文件加入检查点记录</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161458253.png" class title="image-20230612161458253">
+<h3 id="采取的策略">采取的策略</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161514500.png" class title="image-20230612161514500">
+<blockquote>
+<p>为什么T1不用重做？有没有可能他的数据还在缓冲区？</p>
+<p>没有可能，这正是检查点的作用</p>
+<p>因为在“动态维护日志文件”中，有一个步骤是“将当前数据缓冲区的所有数据记录写入磁盘的数据库中”</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161704463.png" class title="image-20230612161704463">
+</blockquote>
+<h3 id="数据库镜像">数据库镜像</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161837298.png" class title="image-20230612161837298">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161847115.png" class title="image-20230612161847115">
+<blockquote>
+<p>有故障时可救火，没故障时还可并发</p>
+</blockquote>
+<h4 id="并不对整个数据库进行镜像">并不对整个数据库进行镜像</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612161940076.png" class title="image-20230612161940076">
+<h2 id="chap11-并发控制">chap11 并发控制</h2>
+<p>串行、交叉并行、同时并行</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612162828851.png" class title="image-20230612162828851">
+<blockquote>
+<p>事务是并发控制的基本单位</p>
+</blockquote>
+<h3 id="并发操作带来的数据不一致性">并发操作带来的数据不一致性</h3>
+<h4 id="1-丢失修改">1.丢失修改</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612162958300.png" class title="image-20230612162958300">
+<h4 id="2-不可重复读"><strong>2.不可重复读</strong></h4>
+<p>有好几种</p>
+<p>还有幻影现象Phantom Row</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163220847.png" class title="image-20230612163220847">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163102314.png" class title="image-20230612163102314">
+<h4 id="3-读-脏-数据">3.读&quot;脏&quot;数据</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163335089.png" class title="image-20230612163335089">
+<p>原本的修改事务被撤销了，读到了脏数据</p>
+<h3 id="并发控制的主要技术">并发控制的主要技术</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612163452173.png" class title="image-20230612163452173">
+<h3 id="封锁">封锁</h3>
+<p>排它锁：写锁，只能上锁者读写</p>
+<p>共享锁：读锁，自己只能读，保证别人不能改</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612165226372.png" class title="image-20230612165226372">
+<h3 id="封锁协议">封锁协议</h3>
+<h4 id="一级封锁协议">一级封锁协议</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170010908.png" class title="image-20230612170010908">
+<p>因为一定在T改完后</p>
+<p>别人才能读或者写，所以不会丢失修改</p>
+<h4 id="二级封锁协议"><strong>二级封锁协议</strong></h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170120631.png" class title="image-20230612170120631">
+<h4 id="三级封锁协议"><strong>三级封锁协议</strong></h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170250578.png" class title="image-20230612170250578">
+<h4 id="小结">小结</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170302699.png" class title="image-20230612170302699">
+<blockquote>
+<p>不可重复读的理解：</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612170442391.png" class title="image-20230612170442391">
+</blockquote>
+<h3 id="活锁">活锁</h3>
+<p>意思就是有个怨种一直没轮到，一直在等</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612172602170.png" class title="image-20230612172602170">
+<h4 id="如何避免">如何避免</h4>
+<p>FCFS</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612172617900.png" class title="image-20230612172617900">
+<h3 id="死锁">死锁</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612173202725.png" class title="image-20230612173202725">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612173139839.png" class title="image-20230612173139839">
+<h4 id="死锁的预防">死锁的预防</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174053238.png" class title="image-20230612174053238">
+<h4 id="死锁的诊断">死锁的诊断</h4>
+<p>超时法：可能误判</p>
+<p>等待图法</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174206336.png" class title="image-20230612174206336">
+<h4 id="等待图法">等待图法</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174252132.png" class title="image-20230612174252132">
+<h3 id="解除死锁">解除死锁</h3>
+<p>选择处理代价最小的事务，将其撤销</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612174324233.png" class title="image-20230612174324233">
+<h3 id="可串行调度">可串行调度</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612184556826.png" class title="image-20230612184556826">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612185725296.png" class title="image-20230612185725296">
+<h3 id="冲突可串行化：给出一个判断课串行化的充分条件">冲突可串行化：给出一个判断课串行化的充分条件</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612185846853.png" class title="image-20230612185846853">
+<h3 id="充分条件">充分条件</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190015596.png" class title="image-20230612190015596">
+<h3 id="例子-3">例子</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190041353.png" class title="image-20230612190041353">
+<h3 id="两段锁协议2PL">两段锁协议2PL</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190423127.png" class title="image-20230612190423127">
+<p>就是对事务来说，所有获取锁的操作都在释放锁之前</p>
+<h3 id="扩展阶段和收缩阶段">扩展阶段和收缩阶段</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190524530.png" class title="image-20230612190524530">
+<h3 id="遵循2PL协议：又一个可串行化的充分条件">遵循2PL协议：又一个可串行化的充分条件</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190649405.png" class title="image-20230612190649405">
+<h3 id="一次封锁法-vs-2PL协议">一次封锁法 vs 2PL协议</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190741530.png" class title="image-20230612190741530">
+<p>例如</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612190757867.png" class title="image-20230612190757867">
+<h3 id="封锁粒度">封锁粒度</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191103318.png" class title="image-20230612191103318">
+<h3 id="选择封锁粒度原则"><strong>选择封锁粒度原则</strong></h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191131578.png" class title="image-20230612191131578">
+<h3 id="多粒度树">多粒度树</h3>
+<h3 id="多粒度协议">多粒度协议</h3>
+<h3 id="显示封锁与隐式封锁">显示封锁与隐式封锁</h3>
+<h3 id="引进意向锁的目的Intention-Lock">引进意向锁的目的Intention Lock</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191438951.png" class title="image-20230612191438951">
+<blockquote>
+<p>注意，上层所有节点都要加上意向锁</p>
+</blockquote>
+<h3 id="意向共享锁IS">意向共享锁IS</h3>
+<h3 id="意向排它锁IX">意向排它锁IX</h3>
+<h3 id="共享意向排它锁SIX">共享意向排它锁SIX</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191647028.png" class title="image-20230612191647028">
+<blockquote>
+<p>表达的是，要读这个节点，并且可能修改子节点</p>
+</blockquote>
+<h3 id="意向锁提高了加锁时的检查效率">意向锁提高了加锁时的检查效率</h3>
+<blockquote>
+<p>因为不用往下检查了</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612191853109.png" class title="image-20230612191853109">
+<blockquote>
+<p>例子：</p>
+<p>意向锁的作用，相当于就是在低层次资源是否使用，加了一个tag来标识而已。对于步骤2的执行可以大大加速，仅此而已。</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612192429335.png" class title="image-20230612192429335">
+<p><a class="link" target="_blank" rel="noopener" href="https://blog.csdn.net/dreamvyps/article/details/84500543">(1条消息) 意向锁的作用_werflychen的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h3 id="意向锁的相容矩阵">意向锁的相容矩阵</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612192552557.png" class title="image-20230612192552557">
+<blockquote>
+<p>意向锁之间，只有互相带X的不兼容</p>
+</blockquote>
+<h2 id="NoSQL">NoSQL</h2>
+<h3 id="阻抗失谐">阻抗失谐</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612201130858.png" class title="image-20230612201130858">
+<h3 id="集群问题">集群问题</h3>
+<p>关系型数据库不适合集群，大规模的数据</p>
+<p>涉及分片和复制，但关系型数据库本身其实没有这些概念</p>
+<p>所以NoSQL要更加适合集群，有的NoSQL就是分布式的</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612204205658.png" class title="image-20230612204205658">
+<h3 id="特点">特点</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612201752496.png" class title="image-20230612201752496">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612204327913.png" class title="image-20230612204327913">
+<blockquote>
+<p>无模式，上课举了不同宠物有不同的描述属性的例子</p>
+<p>有点类似于面向对象的感觉</p>
+<p>比如A有属性A1 A2</p>
+<p>B可以有B1 B2 B3 B4</p>
+<p>不需要每个都有相同的属性列</p>
+</blockquote>
+<h3 id="聚合：名词而非动词">聚合：名词而非动词</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612202818656.png" class title="image-20230612202818656">
+<h3 id="NoSQL特点：无模式">NoSQL特点：无模式</h3>
+<p><img lazyload src="/images/loading.svg" data-src="../../../NJUer-dsy/2023-Spring/Devens_Yuan/%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%25E5%259F%25BA%25E7%25A1%2580-dsy/%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%25E5%259F%25BA%25E7%25A1%2580%25E6%259C%259F%25E6%259C%25AB%25E5%25A4%258D%25E4%25B9%25A0-dsy/%25E8%25AF%25BB%25E4%25B9%25A6%25E5%25A4%258D%25E4%25B9%25A0%25E7%25AC%2594%25E8%25AE%25B0/image-20230612205211355.png" alt="image-20230612205211355"></p>
+<h3 id="格式不一致的数据">格式不一致的数据</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612205304934.png" class title="image-20230612205304934">
+<blockquote>
+<p>直接看看这两篇文章</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://blog.csdn.net/Foools/article/details/120205655">《NoSQL精粹》了解NoSQL这一篇就够了_Foools的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>这篇全一点，但错别字有点多</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://blog.csdn.net/qq_27250279/article/details/129234918">NoSQL精粹笔记-概念_面向聚合数据库_平平无奇的小颜的博客-CSDN博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+</blockquote>
+<h3 id="CAP定理">CAP定理</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612221537514.png" class title="image-20230612221537514">
+<h3 id="BASE属性">BASE属性</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612221630548.png" class title="image-20230612221630548">
+<h2 id="做题记录">做题记录</h2>
+<h3 id="如何判断码">如何判断码</h3>
+<style>.oavudszmrdut{zoom: 50%;}</style><img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611233327926.png" class="oavudszmrdut" alt="image-20230611233327926"> 
+<p>R型没什么写的必要，写出L和LR型就够了</p>
+<p>先求所有L型的闭包，不够再LR型一个个加进去</p>
+<blockquote>
+<p>对于判断迷茫了可以看看P203第6题</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230611233533751.png" class title="image-20230611233533751">
+</blockquote>
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> notes-dbms</li>
+        <li><strong>作者:</strong> SYuan03</li>
+        <li><strong>创建于
+                :</strong> 2023-06-14 22:04:35</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-09-30 20:52:21
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://bblog.031105.xyz/posts/2023-Spring-Courses-数据库管理/notes-dbms.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/">#数据库管理</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/期末复习/数据库开发/24-spring-数据库开发期末复习.html" title="24-Spring-数据库开发期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-数据库开发期末复习" class="!max-w-none">
+  <span class="title">24-Spring-数据库开发期末复习</span>
+</a><a class="recommended-article-item" href="/posts/期末复习/软件系统设计/24-spring-软件系统设计期末复习.html" title="24-Spring-软件系统设计期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-软件系统设计期末复习" class="!max-w-none">
+  <span class="title">24-Spring-软件系统设计期末复习</span>
+</a><a class="recommended-article-item" href="/posts/2023-Spring-Courses-操作系统/notes-os.html" title="notes-os" rel="bookmark">
+  <img src="https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg" alt="notes-os" class="!max-w-none">
+  <span class="title">notes-os</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/期末复习/数据库开发/24-spring-数据库开发期末复习.html" title="24-Spring-数据库开发期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-数据库开发期末复习" class="!max-w-none">
+  <span class="title">24-Spring-数据库开发期末复习</span>
+</a><a class="recommended-article-item" href="/posts/期末复习/软件系统设计/24-spring-软件系统设计期末复习.html" title="24-Spring-软件系统设计期末复习" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="24-Spring-软件系统设计期末复习" class="!max-w-none">
+  <span class="title">24-Spring-软件系统设计期末复习</span>
+</a></div>
+   </div>
+  </div>
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os.html"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">notes-os</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/posts/23-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/hw2%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">hw2学习记录</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <!--TAG: 新增lightgallery的使用-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery.css">
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://imgss.s3.bitiful.net/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                <!--twikoo.init({-->
+                <!--    el: '#twikoo-comment',-->
+                <!--    envId: 'https://api.twikoo.031105.xyz',-->
+                <!--});-->
+                <!--TAG: 新增lightgallery的使用-->
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://api.twikoo.031105.xyz',
+                    onCommentLoaded: function () {
+                        var commentContents = document.getElementsByClassName('tk-content');
+                        for (var i = 0; i < commentContents.length; i++) {
+                            var commentItem = commentContents[i];
+                            var imgEls = commentItem.getElementsByTagName('img');
+                            for (var j = 0; j < imgEls.length; j++) {
+                                var imgEl = imgEls[j];
+                                // 检查图片是否已经被处理过
+                                if (!imgEl.classList.contains('processed')) {
+                                    var aEl = document.createElement('a');
+                                    aEl.setAttribute('class', 'tk-lg-link');
+                                    aEl.setAttribute('href', imgEl.getAttribute('src'));
+                                    aEl.setAttribute('data-src', imgEl.getAttribute('src'));
+                                    aEl.appendChild(imgEl.cloneNode(false));
+                                    imgEl.parentNode.insertBefore(aEl, imgEl.nextSibling);
+                                    imgEl.remove();
+                                    // 标记图片已经被处理
+                                    aEl.firstChild.classList.add('processed');
+                                }
+                            }
+                            // 初始化 lightGallery 只对新添加的链接
+                            lightGallery(commentItem, {
+                                selector: '.tk-lg-link:not(.lightGallery-inited)',
+                                share: false
+                            });
+                            // 标记链接已初始化 lightGallery
+                            var links = commentItem.querySelectorAll('.tk-lg-link');
+                            for (var link of links) {
+                                link.classList.add('lightGallery-inited');
+                            }
+                        }
+                    }
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">notes-dbms</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#chap1-%E7%BB%AA%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">chap1 绪论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8ENoSQL%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.1.</span> <span class="nav-text">SQL数据库与NoSQL数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%BA%A7%E6%A8%A1%E5%BC%8F%E7%BB%93%E6%9E%84-%E4%BE%8B%E5%AD%90"><span class="nav-number">1.2.</span> <span class="nav-text">三级模式结构-例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap2-%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">chap2 关系数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%84%E8%8C%83%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">规范条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">关系模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text">外码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E5%92%8C%E4%B8%BB%E5%B1%9E%E6%80%A7"><span class="nav-number">2.4.</span> <span class="nav-text">主键和主属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E7%A7%8D%E5%9F%BA%E6%9C%AC%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0%E8%BF%90%E7%AE%97"><span class="nav-number">2.5.</span> <span class="nav-text">五种基本关系代数运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%93%8D%E4%BD%9C"><span class="nav-number">2.6.</span> <span class="nav-text">连接操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap3-SQL"><span class="nav-number">3.</span> <span class="nav-text">chap3 SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E4%B8%AD%E6%B2%A1%E6%9C%89%E6%A8%A1%E5%BC%8FSchema%E7%9A%84%E6%A6%82%E5%BF%B5%E5%90%97%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">MySQL中没有模式Schema的概念吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Show-search-path-%E8%AF%AD%E5%8F%A5"><span class="nav-number">3.2.</span> <span class="nav-text">Show search_path; 语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.3.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%89%E5%8F%8A%E7%A9%BA%E4%B8%B2%E7%9A%84%E6%9F%A5%E8%AF%A2-P96"><span class="nav-number">3.4.</span> <span class="nav-text">涉及空串的查询 P96</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BE%E7%94%9F%E8%A1%A8"><span class="nav-number">3.5.</span> <span class="nav-text">派生表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E5%80%BC"><span class="nav-number">3.6.</span> <span class="nav-text">空值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E5%88%97%E5%AD%90%E9%9B%86%E8%A7%86%E5%9B%BE"><span class="nav-number">3.7.</span> <span class="nav-text">行列子集视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E6%B6%88%E8%A7%A3"><span class="nav-number">3.8.</span> <span class="nav-text">视图消解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E7%9A%84%E4%BD%9C%E7%94%A8-%E6%9B%B4%E6%B8%85%E6%99%B0%E7%9A%84%E8%A1%A8%E8%BE%BE"><span class="nav-number">3.9.</span> <span class="nav-text">视图的作用-更清晰的表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#join%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">3.10.</span> <span class="nav-text">join关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">3.11.</span> <span class="nav-text">视图的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E8%AF%AD%E8%A8%80%E7%9A%84%E4%B8%A4%E7%A7%8D%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">3.12.</span> <span class="nav-text">SQL语言的两种使用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GROUP-BY-%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AE%B5"><span class="nav-number">3.13.</span> <span class="nav-text">GROUP BY 多个字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap4-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">chap4 数据库安全性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%AE%89%E5%85%A8%E5%9B%A0%E7%B4%A0"><span class="nav-number">4.1.</span> <span class="nav-text">不安全因素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB"><span class="nav-number">4.2.</span> <span class="nav-text">用户身份鉴别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6"><span class="nav-number">4.3.</span> <span class="nav-text">存取控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6%E6%96%B9%E6%B3%95"><span class="nav-number">4.4.</span> <span class="nav-text">两种存取控制方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DAC-%E8%87%AA%E4%B8%BB%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6"><span class="nav-number">4.5.</span> <span class="nav-text">DAC 自主存取控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUBLIC"><span class="nav-number">4.6.</span> <span class="nav-text">PUBLIC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WITH-GRANT-OPTION"><span class="nav-number">4.7.</span> <span class="nav-text">WITH GRANT OPTION</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REVOKE"><span class="nav-number">4.8.</span> <span class="nav-text">REVOKE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%9D%83%E9%99%90"><span class="nav-number">4.9.</span> <span class="nav-text">创建数据库模式的权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%92%E8%89%B2"><span class="nav-number">4.10.</span> <span class="nav-text">数据库角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E4%B8%BB%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">4.11.</span> <span class="nav-text">自主存取控制的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MAC%EF%BC%9F%E5%BC%BA%E5%8F%96%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6"><span class="nav-number">4.12.</span> <span class="nav-text">MAC？强取存取控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E6%9C%BA%E5%88%B6"><span class="nav-number">4.13.</span> <span class="nav-text">视图机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A1%E8%AE%A1"><span class="nav-number">4.14.</span> <span class="nav-text">审计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A1%E8%AE%A1%E8%AF%AD%E5%8F%A5AUDIT"><span class="nav-number">4.14.1.</span> <span class="nav-text">审计语句AUDIT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86"><span class="nav-number">4.15.</span> <span class="nav-text">数据加密</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap5-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-number">5.</span> <span class="nav-text">chap5 数据库完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E6%9C%BA%E5%88%B6"><span class="nav-number">5.1.</span> <span class="nav-text">完整性机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BD%93%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-number">5.2.</span> <span class="nav-text">实体完整性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BD%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="nav-number">5.3.</span> <span class="nav-text">实体完整性检查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E8%A1%A8%E6%89%AB%E6%8F%8F-%E6%88%96-%E7%B4%A2%E5%BC%95%EF%BC%88%E5%A6%82B-%E6%A0%91%EF%BC%89"><span class="nav-number">5.3.1.</span> <span class="nav-text">全表扫描 或 索引（如B+树）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E7%85%A7%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-number">5.4.</span> <span class="nav-text">参照完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86"><span class="nav-number">5.4.1.</span> <span class="nav-text">处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%EF%BC%9ASET-NULL"><span class="nav-number">5.4.2.</span> <span class="nav-text">例：SET-NULL</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E8%AF%B4%E6%98%8E%E5%8F%82%E7%85%A7%E5%AE%8C%E6%95%B4%E6%80%A7%E7%9A%84%E8%BF%9D%E7%BA%A6%E5%A4%84%E7%90%86"><span class="nav-number">5.5.</span> <span class="nav-text">显示说明参照完整性的违约处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E5%AE%9A%E4%B9%89%E7%9A%84%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-number">5.6.</span> <span class="nav-text">用户定义的完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E4%B8%8A"><span class="nav-number">5.6.1.</span> <span class="nav-text">属性上</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E7%BB%84%E4%B8%8A"><span class="nav-number">5.6.2.</span> <span class="nav-text">元组上</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%98%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E5%AE%8C%E6%95%B4%E6%80%A7%E5%91%BD%E5%90%8D%E5%AD%90%E5%8F%A5CONSTRAINT"><span class="nav-number">5.7.</span> <span class="nav-text">还可以使用完整性命名子句CONSTRAINT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%EF%BC%88%E4%BF%AE%E6%94%B9%EF%BC%89CONSTARINT"><span class="nav-number">5.8.</span> <span class="nav-text">删除（修改）CONSTARINT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E8%A8%80"><span class="nav-number">5.9.</span> <span class="nav-text">断言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">5.9.1.</span> <span class="nav-text">例子</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">5.10.</span> <span class="nav-text">触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">5.10.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.10.2.</span> <span class="nav-text">触发器类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90-2"><span class="nav-number">5.10.3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E6%BF%80%E6%B4%BB%E9%A1%BA%E5%BA%8F"><span class="nav-number">5.10.4.</span> <span class="nav-text">触发器激活顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">5.10.5.</span> <span class="nav-text">删除触发器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap6-%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E7%90%86%E8%AE%BA"><span class="nav-number">6.</span> <span class="nav-text">chap6 关系数据理论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1NF"><span class="nav-number">6.1.</span> <span class="nav-text">1NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BE%9D%E8%B5%96"><span class="nav-number">6.2.</span> <span class="nav-text">数据依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96-FD-Function-Dependency"><span class="nav-number">6.3.</span> <span class="nav-text">函数依赖 FD Function Dependency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1NF%EF%BC%9AF%E7%9A%84%E8%A1%A8%E7%A4%BA"><span class="nav-number">6.4.</span> <span class="nav-text">1NF：F的表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8C%83%E5%BC%8F"><span class="nav-number">6.5.</span> <span class="nav-text">范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E7%9A%84%E6%A0%87%E5%87%86%E5%AE%9A%E4%B9%89"><span class="nav-number">6.6.</span> <span class="nav-text">函数依赖的标准定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E5%87%A1%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E4%B8%8E%E9%9D%9E%E5%B9%B3%E5%87%A1%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="nav-number">6.7.</span> <span class="nav-text">平凡函数依赖与非平凡函数依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96%E5%92%8C%E9%83%A8%E5%88%86%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="nav-number">6.8.</span> <span class="nav-text">完全函数依赖和部分函数依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E9%80%92%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="nav-number">6.9.</span> <span class="nav-text">传递函数依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%81"><span class="nav-number">6.10.</span> <span class="nav-text">码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E7%A0%81-2"><span class="nav-number">6.11.</span> <span class="nav-text">外码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1NF-2"><span class="nav-number">6.12.</span> <span class="nav-text">1NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2NF"><span class="nav-number">6.13.</span> <span class="nav-text">2NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E8%A7%A3%E6%88%902NF"><span class="nav-number">6.14.</span> <span class="nav-text">分解成2NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3NF"><span class="nav-number">6.15.</span> <span class="nav-text">3NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1NF-2NF-3NF-%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB%E5%9B%BE%E5%AF%B9%E6%AF%94"><span class="nav-number">6.16.</span> <span class="nav-text">1NF 2NF 3NF 依赖关系图对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BCNF-Boyce-Codd-NF"><span class="nav-number">6.17.</span> <span class="nav-text">BCNF Boyce Codd NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BCNF%EF%BC%9A%E6%B6%88%E9%99%A4%E4%BA%86%E6%8F%92%E5%85%A5%E5%BC%82%E5%B8%B8%E5%92%8C%E5%88%A0%E9%99%A4%E5%BC%82%E5%B8%B8"><span class="nav-number">6.18.</span> <span class="nav-text">BCNF：消除了插入异常和删除异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BCNF%E4%B8%8E3NF"><span class="nav-number">6.19.</span> <span class="nav-text">BCNF与3NF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%80%BC%E4%BE%9D%E8%B5%96"><span class="nav-number">6.20.</span> <span class="nav-text">多值依赖</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A"><span class="nav-number">6.20.1.</span> <span class="nav-text">例子：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap7-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1"><span class="nav-number">7.</span> <span class="nav-text">chap7 数据库设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A16%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="nav-number">7.1.</span> <span class="nav-text">数据库设计6个阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E7%BA%A7%E6%A8%A1%E5%BC%8F"><span class="nav-number">7.2.</span> <span class="nav-text">各级模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="nav-number">7.3.</span> <span class="nav-text">需求分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="nav-number">7.3.1.</span> <span class="nav-text">需求分析过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8"><span class="nav-number">7.4.</span> <span class="nav-text">数据字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%B0%8F%E7%BB%93"><span class="nav-number">7.5.</span> <span class="nav-text">需求分析小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.6.</span> <span class="nav-text">概念模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%94%E7%B3%BB-Relation"><span class="nav-number">7.7.</span> <span class="nav-text">联系 Relation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%AE%9E%E4%BD%93%E6%80%A7%E4%B9%8B%E9%97%B4"><span class="nav-number">7.7.1.</span> <span class="nav-text">两个实体性之间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E4%BB%A5%E4%B8%8A%E5%AE%9E%E4%BD%93%E5%9E%8B%E4%B9%8B%E9%97%B4"><span class="nav-number">7.7.2.</span> <span class="nav-text">两个以上实体型之间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E4%B8%AA%E5%AE%9E%E4%BD%93%E5%9E%8B%E5%86%85%E9%83%A8"><span class="nav-number">7.7.3.</span> <span class="nav-text">单个实体型内部</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%94%E7%B3%BB%E7%9A%84%E5%BA%A6"><span class="nav-number">7.8.</span> <span class="nav-text">联系的度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#E-R%E5%9B%BE"><span class="nav-number">7.9.</span> <span class="nav-text">E-R图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E7%B3%BB%E4%B9%9F%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%B1%9E%E6%80%A7"><span class="nav-number">7.9.1.</span> <span class="nav-text">联系也可以有属性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ISA%E8%81%94%E7%B3%BB"><span class="nav-number">7.10.</span> <span class="nav-text">ISA联系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E5%B1%9E%E6%80%A7"><span class="nav-number">7.10.1.</span> <span class="nav-text">分类属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E7%9B%B8%E4%BA%A4-%E5%8F%AF%E9%87%8D%E5%8F%A0%E7%BA%A6%E6%9D%9F"><span class="nav-number">7.10.2.</span> <span class="nav-text">不相交&#x2F;可重叠约束</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E5%A4%87%E6%80%A7%E7%BA%A6%E6%9D%9F%EF%BC%9A%E6%98%AF%E5%90%A6%E5%BF%85%E9%A1%BB%E6%98%AF%E5%85%B6%E4%B8%AD%E4%B9%8B%E4%B8%80%EF%BC%9F"><span class="nav-number">7.10.3.</span> <span class="nav-text">完备性约束：是否必须是其中之一？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%95%B0%E7%BA%A6%E6%9D%9F"><span class="nav-number">7.10.4.</span> <span class="nav-text">基数约束</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Part-Of-%E8%81%94%E7%B3%BB"><span class="nav-number">7.10.5.</span> <span class="nav-text">Part Of 联系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">7.11.</span> <span class="nav-text">概念结构设计的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%BA%95%E5%90%91%E4%B8%8A%E7%9A%84%E6%A6%82%E5%BF%B5%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">7.12.</span> <span class="nav-text">自底向上的概念结构设计的步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BD%93%E4%B8%8E%E5%B1%9E%E6%80%A7%E7%9A%84%E5%88%92%E5%88%86%E5%8E%9F%E5%88%99"><span class="nav-number">7.13.</span> <span class="nav-text">实体与属性的划分原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A%E8%81%8C%E5%B7%A5%E5%92%8C%E8%81%8C%E7%A7%B0"><span class="nav-number">7.13.1.</span> <span class="nav-text">例子：职工和职称</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#E-R%E5%9B%BE%E7%9A%84%E9%9B%86%E6%88%90"><span class="nav-number">7.14.</span> <span class="nav-text">E-R图的集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%B1%BB%E5%86%B2%E7%AA%81"><span class="nav-number">7.15.</span> <span class="nav-text">三类冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E7%BB%93%E6%9E%84%E5%86%B2%E7%AA%81"><span class="nav-number">7.15.1.</span> <span class="nav-text">3结构冲突</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#E-R%E5%9B%BE%E9%9B%86%E6%88%90%E4%B9%8B%E4%BA%8C%EF%BC%9A%E4%BF%AE%E6%94%B9%E5%92%8C%E9%87%8D%E6%9E%84"><span class="nav-number">7.16.</span> <span class="nav-text">E-R图集成之二：修改和重构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">7.17.</span> <span class="nav-text">第三步：逻辑结构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1"><span class="nav-number">7.17.1.</span> <span class="nav-text">任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2"><span class="nav-number">7.17.2.</span> <span class="nav-text">转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E5%AE%9E%E4%BD%93%E5%9E%8B"><span class="nav-number">7.17.3.</span> <span class="nav-text">对于实体型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E8%81%94%E7%B3%BB"><span class="nav-number">7.17.4.</span> <span class="nav-text">对于联系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">7.18.</span> <span class="nav-text">数据模型的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E4%B8%8D%E6%98%AF%E8%A7%84%E8%8C%83%E5%8C%96%E7%A8%8B%E5%BA%A6%E8%B6%8A%E9%AB%98%E7%9A%84%E5%85%B3%E7%B3%BB%E5%B0%B1%E8%B6%8A%E4%BC%98"><span class="nav-number">7.18.1.</span> <span class="nav-text">并不是规范化程度越高的关系就越优</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%88%86%E8%A7%A3"><span class="nav-number">7.19.</span> <span class="nav-text">关系模式的分解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%88%86%E8%A7%A3"><span class="nav-number">7.19.1.</span> <span class="nav-text">水平分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%88%86%E8%A7%A3"><span class="nav-number">7.19.2.</span> <span class="nav-text">垂直分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%94%A8%E6%88%B7%E5%AD%90%E6%A8%A1%E5%BC%8F"><span class="nav-number">7.20.</span> <span class="nav-text">设计用户子模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">7.21.</span> <span class="nav-text">第四步：物理结构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%8F%96%E6%96%B9%E6%B3%95%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">7.21.1.</span> <span class="nav-text">存取方法的选择</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%87%8D%E7%BB%84%E7%BB%87"><span class="nav-number">7.22.</span> <span class="nav-text">数据库的重组织</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%87%8D%E6%9E%84%E9%80%A0"><span class="nav-number">7.23.</span> <span class="nav-text">数据库的重构造</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap8-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BC%96%E7%A8%8B"><span class="nav-number">8.</span> <span class="nav-text">chap8 数据库编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC%E9%A9%B1%E5%8A%A8"><span class="nav-number">8.1.</span> <span class="nav-text">JDBC驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E5%8C%96SQL"><span class="nav-number">8.2.</span> <span class="nav-text">过程化SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B8%E6%A0%87"><span class="nav-number">8.3.</span> <span class="nav-text">游标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E5%9D%97%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">8.4.</span> <span class="nav-text">SQL块的概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap10-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%81%A2%E5%A4%8D%E6%8A%80%E6%9C%AF"><span class="nav-number">9.</span> <span class="nav-text">chap10 数据库恢复技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1Transaction"><span class="nav-number">9.1.</span> <span class="nav-text">事务Transaction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACID%E7%89%B9%E6%80%A7"><span class="nav-number">9.2.</span> <span class="nav-text">ACID特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">9.3.</span> <span class="nav-text">恢复子系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">9.4.</span> <span class="nav-text">故障的种类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C1-%E4%BA%8B%E5%8A%A1%E5%86%85%E9%83%A8%E7%9A%84%E6%95%85%E9%9A%9C"><span class="nav-number">9.4.1.</span> <span class="nav-text">故障1-事务内部的故障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C2-%E7%B3%BB%E7%BB%9F%E6%95%85%E9%9A%9C"><span class="nav-number">9.4.2.</span> <span class="nav-text">故障2-系统故障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C3-%E4%BB%8B%E8%B4%A8%E6%95%85%E9%9A%9C"><span class="nav-number">9.4.3.</span> <span class="nav-text">故障3-介质故障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C4-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%97%85%E6%AF%92"><span class="nav-number">9.4.4.</span> <span class="nav-text">故障4-计算机病毒</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">9.5.</span> <span class="nav-text">恢复的基本原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%82%A8"><span class="nav-number">9.6.</span> <span class="nav-text">数据转储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E5%82%A8%E6%96%B9%E6%B3%951-%E9%9D%99%E6%80%81%E8%BD%AC%E5%82%A8"><span class="nav-number">9.6.1.</span> <span class="nav-text">转储方法1-静态转储</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E5%82%A8%E6%96%B9%E6%B3%952-%E5%8A%A8%E6%80%81%E8%BD%AC%E5%82%A8"><span class="nav-number">9.6.2.</span> <span class="nav-text">转储方法2-动态转储</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E5%82%A8%E5%88%86%E7%B1%BB2-%E6%B5%B7%E9%87%8F%E4%B8%8E%E5%A2%9E%E9%87%8F"><span class="nav-number">9.7.</span> <span class="nav-text">转储分类2-海量与增量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="nav-number">9.8.</span> <span class="nav-text">日志文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E8%AE%B0%E5%BD%95%E4%B8%BA%E5%8D%95%E4%BD%8D%E7%9A%84%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="nav-number">9.8.1.</span> <span class="nav-text">以记录为单位的日志文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E6%95%B0%E6%8D%AE%E5%9D%97%E4%B8%BA%E5%8D%95%E4%BD%8D%E7%9A%84%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="nav-number">9.8.2.</span> <span class="nav-text">以数据块为单位的日志文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">9.9.</span> <span class="nav-text">日志文件的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%97%A5%E5%BF%97%EF%BC%8C%E5%90%8E%E6%94%B9%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">9.10.</span> <span class="nav-text">先日志，后改数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">9.10.1.</span> <span class="nav-text">原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">9.11.</span> <span class="nav-text">恢复策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%95%85%E9%9A%9C%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="nav-number">9.11.1.</span> <span class="nav-text">事务故障的恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%95%85%E9%9A%9C%E7%9A%84%E6%81%A2%E5%A4%8D%E6%AD%A5%E9%AA%A4"><span class="nav-number">9.11.2.</span> <span class="nav-text">事务故障的恢复步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%95%85%E9%9A%9C%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="nav-number">9.11.3.</span> <span class="nav-text">系统故障的恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%95%85%E9%9A%9C%E7%9A%84%E6%81%A2%E5%A4%8D%E6%AD%A5%E9%AA%A4"><span class="nav-number">9.11.4.</span> <span class="nav-text">系统故障的恢复步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E8%B4%A8%E6%95%85%E9%9A%9C%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="nav-number">9.11.5.</span> <span class="nav-text">介质故障的恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E8%B4%A8%E6%95%85%E9%9A%9C%E7%9A%84%E6%81%A2%E5%A4%8D%E6%AD%A5%E9%AA%A4"><span class="nav-number">9.11.6.</span> <span class="nav-text">介质故障的恢复步骤</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%82%B9%E6%8A%80%E6%9C%AF"><span class="nav-number">9.12.</span> <span class="nav-text">检查点技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E5%8A%A0%E5%85%A5%E6%A3%80%E6%9F%A5%E7%82%B9%E8%AE%B0%E5%BD%95"><span class="nav-number">9.13.</span> <span class="nav-text">日志文件加入检查点记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E5%8F%96%E7%9A%84%E7%AD%96%E7%95%A5"><span class="nav-number">9.14.</span> <span class="nav-text">采取的策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%95%9C%E5%83%8F"><span class="nav-number">9.15.</span> <span class="nav-text">数据库镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E4%B8%8D%E5%AF%B9%E6%95%B4%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9B%E8%A1%8C%E9%95%9C%E5%83%8F"><span class="nav-number">9.15.1.</span> <span class="nav-text">并不对整个数据库进行镜像</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chap11-%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="nav-number">10.</span> <span class="nav-text">chap11 并发控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%93%8D%E4%BD%9C%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">10.1.</span> <span class="nav-text">并发操作带来的数据不一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%B8%A2%E5%A4%B1%E4%BF%AE%E6%94%B9"><span class="nav-number">10.1.1.</span> <span class="nav-text">1.丢失修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB"><span class="nav-number">10.1.2.</span> <span class="nav-text">2.不可重复读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%AF%BB-%E8%84%8F-%E6%95%B0%E6%8D%AE"><span class="nav-number">10.1.3.</span> <span class="nav-text">3.读&quot;脏&quot;数据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%E7%9A%84%E4%B8%BB%E8%A6%81%E6%8A%80%E6%9C%AF"><span class="nav-number">10.2.</span> <span class="nav-text">并发控制的主要技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81"><span class="nav-number">10.3.</span> <span class="nav-text">封锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">10.4.</span> <span class="nav-text">封锁协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E7%BA%A7%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">10.4.1.</span> <span class="nav-text">一级封锁协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">10.4.2.</span> <span class="nav-text">二级封锁协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E7%BA%A7%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">10.4.3.</span> <span class="nav-text">三级封锁协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">10.4.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E9%94%81"><span class="nav-number">10.5.</span> <span class="nav-text">活锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D"><span class="nav-number">10.5.1.</span> <span class="nav-text">如何避免</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">10.6.</span> <span class="nav-text">死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%9A%84%E9%A2%84%E9%98%B2"><span class="nav-number">10.6.1.</span> <span class="nav-text">死锁的预防</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%9A%84%E8%AF%8A%E6%96%AD"><span class="nav-number">10.6.2.</span> <span class="nav-text">死锁的诊断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AD%89%E5%BE%85%E5%9B%BE%E6%B3%95"><span class="nav-number">10.6.3.</span> <span class="nav-text">等待图法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%99%A4%E6%AD%BB%E9%94%81"><span class="nav-number">10.7.</span> <span class="nav-text">解除死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%B8%B2%E8%A1%8C%E8%B0%83%E5%BA%A6"><span class="nav-number">10.8.</span> <span class="nav-text">可串行调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B2%E7%AA%81%E5%8F%AF%E4%B8%B2%E8%A1%8C%E5%8C%96%EF%BC%9A%E7%BB%99%E5%87%BA%E4%B8%80%E4%B8%AA%E5%88%A4%E6%96%AD%E8%AF%BE%E4%B8%B2%E8%A1%8C%E5%8C%96%E7%9A%84%E5%85%85%E5%88%86%E6%9D%A1%E4%BB%B6"><span class="nav-number">10.9.</span> <span class="nav-text">冲突可串行化：给出一个判断课串行化的充分条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%85%E5%88%86%E6%9D%A1%E4%BB%B6"><span class="nav-number">10.10.</span> <span class="nav-text">充分条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90-3"><span class="nav-number">10.11.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E6%AE%B5%E9%94%81%E5%8D%8F%E8%AE%AE2PL"><span class="nav-number">10.12.</span> <span class="nav-text">两段锁协议2PL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E9%98%B6%E6%AE%B5%E5%92%8C%E6%94%B6%E7%BC%A9%E9%98%B6%E6%AE%B5"><span class="nav-number">10.13.</span> <span class="nav-text">扩展阶段和收缩阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%B5%E5%BE%AA2PL%E5%8D%8F%E8%AE%AE%EF%BC%9A%E5%8F%88%E4%B8%80%E4%B8%AA%E5%8F%AF%E4%B8%B2%E8%A1%8C%E5%8C%96%E7%9A%84%E5%85%85%E5%88%86%E6%9D%A1%E4%BB%B6"><span class="nav-number">10.14.</span> <span class="nav-text">遵循2PL协议：又一个可串行化的充分条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E5%B0%81%E9%94%81%E6%B3%95-vs-2PL%E5%8D%8F%E8%AE%AE"><span class="nav-number">10.15.</span> <span class="nav-text">一次封锁法 vs 2PL协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E7%B2%92%E5%BA%A6"><span class="nav-number">10.16.</span> <span class="nav-text">封锁粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%B0%81%E9%94%81%E7%B2%92%E5%BA%A6%E5%8E%9F%E5%88%99"><span class="nav-number">10.17.</span> <span class="nav-text">选择封锁粒度原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%B2%92%E5%BA%A6%E6%A0%91"><span class="nav-number">10.18.</span> <span class="nav-text">多粒度树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%B2%92%E5%BA%A6%E5%8D%8F%E8%AE%AE"><span class="nav-number">10.19.</span> <span class="nav-text">多粒度协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%B0%81%E9%94%81%E4%B8%8E%E9%9A%90%E5%BC%8F%E5%B0%81%E9%94%81"><span class="nav-number">10.20.</span> <span class="nav-text">显示封锁与隐式封锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E8%BF%9B%E6%84%8F%E5%90%91%E9%94%81%E7%9A%84%E7%9B%AE%E7%9A%84Intention-Lock"><span class="nav-number">10.21.</span> <span class="nav-text">引进意向锁的目的Intention Lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E5%85%B1%E4%BA%AB%E9%94%81IS"><span class="nav-number">10.22.</span> <span class="nav-text">意向共享锁IS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E6%8E%92%E5%AE%83%E9%94%81IX"><span class="nav-number">10.23.</span> <span class="nav-text">意向排它锁IX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E6%84%8F%E5%90%91%E6%8E%92%E5%AE%83%E9%94%81SIX"><span class="nav-number">10.24.</span> <span class="nav-text">共享意向排它锁SIX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81%E6%8F%90%E9%AB%98%E4%BA%86%E5%8A%A0%E9%94%81%E6%97%B6%E7%9A%84%E6%A3%80%E6%9F%A5%E6%95%88%E7%8E%87"><span class="nav-number">10.25.</span> <span class="nav-text">意向锁提高了加锁时的检查效率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81%E7%9A%84%E7%9B%B8%E5%AE%B9%E7%9F%A9%E9%98%B5"><span class="nav-number">10.26.</span> <span class="nav-text">意向锁的相容矩阵</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NoSQL"><span class="nav-number">11.</span> <span class="nav-text">NoSQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E6%8A%97%E5%A4%B1%E8%B0%90"><span class="nav-number">11.1.</span> <span class="nav-text">阻抗失谐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E9%97%AE%E9%A2%98"><span class="nav-number">11.2.</span> <span class="nav-text">集群问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">11.3.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E5%90%88%EF%BC%9A%E5%90%8D%E8%AF%8D%E8%80%8C%E9%9D%9E%E5%8A%A8%E8%AF%8D"><span class="nav-number">11.4.</span> <span class="nav-text">聚合：名词而非动词</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NoSQL%E7%89%B9%E7%82%B9%EF%BC%9A%E6%97%A0%E6%A8%A1%E5%BC%8F"><span class="nav-number">11.5.</span> <span class="nav-text">NoSQL特点：无模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">11.6.</span> <span class="nav-text">格式不一致的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAP%E5%AE%9A%E7%90%86"><span class="nav-number">11.7.</span> <span class="nav-text">CAP定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BASE%E5%B1%9E%E6%80%A7"><span class="nav-number">11.8.</span> <span class="nav-text">BASE属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%9A%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="nav-number">12.</span> <span class="nav-text">做题记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E7%A0%81"><span class="nav-number">12.1.</span> <span class="nav-text">如何判断码</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">SYuan03</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共 45 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.4</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+<script>
+    // Tag: 自己新增
+    document.addEventListener('DOMContentLoaded', function() {
+        if (theme.global.single_page !== false) {
+            document.addEventListener('click', function(e) {
+                let target = e.target;
+                while (target && !target.href) {
+                    target = target.parentNode;
+                }
+                if (target && target.href) {
+                    const url = new URL(target.href);
+                    if (url.pathname.includes('/shuoshuo')) {
+                        e.preventDefault(); // 阻止链接默认的导航行为
+                        window.location.href = target.href; // 通过传统方式加载 `/shuoshuo` 页面
+                    }
+                    // 对于其他链接，什么都不做，让 swup 接管
+                }
+            });
+        }
+    });
+</script>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>

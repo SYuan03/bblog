@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="SYuan03">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://bblog.031105.xyz/posts/2023-summer-courses-cloudwego/day2-http.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="Day2-1 HTTP基础 为什么需要协议  明确的边界 信息解析 （预留拓展）  HTTP最早版本 0.9 HTTP协议的最初版本是HTTP&#x2F;0.9，它于1991年问世。这个版本非常简单，只支持无格式的文本数据传输，没有请求头、响应头等结构化信息。 HTTP&#x2F;0.9的主要特点如下：  请求方式：只支持GET请求方法，即通过GET方法请求服务器上的资源。 URL：只能包含请求的路径，没有主机名、端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Day2-HTTP">
+<meta property="og:url" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http.html">
+<meta property="og:site_name" content="淡水鱼的蔚蓝之海">
+<meta property="og:description" content="Day2-1 HTTP基础 为什么需要协议  明确的边界 信息解析 （预留拓展）  HTTP最早版本 0.9 HTTP协议的最初版本是HTTP&#x2F;0.9，它于1991年问世。这个版本非常简单，只支持无格式的文本数据传输，没有请求头、响应头等结构化信息。 HTTP&#x2F;0.9的主要特点如下：  请求方式：只支持GET请求方法，即通过GET方法请求服务器上的资源。 URL：只能包含请求的路径，没有主机名、端">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711105619899.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711111350794.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112326548.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112540419.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112702967.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711113256917.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151253162.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151516937.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151635573.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711231931491.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233040123.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233626785.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711235734655.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712001708832.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712002635960.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712004622251.png">
+<meta property="og:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712012317679.png">
+<meta property="article:published_time" content="2023-07-11T03:42:29.000Z">
+<meta property="article:modified_time" content="2024-09-30T12:52:01.761Z">
+<meta property="article:author" content="奔跑的淡水鱼">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711105619899.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/MyImgs/icon1.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/MyImgs/icon1.svg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/MyImgs/icon1.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            Day2-HTTP -
+        
+        ChrisDing&#39;s bblog
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script>document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("busuanzi_value_site_uv"),t=document.getElementById("busuanzi_value_site_pv"),n=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){n.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+1782;break}}),i=new MutationObserver(e=>{for(let t of e)if("childList"===t.type){i.disconnect(),t.target.innerHTML=parseInt(t.target.innerHTML)+3784;break}}),r={childList:!0};n.observe(e,r),i.observe(t,r)});</script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"bblog.031105.xyz","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":true,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/MyImgs/home-bg2-light.jpg","dark":"/MyImgs/home-bg-dark.png"},"title":"Welcome to my bblog !","subtitle":{"text":["画凌烟，上甘泉，自古功名属少年!"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#6B3E99"},"text_style":{"title_size":"3.8rem","subtitle_size":"2.1rem","line_height":1.5},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/SYuan03","instagram":null,"zhihu":null,"twitter":null,"email":"tu3344606@gmail.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":true,"type":["atom"],"path":["atom.xml"],"limit":0,"hub":null,"content":null,"content_limit":200,"content_limit_delim":" ","order_by":"-date","icon":"fa-solid fa-rss"},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"绿光","artist":"孙燕姿","url":"https://box.nju.edu.cn/f/6cb53c50b68441cb9df9/?dl=1","cover":"https://s2.loli.net/2024/03/13/4dGBWbposnzfeOv.png","lrc":"/MyLRCs/LvGuang.lrc"},{"name":"黑色柳丁","artist":"陶喆","url":"https://box.nju.edu.cn/f/73c03bfd86f64670b2d0/?dl=1","cover":"https://s2.loli.net/2024/03/13/aVRZuNlzgF2CeBX.png"},{"name":"听","artist":"方大同","url":"https://box.nju.edu.cn/f/99a456f7d933420ead28/?dl=1","cover":"https://s2.loli.net/2024/03/13/UC4ZXvGsmJPwVSz.png"},{"name":"Exile","artist":"Taylor Swift","url":"https://box.nju.edu.cn/f/67b6f94a1994497ba3b0/?dl=1","cover":"https://s2.loli.net/2024/03/13/L31UtycDV4FbYfv.png"},{"name":"Blowin' in the Wind","artist":"Bob Dylan","url":"https://box.nju.edu.cn/f/fbad6214b7c5457f9b34/?dl=1","cover":"https://s2.loli.net/2024/03/13/mw52W3hDnvEAd8P.png"},{"name":"日落大道","artist":"梁博","url":"https://box.nju.edu.cn/f/c21c2403884a4451b751/?dl=1","cover":"https://s2.loli.net/2024/03/13/qOtwhWycx1JYve4.png"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.4","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about","Github":"https://github.com/SYuan03"}},"Shuoshuo":{"path":"/shuoshuo","icon":"fa-regular fa-bullhorn"}},"search":{"enable":true,"preload":true},"tags":{"Tags":{"icon":"fa-solid fa-tags","path":"/tags"}},"categories":{"Categories":{"icon":"fa-solid fa-folder","path":"/categories"}},"shuoshuo":{"Shuoshuo":{"icon":"fa-regular fa-bullhorn","path":"/shuoshuo"}}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":5},"tags":{"enable":true,"limit":5}},"footerStart":"2023/04/14 20:57:49"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="淡水鱼的蔚蓝之海" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+    <style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        ChrisDing&#39;s bblog
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({loop: true})
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [40,0],
+                translateZ: 0,
+                opacity: [0,1],
+                filter: ['blur(5px)', 'blur(0px)'], // Starting from blurred to unblurred
+                easing: "easeOutExpo",
+                duration: 1400,
+                delay: (el, i) => 300 + 30 * i,
+            }).add({
+                targets: '.ml13 .letter',
+                translateY: [0,-40],
+                opacity: [1,0],
+                filter: ['blur(0px)', 'blur(5px)'], // Ending from unblurred to blurred
+                easing: "easeInExpo",
+                duration: 1200,
+                delay: (el, i) => 100 + 30 * i,
+                complete: function() {
+                    hidePreloader(); // Call hidePreloader after the animation completes
+                }
+            });
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/MyImgs/icon1.svg">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                ChrisDing&#39;s bblog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                        
+                                            <li>
+                                                <a href="/about">
+                                                    ME
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/SYuan03">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                    </ul>
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/shuoshuo"
+                                        >
+                                    <i class="fa-regular fa-bullhorn fa-fw"></i>
+                                    说说
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                             navbar-data-toggle="submenu-About"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-About">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/about">ME</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/SYuan03">GITHUB</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/shuoshuo"
+                        >
+                            <span>
+                                说说
+                            </span>
+                            
+                                <i class="fa-regular fa-bullhorn fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">24</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">45</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://s2.loli.net/2023/07/11/pVQlX1SdDe6nAhU.png" alt="Day2-HTTP" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-start">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">Day2-HTTP</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/MyImgs/avatar1.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">SYuan03</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv4</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-07-11 11:42:29</span>
+        <span class="mobile">2023-07-11 11:42:29</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-09-30 20:52:01</span>
+            <span class="mobile">2024-09-30 20:52:01</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/2023-Summer-Courses-CloudWeGo/">2023-Summer-Courses-CloudWeGo</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h2 id="Day2-1-HTTP基础">Day2-1 HTTP基础</h2>
+<h3 id="为什么需要协议">为什么需要协议</h3>
+<ol>
+<li>明确的边界</li>
+<li>信息解析</li>
+<li>（预留拓展）</li>
+</ol>
+<h3 id="HTTP最早版本">HTTP最早版本</h3>
+<p>0.9</p>
+<p>HTTP协议的最初版本是HTTP/0.9，它于1991年问世。这个版本非常简单，只支持无格式的文本数据传输，没有请求头、响应头等结构化信息。</p>
+<p>HTTP/0.9的主要特点如下：</p>
+<ol>
+<li>请求方式：只支持GET请求方法，即通过GET方法请求服务器上的资源。</li>
+<li>URL：只能包含请求的路径，没有主机名、端口号、查询参数等。</li>
+<li>响应格式：服务器返回的响应只包含请求资源的纯文本内容，没有响应头、状态码等。</li>
+<li>连接：每次请求都会关闭连接，无法保持持久连接。</li>
+<li>内容类型：响应的内容类型默认为HTML。</li>
+</ol>
+<h3 id="HTTP协议里有什么">HTTP协议里有什么</h3>
+<p>0.9到1.1的版本变化</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711105619899.png" class title="image-20230711105619899">
+<h3 id="状态码">状态码</h3>
+<ul>
+<li>1xx（信息性状态码）：表示请求已被接收，正在处理中。
+<ul>
+<li>100 Continue：服务器已收到请求的初始部分，客户端应继续发送剩余部分。</li>
+<li>101 Switching Protocols：服务器已经理解请求，将切换到不同的协议进行通信。</li>
+</ul>
+</li>
+<li>2xx（成功状态码）：表示请求已成功处理。
+<ul>
+<li>200 OK：请求成功，返回对应的资源。</li>
+<li>201 Created：请求已成功处理，并在服务器上创建了新资源。</li>
+<li>204 No Content：请求成功，但响应不包含实体主体内容。</li>
+</ul>
+</li>
+<li>3xx（重定向状态码）：表示需要进行进一步操作以完成请求。
+<ul>
+<li>301 Moved Permanently：资源的URI已永久移动到新位置。</li>
+<li>302 Found：资源的URI已临时移动到新位置。</li>
+<li>304 Not Modified：客户端的缓存副本仍然有效，可以使用缓存的版本。</li>
+</ul>
+</li>
+<li>4xx（客户端错误状态码）：表示请求包含语法错误或无法完成请求。
+<ul>
+<li>400 Bad Request：请求无效，服务器无法理解请求。</li>
+<li>401 Unauthorized：请求要求身份验证。</li>
+<li>404 Not Found：请求的资源不存在。</li>
+</ul>
+</li>
+<li>5xx（服务器错误状态码）：表示服务器在处理请求时发生错误。
+<ul>
+<li>500 Internal Server Error：服务器遇到意外错误，无法完成请求。</li>
+<li>502 Bad Gateway：服务器作为网关或代理，从上游服务器收到无效响应。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711111350794.png" class title="image-20230711111350794">
+</blockquote>
+<h3 id="HTTP报文结构">HTTP报文结构</h3>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112326548.png" class title="image-20230711112326548">
+<h4 id="1、请求行和响应行（状态行）">1、请求行和响应行（状态行）</h4>
+<p>请求行：请求方法，url，HTTP版本</p>
+<p>相应行：HTTP版本，状态码，状态描述</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112540419.png" class title="image-20230711112540419">
+<h4 id="2、请求头和响应头">2、请求头和响应头</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711112702967.png" class title="image-20230711112702967">
+<blockquote>
+<p>不止有图上这些</p>
+</blockquote>
+<h5 id="1-请求头">1.请求头</h5>
+<p><strong>Accept:MIME</strong> 可选项，不一定有</p>
+<p>指明了期望返回的类型</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711113256917.png" class title="image-20230711113256917">
+<p><strong>Host</strong></p>
+<p>请求头中的 “Host” 字段用于指定目标服务器的主机名或 IP 地址。它是 HTTP/1.1 协议中的一个必需字段，在发送请求时应该包含在请求头部中。</p>
+<h5 id="2-响应头">2.响应头</h5>
+<p>Content-Length</p>
+<p>Content-Type</p>
+<h4 id="3、空行">3、空行</h4>
+<h4 id="4、请求体和响应体">4、请求体和响应体</h4>
+<h3 id="Day2-2-Hertz-应用篇">Day2-2 Hertz 应用篇</h3>
+<h4 id="hz和thriftgo">hz和thriftgo</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151253162.png" class title="image-20230711151253162">
+<h4 id="IDL-Interface-Definition-Language">IDL Interface Definition Language</h4>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151516937.png" class title="image-20230711151516937">
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151635573.png" class title="image-20230711151635573">
+<h3 id="Hz实战1">Hz实战1</h3>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>创建hello.thrift文件</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> idl</span><br><span class="line">vim hello.thrift</span><br></pre></td></tr></table></figure></div>
+<p><code>hello.thrift</code>文件内容</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// idl/hello.thrift</span></span><br><span class="line">namespace go nju.dsy.example </span><br><span class="line"><span class="comment">// 指明目标代码语言是go</span></span><br><span class="line"><span class="comment">// 命名空间是nju.dsy.example</span></span><br><span class="line"></span><br><span class="line">struct HelloReq &#123;</span><br><span class="line">    <span class="number">1</span>: string <span class="title function_">Name</span> <span class="params">(api.query=<span class="string">&quot;name&quot;</span>)</span>; </span><br><span class="line">    <span class="comment">// 添加 api 注解为方便进行参数绑定</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct HelloResp &#123;</span><br><span class="line">    <span class="number">1</span>: string RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">service HelloService &#123;</span><br><span class="line">    HelloResp <span class="title function_">HelloMethod</span><span class="params">(<span class="number">1</span>: HelloReq request)</span> (api.get=<span class="string">&quot;/hello&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hz new -module github.com/SYuan03/thrift/example -idl idl/hello.thrift</span><br><span class="line">go mod tidy	<span class="comment"># 整理 &amp; 拉取依赖</span></span><br></pre></td></tr></table></figure></div>
+<blockquote>
+<p>namespace里面就是对应的多级目录结构</p>
+</blockquote>
+<blockquote>
+<p>执行go mod tidy后，爆红消失</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711231931491.png" class title="image-20230711231931491">
+</blockquote>
+<p>修改 handler，添加自己的逻辑</p>
+<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// handler path: biz/handler/hello/example/hello_service.go</span></span><br><span class="line"><span class="comment">// 其中 &quot;hello/example&quot; 是 thrift idl 的 namespace</span></span><br><span class="line"><span class="comment">// &quot;hello_service.go&quot; 是 thrift idl 中 service 的名字，所有 HelloService 定义的方法都会生成在这个文件中</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// HelloMethod .</span></span><br><span class="line"><span class="comment">// @router /hello [GET]</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HelloMethod</span><span class="params">(ctx context.Context, c *app.RequestContext)</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line">        <span class="keyword">var</span> req example.HelloReq</span><br><span class="line">        err = c.BindAndValidate(&amp;req)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                c.String(<span class="number">400</span>, err.Error())</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        resp := <span class="built_in">new</span>(example.HelloResp)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 你可以修改整个函数的逻辑，而不仅仅局限于当前模板</span></span><br><span class="line">        resp.RespBody = <span class="string">&quot;hello,&quot;</span> + req.Name <span class="comment">// 添加的逻辑</span></span><br><span class="line"></span><br><span class="line">        c.JSON(<span class="number">200</span>, resp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">go build</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line">./example</span><br><span class="line">curl http://127.0.0.1:8888/hello?name=dsy -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233040123.png" class title="image-20230711233040123">
+<p>成功</p>
+<h3 id="Hz实战2">Hz实战2</h3>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>更新一个已有的项目</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233626785.png" class title="image-20230711233626785">
+<p>根据需求重写hello.thrift的内容</p>
+<div class="highlight-container" data-rel="Java"><figure class="iseeu highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// idl/hello.thrift</span></span><br><span class="line">namespace go nju.dsy.example </span><br><span class="line"><span class="comment">// 指明目标代码语言是go</span></span><br><span class="line"><span class="comment">// 命名空间是nju.dsy.example</span></span><br><span class="line"></span><br><span class="line">struct GetStudentInfoReq &#123;</span><br><span class="line">    <span class="number">1</span>: i32 <span class="title function_">ID</span> <span class="params">(api.query=<span class="string">&quot;id&quot;</span>)</span>; <span class="comment">// 添加 api 注解为方便进行参数绑定</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct GetStudentInfoResp &#123;</span><br><span class="line">    <span class="number">1</span>: i32 ID;</span><br><span class="line">    <span class="number">2</span>: string Name;</span><br><span class="line">    <span class="number">3</span>: string Favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct PostStudentInfoReq &#123;</span><br><span class="line">    <span class="number">1</span>: i32 ID;</span><br><span class="line">    <span class="number">2</span>: string Name;</span><br><span class="line">    <span class="number">3</span>: string Favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct PostStudentInfoResp &#123;</span><br><span class="line">    <span class="number">1</span>: string RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service StudentService &#123;</span><br><span class="line">    GetStudentInfoResp <span class="title function_">GetStudentInfoMethod</span><span class="params">(<span class="number">1</span>: GetStudentInfoReq request)</span> (api.get=<span class="string">&quot;/query&quot;</span>);</span><br><span class="line"></span><br><span class="line">    PostStudentInfoResp <span class="title function_">PostStudentInfoMethod</span><span class="params">(<span class="number">1</span>: PostStudentInfoReq request)</span> (api.post=<span class="string">&quot;/add-student-info&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<blockquote>
+<p>thrift的idl的结构体需要标序号，参数也要标序号，以指明顺序</p>
+<p>int用不了，要用i32</p>
+</blockquote>
+<p>执行</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hz update -idl idl/hello.thrift</span><br></pre></td></tr></table></figure></div>
+<p>关于make</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711235734655.png" class title="image-20230711235734655">
+<p>成功</p>
+<p>post</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:8888/add-student-info -X POST -H <span class="string">&#x27;Content-Type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;ID&quot;:666,&quot;Name&quot;: &quot;dsy&quot;, &quot;Favorite&quot;: &quot;peach&quot;&#125;&#x27;</span> -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
+<p>get</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:8888/query?<span class="built_in">id</span>=10 -w <span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure></div>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712001708832.png" class title="image-20230712001708832">
+<h3 id="Hz实战3">Hz实战3</h3>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/more-feature/client/">hz client 代码生成 | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>参考</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://github.com/cloudwego/hertz-examples/tree/main/hz/hz_client">hertz-examples/hz/hz_client at main · cloudwego/hertz-examples · GitHub <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>啥玩意？</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712002635960.png" class title="image-20230712002635960">
+<blockquote>
+<ul>
+<li>
+<p>IDL（Interface Definition Language）：接口定义语言，用于定义分布式系统中服务接口的规范和格式。IDL 可以用于生成客户端和服务器端的代码，以便它们可以相互通信和交互数据。Thrift 和 gRPC 等框架都支持使用 IDL 进行服务定义和代码生成。</p>
+</li>
+<li>
+<p>RPC（Remote Procedure Call）：远程过程调用，是一种跨网络的分布式系统通信方式，允许客户端应用程序调用远程服务器上的过程或方法，并接收返回结果。RPC 可以使用 HTTP、TCP、UDP 等协议进行通信，常用的框架包括 Thrift、gRPC、Dubbo 等。</p>
+</li>
+<li>
+<p>HTTP 请求：超文本传输协议（HTTP）定义了客户端和服务器之间的通信协议。HTTP 请求是客户端向服务器发送的请求，包括请求方法、URL、请求头、请求体等信息。服务器根据这些信息来处理请求，并返回响应结果。</p>
+</li>
+<li>
+<p>Hertz client：Hertz 是一个开源的 RPC 框架，支持使用 IDL 进行服务定义和代码生成。Hertz client 是客户端程序，用于向 Hertz server 发送 RPC 请求，并接收响应结果。</p>
+</li>
+<li>
+<p>Hertz server：Hertz server 是服务端程序，用于接收 Hertz client 发送的 RPC 请求，并处理请求，返回响应结果。</p>
+</li>
+</ul>
+<p>它提到了一种工具或框架，可以根据 IDL 文件生成客户端代码，并自动屏蔽创建和初始化 Hertz client 的繁琐操作。生成的客户端代码可以直接使用 HTTP 请求调用 Hertz server 提供的服务，并接收响应结果。使用这种工具或框架，可以大大简化分布式系统中的开发和调试过程，提高开发效率。</p>
+</blockquote>
+<p>先把之前的idl搬过来</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> server</span><br><span class="line"><span class="built_in">cd</span> server</span><br><span class="line">hz new -mod=github.com/SYuan03/thrift/example2 --idl=../idl/hello.thrift --handler_by_method -t=template=slim</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 同理，略</span></span><br><span class="line">hz client -mod=github.com/SYuan03/thrift/client --idl=../idl/hello.thrift --model_dir=hertz_gen -t</span><br><span class="line">=template=slim --client_dir=hz_client</span><br></pre></td></tr></table></figure></div>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712004622251.png" class title="image-20230712004622251">
+<p>成功！</p>
+<img lazyload src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230712012317679.png" class title="image-20230712012317679">
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> Day2-HTTP</li>
+        <li><strong>作者:</strong> SYuan03</li>
+        <li><strong>创建于
+                :</strong> 2023-07-11 11:42:29</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-09-30 20:52:01
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://bblog.031105.xyz/posts/2023-Summer-Courses-CloudWeGo/day2-http.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html" title="Day3-RPC" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/12/I8YSvEDi5eJyH6U.jpg" alt="Day3-RPC" class="!max-w-none">
+  <span class="title">Day3-RPC</span>
+</a><a class="recommended-article-item" href="/posts/2023-Summer-Courses-CloudWeGo/day4-服务发现与负载均衡.html" title="Day4-服务发现与负载均衡" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/18/uKQdnGxEN6jMmlt.png" alt="Day4-服务发现与负载均衡" class="!max-w-none">
+  <span class="title">Day4-服务发现与负载均衡</span>
+</a><a class="recommended-article-item" href="/posts/2023-Summer-Courses-百度移动端/2023baiduandroidlec5-lec6.html" title="2023BaiduAndroidlec5-lec6" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/23/ju3yULRqcB7KPYe.png" alt="2023BaiduAndroidlec5-lec6" class="!max-w-none">
+  <span class="title">2023BaiduAndroidlec5-lec6</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html" title="Day3-RPC" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/12/I8YSvEDi5eJyH6U.jpg" alt="Day3-RPC" class="!max-w-none">
+  <span class="title">Day3-RPC</span>
+</a><a class="recommended-article-item" href="/posts/2023-Summer-Courses-CloudWeGo/day4-服务发现与负载均衡.html" title="Day4-服务发现与负载均衡" rel="bookmark">
+  <img src="https://s2.loli.net/2023/07/18/uKQdnGxEN6jMmlt.png" alt="Day4-服务发现与负载均衡" class="!max-w-none">
+  <span class="title">Day4-服务发现与负载均衡</span>
+</a></div>
+   </div>
+  </div>
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/posts/2023-Summer-Courses-%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AF/2023%E7%99%BE%E5%BA%A6%E7%A7%BB%E5%8A%A8%E7%AB%AFlec2-lec4.html"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">2023百度移动端lec2-lec4</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/posts/2023-Spring-Courses-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/note-risc-v.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">note-RISC-V</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <!--TAG: 新增lightgallery的使用-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery.css">
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://imgss.s3.bitiful.net/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                <!--twikoo.init({-->
+                <!--    el: '#twikoo-comment',-->
+                <!--    envId: 'https://api.twikoo.031105.xyz',-->
+                <!--});-->
+                <!--TAG: 新增lightgallery的使用-->
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://api.twikoo.031105.xyz',
+                    onCommentLoaded: function () {
+                        var commentContents = document.getElementsByClassName('tk-content');
+                        for (var i = 0; i < commentContents.length; i++) {
+                            var commentItem = commentContents[i];
+                            var imgEls = commentItem.getElementsByTagName('img');
+                            for (var j = 0; j < imgEls.length; j++) {
+                                var imgEl = imgEls[j];
+                                // 检查图片是否已经被处理过
+                                if (!imgEl.classList.contains('processed')) {
+                                    var aEl = document.createElement('a');
+                                    aEl.setAttribute('class', 'tk-lg-link');
+                                    aEl.setAttribute('href', imgEl.getAttribute('src'));
+                                    aEl.setAttribute('data-src', imgEl.getAttribute('src'));
+                                    aEl.appendChild(imgEl.cloneNode(false));
+                                    imgEl.parentNode.insertBefore(aEl, imgEl.nextSibling);
+                                    imgEl.remove();
+                                    // 标记图片已经被处理
+                                    aEl.firstChild.classList.add('processed');
+                                }
+                            }
+                            // 初始化 lightGallery 只对新添加的链接
+                            lightGallery(commentItem, {
+                                selector: '.tk-lg-link:not(.lightGallery-inited)',
+                                share: false
+                            });
+                            // 标记链接已初始化 lightGallery
+                            var links = commentItem.querySelectorAll('.tk-lg-link');
+                            for (var link of links) {
+                                link.classList.add('lightGallery-inited');
+                            }
+                        }
+                    }
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">Day2-HTTP</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Day2-1-HTTP%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">Day2-1 HTTP基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E6%9C%80%E6%97%A9%E7%89%88%E6%9C%AC"><span class="nav-number">1.2.</span> <span class="nav-text">HTTP最早版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E5%8D%8F%E8%AE%AE%E9%87%8C%E6%9C%89%E4%BB%80%E4%B9%88"><span class="nav-number">1.3.</span> <span class="nav-text">HTTP协议里有什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81"><span class="nav-number">1.4.</span> <span class="nav-text">状态码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E6%8A%A5%E6%96%87%E7%BB%93%E6%9E%84"><span class="nav-number">1.5.</span> <span class="nav-text">HTTP报文结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E8%AF%B7%E6%B1%82%E8%A1%8C%E5%92%8C%E5%93%8D%E5%BA%94%E8%A1%8C%EF%BC%88%E7%8A%B6%E6%80%81%E8%A1%8C%EF%BC%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">1、请求行和响应行（状态行）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E8%AF%B7%E6%B1%82%E5%A4%B4%E5%92%8C%E5%93%8D%E5%BA%94%E5%A4%B4"><span class="nav-number">1.5.2.</span> <span class="nav-text">2、请求头和响应头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E7%A9%BA%E8%A1%8C"><span class="nav-number">1.5.3.</span> <span class="nav-text">3、空行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81%E8%AF%B7%E6%B1%82%E4%BD%93%E5%92%8C%E5%93%8D%E5%BA%94%E4%BD%93"><span class="nav-number">1.5.4.</span> <span class="nav-text">4、请求体和响应体</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Day2-2-Hertz-%E5%BA%94%E7%94%A8%E7%AF%87"><span class="nav-number">1.6.</span> <span class="nav-text">Day2-2 Hertz 应用篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hz%E5%92%8Cthriftgo"><span class="nav-number">1.6.1.</span> <span class="nav-text">hz和thriftgo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IDL-Interface-Definition-Language"><span class="nav-number">1.6.2.</span> <span class="nav-text">IDL Interface Definition Language</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hz%E5%AE%9E%E6%88%981"><span class="nav-number">1.7.</span> <span class="nav-text">Hz实战1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hz%E5%AE%9E%E6%88%982"><span class="nav-number">1.8.</span> <span class="nav-text">Hz实战2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hz%E5%AE%9E%E6%88%983"><span class="nav-number">1.9.</span> <span class="nav-text">Hz实战3</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">SYuan03</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共 45 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.4</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+<script>
+    // Tag: 自己新增
+    document.addEventListener('DOMContentLoaded', function() {
+        if (theme.global.single_page !== false) {
+            document.addEventListener('click', function(e) {
+                let target = e.target;
+                while (target && !target.href) {
+                    target = target.parentNode;
+                }
+                if (target && target.href) {
+                    const url = new URL(target.href);
+                    if (url.pathname.includes('/shuoshuo')) {
+                        e.preventDefault(); // 阻止链接默认的导航行为
+                        window.location.href = target.href; // 通过传统方式加载 `/shuoshuo` 页面
+                    }
+                    // 对于其他链接，什么都不做，让 swup 接管
+                }
+            });
+        }
+    });
+</script>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>
