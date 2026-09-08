@@ -5,6 +5,7 @@
   const hasToc = tocHtml && strip_html(tocHtml).trim().length > 0;
   const isEncrypted = String(page.content || '').includes('hexo-blog-encrypt');
   const commentsEnabled = theme.comments && theme.comments.enable && !isEncrypted;
+  const deckText = isEncrypted ? '受密码保护的文章。' : '';
 %>
 <article class="article-shell section-shell">
   <header class="article-header reveal">
@@ -15,10 +16,10 @@
     </div>
     <h1><%= page.title %></h1>
     <div class="article-deck">
-      <p><%= isEncrypted ? '这篇内容已加密，仅向知道密码的人开放。' : '一份关于技术、方法与实践过程的长期笔记。' %></p>
+      <% if (deckText) { %><p><%= truncate(deckText, { length: 140 }) %></p><% } else { %><span></span><% } %>
       <dl class="article-stats">
         <div><dt>字数</dt><dd><%= wordcount(page.content) %></dd></div>
-        <div><dt>阅读</dt><dd><%= min2read(page.content) %> 分钟</dd></div>
+        <div><dt>阅读</dt><dd><%= min2read(page.content) %></dd></div>
       </dl>
     </div>
   </header>
