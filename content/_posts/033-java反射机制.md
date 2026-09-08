@@ -7,7 +7,6 @@ categories:
   - "软件系统设计"
 tags:
   - "设计原则"
-comments: false
 ---
 
 <!-- Migrated from posts/软件系统设计/java反射机制.html. Keep the permalink stable. -->

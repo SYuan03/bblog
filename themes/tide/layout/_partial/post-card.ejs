@@ -1,0 +1,27 @@
+<%
+  const cats = post.categories ? post.categories.toArray() : [];
+  const tags = post.tags ? post.tags.toArray() : [];
+  const encrypted = String(post.content || '').includes('hexo-blog-encrypt');
+  const rawExcerpt = encrypted ? '这是一篇加密文章。输入密码后，继续阅读只属于特定时刻的内容。' : strip_html(post.excerpt || post.content || '');
+%>
+<article class="post-card reveal">
+  <div class="post-card-index"><%= String(index + 1).padStart(2, '0') %></div>
+  <div class="post-card-main">
+    <div class="post-meta">
+      <time datetime="<%= date_xml(post.date) %>"><%= date(post.date, 'YYYY.MM.DD') %></time>
+      <% if (cats.length) { %>
+        <span>·</span>
+        <a href="<%= url_for(cats[0].path) %>"><%= cats[0].name %></a>
+      <% } %>
+      <% if (encrypted) { %><span class="lock-label">私人</span><% } %>
+    </div>
+    <h2><a href="<%= url_for(post.path) %>"><%= post.title %></a></h2>
+    <p class="post-excerpt"><%= truncate(rawExcerpt.replace(/\s+/g, ' ').trim(), { length: 170 }) %></p>
+    <div class="post-card-footer">
+      <div class="tag-row">
+        <% tags.slice(0, 3).forEach((tag) => { %><a href="<%= url_for(tag.path) %>"># <%= tag.name %></a><% }) %>
+      </div>
+      <a class="read-link" href="<%= url_for(post.path) %>">阅读文章 <span>↗</span></a>
+    </div>
+  </div>
+</article>

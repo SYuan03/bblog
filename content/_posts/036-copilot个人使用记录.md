@@ -8,7 +8,6 @@ categories:
 tags:
   - "摸鱼"
   - "猎奇"
-comments: false
 ---
 
 <!-- Migrated from posts/实践记录/copilot个人使用记录.html. Keep the permalink stable. -->

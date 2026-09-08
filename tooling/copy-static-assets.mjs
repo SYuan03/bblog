@@ -55,5 +55,10 @@ await cp(
   path.join(outputRoot, "vendor", "artitalk.js"),
   { force: true },
 );
+await cp(
+  path.join(projectRoot, "node_modules", "twikoo", "dist", "twikoo.all.min.js"),
+  path.join(outputRoot, "vendor", "twikoo.all.min.js"),
+  { force: true },
+);
 
-console.log("Copied legacy media, encrypted-post runtime, and pinned Artitalk assets.");
+console.log("Copied legacy media, encrypted-post runtime, Artitalk, and Twikoo assets.");

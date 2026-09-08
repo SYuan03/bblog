@@ -8,7 +8,6 @@ categories:
 tags:
   - "服务器"
   - "SSL"
-comments: false
 ---
 
 <!-- Migrated from posts/实践记录/zerossl-域名ssl配置说明.html. Keep the permalink stable. -->

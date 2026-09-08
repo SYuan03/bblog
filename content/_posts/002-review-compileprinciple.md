@@ -9,7 +9,6 @@ categories:
   - "2023-Spring-Courses-编译原理"
 tags:
   - "编译原理"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Spring-Courses-编译原理/review-compileprinciple.html. Keep the permalink stable. -->

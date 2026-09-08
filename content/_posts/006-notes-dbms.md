@@ -9,7 +9,6 @@ categories:
   - "2023-Spring-Courses-数据库管理"
 tags:
   - "数据库管理"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Spring-Courses-数据库管理/notes-dbms.html. Keep the permalink stable. -->

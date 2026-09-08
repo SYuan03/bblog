@@ -8,7 +8,6 @@ categories:
 tags:
   - "服务器"
   - "Visa卡"
-comments: false
 ---
 
 <!-- Migrated from posts/杂记/droplet购买记录.html. Keep the permalink stable. -->

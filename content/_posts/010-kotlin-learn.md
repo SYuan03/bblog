@@ -10,7 +10,6 @@ categories:
 tags:
   - "移动端开发"
   - "Kotlin学习"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Summer-Courses-百度移动端/kotlin-learn.html. Keep the permalink stable. -->

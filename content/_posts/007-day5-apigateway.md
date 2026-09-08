@@ -8,7 +8,6 @@ cover: "https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg"
 categories:
   - "2023-Summer-CloudWeGo"
 tags:
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Summer-CloudWeGo/day5-apigateway.html. Keep the permalink stable. -->

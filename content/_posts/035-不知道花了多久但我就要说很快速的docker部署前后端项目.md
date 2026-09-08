@@ -7,7 +7,6 @@ categories:
   - "实践记录"
 tags:
   - "docker"
-comments: false
 ---
 
 <!-- Migrated from posts/实践记录/不知道花了多久但我就要说很快速的docker部署前后端项目.html. Keep the permalink stable. -->

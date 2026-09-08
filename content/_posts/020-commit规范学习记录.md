@@ -8,7 +8,6 @@ categories:
   - "工具学习"
 tags:
   - "规范学习"
-comments: false
 ---
 
 <!-- Migrated from posts/工具学习/commit规范学习记录.html. Keep the permalink stable. -->

@@ -9,7 +9,6 @@ categories:
   - "2023-Summer-Courses-CloudWeGo"
 tags:
   - "计算机网络"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Summer-Courses-CloudWeGo/day2-http.html. Keep the permalink stable. -->

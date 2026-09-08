@@ -11,7 +11,6 @@ categories:
 tags:
   - "Langchain"
   - "急急国王系列"
-comments: false
 ---
 
 <!-- Migrated from posts/实践记录/2024-Spring-软工三/基于langchain的sql交互agent.html. Keep the permalink stable. -->

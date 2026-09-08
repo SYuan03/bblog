@@ -9,7 +9,6 @@ categories:
   - "2023-Summer-Courses-百度移动端"
 tags:
   - "移动端开发"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Summer-Courses-百度移动端/2023baiduandroidlec5-lec6.html. Keep the permalink stable. -->

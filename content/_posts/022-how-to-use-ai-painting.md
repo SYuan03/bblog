@@ -10,7 +10,6 @@ categories:
 tags:
   - "AI"
   - "AI绘画"
-comments: false
 ---
 
 <!-- Migrated from posts/工具学习/how-to-use-ai-painting.html. Keep the permalink stable. -->

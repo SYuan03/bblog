@@ -8,7 +8,6 @@ cover: "https://s2.loli.net/2023/07/12/I8YSvEDi5eJyH6U.jpg"
 categories:
   - "2023-Summer-Courses-CloudWeGo"
 tags:
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html. Keep the permalink stable. -->

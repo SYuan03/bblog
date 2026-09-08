@@ -1,0 +1,72 @@
+<%
+  const cats = page.categories ? page.categories.toArray() : [];
+  const tags = page.tags ? page.tags.toArray() : [];
+  const tocHtml = toc(page.content, { list_number: false, min_depth: 2, max_depth: 3 });
+  const hasToc = tocHtml && strip_html(tocHtml).trim().length > 0;
+  const isEncrypted = String(page.content || '').includes('hexo-blog-encrypt');
+  const commentsEnabled = theme.comments && theme.comments.enable && !isEncrypted;
+%>
+<article class="article-shell section-shell">
+  <header class="article-header reveal">
+    <div class="article-kicker">
+      <% if (cats.length) { %><a href="<%= url_for(cats[0].path) %>"><%= cats[0].name %></a><% } else { %><span>NOTE</span><% } %>
+      <span>—</span>
+      <time datetime="<%= date_xml(page.date) %>"><%= date(page.date, 'YYYY.MM.DD') %></time>
+    </div>
+    <h1><%= page.title %></h1>
+    <div class="article-deck">
+      <p><%= isEncrypted ? '这篇内容已加密，仅向知道密码的人开放。' : '一份关于技术、方法与实践过程的长期笔记。' %></p>
+      <dl class="article-stats">
+        <div><dt>字数</dt><dd><%= wordcount(page.content) %></dd></div>
+        <div><dt>阅读</dt><dd><%= min2read(page.content) %> 分钟</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="article-grid">
+    <aside class="article-rail reveal">
+      <div class="rail-sticky">
+        <span class="rail-label">ON THIS PAGE</span>
+        <% if (hasToc) { %><nav class="article-toc"><%- tocHtml %></nav><% } else { %><p class="toc-empty">一口气读完吧。</p><% } %>
+        <div class="article-tools">
+          <button type="button" data-focus-toggle><span>◐</span> 专注阅读</button>
+          <button type="button" data-share><span>↗</span> 分享文章</button>
+          <% if (commentsEnabled) { %><a href="#comments"><span>◇</span> 留下评论</a><% } %>
+        </div>
+      </div>
+    </aside>
+
+    <div class="article-main reveal">
+      <div class="prose article-content markdown-body">
+        <%- page.content %>
+      </div>
+
+      <% if (tags.length) { %>
+        <div class="article-tags">
+          <span>Filed under</span>
+          <% tags.forEach((tag) => { %><a href="<%= url_for(tag.path) %>">#<%= tag.name %></a><% }) %>
+        </div>
+      <% } %>
+
+      <nav class="post-navigation" aria-label="相邻文章">
+        <% if (page.prev) { %>
+          <a href="<%= url_for(page.prev.path) %>"><span>上一篇</span><strong><%= page.prev.title %></strong></a>
+        <% } else { %><span></span><% } %>
+        <% if (page.next) { %>
+          <a class="next" href="<%= url_for(page.next.path) %>"><span>下一篇</span><strong><%= page.next.title %></strong></a>
+        <% } %>
+      </nav>
+
+      <% if (commentsEnabled) { %>
+        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>">
+          <div class="comments-heading">
+            <div><span class="eyebrow">CONVERSATION</span><h2>留言</h2></div>
+            <p>想法不必完整，真诚就好。</p>
+          </div>
+          <div id="twikoo-comment"><div class="comment-loading">正在载入留言…</div></div>
+        </section>
+        <script src="<%= url_for('/vendor/twikoo.all.min.js') %>" defer></script>
+      <% } %>
+    </div>
+  </div>
+</article>

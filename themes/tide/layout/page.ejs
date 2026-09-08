@@ -1,0 +1,37 @@
+<%
+  const isCategories = page.type === 'categories';
+  const isTags = page.type === 'tags';
+  const categories = site.categories ? site.categories.toArray().sort((a, b) => b.length - a.length) : [];
+  const tags = site.tags ? site.tags.toArray().sort((a, b) => b.length - a.length) : [];
+%>
+<section class="page-hero section-shell reveal">
+  <span class="eyebrow"><%= isCategories ? 'TOPICS' : isTags ? 'INDEX' : 'PAGE' %></span>
+  <h1><%= page.title %></h1>
+</section>
+
+<section class="page-shell section-shell reveal <%= page.path.startsWith('shuoshuo') ? 'is-shuoshuo' : '' %>">
+  <% if (isCategories) { %>
+    <div class="taxonomy-grid">
+      <% categories.forEach((category, index) => { %>
+        <a class="taxonomy-card" href="<%= url_for(category.path) %>">
+          <span><%= String(index + 1).padStart(2, '0') %></span>
+          <h2><%= category.name %></h2>
+          <p><%= category.length %> 篇文章</p>
+          <b>↗</b>
+        </a>
+      <% }) %>
+    </div>
+  <% } else if (isTags) { %>
+    <div class="tag-cloud-custom">
+      <% tags.forEach((tag) => { %>
+        <a href="<%= url_for(tag.path) %>" style="--weight:<%= Math.min(6, Math.max(1, tag.length)) %>">
+          <span>#</span><%= tag.name %><sup><%= tag.length %></sup>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <article class="page-content prose">
+      <%- page.content %>
+    </article>
+  <% } %>
+</section>

@@ -1,0 +1,37 @@
+<%
+  const path = `/${page.path || ''}`;
+  const activeFor = (itemPath) => itemPath === '/' ? is_home() : path.startsWith(itemPath);
+%>
+<header class="site-header" data-header>
+  <div class="header-inner">
+    <a class="brand" href="<%= url_for('/') %>" aria-label="返回首页">
+      <span class="brand-mark"><%= theme.identity.mark %></span>
+      <span class="brand-copy">
+        <strong><%= theme.identity.name %></strong>
+        <small><%= theme.identity.role %></small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" data-nav>
+      <% theme.navigation.forEach((item) => { %>
+        <a href="<%= url_for(item.path) %>" class="<%= activeFor(item.path) ? 'is-active' : '' %>"><%= item.label %></a>
+      <% }) %>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-button search-trigger" type="button" data-search-open aria-label="搜索文章">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.2 4.2"></path></svg>
+        <kbd>/</kbd>
+      </button>
+      <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="切换深浅色">
+        <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.5 8.5 0 1 0 20.2 15.4Z"></path></svg>
+      </button>
+    </div>
+  </div>
+</header>

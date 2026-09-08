@@ -8,7 +8,6 @@ categories:
   - "软件系统设计"
 tags:
   - "软件系统设计"
-comments: false
 ---
 
 <!-- Migrated from posts/期末复习/软件系统设计/24-spring-软件系统设计期末复习.html. Keep the permalink stable. -->

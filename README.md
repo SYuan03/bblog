@@ -6,8 +6,8 @@ The blog is now a maintainable Hexo project instead of only a committed static e
 
 - Node.js 22
 - Hexo 8.1.2
-- Redefine 2.9.0
-- Artitalk 3.3.4, pinned and self-hosted during the build
+- Tide, a custom editorial theme maintained in this repository
+- Twikoo 1.7.22 comments and Artitalk 3.3.4, pinned and self-hosted during the build
 - Netlify build configuration in `netlify.toml`
 
 ## Local development
@@ -34,7 +34,7 @@ Create new Markdown posts under `content/_posts/`, or use:
 npx hexo new post "Post title"
 ```
 
-The migrated posts intentionally contain their previously rendered article HTML inside a `legacy-content` wrapper. This preserves code blocks, encrypted payloads, links, and article markup without attempting a lossy HTML-to-Markdown conversion. New posts can use normal Markdown and Redefine 2.9 modules.
+The migrated posts intentionally contain their previously rendered article HTML inside a `legacy-content` wrapper. This preserves code blocks, encrypted payloads, links, and article markup without attempting a lossy HTML-to-Markdown conversion. New posts can use normal Markdown.
 
 ## Legacy assets
 

@@ -9,7 +9,6 @@ categories:
 tags:
   - "国画作品"
   - "艺术"
-comments: false
 ---
 
 <!-- Migrated from posts/杂记/非遗珍宝：chrisding早期国画作品展（一）.html. Keep the permalink stable. -->

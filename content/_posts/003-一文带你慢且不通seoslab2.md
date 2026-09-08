@@ -8,7 +8,6 @@ categories:
   - "2023-Spring-Courses-操作系统"
 tags:
   - "操作系统"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Spring-Courses-操作系统/一文带你慢且不通seoslab2.html. Keep the permalink stable. -->

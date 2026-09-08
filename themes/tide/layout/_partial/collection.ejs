@@ -1,0 +1,22 @@
+<%
+  const posts = page.posts ? page.posts.toArray() : [];
+%>
+<section class="collection-hero section-shell reveal">
+  <span class="eyebrow"><%= eyebrow %></span>
+  <h1><%= title %></h1>
+  <% if (description) { %><p><%= description %></p><% } %>
+</section>
+<section class="post-feed section-shell compact-feed">
+  <div class="post-list">
+    <% posts.forEach((post, index) => { %>
+      <%- partial('_partial/post-card', { post, index }) %>
+    <% }) %>
+  </div>
+  <% if (page.total > 1) { %>
+    <nav class="pagination reveal" aria-label="文章分页">
+      <% if (page.prev_link) { %><a href="<%= url_for(page.prev_link) %>">← 更新的</a><% } else { %><span></span><% } %>
+      <span><%= page.current %> / <%= page.total %></span>
+      <% if (page.next_link) { %><a href="<%= url_for(page.next_link) %>">更早的 →</a><% } %>
+    </nav>
+  <% } %>
+</section>

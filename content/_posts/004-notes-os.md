@@ -9,7 +9,6 @@ categories:
   - "2023-Spring-Courses-操作系统"
 tags:
   - "操作系统"
-comments: false
 ---
 
 <!-- Migrated from posts/2023-Spring-Courses-操作系统/notes-os.html. Keep the permalink stable. -->

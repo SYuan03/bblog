@@ -8,7 +8,6 @@ categories:
 tags:
   - "GitlabRunner"
   - "Proxy"
-comments: false
 ---
 
 <!-- Migrated from posts/杂记/gitlabrunner流水线之dockerhub重配置.html. Keep the permalink stable. -->

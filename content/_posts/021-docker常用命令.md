@@ -9,7 +9,6 @@ categories:
   - "工具学习"
 tags:
   - "docker"
-comments: false
 ---
 
 <!-- Migrated from posts/工具学习/docker常用命令.html. Keep the permalink stable. -->

@@ -10,7 +10,6 @@ categories:
 tags:
   - "软件质量与管理"
   - "期末大通关"
-comments: false
 ---
 
 <!-- Migrated from posts/期末复习/24-spring-软件质量与管理期末复习.html. Keep the permalink stable. -->

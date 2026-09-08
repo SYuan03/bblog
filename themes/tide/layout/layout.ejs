@@ -1,0 +1,41 @@
+<%
+  const titleText = page.title ? `${page.title} · ${config.title}` : `${config.title} · ${config.subtitle}`;
+  const descriptionText = page.description || page.excerpt || config.description;
+  const bodyType = page.layout === 'post' ? 'post' : (is_home() ? 'home' : 'page');
+%>
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f0e8">
+  <meta name="description" content="<%= strip_html(descriptionText).replace(/\"/g, '&quot;').slice(0, 180) %>">
+  <meta name="color-scheme" content="light dark">
+  <title><%= titleText %></title>
+  <link rel="canonical" href="<%= full_url_for(page.path || '') %>">
+  <link rel="alternate" type="application/atom+xml" title="<%= config.title %>" href="<%= url_for('/atom.xml') %>">
+  <link rel="icon" href="<%= url_for('/MyImgs/icon1.svg') %>">
+  <script>
+    (() => {
+      const saved = localStorage.getItem('tide-theme');
+      const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="<%= url_for('/css/tide.css') %>">
+  <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css') %>">
+</head>
+<body class="page-type-<%= bodyType %>">
+  <div class="reading-progress" aria-hidden="true"><span></span></div>
+  <%- partial('_partial/header') %>
+  <main id="content" class="site-main">
+    <%- body %>
+  </main>
+  <%- partial('_partial/footer') %>
+  <%- partial('_partial/search') %>
+  <button class="back-to-top" type="button" data-back-to-top aria-label="返回顶部">
+    <span>↑</span>
+  </button>
+  <script src="<%= url_for('/js/tide.js') %>" defer></script>
+</body>
+</html>

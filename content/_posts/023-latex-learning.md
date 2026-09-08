@@ -8,7 +8,6 @@ categories:
   - "工具学习"
 tags:
   - "latex"
-comments: false
 ---
 
 <!-- Migrated from posts/工具学习/latex-learning.html. Keep the permalink stable. -->

@@ -8,7 +8,6 @@ categories:
   - "数据库开发"
 tags:
   - "数据库"
-comments: false
 ---
 
 <!-- Migrated from posts/期末复习/数据库开发/24-spring-数据库开发期末复习.html. Keep the permalink stable. -->
