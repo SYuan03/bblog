@@ -103,10 +103,6 @@ async function migratePage(sourcePath, outputPath, title, permalink) {
   const content = $(".page-template-content.markdown-body").first().html()?.trim();
   if (!content) throw new Error(`Page content is empty: ${sourcePath}`);
 
-  const modernized = content.replace(
-    /https:\/\/unpkg\.com\/artitalk(?:[^"']*)?/g,
-    "/vendor/artitalk.js",
-  );
   const output = [
     "---",
     `title: ${quoted(title)}`,
@@ -116,7 +112,7 @@ async function migratePage(sourcePath, outputPath, title, permalink) {
     "",
     `<!-- Migrated from ${sourcePath}. -->`,
     '<div class="legacy-content">',
-    modernized,
+    content,
     "</div>",
     "",
   ].join("\n");
@@ -128,5 +124,4 @@ async function migratePage(sourcePath, outputPath, title, permalink) {
 
 const manifest = await migratePosts();
 await migratePage("about/index.html", "content/about/index.md", "关于我", "/about/index.html");
-await migratePage("shuoshuo/index.html", "content/shuoshuo/index.md", "说说", "/shuoshuo/index.html");
-console.log(`Migrated ${manifest.length} posts and 2 standalone pages.`);
+console.log(`Migrated ${manifest.length} posts and the About page.`);

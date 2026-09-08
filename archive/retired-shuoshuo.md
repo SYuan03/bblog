@@ -4,11 +4,9 @@ permalink: "/shuoshuo/index.html"
 comments: false
 ---
 
-<!-- Migrated from shuoshuo/index.html. -->
+<!-- Retired on 2026-09-09. Kept outside Hexo's content directory for reference. -->
 <div class="legacy-content">
-<!-- 引用 artitalk -->
 <script type="text/javascript" src="/vendor/artitalk.js"></script>
-<!-- 存放说说的容器 -->
 <div id="artitalk_main"></div>
 <script async="" data-pjax="">
 new Artitalk({

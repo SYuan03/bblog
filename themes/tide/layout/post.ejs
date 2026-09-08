@@ -6,6 +6,19 @@
   const isEncrypted = String(page.content || '').includes('hexo-blog-encrypt');
   const commentsEnabled = theme.comments && theme.comments.enable && !isEncrypted;
   const deckText = isEncrypted ? '受密码保护的文章。' : '';
+  const pageTagNames = new Set(tags.map((tag) => tag.name));
+  const pageCategoryNames = new Set(cats.map((category) => category.name));
+  const allPublicPosts = site.posts ? site.posts.toArray().filter((post) => post.path !== page.path && !String(post.content || '').includes('hexo-blog-encrypt')) : [];
+  const scoredRelated = allPublicPosts.map((post) => {
+    const postTags = post.tags ? post.tags.toArray() : [];
+    const postCategories = post.categories ? post.categories.toArray() : [];
+    const score = postTags.reduce((total, tag) => total + (pageTagNames.has(tag.name) ? 2 : 0), 0)
+      + postCategories.reduce((total, category) => total + (pageCategoryNames.has(category.name) ? 3 : 0), 0);
+    return { post, score };
+  }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score || b.post.date.valueOf() - a.post.date.valueOf());
+  const relatedPosts = [...scoredRelated.map((item) => item.post), ...allPublicPosts]
+    .filter((post, index, list) => list.findIndex((candidate) => candidate.path === post.path) === index)
+    .slice(0, 3);
 %>
 <article class="article-shell section-shell">
   <header class="article-header reveal">
@@ -20,6 +33,7 @@
       <dl class="article-stats">
         <div><dt>字数</dt><dd><%= wordcount(page.content) %></dd></div>
         <div><dt>阅读</dt><dd><%= min2read(page.content) %></dd></div>
+        <div><dt>更新</dt><dd><%= date(page.updated || page.date, 'YYYY.MM.DD') %></dd></div>
       </dl>
     </div>
   </header>
@@ -49,6 +63,24 @@
         </div>
       <% } %>
 
+      <% if (!isEncrypted && relatedPosts.length) { %>
+        <section class="related-posts" aria-labelledby="related-title">
+          <header>
+            <div><span class="eyebrow">KEEP EXPLORING</span><h2 id="related-title">接着看看</h2></div>
+            <a href="<%= url_for('/archives/') %>">全部文章 ↗</a>
+          </header>
+          <div class="related-grid">
+            <% relatedPosts.forEach((post, index) => { %>
+              <a href="<%= url_for(post.path) %>" class="related-card">
+                <span><%= String(index + 1).padStart(2, '0') %> · <%= date(post.date, 'YYYY.MM.DD') %></span>
+                <strong><%= post.title %></strong>
+                <b>阅读 ↗</b>
+              </a>
+            <% }) %>
+          </div>
+        </section>
+      <% } %>
+
       <nav class="post-navigation" aria-label="相邻文章">
         <% if (page.prev) { %>
           <a href="<%= url_for(page.prev.path) %>"><span>上一篇</span><strong><%= page.prev.title %></strong></a>
@@ -59,14 +91,18 @@
       </nav>
 
       <% if (commentsEnabled) { %>
-        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>">
+        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>" data-comments-script="<%= url_for('/vendor/twikoo.all.min.js') %>">
           <div class="comments-heading">
             <div><span class="eyebrow">CONVERSATION</span><h2>留言</h2></div>
             <p>想法不必完整，真诚就好。</p>
           </div>
-          <div id="twikoo-comment"><div class="comment-loading">正在载入留言…</div></div>
+          <div id="twikoo-comment">
+            <div class="comment-gate">
+              <p>留言区将在需要时载入，不影响正文阅读。</p>
+              <button type="button" data-comments-load>加载留言 <span>↘</span></button>
+            </div>
+          </div>
         </section>
-        <script src="<%= url_for('/vendor/twikoo.all.min.js') %>" defer></script>
       <% } %>
     </div>
   </div>

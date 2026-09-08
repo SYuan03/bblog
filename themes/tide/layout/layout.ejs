@@ -2,6 +2,7 @@
   const titleText = page.title ? `${page.title} · ${config.title}` : `${config.title} · ${config.subtitle}`;
   const descriptionText = page.description || page.excerpt || config.description;
   const bodyType = page.layout === 'post' ? 'post' : (is_home() ? 'home' : 'page');
+  const encryptedPage = bodyType === 'post' && String(page.content || '').includes('hexo-blog-encrypt');
 %>
 <!doctype html>
 <html lang="zh-CN" data-theme="light">
@@ -22,10 +23,10 @@
       document.documentElement.dataset.theme = saved || preferred;
     })();
   </script>
-  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=2') %>">
-  <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css?v=2') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=3') %>">
+  <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css?v=3') %>">
 </head>
-<body class="page-type-<%= bodyType %>">
+<body class="page-type-<%= bodyType %>" data-page-kind="<%= bodyType %>" data-page-title="<%= page.title || '' %>" data-page-url="<%= url_for(page.path || '') %>" data-page-date="<%= page.date ? date(page.date, 'YYYY.MM.DD') : '' %>" data-page-private="<%= encryptedPage ? 'true' : 'false' %>">
   <div class="reading-progress" aria-hidden="true"><span></span></div>
   <%- partial('_partial/header') %>
   <main id="content" class="site-main">
@@ -36,6 +37,7 @@
   <button class="back-to-top" type="button" data-back-to-top aria-label="返回顶部">
     <span>↑</span>
   </button>
-  <script src="<%= url_for('/js/tide.js?v=2') %>" defer></script>
+  <div class="site-toast" data-toast role="status" aria-live="polite"></div>
+  <script src="<%= url_for('/js/tide.js?v=3') %>" defer></script>
 </body>
 </html>

@@ -51,14 +51,9 @@ await mkdir(path.join(outputRoot, "css"), { recursive: true });
 await cp(path.join(projectRoot, "css", "hbe.style.css"), path.join(outputRoot, "css", "hbe.style.css"), { force: true });
 await mkdir(path.join(outputRoot, "vendor"), { recursive: true });
 await cp(
-  path.join(projectRoot, "node_modules", "artitalk", "artitalk.js"),
-  path.join(outputRoot, "vendor", "artitalk.js"),
-  { force: true },
-);
-await cp(
   path.join(projectRoot, "node_modules", "twikoo", "dist", "twikoo.all.min.js"),
   path.join(outputRoot, "vendor", "twikoo.all.min.js"),
   { force: true },
 );
 
-console.log("Copied legacy media, encrypted-post runtime, Artitalk, and Twikoo assets.");
+console.log("Copied legacy media, encrypted-post runtime, and Twikoo assets.");

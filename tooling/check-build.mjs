@@ -33,10 +33,13 @@ const postFiles = htmlFiles.filter((file) => file.startsWith(path.join(outputRoo
 // macOS uses a case-insensitive filesystem by default, so the legacy `SSL`
 // and `ssl` tag archives share one output directory locally. Netlify's Linux
 // builders keep both directories, producing one additional valid HTML page.
-if (![144, 145].includes(htmlFiles.length)) {
-  throw new Error(`Expected 144 or 145 HTML pages, found ${htmlFiles.length}`);
+if (![143, 144].includes(htmlFiles.length)) {
+  throw new Error(`Expected 143 or 144 HTML pages, found ${htmlFiles.length}`);
 }
 if (postFiles.length !== 44) throw new Error(`Expected 44 post pages, found ${postFiles.length}`);
+if (await exists(path.join(outputRoot, "shuoshuo", "index.html"))) {
+  throw new Error("The retired Shuoshuo page is still being published");
+}
 
 const missing = new Set();
 let legacyThemeMarkers = 0;
