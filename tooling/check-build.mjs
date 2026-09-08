@@ -30,7 +30,12 @@ for (const required of ["index.html", "404.html", "atom.xml", "search.xml", "sit
 
 const htmlFiles = (await walk(outputRoot)).filter((file) => file.endsWith(".html"));
 const postFiles = htmlFiles.filter((file) => file.startsWith(path.join(outputRoot, "posts") + path.sep));
-if (htmlFiles.length !== 144) throw new Error(`Expected 144 HTML pages, found ${htmlFiles.length}`);
+// macOS uses a case-insensitive filesystem by default, so the legacy `SSL`
+// and `ssl` tag archives share one output directory locally. Netlify's Linux
+// builders keep both directories, producing one additional valid HTML page.
+if (![144, 145].includes(htmlFiles.length)) {
+  throw new Error(`Expected 144 or 145 HTML pages, found ${htmlFiles.length}`);
+}
 if (postFiles.length !== 44) throw new Error(`Expected 44 post pages, found ${postFiles.length}`);
 
 const missing = new Set();
