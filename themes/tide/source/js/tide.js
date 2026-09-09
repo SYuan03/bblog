@@ -155,6 +155,7 @@
     const quoteSource = todayStrip.querySelector('[data-quote-source]');
     const artImage = todayStrip.querySelector('[data-art-image]');
     const artLink = todayStrip.querySelector('[data-art-link]');
+    const artTitle = todayStrip.querySelector('[data-art-title]');
     const artCaption = todayStrip.querySelector('[data-art-caption]');
     const quoteCitation = todayStrip.querySelector('[data-quote-citation]');
     const refresh = todayStrip.querySelector('[data-today-refresh]');
@@ -241,6 +242,8 @@
         reject(new Error('Artwork image timed out'));
       }, 5000);
       candidate.referrerPolicy = 'no-referrer';
+      candidate.decoding = 'async';
+      candidate.fetchPriority = 'high';
       candidate.onload = () => {
         clearTimeout(timeout);
         if (requestId !== activeRequest) {
@@ -258,6 +261,7 @@
         }
         const objectUrl = httpsUrl(artwork.objectURL);
         if (objectUrl && artLink) artLink.href = objectUrl;
+        if (artTitle) artTitle.textContent = artwork.title || '';
         if (artCaption) {
           artCaption.textContent = artwork.artistDisplayName || '';
           artCaption.title = artworkTitle;

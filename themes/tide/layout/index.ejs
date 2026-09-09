@@ -22,21 +22,26 @@
   <div class="post-list">
     <% posts.forEach((post, index) => { %>
       <%- partial('_partial/post-card', { post }) %>
-      <% if ((page.current || 1) === 1 && index === 1) { %>
+      <% if ((page.current || 1) === 1 && index === 0) { %>
         <aside class="today-strip reveal" data-today-strip data-quote-api="<%= extras.quote_api || '' %>" data-art-api="<%= extras.art_api || '' %>" data-art-ids="<%= (extras.artwork_ids || []).join(',') %>">
           <figure class="today-figure">
             <a class="today-art" href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-link aria-label="查看馆藏作品">
-              <img src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-art-image>
+              <img src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="" loading="eager" decoding="async" fetchpriority="high" referrerpolicy="no-referrer" data-art-image>
             </a>
-            <figcaption data-art-credit><span data-art-caption></span></figcaption>
+            <figcaption data-art-credit>
+              <span class="today-art-title" data-art-title></span>
+              <span class="today-art-maker" data-art-caption></span>
+            </figcaption>
           </figure>
           <div class="today-copy" aria-live="polite">
             <blockquote data-quote-text>“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
-            <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
+            <footer class="today-meta">
+              <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
+              <button class="today-refresh" type="button" data-today-refresh aria-label="换一幅画和一句话" title="换一幅画和一句话">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8.2A7 7 0 0 1 18.7 6L20 8"></path><path d="M17.9 15.8A7 7 0 0 1 5.3 18L4 16"></path></svg>
+              </button>
+            </footer>
           </div>
-          <button class="today-refresh" type="button" data-today-refresh aria-label="换一幅画和一句话" title="换一幅画和一句话">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8.2A7 7 0 0 1 18.7 6L20 8"></path><path d="M17.9 15.8A7 7 0 0 1 5.3 18L4 16"></path></svg>
-          </button>
         </aside>
       <% } %>
     <% }) %>
