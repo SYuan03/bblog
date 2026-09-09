@@ -4,7 +4,7 @@ permalink: "/posts/期末复习/数据库开发/24-spring-数据库开发期末�
 date: "2024-06-15T15:21:51.000Z"
 updated: "2024-09-30T12:51:33.130Z"
 cover: "/generated-covers/029-24-spring-数据库开发期末复习.webp"
-description: "24 Spring 数据库开发复习提纲，覆盖 SQL 函数、递归查询、外连接、索引与考试题型等重点。"
+description: "24 Spring 数据库开发复习，先看三道 SQL 和索引结构。"
 categories:
   - "期末复习"
   - "数据库开发"

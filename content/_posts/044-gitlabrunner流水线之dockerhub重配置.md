@@ -4,7 +4,7 @@ permalink: "/posts/杂记/gitlabrunner流水线之dockerhub重配置.html"
 date: "2024-06-08T16:09:32.000Z"
 updated: "2024-10-05T07:17:15.750Z"
 cover: "/generated-covers/044-gitlabrunner流水线之dockerhub重配置.webp"
-description: "记录因 Docker Hub 网络问题导致 GitLab Runner 流水线失败后的镜像源切换与排查过程。"
+description: "后端流水线又没跑过。果然还是 Docker Hub，换个镜像地址再试。"
 categories:
   - "杂记"
 tags:

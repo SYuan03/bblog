@@ -25,8 +25,7 @@
 <article class="article-shell section-shell">
   <header class="article-header reveal">
     <div class="article-kicker">
-      <% if (cats.length) { %><a href="<%= url_for(cats[0].path) %>"><%= cats[0].name %></a><% } else { %><span>NOTE</span><% } %>
-      <span>—</span>
+      <% if (cats.length) { %><a href="<%= url_for(cats[0].path) %>"><%= cats[0].name %></a><span>·</span><% } %>
       <time datetime="<%= date_xml(page.date) %>"><%= date(page.date, 'YYYY.MM.DD') %></time>
     </div>
     <h1><%= page.title %></h1>
@@ -39,7 +38,7 @@
       </dl>
     </div>
     <div class="article-cover cover-tone-<%= coverTone %>">
-      <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i><b><%= cats.length ? cats[0].name : 'TIDE / NOTE' %></b></span>
+      <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i></span>
       <% if (cover) { %><img src="<%= url_for(cover) %>" alt="<%= page.title %>的文章首图" decoding="async" fetchpriority="high" data-cover-image><% } %>
     </div>
   </header>
@@ -47,12 +46,11 @@
   <div class="article-grid">
     <aside class="article-rail reveal">
       <div class="rail-sticky">
-        <span class="rail-label">ON THIS PAGE</span>
-        <% if (hasToc) { %><nav class="article-toc"><%- tocHtml %></nav><% } else { %><p class="toc-empty">一口气读完吧。</p><% } %>
+        <% if (hasToc) { %><span class="rail-label">目录</span><nav class="article-toc"><%- tocHtml %></nav><% } %>
         <div class="article-tools">
-          <button type="button" data-focus-toggle><span>◐</span> 专注阅读</button>
-          <button type="button" data-share><span>↗</span> 分享文章</button>
-          <% if (commentsEnabled) { %><a href="#comments"><span>◇</span> 留下评论</a><% } %>
+          <button type="button" data-focus-toggle><span>◐</span> 专注模式</button>
+          <button type="button" data-share><span>↗</span> 分享</button>
+          <% if (commentsEnabled) { %><a href="#comments"><span>◇</span> 评论</a><% } %>
         </div>
       </div>
     </aside>
@@ -64,7 +62,7 @@
 
       <% if (tags.length) { %>
         <div class="article-tags">
-          <span>Filed under</span>
+          <span>标签</span>
           <% tags.forEach((tag) => { %><a href="<%= url_for(tag.path) %>">#<%= tag.name %></a><% }) %>
         </div>
       <% } %>
@@ -72,7 +70,7 @@
       <% if (!isEncrypted && relatedPosts.length) { %>
         <section class="related-posts" aria-labelledby="related-title">
           <header>
-            <div><span class="eyebrow">KEEP EXPLORING</span><h2 id="related-title">接着看看</h2></div>
+            <div><h2 id="related-title">相关旧文</h2></div>
             <a href="<%= url_for('/archives/') %>">全部文章 ↗</a>
           </header>
           <div class="related-grid">
@@ -99,8 +97,7 @@
       <% if (commentsEnabled) { %>
         <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>" data-comments-script="<%= url_for('/vendor/twikoo.all.min.js') %>">
           <div class="comments-heading">
-            <div><span class="eyebrow">CONVERSATION</span><h2>留言</h2></div>
-            <p>想法不必完整，真诚就好。</p>
+            <div><h2>留言</h2></div>
           </div>
           <div id="twikoo-comment">
             <div class="comment-loading">留言正在载入…</div>

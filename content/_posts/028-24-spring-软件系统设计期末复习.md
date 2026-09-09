@@ -4,7 +4,7 @@ permalink: "/posts/期末复习/软件系统设计/24-spring-软件系统设计�
 date: "2024-06-19T10:07:06.000Z"
 updated: "2024-09-30T12:51:32.952Z"
 cover: "/generated-covers/028-24-spring-软件系统设计期末复习.webp"
-description: "软件系统设计期末复习笔记，整理软件模式、面向对象分析与设计、架构设计和常见设计模式等重点。"
+description: "zh 老师这部分不太好整理，花体看得眼花。往年题和设计模式先堆在这。"
 categories:
   - "期末复习"
   - "软件系统设计"

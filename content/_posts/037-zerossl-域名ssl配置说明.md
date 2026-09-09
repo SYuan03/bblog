@@ -4,7 +4,7 @@ permalink: "/posts/实践记录/zerossl-域名ssl配置说明.html"
 date: "2024-06-13T08:37:22.000Z"
 updated: "2024-09-30T12:51:50.766Z"
 cover: "/generated-covers/037-zerossl-域名ssl配置说明.webp"
-description: "记录 ZeroSSL 证书续期时的 Docker 端口映射、Nginx 配置和流水线更新过程。"
+description: "证书又要过期了。先记下当时 Docker、Nginx 和流水线到底配了啥。"
 categories:
   - "实践记录"
 tags:

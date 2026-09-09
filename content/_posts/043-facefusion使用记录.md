@@ -4,7 +4,7 @@ permalink: "/posts/杂记/facefusion使用记录.html"
 date: "2024-07-05T07:29:59.000Z"
 updated: "2024-09-30T12:51:30.561Z"
 cover: "/generated-covers/043-facefusion使用记录.webp"
-description: "记录在云端 GPU 环境中安装和运行 FaceFusion，包括 Conda、CUDA 与镜像源配置。"
+description: "南软面试刚结束，用驱动云送的计算点折腾了一下 FaceFusion。"
 categories:
   - "杂记"
 tags:

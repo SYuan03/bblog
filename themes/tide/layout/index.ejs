@@ -1,86 +1,17 @@
 <%
-  const latest = site.posts && site.posts.length ? site.posts.first() : null;
   const posts = page.posts ? page.posts.toArray() : [];
-  const publicPosts = site.posts ? site.posts.toArray().filter((post) => !String(post.content || '').includes('hexo-blog-encrypt')) : [];
-  const living = theme.living_note || {};
 %>
-<section class="home-hero section-shell">
-  <div class="hero-copy reveal">
-    <span class="eyebrow"><%= theme.hero.eyebrow %></span>
-    <h1><%= theme.hero.title %></h1>
-    <p><%= theme.hero.description %></p>
-    <div class="hero-actions">
-      <% if (latest) { %><a class="button button-primary" href="<%= url_for(latest.path) %>">读最新文章 <span>↗</span></a><% } %>
-      <button class="button button-quiet" type="button" data-search-open>搜索笔记 <span>/</span></button>
+<section class="post-feed home-feed section-shell" id="notes">
+  <header class="home-intro reveal">
+    <div class="home-intro-copy">
+      <h1><%= theme.hero.title %></h1>
+      <p><%= theme.hero.description %></p>
     </div>
-    <div class="hero-stats" aria-label="博客统计">
-      <div><strong><%= site.posts.length %></strong><span>篇文章</span></div>
-      <div><strong><%= site.categories.length %></strong><span>个分类</span></div>
-      <div><strong>2023</strong><span>开始记录</span></div>
-    </div>
-  </div>
-
-  <div class="hero-art reveal" aria-label="每日变化的视觉切片">
-    <div class="art-frame" data-daily-art data-art-api="<%= living.art_api || '' %>" data-art-ids="<%= (living.artwork_ids || []).join(',') %>">
-      <img class="hero-image hero-image-light" src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="山野、云层与行旅者">
-      <img class="hero-image hero-image-dark" src="<%= url_for('/MyImgs/home-bg-dark.webp') %>" alt="夜色山野">
-      <img class="hero-image hero-image-daily" data-art-image alt="当天轮换的公版艺术作品" referrerpolicy="no-referrer">
-      <button class="frame-refresh" type="button" data-art-refresh aria-label="换一幅作品"><span>换一幅</span><b>↻</b></button>
-      <div class="art-caption">
-        <a href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-link>
-          <span data-art-title>THE MET COLLECTION</span>
-          <small data-art-credit>每日一幅 · 公版馆藏</small>
-        </a>
-        <b data-live-date>—</b>
-      </div>
-    </div>
-  </div>
-
-</section>
-
-<section class="living-note section-shell reveal" data-living-note data-quote-api="<%= living.quote_api || '' %>">
-  <svg class="living-lines" viewBox="0 0 760 170" aria-hidden="true" preserveAspectRatio="none">
-    <path d="M-30 132C93 36 165 194 291 97S500 13 790 118" />
-    <path d="M-15 150C104 61 184 214 309 119S522 36 782 139" />
-    <path d="M18 165C132 86 205 225 331 143S541 63 762 157" />
-  </svg>
-  <div class="living-index">
-    <span>LIVE NOTE / 今日切片</span>
-    <time data-live-date>—</time>
-  </div>
-  <div class="living-quote">
-    <a class="living-label" href="https://hitokoto.cn/" target="_blank" rel="noopener">今天读到 · 一言</a>
-    <blockquote data-quote-text>“<%= living.fallback_quote || '保持好奇，答案会在动手之后慢慢出现。' %>”</blockquote>
-    <cite>— <span data-quote-source><%= living.fallback_source || 'ChrisDing' %></span></cite>
-  </div>
-  <div class="living-actions">
-    <button type="button" data-quote-refresh><span>换一句</span><b>↻</b></button>
-    <button type="button" data-random-post><span>随机漫游</span><b>↗</b></button>
-  </div>
-  <div class="random-post-sources" hidden>
-    <% publicPosts.forEach((post) => { %><a href="<%= url_for(post.path) %>" data-title="<%= post.title %>"></a><% }) %>
-  </div>
-</section>
-
-<section class="reading-history section-shell" data-reading-history hidden>
-  <header>
-    <div><span class="eyebrow">PICK UP WHERE YOU LEFT</span><h2>继续阅读</h2></div>
-    <button type="button" data-history-clear>清除记录</button>
-  </header>
-  <div class="history-list" data-history-list></div>
-</section>
-
-<section class="post-feed section-shell" id="notes">
-  <header class="section-heading reveal">
-    <div>
-      <span class="eyebrow">LATEST NOTES</span>
-      <h2>最新文章</h2>
-    </div>
-    <p>按时间排列的技术与生活记录。</p>
+    <h2>最近写的</h2>
   </header>
   <div class="post-list">
-    <% posts.forEach((post, index) => { %>
-      <%- partial('_partial/post-card', { post, index }) %>
+    <% posts.forEach((post) => { %>
+      <%- partial('_partial/post-card', { post }) %>
     <% }) %>
   </div>
   <% if (page.total > 1) { %>

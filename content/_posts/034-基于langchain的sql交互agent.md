@@ -3,7 +3,7 @@ title: "基于Langchain的SQL交互Agent"
 permalink: "/posts/实践记录/2024-Spring-软工三/基于langchain的sql交互agent.html"
 date: "2024-06-09T13:18:29.000Z"
 updated: "2024-09-30T12:51:50.863Z"
-description: "记录基于 LangChain 与通义模型构建 SQL 问答链的过程，包括数据库连接、结果解析、提示优化及 HTTPS 流式响应排查。"
+description: "顶着一堆作业写的 SQL 问答 Agent，顺便记几个很气人的坑。"
 cover: "https://imgss.s3.bitiful.net/2024/06/9/20240609212459.png"
 categories:
   - "实践记录"
