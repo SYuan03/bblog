@@ -4,7 +4,7 @@ permalink: "/posts/2023-Spring-Courses-编译原理/review-compileprinciple.html
 date: "2023-06-22T08:00:22.000Z"
 updated: "2024-09-30T12:52:04.678Z"
 description: "面向编译原理复习，串联正则表达式与自动机转换、LL/LR 语法分析、ANTLR 优先级处理、语法制导翻译及 RISC-V 目标代码生成。"
-cover: "https://s2.loli.net/2023/06/22/ESvOUMFbak2VYRj.jpg"
+cover: "/generated-covers/legacy-ESvOUMFbak2VYRj-7a523913.webp"
 categories:
   - "2023-Spring-Courses-编译原理"
 tags:

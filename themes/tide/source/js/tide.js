@@ -39,28 +39,57 @@
     const available = document.documentElement.scrollHeight - window.innerHeight;
     if (header) header.classList.toggle('is-scrolled', top > 12);
     if (backToTop) backToTop.classList.toggle('is-visible', top > 600);
-    if (progress) progress.style.width = `${available > 0 ? Math.min(100, top / available * 100) : 0}%`;
+    if (progress) progress.style.transform = `scaleX(${available > 0 ? Math.min(1, top / available) : 0})`;
   };
 
+  let scrollFrame = 0;
+  const queueScrollUpdate = () => {
+    if (scrollFrame) return;
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = 0;
+      updateScrollState();
+    });
+  };
   updateScrollState();
-  addEventListener('scroll', updateScrollState, { passive: true });
+  addEventListener('scroll', queueScrollUpdate, { passive: true });
 
   navToggle?.addEventListener('click', () => {
     const open = nav?.classList.toggle('is-open') || false;
     navToggle.setAttribute('aria-expanded', String(open));
+    const label = navToggle.querySelector('.sr-only');
+    if (label) label.textContent = open ? '关闭导航' : '打开导航';
   });
   nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
     nav.classList.remove('is-open');
     navToggle?.setAttribute('aria-expanded', 'false');
+    const label = navToggle?.querySelector('.sr-only');
+    if (label) label.textContent = '打开导航';
   }));
 
   document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     localStorage.setItem('tide-theme', next);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#101721' : '#f8f4ed');
   });
 
   backToTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+  document.querySelector('[data-copy-wechat]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const value = button.dataset.copyValue || '';
+    if (!value) return;
+    try {
+      await copyText(value);
+      const label = button.querySelector('[data-copy-label]');
+      if (label) label.textContent = '已复制';
+      showToast('微信号已复制');
+      setTimeout(() => { if (label) label.textContent = '复制'; }, 1600);
+    } catch (error) {
+      console.warn('Wechat copy failed', error);
+      showToast('复制失败，请手动复制');
+    }
+  });
 
   const lastReadKey = 'tide-last-read-v1';
   const legacyHistoryKey = 'tide-reading-history-v1';
@@ -114,7 +143,8 @@
     }
     const href = sameOriginHref(entry?.url);
     const link = historyRow.querySelector('[data-history-last]');
-    if (href && entry?.title && link) {
+    const visiblePosts = new Set([...document.querySelectorAll('.post-card h2 a')].map((item) => sameOriginHref(item.href)));
+    if (href && entry?.title && link && !visiblePosts.has(href)) {
       link.href = href;
       link.textContent = entry.title;
       historyRow.hidden = false;
@@ -153,26 +183,38 @@
   if (todayStrip) {
     const quoteText = todayStrip.querySelector('[data-quote-text]');
     const quoteSource = todayStrip.querySelector('[data-quote-source]');
+    const quoteCitation = todayStrip.querySelector('[data-quote-citation]');
     const artImage = todayStrip.querySelector('[data-art-image]');
     const artLink = todayStrip.querySelector('[data-art-link]');
+    const artTitleLink = todayStrip.querySelector('[data-art-title-link]');
+    const artTitleZh = todayStrip.querySelector('[data-art-title-zh]');
     const artTitle = todayStrip.querySelector('[data-art-title]');
-    const artCaption = todayStrip.querySelector('[data-art-caption]');
-    const quoteCitation = todayStrip.querySelector('[data-quote-citation]');
+    const artMaker = todayStrip.querySelector('[data-art-maker]');
+    const artOrigin = todayStrip.querySelector('[data-art-origin]');
+    const artDate = todayStrip.querySelector('[data-art-date]');
+    const artMedium = todayStrip.querySelector('[data-art-medium]');
+    const artDetail = todayStrip.querySelector('[data-art-detail]');
+    const todayStatus = todayStrip.querySelector('[data-today-status]');
     const refresh = todayStrip.querySelector('[data-today-refresh]');
-    const artworkIds = (todayStrip.dataset.artIds || '').split(',').map(Number).filter(Number.isFinite);
     const quoteEndpoint = todayStrip.dataset.quoteApi || '';
-    const artEndpoint = (todayStrip.dataset.artApi || '').replace(/\/$/, '');
-    const expectedUpdates = Number(Boolean(quoteEndpoint)) + Number(Boolean(artEndpoint && artworkIds.length));
+    let artworks = [];
+    try {
+      artworks = JSON.parse(todayStrip.querySelector('[data-artworks-json]')?.textContent || '[]');
+    } catch (error) {
+      console.warn('Artwork data is unavailable', error);
+    }
     const now = new Date();
     const dayKey = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
-    const dayNumber = Math.floor(new Date(`${dayKey}T00:00:00`).getTime() / 86400000);
+    const siteDayNumber = Math.floor((Date.now() + 8 * 60 * 60 * 1000) / 86400000);
+    const startIndex = artworks.length ? siteDayNumber % artworks.length : 0;
     let artOffset = 0;
     let activeRequest = 0;
 
-    const httpsUrl = (value) => {
+    const safeUrl = (value, sameOriginOnly = false) => {
       try {
-        const url = new URL(value);
-        return url.protocol === 'https:' ? url.href : '';
+        const url = new URL(value, location.origin);
+        if (sameOriginOnly) return url.origin === location.origin ? url.href : '';
+        return url.protocol === 'https:' || url.origin === location.origin ? url.href : '';
       } catch {
         return '';
       }
@@ -230,95 +272,109 @@
         return false;
       }
     };
-    const applyArtwork = (artwork, requestId = activeRequest) => new Promise((resolve, reject) => {
-      const imageUrl = httpsUrl(artwork?.primaryImageSmall);
+    const applyArtwork = (artwork, requestId = activeRequest) => new Promise((resolve) => {
+      const imageUrl = safeUrl(artwork?.image, true);
+      const objectUrl = safeUrl(artwork?.object_url);
+      const primaryTitle = artwork?.title_zh || artwork?.title || '馆藏作品';
+      const originalTitle = artwork?.title_zh && artwork?.title ? artwork.title : '';
+      const maker = [artwork?.artist_zh, artwork?.artist].filter(Boolean).join(' · ');
+
+      const commitArtwork = () => {
+        if (artTitleZh) artTitleZh.textContent = primaryTitle;
+        if (artTitle) {
+          artTitle.textContent = originalTitle;
+          artTitle.hidden = !originalTitle;
+        }
+        if (artMaker) artMaker.textContent = maker;
+        if (artOrigin) artOrigin.textContent = artwork?.origin || '';
+        if (artDate) artDate.textContent = artwork?.date || '';
+        if (artMedium) artMedium.textContent = artwork?.medium || '';
+        [artOrigin, artDate, artMedium].forEach((item) => { if (item) item.hidden = !item.textContent; });
+        [artLink, artTitleLink, artDetail].forEach((link) => {
+          if (!link) return;
+          if (objectUrl) link.href = objectUrl;
+          else link.removeAttribute('href');
+        });
+        if (artDetail) artDetail.hidden = !objectUrl;
+        if (artLink) artLink.setAttribute('aria-label', `查看《${primaryTitle}》的馆藏详情`);
+        if (artImage) {
+          artImage.src = imageUrl;
+          artImage.alt = `${primaryTitle}${maker ? `，${maker}` : ''}`;
+        }
+      };
+
       if (!imageUrl || !artImage) {
-        reject(new Error('Artwork image is unavailable'));
+        resolve(false);
         return;
       }
+      if (artImage.src === imageUrl) {
+        commitArtwork();
+        resolve(true);
+        return;
+      }
+
+      todayStrip.classList.add('is-loading');
       const candidate = new Image();
-      const timeout = setTimeout(() => {
-        candidate.src = '';
-        reject(new Error('Artwork image timed out'));
-      }, 5000);
-      candidate.referrerPolicy = 'no-referrer';
-      candidate.decoding = 'async';
-      candidate.fetchPriority = 'high';
-      candidate.onload = () => {
+      let settled = false;
+      let timeout;
+      const finish = (success) => {
+        if (settled) return;
+        settled = true;
         clearTimeout(timeout);
+        candidate.onload = null;
+        candidate.onerror = null;
+        todayStrip.classList.remove('is-loading');
+        resolve(success);
+      };
+      timeout = setTimeout(() => {
+        candidate.onload = null;
+        candidate.onerror = null;
+        candidate.src = '';
+        finish(false);
+      }, 3000);
+      candidate.decoding = 'async';
+      candidate.fetchPriority = 'low';
+      candidate.onload = () => {
         if (requestId !== activeRequest) {
-          resolve();
+          finish(false);
           return;
         }
-        artImage.src = imageUrl;
-        artImage.alt = `${artwork.title || '公版馆藏作品'}${artwork.artistDisplayName ? `，${artwork.artistDisplayName}` : ''}`;
-        const artworkTitle = [artwork.title, artwork.artistDisplayName].filter(Boolean).join(' — ');
-        if (artLink) {
-          artLink.title = artworkTitle;
-          artLink.setAttribute('aria-label', artwork.title
-            ? `查看《${artwork.title}》${artwork.artistDisplayName ? `，${artwork.artistDisplayName}` : ''}`
-            : '查看馆藏作品');
-        }
-        const objectUrl = httpsUrl(artwork.objectURL);
-        if (objectUrl && artLink) artLink.href = objectUrl;
-        if (artTitle) artTitle.textContent = artwork.title || '';
-        if (artCaption) {
-          artCaption.textContent = artwork.artistDisplayName || '';
-          artCaption.title = artworkTitle;
-        }
-        resolve();
+        commitArtwork();
+        finish(true);
       };
-      candidate.onerror = () => {
-        clearTimeout(timeout);
-        reject(new Error('Artwork image failed to load'));
-      };
+      candidate.onerror = () => finish(false);
       candidate.src = imageUrl;
     });
-    const loadArtwork = async (force = false, requestId = activeRequest) => {
-      if (!artEndpoint || !artworkIds.length) return false;
-      const artworkId = artworkIds[(dayNumber + artOffset) % artworkIds.length];
-      const cacheKey = 'tide-daily-art-v1';
-      const cached = readStoredJson(cacheKey);
-      if (!force && cached?.day === dayKey && cached?.id === artworkId && cached?.artwork) {
-        try {
-          await applyArtwork(cached.artwork, requestId);
-          return true;
-        } catch {
-          removeStoredValue(cacheKey);
-        }
-      }
-      try {
-        const artwork = await fetchJson(`${artEndpoint}/${artworkId}`, 5000);
-        if (!artwork.isPublicDomain || !artwork.primaryImageSmall) throw new Error('Artwork is unavailable');
-        const compactArtwork = {
-          title: artwork.title,
-          artistDisplayName: artwork.artistDisplayName,
-          objectURL: artwork.objectURL,
-          primaryImageSmall: artwork.primaryImageSmall,
-        };
-        await applyArtwork(compactArtwork, requestId);
-        if (requestId !== activeRequest) return false;
-        if (!force) writeStoredJson(cacheKey, { day: dayKey, id: artworkId, artwork: compactArtwork });
-        return true;
-      } catch (error) {
-        console.warn('Daily artwork failed', error);
-        return false;
-      }
+    const loadArtwork = (requestId = activeRequest) => {
+      if (!artworks.length) return Promise.resolve(false);
+      const artwork = artworks[(startIndex + artOffset) % artworks.length];
+      return applyArtwork(artwork, requestId);
     };
 
     const updateToday = async (force = false) => {
       const requestId = ++activeRequest;
-      const results = await Promise.all([loadQuote(force, requestId), loadArtwork(force, requestId)]);
-      return results.filter(Boolean).length;
+      const [quoteUpdated, artworkUpdated] = await Promise.all([loadQuote(force, requestId), loadArtwork(requestId)]);
+      return { quoteUpdated, artworkUpdated };
     };
-    updateToday();
+    const loadInitialToday = () => {
+      loadQuote(false, activeRequest);
+      loadArtwork(activeRequest);
+    };
+    if ('requestIdleCallback' in window) requestIdleCallback(loadInitialToday, { timeout: 1800 });
+    else setTimeout(loadInitialToday, 250);
     refresh?.addEventListener('click', async () => {
       if (refresh.getAttribute('aria-busy') === 'true') return;
       refresh.setAttribute('aria-busy', 'true');
-      artOffset = artworkIds.length ? (artOffset + 1) % artworkIds.length : 0;
-      const updated = await updateToday(true);
+      artOffset = artworks.length ? (artOffset + 1) % artworks.length : 0;
+      const { quoteUpdated, artworkUpdated } = await updateToday(true);
       refresh.removeAttribute('aria-busy');
-      if (updated < expectedUpdates) showToast(updated ? '有一项没换成，稍后再试。' : '没换成功，稍后再试。');
+      if (todayStatus) {
+        if (quoteUpdated && artworkUpdated) todayStatus.textContent = `已换一幅画和一句话：《${artTitleZh?.textContent || '新作品'}》`;
+        else if (artworkUpdated) todayStatus.textContent = `已换一幅画：《${artTitleZh?.textContent || '新作品'}》；一句话暂未更新`;
+        else if (quoteUpdated) todayStatus.textContent = '已换一句话；画作暂未更新';
+        else todayStatus.textContent = '画作和一句话都暂未更新';
+      }
+      if (!quoteUpdated || !artworkUpdated) showToast(quoteUpdated || artworkUpdated ? '有一项没换成，稍后再试。' : '没换成功，稍后再试。');
     });
   }
 
@@ -419,6 +475,17 @@
   const comments = document.querySelector('[data-comments]');
   if (comments) {
     let commentsPromise;
+    const commentsContainer = document.querySelector('#twikoo-comment');
+    const setCommentStatus = (message) => {
+      if (!commentsContainer) return;
+      const status = document.createElement('div');
+      status.className = 'comment-loading';
+      status.setAttribute('role', 'status');
+      status.setAttribute('aria-live', 'polite');
+      status.textContent = message;
+      commentsContainer.replaceChildren(status);
+      commentsContainer.removeAttribute('aria-busy');
+    };
     const loadCommentsScript = () => {
       if (window.twikoo) return Promise.resolve();
       if (commentsPromise) return commentsPromise;
@@ -431,27 +498,28 @@
       });
       return commentsPromise;
     };
-    const initComments = () => {
+    const initComments = async () => {
       if (!window.twikoo || comments.dataset.loaded) return;
       comments.dataset.loaded = 'true';
-      window.twikoo.init({
-        envId: comments.dataset.envId,
-        el: '#twikoo-comment',
-        lang: 'zh-CN',
-      }).catch((error) => {
+      try {
+        await window.twikoo.init({
+          envId: comments.dataset.envId,
+          el: '#twikoo-comment',
+          lang: 'zh-CN',
+        });
+        commentsContainer?.removeAttribute('aria-busy');
+      } catch (error) {
         console.warn('Twikoo failed to load', error);
-        const container = document.querySelector('#twikoo-comment');
-        if (container) container.innerHTML = '<div class="comment-loading">留言加载失败，刷新试试。</div>';
-      });
+        setCommentStatus('留言加载失败，刷新试试。');
+      }
     };
     const hydrateComments = async () => {
       try {
         await loadCommentsScript();
-        initComments();
+        await initComments();
       } catch (error) {
         console.warn('Twikoo script failed to load', error);
-        const container = document.querySelector('#twikoo-comment');
-        if (container) container.innerHTML = '<div class="comment-loading">留言加载失败，刷新试试。</div>';
+        setCommentStatus('留言加载失败，刷新试试。');
       }
     };
     hydrateComments();

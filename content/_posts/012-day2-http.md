@@ -4,7 +4,7 @@ permalink: "/posts/2023-Summer-Courses-CloudWeGo/day2-http.html"
 date: "2023-07-11T03:42:29.000Z"
 updated: "2024-09-30T12:52:01.761Z"
 description: "先梳理 HTTP 版本、状态码与请求响应报文，再以 Thrift IDL 和 CloudWeGo Hertz 实战演示服务端、接口更新及客户端代码生成。"
-cover: "https://s2.loli.net/2023/07/11/pVQlX1SdDe6nAhU.png"
+cover: "/generated-covers/legacy-pVQlX1SdDe6nAhU-c7c1640a.webp"
 categories:
   - "2023-Summer-Courses-CloudWeGo"
 tags:

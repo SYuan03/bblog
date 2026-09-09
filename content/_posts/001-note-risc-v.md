@@ -4,7 +4,7 @@ permalink: "/posts/2023-Spring-Courses-编译原理/note-risc-v.html"
 date: "2023-06-23T13:13:08.000Z"
 updated: "2024-09-30T12:52:04.700Z"
 description: "以 RISC-V 汇编练习为主线，梳理伪指令、算术与分支、系统调用、数据段和数组操作，并通过函数调用、栈与递归示例说明基本执行方式。"
-cover: "https://s2.loli.net/2023/06/23/gpHA243bwCm9MvI.png"
+cover: "/generated-covers/legacy-gpHA243bwCm9MvI-b28b8869.webp"
 categories:
   - "2023-Spring-Courses-编译原理"
 tags:

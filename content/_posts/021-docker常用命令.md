@@ -4,7 +4,7 @@ permalink: "/posts/工具学习/docker常用命令.html"
 date: "2023-10-12T03:46:19.000Z"
 updated: "2024-09-30T12:52:39.136Z"
 description: "汇总 Docker 日常操作命令，涵盖容器启动与停止、网络创建、Redis 和 MySQL 运行、客户端连接及进入容器。"
-cover: "https://s2.loli.net/2023/10/12/54d1YtI3KwlCoZW.png"
+cover: "/generated-covers/legacy-54d1YtI3KwlCoZW-3395e794.webp"
 categories:
   - "工具学习"
 tags:

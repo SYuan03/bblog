@@ -67,13 +67,28 @@ for (const file of htmlFiles) {
     }
   }
 
-  for (const element of $("[src], [href], [data-src]").toArray()) {
-    const value = $(element).attr("src") || $(element).attr("href") || $(element).attr("data-src");
-    if (!value?.startsWith("/") || value.startsWith("//")) continue;
-    const pathname = decodeURIComponent(value.split(/[?#]/, 1)[0]);
-    if (pathname === "/") continue;
-    const localPath = path.join(outputRoot, pathname);
-    if (!(await exists(localPath))) missing.add(pathname);
+  const relativeHtmlPath = path.relative(outputRoot, file).split(path.sep).join('/');
+  const pageUrl = new URL(relativeHtmlPath, 'https://bblog.local/');
+  for (const element of $("[src], [href], [data-src], [poster], [srcset]").toArray()) {
+    for (const attribute of ['src', 'href', 'data-src', 'poster', 'srcset']) {
+      const raw = $(element).attr(attribute);
+      if (!raw) continue;
+      const values = attribute === 'srcset'
+        ? raw.split(',').map((part) => part.trim().split(/\s+/)[0])
+        : [raw];
+      for (const value of values) {
+        let url;
+        try {
+          url = new URL(value, pageUrl);
+        } catch {
+          continue;
+        }
+        if (url.origin !== pageUrl.origin || url.pathname === '/') continue;
+        const pathname = decodeURIComponent(url.pathname);
+        const localPath = path.join(outputRoot, pathname);
+        if (!(await exists(localPath))) missing.add(pathname);
+      }
+    }
   }
 }
 

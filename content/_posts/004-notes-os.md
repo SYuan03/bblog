@@ -4,7 +4,7 @@ permalink: "/posts/2023-Spring-Courses-操作系统/notes-os.html"
 date: "2023-06-16T14:25:39.000Z"
 updated: "2024-09-30T12:52:08.717Z"
 description: "一份覆盖操作系统核心章节的复习笔记，整理进程与调度、虚拟内存、页面置换、I/O 与磁盘调度、文件系统等概念及典型题型。"
-cover: "https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg"
+cover: "/generated-covers/legacy-KfOI7iDNwsPCGBX-e117d1a1.webp"
 categories:
   - "2023-Spring-Courses-操作系统"
 tags:
@@ -610,7 +610,7 @@ tags:
 <h3 id="2-I-O-软件的一般分为四层结构，请按照自顶向下的顺序写出四层结构的名称。">2. I/O 软件的一般分为四层结构，请按照自顶向下的顺序写出四层结构的名称。</h3>
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os/image-20230620194352594.png" class="" title="image-20230620194352594">
 <h3 id="3-请画出三状态、五状态和七状态进程模型（包括挂起）及其状态转换图">3. 请画出三状态、五状态和七状态进程模型（包括挂起）及其状态转换图</h3>
-<img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os/image-20230620200130428.png" class="" title="image-20230620200130428">
+<img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os/image-20230620200130428.webp" class="" title="image-20230620200130428">
 <h3 id="4-进程调度：6种-3抢-3不抢">4. 进程调度：6种 3抢 3不抢</h3>
 <p>感觉就是FeedBack只要来了就会给机会运行一段时间</p>
 <p>注意RR算法是先来先服务的，所以新来的只要还有在运行，就要排队，<strong>而且新来的会比正在运行的那个先排到队尾</strong></p>
@@ -628,7 +628,7 @@ tags:
 <p>工作集模型和工作集置换方法</p>
 <ul>
 <li>
-<img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os/image-20230620221401511.png" class="" title="image-20230620221401511">
+<img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/notes-os/image-20230620221401511.webp" class="" title="image-20230620221401511">
 </li>
 </ul>
 <h3 id="7-操作系统三个最基本的抽象以及为什么要引入">7. 操作系统三个最基本的抽象以及为什么要引入</h3>

@@ -4,7 +4,7 @@ permalink: "/posts/实践记录/2024-Spring-软工三/基于langchain的sql交�
 date: "2024-06-09T13:18:29.000Z"
 updated: "2024-09-30T12:51:50.863Z"
 description: "顶着一堆作业写的 SQL 问答 Agent，顺便记几个很气人的坑。"
-cover: "https://imgss.s3.bitiful.net/2024/06/9/20240609212459.png"
+cover: "/generated-covers/legacy-20240609212459-8b7a222d.webp"
 categories:
   - "实践记录"
   - "2024-Spring-软工三"

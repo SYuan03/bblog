@@ -4,7 +4,7 @@ permalink: "/posts/期末复习/24-spring-软件质量与管理期末复习.html
 date: "2024-06-25T16:36:32.000Z"
 updated: "2024-10-05T07:13:45.448Z"
 description: "非背诵速通版，只是尽力把课上的几条线理清楚。"
-cover: "https://imgss.s3.bitiful.net/2024/06/26/20240626000213.png"
+cover: "/generated-covers/legacy-20240626000213-7cdde434.webp"
 categories:
   - "期末复习"
 tags:

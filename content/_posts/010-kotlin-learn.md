@@ -4,7 +4,7 @@ permalink: "/posts/2023-Summer-Courses-百度移动端/kotlin-learn.html"
 date: "2023-07-24T02:26:50.000Z"
 updated: "2024-09-30T12:51:52.217Z"
 description: "面向 Android 开发的 Kotlin 入门笔记，结合示例讲解变量、函数、条件与循环、类和接口、集合与 Lambda，以及空安全机制。"
-cover: "https://s2.loli.net/2023/07/24/NsAn8BtIVudU6yj.jpg"
+cover: "/generated-covers/legacy-NsAn8BtIVudU6yj-ba7000b2.webp"
 categories:
   - "2023-Summer-Courses-百度移动端"
 tags:

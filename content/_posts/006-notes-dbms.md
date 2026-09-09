@@ -4,7 +4,7 @@ permalink: "/posts/2023-Spring-Courses-数据库管理/notes-dbms.html"
 date: "2023-06-14T14:04:35.000Z"
 updated: "2024-09-30T12:52:21.056Z"
 description: "数据库课程综合笔记，涵盖关系模型与 SQL、安全和完整性、函数依赖与范式、数据库设计、事务恢复、并发控制及 NoSQL 基础。"
-cover: "https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg"
+cover: "/generated-covers/legacy-3DWJMp2ZnT4iL1j-6ae91e7a.webp"
 categories:
   - "2023-Spring-Courses-数据库管理"
 tags:
@@ -774,7 +774,7 @@ tags:
 <h3 id="聚合：名词而非动词">聚合：名词而非动词</h3>
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612202818656.png" class="" title="image-20230612202818656">
 <h3 id="NoSQL特点：无模式">NoSQL特点：无模式</h3>
-<p><img lazyload="" src="/images/loading.svg" data-src="../../../NJUer-dsy/2023-Spring/Devens_Yuan/%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%25E5%259F%25BA%25E7%25A1%2580-dsy/%25E6%2595%25B0%25E6%258D%25AE%25E7%25AE%25A1%25E7%2590%2586%25E5%259F%25BA%25E7%25A1%2580%25E6%259C%259F%25E6%259C%25AB%25E5%25A4%258D%25E4%25B9%25A0-dsy/%25E8%25AF%25BB%25E4%25B9%25A6%25E5%25A4%258D%25E4%25B9%25A0%25E7%25AC%2594%25E8%25AE%25B0/image-20230612205211355.png" alt="image-20230612205211355"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="notes-dbms/image-20230612205211355.png" alt="image-20230612205211355"></p>
 <h3 id="格式不一致的数据">格式不一致的数据</h3>
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Spring-Courses-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86/notes-dbms/image-20230612205304934.png" class="" title="image-20230612205304934">
 <blockquote>

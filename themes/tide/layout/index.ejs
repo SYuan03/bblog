@@ -2,14 +2,97 @@
   const posts = page.posts ? page.posts.toArray() : [];
   const publicPosts = site.posts ? site.posts.toArray().filter((post) => !String(post.content || '').includes('hexo-blog-encrypt')) : [];
   const extras = theme.home_extras || {};
+  const profile = theme.profile || {};
+  const artworks = extras.artworks || [];
+  const artworkIndex = artworks.length ? Math.floor((Date.now() + 8 * 60 * 60 * 1000) / 86400000) % artworks.length : 0;
+  const artwork = artworks[artworkIndex] || {};
+  const categories = site.categories ? site.categories.toArray() : [];
+  const featuredCategories = (theme.featured_categories || [])
+    .map((name) => categories.find((category) => category.name === name))
+    .filter(Boolean);
 %>
 <section class="post-feed home-feed section-shell" id="notes">
-  <header class="home-intro reveal">
-    <div class="home-intro-copy">
-      <h1><%= theme.hero.title %></h1>
-      <p><%= theme.hero.description %></p>
-    </div>
-  </header>
+  <% if ((page.current || 1) > 1) { %>
+    <h1 class="sr-only">文章列表，第 <%= page.current %> 页</h1>
+  <% } %>
+  <% if ((page.current || 1) === 1) { %>
+    <header class="home-intro reveal">
+      <div class="home-intro-copy">
+        <h1><%= theme.hero.title %></h1>
+        <p class="home-description"><%= theme.hero.description %></p>
+      </div>
+
+      <blockquote class="home-motto">
+        <% (profile.motto || []).forEach((line) => { %><span><%= line %></span><% }) %>
+      </blockquote>
+
+      <% if (profile.wechat) { %>
+        <div class="home-contact">
+          <button class="profile-contact" type="button" data-copy-wechat data-copy-value="<%= profile.wechat %>" aria-label="复制微信号 <%= profile.wechat %>">
+            <span>微信</span>
+            <strong><%= profile.wechat %></strong>
+            <small data-copy-label>复制</small>
+          </button>
+        </div>
+      <% } %>
+
+      <% if (profile.avatar) { %>
+        <figure class="home-portrait">
+          <img src="<%= url_for(profile.avatar) %>" alt="<%= theme.brand || config.author %> 的头像" width="512" height="512" loading="eager" decoding="async" fetchpriority="high">
+        </figure>
+      <% } %>
+    </header>
+
+    <% if (featuredCategories.length) { %>
+      <nav class="home-topics reveal" aria-label="常写主题">
+        <span>常写</span>
+        <% featuredCategories.forEach((category) => { %>
+          <a href="<%= url_for(category.path) %>"><%= category.name %><sup><%= category.length %></sup></a>
+        <% }) %>
+        <a class="home-topics-all" href="<%= url_for('/categories/') %>">全部分类</a>
+      </nav>
+    <% } %>
+
+    <% if (artworks.length) { %>
+      <aside class="today-strip reveal" data-today-strip data-quote-api="<%= extras.quote_api || '' %>" data-art-start-index="<%= artworkIndex %>">
+        <figure class="today-figure">
+          <a class="today-art" href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-link aria-label="查看《<%= artwork.title_zh || artwork.title %>》的馆藏详情">
+            <img src="<%= url_for(artwork.image) %>" alt="<%= artwork.title_zh || artwork.title %>，<%= artwork.artist_zh || artwork.artist %>" width="960" height="720" loading="lazy" decoding="async" fetchpriority="low" data-art-image>
+          </a>
+        </figure>
+
+        <div class="today-copy">
+          <div class="today-toolbar">
+            <span>馆藏一隅</span>
+            <span class="sr-only" data-today-status aria-live="polite"></span>
+            <button class="today-refresh" type="button" data-today-refresh aria-label="换一幅画和一句话" title="换一幅画和一句话">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8.2A7 7 0 0 1 18.7 6L20 8"></path><path d="M17.9 15.8A7 7 0 0 1 5.3 18L4 16"></path></svg>
+            </button>
+          </div>
+
+          <div class="today-work">
+            <p class="today-facts">
+              <span data-art-origin><%= artwork.origin %></span>
+              <span data-art-date><%= artwork.date %></span>
+              <span data-art-medium><%= artwork.medium %></span>
+            </p>
+            <h2><a href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-title-link><span data-art-title-zh><%= artwork.title_zh || artwork.title %></span></a></h2>
+            <% if (artwork.title_zh && artwork.title) { %><p class="today-art-title" lang="en" data-art-title><%= artwork.title %></p><% } else { %><p class="today-art-title" lang="en" data-art-title hidden></p><% } %>
+            <p class="today-art-maker" data-art-maker><%= [artwork.artist_zh, artwork.artist].filter(Boolean).join(' · ') %></p>
+            <a class="today-detail" href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-detail>在 The Met 查看作品 <span>↗</span></a>
+          </div>
+
+          <div class="today-quote">
+            <blockquote data-quote-text>“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
+            <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
+          </div>
+        </div>
+
+        <script type="application/json" data-artworks-json><%- JSON.stringify(artworks).replace(/</g, '\\u003c') %></script>
+      </aside>
+    <% } %>
+  <% } %>
+
   <div class="feed-bar">
     <h2>最近写的</h2>
     <button class="text-action" type="button" data-random-post>随便翻翻</button>
@@ -20,32 +103,35 @@
     <button class="resume-clear" type="button" data-history-clear aria-label="清除阅读记录" title="清除阅读记录">×</button>
   </div>
   <div class="post-list">
-    <% posts.forEach((post, index) => { %>
+    <% posts.forEach((post) => { %>
       <%- partial('_partial/post-card', { post }) %>
-      <% if ((page.current || 1) === 1 && index === 0) { %>
-        <aside class="today-strip reveal" data-today-strip data-quote-api="<%= extras.quote_api || '' %>" data-art-api="<%= extras.art_api || '' %>" data-art-ids="<%= (extras.artwork_ids || []).join(',') %>">
-          <figure class="today-figure">
-            <a class="today-art" href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-link aria-label="查看馆藏作品">
-              <img src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="" loading="eager" decoding="async" fetchpriority="high" referrerpolicy="no-referrer" data-art-image>
-            </a>
-            <figcaption data-art-credit>
-              <span class="today-art-title" data-art-title></span>
-              <span class="today-art-maker" data-art-caption></span>
-            </figcaption>
-          </figure>
-          <div class="today-copy" aria-live="polite">
-            <blockquote data-quote-text>“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
-            <footer class="today-meta">
-              <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
-              <button class="today-refresh" type="button" data-today-refresh aria-label="换一幅画和一句话" title="换一幅画和一句话">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8.2A7 7 0 0 1 18.7 6L20 8"></path><path d="M17.9 15.8A7 7 0 0 1 5.3 18L4 16"></path></svg>
-              </button>
-            </footer>
-          </div>
-        </aside>
-      <% } %>
     <% }) %>
   </div>
+  <script>
+    (() => {
+      try {
+        const row = document.querySelector('[data-reading-history]');
+        const link = row?.querySelector('[data-history-last]');
+        const current = JSON.parse(localStorage.getItem('tide-last-read-v1') || 'null');
+        const legacy = JSON.parse(localStorage.getItem('tide-reading-history-v1') || '[]');
+        const entry = current?.url ? current : (Array.isArray(legacy) ? legacy[0] : null);
+        if (!row || !link || !entry?.url || !entry?.title) return;
+        const target = new URL(entry.url, location.origin);
+        if (target.origin !== location.origin) return;
+        const href = `${target.pathname}${target.search}${target.hash}`;
+        const visible = [...document.querySelectorAll('.post-card h2 a')].some((item) => {
+          const candidate = new URL(item.href, location.origin);
+          return `${candidate.pathname}${candidate.search}${candidate.hash}` === href;
+        });
+        if (visible) return;
+        link.href = href;
+        link.textContent = entry.title;
+        row.hidden = false;
+      } catch {
+        // Reading history is optional and storage may be unavailable.
+      }
+    })();
+  </script>
   <% if (page.total > 1) { %>
     <nav class="pagination reveal" aria-label="文章分页">
       <% if (page.prev_link) { %><a href="<%= url_for(page.prev_link) %>">← 更新的</a><% } else { %><span></span><% } %>

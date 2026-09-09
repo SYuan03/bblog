@@ -4,7 +4,7 @@ permalink: "/posts/工具学习/how-to-use-ai-painting.html"
 date: "2023-04-24T08:15:08.000Z"
 updated: "2024-09-30T12:52:39.379Z"
 description: "记录早期尝试 Midjourney 与 BlueWillow 等 AI 绘画工具的过程，并整理提示词、画面比例和替代平台的使用线索。"
-cover: "https://s2.loli.net/2023/04/24/WBFOwaHqVeAkoT1.jpg"
+cover: "/generated-covers/legacy-WBFOwaHqVeAkoT1-d161690e.webp"
 categories:
   - "工具学习"
 tags:

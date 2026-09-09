@@ -19,7 +19,7 @@ tags:
 </blockquote>
 <h2 id="起因">起因</h2>
 <p>收到了ZeroSSL证书即将过期的通知</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="zerossl-%E5%9F%9F%E5%90%8DSSL%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/image-20240613164048436.png" alt="image-20240613164048436"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="zerossl-%E5%9F%9F%E5%90%8Dssl%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/image-20240613164048436.png" alt="image-20240613164048436"></p>
 <p>于是不得不回顾下当时搞了啥</p>
 <h2 id="流水线配置">流水线配置</h2>
 <p>先看下流水线干了啥</p>

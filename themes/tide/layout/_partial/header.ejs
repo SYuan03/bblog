@@ -5,8 +5,9 @@
 <header class="site-header" data-header>
   <div class="header-inner">
     <a class="brand" href="<%= url_for('/') %>" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"></span>
       <span class="brand-copy">
-        <strong><%= config.title %></strong>
+        <strong><%= theme.brand || config.author %></strong>
       </span>
     </a>
 
@@ -17,7 +18,7 @@
 
     <nav class="site-nav" id="site-nav" data-nav>
       <% theme.navigation.forEach((item) => { %>
-        <a href="<%= url_for(item.path) %>" class="<%= activeFor(item.path) ? 'is-active' : '' %>"><%= item.label %></a>
+        <a href="<%= url_for(item.path) %>" class="<%= activeFor(item.path) ? 'is-active' : '' %>"<% if (activeFor(item.path)) { %> aria-current="page"<% } %>><%= item.label %></a>
       <% }) %>
     </nav>
 

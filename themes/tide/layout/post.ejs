@@ -7,6 +7,7 @@
   const commentsEnabled = theme.comments && theme.comments.enable && !isEncrypted;
   const deckText = post_summary(page, 150);
   const cover = post_cover(page);
+  const coverSrcset = post_cover_srcset(page);
   const coverTone = post_cover_tone(page);
   const pageTagNames = new Set(tags.map((tag) => tag.name));
   const pageCategoryNames = new Set(cats.map((category) => category.name));
@@ -39,7 +40,7 @@
     </div>
     <div class="article-cover cover-tone-<%= coverTone %>">
       <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i></span>
-      <% if (cover) { %><img src="<%= url_for(cover) %>" alt="<%= page.title %>的文章首图" decoding="async" fetchpriority="high" data-cover-image><% } %>
+      <% if (cover) { %><img src="<%= url_for(cover) %>"<% if (coverSrcset) { %> srcset="<%= coverSrcset.split(', ').map((candidate) => { const [url, size] = candidate.split(' '); return `${url_for(url)} ${size}`; }).join(', ') %>" sizes="(max-width: 680px) calc(100vw - 28px), (max-width: 960px) min(760px, calc(100vw - 34px)), 860px"<% } %> alt="<%= page.title %>的文章首图" decoding="async" fetchpriority="high" data-cover-image><% } %>
     </div>
   </header>
 
@@ -94,12 +95,12 @@
       </nav>
 
       <% if (commentsEnabled) { %>
-        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>" data-comments-script="<%= url_for('/vendor/twikoo.all.min.js') %>">
+        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>" data-comments-script="<%= url_for('/vendor/twikoo.min.js') %>">
           <div class="comments-heading">
             <div><h2>留言</h2></div>
           </div>
-          <div id="twikoo-comment">
-            <div class="comment-loading">留言正在载入…</div>
+          <div id="twikoo-comment" aria-busy="true">
+            <div class="comment-loading" role="status" aria-live="polite">留言正在载入…</div>
           </div>
         </section>
       <% } %>
