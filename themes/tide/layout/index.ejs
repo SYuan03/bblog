@@ -1,17 +1,43 @@
 <%
   const posts = page.posts ? page.posts.toArray() : [];
+  const publicPosts = site.posts ? site.posts.toArray().filter((post) => !String(post.content || '').includes('hexo-blog-encrypt')) : [];
+  const extras = theme.home_extras || {};
 %>
 <section class="post-feed home-feed section-shell" id="notes">
   <header class="home-intro reveal">
     <div class="home-intro-copy">
       <h1><%= theme.hero.title %></h1>
       <p><%= theme.hero.description %></p>
+      <p class="home-facts"><%= site.posts.length %> 篇文章 · 从 <%= theme.footer.since %> 开始</p>
     </div>
-    <h2>最近写的</h2>
   </header>
+  <div class="feed-bar">
+    <h2>最近写的</h2>
+    <button class="text-action" type="button" data-random-post>随便看一篇 <span aria-hidden="true">↗</span></button>
+  </div>
+  <div class="resume-row" data-reading-history hidden>
+    <span>上次看到这儿</span>
+    <a href="/" data-history-last></a>
+    <button class="text-action" type="button" data-history-clear>清空</button>
+  </div>
   <div class="post-list">
-    <% posts.forEach((post) => { %>
+    <% posts.forEach((post, index) => { %>
       <%- partial('_partial/post-card', { post }) %>
+      <% if ((page.current || 1) === 1 && index === 1) { %>
+        <aside class="today-strip reveal" data-today-strip data-quote-api="<%= extras.quote_api || '' %>" data-art-api="<%= extras.art_api || '' %>" data-art-ids="<%= (extras.artwork_ids || []).join(',') %>">
+          <a class="today-art" href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-link aria-label="查看今天的馆藏作品">
+            <img src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-art-image>
+          </a>
+          <div class="today-copy">
+            <div class="today-topline">
+              <span>今天看到的</span>
+              <button class="text-action" type="button" data-today-refresh>换一组</button>
+            </div>
+            <blockquote data-quote-text aria-live="polite">“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
+            <p class="today-meta"><cite>— <span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite><span aria-hidden="true"> · </span><a href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-caption>大都会艺术博物馆馆藏</a></p>
+          </div>
+        </aside>
+      <% } %>
     <% }) %>
   </div>
   <% if (page.total > 1) { %>
@@ -21,4 +47,7 @@
       <% if (page.next_link) { %><a href="<%= url_for(page.next_link) %>">更早的 →</a><% } %>
     </nav>
   <% } %>
+  <div class="random-post-sources" hidden>
+    <% publicPosts.forEach((post) => { %><a href="<%= url_for(post.path) %>"></a><% }) %>
+  </div>
 </section>

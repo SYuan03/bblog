@@ -62,6 +62,243 @@
 
   backToTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
 
+  const lastReadKey = 'tide-last-read-v1';
+  const legacyHistoryKey = 'tide-reading-history-v1';
+  const readStoredJson = (key, fallback = null) => {
+    try {
+      return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+    } catch {
+      return fallback;
+    }
+  };
+  const writeStoredJson = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Storage can be unavailable in strict privacy modes.
+    }
+  };
+  const removeStoredValue = (key) => {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Keep the rest of the page usable when storage is unavailable.
+    }
+  };
+  const sameOriginHref = (value) => {
+    try {
+      const url = new URL(value, location.origin);
+      return url.origin === location.origin ? `${url.pathname}${url.search}${url.hash}` : '';
+    } catch {
+      return '';
+    }
+  };
+
+  if (body.dataset.pageKind === 'post' && body.dataset.pagePrivate !== 'true') {
+    const entry = {
+      title: body.dataset.pageTitle,
+      url: sameOriginHref(body.dataset.pageUrl),
+      date: body.dataset.pageDate,
+      visitedAt: Date.now(),
+    };
+    if (entry.title && entry.url) writeStoredJson(lastReadKey, entry);
+  }
+
+  const historyRow = document.querySelector('[data-reading-history]');
+  if (historyRow) {
+    let entry = readStoredJson(lastReadKey);
+    if (!entry?.url) {
+      const legacyEntries = readStoredJson(legacyHistoryKey, []);
+      entry = Array.isArray(legacyEntries) ? legacyEntries[0] : null;
+      if (entry?.url) writeStoredJson(lastReadKey, entry);
+    }
+    const href = sameOriginHref(entry?.url);
+    const link = historyRow.querySelector('[data-history-last]');
+    if (href && entry?.title && link) {
+      link.href = href;
+      link.textContent = entry.title;
+      historyRow.hidden = false;
+    }
+    historyRow.querySelector('[data-history-clear]')?.addEventListener('click', () => {
+      removeStoredValue(lastReadKey);
+      removeStoredValue(legacyHistoryKey);
+      historyRow.hidden = true;
+      document.querySelector('[data-random-post]')?.focus();
+      showToast('阅读记录已清空');
+    });
+  }
+
+  const randomPosts = [...document.querySelectorAll('.random-post-sources a')]
+    .map((link) => sameOriginHref(link.href))
+    .filter(Boolean);
+  document.querySelector('[data-random-post]')?.addEventListener('click', () => {
+    if (!randomPosts.length) return;
+    let previous = -1;
+    try {
+      previous = Number(sessionStorage.getItem('tide-random-index') || -1);
+    } catch {
+      // Repeating once is harmless when session storage is unavailable.
+    }
+    let index = Math.floor(Math.random() * randomPosts.length);
+    if (randomPosts.length > 1 && index === previous) index = (index + 1) % randomPosts.length;
+    try {
+      sessionStorage.setItem('tide-random-index', String(index));
+    } catch {
+      // Navigation still works without remembering the previous index.
+    }
+    location.assign(randomPosts[index]);
+  });
+
+  const todayStrip = document.querySelector('[data-today-strip]');
+  if (todayStrip) {
+    const quoteText = todayStrip.querySelector('[data-quote-text]');
+    const quoteSource = todayStrip.querySelector('[data-quote-source]');
+    const artImage = todayStrip.querySelector('[data-art-image]');
+    const artLink = todayStrip.querySelector('[data-art-link]');
+    const artCaption = todayStrip.querySelector('[data-art-caption]');
+    const refresh = todayStrip.querySelector('[data-today-refresh]');
+    const artworkIds = (todayStrip.dataset.artIds || '').split(',').map(Number).filter(Number.isFinite);
+    const quoteEndpoint = todayStrip.dataset.quoteApi || '';
+    const artEndpoint = (todayStrip.dataset.artApi || '').replace(/\/$/, '');
+    const expectedUpdates = Number(Boolean(quoteEndpoint)) + Number(Boolean(artEndpoint && artworkIds.length));
+    const now = new Date();
+    const dayKey = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
+    const dayNumber = Math.floor(new Date(`${dayKey}T00:00:00`).getTime() / 86400000);
+    let artOffset = 0;
+    let activeRequest = 0;
+
+    const httpsUrl = (value) => {
+      try {
+        const url = new URL(value);
+        return url.protocol === 'https:' ? url.href : '';
+      } catch {
+        return '';
+      }
+    };
+    const fetchJson = async (url, timeoutMs) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, {
+          signal: controller.signal,
+          credentials: 'omit',
+          referrerPolicy: 'no-referrer',
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+    const applyQuote = (text, source) => {
+      const clean = String(text || '').trim().replace(/^[“\"]+|[”\"]+$/g, '');
+      if (!clean) return;
+      if (quoteText) quoteText.textContent = `“${clean}”`;
+      if (quoteSource) quoteSource.textContent = String(source || '佚名').trim();
+    };
+    const loadQuote = async (force = false, requestId = activeRequest) => {
+      const cacheKey = 'tide-living-quote';
+      const cached = readStoredJson(cacheKey);
+      if (!force && cached?.day === dayKey && cached?.text) {
+        if (requestId === activeRequest) applyQuote(cached.text, cached.source);
+        return true;
+      }
+      if (!quoteEndpoint) return false;
+      try {
+        const quote = await fetchJson(quoteEndpoint, 3500);
+        if (!quote.hitokoto) throw new Error('Quote is unavailable');
+        const source = [quote.from_who, quote.from].filter(Boolean).join(' · ') || '佚名';
+        const cachedQuote = { day: dayKey, text: quote.hitokoto, source };
+        if (requestId !== activeRequest) return false;
+        writeStoredJson(cacheKey, cachedQuote);
+        applyQuote(cachedQuote.text, cachedQuote.source);
+        return true;
+      } catch (error) {
+        console.warn('Daily quote failed', error);
+        return false;
+      }
+    };
+    const applyArtwork = (artwork, requestId = activeRequest) => new Promise((resolve, reject) => {
+      const imageUrl = httpsUrl(artwork?.primaryImageSmall);
+      if (!imageUrl || !artImage) {
+        reject(new Error('Artwork image is unavailable'));
+        return;
+      }
+      const candidate = new Image();
+      const timeout = setTimeout(() => {
+        candidate.src = '';
+        reject(new Error('Artwork image timed out'));
+      }, 5000);
+      candidate.referrerPolicy = 'no-referrer';
+      candidate.onload = () => {
+        clearTimeout(timeout);
+        if (requestId !== activeRequest) {
+          resolve();
+          return;
+        }
+        artImage.src = imageUrl;
+        artImage.alt = `${artwork.title || '公版馆藏作品'}${artwork.artistDisplayName ? `，${artwork.artistDisplayName}` : ''}`;
+        const objectUrl = httpsUrl(artwork.objectURL);
+        if (objectUrl && artLink) artLink.href = objectUrl;
+        if (objectUrl && artCaption) artCaption.href = objectUrl;
+        if (artCaption) artCaption.textContent = artwork.artistDisplayName ? `馆藏：${artwork.artistDisplayName}` : '大都会艺术博物馆馆藏';
+        resolve();
+      };
+      candidate.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error('Artwork image failed to load'));
+      };
+      candidate.src = imageUrl;
+    });
+    const loadArtwork = async (force = false, requestId = activeRequest) => {
+      if (!artEndpoint || !artworkIds.length) return false;
+      const artworkId = artworkIds[(dayNumber + artOffset) % artworkIds.length];
+      const cacheKey = 'tide-daily-art-v1';
+      const cached = readStoredJson(cacheKey);
+      if (!force && cached?.day === dayKey && cached?.id === artworkId && cached?.artwork) {
+        try {
+          await applyArtwork(cached.artwork, requestId);
+          return true;
+        } catch {
+          removeStoredValue(cacheKey);
+        }
+      }
+      try {
+        const artwork = await fetchJson(`${artEndpoint}/${artworkId}`, 5000);
+        if (!artwork.isPublicDomain || !artwork.primaryImageSmall) throw new Error('Artwork is unavailable');
+        const compactArtwork = {
+          title: artwork.title,
+          artistDisplayName: artwork.artistDisplayName,
+          objectURL: artwork.objectURL,
+          primaryImageSmall: artwork.primaryImageSmall,
+        };
+        await applyArtwork(compactArtwork, requestId);
+        if (requestId !== activeRequest) return false;
+        writeStoredJson(cacheKey, { day: dayKey, id: artworkId, artwork: compactArtwork });
+        return true;
+      } catch (error) {
+        console.warn('Daily artwork failed', error);
+        return false;
+      }
+    };
+
+    const updateToday = async (force = false) => {
+      const requestId = ++activeRequest;
+      const results = await Promise.all([loadQuote(force, requestId), loadArtwork(force, requestId)]);
+      return results.filter(Boolean).length;
+    };
+    updateToday();
+    refresh?.addEventListener('click', async () => {
+      if (refresh.getAttribute('aria-busy') === 'true') return;
+      refresh.setAttribute('aria-busy', 'true');
+      artOffset = artworkIds.length ? (artOffset + 1) % artworkIds.length : 0;
+      const updated = await updateToday(true);
+      refresh.removeAttribute('aria-busy');
+      if (updated < expectedUpdates) showToast(updated ? '有一项没换成，稍后再试。' : '没换成功，稍后再试。');
+    });
+  }
+
   const lazyImages = document.querySelectorAll('img[data-src]');
   const hydrateImage = (image) => {
     if (!image.dataset.src) return;

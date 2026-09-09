@@ -37,6 +37,11 @@ hexo.extend.helper.register('post_summary', function postSummary(post, limit = 1
   return truncate(inferred || '打开文章继续阅读。', Number(limit) || 112);
 });
 
+hexo.extend.helper.register('reading_minutes', function readingMinutes(post) {
+  const symbols = Number(post?.length) || cleanText(post?.content || '').length;
+  return Math.max(1, Math.round(symbols / 275));
+});
+
 hexo.extend.helper.register('post_cover', function postCover(post) {
   const declared = Array.isArray(post?.cover) ? post.cover[0] : post?.cover;
   return normalizeImageUrl(declared, post?.path);
