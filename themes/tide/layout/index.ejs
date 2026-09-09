@@ -8,34 +8,35 @@
     <div class="home-intro-copy">
       <h1><%= theme.hero.title %></h1>
       <p><%= theme.hero.description %></p>
-      <p class="home-facts"><%= site.posts.length %> 篇文章 · 从 <%= theme.footer.since %> 开始</p>
     </div>
   </header>
   <div class="feed-bar">
     <h2>最近写的</h2>
-    <button class="text-action" type="button" data-random-post>随便看一篇 <span aria-hidden="true">↗</span></button>
+    <button class="text-action" type="button" data-random-post>随便翻翻</button>
   </div>
   <div class="resume-row" data-reading-history hidden>
-    <span>上次看到这儿</span>
+    <span>接着读</span>
     <a href="/" data-history-last></a>
-    <button class="text-action" type="button" data-history-clear>清空</button>
+    <button class="resume-clear" type="button" data-history-clear aria-label="清除阅读记录" title="清除阅读记录">×</button>
   </div>
   <div class="post-list">
     <% posts.forEach((post, index) => { %>
       <%- partial('_partial/post-card', { post }) %>
       <% if ((page.current || 1) === 1 && index === 1) { %>
         <aside class="today-strip reveal" data-today-strip data-quote-api="<%= extras.quote_api || '' %>" data-art-api="<%= extras.art_api || '' %>" data-art-ids="<%= (extras.artwork_ids || []).join(',') %>">
-          <a class="today-art" href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-link aria-label="查看今天的馆藏作品">
-            <img src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-art-image>
-          </a>
-          <div class="today-copy">
-            <div class="today-topline">
-              <span>今天看到的</span>
-              <button class="text-action" type="button" data-today-refresh>换一组</button>
-            </div>
-            <blockquote data-quote-text aria-live="polite">“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
-            <p class="today-meta"><cite>— <span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite><span aria-hidden="true"> · </span><a href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-caption>大都会艺术博物馆馆藏</a></p>
+          <figure class="today-figure">
+            <a class="today-art" href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" data-art-link aria-label="查看馆藏作品">
+              <img src="<%= url_for('/MyImgs/home-bg-light.webp') %>" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-art-image>
+            </a>
+            <figcaption data-art-credit><span data-art-caption></span></figcaption>
+          </figure>
+          <div class="today-copy" aria-live="polite">
+            <blockquote data-quote-text>“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
+            <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
           </div>
+          <button class="today-refresh" type="button" data-today-refresh aria-label="换一幅画和一句话" title="换一幅画和一句话">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8.2A7 7 0 0 1 18.7 6L20 8"></path><path d="M17.9 15.8A7 7 0 0 1 5.3 18L4 16"></path></svg>
+          </button>
         </aside>
       <% } %>
     <% }) %>

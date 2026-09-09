@@ -156,6 +156,7 @@
     const artImage = todayStrip.querySelector('[data-art-image]');
     const artLink = todayStrip.querySelector('[data-art-link]');
     const artCaption = todayStrip.querySelector('[data-art-caption]');
+    const quoteCitation = todayStrip.querySelector('[data-quote-citation]');
     const refresh = todayStrip.querySelector('[data-today-refresh]');
     const artworkIds = (todayStrip.dataset.artIds || '').split(',').map(Number).filter(Number.isFinite);
     const quoteEndpoint = todayStrip.dataset.quoteApi || '';
@@ -195,10 +196,19 @@
       const clean = String(text || '').trim().replace(/^[“\"]+|[”\"]+$/g, '');
       if (!clean) return;
       if (quoteText) quoteText.textContent = `“${clean}”`;
-      if (quoteSource) quoteSource.textContent = String(source || '佚名').trim();
+      const cleanSource = String(source || '').trim();
+      if (quoteSource) quoteSource.textContent = cleanSource;
+      if (quoteCitation) quoteCitation.hidden = !cleanSource;
+    };
+    const formatQuoteSource = (author, work) => {
+      const cleanAuthor = String(author || '').trim();
+      const cleanWork = String(work || '').trim().replace(/^《|》$/g, '');
+      if (cleanAuthor && cleanWork) return `${cleanAuthor}《${cleanWork}》`;
+      if (cleanAuthor) return cleanAuthor;
+      return cleanWork ? `《${cleanWork}》` : '';
     };
     const loadQuote = async (force = false, requestId = activeRequest) => {
-      const cacheKey = 'tide-living-quote';
+      const cacheKey = 'tide-living-quote-v2';
       const cached = readStoredJson(cacheKey);
       if (!force && cached?.day === dayKey && cached?.text) {
         if (requestId === activeRequest) applyQuote(cached.text, cached.source);
@@ -208,10 +218,10 @@
       try {
         const quote = await fetchJson(quoteEndpoint, 3500);
         if (!quote.hitokoto) throw new Error('Quote is unavailable');
-        const source = [quote.from_who, quote.from].filter(Boolean).join(' · ') || '佚名';
+        const source = formatQuoteSource(quote.from_who, quote.from);
         const cachedQuote = { day: dayKey, text: quote.hitokoto, source };
         if (requestId !== activeRequest) return false;
-        writeStoredJson(cacheKey, cachedQuote);
+        if (!force) writeStoredJson(cacheKey, cachedQuote);
         applyQuote(cachedQuote.text, cachedQuote.source);
         return true;
       } catch (error) {
@@ -239,10 +249,19 @@
         }
         artImage.src = imageUrl;
         artImage.alt = `${artwork.title || '公版馆藏作品'}${artwork.artistDisplayName ? `，${artwork.artistDisplayName}` : ''}`;
+        const artworkTitle = [artwork.title, artwork.artistDisplayName].filter(Boolean).join(' — ');
+        if (artLink) {
+          artLink.title = artworkTitle;
+          artLink.setAttribute('aria-label', artwork.title
+            ? `查看《${artwork.title}》${artwork.artistDisplayName ? `，${artwork.artistDisplayName}` : ''}`
+            : '查看馆藏作品');
+        }
         const objectUrl = httpsUrl(artwork.objectURL);
         if (objectUrl && artLink) artLink.href = objectUrl;
-        if (objectUrl && artCaption) artCaption.href = objectUrl;
-        if (artCaption) artCaption.textContent = artwork.artistDisplayName ? `馆藏：${artwork.artistDisplayName}` : '大都会艺术博物馆馆藏';
+        if (artCaption) {
+          artCaption.textContent = artwork.artistDisplayName || '';
+          artCaption.title = artworkTitle;
+        }
         resolve();
       };
       candidate.onerror = () => {
@@ -275,7 +294,7 @@
         };
         await applyArtwork(compactArtwork, requestId);
         if (requestId !== activeRequest) return false;
-        writeStoredJson(cacheKey, { day: dayKey, id: artworkId, artwork: compactArtwork });
+        if (!force) writeStoredJson(cacheKey, { day: dayKey, id: artworkId, artwork: compactArtwork });
         return true;
       } catch (error) {
         console.warn('Daily artwork failed', error);
@@ -444,9 +463,15 @@
   const searchStatus = document.querySelector('[data-search-status]');
   let searchIndex;
 
+  const setSearchStatus = (message, visible = false) => {
+    if (!searchStatus) return;
+    searchStatus.textContent = message;
+    searchStatus.classList.toggle('is-visible', visible);
+  };
+
   const loadSearch = async () => {
     if (searchIndex) return searchIndex;
-    searchStatus.textContent = '正在加载…';
+    setSearchStatus('正在加载…');
     try {
       const response = await fetch('/search.xml');
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -459,12 +484,12 @@
           content: entry.querySelector('content')?.textContent.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() || '',
         };
       });
-      searchStatus.textContent = `已收录 ${searchIndex.length} 篇文章`;
+      setSearchStatus(`已收录 ${searchIndex.length} 篇文章`);
       return searchIndex;
     } catch (error) {
-      searchStatus.textContent = '搜索索引载入失败，请刷新后重试。';
+      setSearchStatus('搜索索引载入失败，请刷新后重试。', true);
       console.warn('Search index failed', error);
-      return [];
+      return null;
     }
   };
 
@@ -490,8 +515,9 @@
     const query = searchInput.value.trim().toLocaleLowerCase('zh-CN');
     const entries = await loadSearch();
     searchResults.replaceChildren();
+    if (!entries) return;
     if (!query) {
-      searchStatus.textContent = `已收录 ${entries.length} 篇文章`;
+      setSearchStatus(`已收录 ${entries.length} 篇文章`);
       return;
     }
     const terms = query.split(/\s+/).filter(Boolean);
@@ -501,20 +527,14 @@
       return { ...entry, score };
     }).filter((entry) => entry.score >= terms.length).sort((a, b) => b.score - a.score).slice(0, 12);
 
-    searchStatus.textContent = matches.length ? `找到 ${matches.length} 条结果` : '没搜到，换个词试试。';
-    matches.forEach((entry, index) => {
+    setSearchStatus(matches.length ? `找到 ${matches.length} 条结果` : '没搜到，换个词试试。', !matches.length);
+    matches.forEach((entry) => {
       const link = document.createElement('a');
       link.className = 'search-result';
       link.href = entry.url;
-      const number = document.createElement('span');
-      number.textContent = String(index + 1).padStart(2, '0');
-      const copy = document.createElement('div');
       const title = document.createElement('h3');
       title.textContent = entry.title;
-      const excerpt = document.createElement('p');
-      excerpt.textContent = entry.content.slice(0, 110) + (entry.content.length > 110 ? '…' : '');
-      copy.append(title, excerpt);
-      link.append(number, copy);
+      link.append(title);
       searchResults.append(link);
     });
   });
