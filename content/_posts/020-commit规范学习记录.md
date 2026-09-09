@@ -3,7 +3,8 @@ title: "Commit规范学习记录"
 permalink: "/posts/工具学习/commit规范学习记录.html"
 date: "2024-03-13T03:14:09.000Z"
 updated: "2024-09-30T12:51:51.554Z"
-description: "速通commit规范，省得每次都乱写，只会用feat和fix"
+cover: "/generated-covers/020-commit规范学习记录.webp"
+description: "简要整理约定式提交规范，并用 docs、style 两类示例说明文档修改与纯样式调整时的提交信息写法。"
 categories:
   - "工具学习"
 tags:

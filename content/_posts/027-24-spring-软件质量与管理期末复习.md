@@ -3,7 +3,7 @@ title: "24-Spring-软件质量与管理期末复习"
 permalink: "/posts/期末复习/24-spring-软件质量与管理期末复习.html"
 date: "2024-06-25T16:36:32.000Z"
 updated: "2024-10-05T07:13:45.448Z"
-description: "不理解瀑布模型的话，你觉得你是软件工程职业选手吗？"
+description: "按过程、项目管理、质量管理与工程技术四条主线整理期末复习内容，覆盖生命周期模型、估算计划、质量控制与验证确认。"
 cover: "https://imgss.s3.bitiful.net/2024/06/26/20240626000213.png"
 categories:
   - "期末复习"

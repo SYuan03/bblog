@@ -3,6 +3,8 @@
   const descriptionText = page.description || page.excerpt || config.description;
   const bodyType = page.layout === 'post' ? 'post' : (is_home() ? 'home' : 'page');
   const encryptedPage = bodyType === 'post' && String(page.content || '').includes('hexo-blog-encrypt');
+  const summaryText = bodyType === 'post' ? post_summary(page, 180) : strip_html(descriptionText);
+  const socialCover = bodyType === 'post' ? (post_cover(page) || '/MyImgs/home-bg-light.webp') : '/MyImgs/home-bg-light.webp';
 %>
 <!doctype html>
 <html lang="zh-CN" data-theme="light">
@@ -10,7 +12,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f4f0e8">
-  <meta name="description" content="<%= strip_html(descriptionText).replace(/\"/g, '&quot;').slice(0, 180) %>">
+  <meta name="description" content="<%= summaryText %>">
+  <meta property="og:type" content="<%= bodyType === 'post' ? 'article' : 'website' %>">
+  <meta property="og:title" content="<%= titleText %>">
+  <meta property="og:description" content="<%= summaryText %>">
+  <meta property="og:url" content="<%= full_url_for(page.path || '') %>">
+  <% if (socialCover) { %><meta property="og:image" content="<%= full_url_for(socialCover) %>"><% } %>
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <title><%= titleText %></title>
   <link rel="canonical" href="<%= full_url_for(page.path || '') %>">
@@ -23,8 +31,8 @@
       document.documentElement.dataset.theme = saved || preferred;
     })();
   </script>
-  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=3') %>">
-  <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css?v=3') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=4') %>">
+  <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css?v=4') %>">
 </head>
 <body class="page-type-<%= bodyType %>" data-page-kind="<%= bodyType %>" data-page-title="<%= page.title || '' %>" data-page-url="<%= url_for(page.path || '') %>" data-page-date="<%= page.date ? date(page.date, 'YYYY.MM.DD') : '' %>" data-page-private="<%= encryptedPage ? 'true' : 'false' %>">
   <div class="reading-progress" aria-hidden="true"><span></span></div>
@@ -38,6 +46,6 @@
     <span>↑</span>
   </button>
   <div class="site-toast" data-toast role="status" aria-live="polite"></div>
-  <script src="<%= url_for('/js/tide.js?v=3') %>" defer></script>
+  <script src="<%= url_for('/js/tide.js?v=4') %>" defer></script>
 </body>
 </html>

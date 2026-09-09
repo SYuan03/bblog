@@ -3,6 +3,8 @@ title: "24-Spring-数据库开发期末复习"
 permalink: "/posts/期末复习/数据库开发/24-spring-数据库开发期末复习.html"
 date: "2024-06-15T15:21:51.000Z"
 updated: "2024-09-30T12:51:33.130Z"
+cover: "/generated-covers/029-24-spring-数据库开发期末复习.webp"
+description: "24 Spring 数据库开发复习提纲，覆盖 SQL 函数、递归查询、外连接、索引与考试题型等重点。"
 categories:
   - "期末复习"
   - "数据库开发"
@@ -58,13 +60,13 @@ tags:
 <li>要么是group by出现的字段</li>
 <li>要么是group by后出现的字段+聚合函数的组合</li>
 </ul>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616154704762.png" alt="image-20240616154704762"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616154704762.png" alt="image-20240616154704762"></p>
 <blockquote>
 <p>但实际运行好像无论MySQL5.7还是8.0也能选没group的</p>
 </blockquote>
 <h3 id="NULL如何成组">NULL如何成组?</h3>
 <p>利用coalesce函数</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616155109877.png" alt="image-20240616155109877"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616155109877.png" alt="image-20240616155109877"></p>
 <h3 id="coalesce函数">coalesce函数</h3>
 <p><code>COALESCE</code> 是 SQL 中的一个函数，它的作用是返回第一个非空表达式的结果。如果所有的表达式都是空（NULL），则 <code>COALESCE</code> 函数返回 NULL。这个函数常用于处理可能为 NULL 的数据列，确保查询结果中不会出现 NULL 值，而是使用一个默认的值。</p>
 <p>语法：</p>
@@ -468,12 +470,12 @@ tags:
 <p>删除：<a class="link" target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1JU411d7iY/?spm_id_from=333.788&amp;vd_source=54bdc0734ba281535b1404bbbce896ef">https://www.bilibili.com/video/BV1JU411d7iY/?spm_id_from=333.788&amp;vd_source=54bdc0734ba281535b1404bbbce896ef <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p><strong>B树：多叉平衡搜索树</strong></p>
 <p>B树需要满足三个特点(m阶B树就是最多有m个分支)</p>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616232633809.png" alt="image-20240616232633809" style="zoom: 25%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616232633809.png" alt="image-20240616232633809" style="zoom: 25%;">
 <blockquote>
 <p>上取整</p>
 </blockquote>
 <p>内存与硬盘（并且会有查找失败的可能</p>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616232911847.png" alt="image-20240616232911847" style="zoom: 67%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616232911847.png" alt="image-20240616232911847" style="zoom: 67%;">
 <p><strong>B 树 与 B+树两者有何异同呢？</strong></p>
 <ul>
 <li>B 树的所有节点既存放键(key) 也存放数据(data)，而 B+树只有叶子节点存放 key 和 data，其他内节点只存放 key。</li>
@@ -485,10 +487,10 @@ tags:
 <h3 id="B-树的节点分裂（叶节点）">B+树的节点分裂（叶节点）</h3>
 <p><strong><u>B+树 叶节点 分裂 选一个移上去就行，需要复制，因为是非叶结点</u></strong></p>
 <p>以下是4阶B树插入11：N是4-1=3</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616235206850.png" alt="image-20240616235206850"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616235206850.png" alt="image-20240616235206850"></p>
 <blockquote>
 <p>这应该是B+树</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616234710682.png" alt="image-20240616234710682"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616234710682.png" alt="image-20240616234710682"></p>
 </blockquote>
 <p>**Step 1: **查找算法定位目标叶节点，并将新值关联</p>
 <p><strong>Step 2:</strong> 有空就插⼊，没空就叫“节点溢出”overflow，必须分裂</p>
@@ -502,7 +504,7 @@ tags:
 <p>11插不进去，所以要分裂，先把原来的分裂下，13提上去</p>
 </blockquote>
 <h3 id="B-树的节点分裂（非叶节点）">B+树的节点分裂（非叶节点）</h3>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616235311923.png" alt="image-20240616235311923"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240616235311923.png" alt="image-20240616235311923"></p>
 <p><strong><u>B+树 非叶节点 分裂选一个直接移上去就行，不需要复制，因为是非叶结点</u></strong></p>
 <h3 id="B-树的叶节点合并（删除16后）">B+树的叶节点合并（删除16后）</h3>
 <p><strong>如果是删除16</strong></p>
@@ -510,14 +512,14 @@ tags:
 <blockquote>
 <p>删除会出现<strong>下溢出</strong>，也就是删完节点太少了，相邻加起来小于某个值了</p>
 </blockquote>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617000237631.png" alt="image-20240617000237631" style="zoom: 67%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617000237631.png" alt="image-20240617000237631" style="zoom: 67%;">
 <p>对于叶节点：两个相邻节点中的键值对数量 小于或等于 N</p>
 <p>对于非叶节点：两个相邻节点中指针的数量 小于或等于 N+1（感觉是一个意思）</p>
 <p><strong>如果是删除20</strong></p>
 <p>⼀般50%是树状结构节点占用率的阈值</p>
 <p>如果是删除20，那么20消失就行了</p>
 <h3 id="B-树的非叶节点合并（删除10后）">B+树的非叶节点合并（删除10后）</h3>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617003550839.png" alt="image-20240617003550839" style="zoom:50%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617003550839.png" alt="image-20240617003550839" style="zoom:50%;">
 <h3 id="B树的分裂（插入）-合并（删除）">B树的分裂（插入）/合并（删除）</h3>
 <p><strong>B树</strong>的<strong>非叶结点</strong><u>分裂合并</u>与<strong>B+树</strong>的<strong>非叶结点</strong><u>分裂合并</u>是一致的</p>
 <p><strong>B树</strong>的<strong>非叶结点</strong><u>分裂合并</u>与<strong>B树</strong>的<strong>叶结点</strong><u>分裂合并</u>是一致的</p>
@@ -560,9 +562,9 @@ tags:
 <p>分区目标：</p>
 <p>分区想做到的：查询时可以过滤掉很多无用分区、分区本身不会带来很多代价</p>
 <h4 id="面对两大问题">面对两大问题</h4>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617150424273.png" alt="image-20240617150424273"></p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617150525113.png" alt="image-20240617150525113"></p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617150816868.png" alt="image-20240617150816868"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617150424273.png" alt="image-20240617150424273"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617150525113.png" alt="image-20240617150525113"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617150816868.png" alt="image-20240617150816868"></p>
 <blockquote>
 <p>• NULL值会使分区过滤无效（PATITION by RANGE COLUMN（order_date））</p>
 <p>• 分区列和索引列不匹配（没有索引，或关联查询时关联条件不匹配索引）</p>
@@ -577,7 +579,7 @@ tags:
 <blockquote>
 <p>感觉<strong>分区表</strong>就是一个管理底层表的东西？</p>
 </blockquote>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617151531213.png" alt="image-20240617151531213"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617151531213.png" alt="image-20240617151531213"></p>
 <h3 id="分表">分表</h3>
 <p>一张表按照一定规则分为N个独立存储空间的实体表，系统读写时需要根据定义好的规则得到对应的字表明，然后操作</p>
 <h4 id="解决什么问题">解决什么问题</h4>
@@ -719,9 +721,9 @@ tags:
 <p><strong>为什么要分库？</strong></p>
 <p>突破单节点数据库服务器的I/O能力限制，解决数据库扩展性的问题</p>
 <p><strong>怎么分库？</strong></p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617152718689.png" alt="image-20240617152718689"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617152718689.png" alt="image-20240617152718689"></p>
 <p><strong>会遇到什么问题？</strong></p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617153056627.png" alt="image-20240617153056627"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617153056627.png" alt="image-20240617153056627"></p>
 <h2 id="SQL成本计算">SQL成本计算</h2>
 <blockquote>
 <p>SQL解释器</p>
@@ -761,7 +763,7 @@ tags:
 </li>
 </ol>
 <p><strong><u>二、基于块的连接优化</u></strong>：通过减少对被驱动表的多次遍历来提高连接效率（感觉像是倒反天罡</p>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617133051390.png" alt="image-20240617133051390" style="zoom: 50%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617133051390.png" alt="image-20240617133051390" style="zoom: 50%;">
 <ol>
 <li>尽量减少访问被驱动表的次数（驱动表的记录不会都放入 join buffer，只会将部分列放入）</li>
 <li>join buffer 足够大，就可以一次访问被驱动表完成连接</li>
@@ -781,7 +783,7 @@ tags:
 </blockquote>
 <p>要点是<strong>执行计划的成本估算</strong></p>
 <p>基础仍然是规则方案探索</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718595481773-21.png" alt="img"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718595481773-21.png" alt="img"></p>
 <h4 id="什么是“成本”">什么是“成本”</h4>
 <ul>
 <li>一个查询有不同的执行方案，它会选择其中成本最低的（也就是代价最低的）</li>
@@ -848,7 +850,7 @@ tags:
 <p>对比各种执行方案的代价，找出成本最低的那一个</p>
 </li>
 </ol>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617125503524.png" alt="image-20240617125503524" style="zoom:50%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617125503524.png" alt="image-20240617125503524" style="zoom:50%;">
 <blockquote>
 <p>1.1，1.0这些都是常数，加一些偏置值而已</p>
 </blockquote>
@@ -871,7 +873,7 @@ tags:
 <li><strong>适应范围窄</strong>：固定优先级顺序意味着优化器在面对不同类型的查询时，可能不能很好地适应多变的查询模式和数据特性。</li>
 </ul>
 <h4 id="一个例子（GPT）">一个例子（GPT）</h4>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617113254543.png" alt="image-20240617113254543" style="zoom:50%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617113254543.png" alt="image-20240617113254543" style="zoom:50%;">
 <h2 id="日志-2">日志</h2>
 <blockquote>
 <p><a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaolincoding/p/16396502.html">https://www.cnblogs.com/xiaolincoding/p/16396502.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
@@ -907,8 +909,8 @@ tags:
 </li>
 </ul>
 <h3 id="缓冲区管理">缓冲区管理</h3>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617092103635.png" alt="image-20240617092103635"></p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617092119912.png" alt="image-20240617092119912"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617092103635.png" alt="image-20240617092103635"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617092119912.png" alt="image-20240617092119912"></p>
 <h3 id="请求页的基本步骤">请求页的基本步骤</h3>
 <ul>
 <li>检查该页是否已被缓存
@@ -926,7 +928,7 @@ tags:
 <li>如果某些页被修改，标记为脏页（dirty page），脏页表示内容与磁盘不同步，换出时必须将其刷写到磁盘</li>
 </ul>
 <h3 id="恢复Recovery">恢复Recovery</h3>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617093143299.png" alt="image-20240617093143299"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617093143299.png" alt="image-20240617093143299"></p>
 <blockquote>
 <p>意思是本来事务提交是在缓存完成就修改就事务提交了，这样能快一点，但是就会存在<strong>在提交和写入磁盘</strong>之间崩溃的可能，无法恢复，违反持久性；所以一个方案是使用写入disk才算完成，这样固然可以，但是显然太麻烦，因此redo日志诞生。</p>
 </blockquote>
@@ -947,15 +949,15 @@ tags:
 <li>记录操作（执行恢复的参数）</li>
 </ol>
 <p>一些数据库也会做一些压缩操作，比如 space id，page number 等</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718588747996-1.png" alt="img"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718588747996-1.png" alt="img"></p>
 <blockquote>
 <p>对应第一种</p>
 </blockquote>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617095405672.png" alt="image-20240617095405672"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617095405672.png" alt="image-20240617095405672"></p>
 <blockquote>
 <p>方案2大体对应第二种</p>
 </blockquote>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617095801000.png" alt="image-20240617095801000"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617095801000.png" alt="image-20240617095801000"></p>
 <blockquote>
 <p>大体上是第三种</p>
 </blockquote>
@@ -964,13 +966,13 @@ tags:
 <p>• 一组操作，一组日志的不可分割性</p>
 <p>• 索引、基本表、聚簇、二级索引、目录等多个页的操作</p>
 <p><strong>MLOG_MULTI_REC_END</strong></p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718589881176-4.png" alt="img"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718589881176-4.png" alt="img"></p>
 <h3 id="redo-log-block">redo log block</h3>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718589935838-11.png" alt="img"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718589935838-11.png" alt="img"></p>
 <blockquote>
 <p>512B，512K也太大了</p>
 </blockquote>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718589956060-14.png" alt="img"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/1718589956060-14.png" alt="img"></p>
 <h3 id="redo-log-的刷盘时机">redo log 的刷盘时机</h3>
 <p>redo log刷盘是指将这些日志从内存中的log buffer（日志缓冲区）写入磁盘的过程。这个过程确保了数据的<strong>持久性</strong>，即使在系统崩溃或宕机后，数据库也能通过这些日志恢复到一致的状态。</p>
 <ul>
@@ -997,7 +999,7 @@ tags:
 <li><strong>记录LSN</strong>：将当前的LSN记录在某个稳定存储位置（如日志文件头部），这标志着所有在这个LSN之前的变更都已经持久化到磁盘。(<strong>checkpoint_lsn</strong>)</li>
 </ol>
 </blockquote>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617102214425.png" alt="image-20240617102214425"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617102214425.png" alt="image-20240617102214425"></p>
 <blockquote>
 <p>checkpoint就是之前的都完成了，lsn是目前有多少了，最新的一个增长，应该跟buf_free对应的？</p>
 </blockquote>
@@ -1005,7 +1007,7 @@ tags:
 <p><a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/kuangtf/articles/16353184.html#4log-sequeue-number">https://www.cnblogs.com/kuangtf/articles/16353184.html#4log-sequeue-number <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p><strong>博客讲的很详细</strong></p>
 <p>小trick就是使用Hash表，相同的页面不用多次取回</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617103555399.png" alt="image-20240617103555399"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617103555399.png" alt="image-20240617103555399"></p>
 <h3 id="Undo日志（Undo-log）">Undo日志（Undo log）</h3>
 <ul>
 <li>事务保证原子性靠的就是日志
@@ -1068,17 +1070,17 @@ tags:
 <li>
 <p>被修改的Undo log本身，也会记录Redo log</p>
 <blockquote>
-<img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617110010159.png" alt="image-20240617110010159" style="zoom: 67%;">
+<img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617110010159.png" alt="image-20240617110010159" style="zoom: 67%;">
 </blockquote>
 </li>
 </ul>
 <h3 id="steal和force策略">steal和force策略</h3>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617110532293.png" alt="image-20240617110532293"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617110532293.png" alt="image-20240617110532293"></p>
 <blockquote>
 <p>事务提交前能不能刷脏页？能 steal（要undo日志，未能提交的话要恢复）</p>
 <p>事务提交前要不要保证所有的脏页都刷了？不要保证 no-force（要redo日志），要保证 force</p>
 </blockquote>
-<p><img lazyload="" src="/images/loading.svg" data-src="24-Spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617110548879.png" alt="image-20240617110548879"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="24-spring-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/image-20240617110548879.png" alt="image-20240617110548879"></p>
 <h2 id="SQL题目补充（一开始跳了几道">SQL题目补充（一开始跳了几道</h2>
 <blockquote>
 <p>全用mysql，不用oracle吧</p>

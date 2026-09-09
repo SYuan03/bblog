@@ -3,7 +3,7 @@ title: "Review-CompilePrinciple"
 permalink: "/posts/2023-Spring-Courses-编译原理/review-compileprinciple.html"
 date: "2023-06-22T08:00:22.000Z"
 updated: "2024-09-30T12:52:04.678Z"
-description: "题目1 正则表达式与自动机 前置知识 自动机： Automaton/Automata 状态集+转移函数 RE：  RE与DFA与NFA表达能力是等价的，所以可以相互转换 DFA与NFA： 确定性和非确定性有穷自动机 DFA一个状态通过一个字符转移只能有一个确定的状态（也就是隐含了无法使用空串进行转移 NFA 简洁易于理解, 便于描述语言 L(A) DFA 易于判断 x ∈ L(A), 适合产生词法"
+description: "面向编译原理复习，串联正则表达式与自动机转换、LL/LR 语法分析、ANTLR 优先级处理、语法制导翻译及 RISC-V 目标代码生成。"
 cover: "https://s2.loli.net/2023/06/22/ESvOUMFbak2VYRj.jpg"
 categories:
   - "2023-Spring-Courses-编译原理"

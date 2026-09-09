@@ -3,6 +3,8 @@ title: "Droplet购买记录"
 permalink: "/posts/杂记/droplet购买记录.html"
 date: "2024-03-16T13:32:05.000Z"
 updated: "2024-10-05T07:17:21.971Z"
+cover: "/generated-covers/042-droplet购买记录.webp"
+description: "一篇受密码保护的 Droplet 购买与服务器配置记录。"
 categories:
   - "杂记"
 tags:

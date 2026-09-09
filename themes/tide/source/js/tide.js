@@ -420,17 +420,12 @@
         if (container) container.innerHTML = '<div class="comment-loading">留言暂时走丢了，请稍后再试。</div>';
       }
     };
-    comments.querySelector('[data-comments-load]')?.addEventListener('click', hydrateComments);
-    if (location.hash === '#comments' || !('IntersectionObserver' in window)) hydrateComments();
-    else {
-      const commentsObserver = new IntersectionObserver((entries, observer) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        observer.disconnect();
-        hydrateComments();
-      }, { rootMargin: '700px 0px' });
-      commentsObserver.observe(comments);
-    }
+    hydrateComments();
   }
+
+  document.querySelectorAll('[data-cover-image]').forEach((image) => {
+    image.addEventListener('error', () => image.remove());
+  });
 
   const dialog = document.querySelector('[data-search-dialog]');
   const searchInput = document.querySelector('[data-search-input]');

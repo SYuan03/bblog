@@ -3,7 +3,7 @@ title: "Day2-HTTP"
 permalink: "/posts/2023-Summer-Courses-CloudWeGo/day2-http.html"
 date: "2023-07-11T03:42:29.000Z"
 updated: "2024-09-30T12:52:01.761Z"
-description: "Day2-1 HTTP基础 为什么需要协议  明确的边界 信息解析 （预留拓展）  HTTP最早版本 0.9 HTTP协议的最初版本是HTTP/0.9，它于1991年问世。这个版本非常简单，只支持无格式的文本数据传输，没有请求头、响应头等结构化信息。 HTTP/0.9的主要特点如下：  请求方式：只支持GET请求方法，即通过GET方法请求服务器上的资源。 URL：只能包含请求的路径，没有主机名、端"
+description: "先梳理 HTTP 版本、状态码与请求响应报文，再以 Thrift IDL 和 CloudWeGo Hertz 实战演示服务端、接口更新及客户端代码生成。"
 cover: "https://s2.loli.net/2023/07/11/pVQlX1SdDe6nAhU.png"
 categories:
   - "2023-Summer-Courses-CloudWeGo"

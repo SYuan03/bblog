@@ -3,6 +3,8 @@ title: "不知道花了多久但我就要说很快速的docker部署前后端项
 permalink: "/posts/实践记录/不知道花了多久但我就要说很快速的docker部署前后端项目.html"
 date: "2024-04-16T15:40:58.000Z"
 updated: "2024-09-30T12:51:51.006Z"
+cover: "/generated-covers/035-不知道花了多久但我就要说很快速的docker部署前后端项目.webp"
+description: "从前端 Dockerfile、Nginx 反向代理到域名解析，记录一次前后端项目容器化部署过程。"
 categories:
   - "实践记录"
 tags:
@@ -17,7 +19,7 @@ tags:
 <h2 id="前端">前端</h2>
 <h3 id="扔到github仓库">扔到github仓库</h3>
 <p>主要是原先不在github上</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="%E4%B8%8D%E7%9F%A5%E9%81%93%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240416234307784.png" alt="image-20240416234307784"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240416234307784.png" alt="image-20240416234307784"></p>
 <h3 id="前端该点东西you-know-what">前端该点东西you know what</h3>
 <p>诸如api_url之类的</p>
 <blockquote>
@@ -33,7 +35,7 @@ tags:
 <p>可以把自己的nginx.conf复制到容器内运行</p>
 <h3 id="打包运行">打包运行</h3>
 <div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t llm4se_frontend:1.0 .</span><br><span class="line">docker run -p 7001:80 -d llm4se_frontend:1.0</span><br></pre></td></tr></tbody></table></figure></div>
-<p><img lazyload="" src="/images/loading.svg" data-src="%E4%B8%8D%E7%9F%A5%E9%81%93%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240417003432802.png" alt="image-20240417003432802"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="%E4%B8%8D%E7%9F%A5%E9%81%93%E8%8A%B1%E4%BA%86%E5%A4%9A%E4%B9%85%E4%BD%86%E6%88%91%E5%B0%B1%E8%A6%81%E8%AF%B4%E5%BE%88%E5%BF%AB%E9%80%9F%E7%9A%84docker%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE/image-20240417003432802.png" alt="image-20240417003432802"></p>
 <p>打包打了117.3秒</p>
 <h3 id="（必选）域名配置">（<s>必选</s>）域名配置</h3>
 <p>改下服务器上的nginx配置就行（注意不是容器内部的那个）</p>

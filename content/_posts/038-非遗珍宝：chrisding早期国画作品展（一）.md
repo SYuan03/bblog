@@ -3,7 +3,8 @@ title: "非遗珍宝：ChrisDing早期国画作品展（一）"
 permalink: "/posts/杂记/非遗珍宝：chrisding早期国画作品展（一）.html"
 date: "2024-04-30T03:48:33.000Z"
 updated: "2025-05-10T09:27:50.727Z"
-description: "标题仅娱乐QAQ"
+cover: "/generated-covers/038-非遗珍宝-chrisding早期国画作品展-一-.webp"
+description: "整理一组早期国画习作，包括青蛙、人物、石榴与螃蟹等题材，并保留家人拍摄和点评带来的轻松创作记忆。"
 categories:
   - "杂记"
 tags:

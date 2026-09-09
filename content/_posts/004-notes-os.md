@@ -3,7 +3,7 @@ title: "notes-os"
 permalink: "/posts/2023-Spring-Courses-操作系统/notes-os.html"
 date: "2023-06-16T14:25:39.000Z"
 updated: "2024-09-30T12:52:08.717Z"
-description: "[TOC] chap2 处理器管理 如何区分内核态和用户态？ P43 处理器状态位（程序状态字PSW中的一个比特位 中断源   硬件故障中断：电源故障，主存故障，线路故障   程序性中断：执行指令异常或出错 除0、溢出、虚拟地址异常等   **自愿性中断：**又称为系统调用   **I/O中断：**比如外围设备输入输出完了，又或者输入输出异常了   **外部中断：**时钟中断，关机重启等   系统"
+description: "一份覆盖操作系统核心章节的复习笔记，整理进程与调度、虚拟内存、页面置换、I/O 与磁盘调度、文件系统等概念及典型题型。"
 cover: "https://s2.loli.net/2023/06/16/KfOI7iDNwsPCGBX.jpg"
 categories:
   - "2023-Spring-Courses-操作系统"

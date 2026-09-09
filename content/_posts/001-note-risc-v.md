@@ -3,7 +3,7 @@ title: "note-RISC-V"
 permalink: "/posts/2023-Spring-Courses-编译原理/note-risc-v.html"
 date: "2023-06-23T13:13:08.000Z"
 updated: "2024-09-30T12:52:04.700Z"
-description: "伪指令与基本指令 伪指令就是并不是硬件实现的直接指令，只是给解释器看的，比如li 就是说向li这种指令，其实并不直接对硬件进行操作  实际上他就是一个addi指令 加法、减法 1234567891011121314151617li t0, 20\t# li: load immediate 加载立即数，现在这种写法是10进制li t1, 22add t2, t0, t1li t0, 32addi t0"
+description: "以 RISC-V 汇编练习为主线，梳理伪指令、算术与分支、系统调用、数据段和数组操作，并通过函数调用、栈与递归示例说明基本执行方式。"
 cover: "https://s2.loli.net/2023/06/23/gpHA243bwCm9MvI.png"
 categories:
   - "2023-Spring-Courses-编译原理"

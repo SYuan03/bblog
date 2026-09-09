@@ -3,6 +3,8 @@ title: "ZeroSSL-域名SSL配置说明"
 permalink: "/posts/实践记录/zerossl-域名ssl配置说明.html"
 date: "2024-06-13T08:37:22.000Z"
 updated: "2024-09-30T12:51:50.766Z"
+cover: "/generated-covers/037-zerossl-域名ssl配置说明.webp"
+description: "记录 ZeroSSL 证书续期时的 Docker 端口映射、Nginx 配置和流水线更新过程。"
 categories:
   - "实践记录"
 tags:
@@ -17,7 +19,7 @@ tags:
 </blockquote>
 <h2 id="起因">起因</h2>
 <p>收到了ZeroSSL证书即将过期的通知</p>
-<p><img lazyload="" src="/images/loading.svg" data-src="ZeroSSL-%E5%9F%9F%E5%90%8DSSL%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/image-20240613164048436.png" alt="image-20240613164048436"></p>
+<p><img lazyload="" src="/images/loading.svg" data-src="zerossl-%E5%9F%9F%E5%90%8DSSL%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/image-20240613164048436.png" alt="image-20240613164048436"></p>
 <p>于是不得不回顾下当时搞了啥</p>
 <h2 id="流水线配置">流水线配置</h2>
 <p>先看下流水线干了啥</p>

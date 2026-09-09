@@ -3,7 +3,7 @@ title: "notes-dbms"
 permalink: "/posts/2023-Spring-Courses-数据库管理/notes-dbms.html"
 date: "2023-06-14T14:04:35.000Z"
 updated: "2024-09-30T12:52:21.056Z"
-description: "chap1 绪论 SQL数据库与NoSQL数据库 其实就是NoSQL主要是面向单一的大量数据（比如一个人每天的定位数据这种，显然那比较适合NoSQL 但是那种需要经常读写的，就需要关系型数据库来维持ACID的性质 .mbyggdcckiuk{zoom: 33%;}   SQL 结构化查询语言   三级模式结构-例子 GPT: 让我们以一个简单的学生信息管理系统为例来说明外模式-模式-内模式的概念。"
+description: "数据库课程综合笔记，涵盖关系模型与 SQL、安全和完整性、函数依赖与范式、数据库设计、事务恢复、并发控制及 NoSQL 基础。"
 cover: "https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg"
 categories:
   - "2023-Spring-Courses-数据库管理"

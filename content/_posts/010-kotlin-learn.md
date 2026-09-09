@@ -3,7 +3,7 @@ title: "kotlin-learn"
 permalink: "/posts/2023-Summer-Courses-百度移动端/kotlin-learn.html"
 date: "2023-07-24T02:26:50.000Z"
 updated: "2024-09-30T12:51:52.217Z"
-description: "菜鸟教程：Kotlin 教程 | 菜鸟教程 (runoob.com)  官方文档：入门 · Kotlin 官方文档 中文版 (kotlincn.net)  在线运行：Kotlin Playground: Edit, Run, Share Kotlin Code Online (kotlinlang.org)  / https://try.kotlinlang.org  简介 Kotlin 是一种在"
+description: "面向 Android 开发的 Kotlin 入门笔记，结合示例讲解变量、函数、条件与循环、类和接口、集合与 Lambda，以及空安全机制。"
 cover: "https://s2.loli.net/2023/07/24/NsAn8BtIVudU6yj.jpg"
 categories:
   - "2023-Summer-Courses-百度移动端"

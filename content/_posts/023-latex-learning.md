@@ -3,7 +3,8 @@ title: "latex-learning"
 permalink: "/posts/工具学习/latex-learning.html"
 date: "2023-04-16T09:38:54.000Z"
 updated: "2024-09-30T12:52:39.130Z"
-description: "记录下一些latex的用法 收藏夹太满了 并且懒得每次都因为同样的问题去查 1.图片插入相关-单张 12345\\begin{figure}[h]  \\centering  \\includegraphics[width=0.8\\textwidth]{1.jpg}  \\caption{question1\\\\文法一是LL(1)文法}\\end&#"
+cover: "/generated-covers/023-latex-learning.webp"
+description: "整理 LaTeX 插图时常用的 figure 环境、尺寸与浮动位置参数，记录图片排版失控时的处理经验，便于随时查用。"
 categories:
   - "工具学习"
 tags:

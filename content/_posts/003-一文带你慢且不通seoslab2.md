@@ -3,7 +3,8 @@ title: "一文带你慢且不通SEOSLab2"
 permalink: "/posts/2023-Spring-Courses-操作系统/一文带你慢且不通seoslab2.html"
 date: "2023-04-14T15:45:07.000Z"
 updated: "2024-09-30T12:52:08.489Z"
-description: "主要是针对OS Lab2的一些记录，自己看看的  makefile解读  一共三条，make onlyCpp主要是一开始没写汇编的打印函数，全用的cout，先编译出来看看效果 同时也是为了便于调试，打断点（./main的过程可能也是可以调的，没试  实验开始前 装库 gcc-multilib 和 g+±multilib 不然后面会报错  制作软盘并建立结构 1234mkfs.fat -C a.i"
+cover: "/generated-covers/003-一文带你慢且不通seoslab2.webp"
+description: "记录 SEOS Lab2 的实现过程：从 Makefile 和 FAT12 镜像结构入手，解析目录与文件并构建树，再用汇编输出完成 cat、ls 等命令。"
 categories:
   - "2023-Spring-Courses-操作系统"
 tags:

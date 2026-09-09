@@ -3,7 +3,7 @@ title: "docker常用命令"
 permalink: "/posts/工具学习/docker常用命令.html"
 date: "2023-10-12T03:46:19.000Z"
 updated: "2024-09-30T12:52:39.136Z"
-description: "docker run 1docker run -it --network mongo-net-1012 --rm mongo mongosh --host my-mongo-1012  docker run: 这是Docker的运行容器命令，用于创建和启动一个新的容器。 -it: 这两个选项组合表示以交互式模式运行容器并分配一个伪终端（TTY）。这允许你在容器内部与终端进行交互。 --networ"
+description: "汇总 Docker 日常操作命令，涵盖容器启动与停止、网络创建、Redis 和 MySQL 运行、客户端连接及进入容器。"
 cover: "https://s2.loli.net/2023/10/12/54d1YtI3KwlCoZW.png"
 categories:
   - "工具学习"

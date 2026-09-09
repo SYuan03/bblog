@@ -3,6 +3,8 @@ title: "Java反射机制"
 permalink: "/posts/软件系统设计/java反射机制.html"
 date: "2024-03-19T13:37:50.000Z"
 updated: "2024-09-30T12:51:29.130Z"
+cover: "/generated-covers/033-java反射机制.webp"
+description: "通过配置文件与 Java 反射动态创建对象，理解反射机制如何帮助实现开闭原则。"
 categories:
   - "软件系统设计"
 tags:

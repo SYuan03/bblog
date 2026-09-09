@@ -5,7 +5,9 @@
   const hasToc = tocHtml && strip_html(tocHtml).trim().length > 0;
   const isEncrypted = String(page.content || '').includes('hexo-blog-encrypt');
   const commentsEnabled = theme.comments && theme.comments.enable && !isEncrypted;
-  const deckText = isEncrypted ? '受密码保护的文章。' : '';
+  const deckText = post_summary(page, 150);
+  const cover = post_cover(page);
+  const coverTone = post_cover_tone(page);
   const pageTagNames = new Set(tags.map((tag) => tag.name));
   const pageCategoryNames = new Set(cats.map((category) => category.name));
   const allPublicPosts = site.posts ? site.posts.toArray().filter((post) => post.path !== page.path && !String(post.content || '').includes('hexo-blog-encrypt')) : [];
@@ -29,12 +31,16 @@
     </div>
     <h1><%= page.title %></h1>
     <div class="article-deck">
-      <% if (deckText) { %><p><%= truncate(deckText, { length: 140 }) %></p><% } else { %><span></span><% } %>
+      <p><%= deckText %></p>
       <dl class="article-stats">
         <div><dt>字数</dt><dd><%= wordcount(page.content) %></dd></div>
         <div><dt>阅读</dt><dd><%= min2read(page.content) %></dd></div>
         <div><dt>更新</dt><dd><%= date(page.updated || page.date, 'YYYY.MM.DD') %></dd></div>
       </dl>
+    </div>
+    <div class="article-cover cover-tone-<%= coverTone %>">
+      <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i><b><%= cats.length ? cats[0].name : 'TIDE / NOTE' %></b></span>
+      <% if (cover) { %><img src="<%= url_for(cover) %>" alt="<%= page.title %>的文章首图" decoding="async" fetchpriority="high" data-cover-image><% } %>
     </div>
   </header>
 
@@ -97,10 +103,7 @@
             <p>想法不必完整，真诚就好。</p>
           </div>
           <div id="twikoo-comment">
-            <div class="comment-gate">
-              <p>留言区将在需要时载入，不影响正文阅读。</p>
-              <button type="button" data-comments-load>加载留言 <span>↘</span></button>
-            </div>
+            <div class="comment-loading">留言正在载入…</div>
           </div>
         </section>
       <% } %>

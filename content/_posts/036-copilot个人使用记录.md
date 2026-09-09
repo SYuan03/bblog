@@ -3,6 +3,8 @@ title: "copilot个人使用记录"
 permalink: "/posts/实践记录/copilot个人使用记录.html"
 date: "2024-03-15T08:30:00.000Z"
 updated: "2024-09-30T12:51:50.961Z"
+cover: "/generated-covers/036-copilot个人使用记录.webp"
+description: "一篇受密码保护的 Copilot 使用记录。"
 categories:
   - "实践记录"
 tags:

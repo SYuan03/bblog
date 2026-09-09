@@ -3,7 +3,7 @@ title: "Day3-RPC"
 permalink: "/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html"
 date: "2023-07-12T02:11:40.000Z"
 updated: "2024-09-30T12:52:01.933Z"
-description: "Day2-1 RPC的定义 From wiki:  远程过程调用是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一个地址空间（通常为一个开放网络的一台计算机）的子程序。 可以像调用本地方法一样调用远程方法。 解决跨进程间/远程通信问题。 通信协议 Thrift-一个FaceBook开发的框架  IDL 跨语言，规范性，代码生成  Thrift IDL  基本语法  Field Requ"
+description: "介绍 RPC 的基本概念、Thrift 协议与 IDL 语法，并用 CloudWeGo Kitex 生成服务端和调用端，记录 Hertz 转发 Kitex 的课堂练习。"
 cover: "https://s2.loli.net/2023/07/12/I8YSvEDi5eJyH6U.jpg"
 categories:
   - "2023-Summer-Courses-CloudWeGo"

@@ -2,6 +2,9 @@
   const cats = post.categories ? post.categories.toArray() : [];
   const tags = post.tags ? post.tags.toArray() : [];
   const encrypted = String(post.content || '').includes('hexo-blog-encrypt');
+  const cover = post_cover(post);
+  const summary = post_summary(post, 108);
+  const coverTone = post_cover_tone(post);
 %>
 <article class="post-card reveal">
   <div class="post-card-index"><%= String(index + 1).padStart(2, '0') %></div>
@@ -15,6 +18,7 @@
       <% if (encrypted) { %><span class="lock-label">私人</span><% } %>
     </div>
     <h2><a href="<%= url_for(post.path) %>"><%= post.title %></a></h2>
+    <p class="post-card-summary"><%= summary %></p>
     <div class="post-card-footer">
       <div class="tag-row">
         <% tags.slice(0, 3).forEach((tag) => { %><a href="<%= url_for(tag.path) %>"># <%= tag.name %></a><% }) %>
@@ -22,4 +26,8 @@
       <a class="read-link" href="<%= url_for(post.path) %>">阅读文章 <span>↗</span></a>
     </div>
   </div>
+  <a class="post-card-cover cover-tone-<%= coverTone %>" href="<%= url_for(post.path) %>" tabindex="-1" aria-hidden="true">
+    <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i><b>TIDE / NOTE</b></span>
+    <% if (cover) { %><img src="<%= url_for(cover) %>" alt="" loading="lazy" decoding="async" data-cover-image><% } %>
+  </a>
 </article>

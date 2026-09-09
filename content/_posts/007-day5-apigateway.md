@@ -3,7 +3,7 @@ title: "Day5-APIGateway"
 permalink: "/posts/2023-Summer-CloudWeGo/day5-apigateway.html"
 date: "2023-07-14T02:17:05.000Z"
 updated: "2024-09-30T12:52:01.789Z"
-description: "正向/反向代理   正向代理是客户端主动知道要找一个代理：VPN 反向代理是客户端并不知道，是服务端的一些代理：基本的服务网关如Nginx 反向代理服务器就是服务网关，那 API 网关是什么？  比如大门只控制学校的进出控制（流量网关，如nginx，其实还是不太一样，因为基本网关是有URL路由转发到不同服务器的），但是某个特定的事务处理，显然不能都交给流量网关，需要对于业务有特定的了解，相当于有了"
+description: "从正向代理和反向代理的区别切入，说明 Nginx 流量网关与 API 业务网关的分工，并简要梳理网关分类、形态及 Sidecar 场景。"
 cover: "https://s2.loli.net/2023/04/24/3DWJMp2ZnT4iL1j.jpg"
 categories:
   - "2023-Summer-CloudWeGo"

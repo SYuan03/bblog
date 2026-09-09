@@ -7,7 +7,7 @@ The blog is now a maintainable Hexo project instead of only a committed static e
 - Node.js 22
 - Hexo 8.1.2
 - Tide, a custom editorial theme maintained in this repository
-- Twikoo 1.7.22 comments and Artitalk 3.3.4, pinned and self-hosted during the build
+- Twikoo comments, pinned and self-hosted during the build
 - Netlify build configuration in `netlify.toml`
 
 ## Local development
@@ -35,6 +35,17 @@ npx hexo new post "Post title"
 ```
 
 The migrated posts intentionally contain their previously rendered article HTML inside a `legacy-content` wrapper. This preserves code blocks, encrypted payloads, links, and article markup without attempting a lossy HTML-to-Markdown conversion. New posts can use normal Markdown.
+
+Cards and social previews prefer an explicit `cover` and `description`. When either is absent, Tide uses a clean text excerpt and a deterministic visual fallback; body screenshots are never promoted to covers automatically.
+
+To enrich missing metadata through Hub Router, copy `.env.example` to a local ignored env file, export `HUBROUTER_API_KEY` in your shell, inspect the dry run, and then apply it:
+
+```bash
+npm run enrich:posts
+npm run enrich:posts -- --apply --limit=3
+```
+
+The command never stores the API key, preserves existing metadata, uses `gpt-image-2` by default, and writes compressed WebP covers under `content/generated-covers/`. Models and image size can be overridden with the environment variables shown in `.env.example`; `JoyAI-Image` remains available as a lower-cost option, but its typography control is less reliable for text-free covers.
 
 ## Legacy assets
 

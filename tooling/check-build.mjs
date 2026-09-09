@@ -45,6 +45,10 @@ const missing = new Set();
 let legacyThemeMarkers = 0;
 let preloaderElements = 0;
 let unrenderedTemplates = 0;
+let postCards = 0;
+let incompletePostCards = 0;
+let incompletePostPages = 0;
+let commentGates = 0;
 
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
@@ -52,6 +56,16 @@ for (const file of htmlFiles) {
   if (html.includes("<%") || html.includes("%>")) unrenderedTemplates += 1;
   const $ = cheerio.load(html);
   preloaderElements += $(".preloader").length;
+  commentGates += $(".comment-gate").length;
+  postCards += $(".post-card").length;
+  incompletePostCards += $(".post-card").toArray().filter((card) => {
+    return !$(card).find(".post-card-summary").text().trim() || !$(card).find(".post-card-cover").length;
+  }).length;
+  if (file.startsWith(path.join(outputRoot, "posts") + path.sep)) {
+    if (!$(".article-cover").length || !$(".article-deck > p").text().trim() || !$('meta[property="og:image"]').attr("content")) {
+      incompletePostPages += 1;
+    }
+  }
 
   for (const element of $("[src], [href], [data-src]").toArray()) {
     const value = $(element).attr("src") || $(element).attr("href") || $(element).attr("data-src");
@@ -66,6 +80,9 @@ for (const file of htmlFiles) {
 if (legacyThemeMarkers) throw new Error(`${legacyThemeMarkers} pages still identify as Redefine 2.6.4`);
 if (unrenderedTemplates) throw new Error(`${unrenderedTemplates} pages still contain unrendered EJS templates`);
 if (preloaderElements) throw new Error(`${preloaderElements} pages still contain the blocking preloader`);
+if (!postCards || incompletePostCards) throw new Error(`${incompletePostCards} of ${postCards} post cards lack a cover or summary`);
+if (incompletePostPages) throw new Error(`${incompletePostPages} post pages lack a cover, summary, or social image`);
+if (commentGates) throw new Error(`${commentGates} pages still gate comments behind a manual action`);
 if (missing.size) {
   throw new Error(`Missing local assets (${missing.size}):\n${[...missing].slice(0, 30).join("\n")}`);
 }
