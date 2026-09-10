@@ -1,0 +1,34 @@
+<%
+  const entries = Array.isArray(page.entries)
+    ? page.entries.filter((entry) => entry && entry.label && entry.text)
+    : [];
+  const asOf = String(page.as_of || '').trim();
+  const asOfLabel = asOf ? asOf.replaceAll('-', '.') : '';
+%>
+<section class="now-page section-shell">
+  <header class="now-header reveal">
+    <h1><%= page.title %></h1>
+    <% if (asOf) { %>
+      <time datetime="<%= asOf %>">更新于 <%= asOfLabel %></time>
+    <% } %>
+  </header>
+
+  <div class="now-entries reveal">
+    <% entries.forEach((entry) => { %>
+      <section class="now-entry">
+        <h2><span aria-hidden="true"></span><%= entry.label %></h2>
+        <p>
+          <% if (entry.href) { %>
+            <a href="<%= url_for(entry.href) %>"><%= entry.text %></a>
+          <% } else { %>
+            <%= entry.text %>
+          <% } %>
+        </p>
+      </section>
+    <% }) %>
+  </div>
+
+  <% if (page.note) { %>
+    <p class="now-note reveal"><%= page.note %></p>
+  <% } %>
+</section>

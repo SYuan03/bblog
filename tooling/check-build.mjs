@@ -24,7 +24,7 @@ async function exists(file) {
   }
 }
 
-for (const required of ["index.html", "404.html", "about/dongdong/index.html", "atom.xml", "search.xml", "sitemap.xml"]) {
+for (const required of ["index.html", "404.html", "about/dongdong/index.html", "now/index.html", "atom.xml", "search.xml", "sitemap.xml"]) {
   if (!(await exists(path.join(outputRoot, required)))) throw new Error(`Missing build output: ${required}`);
 }
 
@@ -33,8 +33,8 @@ const postFiles = htmlFiles.filter((file) => file.startsWith(path.join(outputRoo
 // macOS uses a case-insensitive filesystem by default, so the legacy `SSL`
 // and `ssl` tag archives share one output directory locally. Netlify's Linux
 // builders keep both directories, producing one additional valid HTML page.
-if (![144, 145].includes(htmlFiles.length)) {
-  throw new Error(`Expected 144 or 145 HTML pages, found ${htmlFiles.length}`);
+if (![145, 146].includes(htmlFiles.length)) {
+  throw new Error(`Expected 145 or 146 HTML pages, found ${htmlFiles.length}`);
 }
 if (postFiles.length !== 44) throw new Error(`Expected 44 post pages, found ${postFiles.length}`);
 if (await exists(path.join(outputRoot, "shuoshuo", "index.html"))) {
@@ -100,6 +100,19 @@ if (incompletePostPages) throw new Error(`${incompletePostPages} post pages lack
 if (commentGates) throw new Error(`${commentGates} pages still gate comments behind a manual action`);
 if (missing.size) {
   throw new Error(`Missing local assets (${missing.size}):\n${[...missing].slice(0, 30).join("\n")}`);
+}
+
+const nowHtml = await readFile(path.join(outputRoot, "now", "index.html"), "utf8");
+const $now = cheerio.load(nowHtml);
+if ($now(".now-page h1").length !== 1 || $now(".now-entry").length < 1) {
+  throw new Error("The Now page is missing its heading or status entries");
+}
+if (!$now("time[datetime]").attr("datetime")) throw new Error("The Now page is missing its update date");
+if (!$now('meta[name="description"]').attr("content") || !$now('meta[property="og:image"]').attr("content")) {
+  throw new Error("The Now page is missing social metadata");
+}
+if ($now('.site-nav a[aria-current="page"]').attr("href") !== "/now/") {
+  throw new Error("The Now page navigation item is not active");
 }
 
 const manifest = JSON.parse(await readFile(path.join(projectRoot, "content", "_migration-manifest.json"), "utf8"));
