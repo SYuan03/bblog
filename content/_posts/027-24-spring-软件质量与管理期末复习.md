@@ -15,7 +15,7 @@ tags:
 <!-- Migrated from posts/期末复习/24-spring-软件质量与管理期末复习.html. Keep the permalink stable. -->
 <div class="legacy-content">
 <blockquote>
-<p><a class="link" target="_blank" rel="noopener" href="https://wbl-z.github.io/%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86/%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86%E5%A4%8D%E4%B9%A0/#">2024软件质量管理复习+2024回忆 | wbl-z’s Blog <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> | <a class="link" target="_blank" rel="noopener" href="https://eaglebear2002.github.io/2023Fall-%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86/%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86-%E4%B9%A0%E9%A2%98/">软件质量管理-习题 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link" target="_blank" rel="noopener" href="https://wbl-z.github.io/%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86/%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86%E5%A4%8D%E4%B9%A0/#">2024软件质量管理复习+2024回忆 | wbl-z’s Blog <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> | 软件质量管理-习题</p>
 <p>PS：本文非背诵速通版本，只是尽力理一下思路</p>
 <p>v2.0 修正了一些错误，添加了一些内容</p>
 </blockquote>

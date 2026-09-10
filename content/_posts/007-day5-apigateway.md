@@ -1,6 +1,6 @@
 ---
 title: "Day5-APIGateway"
-permalink: "/posts/2023-Summer-CloudWeGo/day5-apigateway.html"
+permalink: "/posts/2023-summer-cloudwego/day5-apigateway.html"
 date: "2023-07-14T02:17:05.000Z"
 updated: "2024-09-30T12:52:01.789Z"
 description: "从正向代理和反向代理的区别切入，说明 Nginx 流量网关与 API 业务网关的分工，并简要梳理网关分类、形态及 Sidecar 场景。"

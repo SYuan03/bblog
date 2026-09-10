@@ -2,6 +2,7 @@
   const entries = Array.isArray(page.entries)
     ? page.entries.filter((entry) => entry && entry.datetime && entry.text)
     : [];
+  const firstImageIndex = entries.findIndex((entry) => entry.image);
 %>
 <section class="now-page section-shell">
   <header class="now-header reveal">
@@ -9,8 +10,8 @@
   </header>
 
   <div class="now-log reveal">
-    <% entries.forEach((entry) => { %>
-      <article class="now-entry">
+    <% entries.forEach((entry, index) => { %>
+      <article class="now-entry<%= entry.image ? ' has-image' : '' %>">
         <time datetime="<%= entry.datetime %>">
           <span><%= entry.date %></span>
           <b><%= entry.time %></b>
@@ -27,8 +28,9 @@
                   alt="<%= entry.image_alt || '' %>"
                   width="<%= entry.image_width || 480 %>"
                   height="<%= entry.image_height || 600 %>"
-                  loading="lazy"
-                  decoding="async">
+                  loading="<%= index === firstImageIndex ? 'eager' : 'lazy' %>"
+                  decoding="async"<% if (index === firstImageIndex) { %>
+                  fetchpriority="high"<% } %>>
               <% if (entry.image_source) { %></a><% } %>
               <figcaption>
                 <span><%= entry.image_caption || '' %></span>

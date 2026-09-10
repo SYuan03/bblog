@@ -1,26 +1,77 @@
 <%
-  const titleText = page.title
-    ? `${page.title} · ${config.title}`
-    : `${config.title}${config.subtitle ? ` · ${config.subtitle}` : ''}`;
-  const descriptionText = page.description || page.excerpt || config.description;
+  const currentPage = Number(page.current || 1);
+  const archiveMonth = page.month ? `${page.month} 月` : '';
+  const paginationTitle = currentPage > 1 ? ` · 第 ${currentPage} 页` : '';
+  const paginationDescription = currentPage > 1 ? ` 当前为第 ${currentPage} 页。` : '';
+  const taxonomyTrail = (root) => {
+    const segments = String(page.path || '').replace(/^\/+/, '').split('/').filter(Boolean);
+    const start = segments.indexOf(root) + 1;
+    const pageIndex = segments.indexOf('page', start);
+    const end = pageIndex >= 0 ? pageIndex : segments.findIndex((segment, index) => index >= start && /^index\.html$/i.test(segment));
+    return segments.slice(start, end >= 0 ? end : undefined).map((segment) => {
+      try { return decodeURIComponent(segment); } catch { return segment; }
+    });
+  };
+  let titleText;
+  let descriptionText;
+
+  if (is_home()) {
+    titleText = currentPage === 1
+      ? `${config.title}${config.subtitle ? ` · ${config.subtitle}` : ''}`
+      : `${config.title} · 第 ${currentPage} 页`;
+    descriptionText = currentPage === 1
+      ? config.description
+      : `${config.description}（第 ${currentPage} 页）`;
+  } else if (is_month()) {
+    const archiveLabel = `${page.year} 年 ${archiveMonth}`;
+    titleText = `${archiveLabel}归档${paginationTitle} · ${config.title}`;
+    descriptionText = `浏览 ${config.title} 在 ${archiveLabel}发布的文章。${paginationDescription}`;
+  } else if (is_year()) {
+    const archiveLabel = `${page.year} 年`;
+    titleText = `${archiveLabel}归档${paginationTitle} · ${config.title}`;
+    descriptionText = `浏览 ${config.title} 在 ${archiveLabel}发布的文章。${paginationDescription}`;
+  } else if (is_category()) {
+    const categoryTrail = taxonomyTrail('categories');
+    const categoryLabel = page.category || page.title || categoryTrail[categoryTrail.length - 1];
+    const categoryName = categoryTrail.length > 1
+      ? [...categoryTrail.slice(0, -1), categoryLabel].join(' / ')
+      : categoryLabel;
+    titleText = `${categoryName} · 分类${paginationTitle} · ${config.title}`;
+    descriptionText = `浏览 ${config.title} 中「${categoryName}」分类下的文章。${paginationDescription}`;
+  } else if (is_tag()) {
+    const tagName = page.tag || page.title;
+    titleText = `#${tagName} · 标签${paginationTitle} · ${config.title}`;
+    descriptionText = `浏览 ${config.title} 中带有「${tagName}」标签的文章。${paginationDescription}`;
+  } else if (is_archive()) {
+    titleText = `归档${paginationTitle} · ${config.title}`;
+    descriptionText = `按时间浏览 ${config.title} 的全部文章。${paginationDescription}`;
+  } else {
+    titleText = page.title
+      ? `${page.title} · ${config.title}`
+      : `${config.title}${config.subtitle ? ` · ${config.subtitle}` : ''}`;
+    descriptionText = page.description || page.excerpt || config.description;
+  }
   const bodyType = page.layout === 'post' ? 'post' : (is_home() ? 'home' : 'page');
-  const isHomeLanding = bodyType === 'home' && Number(page.current || 1) === 1;
+  const isHomeLanding = bodyType === 'home' && currentPage === 1;
   const encryptedPage = bodyType === 'post' && String(page.content || '').includes('hexo-blog-encrypt');
   const summaryText = bodyType === 'post' ? post_summary(page, 180) : strip_html(descriptionText);
   const pageSocialCover = bodyType === 'post' ? post_cover(page) : (page.cover || '');
   const socialCover = pageSocialCover || '/MyImgs/avatar-chris.webp';
 %>
 <!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" class="no-js" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f8f4ed">
   <meta name="description" content="<%= summaryText %>">
+  <% if (page.noindex || page.sitemap === false) { %><meta name="robots" content="noindex,follow"><% } %>
   <meta property="og:type" content="<%= bodyType === 'post' ? 'article' : 'website' %>">
   <meta property="og:title" content="<%= titleText %>">
   <meta property="og:description" content="<%= summaryText %>">
   <meta property="og:url" content="<%= full_url_for(page.path || '') %>">
+  <% if (bodyType === 'post' && page.date) { %><meta property="article:published_time" content="<%= date(page.date, 'YYYY-MM-DDTHH:mm:ssZ') %>"><% } %>
+  <% if (bodyType === 'post' && (page.updated || page.date)) { %><meta property="article:modified_time" content="<%= date(page.updated || page.date, 'YYYY-MM-DDTHH:mm:ssZ') %>"><% } %>
   <% if (socialCover) { %><meta property="og:image" content="<%= full_url_for(socialCover) %>"><% } %>
   <meta name="twitter:card" content="<%= pageSocialCover ? 'summary_large_image' : 'summary' %>">
   <meta name="color-scheme" content="light dark">
@@ -28,20 +79,24 @@
   <link rel="canonical" href="<%= full_url_for(page.path || '') %>">
   <link rel="alternate" type="application/atom+xml" title="<%= config.title %>" href="<%= url_for('/atom.xml') %>">
   <link rel="icon" href="<%= url_for('/MyImgs/icon1.svg') %>">
+  <% if (bodyType === 'post' && !encryptedPage && theme.comments && theme.comments.enable && theme.comments.env_id) { %><link rel="preconnect" href="<%= theme.comments.env_id %>" crossorigin><% } %>
   <% if (isHomeLanding) { %><link rel="preload" as="image" type="image/webp" href="<%= url_for('/MyImgs/avatar-chris.webp') %>" fetchpriority="high"><% } %>
   <script>
     (() => {
-      const saved = localStorage.getItem('tide-theme');
+      document.documentElement.classList.replace('no-js', 'js');
+      let saved = null;
+      try { saved = localStorage.getItem('tide-theme'); } catch { /* Use the system preference. */ }
       const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       const theme = saved || preferred;
       document.documentElement.dataset.theme = theme;
       document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#101721' : '#f8f4ed';
     })();
   </script>
-  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=13') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=14') %>">
   <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css?v=10') %>">
 </head>
 <body class="page-type-<%= bodyType %>" data-page-kind="<%= bodyType %>" data-page-title="<%= page.title || '' %>" data-page-url="<%= url_for(page.path || '') %>" data-page-date="<%= page.date ? date(page.date, 'YYYY.MM.DD') : '' %>" data-page-private="<%= encryptedPage ? 'true' : 'false' %>">
+  <a class="skip-link" href="#content">跳到正文</a>
   <div class="reading-progress" aria-hidden="true"><span></span></div>
   <%- partial('_partial/header') %>
   <main id="content" class="site-main">
@@ -53,6 +108,6 @@
     <span>↑</span>
   </button>
   <div class="site-toast" data-toast role="status" aria-live="polite"></div>
-  <script src="<%= url_for('/js/tide.js?v=11') %>" defer></script>
+  <script src="<%= url_for('/js/tide.js?v=12') %>" defer></script>
 </body>
 </html>

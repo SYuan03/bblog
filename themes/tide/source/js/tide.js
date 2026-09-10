@@ -9,6 +9,7 @@
   const nav = document.querySelector('[data-nav]');
   const navToggle = document.querySelector('[data-nav-toggle]');
   const toast = document.querySelector('[data-toast]');
+  const themeToggle = document.querySelector('[data-theme-toggle]');
   let toastTimer;
 
   const showToast = (message) => {
@@ -53,24 +54,38 @@
   updateScrollState();
   addEventListener('scroll', queueScrollUpdate, { passive: true });
 
-  navToggle?.addEventListener('click', () => {
-    const open = nav?.classList.toggle('is-open') || false;
-    navToggle.setAttribute('aria-expanded', String(open));
-    const label = navToggle.querySelector('.sr-only');
+  const setNavOpen = (open, restoreFocus = false) => {
+    nav?.classList.toggle('is-open', open);
+    navToggle?.setAttribute('aria-expanded', String(open));
+    const label = navToggle?.querySelector('.sr-only');
     if (label) label.textContent = open ? '关闭导航' : '打开导航';
+    if (!open && restoreFocus) navToggle.focus({ preventScroll: true });
+  };
+  navToggle?.addEventListener('click', () => {
+    setNavOpen(!nav?.classList.contains('is-open'));
   });
   nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
-    nav.classList.remove('is-open');
-    navToggle?.setAttribute('aria-expanded', 'false');
-    const label = navToggle?.querySelector('.sr-only');
-    if (label) label.textContent = '打开导航';
+    setNavOpen(false);
   }));
+  addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !nav?.classList.contains('is-open')) return;
+    event.preventDefault();
+    setNavOpen(false, true);
+  });
 
-  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+  const updateThemeToggleLabel = () => {
+    if (!themeToggle) return;
+    const label = root.dataset.theme === 'dark' ? '切换到浅色模式' : '切换到深色模式';
+    themeToggle.setAttribute('aria-label', label);
+    themeToggle.title = label;
+  };
+  updateThemeToggleLabel();
+  themeToggle?.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
-    localStorage.setItem('tide-theme', next);
+    try { localStorage.setItem('tide-theme', next); } catch { /* Theme switching still works without storage. */ }
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#101721' : '#f8f4ed');
+    updateThemeToggleLabel();
   });
 
   backToTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
@@ -468,9 +483,25 @@
     block.append(button);
   });
 
-  document.querySelector('[data-focus-toggle]')?.addEventListener('click', (event) => {
-    const active = body.classList.toggle('focus-mode');
-    event.currentTarget.innerHTML = active ? '<span>◑</span> 退出专注' : '<span>◐</span> 专注阅读';
+  const focusToggles = [...document.querySelectorAll('[data-focus-toggle]')];
+  const focusExit = document.querySelector('[data-focus-exit]');
+  const primaryFocusToggle = focusToggles.find((button) => button !== focusExit);
+  const setFocusMode = (active) => {
+    body.classList.toggle('focus-mode', active);
+    focusToggles.forEach((button) => {
+      button.setAttribute('aria-pressed', String(active));
+      const icon = button.querySelector('[aria-hidden="true"]');
+      const label = button.querySelector('[data-focus-label]');
+      if (icon) icon.textContent = active ? '◑' : '◐';
+      if (label) label.textContent = active ? '退出专注' : '专注模式';
+    });
+  };
+  focusToggles.forEach((button) => {
+    button.addEventListener('click', () => {
+      const active = !body.classList.contains('focus-mode');
+      setFocusMode(active);
+      (active ? focusExit : primaryFocusToggle)?.focus({ preventScroll: true });
+    });
   });
 
   document.querySelector('[data-share]')?.addEventListener('click', async (event) => {
@@ -526,6 +557,37 @@
   if (comments) {
     let commentsPromise;
     const commentsContainer = document.querySelector('#twikoo-comment');
+    const labelTwikooControls = () => {
+      const labelsByName = { nick: '昵称', mail: '邮箱', link: '网址' };
+      comments.querySelectorAll('.tk-meta-input input[name]').forEach((input) => {
+        const label = labelsByName[input.name];
+        if (label && !input.getAttribute('aria-label')) input.setAttribute('aria-label', label);
+      });
+      comments.querySelectorAll('.tk-input textarea').forEach((textarea) => {
+        if (!textarea.getAttribute('aria-label')) textarea.setAttribute('aria-label', '评论正文');
+      });
+      comments.querySelectorAll('input.tk-input-image[type="file"]').forEach((input) => {
+        if (!input.getAttribute('aria-label')) input.setAttribute('aria-label', '添加评论图片');
+      });
+      comments.querySelectorAll('.tk-submit-action-icon:not(.OwO):not(.__markdown)').forEach((control) => {
+        if (!control.getAttribute('aria-label')) control.setAttribute('aria-label', '添加评论图片');
+        if (!control.hasAttribute('role')) control.setAttribute('role', 'button');
+        if (!control.hasAttribute('tabindex')) control.tabIndex = 0;
+        if (control.dataset.a11yKeyboard === 'true') return;
+        control.dataset.a11yKeyboard = 'true';
+        control.addEventListener('keydown', (event) => {
+          if (!['Enter', ' '].includes(event.key)) return;
+          event.preventDefault();
+          control.click();
+        });
+      });
+    };
+    const commentsObserver = new MutationObserver(labelTwikooControls);
+    commentsObserver.observe(comments, { childList: true, subtree: true });
+    setTimeout(() => {
+      labelTwikooControls();
+      commentsObserver.disconnect();
+    }, 12000);
     const setCommentStatus = (message) => {
       if (!commentsContainer) return;
       const status = document.createElement('div');
@@ -556,7 +618,9 @@
           envId: comments.dataset.envId,
           el: '#twikoo-comment',
           lang: 'zh-CN',
+          path: comments.dataset.commentsPath || location.pathname,
         });
+        labelTwikooControls();
         commentsContainer?.removeAttribute('aria-busy');
       } catch (error) {
         console.warn('Twikoo failed to load', error);
@@ -581,6 +645,7 @@
 
   const photoDialog = document.querySelector('[data-gallery-dialog]');
   const photoDialogImage = photoDialog?.querySelector('[data-gallery-image]');
+  let photoDialogTrigger;
   document.querySelectorAll('[data-gallery-open]').forEach((button) => {
     button.addEventListener('click', () => {
       const source = sameOriginHref(button.dataset.gallerySrc);
@@ -589,6 +654,7 @@
         location.assign(source);
         return;
       }
+      photoDialogTrigger = button;
       photoDialogImage.src = source;
       photoDialogImage.alt = button.dataset.galleryAlt || '';
       photoDialog.showModal();
@@ -602,6 +668,8 @@
     if (!photoDialogImage) return;
     photoDialogImage.removeAttribute('src');
     photoDialogImage.alt = '';
+    photoDialogTrigger?.focus({ preventScroll: true });
+    photoDialogTrigger = null;
   });
 
   const dialog = document.querySelector('[data-search-dialog]');
@@ -609,6 +677,7 @@
   const searchResults = document.querySelector('[data-search-results]');
   const searchStatus = document.querySelector('[data-search-status]');
   let searchIndex;
+  let searchDialogTrigger;
 
   const setSearchStatus = (message, visible = false) => {
     if (!searchStatus) return;
@@ -640,9 +709,14 @@
     }
   };
 
-  const openSearch = async () => {
+  const openSearch = async (event) => {
     if (!dialog) return;
-    if (!dialog.open) dialog.showModal();
+    if (!dialog.open) {
+      searchDialogTrigger = event?.currentTarget instanceof HTMLElement
+        ? event.currentTarget
+        : (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+      dialog.showModal();
+    }
     await loadSearch();
     searchInput?.focus();
   };
@@ -651,6 +725,10 @@
   document.querySelectorAll('[data-search-open]').forEach((button) => button.addEventListener('click', openSearch));
   document.querySelector('[data-search-close]')?.addEventListener('click', closeSearch);
   dialog?.addEventListener('click', (event) => { if (event.target === dialog) closeSearch(); });
+  dialog?.addEventListener('close', () => {
+    searchDialogTrigger?.focus({ preventScroll: true });
+    searchDialogTrigger = null;
+  });
   addEventListener('keydown', (event) => {
     if (event.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement?.tagName || '')) {
       event.preventDefault();

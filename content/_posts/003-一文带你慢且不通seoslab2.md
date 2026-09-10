@@ -1,6 +1,6 @@
 ---
 title: "一文带你慢且不通SEOSLab2"
-permalink: "/posts/2023-Spring-Courses-操作系统/一文带你慢且不通seoslab2.html"
+permalink: "/posts/2023-spring-courses-操作系统/一文带你慢且不通seoslab2.html"
 date: "2023-04-14T15:45:07.000Z"
 updated: "2024-09-30T12:52:08.489Z"
 cover: "/generated-covers/003-一文带你慢且不通seoslab2.webp"

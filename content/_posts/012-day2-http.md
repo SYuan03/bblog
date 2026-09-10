@@ -1,6 +1,6 @@
 ---
 title: "Day2-HTTP"
-permalink: "/posts/2023-Summer-Courses-CloudWeGo/day2-http.html"
+permalink: "/posts/2023-summer-courses-cloudwego/day2-http.html"
 date: "2023-07-11T03:42:29.000Z"
 updated: "2024-09-30T12:52:01.761Z"
 description: "先梳理 HTTP 版本、状态码与请求响应报文，再以 Thrift IDL 和 CloudWeGo Hertz 实战演示服务端、接口更新及客户端代码生成。"
@@ -102,7 +102,7 @@ tags:
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151516937.png" class="" title="image-20230711151516937">
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711151635573.png" class="" title="image-20230711151635573">
 <h3 id="Hz实战1">Hz实战1</h3>
-<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/docs/hertz/tutorials/toolkit/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>创建hello.thrift文件</p>
 <div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> idl</span><br><span class="line">vim hello.thrift</span><br></pre></td></tr></tbody></table></figure></div>
 <p><code>hello.thrift</code>文件内容</p>
@@ -121,7 +121,7 @@ tags:
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233040123.png" class="" title="image-20230711233040123">
 <p>成功</p>
 <h3 id="Hz实战2">Hz实战2</h3>
-<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/zh/docs/hertz/tutorials/toolkit/usage/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.cloudwego.io/docs/hertz/tutorials/toolkit/usage-thrift/">hz 使用 (thrift) | CloudWeGo <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>更新一个已有的项目</p>
 <img lazyload="" src="/images/loading.svg" data-src="/posts/2023-Summer-Courses-CloudWeGo/day2-http/image-20230711233626785.png" class="" title="image-20230711233626785">
 <p>根据需求重写hello.thrift的内容</p>

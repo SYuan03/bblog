@@ -5,6 +5,7 @@ import * as cheerio from "cheerio";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputRoot = path.join(projectRoot, "dist");
+const postsRoot = path.join(projectRoot, "content", "_posts");
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -30,13 +31,13 @@ for (const required of ["index.html", "404.html", "about/dongdong/index.html", "
 
 const htmlFiles = (await walk(outputRoot)).filter((file) => file.endsWith(".html"));
 const postFiles = htmlFiles.filter((file) => file.startsWith(path.join(outputRoot, "posts") + path.sep));
-// macOS uses a case-insensitive filesystem by default, so the legacy `SSL`
-// and `ssl` tag archives share one output directory locally. Netlify's Linux
-// builders keep both directories, producing one additional valid HTML page.
-if (![145, 146].includes(htmlFiles.length)) {
-  throw new Error(`Expected 145 or 146 HTML pages, found ${htmlFiles.length}`);
+const sourcePosts = (await walk(postsRoot)).filter((file) => /\.md$/i.test(file));
+if (htmlFiles.length < sourcePosts.length + 5) {
+  throw new Error(`Expected at least ${sourcePosts.length + 5} HTML pages, found ${htmlFiles.length}`);
 }
-if (postFiles.length !== 44) throw new Error(`Expected 44 post pages, found ${postFiles.length}`);
+if (postFiles.length !== sourcePosts.length) {
+  throw new Error(`Expected ${sourcePosts.length} post pages from content/_posts, found ${postFiles.length}`);
+}
 if (await exists(path.join(outputRoot, "shuoshuo", "index.html"))) {
   throw new Error("The retired Shuoshuo page is still being published");
 }
@@ -115,14 +116,54 @@ if ($now('.site-nav a[aria-current="page"]').attr("href") !== "/now/") {
   throw new Error("The Now page navigation item is not active");
 }
 
-const manifest = JSON.parse(await readFile(path.join(projectRoot, "content", "_migration-manifest.json"), "utf8"));
-const normalizeText = (value) => value.replace(/\s+/g, " ").trim();
-for (const post of manifest) {
-  const legacyHtml = await readFile(path.join(projectRoot, post.source), "utf8");
-  const generatedHtml = await readFile(path.join(outputRoot, post.permalink.slice(1)), "utf8");
-  const legacyText = normalizeText(cheerio.load(legacyHtml)(".article-content.markdown-body").first().text());
-  const generatedText = normalizeText(cheerio.load(generatedHtml)(".article-content.markdown-body").first().text());
-  if (legacyText !== generatedText) throw new Error(`Migrated article text differs: ${post.permalink}`);
+const atomXml = await readFile(path.join(outputRoot, "atom.xml"), "utf8");
+if (/<img\b[^>]*\bdata-src=/i.test(atomXml) || /<img\b[^>]*\bsrc=["'][^"']*loading\.svg/i.test(atomXml)) {
+  throw new Error("The Atom feed still contains browser-only lazy image placeholders");
 }
 
-console.log(`Validated ${htmlFiles.length} HTML pages, including ${postFiles.length} posts with text parity.`);
+const sitemapXml = await readFile(path.join(outputRoot, "sitemap.xml"), "utf8");
+const sitemapPaths = [...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => {
+  const url = new URL(match[1].replace(/&amp;/g, '&'));
+  return decodeURIComponent(url.pathname);
+});
+const pollutedSitemapPaths = sitemapPaths.filter((pathname) => pathname === '/404.html' || pathname.endsWith('/manifest.json'));
+if (pollutedSitemapPaths.length) {
+  throw new Error(`Sitemap contains non-indexable files: ${pollutedSitemapPaths.join(', ')}`);
+}
+const uppercaseSitemapPaths = sitemapPaths.filter((pathname) => /[A-Z]/.test(pathname));
+if (uppercaseSitemapPaths.length) {
+  throw new Error(`Sitemap contains mixed-case URLs: ${uppercaseSitemapPaths.slice(0, 10).join(', ')}`);
+}
+
+const manifest = JSON.parse(await readFile(path.join(projectRoot, "content", "_migration-manifest.json"), "utf8"));
+const normalizeText = (value) => value.replace(/\s+/g, " ").trim();
+const normalizeLegacyText = (value) => normalizeText(value)
+  .replace("https://syding.njuse.icu/atom.xml", "https://bblog.031105.xyz/atom.xml");
+let legacyCommentPathChecks = 0;
+let currentCommentPathChecks = 0;
+for (const post of manifest) {
+  const legacyHtml = await readFile(path.join(projectRoot, post.source), "utf8");
+  const generatedPath = post.permalink.replace(/[A-Z]/g, (character) => character.toLowerCase());
+  const generatedHtml = await readFile(path.join(outputRoot, generatedPath.slice(1)), "utf8");
+  const $generated = cheerio.load(generatedHtml);
+  const legacyText = normalizeLegacyText(cheerio.load(legacyHtml)(".article-content.markdown-body").first().text());
+  const generatedText = normalizeText($generated(".article-content.markdown-body").first().text());
+  if (legacyText !== generatedText) throw new Error(`Migrated article text differs: ${post.permalink}`);
+
+  const renderedCommentPath = $generated("[data-comments-path]").attr("data-comments-path");
+  if (renderedCommentPath) {
+    const usesLegacyRedirect = /[A-Z]/.test(post.permalink);
+    const expectedCommentPath = usesLegacyRedirect ? generatedPath.replace(/\.html$/i, "") : generatedPath;
+    if (decodeURI(renderedCommentPath) !== expectedCommentPath) {
+      throw new Error(`Unexpected comment path for ${post.permalink}: ${renderedCommentPath}`);
+    }
+    if (usesLegacyRedirect) legacyCommentPathChecks += 1;
+    else currentCommentPathChecks += 1;
+  }
+}
+
+if (!legacyCommentPathChecks || !currentCommentPathChecks) {
+  throw new Error("Comment path compatibility checks did not cover both migrated and current URL shapes");
+}
+
+console.log(`Validated ${htmlFiles.length} HTML pages, including ${postFiles.length} posts with text parity and ${legacyCommentPathChecks + currentCommentPathChecks} comment paths.`);

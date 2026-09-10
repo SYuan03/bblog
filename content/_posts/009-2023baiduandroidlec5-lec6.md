@@ -1,6 +1,6 @@
 ---
 title: "2023BaiduAndroidlec5-lec6"
-permalink: "/posts/2023-Summer-Courses-百度移动端/2023baiduandroidlec5-lec6.html"
+permalink: "/posts/2023-summer-courses-百度移动端/2023baiduandroidlec5-lec6.html"
 date: "2023-07-23T14:33:10.000Z"
 updated: "2024-09-30T12:51:52.260Z"
 description: "汇总 Android 核心开发笔记，覆盖 Activity、Fragment、广播、服务与内容提供者，并延伸至图片音视频处理和本地持久化方案。"

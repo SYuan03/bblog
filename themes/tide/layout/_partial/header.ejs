@@ -1,7 +1,11 @@
 <%
   const rawPath = String(page.path || '');
   const path = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;
-  const activeFor = (itemPath) => itemPath === '/' ? is_home() : path.startsWith(itemPath);
+  const activeFor = (itemPath) => {
+    if (itemPath === '/') return is_home();
+    if (itemPath === '/archives/' && page.layout === 'post') return true;
+    return path.startsWith(itemPath);
+  };
 %>
 <header class="site-header" data-header>
   <div class="header-inner">

@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, readdir } from "node:fs/promises";
+import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -43,8 +43,26 @@ async function walkFiles(directory) {
   return files;
 }
 
-async function referencedPostAssets() {
-  const references = new Set();
+const portablePath = (filename) => filename.split(path.sep).join('/').normalize('NFC');
+const pathLookupKey = (filename) => portablePath(filename).toLowerCase();
+
+async function indexPostAssets() {
+  const postsRoot = path.join(projectRoot, 'posts');
+  const index = new Map();
+  for (const source of await walkFiles(postsRoot)) {
+    const relative = portablePath(path.relative(projectRoot, source));
+    const key = pathLookupKey(relative);
+    const existing = index.get(key);
+    if (existing && existing !== source) {
+      throw new Error(`Legacy assets differ only by letter case: ${relative}`);
+    }
+    index.set(key, source);
+  }
+  return index;
+}
+
+async function referencedPostAssets(assetIndex) {
+  const references = new Map();
   const htmlFiles = (await walkFiles(outputRoot)).filter((filename) => filename.endsWith(".html"));
   const attributePattern = /(?:src|href|poster|data-src|srcset)\s*=\s*(["'])(.*?)\1/gi;
   const cssUrlPattern = /url\(\s*(["']?)([^'"\)]+)\1\s*\)/gi;
@@ -66,9 +84,12 @@ async function referencedPostAssets() {
       } catch {
         continue;
       }
-      const source = path.resolve(projectRoot, decodedPath.replace(/^\/+/, ''));
+      const relative = portablePath(decodedPath.replace(/^\/+/, ''));
+      const source = path.resolve(projectRoot, relative);
       const postsRoot = path.join(projectRoot, 'posts');
-      if (source.startsWith(`${postsRoot}${path.sep}`)) references.add(source);
+      if (source.startsWith(`${postsRoot}${path.sep}`)) {
+        references.set(relative, assetIndex.get(pathLookupKey(relative)) || source);
+      }
     }
   };
 
@@ -83,29 +104,82 @@ async function referencedPostAssets() {
 }
 
 async function copyPostAssets() {
-  const references = await referencedPostAssets();
+  const references = await referencedPostAssets(await indexPostAssets());
   let copied = 0;
-  for (const source of references) {
+  let caseAdjusted = 0;
+  const missing = [];
+  for (const [relative, source] of references) {
     try {
-      const relative = path.relative(projectRoot, source);
       const destination = path.join(outputRoot, relative);
       await mkdir(path.dirname(destination), { recursive: true });
       await cp(source, destination, { force: true });
+      if (portablePath(path.relative(projectRoot, source)) !== relative) caseAdjusted += 1;
       copied += 1;
     } catch (error) {
       if (error.code !== 'ENOENT') throw error;
-      console.warn(`Missing referenced legacy asset: ${path.relative(projectRoot, source)}`);
+      missing.push(relative);
     }
   }
 
-  return copied;
+  if (missing.length) {
+    throw new Error(`Missing referenced legacy assets (${missing.length}):\n${missing.join('\n')}`);
+  }
+
+  return { copied, caseAdjusted };
+}
+
+async function fixFeedImages() {
+  const feedPath = path.join(outputRoot, 'atom.xml');
+  let feed;
+  try {
+    feed = await readFile(feedPath, 'utf8');
+  } catch (error) {
+    if (error.code === 'ENOENT') return 0;
+    throw error;
+  }
+
+  let fixed = 0;
+  const rewritten = feed.replace(/<entry>[\s\S]*?<\/entry>/g, (entry) => {
+    const link = entry.match(/<link\s+href=(['"])(.*?)\1[^>]*\/>/i)?.[2];
+    if (!link) return entry;
+
+    return entry.replace(/<img\b[^>]*>/gi, (tag) => {
+      const dataSource = tag.match(/\sdata-src=(['"])(.*?)\1/i)?.[2];
+      if (!dataSource) return tag;
+
+      let absolute;
+      try {
+        const source = dataSource.replace(/&amp;/g, '&');
+        const candidate = new URL(source, link.replace(/&amp;/g, '&'));
+        if (!['http:', 'https:'].includes(candidate.protocol)) return tag;
+        absolute = candidate.href.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      } catch {
+        return tag;
+      }
+
+      let result = tag
+        .replace(/\sdata-src=(['"])(.*?)\1/i, '')
+        .replace(/\slazyload(?:=(['"])(.*?)\1)?/i, '');
+      if (/\ssrc=(['"])(.*?)\1/i.test(result)) {
+        result = result.replace(/\ssrc=(['"])(.*?)\1/i, ` src="${absolute}"`);
+      } else {
+        result = result.replace(/>$/, ` src="${absolute}">`);
+      }
+      fixed += 1;
+      return result;
+    });
+  });
+
+  await writeFile(feedPath, rewritten);
+  return fixed;
 }
 
 for (const directory of ["MyImgs", "lib"]) {
   await copyDirectory(directory);
 }
 
-const copiedPostAssets = await copyPostAssets();
+const { copied: copiedPostAssets, caseAdjusted: caseAdjustedPostAssets } = await copyPostAssets();
+const fixedFeedImages = await fixFeedImages();
 await mkdir(path.join(outputRoot, "css"), { recursive: true });
 await cp(path.join(projectRoot, "css", "hbe.style.css"), path.join(outputRoot, "css", "hbe.style.css"), { force: true });
 await mkdir(path.join(outputRoot, "vendor"), { recursive: true });
@@ -115,4 +189,4 @@ await cp(
   { force: true },
 );
 
-console.log(`Copied shared media, ${copiedPostAssets} referenced post assets, encrypted-post runtime, and Twikoo assets.`);
+console.log(`Copied shared media, ${copiedPostAssets} referenced post assets (${caseAdjustedPostAssets} case-adjusted), fixed ${fixedFeedImages} feed images, encrypted-post runtime, and Twikoo assets.`);

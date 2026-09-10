@@ -32,6 +32,7 @@ function normalizeImageUrl(value, postPath) {
 }
 
 let generatedCoverManifest = {};
+let legacyCommentPaths = new Map();
 try {
   const manifestPath = path.join(
     hexo.base_dir,
@@ -43,6 +44,21 @@ try {
   generatedCoverManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))?.covers || {};
 } catch {
   // Responsive images are an optional build-time optimization.
+}
+
+try {
+  const migrationManifest = JSON.parse(fs.readFileSync(
+    path.join(hexo.base_dir, hexo.config.source_dir || 'source', '_migration-manifest.json'),
+    'utf8',
+  ));
+  legacyCommentPaths = new Map(migrationManifest
+    .filter((post) => /[A-Z]/.test(post.permalink || ''))
+    .map((post) => {
+      const normalized = post.permalink.replace(/[A-Z]/g, (character) => character.toLowerCase());
+      return [normalized, normalized.replace(/\.html$/i, '')];
+    }));
+} catch {
+  // Fresh sites do not need compatibility with the migrated comment paths.
 }
 
 function generatedCoverInfo(cover) {
@@ -102,4 +118,9 @@ hexo.extend.helper.register('post_cover_tone', function postCoverTone(post) {
     hash = Math.imul(hash, 16777619);
   }
   return Math.abs(hash) % 5;
+});
+
+hexo.extend.helper.register('comment_path', function commentPath(post) {
+  const pagePath = `/${String(post?.path || '').replace(/^\/+/, '')}`;
+  return encodeURI(legacyCommentPaths.get(pagePath) || pagePath);
 });

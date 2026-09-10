@@ -1,6 +1,6 @@
 ---
 title: "notes-os"
-permalink: "/posts/2023-Spring-Courses-操作系统/notes-os.html"
+permalink: "/posts/2023-spring-courses-操作系统/notes-os.html"
 date: "2023-06-16T14:25:39.000Z"
 updated: "2024-09-30T12:52:08.717Z"
 description: "一份覆盖操作系统核心章节的复习笔记，整理进程与调度、虚拟内存、页面置换、I/O 与磁盘调度、文件系统等概念及典型题型。"

@@ -49,7 +49,7 @@
       <div class="rail-sticky">
         <% if (hasToc) { %><span class="rail-label">目录</span><nav class="article-toc"><%- tocHtml %></nav><% } %>
         <div class="article-tools">
-          <button type="button" data-focus-toggle><span>◐</span> 专注模式</button>
+          <button type="button" data-focus-toggle aria-pressed="false"><span aria-hidden="true">◐</span> <span data-focus-label>专注模式</span></button>
           <button type="button" data-share><span>↗</span> 分享</button>
           <% if (commentsEnabled) { %><a href="#comments"><span>◇</span> 评论</a><% } %>
         </div>
@@ -95,7 +95,7 @@
       </nav>
 
       <% if (commentsEnabled) { %>
-        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>" data-comments-script="<%= url_for('/vendor/twikoo.min.js') %>">
+        <section class="comments" id="comments" data-comments data-env-id="<%= theme.comments.env_id %>" data-comments-path="<%= comment_path(page) %>" data-comments-script="<%= url_for('/vendor/twikoo.min.js') %>">
           <div class="comments-heading">
             <div><h2>留言</h2></div>
           </div>
@@ -107,3 +107,8 @@
     </div>
   </div>
 </article>
+
+<button class="focus-exit" type="button" data-focus-toggle data-focus-exit aria-pressed="false">
+  <span aria-hidden="true">◑</span>
+  <span data-focus-label>退出专注</span>
+</button>

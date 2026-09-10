@@ -1,6 +1,6 @@
 ---
 title: "Day3-RPC"
-permalink: "/posts/2023-Summer-Courses-CloudWeGo/day3-rpc.html"
+permalink: "/posts/2023-summer-courses-cloudwego/day3-rpc.html"
 date: "2023-07-12T02:11:40.000Z"
 updated: "2024-09-30T12:52:01.933Z"
 description: "介绍 RPC 的基本概念、Thrift 协议与 IDL 语法，并用 CloudWeGo Kitex 生成服务端和调用端，记录 Hertz 转发 Kitex 的课堂练习。"

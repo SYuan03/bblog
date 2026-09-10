@@ -1,6 +1,6 @@
 ---
 title: "notes-dbms"
-permalink: "/posts/2023-Spring-Courses-数据库管理/notes-dbms.html"
+permalink: "/posts/2023-spring-courses-数据库管理/notes-dbms.html"
 date: "2023-06-14T14:04:35.000Z"
 updated: "2024-09-30T12:52:21.056Z"
 description: "数据库课程综合笔记，涵盖关系模型与 SQL、安全和完整性、函数依赖与范式、数据库设计、事务恢复、并发控制及 NoSQL 基础。"
