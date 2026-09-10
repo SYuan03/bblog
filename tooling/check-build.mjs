@@ -69,8 +69,8 @@ for (const file of htmlFiles) {
 
   const relativeHtmlPath = path.relative(outputRoot, file).split(path.sep).join('/');
   const pageUrl = new URL(relativeHtmlPath, 'https://bblog.local/');
-  for (const element of $("[src], [href], [data-src], [poster], [srcset]").toArray()) {
-    for (const attribute of ['src', 'href', 'data-src', 'poster', 'srcset']) {
+  for (const element of $("[src], [href], [data-src], [data-gallery-src], [poster], [srcset]").toArray()) {
+    for (const attribute of ['src', 'href', 'data-src', 'data-gallery-src', 'poster', 'srcset']) {
       const raw = $(element).attr(attribute);
       if (!raw) continue;
       const values = attribute === 'srcset'
