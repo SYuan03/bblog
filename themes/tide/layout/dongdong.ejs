@@ -1,0 +1,51 @@
+<%
+  const media = Array.isArray(page.media) ? page.media : [];
+  const photoCount = media.filter((item) => item.type !== 'video').length;
+  const videoCount = media.filter((item) => item.type === 'video').length;
+  const mediaSummary = [photoCount ? `${photoCount} 张照片` : '', videoCount ? `${videoCount} 段视频` : ''].filter(Boolean).join(' · ');
+%>
+<section class="pet-page section-shell">
+  <nav class="page-breadcrumb reveal" aria-label="面包屑">
+    <a href="<%= url_for('/about/') %>">关于</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page"><%= page.title %></span>
+  </nav>
+
+  <header class="pet-page-header reveal">
+    <p class="eyebrow">家里的另一位</p>
+    <h1><%= page.title %></h1>
+    <p><%= page.description || '照片和视频，慢慢往这里放。' %></p>
+  </header>
+
+  <section class="pet-gallery reveal" aria-labelledby="pet-gallery-title">
+    <header class="pet-gallery-heading">
+      <h2 id="pet-gallery-title">相册</h2>
+      <span><%= mediaSummary %></span>
+    </header>
+
+    <div class="pet-gallery-grid">
+      <% media.forEach((item, index) => { %>
+        <figure class="pet-media <%= index === 0 ? 'pet-media-featured' : '' %>">
+          <% if (item.type === 'video') { %>
+            <video controls playsinline preload="metadata"<% if (item.poster) { %> poster="<%= url_for(item.poster) %>"<% } %>>
+              <source src="<%= url_for(item.src) %>"<% if (item.mime) { %> type="<%= item.mime %>"<% } %>>
+            </video>
+          <% } else { %>
+            <button class="pet-photo" type="button" data-gallery-open data-gallery-src="<%= url_for(item.src) %>" data-gallery-alt="<%= item.alt || page.title %>" aria-label="放大查看：<%= item.alt || page.title %>">
+              <img src="<%= url_for(item.thumbnail || item.src) %>" alt="<%= item.alt || page.title %>" width="<%= item.width || 1200 %>" height="<%= item.height || 900 %>" loading="<%= index === 0 ? 'eager' : 'lazy' %>" decoding="async"<% if (index === 0) { %> fetchpriority="high"<% } %>>
+            </button>
+          <% } %>
+          <figcaption>
+            <span><%= String(index + 1).padStart(2, '0') %></span>
+            <p><%= item.caption || page.title %></p>
+          </figcaption>
+        </figure>
+      <% }) %>
+    </div>
+  </section>
+</section>
+
+<dialog class="photo-dialog" data-gallery-dialog aria-label="照片大图">
+  <button type="button" class="photo-dialog-close" data-gallery-close aria-label="关闭大图">×</button>
+  <img src="" alt="" data-gallery-image>
+</dialog>

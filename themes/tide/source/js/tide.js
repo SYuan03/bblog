@@ -91,6 +91,36 @@
     }
   });
 
+  document.querySelectorAll('[data-profile-switcher]').forEach((switcher) => {
+    const images = [...switcher.querySelectorAll('[data-profile-image]')];
+    const choices = [...switcher.querySelectorAll('[data-profile-choice]')];
+    const petLink = switcher.querySelector('[data-profile-pet-link]');
+
+    const selectProfile = (profile) => {
+      if (!images.some((image) => image.dataset.profileImage === profile)) return;
+      switcher.dataset.activeProfile = profile;
+      images.forEach((image) => {
+        const active = image.dataset.profileImage === profile;
+        image.classList.toggle('is-active', active);
+        image.setAttribute('aria-hidden', String(!active));
+      });
+      choices.forEach((choice) => choice.setAttribute('aria-pressed', String(choice.dataset.profileChoice === profile)));
+      if (petLink) petLink.hidden = profile !== 'pet';
+    };
+
+    choices.forEach((choice, index) => {
+      choice.addEventListener('click', () => selectProfile(choice.dataset.profileChoice));
+      choice.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        const next = choices[(index + direction + choices.length) % choices.length];
+        next.focus();
+        selectProfile(next.dataset.profileChoice);
+      });
+    });
+  });
+
   const lastReadKey = 'tide-last-read-v1';
   const legacyHistoryKey = 'tide-reading-history-v1';
   const readStoredJson = (key, fallback = null) => {
@@ -547,6 +577,31 @@
 
   document.querySelectorAll('[data-cover-image]').forEach((image) => {
     image.addEventListener('error', () => image.remove());
+  });
+
+  const photoDialog = document.querySelector('[data-gallery-dialog]');
+  const photoDialogImage = photoDialog?.querySelector('[data-gallery-image]');
+  document.querySelectorAll('[data-gallery-open]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const source = sameOriginHref(button.dataset.gallerySrc);
+      if (!source) return;
+      if (!photoDialog?.showModal || !photoDialogImage) {
+        location.assign(source);
+        return;
+      }
+      photoDialogImage.src = source;
+      photoDialogImage.alt = button.dataset.galleryAlt || '';
+      photoDialog.showModal();
+    });
+  });
+  photoDialog?.querySelector('[data-gallery-close]')?.addEventListener('click', () => photoDialog.close());
+  photoDialog?.addEventListener('click', (event) => {
+    if (event.target === photoDialog) photoDialog.close();
+  });
+  photoDialog?.addEventListener('close', () => {
+    if (!photoDialogImage) return;
+    photoDialogImage.removeAttribute('src');
+    photoDialogImage.alt = '';
   });
 
   const dialog = document.querySelector('[data-search-dialog]');

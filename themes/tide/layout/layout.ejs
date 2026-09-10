@@ -7,8 +7,8 @@
   const isHomeLanding = bodyType === 'home' && Number(page.current || 1) === 1;
   const encryptedPage = bodyType === 'post' && String(page.content || '').includes('hexo-blog-encrypt');
   const summaryText = bodyType === 'post' ? post_summary(page, 180) : strip_html(descriptionText);
-  const postSocialCover = bodyType === 'post' ? post_cover(page) : '';
-  const socialCover = postSocialCover || '/MyImgs/avatar-chris.webp';
+  const pageSocialCover = bodyType === 'post' ? post_cover(page) : (page.cover || '');
+  const socialCover = pageSocialCover || '/MyImgs/avatar-chris.webp';
 %>
 <!doctype html>
 <html lang="zh-CN" data-theme="light">
@@ -22,7 +22,7 @@
   <meta property="og:description" content="<%= summaryText %>">
   <meta property="og:url" content="<%= full_url_for(page.path || '') %>">
   <% if (socialCover) { %><meta property="og:image" content="<%= full_url_for(socialCover) %>"><% } %>
-  <meta name="twitter:card" content="<%= postSocialCover ? 'summary_large_image' : 'summary' %>">
+  <meta name="twitter:card" content="<%= pageSocialCover ? 'summary_large_image' : 'summary' %>">
   <meta name="color-scheme" content="light dark">
   <title><%= titleText %></title>
   <link rel="canonical" href="<%= full_url_for(page.path || '') %>">
@@ -38,7 +38,7 @@
       document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#101721' : '#f8f4ed';
     })();
   </script>
-  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=10') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/tide.css?v=11') %>">
   <link rel="stylesheet" href="<%= url_for('/styles/legacy-content.css?v=10') %>">
 </head>
 <body class="page-type-<%= bodyType %>" data-page-kind="<%= bodyType %>" data-page-title="<%= page.title || '' %>" data-page-url="<%= url_for(page.path || '') %>" data-page-date="<%= page.date ? date(page.date, 'YYYY.MM.DD') : '' %>" data-page-private="<%= encryptedPage ? 'true' : 'false' %>">
@@ -53,6 +53,6 @@
     <span>↑</span>
   </button>
   <div class="site-toast" data-toast role="status" aria-live="polite"></div>
-  <script src="<%= url_for('/js/tide.js?v=10') %>" defer></script>
+  <script src="<%= url_for('/js/tide.js?v=11') %>" defer></script>
 </body>
 </html>

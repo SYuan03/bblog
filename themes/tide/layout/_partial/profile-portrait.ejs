@@ -1,0 +1,32 @@
+<%
+  const profileData = profile || theme.profile || {};
+  const pet = profileData.pet || {};
+  const ownerAvatar = profileData.avatar;
+  const petAvatar = pet.avatar;
+  const hasPet = Boolean(petAvatar && pet.page);
+%>
+<% if (ownerAvatar) { %>
+  <figure class="home-portrait profile-portrait" data-profile-switcher data-active-profile="self">
+    <div class="portrait-stage">
+      <img class="portrait-image is-active" src="<%= url_for(ownerAvatar) %>" alt="<%= theme.brand || config.author %> 的头像" width="512" height="512" loading="eager" decoding="async" fetchpriority="high" data-profile-image="self">
+      <% if (hasPet) { %>
+        <img class="portrait-image" src="<%= url_for(petAvatar) %>" alt="<%= pet.name || '冬冬' %>" width="512" height="512" loading="lazy" decoding="async" fetchpriority="low" aria-hidden="true" data-profile-image="pet">
+        <div class="portrait-switch" role="group" aria-label="切换头像">
+          <button class="portrait-choice" type="button" aria-pressed="true" title="<%= theme.brand || config.author %>" data-profile-choice="self">
+            <img src="<%= url_for(ownerAvatar) %>" alt="" width="64" height="64" aria-hidden="true">
+            <span class="sr-only">显示 <%= theme.brand || config.author %> 的头像</span>
+          </button>
+          <button class="portrait-choice" type="button" aria-pressed="false" title="<%= pet.name || '冬冬' %>" data-profile-choice="pet">
+            <img src="<%= url_for(petAvatar) %>" alt="" width="64" height="64" aria-hidden="true">
+            <span class="sr-only">显示<%= pet.name || '冬冬' %></span>
+          </button>
+        </div>
+      <% } %>
+    </div>
+    <% if (hasPet) { %>
+      <figcaption class="portrait-caption" aria-live="polite">
+        <a href="<%= url_for(pet.page) %>" data-profile-pet-link hidden><%= pet.link_text || `${pet.name || '冬冬'}的相册` %> <span aria-hidden="true">↗</span></a>
+      </figcaption>
+    <% } %>
+  </figure>
+<% } %>

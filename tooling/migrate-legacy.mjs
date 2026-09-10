@@ -97,31 +97,5 @@ async function migratePosts() {
   return manifest;
 }
 
-async function migratePage(sourcePath, outputPath, title, permalink) {
-  const source = await readFile(path.join(projectRoot, sourcePath), "utf8");
-  const $ = cheerio.load(source);
-  const content = $(".page-template-content.markdown-body").first().html()?.trim();
-  if (!content) throw new Error(`Page content is empty: ${sourcePath}`);
-
-  const output = [
-    "---",
-    `title: ${quoted(title)}`,
-    `permalink: ${quoted(permalink)}`,
-    "comments: false",
-    "---",
-    "",
-    `<!-- Migrated from ${sourcePath}. -->`,
-    '<div class="legacy-content">',
-    content,
-    "</div>",
-    "",
-  ].join("\n");
-
-  const absoluteOutput = path.join(projectRoot, outputPath);
-  await mkdir(path.dirname(absoluteOutput), { recursive: true });
-  await writeFile(absoluteOutput, output);
-}
-
 const manifest = await migratePosts();
-await migratePage("about/index.html", "content/about/index.md", "关于我", "/about/index.html");
-console.log(`Migrated ${manifest.length} posts and the About page.`);
+console.log(`Migrated ${manifest.length} posts; curated pages were preserved.`);

@@ -24,7 +24,7 @@ async function exists(file) {
   }
 }
 
-for (const required of ["index.html", "404.html", "atom.xml", "search.xml", "sitemap.xml"]) {
+for (const required of ["index.html", "404.html", "about/dongdong/index.html", "atom.xml", "search.xml", "sitemap.xml"]) {
   if (!(await exists(path.join(outputRoot, required)))) throw new Error(`Missing build output: ${required}`);
 }
 
@@ -33,8 +33,8 @@ const postFiles = htmlFiles.filter((file) => file.startsWith(path.join(outputRoo
 // macOS uses a case-insensitive filesystem by default, so the legacy `SSL`
 // and `ssl` tag archives share one output directory locally. Netlify's Linux
 // builders keep both directories, producing one additional valid HTML page.
-if (![143, 144].includes(htmlFiles.length)) {
-  throw new Error(`Expected 143 or 144 HTML pages, found ${htmlFiles.length}`);
+if (![144, 145].includes(htmlFiles.length)) {
+  throw new Error(`Expected 144 or 145 HTML pages, found ${htmlFiles.length}`);
 }
 if (postFiles.length !== 44) throw new Error(`Expected 44 post pages, found ${postFiles.length}`);
 if (await exists(path.join(outputRoot, "shuoshuo", "index.html"))) {
