@@ -55,36 +55,46 @@
 
     <% if (artworks.length) { %>
       <aside class="today-strip reveal" data-today-strip data-quote-api="<%= extras.quote_api || '' %>" data-art-start-index="<%= artworkIndex %>">
-        <figure class="today-figure">
-          <a class="today-art" href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-link aria-label="查看《<%= artwork.title_zh || artwork.title %>》的馆藏详情">
-            <img src="<%= url_for(artwork.image) %>" alt="<%= artwork.title_zh || artwork.title %>，<%= artwork.artist_zh || artwork.artist %>" width="960" height="720" loading="lazy" decoding="async" fetchpriority="low" data-art-image>
-          </a>
-        </figure>
-
-        <div class="today-copy">
-          <div class="today-toolbar">
-            <span>馆藏一隅</span>
+        <div class="today-toolbar">
+          <h2 id="today-heading">馆藏一隅</h2>
+          <div class="today-actions">
             <span class="sr-only" data-today-status aria-live="polite"></span>
             <button class="today-refresh" type="button" data-today-refresh aria-label="换一幅画和一句话" title="换一幅画和一句话">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8.2A7 7 0 0 1 18.7 6L20 8"></path><path d="M17.9 15.8A7 7 0 0 1 5.3 18L4 16"></path></svg>
             </button>
+            <button class="today-toggle" type="button" data-today-toggle aria-expanded="true" aria-controls="today-panel" aria-label="收起馆藏" title="收起馆藏">
+              <span data-today-toggle-label>收起</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"></path></svg>
+            </button>
           </div>
+        </div>
 
-          <div class="today-work">
-            <p class="today-facts">
-              <span data-art-origin><%= artwork.origin %></span>
-              <span data-art-date><%= artwork.date %></span>
-              <span data-art-medium><%= artwork.medium %></span>
-            </p>
-            <h2><a href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-title-link><span data-art-title-zh><%= artwork.title_zh || artwork.title %></span></a></h2>
-            <% if (artwork.title_zh && artwork.title) { %><p class="today-art-title" lang="en" data-art-title><%= artwork.title %></p><% } else { %><p class="today-art-title" lang="en" data-art-title hidden></p><% } %>
-            <p class="today-art-maker" data-art-maker><%= [artwork.artist_zh, artwork.artist].filter(Boolean).join(' · ') %></p>
-            <a class="today-detail" href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-detail>在 The Met 查看作品 <span>↗</span></a>
-          </div>
+        <div class="today-panel" id="today-panel" role="region" aria-labelledby="today-heading" data-today-panel>
+          <div class="today-panel-inner">
+            <figure class="today-figure">
+              <a class="today-art" href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-link aria-label="查看《<%= artwork.title_zh || artwork.title %>》的馆藏详情">
+                <img src="<%= url_for(artwork.image) %>" alt="<%= artwork.title_zh || artwork.title %>，<%= artwork.artist_zh || artwork.artist %>" width="960" height="720" loading="lazy" decoding="async" fetchpriority="low" data-art-image>
+              </a>
+            </figure>
 
-          <div class="today-quote">
-            <blockquote data-quote-text>“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
-            <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
+            <div class="today-copy">
+              <div class="today-work">
+                <p class="today-facts">
+                  <span data-art-origin><%= artwork.origin %></span>
+                  <span data-art-date><%= artwork.date %></span>
+                  <span data-art-medium><%= artwork.medium %></span>
+                </p>
+                <h3><a href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-title-link><span data-art-title-zh><%= artwork.title_zh || artwork.title %></span></a></h3>
+                <% if (artwork.title_zh && artwork.title) { %><p class="today-art-title" lang="en" data-art-title><%= artwork.title %></p><% } else { %><p class="today-art-title" lang="en" data-art-title hidden></p><% } %>
+                <p class="today-art-maker" data-art-maker><%= [artwork.artist_zh, artwork.artist].filter(Boolean).join(' · ') %></p>
+                <a class="today-detail" href="<%= artwork.object_url %>" target="_blank" rel="noopener" data-art-detail>在 The Met 查看作品 <span>↗</span></a>
+              </div>
+
+              <div class="today-quote">
+                <blockquote data-quote-text>“<%= extras.fallback_quote || '纸上得来终觉浅，绝知此事要躬行。' %>”</blockquote>
+                <cite data-quote-citation><span data-quote-source><%= extras.fallback_source || '陆游' %></span></cite>
+              </div>
+            </div>
           </div>
         </div>
 

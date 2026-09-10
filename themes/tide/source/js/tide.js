@@ -196,6 +196,9 @@
     const artDetail = todayStrip.querySelector('[data-art-detail]');
     const todayStatus = todayStrip.querySelector('[data-today-status]');
     const refresh = todayStrip.querySelector('[data-today-refresh]');
+    const panel = todayStrip.querySelector('[data-today-panel]');
+    const panelToggle = todayStrip.querySelector('[data-today-toggle]');
+    const panelToggleLabel = panelToggle?.querySelector('[data-today-toggle-label]');
     const quoteEndpoint = todayStrip.dataset.quoteApi || '';
     let artworks = [];
     try {
@@ -209,6 +212,23 @@
     const startIndex = artworks.length ? siteDayNumber % artworks.length : 0;
     let artOffset = 0;
     let activeRequest = 0;
+
+    const setPanelExpanded = (expanded) => {
+      if (!panel || !panelToggle) return;
+      const isExpanded = Boolean(expanded);
+      if (!isExpanded && panel.contains(document.activeElement)) panelToggle.focus();
+      todayStrip.classList.toggle('is-collapsed', !isExpanded);
+      panelToggle.setAttribute('aria-expanded', String(isExpanded));
+      panelToggle.setAttribute('aria-label', isExpanded ? '收起馆藏' : '展开馆藏');
+      panelToggle.title = isExpanded ? '收起馆藏' : '展开馆藏';
+      if (panelToggleLabel) panelToggleLabel.textContent = isExpanded ? '收起' : '展开';
+      panel.setAttribute('aria-hidden', String(!isExpanded));
+      panel.inert = !isExpanded;
+    };
+    setPanelExpanded(panelToggle?.getAttribute('aria-expanded') !== 'false');
+    panelToggle?.addEventListener('click', () => {
+      setPanelExpanded(panelToggle.getAttribute('aria-expanded') !== 'true');
+    });
 
     const safeUrl = (value, sameOriginOnly = false) => {
       try {
