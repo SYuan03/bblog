@@ -1,34 +1,46 @@
 <%
   const entries = Array.isArray(page.entries)
-    ? page.entries.filter((entry) => entry && entry.label && entry.text)
+    ? page.entries.filter((entry) => entry && entry.datetime && entry.text)
     : [];
-  const asOf = String(page.as_of || '').trim();
-  const asOfLabel = asOf ? asOf.replaceAll('-', '.') : '';
 %>
 <section class="now-page section-shell">
   <header class="now-header reveal">
     <h1><%= page.title %></h1>
-    <% if (asOf) { %>
-      <time datetime="<%= asOf %>">更新于 <%= asOfLabel %></time>
-    <% } %>
   </header>
 
-  <div class="now-entries reveal">
+  <div class="now-log reveal">
     <% entries.forEach((entry) => { %>
-      <section class="now-entry">
-        <h2><span aria-hidden="true"></span><%= entry.label %></h2>
-        <p>
-          <% if (entry.href) { %>
-            <a href="<%= url_for(entry.href) %>"><%= entry.text %></a>
-          <% } else { %>
-            <%= entry.text %>
+      <article class="now-entry">
+        <time datetime="<%= entry.datetime %>">
+          <span><%= entry.date %></span>
+          <b><%= entry.time %></b>
+        </time>
+
+        <div class="now-entry-content<%= entry.image ? ' has-image' : '' %>">
+          <p><%= entry.text %></p>
+
+          <% if (entry.image) { %>
+            <figure class="now-entry-image">
+              <% if (entry.image_source) { %><a href="<%= entry.image_source %>" target="_blank" rel="noopener noreferrer"><% } %>
+                <img
+                  src="<%= url_for(entry.image) %>"
+                  alt="<%= entry.image_alt || '' %>"
+                  width="<%= entry.image_width || 480 %>"
+                  height="<%= entry.image_height || 600 %>"
+                  loading="lazy"
+                  decoding="async">
+              <% if (entry.image_source) { %></a><% } %>
+              <figcaption>
+                <span><%= entry.image_caption || '' %></span>
+                <% if (entry.image_credit) { %>
+                  <a href="<%= entry.image_source %>" target="_blank" rel="noopener noreferrer"><%= entry.image_credit %></a><% if (entry.image_license && entry.image_license_url) { %>
+                  · <a href="<%= entry.image_license_url %>" target="_blank" rel="license noopener noreferrer"><%= entry.image_license %></a><% } %>
+                <% } %>
+              </figcaption>
+            </figure>
           <% } %>
-        </p>
-      </section>
+        </div>
+      </article>
     <% }) %>
   </div>
-
-  <% if (page.note) { %>
-    <p class="now-note reveal"><%= page.note %></p>
-  <% } %>
 </section>
