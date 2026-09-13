@@ -25,14 +25,24 @@
 
     <div class="pet-gallery-grid">
       <% media.forEach((item, index) => { %>
-        <figure class="pet-media <%= index === 0 ? 'pet-media-featured' : '' %> <%= item.layout === 'wide' ? 'pet-media-wide' : '' %>">
+        <figure class="pet-media">
           <% if (item.type === 'video') { %>
             <video controls playsinline preload="metadata"<% if (item.poster) { %> poster="<%= url_for(item.poster) %>"<% } %>>
               <source src="<%= url_for(item.src) %>"<% if (item.mime) { %> type="<%= item.mime %>"<% } %>>
             </video>
           <% } else { %>
             <button class="pet-photo" type="button" data-gallery-open data-gallery-src="<%= url_for(item.src) %>" data-gallery-alt="<%= item.alt || page.title %>" aria-label="放大查看：<%= item.alt || page.title %>">
-              <img src="<%= url_for(item.thumbnail || item.src) %>" alt="<%= item.alt || page.title %>" width="<%= item.width || 1200 %>" height="<%= item.height || 900 %>" loading="<%= index === 0 ? 'eager' : 'lazy' %>" decoding="async"<% if (index === 0) { %> fetchpriority="high"<% } %>>
+              <img
+                src="<%= url_for(item.thumbnail_2x || item.thumbnail || item.src) %>"
+                <% if (item.thumbnail && item.thumbnail_2x) { %>srcset="<%= url_for(item.thumbnail) %> 320w, <%= url_for(item.thumbnail_2x) %> 640w" sizes="(max-width: 680px) calc(50vw - 22px), (max-width: 960px) calc(33vw - 24px), 260px"<% } %>
+                alt="<%= item.alt || page.title %>"
+                width="<%= item.width || 1200 %>"
+                height="<%= item.height || 900 %>"
+                loading="<%= index === 0 ? 'eager' : 'lazy' %>"
+                decoding="async"
+                style="--pet-photo-position: <%= item.position || 'center' %>;"
+                <% if (index === 0) { %>fetchpriority="high"<% } %>
+              >
             </button>
           <% } %>
           <figcaption>
