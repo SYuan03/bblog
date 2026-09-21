@@ -63,7 +63,8 @@ for (const file of htmlFiles) {
     return !$(card).find(".post-card-summary").text().trim() || !$(card).find(".post-card-cover").length;
   }).length;
   if (file.startsWith(path.join(outputRoot, "posts") + path.sep)) {
-    if (!$(".article-cover").length || !$(".article-deck > p").text().trim() || !$('meta[property="og:image"]').attr("content")) {
+    const hasPrimaryVisual = $(".article-cover").length || $(".post-deck-embed").length;
+    if (!hasPrimaryVisual || !$(".article-deck > p").text().trim() || !$('meta[property="og:image"]').attr("content")) {
       incompletePostPages += 1;
     }
   }

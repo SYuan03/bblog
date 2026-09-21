@@ -33,15 +33,22 @@
     <div class="article-deck">
       <p><%= deckText %></p>
       <dl class="article-stats">
-        <div><dt>字数</dt><dd><%= wordcount(page) %></dd></div>
-        <div><dt>阅读</dt><dd>约 <%= reading_minutes(page) %> 分钟</dd></div>
+        <% if (page.deck_pages) { %>
+          <div><dt>页数</dt><dd><%= page.deck_pages %></dd></div>
+          <div><dt>形式</dt><dd>交互图解</dd></div>
+        <% } else { %>
+          <div><dt>字数</dt><dd><%= wordcount(page) %></dd></div>
+          <div><dt>阅读</dt><dd>约 <%= reading_minutes(page) %> 分钟</dd></div>
+        <% } %>
         <div><dt>更新</dt><dd><%= date(page.updated || page.date, 'YYYY.MM.DD') %></dd></div>
       </dl>
     </div>
-    <div class="article-cover cover-tone-<%= coverTone %>">
-      <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i></span>
-      <% if (cover) { %><img src="<%= url_for(cover) %>"<% if (coverSrcset) { %> srcset="<%= coverSrcset.split(', ').map((candidate) => { const [url, size] = candidate.split(' '); return `${url_for(url)} ${size}`; }).join(', ') %>" sizes="(max-width: 680px) calc(100vw - 28px), (max-width: 960px) min(760px, calc(100vw - 34px)), 860px"<% } %> alt="<%= page.title %>的文章首图" decoding="async" fetchpriority="high" data-cover-image><% } %>
-    </div>
+    <% if (!page.hide_post_cover) { %>
+      <div class="article-cover cover-tone-<%= coverTone %>">
+        <span class="cover-art" aria-hidden="true"><i></i><i></i><i></i></span>
+        <% if (cover) { %><img src="<%= url_for(cover) %>"<% if (coverSrcset) { %> srcset="<%= coverSrcset.split(', ').map((candidate) => { const [url, size] = candidate.split(' '); return `${url_for(url)} ${size}`; }).join(', ') %>" sizes="(max-width: 680px) calc(100vw - 28px), (max-width: 960px) min(760px, calc(100vw - 34px)), 860px"<% } %> alt="<%= page.title %>的文章首图" decoding="async" fetchpriority="high" data-cover-image><% } %>
+      </div>
+    <% } %>
   </header>
 
   <div class="article-grid">
