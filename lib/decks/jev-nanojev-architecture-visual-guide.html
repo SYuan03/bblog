@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <base target="_blank">
+  <title>Jev、NanoJev、BERT 与 LLM 架构图解</title>
+  <style>
+    :root{
+      --paper:#f8f5ee;--ink:#16191d;--text:#3e4652;--muted:#89909a;--rule:#cbc9c1;
+      --blue:#2676c9;--blue2:#e7f0fb;--orange:#eb6b35;--orange2:#fceddf;--green:#478b6e;
+      --green2:#e5f1eb;--gray:#e9ebed;--red:#bd4b43;--sans:-apple-system,BlinkMacSystemFont,
+      "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+      --serif:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",serif;
+      --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#242424;color:var(--ink)}
+    body{font-family:var(--sans)}
+    a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}
+    #viewport{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+    #deck{position:relative;width:900px;height:1200px;transform-origin:center center;box-shadow:0 18px 80px #0008;background:var(--paper)}
+    .page{position:absolute;inset:0;display:none;padding:46px 54px 39px;background:
+      linear-gradient(90deg,transparent 0 53px,#ece8de 53px 54px,transparent 54px),var(--paper)}
+    .page.active{display:flex;flex-direction:column}
+    .topline{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font:500 17px/1 var(--sans);letter-spacing:.12em;padding-bottom:15px;border-bottom:1px solid var(--rule)}
+    .section-no{color:var(--blue);font-family:var(--mono);letter-spacing:.06em}
+    .kicker{margin-top:17px;color:var(--orange);font-weight:800;font-size:19px}
+    h1,h2,h3,p{margin:0}
+    h1,h2{font-family:var(--serif);font-weight:650;letter-spacing:-.035em}
+    h1{font-size:55px;line-height:1.12;margin-top:10px}
+    h2{font-size:48px;line-height:1.14;margin-top:17px}
+    h3{font-size:22px;line-height:1.3}
+    .lead{font-family:var(--serif);font-size:25px;line-height:1.55;color:var(--text);margin-top:14px}
+    .lead strong{color:var(--ink)}
+    .body{flex:1;min-height:0;display:flex;flex-direction:column}
+    .caption{font-family:var(--serif);font-size:17px;line-height:1.45;text-align:center;color:#5e6570;margin-top:13px}
+    .note{font-size:17px;line-height:1.55;color:var(--text)}
+    .note strong{color:var(--ink)}
+    .foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule);padding-top:12px;color:#9097a1;font:500 15px/1.25 var(--sans);letter-spacing:.05em}
+    .foot .src{max-width:670px;letter-spacing:0;font-size:12px;line-height:1.35}
+    .foot .pg{font-family:var(--mono);white-space:nowrap}
+    .tag{display:inline-block;padding:4px 9px;border:1px solid var(--blue);color:var(--blue);font-weight:750;font-size:14px;letter-spacing:.04em}
+    .tag.orange{border-color:var(--orange);color:var(--orange)}
+    .tag.gray{border-color:#8e9399;color:#727981}
+    .arrow{position:relative;height:2px;background:var(--blue)}
+    .arrow:after{content:"";position:absolute;right:-1px;top:-5px;border-left:9px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}
+    .arrow.orange{background:var(--orange)}.arrow.orange:after{border-left-color:var(--orange)}
+    .box{border:1.5px solid #aeb2b7;background:#fffdf8;padding:17px}
+    .box.blue{border-color:var(--blue);background:var(--blue2)}
+    .box.orange{border-color:var(--orange);background:var(--orange2)}
+    .box.green{border-color:var(--green);background:var(--green2)}
+    .mono{font-family:var(--mono)}
+    .muted{color:var(--muted)}.blue-text{color:var(--blue)}.orange-text{color:var(--orange)}
+
+    /* 01 */
+    .jev-vs-llm{display:grid;grid-template-rows:1fr 1fr;gap:18px;margin-top:25px}
+    .model-lane{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:18px 0;border-bottom:1px dashed var(--rule)}
+    .lane-label{font-size:22px;font-weight:800;padding-top:5px}.lane-label.jev{color:var(--blue)}
+    .serial{display:grid;grid-template-columns:105px 32px 250px 32px 1fr;align-items:center;gap:6px}
+    .prompt-box{text-align:center;font-size:18px;line-height:1.4}
+    .token-stream{display:flex;align-items:center;gap:7px}
+    .token-dot{width:31px;height:31px;border-radius:50%;border:2px solid #606975;background:#fff}
+    .token-dot:nth-child(2){opacity:.88}.token-dot:nth-child(3){opacity:.73}.token-dot:nth-child(4){opacity:.55}.token-dot:nth-child(5){opacity:.35}
+    .speech{font-family:var(--serif);font-size:20px;line-height:1.45;color:#3e4652}
+    .parallel{display:grid;grid-template-columns:130px 28px 215px 28px 160px 28px 1fr;align-items:center;gap:6px}
+    .candidates{display:grid;gap:7px}.candidate{padding:10px 9px;text-align:center;background:var(--blue2);border:1.5px solid var(--blue);font-size:17px;color:#225b91}
+    .backbone{text-align:center;padding:24px 10px;border:2px solid var(--blue);background:#f0f6fd;font-weight:800;font-size:20px;line-height:1.5}
+    .bars{display:grid;gap:10px}.bar-row{display:grid;grid-template-columns:18px 1fr 42px;gap:7px;align-items:center;font:17px/1 var(--mono)}
+    .track{height:18px;background:#e5e9ed}.fill{height:100%;background:var(--blue)}
+    .fact-row{display:grid;grid-template-columns:88px 1fr;margin-top:16px;border-top:1px solid var(--rule);font-size:20px;line-height:1.65;padding-top:12px}
+    .fact-row b{color:var(--orange)}
+    .big-metrics{display:grid;grid-template-columns:repeat(3,1fr);margin:11px 0 18px;border-top:2px solid var(--ink);padding-top:13px}
+    .big-metric{text-align:center;border-right:1px solid var(--rule)}.big-metric:last-child{border:0}
+    .big-metric strong{display:block;font:500 50px/1 var(--serif);color:var(--blue)}.big-metric:last-child strong{color:var(--orange)}
+    .big-metric span{display:block;margin-top:7px;font-size:15px;color:#747b85}
+
+    /* 02 */
+    .token-pipeline{margin-top:27px;display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;align-items:center}
+    .stage{text-align:center}.stage h3{margin-bottom:12px}.sentence-card{font-family:var(--serif);font-size:25px;line-height:1.5;min-height:145px;display:grid;place-items:center}
+    .token-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-content:center;min-height:145px}
+    .tok{font-size:19px;padding:9px 11px;border:1.5px solid var(--blue);background:var(--blue2);color:#225b91}
+    .ids{font:16px/1.7 var(--mono);min-height:145px;display:grid;place-items:center}
+    .embedding-demo{margin-top:28px;display:grid;grid-template-columns:185px 1fr;gap:24px;align-items:center}
+    .vector{display:flex;height:142px;align-items:flex-end;gap:9px;padding:12px 20px;border-left:2px solid var(--rule);border-bottom:2px solid var(--rule)}
+    .vector i{display:block;width:24px;background:var(--orange)}
+    .vector i:nth-child(1){height:22%}.vector i:nth-child(2){height:72%}.vector i:nth-child(3){height:44%}.vector i:nth-child(4){height:94%}.vector i:nth-child(5){height:35%}.vector i:nth-child(6){height:61%}.vector i:nth-child(7){height:82%}.vector i:nth-child(8){height:28%}
+    .definition-grid{display:grid;grid-template-columns:120px 1fr;gap:9px 15px;margin-top:24px;padding-top:17px;border-top:1px solid var(--rule);font-size:19px;line-height:1.55}.definition-grid b{color:var(--blue)}
+
+    /* 03 */
+    .attn-sentence{display:flex;justify-content:center;align-items:center;gap:9px;margin:24px 0 18px}
+    .word{position:relative;padding:11px 14px;border:1.5px solid #adb2b8;background:#fff;font-size:21px}.word.target{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:800}
+    .weight-line{display:grid;grid-template-columns:110px 1fr 50px;gap:10px;align-items:center;margin:8px auto;width:560px;font-size:17px}.weight-track{height:13px;background:#e5e7e9}.weight-fill{height:100%;background:var(--orange)}
+    .qkv-row{display:grid;grid-template-columns:repeat(3,1fr);gap:17px;margin-top:27px}
+    .qkv{padding:17px 16px 18px;border-top:6px solid var(--blue);background:#ffffff92}.qkv:nth-child(2){border-color:var(--orange)}.qkv:nth-child(3){border-color:var(--green)}
+    .qkv strong{font:700 38px/1 var(--serif)}.qkv span{font:800 16px/1 var(--sans);margin-left:7px;color:#5e6570}.qkv p{margin-top:10px;font-size:17px;line-height:1.45;color:var(--text)}
+    .formula-box{text-align:center;font:20px/1.5 var(--serif);padding:13px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:18px}
+
+    /* 04 */
+    .mask-compare{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:23px}
+    .mask-panel h3{color:var(--blue);margin-bottom:8px}.mask-panel.causal h3{color:var(--orange)}
+    .matrix-wrap{display:grid;grid-template-columns:45px 1fr;grid-template-rows:40px 1fr;gap:5px;margin-top:17px}
+    .col-labels{display:grid;grid-template-columns:repeat(5,1fr);font-size:14px;color:#68717c;text-align:center;align-items:end}
+    .row-labels{display:grid;grid-template-rows:repeat(5,1fr);font-size:14px;color:#68717c;align-items:center;text-align:right;padding-right:5px}
+    .matrix{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(5,1fr);gap:5px;aspect-ratio:1}
+    .cell{background:#e3e5e6;border:1px solid #d1d3d5}.cell.on{background:var(--blue);border-color:var(--blue)}.causal .cell.on{background:var(--orange);border-color:var(--orange)}
+    .legend-row{display:flex;gap:22px;justify-content:center;margin-top:14px;font-size:14px;color:#6d747d}.legend-row i{display:inline-block;width:13px;height:13px;margin-right:6px;vertical-align:-1px;background:var(--blue)}.legend-row .blocked i{background:#e3e5e6}
+    .mask-summary{display:grid;grid-template-columns:110px 1fr;margin-top:22px;padding:17px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);font-size:20px;line-height:1.55}.mask-summary b{color:var(--orange)}
+
+    /* 05 */
+    .cls-flow{display:grid;grid-template-columns:1fr 38px 210px 38px 160px;align-items:center;margin-top:28px}
+    .cls-tokens{display:flex;align-items:center;gap:6px}.cls-tokens .tok{font-size:16px;padding:9px 8px}.cls-tokens .tok:first-child{background:var(--orange);border-color:var(--orange);color:#fff}
+    .tower-box{border:2px solid var(--blue);background:var(--blue2);padding:15px;text-align:center}.layers{display:grid;gap:6px;margin-top:10px}.layer{background:#fff;border:1px solid #89b4e1;padding:8px;font-size:15px}.ellipsis{text-align:center;color:#78818c;line-height:.8}
+    .cls-head{padding:19px 12px;text-align:center;border:2px solid var(--orange);background:var(--orange2);font-size:18px;line-height:1.55}.cls-head strong{font-size:25px;color:var(--orange)}
+    .cls-explain{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:29px}.explain-block{padding:16px 18px;border-left:5px solid var(--blue);font-size:17px;line-height:1.5}.explain-block:last-child{border-color:var(--orange)}
+    .bert-spec{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}.spec{display:grid;grid-template-columns:1fr 1fr;padding:13px 17px;border-top:1px solid var(--rule);font-size:17px}.spec strong{color:var(--blue);font-size:22px}.spec span:last-child{text-align:right;color:#69717a}
+
+    /* 06 */
+    .gen-flow{display:grid;grid-template-columns:265px 35px 190px 35px 1fr;align-items:center;margin-top:24px}
+    .context-stack{display:grid;gap:9px}.context-line{padding:13px 15px;border-left:5px solid #d6d8da;background:#fff;font-family:var(--serif);font-size:19px}.context-line:nth-child(2){border-color:#f1bca5}.context-line:nth-child(3){border-color:#ef8a60}.context-line:nth-child(4){border-color:var(--orange);background:var(--orange2)}.next{color:var(--orange);font-weight:800}
+    .decoder{padding:33px 12px;text-align:center;border:2px solid var(--ink);font-size:20px;font-weight:800}.decoder small{display:block;margin-top:9px;color:#707781;font-size:14px;font-weight:500}
+    .next-bars{display:grid;gap:12px}.next-bars .bar-row{grid-template-columns:50px 1fr 48px}
+    .loop-note{text-align:center;margin-top:21px;padding:14px 18px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);font-size:19px}.loop-note strong{color:var(--orange)}
+    .scale-line{margin-top:24px;display:grid;grid-template-columns:115px 1fr;gap:15px;align-items:center}.bubbles{display:flex;align-items:center;gap:24px}.bubble{border-radius:50%;display:grid;place-items:center;background:#222;color:#fff;font-weight:800}.b8{width:63px;height:63px}.b70{width:92px;height:92px}.b405{width:126px;height:126px;background:var(--orange)}
+
+    /* 07 */
+    .contract{display:grid;grid-template-columns:200px 32px 180px 32px 1fr;align-items:center;margin-top:25px}
+    .state{padding:20px 16px;border:1.5px solid var(--ink);font-size:17px;line-height:1.55;background:#fff}.state strong{display:block;font-size:20px;margin-bottom:7px}
+    .jev-black{padding:38px 12px;background:var(--ink);color:white;text-align:center}.jev-black strong{font:700 39px/1 var(--serif)}.jev-black span{display:block;margin-top:9px;font-size:13px;color:#bbc0c5}
+    .answers{display:grid;gap:10px}.answer{padding:12px 13px;border-left:5px solid var(--blue);background:var(--blue2);font-size:15px}.answer b{display:inline-block;width:65px;color:var(--blue)}
+    .public-unknown{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:26px}.public,.unknown{padding:17px 19px}.public{border-top:5px solid var(--green);background:var(--green2)}.unknown{border-top:5px solid var(--orange);background:var(--orange2)}
+    .public h3,.unknown h3{margin-bottom:10px}.line-list{display:grid;gap:7px;font-size:16px;line-height:1.35}.line-list span:before{content:"—";margin-right:8px;color:var(--muted)}
+    .jev-metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);margin-top:20px;padding-top:14px}.jev-metrics div{text-align:center;border-right:1px solid var(--rule)}.jev-metrics div:last-child{border:0}.jev-metrics strong{display:block;color:var(--blue);font:600 25px/1.1 var(--serif)}.jev-metrics span{display:block;font-size:13px;color:#78808a;margin-top:5px}
+
+    /* 08 */
+    .compare-table{margin-top:22px;display:grid;grid-template-columns:140px repeat(3,1fr);border-top:2px solid var(--ink)}
+    .ct{padding:14px 12px;border-bottom:1px solid var(--rule);font-size:16px;line-height:1.4}.ct.head{text-align:center;font-size:21px;font-weight:850}.ct.row{color:#737a84;font-weight:750}.ct.bert{background:#eaf3fb}.ct.llm{background:#f0efeb}.ct.jev{background:#fff0e8}.ct strong{display:block;font-size:18px;color:var(--ink);margin-bottom:3px}.ct small{font-size:13px;color:#737a84}
+    .size-bars{margin-top:23px;display:grid;grid-template-columns:150px 1fr;gap:9px 14px;align-items:center;font-size:16px}.size-track{height:24px;background:#e5e7e9;position:relative}.size-fill{height:100%;min-width:7px;background:var(--blue)}.size-fill.dark{background:#333}.size-fill.orange{background:repeating-linear-gradient(135deg,var(--orange),var(--orange) 7px,#f39b75 7px,#f39b75 14px)}.size-track b{position:absolute;left:9px;top:2px;color:white;font:700 14px/20px var(--mono)}
+
+    /* 09 */
+    .nano-flow{display:grid;grid-template-columns:155px 27px 205px 27px 150px 27px 1fr;align-items:center;margin-top:23px}
+    .leafs{display:grid;gap:7px}.leaf{font:13px/1.35 var(--mono);padding:9px 10px;border:1.5px solid var(--blue);background:var(--blue2)}
+    .qwen{padding:26px 10px;text-align:center;border:2px solid var(--ink);background:#fff}.qwen strong{display:block;font:700 26px/1.1 var(--serif)}.qwen span{display:block;font-size:13px;color:#69717b;margin-top:7px}
+    .readout{padding:21px 10px;text-align:center;border:2px solid var(--orange);background:var(--orange2);font-size:15px;line-height:1.5}
+    .head-detail{padding:13px;border:1.5px solid var(--blue);background:#fff;font-size:14px;line-height:1.55}.head-detail b{color:var(--blue)}
+    .choice-set{display:grid;grid-template-columns:1fr 34px 1.2fr;align-items:center;margin-top:22px;padding:16px 18px;background:#eef5fc;border-top:1px solid #a8c8e8;border-bottom:1px solid #a8c8e8}.logits{font:15px/1.65 var(--mono)}.sethead{font-size:15px;line-height:1.55}.sethead strong{color:var(--blue)}
+    .primitive-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.primitive{padding:13px 15px;border-top:4px solid var(--blue);background:#fff;font-size:14px;line-height:1.45}.primitive:nth-child(2){border-color:var(--orange)}.primitive:nth-child(3){border-color:var(--green)}.primitive strong{display:block;font-size:17px;margin-bottom:4px}
+    .code-note{margin-top:17px;display:flex;gap:13px;align-items:flex-start;font-size:15px;line-height:1.45;color:#5f6670}.code-note:before{content:"源码";flex:0 0 auto;color:#fff;background:var(--green);padding:3px 7px;font-weight:800;font-size:12px}
+
+    /* 10 */
+    .data-bars{display:grid;grid-template-columns:170px 1fr 75px;gap:9px 13px;align-items:center;margin-top:23px;font-size:16px}.data-track{height:20px;background:#e6e8ea}.data-fill{height:100%;background:var(--blue)}.data-bars .n{text-align:right;font-family:var(--mono)}
+    .train-flow{display:grid;grid-template-columns:155px 25px 155px 25px 155px 25px 1fr;align-items:center;margin-top:29px}.train-node{padding:17px 10px;text-align:center;border:1.5px solid #aeb2b6;background:#fff;font-size:15px;line-height:1.45}.train-node strong{display:block;font-size:18px;margin-bottom:5px}.train-node.focus{border-color:var(--orange);background:var(--orange2)}
+    .recipe{display:grid;grid-template-columns:repeat(4,1fr);margin-top:22px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}.recipe div{text-align:center;padding:12px 8px;border-right:1px solid var(--rule)}.recipe div:last-child{border:0}.recipe strong{display:block;color:var(--blue);font:600 22px/1.1 var(--serif)}.recipe span{display:block;margin-top:4px;font-size:12px;color:#747c86}
+
+    /* 11 */
+    .result-table{display:grid;grid-template-columns:160px repeat(4,1fr);margin-top:23px;border-top:2px solid var(--ink)}.rt{padding:14px 9px;border-bottom:1px solid var(--rule);text-align:center;font-size:16px}.rt.h{font-weight:800;background:#f0efeb}.rt.model{text-align:left;font-weight:800}.rt.nano{color:var(--blue)}.rt.best{background:var(--blue2);color:#174f88;font-weight:850}.rt.tie{background:var(--green2);color:#2f7458;font-weight:850}
+    .result-bars{display:grid;grid-template-columns:118px 1fr 54px;gap:8px 10px;align-items:center;margin-top:24px;font-size:15px}.rb-track{height:16px;background:#e5e7e8}.rb-fill{height:100%}.rb-fill.nano{background:var(--blue)}.rb-fill.jev{background:var(--orange)}.rb-fill.qwen{background:#7d838a}.rb-val{font-family:var(--mono);text-align:right}
+    .caveat{margin-top:22px;padding:15px 17px;border-left:5px solid var(--orange);background:var(--orange2);font-size:16px;line-height:1.5}
+
+    /* 12 */
+    .research-map{margin-top:23px;display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}.research-item{display:grid;grid-template-columns:46px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}.research-item .n{width:38px;height:38px;border:1.5px solid var(--blue);display:grid;place-items:center;color:var(--blue);font:800 16px/1 var(--mono)}.research-item h3{font-size:17px}.research-item p{font-size:14px;color:#6c747e;line-height:1.45;margin-top:4px}
+    .research-plan{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:center;margin-top:26px}.phase{padding:17px 14px;min-height:118px;border-top:5px solid var(--blue);background:#fff}.phase:nth-of-type(3){border-color:var(--orange)}.phase:nth-of-type(5){border-color:var(--green)}.phase strong{display:block;font-size:18px;margin-bottom:7px}.phase span{font-size:14px;line-height:1.45;color:#69717a}
+    .takeaway{margin-top:24px;padding:19px 21px;border-left:6px solid var(--orange);background:#fff0e8;font-family:var(--serif);font-size:20px;line-height:1.55}
+
+    /* 深入页：Embedding */
+    .embed-stack{margin-top:25px;display:grid;grid-template-columns:150px 1fr;gap:12px 16px;align-items:center}
+    .embed-label{font-size:18px;font-weight:800}.embed-label small{display:block;margin-top:3px;font-size:12px;font-weight:500;color:var(--muted)}
+    .mini-vector{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.mini-vector i{height:39px;border:1px solid #9ebfe1;background:var(--blue2);position:relative}.mini-vector.orange i{border-color:#efb49a;background:var(--orange2)}.mini-vector.green i{border-color:#9fc9b7;background:var(--green2)}
+    .embed-plus{grid-column:1/-1;text-align:center;font:700 24px/1 var(--serif);color:var(--muted);margin:-5px 0}
+    .embed-result{grid-column:1/-1;display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;padding:15px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+    .mini-vector.result i{background:var(--blue);border-color:var(--blue)}
+    .dim-callout{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:25px}.dim-card{padding:16px 17px;border-top:5px solid var(--blue);background:#fff;font-size:15px;line-height:1.5}.dim-card:nth-child(2){border-color:var(--orange)}.dim-card:nth-child(3){border-color:var(--green)}.dim-card strong{display:block;font-size:19px;margin-bottom:5px}
+
+    /* 深入页：Attention 计算 */
+    .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.calc-step{position:relative;min-height:155px;padding:16px 17px 15px 57px;border-top:5px solid var(--blue);background:#fff}.calc-step:nth-child(2),.calc-step:nth-child(4){border-color:var(--orange)}.calc-step .step-no{position:absolute;left:15px;top:15px;width:29px;height:29px;display:grid;place-items:center;background:var(--ink);color:#fff;font:800 13px/1 var(--mono)}.calc-step h3{font-size:18px}.calc-step p{margin-top:8px;font-size:15px;line-height:1.5;color:#5e6670}.calc-step .eq{margin-top:10px;font:700 15px/1.5 var(--mono);color:#285d91}
+    .score-example{margin-top:23px;display:grid;grid-template-columns:130px 1fr;gap:15px;align-items:center;padding:17px;border:1px solid var(--rule)}.score-example h3{font-family:var(--serif);font-size:24px}.score-row{display:grid;grid-template-columns:70px 1fr 45px;gap:9px;align-items:center;margin:7px 0;font-size:15px}.score-row .track{height:14px}.score-row .fill{background:var(--orange)}
+
+    /* 深入页：Transformer Block */
+    .block-compare{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:24px}.block-col h3{text-align:center;margin-bottom:13px}.block-stack{display:grid;gap:7px}.block-unit{padding:10px 13px;text-align:center;border:1.5px solid #aeb3b8;background:#fff;font-size:15px}.block-unit.attn{border-color:var(--blue);background:var(--blue2);font-weight:800}.block-unit.mlp{border-color:var(--orange);background:var(--orange2);font-weight:800}.block-unit.norm{border-style:dashed}.block-unit.res{border-color:var(--green);background:var(--green2)}.block-down{text-align:center;color:var(--muted);font-size:18px;line-height:.75}
+    .block-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:22px}.block-fact{padding:15px 16px;border-left:5px solid var(--blue);font-size:15px;line-height:1.45}.block-fact:nth-child(2){border-color:var(--orange)}.block-fact:nth-child(3){border-color:var(--green)}.block-fact strong{display:block;font-size:17px;margin-bottom:5px}
+
+    /* 深入页：BERT 训练 */
+    .pretrain-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:25px}.pretrain-card{padding:18px;border-top:6px solid var(--blue);background:#fff}.pretrain-card:nth-child(2){border-color:var(--orange)}.pretrain-card h3{font-size:21px}.masked-sentence{margin:18px 0;padding:17px;background:var(--blue2);font-family:var(--serif);font-size:21px;text-align:center}.masked-sentence b{background:var(--blue);color:#fff;padding:3px 7px}.prediction-list{display:flex;gap:9px;align-items:flex-end;height:75px}.prediction-list div{flex:1;text-align:center;font-size:13px}.prediction-list i{display:block;background:var(--blue);margin-bottom:6px}.pair{display:grid;gap:10px;margin-top:18px}.pair div{padding:13px 14px;background:var(--orange2);font-size:16px}.pair b{color:var(--orange)}
+    .transfer-flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;align-items:center;margin-top:26px}.transfer-node{padding:17px 13px;text-align:center;border:1.5px solid #adb2b7;background:#fff;font-size:15px;line-height:1.45}.transfer-node strong{display:block;font-size:18px;margin-bottom:5px}.transfer-node.final{border-color:var(--green);background:var(--green2)}
+
+    /* 深入页：NanoJev head */
+    .head-pipeline{display:grid;grid-template-columns:120px 26px 120px 26px 135px 26px 1fr;align-items:center;margin-top:25px}.head-node{padding:17px 9px;text-align:center;border:1.5px solid #aeb3b8;background:#fff;font:15px/1.45 var(--mono)}.head-node.blue{border-color:var(--blue);background:var(--blue2)}.head-node.orange{border-color:var(--orange);background:var(--orange2)}
+    .set-detail{margin-top:25px;padding:18px 19px;border-top:5px solid var(--blue);background:#eef5fc}.set-detail h3{margin-bottom:13px}.set-seq{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:stretch}.set-seq div{padding:11px 7px;text-align:center;background:#fff;border:1px solid #a9c8e8;font-size:13px;line-height:1.35}.set-seq div:nth-child(3){background:var(--blue2);font-weight:800}.set-seq div:nth-child(5){background:var(--orange2);border-color:#efb49a}
+    .formula-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.formula-card{padding:15px 14px;border-top:4px solid var(--blue);background:#fff}.formula-card:nth-child(2){border-color:var(--orange)}.formula-card:nth-child(3){border-color:var(--green)}.formula-card strong{display:block;font-size:18px}.formula-card code{display:block;margin-top:7px;font:14px/1.5 var(--mono);color:#4e5660}.formula-card p{margin-top:6px;font-size:13px;line-height:1.4;color:#6c747d}
+
+    @media screen{
+      html,body{background:#e8e5de}
+      #viewport{display:block}
+      #deck{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;box-shadow:0 16px 58px #2c2b2840}
+      .page{padding:28px 64px 25px;background:linear-gradient(90deg,transparent 0 63px,#e9e4da 63px 64px,transparent 64px),var(--paper)}
+      .topline{font-size:15px;padding-bottom:10px}.kicker{margin-top:10px;font-size:17px}
+      h1{font-size:52px;margin-top:7px}h2{font-size:43px;margin-top:10px}.lead{font-size:21px;line-height:1.42;margin-top:8px}
+      .caption{font-size:15px;margin-top:8px}.note{font-size:15px}.foot{padding-top:8px;font-size:13px}.foot .src{max-width:1260px;font-size:11px}
+      .definition-grid{grid-template-columns:130px 1fr 130px 1fr;gap:7px 15px;margin-top:14px;padding-top:12px;font-size:15px;line-height:1.4}
+      .definition-grid b:nth-of-type(3){grid-column:1}.definition-grid span:nth-of-type(3){grid-column:2/-1}
+      .jev-vs-llm{gap:8px;margin-top:13px}.model-lane{padding:9px 0;grid-template-columns:128px 1fr}.lane-label{font-size:19px}
+      .serial{grid-template-columns:105px 30px 240px 30px 1fr}.parallel{grid-template-columns:120px 28px 210px 28px 160px 28px 1fr}.candidate{padding:7px}.backbone{padding:17px 8px}.speech{font-size:18px}.fact-row{margin-top:8px;padding-top:8px;font-size:17px}.big-metrics{margin:7px 0 10px;padding-top:8px}.big-metric strong{font-size:38px}
+      .token-pipeline{margin-top:16px}.sentence-card,.token-list,.ids{min-height:105px}.embedding-demo{margin-top:16px;grid-template-columns:220px 1fr}.vector{height:92px}
+      .embed-stack{margin-top:16px;gap:7px 16px}.mini-vector i{height:31px}.embed-plus{font-size:18px}.embed-result{padding:9px 0}.dim-callout{margin-top:15px}.dim-card{padding:11px 14px;font-size:14px}.dim-card strong{font-size:17px}
+      .attn-sentence{margin:16px 0 10px}.word{padding:8px 12px;font-size:18px}.weight-line{margin:5px auto}.qkv-row{margin-top:15px}.qkv{padding:11px 14px}.qkv strong{font-size:31px}.qkv p{font-size:15px}.formula-box{margin-top:10px;padding:9px;font-size:17px}
+      .calc-grid{grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}.calc-step{min-height:192px;padding:15px 14px 13px 49px}.calc-step p{font-size:14px}.calc-step .eq{font-size:13px}.score-example{margin-top:14px;padding:11px;grid-template-columns:150px 1fr}.score-example h3{font-size:22px}.score-row{margin:4px 0}
+      .mask-compare{gap:55px;margin-top:15px}.matrix-wrap{grid-template-columns:38px 270px;grid-template-rows:32px 270px;justify-content:center}.col-labels{width:270px}.matrix{width:270px}.legend-row{margin-top:8px}.mask-summary{margin-top:13px;padding:11px 0;font-size:17px}
+      .block-compare{gap:60px;margin-top:15px}.block-stack{gap:4px}.block-unit{padding:7px 11px;font-size:14px}.block-down{font-size:15px}.block-foot{margin-top:14px}.block-fact{padding:11px 14px;font-size:14px}
+      .cls-flow{margin-top:16px;grid-template-columns:1fr 38px 250px 38px 190px}.tower-box{padding:10px}.layers{gap:4px;margin-top:7px}.layer{padding:5px}.cls-head{padding:14px 10px}.cls-explain{gap:30px;margin-top:17px}.explain-block{padding:11px 15px;font-size:15px}.bert-spec{margin-top:14px}.spec{padding:9px 14px;font-size:15px}.spec strong{font-size:19px}
+      .pretrain-grid{gap:30px;margin-top:15px}.pretrain-card{padding:13px 16px}.masked-sentence{margin:11px 0;padding:12px}.prediction-list{height:60px}.pair{gap:6px;margin-top:10px}.pair div{padding:9px 12px}.transfer-flow{margin-top:16px}.transfer-node{padding:11px}.pretrain-card .note{margin-top:8px!important}
+      .gen-flow{margin-top:15px;grid-template-columns:330px 40px 220px 40px 1fr}.context-stack{gap:6px}.context-line{padding:9px 13px;font-size:17px}.decoder{padding:24px 10px}.loop-note{margin-top:12px;padding:9px}.scale-line{margin-top:14px;grid-template-columns:170px 1fr}.b8{width:50px;height:50px}.b70{width:68px;height:68px}.b405{width:90px;height:90px}
+      .contract{grid-template-columns:300px 38px 230px 38px 1fr;margin-top:16px}.state{padding:14px}.jev-black{padding:28px 10px}.answers{grid-template-columns:repeat(3,1fr);gap:10px}.public-unknown{gap:30px;margin-top:15px}.public,.unknown{padding:12px 16px}.line-list{grid-template-columns:1fr 1fr;font-size:14px}.jev-metrics{margin-top:12px;padding-top:9px}.caveat{margin-top:10px!important;padding:10px 15px;font-size:14px}
+      .compare-table{margin-top:14px}.ct{padding:8px 11px;font-size:14px}.ct.head{font-size:18px}.ct strong{font-size:16px}.size-bars{margin-top:13px;grid-template-columns:155px 1fr;gap:6px 14px;font-size:14px}.size-track{height:19px}.size-track b{top:0;font-size:12px;line-height:19px}
+      .nano-flow{grid-template-columns:190px 32px 245px 32px 185px 32px 1fr;margin-top:14px}.leaf{font-size:11px;padding:7px}.qwen{padding:20px 10px}.readout{padding:17px 10px}.choice-set{margin-top:13px;padding:11px 15px;grid-template-columns:1fr 40px 1.4fr}.primitive-row{margin-top:11px}.primitive{padding:9px 13px}.code-note{margin-top:10px}
+      .head-pipeline{grid-template-columns:150px 32px 150px 32px 170px 32px 1fr;margin-top:16px}.head-node{padding:12px}.set-detail{margin-top:15px;padding:12px 16px}.set-detail h3{margin-bottom:8px}.set-seq div{padding:8px 6px}.formula-row{margin-top:14px}.formula-card{padding:10px 13px}.formula-card code{font-size:13px}
+      .data-bars{margin-top:15px;grid-template-columns:190px 1fr 80px;gap:6px 13px}.train-flow{margin-top:18px;grid-template-columns:190px 30px 190px 30px 190px 30px 1fr}.train-node{padding:12px 9px}.recipe{margin-top:13px}.recipe div{padding:8px}.recipe strong{font-size:19px}
+      .result-table{margin-top:14px}.rt{padding:9px}.result-bars{margin-top:14px;grid-template-columns:150px 1fr 55px;gap:5px 10px}.caveat{margin-top:13px}
+      .research-map{grid-template-columns:repeat(3,1fr);gap:5px 24px;margin-top:14px}.research-item{padding:8px 0}.research-plan{margin-top:14px}.phase{padding:12px;min-height:94px}.takeaway{margin-top:14px;padding:13px 18px;font-size:17px}
+
+      /* Landscape composition: each page uses the body as a real visual canvas. */
+      .body{margin-top:14px;display:grid;min-height:0;gap:12px;align-content:stretch}
+      .body>*,.body>*>*{min-width:0}
+      .body .caption,.body .definition-grid,.body .formula-box{margin-top:0!important}
+      .box{padding:20px}
+
+      /* 01 · two complete storyboards */
+      .page[data-title="什么是 Jev"] .body{grid-template-rows:minmax(0,1fr) 24px 66px 86px}
+      .page[data-title="什么是 Jev"] .jev-vs-llm{margin:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr;gap:28px}
+      .page[data-title="什么是 Jev"] .model-lane{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:18px;padding:20px 22px;border:0;border-top:6px solid #7e858d;background:#fff}
+      .page[data-title="什么是 Jev"] .model-lane:last-child{border-color:var(--blue);background:#f3f8fd}
+      .page[data-title="什么是 Jev"] .lane-label{padding:0;font-size:22px}
+      .page[data-title="什么是 Jev"] .serial{grid-template-columns:95px 26px 175px 26px 1fr;gap:8px;align-self:center}
+      .page[data-title="什么是 Jev"] .parallel{grid-template-columns:105px 24px 135px 24px 120px 24px 1fr;gap:7px;align-self:center}
+      .page[data-title="什么是 Jev"] .token-dot{width:37px;height:37px}
+      .page[data-title="什么是 Jev"] .backbone{padding:31px 8px}
+      .page[data-title="什么是 Jev"] .fact-row{margin:0;padding:9px 0;grid-template-columns:90px 1fr 110px 1.25fr;align-items:center}
+      .page[data-title="什么是 Jev"] .big-metrics{margin:0;padding-top:10px;align-items:center}
+      .page[data-title="什么是 Jev"] .big-metric strong{font-size:44px}
+
+      /* 02 · one large text-to-vector pipeline */
+      .page[data-title="Token 与 Embedding"] .body{grid-template-rows:246px 24px minmax(0,1fr) 84px}
+      .page[data-title="Token 与 Embedding"] .token-pipeline{margin:0;grid-template-columns:1fr 62px 1fr 62px 1fr;height:100%}
+      .page[data-title="Token 与 Embedding"] .stage{height:100%;display:flex;flex-direction:column}
+      .page[data-title="Token 与 Embedding"] .stage h3{font-size:22px}
+      .page[data-title="Token 与 Embedding"] .sentence-card,
+      .page[data-title="Token 与 Embedding"] .token-list,
+      .page[data-title="Token 与 Embedding"] .ids{min-height:0;flex:1;font-size:22px}
+      .page[data-title="Token 与 Embedding"] .embedding-demo{margin:0;grid-template-columns:290px 1fr;gap:36px;height:100%;padding:18px 24px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+      .page[data-title="Token 与 Embedding"] .vector{height:150px;gap:16px}
+      .page[data-title="Token 与 Embedding"] .vector i{width:34px}
+      .page[data-title="Token 与 Embedding"] .definition-grid{height:100%;align-items:center}
+
+      /* 03 · enlarged vector addition */
+      .page[data-title="Embedding 的组成"] .body{grid-template-rows:minmax(0,1fr) 24px 152px 76px}
+      .page[data-title="Embedding 的组成"] .embed-stack{margin:0;grid-template-columns:210px 1fr;gap:12px 24px;padding:20px 24px;background:#fff}
+      .page[data-title="Embedding 的组成"] .embed-label{font-size:20px}
+      .page[data-title="Embedding 的组成"] .embed-label small{font-size:14px}
+      .page[data-title="Embedding 的组成"] .mini-vector{gap:11px}
+      .page[data-title="Embedding 的组成"] .mini-vector i{height:48px}
+      .page[data-title="Embedding 的组成"] .embed-result{grid-template-columns:210px 1fr;gap:24px;padding:13px 0}
+      .page[data-title="Embedding 的组成"] .dim-callout{margin:0;height:100%;gap:20px}
+      .page[data-title="Embedding 的组成"] .dim-card{padding:18px 20px;font-size:16px}
+      .page[data-title="Embedding 的组成"] .dim-card strong{font-size:20px}
+
+      /* 04 · attention picture on the left, Q/K/V legend on the right */
+      .page[data-title="Self-Attention"] .body{grid-template-columns:minmax(0,1.8fr) minmax(330px,.8fr);grid-template-rows:78px repeat(3,minmax(58px,1fr)) 32px 62px 76px;column-gap:34px;row-gap:8px}
+      .page[data-title="Self-Attention"] .attn-sentence{grid-column:1;grid-row:1;margin:0;align-self:center}
+      .page[data-title="Self-Attention"] .word{padding:13px 19px;font-size:22px}
+      .page[data-title="Self-Attention"] .weight-line{grid-column:1;margin:0 auto;width:86%;font-size:18px;grid-template-columns:120px 1fr 54px}
+      .page[data-title="Self-Attention"] .weight-line:nth-of-type(2){grid-row:2}
+      .page[data-title="Self-Attention"] .weight-line:nth-of-type(3){grid-row:3}
+      .page[data-title="Self-Attention"] .weight-line:nth-of-type(4){grid-row:4}
+      .page[data-title="Self-Attention"] .weight-track{height:22px}
+      .page[data-title="Self-Attention"] .caption{grid-column:1;grid-row:5;align-self:center}
+      .page[data-title="Self-Attention"] .qkv-row{grid-column:2;grid-row:1/6;margin:0;grid-template-columns:1fr;grid-template-rows:repeat(3,1fr);gap:13px}
+      .page[data-title="Self-Attention"] .qkv{padding:18px 20px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto 1fr;align-items:center;column-gap:10px}
+      .page[data-title="Self-Attention"] .qkv strong{font-size:39px}.page[data-title="Self-Attention"] .qkv p{grid-column:1/-1;font-size:17px}
+      .page[data-title="Self-Attention"] .formula-box{grid-column:1/-1;grid-row:6;display:grid;place-items:center;font-size:19px}
+      .page[data-title="Self-Attention"] .definition-grid{grid-column:1/-1;grid-row:7;height:100%;align-items:center}
+
+      /* 05 · real worked calculation instead of four shallow cards */
+      .page[data-title="Attention 的实际计算"] .body{grid-template-rows:minmax(0,1fr) 78px;gap:14px}
+      .page[data-title="Attention 的实际计算"] .calc-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(430px,.85fr);gap:18px;min-height:0}
+      .page[data-title="Attention 的实际计算"] .calc-grid{margin:0;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:15px;height:100%}
+      .page[data-title="Attention 的实际计算"] .calc-step{min-height:0;padding:21px 20px 17px 66px;display:flex;flex-direction:column}
+      .page[data-title="Attention 的实际计算"] .calc-step .step-no{left:19px;top:20px;width:33px;height:33px;font-size:15px}
+      .page[data-title="Attention 的实际计算"] .calc-step h3{font-size:20px}
+      .page[data-title="Attention 的实际计算"] .calc-step p{font-size:16px;line-height:1.52;margin-top:11px}
+      .page[data-title="Attention 的实际计算"] .calc-step .eq{font-size:15px;margin-top:14px}
+      .page[data-title="Attention 的实际计算"] .calc-side{display:grid;grid-template-rows:1.05fr .95fr;gap:15px;min-height:0}
+      .page[data-title="Attention 的实际计算"] .score-example{margin:0;padding:18px 20px;display:block;background:#fff;border-top:5px solid var(--orange)}
+      .page[data-title="Attention 的实际计算"] .score-example h3{font-size:21px;margin-bottom:12px}
+      .page[data-title="Attention 的实际计算"] .score-row{grid-template-columns:74px 1fr 45px;margin:9px 0;font-size:16px}
+      .page[data-title="Attention 的实际计算"] .score-row .track{height:17px}
+      .mix-demo{padding:16px 18px;background:#edf5fc;border-top:5px solid var(--blue)}
+      .mix-demo h3{font-size:20px;margin-bottom:11px}
+      .mix-chain{display:grid;grid-template-columns:1fr 28px 1fr 28px 1.25fr;align-items:stretch;gap:7px}
+      .mix-node{display:grid;place-items:center;text-align:center;padding:12px 8px;background:#fff;border:1px solid #a9c8e8;font:14px/1.45 var(--mono)}
+      .mix-node:last-child{border-color:var(--orange);background:var(--orange2);font-weight:800}
+      .mix-arrow{display:grid;place-items:center;color:var(--blue);font-size:24px;font-weight:800}
+      .mix-equation{margin-top:12px;padding-top:10px;border-top:1px solid #a9c8e8;text-align:center;font:14px/1.5 var(--mono);color:#285d91}
+      .calc-viz{margin-top:auto;padding-top:14px;display:grid;align-items:center;gap:7px;border-top:1px solid #e0e3e6;font:13px/1.25 var(--mono)}
+      .qkv-mini{grid-template-columns:62px 22px repeat(3,1fr)}
+      .qkv-mini span,.dot-mini span,.softmax-mini span,.value-mini span{padding:9px 7px;text-align:center;border:1px solid #a9c8e8;background:#edf5fc}
+      .qkv-mini span:nth-last-child(2){border-color:#efb49a;background:var(--orange2)}
+      .qkv-mini span:last-child{border-color:#9fc9b7;background:var(--green2)}
+      .calc-viz i{font-style:normal;text-align:center;color:var(--blue);font-size:18px;font-weight:800}
+      .dot-mini{grid-template-columns:repeat(4,1fr)}
+      .dot-mini span{display:grid;grid-template-columns:1fr auto;gap:6px}.dot-mini b{color:var(--orange)}
+      .softmax-mini{grid-template-columns:1fr 25px 1fr}.softmax-mini .prob{border-color:#efb49a;background:var(--orange2)}
+      .value-mini{grid-template-columns:repeat(4,1fr) 25px 1.15fr}.value-mini span{padding:8px 5px}.value-mini .out{border-color:var(--orange);background:var(--orange2);font-weight:800}
+      .page[data-title="Attention 的实际计算"] .definition-grid{height:100%;align-items:center}
+
+      /* 06 · masks are the visual centre */
+      .page[data-title="双向与因果 Attention"] .body{grid-template-rows:minmax(0,1fr) 25px 74px 76px;gap:10px}
+      .page[data-title="双向与因果 Attention"] .mask-compare{margin:0;gap:70px;height:100%}
+      .page[data-title="双向与因果 Attention"] .mask-panel{display:flex;flex-direction:column;align-items:center}
+      .page[data-title="双向与因果 Attention"] .mask-panel h3{font-size:23px;align-self:stretch}.page[data-title="双向与因果 Attention"] .mask-panel .note{align-self:stretch;font-size:16px}
+      .page[data-title="双向与因果 Attention"] .matrix-wrap{grid-template-columns:42px 380px;grid-template-rows:34px 380px;margin-top:10px}
+      .page[data-title="双向与因果 Attention"] .col-labels,.page[data-title="双向与因果 Attention"] .matrix{width:380px}
+      .page[data-title="双向与因果 Attention"] .legend-row{margin:0;font-size:15px;align-items:center}
+      .page[data-title="双向与因果 Attention"] .mask-summary{margin:0;padding:12px 18px;align-items:center}
+      .page[data-title="双向与因果 Attention"] .definition-grid{height:100%;align-items:center}
+
+      /* 07 · tall blocks, not thin strips */
+      .page[data-title="Transformer Block"] .body{grid-template-rows:minmax(0,1fr) 24px 98px 76px;gap:10px}
+      .page[data-title="Transformer Block"] .block-compare{margin:0;gap:44px;height:100%}
+      .page[data-title="Transformer Block"] .block-col{padding:14px 28px;background:#fff;display:flex;flex-direction:column}
+      .page[data-title="Transformer Block"] .block-col h3{font-size:21px}
+      .page[data-title="Transformer Block"] .block-stack{flex:1;grid-template-rows:repeat(11,auto);align-content:space-evenly;padding:0 38px;position:relative}
+      .page[data-title="Transformer Block"] .block-stack:before{content:"residual path";position:absolute;left:3px;top:56px;bottom:26px;width:24px;border-left:2px solid var(--green);border-top:2px solid var(--green);border-bottom:2px solid var(--green);color:var(--green);font:10px/1 var(--mono);writing-mode:vertical-rl;text-align:center;padding-left:5px}
+      .page[data-title="Transformer Block"] .block-unit{padding:9px 13px;font-size:15px}
+      .page[data-title="Transformer Block"] .block-foot{margin:0;height:100%;gap:20px}.page[data-title="Transformer Block"] .block-fact{padding:14px 17px;font-size:15px}
+      .page[data-title="Transformer Block"] .definition-grid{height:100%;align-items:center}
+
+      /* 08 · CLS path plus misconception side notes */
+      .page[data-title="CLS 与 BERT"] .body{grid-template-columns:minmax(0,2fr) minmax(360px,.8fr);grid-template-rows:minmax(0,1fr) 24px 104px 78px;column-gap:28px;row-gap:10px}
+      .page[data-title="CLS 与 BERT"] .cls-flow{grid-column:1;grid-row:1;margin:0;height:100%;grid-template-columns:1fr 38px 270px 38px 195px;padding:24px;background:#fff}
+      .page[data-title="CLS 与 BERT"] .cls-tokens{flex-wrap:wrap;justify-content:center}.page[data-title="CLS 与 BERT"] .cls-tokens .tok{font-size:17px;padding:11px 10px}
+      .page[data-title="CLS 与 BERT"] .tower-box{padding:18px 15px}.page[data-title="CLS 与 BERT"] .layers{gap:8px;margin-top:12px}.page[data-title="CLS 与 BERT"] .layer{padding:10px}
+      .page[data-title="CLS 与 BERT"] .cls-head{padding:35px 12px;font-size:19px}.page[data-title="CLS 与 BERT"] .cls-head strong{font-size:31px}
+      .page[data-title="CLS 与 BERT"] .caption{grid-column:1;grid-row:2}
+      .page[data-title="CLS 与 BERT"] .cls-explain{grid-column:2;grid-row:1/3;margin:0;grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:15px}
+      .page[data-title="CLS 与 BERT"] .explain-block{padding:21px 21px;font-size:16px;background:#fff;display:flex;flex-direction:column;justify-content:center}
+      .page[data-title="CLS 与 BERT"] .bert-spec{grid-column:1/-1;grid-row:3;margin:0;gap:20px}.page[data-title="CLS 与 BERT"] .spec{padding:16px 22px;align-items:center}
+      .page[data-title="CLS 与 BERT"] .definition-grid{grid-column:1/-1;grid-row:4;height:100%;align-items:center}
+
+      /* 09 · large pretraining experiments */
+      .page[data-title="BERT 的训练方式"] .body{grid-template-rows:minmax(0,1fr) 24px 122px 76px;gap:10px}
+      .page[data-title="BERT 的训练方式"] .pretrain-grid{margin:0;gap:28px;height:100%}
+      .page[data-title="BERT 的训练方式"] .pretrain-card{padding:22px 24px}.page[data-title="BERT 的训练方式"] .pretrain-card h3{font-size:23px}
+      .page[data-title="BERT 的训练方式"] .masked-sentence{margin:18px 0;padding:18px;font-size:24px}.page[data-title="BERT 的训练方式"] .prediction-list{height:92px}
+      .page[data-title="BERT 的训练方式"] .pair{margin-top:20px;gap:10px}.page[data-title="BERT 的训练方式"] .pair div{padding:14px 16px}
+      .page[data-title="BERT 的训练方式"] .transfer-flow{margin:0;height:100%}.page[data-title="BERT 的训练方式"] .transfer-node{padding:18px 16px;font-size:16px}
+      .page[data-title="BERT 的训练方式"] .definition-grid{height:100%;align-items:center}
+
+      /* 10 · auto-regressive timeline */
+      .page[data-title="LLM 架构"] .body{grid-template-columns:minmax(0,1.65fr) minmax(360px,.7fr);grid-template-rows:minmax(0,1fr) 112px 80px;column-gap:28px;row-gap:12px}
+      .page[data-title="LLM 架构"] .gen-flow{grid-column:1/-1;grid-row:1;margin:0;grid-template-columns:410px 45px 250px 45px 1fr;padding:22px 26px;background:#fff}
+      .page[data-title="LLM 架构"] .context-stack{gap:10px}.page[data-title="LLM 架构"] .context-line{padding:13px 16px;font-size:19px}
+      .page[data-title="LLM 架构"] .decoder{padding:42px 14px;font-size:23px}.page[data-title="LLM 架构"] .next-bars{gap:18px}.page[data-title="LLM 架构"] .next-bars .bar-row{grid-template-columns:58px 1fr 50px;font-size:17px}.page[data-title="LLM 架构"] .next-bars .track{height:22px}
+      .page[data-title="LLM 架构"] .scale-line{grid-column:1;grid-row:2;margin:0;grid-template-columns:190px 1fr;padding:10px 18px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+      .page[data-title="LLM 架构"] .b8{width:58px;height:58px}.page[data-title="LLM 架构"] .b70{width:79px;height:79px}.page[data-title="LLM 架构"] .b405{width:101px;height:101px}
+      .page[data-title="LLM 架构"] .loop-note{grid-column:2;grid-row:2;margin:0;padding:18px;display:grid;place-items:center;background:var(--orange2);font-size:17px}
+      .page[data-title="LLM 架构"] .definition-grid{grid-column:1/-1;grid-row:3;height:100%;align-items:center}
+
+      /* 11 · black-box contract with explicit evidence boundary */
+      .page[data-title="Jev 的公开边界"] .body{grid-template-rows:minmax(0,1fr) 24px 145px 66px 62px;gap:9px}
+      .page[data-title="Jev 的公开边界"] .contract{margin:0;grid-template-columns:320px 44px 245px 44px 1fr;height:100%;padding:18px 22px;background:#fff}
+      .page[data-title="Jev 的公开边界"] .state{padding:26px 22px;font-size:18px}.page[data-title="Jev 的公开边界"] .jev-black{padding:52px 14px}.page[data-title="Jev 的公开边界"] .jev-black strong{font-size:45px}
+      .page[data-title="Jev 的公开边界"] .answers{grid-template-columns:1fr;gap:9px}.page[data-title="Jev 的公开边界"] .answer{padding:13px 16px;font-size:16px}
+      .page[data-title="Jev 的公开边界"] .public-unknown{margin:0;gap:24px;height:100%}.page[data-title="Jev 的公开边界"] .public,.page[data-title="Jev 的公开边界"] .unknown{padding:15px 20px}
+      .page[data-title="Jev 的公开边界"] .line-list{grid-template-columns:1fr 1fr;font-size:15px;gap:9px 16px}
+      .page[data-title="Jev 的公开边界"] .jev-metrics{margin:0;padding-top:8px;align-items:center}
+      .page[data-title="Jev 的公开边界"] .caveat{margin:0!important;padding:11px 16px;display:grid;align-items:center;font-size:14px}
+
+      /* 12 · comparison and scale chart share the canvas */
+      .page[data-title="BERT LLM Jev 对比"] .body{grid-template-columns:minmax(0,1.55fr) minmax(430px,.75fr);grid-template-rows:minmax(0,1fr) 28px;gap:12px 28px}
+      .page[data-title="BERT LLM Jev 对比"] .compare-table{grid-column:1;grid-row:1;margin:0;grid-template-columns:130px repeat(3,1fr);grid-template-rows:repeat(5,1fr);height:100%}
+      .page[data-title="BERT LLM Jev 对比"] .ct{padding:15px 14px;font-size:16px;display:flex;flex-direction:column;justify-content:center}.page[data-title="BERT LLM Jev 对比"] .ct.head{font-size:22px}.page[data-title="BERT LLM Jev 对比"] .ct strong{font-size:19px}
+      .page[data-title="BERT LLM Jev 对比"] .size-bars{grid-column:2;grid-row:1;margin:0;grid-template-columns:145px 1fr;grid-template-rows:repeat(6,1fr);gap:10px 13px;height:100%;padding:24px 22px;background:#fff;border-top:5px solid var(--ink);font-size:15px}
+      .page[data-title="BERT LLM Jev 对比"] .size-track{height:28px}.page[data-title="BERT LLM Jev 对比"] .size-track b{top:4px;line-height:20px;font-size:13px}
+      .page[data-title="BERT LLM Jev 对比"] .size-fill.orange{width:38px!important;background:transparent;border:2px dashed var(--orange);position:relative}
+      .page[data-title="BERT LLM Jev 对比"] .size-fill.orange:after{content:"?";position:absolute;inset:-2px;display:grid;place-items:center;color:var(--orange);font:bold 18px/1 var(--mono)}
+      .page[data-title="BERT LLM Jev 对比"] .caption{grid-column:1/-1;grid-row:2}
+
+      /* 13 · code-level architecture */
+      .page[data-title="NanoJev 架构"] .body{grid-template-rows:minmax(0,1fr) 150px 104px 38px 24px;gap:9px}
+      .page[data-title="NanoJev 架构"] .nano-flow{margin:0;grid-template-columns:225px 38px 290px 38px 220px 38px 1fr;height:100%;padding:18px 22px;background:#fff}
+      .page[data-title="NanoJev 架构"] .leafs{gap:10px}.page[data-title="NanoJev 架构"] .leaf{font-size:12px;padding:11px 13px}
+      .page[data-title="NanoJev 架构"] .qwen{padding:45px 14px}.page[data-title="NanoJev 架构"] .qwen strong{font-size:32px}.page[data-title="NanoJev 架构"] .qwen span{font-size:15px}
+      .page[data-title="NanoJev 架构"] .readout{padding:34px 15px;font-size:17px}.page[data-title="NanoJev 架构"] .head-detail{padding:21px;font-size:16px}
+      .page[data-title="NanoJev 架构"] .choice-set{margin:0;height:100%;padding:15px 20px;grid-template-columns:1fr 44px 1.6fr}.page[data-title="NanoJev 架构"] .logits{font-size:13px}.page[data-title="NanoJev 架构"] .sethead{font-size:16px}
+      .page[data-title="NanoJev 架构"] .primitive-row{margin:0;height:100%;gap:16px}.page[data-title="NanoJev 架构"] .primitive{padding:14px 16px;font-size:14px}.page[data-title="NanoJev 架构"] .code-note{margin:0;align-items:center}.page[data-title="NanoJev 架构"] .caption{align-self:center}
+
+      /* 14 · decision-head mechanics */
+      .page[data-title="NanoJev 决策头"] .body{grid-template-rows:112px minmax(0,1fr) 148px 78px 24px;gap:9px}
+      .page[data-title="NanoJev 决策头"] .head-pipeline{margin:0;grid-template-columns:170px 38px 190px 38px 190px 38px 1fr;height:100%}
+      .page[data-title="NanoJev 决策头"] .head-node{padding:20px 12px;font-size:16px}
+      .page[data-title="NanoJev 决策头"] .set-detail{margin:0;padding:19px 21px;height:100%}.page[data-title="NanoJev 决策头"] .set-detail h3{font-size:21px}.page[data-title="NanoJev 决策头"] .set-seq{gap:12px}.page[data-title="NanoJev 决策头"] .set-seq div{padding:16px 10px;font-size:14px}
+      .page[data-title="NanoJev 决策头"] .formula-row{margin:0;height:100%;gap:18px}.page[data-title="NanoJev 决策头"] .formula-card{padding:15px 17px}.page[data-title="NanoJev 决策头"] .formula-card strong{font-size:20px}.page[data-title="NanoJev 决策头"] .formula-card p{font-size:14px}
+      .page[data-title="NanoJev 决策头"] .definition-grid{height:100%;align-items:center}.page[data-title="NanoJev 决策头"] .caption{align-self:center}
+
+      /* 15 · dataset at left, two-stage training at right */
+      .page[data-title="NanoJev 训练"] .body{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr) 24px 94px 78px;column-gap:28px;row-gap:10px}
+      .page[data-title="NanoJev 训练"] .data-bars{grid-column:1;grid-row:1;margin:0;grid-template-columns:170px 1fr 78px;grid-template-rows:repeat(4,1fr);gap:13px;padding:24px 20px;background:#fff;border-top:5px solid var(--blue);font-size:16px}
+      .page[data-title="NanoJev 训练"] .data-track{height:30px}.page[data-title="NanoJev 训练"] .data-fill{background:linear-gradient(90deg,var(--blue),#65a7e6)}
+      .page[data-title="NanoJev 训练"] .caption{grid-column:1;grid-row:2}
+      .page[data-title="NanoJev 训练"] .train-flow{grid-column:2;grid-row:1/3;margin:0;grid-template-columns:1fr;grid-template-rows:1fr 28px 1fr 28px 1fr 28px 1fr;height:100%;padding:18px 50px;background:#fff;border-top:5px solid var(--orange)}
+      .page[data-title="NanoJev 训练"] .train-flow .arrow{width:28px;height:2px;justify-self:center;transform:rotate(90deg)}
+      .page[data-title="NanoJev 训练"] .train-node{padding:13px 18px;font-size:15px}.page[data-title="NanoJev 训练"] .train-node strong{font-size:19px}
+      .page[data-title="NanoJev 训练"] .recipe{grid-column:1/-1;grid-row:3;margin:0;height:100%;align-items:center}.page[data-title="NanoJev 训练"] .recipe div{padding:14px 8px}.page[data-title="NanoJev 训练"] .recipe strong{font-size:22px}
+      .page[data-title="NanoJev 训练"] .definition-grid{grid-column:1/-1;grid-row:4;height:100%;align-items:center}
+
+      /* 16 · result table and direct-label chart */
+      .page[data-title="NanoJev 结果"] .body{grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);grid-template-rows:minmax(0,1fr) 92px 78px;column-gap:28px;row-gap:10px}
+      .page[data-title="NanoJev 结果"] .result-table{grid-column:1;grid-row:1;margin:0;grid-template-columns:150px repeat(4,1fr);grid-template-rows:repeat(4,1fr);height:100%}
+      .page[data-title="NanoJev 结果"] .rt{padding:13px 10px;font-size:17px;display:grid;place-items:center}.page[data-title="NanoJev 结果"] .rt.model{justify-items:start}
+      .page[data-title="NanoJev 结果"] .result-bars{grid-column:2;grid-row:1;margin:0;grid-template-columns:155px 1fr 58px;grid-template-rows:repeat(6,1fr);gap:12px 12px;height:100%;padding:24px 22px;background:#fff;border-top:5px solid var(--blue);font-size:16px}
+      .page[data-title="NanoJev 结果"] .rb-track{height:26px}.page[data-title="NanoJev 结果"] .caveat{grid-column:1/-1;grid-row:2;margin:0;padding:15px 19px;font-size:15px;display:grid;align-items:center}
+      .page[data-title="NanoJev 结果"] .definition-grid{grid-column:1/-1;grid-row:3;height:100%;align-items:center}
+
+      /* 17 · six research questions must actually fill the page */
+      .page[data-title="Research 路线"] .body{grid-template-rows:minmax(0,1fr) 138px 58px;gap:12px}
+      .page[data-title="Research 路线"] .research-map{margin:0;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:14px 18px}
+      .page[data-title="Research 路线"] .research-item{padding:18px 19px;gap:14px;background:#fff;border:0;border-top:5px solid var(--blue);align-content:start}
+      .page[data-title="Research 路线"] .research-item:nth-child(2n){border-color:var(--orange)}.page[data-title="Research 路线"] .research-item:nth-child(3n){border-color:var(--green)}
+      .page[data-title="Research 路线"] .research-item .n{width:42px;height:42px;font-size:17px}.page[data-title="Research 路线"] .research-item h3{font-size:19px}.page[data-title="Research 路线"] .research-item p{font-size:15px;margin-top:7px}
+      .page[data-title="Research 路线"] .research-plan{margin:0;height:100%}.page[data-title="Research 路线"] .phase{min-height:0;height:100%;padding:17px 18px}.page[data-title="Research 路线"] .phase strong{font-size:19px}.page[data-title="Research 路线"] .phase span{font-size:15px}
+      .page[data-title="Research 路线"] .takeaway{margin:0;padding:12px 18px;font-size:17px;display:grid;align-items:center}
+    }
+
+    .controls{position:fixed;right:18px;bottom:16px;z-index:8;display:flex;gap:8px;align-items:center;color:#fff;font:700 13px/1 var(--mono)}
+    .controls button{width:38px;height:38px;border-radius:50%;border:1px solid #ffffff55;color:#fff;background:#171717d8;font-size:20px;cursor:pointer}
+    .controls button:hover,.controls button:focus-visible{background:var(--blue);outline:2px solid white}
+    #counter{padding:8px 11px;border-radius:16px;background:#171717d8}
+    .progress{position:fixed;left:0;bottom:0;height:4px;background:var(--blue);transition:width .18s ease;z-index:9}
+    @media print{
+      @page{size:7.5in 10in;margin:0}
+      html,body{height:auto;overflow:visible;background:#fff}
+      #viewport{position:static;display:block;overflow:visible}
+      #deck{width:900px;height:auto;transform:none!important;box-shadow:none}
+      .page,.page.active{position:relative;display:flex;width:900px;height:1200px;break-after:page;page-break-after:always}
+      .controls,.progress{display:none}
+    }
+  </style>
+</head>
+<body>
+<div id="viewport">
+<main id="deck" aria-label="Jev、NanoJev、BERT 与 LLM 架构图解">
+
+  <section class="page active" data-title="什么是 Jev">
+    <header class="topline"><span>SYSTEM ONE MODELS · 架构科普</span><span class="section-no">§0</span></header>
+    <div class="kicker">一个不写字的模型</div>
+    <h1>什么是 Jev？</h1>
+    <p class="lead">同一个问题，大语言模型给你一段话，Jev 直接给你一组<strong>可供程序使用的概率</strong>。</p>
+    <div class="body">
+      <div class="jev-vs-llm">
+        <div class="model-lane">
+          <div class="lane-label">大语言模型</div>
+          <div class="serial">
+            <div class="box prompt-box">问题</div><div class="arrow"></div>
+            <div><div class="token-stream" aria-label="逐 token 生成"><i class="token-dot"></i><i class="token-dot"></i><i class="token-dot"></i><i class="token-dot"></i><i class="token-dot"></i></div><div class="muted" style="font-size:14px;margin-top:9px">一个 token 接一个 token</div></div>
+            <div class="arrow"></div><div class="box speech">“我建议转给技术组，因为这个问题涉及……”</div>
+          </div>
+        </div>
+        <div class="model-lane">
+          <div class="lane-label jev">Jev</div>
+          <div class="parallel">
+            <div class="box prompt-box">问题<br><span class="muted">+ 3 个候选</span></div><div class="arrow"></div>
+            <div class="candidates"><div class="candidate">候选 A</div><div class="candidate">候选 B</div><div class="candidate">候选 C</div></div>
+            <div class="arrow"></div><div class="backbone">模型<br>并行评估</div><div class="arrow"></div>
+            <div class="bars"><div class="bar-row"><span>A</span><div class="track"><div class="fill" style="width:71%"></div></div><b>0.71</b></div><div class="bar-row"><span>B</span><div class="track"><div class="fill" style="width:22%"></div></div><b>0.22</b></div><div class="bar-row"><span>C</span><div class="track"><div class="fill" style="width:7%"></div></div><b>0.07</b></div></div>
+          </div>
+        </div>
+      </div>
+      <p class="caption">图 1　LLM 把计算铺在生成时间上，Jev 把候选判断铺在并行空间里</p>
+      <div class="fact-row"><b>是什么</b><span>面向 Choice、Score、Noul 的概率决策模型</span><b>适合什么</b><span>路由、审核、Agent 选动作、风险评分与门控</span></div>
+      <div class="big-metrics"><div class="big-metric"><strong>0</strong><span>输出 token 数</span></div><div class="big-metric"><strong>1</strong><span>一次 API 请求</span></div><div class="big-metric"><strong>255</strong><span>Choice 最多候选</span></div></div>
+    </div>
+    <footer class="foot"><span class="src">来源：<a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">TypeSafe AI · Introducing System One Models and Jev</a>，事实截止 2026-09-21。</span><span class="pg">01 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Token 与 Embedding">
+    <header class="topline"><span>从文字到数字</span><span class="section-no">§1</span></header>
+    <h2>模型眼里的文字：Token 与 Embedding</h2>
+    <p class="lead">神经网络不能直接读字。它先切分，再编号，最后把每个编号变成一串可计算的数字。</p>
+    <div class="body">
+      <div class="token-pipeline">
+        <div class="stage"><h3>原始文字</h3><div class="box sentence-card">“我喜欢研究 AI”</div></div><div class="arrow"></div>
+        <div class="stage"><h3>Token</h3><div class="box token-list"><span class="tok">我</span><span class="tok">喜欢</span><span class="tok">研究</span><span class="tok">AI</span></div></div><div class="arrow"></div>
+        <div class="stage"><h3>Token ID</h3><div class="box ids">[ 2769,<br>1599, 2850,<br>11041 ]</div></div>
+      </div>
+      <p class="caption">图 2　Token 不一定等于“一个词”，也可能是一个字或词的一部分</p>
+      <div class="embedding-demo">
+        <div><span class="tag orange">Embedding</span><h3 style="font-family:var(--serif);font-size:27px;margin-top:10px">把编号变成“坐标”</h3><p class="note" style="margin-top:9px">每个 token 对应一个高维向量。</p></div>
+        <div><div class="vector" aria-label="简化的 embedding 向量柱形"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="mono muted" style="margin-top:8px;text-align:center">“研究” = [0.12, −0.83, 0.44, …]</div></div>
+      </div>
+      <div class="definition-grid"><b>Token</b><span>模型词表中的最小离散单位</span><b>Embedding</b><span>token 的连续向量表示，后续 Attention 在这些向量上计算</span><b>位置编码</b><span>告诉模型“谁在前、谁在后”，否则词序会丢失</span></div>
+    </div>
+    <footer class="foot"><span class="src">这一步在 BERT、LLM 与 NanoJev 中都存在。具体切词和编号取决于 tokenizer。</span><span class="pg">02 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Embedding 的组成">
+    <header class="topline"><span>从编号到模型输入</span><span class="section-no">§1.1</span></header>
+    <h2>Embedding 不是一个数，而是一整条向量</h2>
+    <p class="lead">以 BERT 为例，一个位置送进第一层 Transformer 的向量，由三部分逐维相加。</p>
+    <div class="body">
+      <div class="embed-stack" aria-label="BERT 输入 embedding 的三部分">
+        <div class="embed-label">Token embedding<small>“银行”这个 token 是谁</small></div><div class="mini-vector"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="embed-plus">＋</div>
+        <div class="embed-label">Position embedding<small>它处在第 3 个位置</small></div><div class="mini-vector orange"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="embed-plus">＋</div>
+        <div class="embed-label">Segment embedding<small>它属于句子 A 还是 B</small></div><div class="mini-vector green"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="embed-result"><div class="embed-label">最终输入向量<small>x₃ ∈ ℝᵈ</small></div><div class="mini-vector result"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      </div>
+      <p class="caption">图 3　图中只画 8 个格子。BERT Base 的 d=768，BERT Large 的 d=1024</p>
+      <div class="dim-callout">
+        <div class="dim-card"><strong>每个位置一条向量</strong>长度为 d。句子有 n 个 token，整段输入就是 n × d 的矩阵。</div>
+        <div class="dim-card"><strong>向量会被训练</strong>模型并不知道“银行”的含义，训练让相关用法逐渐形成相近表示。</div>
+        <div class="dim-card"><strong>模型做法会变化</strong>BERT 直接加入位置向量；许多现代 LLM 改用 RoPE 把位置信息作用到 Q、K。</div>
+      </div>
+      <div class="definition-grid"><b>静态起点</b><span>Embedding lookup 只看 token ID</span><b>上下文化之后</b><span>经过 Attention，同一个“银行”会因“取钱”或“河岸”得到不同表示</span></div>
+    </div>
+    <footer class="foot"><span class="src">来源：BERT 原论文的 Input Representation。现代 LLM 的位置机制因模型而异。</span><span class="pg">03 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Self-Attention">
+    <header class="topline"><span>Transformer 的核心操作</span><span class="section-no">§2</span></header>
+    <h2>Self-Attention：每个词都在找上下文</h2>
+    <p class="lead">“Self” 表示<strong>同一段序列内部</strong>互相查看。模型会为不同位置分配不同权重。</p>
+    <div class="body">
+      <div class="attn-sentence"><span class="word">小明</span><span class="word">去</span><span class="word target">银行</span><span class="word">取钱</span><span class="word">。</span></div>
+      <div class="weight-line"><span>取钱</span><div class="weight-track"><div class="weight-fill" style="width:91%"></div></div><b class="mono">.91</b></div>
+      <div class="weight-line"><span>小明</span><div class="weight-track"><div class="weight-fill" style="width:52%"></div></div><b class="mono">.52</b></div>
+      <div class="weight-line"><span>去</span><div class="weight-track"><div class="weight-fill" style="width:34%"></div></div><b class="mono">.34</b></div>
+      <p class="caption">图 3　理解“银行”时，“取钱”提供了强线索。图中的数值只用于解释概念。</p>
+      <div class="qkv-row">
+        <div class="qkv"><strong>Q</strong><span>Query</span><p>当前 token 想寻找什么信息？</p></div>
+        <div class="qkv"><strong>K</strong><span>Key</span><p>每个 token 能提供哪类信息？</p></div>
+        <div class="qkv"><strong>V</strong><span>Value</span><p>真正汇总进新表示的内容是什么？</p></div>
+      </div>
+      <div class="formula-box">先比较 Q 与 K 的匹配度，再按权重混合对应的 V</div>
+      <div class="definition-grid" style="margin-top:18px"><b>多头</b><span>多个 Attention head 可以同时关注语法、指代、位置等不同关系</span><b>每一层</b><span>Attention 读取上下文，MLP 再对每个位置做非线性变换</span></div>
+    </div>
+    <footer class="foot"><span class="src">常见写法：softmax(QKᵀ/√d)V。权重会随输入与层数变化。</span><span class="pg">04 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Attention 的实际计算">
+    <header class="topline"><span>Q、K、V 到底怎样工作</span><span class="section-no">§2.1</span></header>
+    <h2>一次 Attention 的四个计算步骤</h2>
+    <p class="lead">仍以“银行”为当前 token。下面从它的输入向量出发，走到新的上下文化表示。</p>
+    <div class="body">
+      <div class="calc-layout">
+        <div class="calc-grid">
+          <div class="calc-step"><span class="step-no">1</span><h3>线性投影得到 Q、K、V</h3><p>每个 token 的向量分别乘三个可训练矩阵。Q 用来发问，K 用来匹配，V 携带内容。</p><div class="eq">qᵢ=xᵢWQ　kⱼ=xⱼWK　vⱼ=xⱼWV</div><div class="calc-viz qkv-mini"><span>x<sub>银行</sub></span><i>→</i><span>Q<br>发问</span><span>K<br>匹配</span><span>V<br>内容</span></div></div>
+          <div class="calc-step"><span class="step-no">2</span><h3>Q 与所有 K 做点积</h3><p>“银行”的 q 与“小明、去、银行、取钱”的 k 比较。点积越大，当前 head 认为越相关。</p><div class="eq">sᵢⱼ=qᵢ·kⱼ / √dₖ</div><div class="calc-viz dot-mini"><span>K<sub>小明</sub><b>0.2</b></span><span>K<sub>去</sub><b>−0.1</b></span><span>K<sub>银行</sub><b>0.7</b></span><span>K<sub>取钱</sub><b>1.6</b></span></div></div>
+          <div class="calc-step"><span class="step-no">3</span><h3>Mask 后做 Softmax</h3><p>禁止读取的位置先变成 −∞。Softmax 再把剩余分数变成总和为 1 的权重。</p><div class="eq">aᵢ=softmax(sᵢ + mask)</div><div class="calc-viz softmax-mini"><span>scores<br>0.2 −0.1 0.7 1.6</span><i>→</i><span class="prob">probabilities<br>.14 .09 .22 .55</span></div></div>
+          <div class="calc-step"><span class="step-no">4</span><h3>按权重混合 V</h3><p>模型把“取钱”的信息读得更多，把弱相关位置读得更少，得到“银行”的新表示。</p><div class="eq">yᵢ=Σⱼ aᵢⱼvⱼ</div><div class="calc-viz value-mini"><span>.14V<sub>小明</sub></span><span>.09V<sub>去</sub></span><span>.22V<sub>银行</sub></span><span>.55V<sub>取钱</sub></span><i>→</i><span class="out">y<sub>银行</sub></span></div></div>
+        </div>
+        <div class="calc-side">
+          <div class="score-example"><h3>“银行”读取谁？</h3><div><div class="score-row"><span>小明</span><div class="track"><div class="fill" style="width:14%"></div></div><b>.14</b></div><div class="score-row"><span>去</span><div class="track"><div class="fill" style="width:9%"></div></div><b>.09</b></div><div class="score-row"><span>银行</span><div class="track"><div class="fill" style="width:22%"></div></div><b>.22</b></div><div class="score-row"><span>取钱</span><div class="track"><div class="fill" style="width:55%"></div></div><b>.55</b></div></div></div>
+          <div class="mix-demo"><h3>从分数到新表示</h3><div class="mix-chain"><div class="mix-node">Q·K<br>raw scores</div><div class="mix-arrow">→</div><div class="mix-node">softmax<br>.14 .09 .22 .55</div><div class="mix-arrow">→</div><div class="mix-node">加权求和<br>new y<sub>银行</sub></div></div><div class="mix-equation">.14V<sub>小明</sub> + .09V<sub>去</sub> + .22V<sub>银行</sub> + .55V<sub>取钱</sub></div></div>
+        </div>
+      </div>
+      <div class="definition-grid"><b>为什么除以 √dₖ</b><span>避免维度升高后点积过大，导致 softmax 过早饱和</span><b>真正学什么</b><span>WQ、WK、WV 和后续输出投影都由任务损失共同更新</span></div>
+    </div>
+    <footer class="foot"><span class="src">权重示例用于教学，不是某个真实模型的可视化结果。</span><span class="pg">05 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="双向与因果 Attention">
+    <header class="topline"><span>同一个公式，不同的可见范围</span><span class="section-no">§3</span></header>
+    <h2>双向与因果 Attention 的区别</h2>
+    <p class="lead">核心差别来自 <strong>attention mask</strong>：当前 token 到底获准看哪些位置。</p>
+    <div class="body">
+      <div class="mask-compare">
+        <div class="mask-panel">
+          <h3>BERT：左右都能看</h3><p class="note">适合理解一整段已经存在的文字。</p>
+          <div class="matrix-wrap"><div></div><div class="col-labels"><span>我</span><span>喜</span><span>欢</span><span>苹</span><span>果</span></div><div class="row-labels"><span>我</span><span>喜</span><span>欢</span><span>苹</span><span>果</span></div><div class="matrix" aria-label="BERT 全可见注意力矩阵">
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i>
+          </div></div>
+        </div>
+        <div class="mask-panel causal">
+          <h3>LLM：只看左边与自己</h3><p class="note">生成下一个 token 时，未来内容还不存在。</p>
+          <div class="matrix-wrap"><div></div><div class="col-labels"><span>北</span><span>京</span><span>是</span><span>首</span><span>都</span></div><div class="row-labels"><span>北</span><span>京</span><span>是</span><span>首</span><span>都</span></div><div class="matrix" aria-label="因果下三角注意力矩阵">
+            <i class="cell on"></i><i class="cell"></i><i class="cell"></i><i class="cell"></i><i class="cell"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell"></i><i class="cell"></i><i class="cell"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell"></i><i class="cell"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell"></i>
+            <i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i><i class="cell on"></i>
+          </div></div>
+        </div>
+      </div>
+      <div class="legend-row"><span><i></i>允许读取</span><span class="blocked"><i></i>被 mask 挡住</span></div>
+      <div class="mask-summary"><b>一句话记住</b><span>BERT 像拿着全文做阅读理解。因果 LLM 像一边写、一边只回看已经写出的内容。</span></div>
+      <div class="definition-grid" style="margin-top:18px"><b>双向 ≠ 两遍</b><span>每个位置在同一层里同时访问左右上下文</span><b>普通 Attention</b><span>没有唯一“普通”版本，双向与因果只是两种常见可见性规则</span></div>
+    </div>
+    <footer class="foot"><span class="src">图中行表示正在更新的位置，列表示它可以读取的位置。</span><span class="pg">06 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Transformer Block">
+    <header class="topline"><span>Attention 只是半层工作</span><span class="section-no">§3.1</span></header>
+    <h2>Transformer Block：读取上下文，再逐位置加工</h2>
+    <p class="lead">一层通常包含 Attention、前馈网络、残差连接和归一化。不同模型主要在排列与细节上变化。</p>
+    <div class="body">
+      <div class="block-compare">
+        <div class="block-col"><h3 class="blue-text">BERT 原始层 · Post-LN</h3><div class="block-stack"><div class="block-unit">输入 X</div><div class="block-down">↓</div><div class="block-unit attn">Multi-Head Self-Attention</div><div class="block-down">↓</div><div class="block-unit res">Add 残差：X + Attention(X)</div><div class="block-down">↓</div><div class="block-unit norm">LayerNorm</div><div class="block-down">↓</div><div class="block-unit mlp">Feed-Forward Network</div><div class="block-down">↓</div><div class="block-unit res">Add 残差 + LayerNorm</div></div></div>
+        <div class="block-col"><h3 class="orange-text">现代 LLM 常见 · Pre-Norm</h3><div class="block-stack"><div class="block-unit">输入 X</div><div class="block-down">↓</div><div class="block-unit norm">RMSNorm / LayerNorm</div><div class="block-down">↓</div><div class="block-unit attn">Causal Self-Attention</div><div class="block-down">↓</div><div class="block-unit res">残差相加</div><div class="block-down">↓</div><div class="block-unit norm">Norm → MLP</div><div class="block-down">↓</div><div class="block-unit res">残差相加</div></div></div>
+      </div>
+      <p class="caption">图 7　Post-LN 与 Pre-Norm 的顺序不同，但都在反复执行“沟通 + 独立加工”</p>
+      <div class="block-foot"><div class="block-fact"><strong>Attention</strong>让不同 token 之间交换信息，序列长度通常不变。</div><div class="block-fact"><strong>MLP</strong>对每个位置单独变换，通常先扩宽再压回 hidden size。</div><div class="block-fact"><strong>残差与归一化</strong>帮助深层网络保留信息并稳定训练。</div></div>
+      <div class="definition-grid" style="margin-top:18px"><b>“× L”</b><span>表示这个 block 重复 L 层，每层有独立参数</span><b>Encoder / Decoder</b><span>并非有没有 Transformer block，而是 mask、交叉注意力和训练目标等结构选择不同</span></div>
+    </div>
+    <footer class="foot"><span class="src">BERT 使用原始 Transformer 的 Post-LN 结构；不同现代 LLM 的 Norm、MLP 与 Attention 细节并不完全相同。</span><span class="pg">07 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="CLS 与 BERT">
+    <header class="topline"><span>BERT 的句级任务</span><span class="section-no">§4</span></header>
+    <h2>[CLS]：给整句话预留的“汇总位置”</h2>
+    <p class="lead">[CLS] 是一个特殊 token。经过多层双向 Attention 后，分类头读取它的最终向量。</p>
+    <div class="body">
+      <div class="cls-flow">
+        <div class="cls-tokens"><span class="tok">[CLS]</span><span class="tok">这家</span><span class="tok">店</span><span class="tok">不错</span><span class="tok">[SEP]</span></div><div class="arrow"></div>
+        <div class="tower-box"><h3>Transformer Encoder</h3><div class="layers"><div class="layer">Attention + MLP</div><div class="layer">Attention + MLP</div><div class="ellipsis">⋮</div><div class="layer">Attention + MLP</div></div></div><div class="arrow orange"></div>
+        <div class="cls-head">读取最终<br><strong>[CLS]</strong><br>正面 94%</div>
+      </div>
+      <p class="caption">图 5　训练目标迫使 [CLS] 学会携带完成句级任务所需的信息</p>
+      <div class="cls-explain"><div class="explain-block"><strong>[CLS] 没有天然“句意”</strong><br>它只是一个固定位置。微调时，梯度让它逐渐成为有用的句子表示。</div><div class="explain-block"><strong>词级任务不必只用 [CLS]</strong><br>命名实体识别会读取每个 token 的输出，抽取式问答会预测答案起止位置。</div></div>
+      <div class="bert-spec">
+        <div class="spec"><span><strong>BERT Base</strong><br>12 层 · hidden 768</span><span>12 heads<br>110M 参数</span></div>
+        <div class="spec"><span><strong>BERT Large</strong><br>24 层 · hidden 1024</span><span>16 heads<br>340M 参数</span></div>
+      </div>
+      <div class="definition-grid" style="margin-top:17px"><b>预训练</b><span>原始 BERT 使用掩码语言模型 MLM，并加入下一句预测 NSP</span><b>强项</b><span>分类、抽取、检索编码；通常不负责自由生成长文本</span></div>
+    </div>
+    <footer class="foot"><span class="src">来源：<a href="https://arxiv.org/abs/1810.04805">Devlin et al., BERT, 2018</a>。参数量为论文常用口径。</span><span class="pg">08 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="BERT 的训练方式">
+    <header class="topline"><span>为什么 BERT 学会了理解上下文</span><span class="section-no">§4.1</span></header>
+    <h2>BERT 先做预训练，再为具体任务微调</h2>
+    <p class="lead">预训练提供通用语言表示；微调用较少标注数据，把这些表示连接到分类、抽取或检索任务。</p>
+    <div class="body">
+      <div class="pretrain-grid">
+        <div class="pretrain-card"><h3>MLM · 掩码语言模型</h3><div class="masked-sentence">小明去 <b>[MASK]</b> 取钱</div><p class="note">模型同时利用左右上下文，预测被遮住的位置。</p><div class="prediction-list"><div><i style="height:58px"></i>银行<br><b>0.82</b></div><div><i style="height:19px"></i>河边<br><b>0.09</b></div><div><i style="height:8px"></i>商场<br><b>0.04</b></div></div></div>
+        <div class="pretrain-card"><h3>NSP · 下一句预测</h3><div class="pair"><div><b>句子 A</b> 他打开了电脑。</div><div><b>句子 B</b> 屏幕亮了起来。</div><div style="background:#fff;border:1px solid #e2b49f">[CLS] 判断：B 是否紧跟 A？</div></div><p class="note" style="margin-top:14px">这是原始 BERT 的第二个目标。许多后续模型调整或移除了 NSP。</p></div>
+      </div>
+      <p class="caption">图 9　预训练学习语言规律，微调把模型适配到具体输出</p>
+      <div class="transfer-flow"><div class="transfer-node"><strong>大量无标注文本</strong>随机遮住 token，构造监督信号</div><div class="arrow"></div><div class="transfer-node"><strong>预训练 BERT</strong>得到通用双向编码器参数</div><div class="arrow orange"></div><div class="transfer-node final"><strong>任务微调</strong>接一个小 head，用标注样本共同更新</div></div>
+      <div class="definition-grid"><b>训练时</b><span>通常对被 mask 的位置计算词表交叉熵；NSP 对 [CLS] 做二分类</span><b>使用时</b><span>真实输入一般没有 [MASK]，模型把完整文本编码后交给下游 head</span></div>
+    </div>
+    <footer class="foot"><span class="src">来源：BERT 原论文。这里描述原始 BERT 配方，不代表所有 encoder 模型都使用 NSP。</span><span class="pg">09 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="LLM 架构">
+    <header class="topline"><span>Decoder-only 大语言模型</span><span class="section-no">§5</span></header>
+    <h2>LLM：把“预测下一个 token”循环很多次</h2>
+    <p class="lead">一次前向给出下一个 token 的概率。选中后把它接回输入，再运行下一步。</p>
+    <div class="body">
+      <div class="gen-flow">
+        <div class="context-stack"><div class="context-line">北京是中国的</div><div class="context-line">北京是中国的 <span class="next">首都</span></div><div class="context-line">北京是中国的首都 <span class="next">，</span></div><div class="context-line">北京是中国的首都，也是 <span class="next">...</span></div></div><div class="arrow"></div>
+        <div class="decoder">Decoder × L<small>因果 Attention<br>+ MLP</small></div><div class="arrow orange"></div>
+        <div class="next-bars"><div class="bar-row"><span>首都</span><div class="track"><div class="fill" style="width:76%"></div></div><b>.76</b></div><div class="bar-row"><span>城市</span><div class="track"><div class="fill" style="width:15%"></div></div><b>.15</b></div><div class="bar-row"><span>中心</span><div class="track"><div class="fill" style="width:6%"></div></div><b>.06</b></div></div>
+      </div>
+      <div class="loop-note">输出越长，解码次数越多。<strong>开放式表达能力</strong>来自这个自回归循环。</div>
+      <div class="scale-line"><div><span class="tag gray">代表规模</span><p class="note" style="margin-top:9px">Llama 3.1 参数量</p></div><div class="bubbles"><div class="bubble b8">8B</div><div class="bubble b70">70B</div><div class="bubble b405">405B</div></div></div>
+      <div class="definition-grid"><b>强项</b><span>写作、对话、代码、开放式问答与多步推理</span><b>结构化输出</b><span>通常仍由 token 生成，再用 JSON schema、工具调用或约束解码收紧格式</span><b>成本来源</b><span>输入前向 + 每个输出 token 的连续解码，长回答会增加延迟</span></div>
+    </div>
+    <footer class="foot"><span class="src">来源：<a href="https://arxiv.org/abs/2407.21783">Meta Llama 3.1 model card / paper</a>。这里只用它说明 LLM 的代表性规模。</span><span class="pg">10 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Jev 的公开边界">
+    <header class="topline"><span>官方能确认什么</span><span class="section-no">§6</span></header>
+    <h2>Jev 的输入输出已公开，内部网络仍是黑盒</h2>
+    <p class="lead">可以研究它的行为与接口，但不能把某个熟悉架构直接当成 Jev 的真实内部实现。</p>
+    <div class="body">
+      <div class="contract">
+        <div class="state"><strong>State</strong>“客户被重复扣款，正在等待处理。”<br><br><span class="muted">共享上下文</span></div><div class="arrow"></div>
+        <div class="jev-black"><strong>Jev</strong><span>jev-1.13.0</span></div><div class="arrow orange"></div>
+        <div class="answers"><div class="answer"><b>Choice</b>账单组 .86<br>技术组 .09 · 其他 .05</div><div class="answer"><b>Noul</b>需要退款：P(yes)=.93</div><div class="answer"><b>Score</b>紧急度：3.7 / 5</div></div>
+      </div>
+      <p class="caption">图 7　多个问题共享 state，但官方语义要求它们相互独立</p>
+      <div class="public-unknown"><div class="public"><h3>公开可确认</h3><div class="line-list"><span>文本输入，Choice / Score / Noul</span><span>Choice 2–255 个候选</span><span>多问题并行评估</span><span>官方称使用 RLCD</span></div></div><div class="unknown"><h3>尚未公开</h3><div class="line-list"><span>参数量与层数</span><span>Encoder / Decoder / MoE</span><span>训练数据与权重</span><span>内部校准和缓存实现</span></div></div></div>
+      <div class="jev-metrics"><div><strong>64k</strong><span>请求预算</span></div><div><strong>≤32k</strong><span>state + 最长问题</span></div><div><strong>70–500ms</strong><span>官方时延区间</span></div><div><strong>$0.042</strong><span>/ 百万输入 token</span></div></div>
+      <div class="caveat" style="margin-top:17px"><strong>“不会幻觉”需要缩小理解范围：</strong>Jev 可以避免输出格式和候选集合之外的内容，但仍可能做出语义上错误的高置信判断。</div>
+    </div>
+    <footer class="foot"><span class="src">来源：TypeSafe AI <a href="https://docs.typesafe.ai/models">Models</a>、<a href="https://docs.typesafe.ai/concepts/system-one">System One</a>、<a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13">Jev 1.13</a>。2026-09-15 发布。</span><span class="pg">11 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="BERT LLM Jev 对比">
+    <header class="topline"><span>三类模型放在一张图里</span><span class="section-no">§7</span></header>
+    <h2>BERT、LLM、Jev 的结构与用途</h2>
+    <p class="lead">三者都处理 token，但它们的可见范围、训练目标和输出接口服务于不同任务。</p>
+    <div class="body">
+      <div class="compare-table">
+        <div class="ct"></div><div class="ct head bert">BERT</div><div class="ct head llm">LLM</div><div class="ct head jev">Jev</div>
+        <div class="ct row">主结构</div><div class="ct bert"><strong>Encoder-only</strong><small>双向 Attention</small></div><div class="ct llm"><strong>Decoder-only</strong><small>因果 Attention</small></div><div class="ct jev"><strong>未披露</strong><small>只能确认产品行为</small></div>
+        <div class="ct row">输出</div><div class="ct bert"><strong>上下文向量</strong><small>再接分类或抽取头</small></div><div class="ct llm"><strong>下一个 token</strong><small>循环生成文本</small></div><div class="ct jev"><strong>类型化概率</strong><small>Choice / Score / Noul</small></div>
+        <div class="ct row">解码</div><div class="ct bert"><strong>通常 0 token</strong><small>一次编码</small></div><div class="ct llm"><strong>N 个 token</strong><small>N 次自回归步骤</small></div><div class="ct jev"><strong>0 token</strong><small>直接判断</small></div>
+        <div class="ct row">常见用途</div><div class="ct bert"><strong>固定任务</strong><small>分类、抽取、检索</small></div><div class="ct llm"><strong>开放生成</strong><small>对话、写作、代码</small></div><div class="ct jev"><strong>程序决策</strong><small>路由、门控、选动作</small></div>
+      </div>
+      <div class="size-bars">
+        <b>BERT Base</b><div class="size-track"><div class="size-fill" style="width:7%"></div><b>110M</b></div>
+        <b>BERT Large</b><div class="size-track"><div class="size-fill" style="width:12%"></div><b>340M</b></div>
+        <b>Llama 3.1 8B</b><div class="size-track"><div class="size-fill dark" style="width:31%"></div><b>8B</b></div>
+        <b>Llama 3.1 70B</b><div class="size-track"><div class="size-fill dark" style="width:67%"></div><b>70B</b></div>
+        <b>Llama 3.1 405B</b><div class="size-track"><div class="size-fill dark" style="width:100%"></div><b>405B</b></div>
+        <b>Jev 1.13</b><div class="size-track"><div class="size-fill orange" style="width:100%"></div><b>未知</b></div>
+      </div>
+      <p class="caption">柱长只表达量级顺序，不按真实比例绘制。Jev 的低时延不能反推出参数量。</p>
+    </div>
+    <footer class="foot"><span class="src">BERT：原论文。LLM：Llama 3.1 代表规模。Jev：官方未披露参数量、层数或拓扑。</span><span class="pg">12 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="NanoJev 架构">
+    <header class="topline"><span>NanoJev · 源码可核对</span><span class="section-no">§8</span></header>
+    <h2>NanoJev：用 0.6B Qwen 复刻“直接判断”</h2>
+    <p class="lead">NanoJev 是 MIT 开源的独立功能复刻：把每个候选编码成路径，再直接产出 logits。它无法揭示 Jev 的私有实现。</p>
+    <div class="body">
+      <div class="nano-flow">
+        <div class="leafs"><div class="leaf">State<br>+ Question<br>+ Candidate A<br>+ Decision: &lt;EOS&gt;</div><div class="leaf">State<br>+ Question<br>+ Candidate B<br>+ Decision: &lt;EOS&gt;</div><div class="leaf">State<br>+ Question<br>+ Candidate C<br>+ Decision: &lt;EOS&gt;</div></div><div class="arrow"></div>
+        <div class="qwen"><strong>Qwen3-0.6B</strong><span>所有候选路径<br>放进一个 batch 前向</span></div><div class="arrow orange"></div>
+        <div class="readout">读取每条路径<br><strong>最后一个 token</strong><br>的 hidden state</div><div class="arrow"></div>
+        <div class="head-detail"><b>LayerNorm</b><br>↓<br>Linear(hidden → 1)<br>↓<br>每个候选一个 scalar logit</div>
+      </div>
+      <div class="choice-set"><div class="logits">State:\n{state}\n<br>Question type: choice<br>Question:\n{instruction}\n<br>Candidate:\n{name}: {description}\n<br>Decision: &lt;EOS&gt;</div><div class="arrow"></div><div class="sethead"><strong>为什么读最后一个位置</strong><br>Qwen 是因果 backbone。最后的 &lt;EOS&gt; 位置可以看到前面完整的 state、question 和当前 candidate，所以它的 hidden state 用作该候选摘要。</div></div>
+      <div class="primitive-row"><div class="primitive"><strong>并行单位</strong>代码把所有问题的所有候选路径 flatten 后补齐长度，送入同一个 batch。</div><div class="primitive"><strong>隔离方式</strong>每条路径只含自己的问题和候选，因此没有跨问题 Attention。</div><div class="primitive"><strong>计算代价</strong>同一 state 会在 K 条候选路径里重复编码，batching 不等于前缀复用。</div></div>
+      <div class="code-note">backbone 约 0.6B 参数。当前 README 明确把 shared-prefix inference 列为未完成路线。</div>
+      <p class="caption">图 13　NanoJev 的输入编码与 backbone readout，可由源码直接核对</p>
+    </div>
+    <footer class="foot"><span class="src">来源：<a href="https://github.com/TianyuCodings/NanoJev">TianyuCodings/NanoJev</a>，train_toy_decisions.py 与 TYPESAFE_CONTRACT.md。参数头估算按 hidden=1024。</span><span class="pg">13 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="NanoJev 决策头">
+    <header class="topline"><span>NanoJev · 从 hidden state 到概率</span><span class="section-no">§8.1</span></header>
+    <h2>Decision Head：先独立打分，再按题型归一化</h2>
+    <p class="lead">每条候选路径先产生一个基础标量 z。Choice 还可以让同一题的候选互相比较，再修正这些分数。</p>
+    <div class="body">
+      <div class="head-pipeline"><div class="head-node">h<sub>last</sub><br>1024 维</div><div class="arrow"></div><div class="head-node blue">LayerNorm<br>1024 维</div><div class="arrow"></div><div class="head-node orange">Linear<br>1024 → 1</div><div class="arrow orange"></div><div class="head-node">基础 logits<br>z₁, z₂, …, zₖ</div></div>
+      <div class="set-detail"><h3>Choice 的可选 Set Head</h3><div class="set-seq"><div>每个候选 h<br>拼接 log(K)</div><div>Linear<br>1025 → 128</div><div>4-head<br>Set Attention</div><div>tanh<br>残差变换</div><div>Linear 128 → 1<br>得到 Δz</div></div><p class="note" style="margin-top:13px">最终分数为 z + Δz。Set Attention 只在同一道 Choice 的候选之间运行，并使用 padding mask 忽略补齐位置。</p></div>
+      <div class="formula-row"><div class="formula-card"><strong>Boolean</strong><code>logits = [0, z]<br>p(true)=sigmoid(z)</code><p>源码只编码语义上的 true 路径，false 的 logit 固定为 0。</p></div><div class="formula-card"><strong>Choice</strong><code>p = softmax(z₁…zₖ)</code><p>所有候选概率相加为 1，K 可以在推理时动态变化。</p></div><div class="formula-card"><strong>Score</strong><code>score = Σ k·pₖ</code><p>对 2–10 个有序等级归一化，再返回概率加权等级。</p></div></div>
+      <div class="definition-grid"><b>额外参数</b><span>hidden=1024 时，LayerNorm、scalar head 与 set head 合计约 200,578 参数，约 0.20M</span><b>训练信号</b><span>完整问题上的交叉熵同时比较所有有效候选，不把候选拆成互不相关的二分类样本</span><b>重要限制</b><span>归一化分布不自动代表概率已校准，仍需在独立 calibration split 上验证</span></div>
+      <p class="caption">图 14　这部分来自 NanoJev 代码，仍不能代表商业 Jev 的内部 head</p>
+    </div>
+    <footer class="foot"><span class="src">来源：NanoJev DecisionModel.forward 与 answer_from_probabilities。参数量为按源码层尺寸逐项计算。</span><span class="pg">14 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="NanoJev 训练">
+    <header class="topline"><span>数据与训练配方</span><span class="section-no">§9</span></header>
+    <h2>NanoJev 如何把游戏状态变成决策分布</h2>
+    <p class="lead">当前统一 checkpoint 覆盖 Maze、Snake 与两个 ViZDoom 任务，训练单位是一道完整问题。</p>
+    <div class="body">
+      <div class="data-bars">
+        <b>Predict Position</b><div class="data-track"><div class="data-fill" style="width:100%"></div></div><span class="n">11,173</span>
+        <b>ViZDoom Basic</b><div class="data-track"><div class="data-fill" style="width:46.2%"></div></div><span class="n">5,160</span>
+        <b>Maze</b><div class="data-track"><div class="data-fill" style="width:13.1%"></div></div><span class="n">1,469</span>
+        <b>Snake</b><div class="data-track"><div class="data-fill" style="width:8.6%"></div></div><span class="n">958</span>
+      </div>
+      <p class="caption">图 10　每个 target variant 共 18,760 道问题，训练 split 存 10,898 道，其中 10,893 道通过有效性过滤</p>
+      <div class="train-flow"><div class="train-node"><strong>游戏轨迹</strong>状态、问题、候选、目标分布</div><div class="arrow"></div><div class="train-node"><strong>完整问题 batch</strong>候选不拆散</div><div class="arrow"></div><div class="train-node focus"><strong>交叉熵</strong>对整组候选分布监督</div><div class="arrow orange"></div><div class="train-node"><strong>统一 checkpoint</strong>四个游戏共用模型</div></div>
+      <div class="recipe"><div><strong>1e−5</strong><span>backbone LR</span></div><div><strong>1e−4</strong><span>decision head LR</span></div><div><strong>step 400</strong><span>选中的 checkpoint</span></div><div><strong>BF16</strong><span>训练前向精度</span></div></div>
+      <div class="definition-grid" style="margin-top:20px"><b>采样权重</b><span>Maze 1/3 · Snake 1/3 · Basic 1/6 · Predict Position 1/6</span><b>两阶段</b><span>先冻结 backbone 训练 head，随后解冻并以不同学习率共同更新</span><b>当前缺口</b><span>README 路线图仍将 RLCD post-training 与 shared-prefix inference 标为未完成</span></div>
+    </div>
+    <footer class="foot"><span class="src">来源：<a href="https://github.com/TianyuCodings/NanoJev">NanoJev README</a>、UNIFIED_DEVELOPMENT_RELEASE.md 与训练源码。发布标签 unified-games-v1。</span><span class="pg">15 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="NanoJev 结果">
+    <header class="topline"><span>开源项目报告的 held-out 游戏结果</span><span class="section-no">§10</span></header>
+    <h2>NanoJev 在四个游戏里的表现</h2>
+    <p class="lead">同一观察接口、候选动作和 seeded epsilon-greedy controller 下，项目作者报告了 274 个 test cases。</p>
+    <div class="body">
+      <div class="result-table">
+        <div class="rt h">模型</div><div class="rt h">Maze<br><span class="muted">/10</span></div><div class="rt h">Snake<br><span class="muted">/8</span></div><div class="rt h">Basic<br><span class="muted">/128</span></div><div class="rt h">Predict<br><span class="muted">/128</span></div>
+        <div class="rt model nano">NanoJev</div><div class="rt">4</div><div class="rt tie">8</div><div class="rt best">128</div><div class="rt best">27</div>
+        <div class="rt model">Jev</div><div class="rt best">7</div><div class="rt tie">8</div><div class="rt">56</div><div class="rt">11</div>
+        <div class="rt model">Untuned Qwen</div><div class="rt">2</div><div class="rt">0</div><div class="rt">56</div><div class="rt">11</div>
+      </div>
+      <div class="result-bars">
+        <b>Maze · NanoJev</b><div class="rb-track"><div class="rb-fill nano" style="width:40%"></div></div><span class="rb-val">40%</span>
+        <b>Maze · Jev</b><div class="rb-track"><div class="rb-fill jev" style="width:70%"></div></div><span class="rb-val">70%</span>
+        <b>Basic · NanoJev</b><div class="rb-track"><div class="rb-fill nano" style="width:100%"></div></div><span class="rb-val">100%</span>
+        <b>Basic · Jev</b><div class="rb-track"><div class="rb-fill jev" style="width:43.75%"></div></div><span class="rb-val">43.8%</span>
+        <b>Predict · NanoJev</b><div class="rb-track"><div class="rb-fill nano" style="width:21.1%"></div></div><span class="rb-val">21.1%</span>
+        <b>Predict · Jev</b><div class="rb-track"><div class="rb-fill jev" style="width:8.6%"></div></div><span class="rb-val">8.6%</span>
+      </div>
+      <div class="caveat"><strong>如何正确解读：</strong>这些是 NanoJev 项目作者构造并报告的游戏任务，不是独立第三方评测，也不能证明 NanoJev 在通用语言理解上超过 Jev。Maze 上 Jev 更好，Snake 持平，两个 ViZDoom 任务里 NanoJev 更好。</div>
+      <div class="definition-grid" style="margin-top:18px"><b>价值</b><span>证明“0.6B backbone + 动态候选头 + 0 token 解码”是一条可运行的开源路线</span><b>缺口</b><span>任务范围窄，校准、跨领域泛化、延迟与成本仍需独立复测</span></div>
+    </div>
+    <footer class="foot"><span class="src">来源：<a href="https://github.com/TianyuCodings/NanoJev#held-out-gameplay">NanoJev README · Held-out gameplay</a>。结果口径由项目作者定义。</span><span class="pg">16 / 17</span></footer>
+  </section>
+
+  <section class="page" data-title="Research 路线">
+    <header class="topline"><span>Jev Research 起点</span><span class="section-no">§11</span></header>
+    <h2>最值得优先验证的六个问题</h2>
+    <p class="lead">研究目标不只是“答对多少”，还要知道概率是否可信、规模如何增长、失败发生在哪里。</p>
+    <div class="body">
+      <div class="research-map">
+        <div class="research-item"><div class="n">01</div><div><h3>概率校准</h3><p>可靠性图、ECE、Brier、NLL。检查 0.9 是否真的约有 90% 正确。</p></div></div>
+        <div class="research-item"><div class="n">02</div><div><h3>候选数 K</h3><p>从 2 扩到 255，观察准确率、时延、显存与 softmax 稳定性。</p></div></div>
+        <div class="research-item"><div class="n">03</div><div><h3>问题数 Q</h3><p>同一 state 并行 1、4、16、64 道问题，测吞吐与问题隔离。</p></div></div>
+        <div class="research-item"><div class="n">04</div><div><h3>上下文长度</h3><p>加入无关信息、长证据与冲突证据，观察性能和置信度漂移。</p></div></div>
+        <div class="research-item"><div class="n">05</div><div><h3>候选顺序与措辞</h3><p>打乱候选、改写描述，检测位置偏差和语义脆弱性。</p></div></div>
+        <div class="research-item"><div class="n">06</div><div><h3>高置信错误</h3><p>专门收集 confidence 高却错误的案例，建立拒答或人工复核阈值。</p></div></div>
+      </div>
+      <div class="research-plan"><div class="phase"><strong>第 1 阶段 · 公平基线</strong><span>同一标注集比较 BERT/DeBERTa、结构化 LLM、NanoJev 与 Jev API。</span></div><div class="arrow"></div><div class="phase"><strong>第 2 阶段 · 压力测试</strong><span>系统改变 K、Q、上下文长度、顺序和 OOD 程度。</span></div><div class="arrow orange"></div><div class="phase"><strong>第 3 阶段 · 决策验证</strong><span>把概率接进真实路由策略，测端到端收益与错误成本。</span></div></div>
+      <div class="takeaway">BERT 是高效的双向文本编码器；LLM 是通用的自回归生成器；Jev 提供面向程序的概率决策接口。NanoJev 给出了一个可读源码、可复现实验的 0.6B 近似实现。</div>
+    </div>
+    <footer class="foot"><span class="src">建议优先复现 NanoJev，再把 Jev 当作黑盒 API 对照。所有模型统一报告 accuracy/F1、ECE/Brier、p50/p95 和单位成本。</span><span class="pg">17 / 17</span></footer>
+  </section>
+
+</main>
+</div>
+
+<nav class="controls" aria-label="页面控制"><span id="counter">1 / 17</span><button id="prev" type="button" aria-label="上一页">‹</button><button id="next" type="button" aria-label="下一页">›</button><button id="full" type="button" aria-label="全屏">⛶</button></nav>
+<div class="progress" aria-hidden="true"></div>
+<script>
+  const W=1600,H=900,deck=document.getElementById('deck'),pages=[...document.querySelectorAll('.page')];
+  const counter=document.getElementById('counter'),progress=document.querySelector('.progress');
+  pages.forEach((page,i)=>{const pg=page.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${pages.length}`;});
+  let index=Math.max(0,Math.min(pages.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  function fit(){const s=Math.min((innerWidth-28)/W,(innerHeight-28)/H),x=(innerWidth-W*s)/2,y=(innerHeight-H*s)/2;deck.style.transform=`translate(${x}px,${y}px) scale(${s})`;}
+  function show(n){index=(n+pages.length)%pages.length;pages.forEach((p,i)=>p.classList.toggle('active',i===index));counter.textContent=`${index+1} / ${pages.length}`;progress.style.width=`${(index+1)/pages.length*100}%`;history.replaceState(null,'',`#${index+1}`);document.title=`${index+1}/${pages.length} · ${pages[index].dataset.title}`;}
+  document.getElementById('prev').onclick=()=>show(index-1);document.getElementById('next').onclick=()=>show(index+1);
+  document.getElementById('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+  addEventListener('resize',fit);addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(index-1)}if(e.key==='Home')show(0);if(e.key==='End')show(pages.length-1);if(e.key.toLowerCase()==='f')document.getElementById('full').click()});
+  addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1));fit();show(index);
+</script>
+</body>
+</html>
