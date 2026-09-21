@@ -2,7 +2,7 @@
 title: "GameASG-Bench 如何验证一个游戏真的做完了"
 permalink: "/posts/论文解读/gameasg-bench.html"
 date: "2026-09-21T21:31:01+08:00"
-updated: "2026-09-21T23:58:00+08:00"
+updated: "2026-09-22T00:02:00+08:00"
 cover: "/generated-covers/046-gameasg-bench.webp"
 description: "逐文件拆解 GameASG-Bench：人类如何写规格与隐藏测试，Agent 能看到什么，L1/L2 怎样执行，以及真实浏览器输入为什么能抓住看似完成的游戏。"
 wide_content: true
@@ -19,10 +19,12 @@ tags:
 
 <style>
 .gb-reading{--gb-blue:#2676c9;--gb-orange:#e86c36;--gb-green:#3f8a68;--gb-ink:#20262d;--gb-paper:#f8f5ee;--gb-line:#d7d2c8;color:var(--gb-ink)}
-.gb-reading .gb-download{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;padding:24px 26px;margin:4px 0 30px;border:1px solid #b7cbe0;background:#edf5fc}
-.gb-reading .gb-download strong{display:block;font-size:1.18em;margin-bottom:6px}.gb-reading .gb-download span{color:#56616d}
 .gb-reading .gb-button{display:inline-block;padding:11px 18px;border:1px solid #155b9f;background:var(--gb-blue);color:#fff!important;text-decoration:none!important;font-weight:700;white-space:nowrap}
-.gb-reading .gb-source-links{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 30px;font-size:.94em}
+.gb-reading .gb-player-shell{width:100%;margin:4px 0 34px;border:1px solid #c5c2ba;background:#252b31;box-shadow:0 20px 60px #17202a24}
+.gb-reading .gb-player-bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:17px 20px;color:#eef3f7;background:#252b31}
+.gb-reading .gb-player-copy{display:grid;gap:3px}.gb-reading .gb-player-copy small{font:800 .72em/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#7fc1ff}.gb-reading .gb-player-copy strong{font-size:1.02em}.gb-reading .gb-player-copy span{font-size:.82em;color:#b9c2ca}
+.gb-reading .gb-player-shell .post-deck-embed{margin:0}.gb-reading .gb-player-shell .post-deck-embed-frame{border:0;border-top:1px solid #424950;background:#dcd9d2}.gb-reading .gb-player-shell .post-deck-embed-note{margin:0;padding:11px 17px;color:#c4ccd3;background:#252b31;border-top:1px solid #424950}
+.gb-reading .gb-source-links{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 34px;font-size:.94em}
 .gb-reading .gb-callout{padding:18px 22px;margin:22px 0;border-left:5px solid var(--gb-orange);background:#fff7f1}
 .gb-reading .gb-callout.blue{border-color:var(--gb-blue);background:#f1f7fd}.gb-reading .gb-callout.green{border-color:var(--gb-green);background:#f1f8f4}
 .gb-reading .gb-figure{margin:30px 0}.gb-reading .gb-figure img{display:block;width:100%;height:auto;border:1px solid #dedad2;background:white}.gb-reading .gb-figure figcaption{margin-top:9px;color:#66707a;font-size:.9em;line-height:1.55}
@@ -32,21 +34,29 @@ tags:
 .gb-reading .gb-inline-code{padding:2px 6px;border:1px solid #d8d8d3;background:#f4f4f1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
 .gb-reading .gb-deck-heading{margin-top:54px}
 .gb-reading #interactive-deck{scroll-margin-top:88px}
-@media(max-width:900px){.gb-reading .gb-download{grid-template-columns:1fr}.gb-reading .gb-flow{grid-template-columns:1fr 1fr}.gb-reading .gb-flow em{display:none}.gb-reading .gb-two{grid-template-columns:1fr}.gb-reading .gb-compare{display:block;overflow-x:auto;white-space:nowrap}.gb-reading .gb-button{text-align:center}}
+@media(max-width:900px){.gb-reading .gb-player-shell{margin-bottom:28px}.gb-reading .gb-player-bar{align-items:flex-start;padding:14px;gap:12px}.gb-reading .gb-player-copy span{display:none}.gb-reading .gb-button{padding:9px 12px;font-size:.84em}.gb-reading .gb-flow{grid-template-columns:1fr 1fr}.gb-reading .gb-flow em{display:none}.gb-reading .gb-two{grid-template-columns:1fr}.gb-reading .gb-compare{display:block;overflow-x:auto;white-space:nowrap}.gb-reading .gb-button{text-align:center}}
 </style>
 
 <div class="gb-reading">
 
-<div class="gb-download">
-  <div><strong>先拿走完整 PPTX</strong><span>26 页，含原论文 Figure 1、Tables 1 至 9、真实 checks 代码与 Armor Alley 完整测试轨迹。</span></div>
-  <a class="gb-button" href="/lib/downloads/gameasg-bench-visual-guide.pptx" download>下载 PPTX</a>
+<div id="interactive-deck" class="gb-player-shell">
+  <div class="gb-player-bar">
+    <div class="gb-player-copy"><small>INTERACTIVE PAPER DECK</small><strong>GameASG-Bench · 26 页可交互图解</strong><span>页面内直接翻页；支持方向键、目录、全屏与手机横屏。</span></div>
+    <a class="gb-button" href="/lib/decks/gameasg-bench-visual-guide.html">沉浸模式 ↗</a>
+  </div>
+  <div class="post-deck-embed">
+    <div class="post-deck-embed-frame">
+      <iframe src="/lib/decks/gameasg-bench-visual-guide.html" title="GameASG-Bench 论文图解，共 26 页" allow="fullscreen" loading="eager"></iframe>
+    </div>
+    <p class="post-deck-embed-note"><span>共 26 页 · 点击按钮或使用 ← → 翻页</span><span>手机端建议横屏后全屏阅读</span></p>
+  </div>
 </div>
 
 <div class="gb-source-links">
   <a href="https://arxiv.org/abs/2609.21293">论文主页</a>
   <a href="https://arxiv.org/pdf/2609.21293">论文 PDF</a>
   <a href="https://github.com/areal-project/GameASG-Bench">官方代码与 47 个任务</a>
-  <a href="#interactive-deck">跳到可交互版本</a>
+  <a href="#原论文表格索引">跳到原论文表格</a>
 </div>
 
 ## 先说结论
@@ -357,15 +367,6 @@ if (served(after) <= served(setup) &&
 - [Table 7：推理强度](/lib/papers/gameasg-bench/table-7-reasoning-effort.png)
 - [Table 8：harness 比较](/lib/papers/gameasg-bench/table-8-harness.png)
 - [Table 9：失败诊断](/lib/papers/gameasg-bench/table-9-diagnostics.png)
-
-## 可交互图解
-
-<div id="interactive-deck" class="post-deck-embed">
-  <div class="post-deck-embed-frame">
-    <iframe src="/lib/decks/gameasg-bench-visual-guide.html" title="GameASG-Bench 论文图解，共 26 页" allow="fullscreen"></iframe>
-  </div>
-  <p class="post-deck-embed-note"><span>共 26 页，可点击按钮或使用方向键翻页</span><span>手机端建议横屏后全屏阅读</span></p>
-</div>
 
 论文：[GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development](https://arxiv.org/abs/2609.21293)。代码与任务：[areal-project/GameASG-Bench](https://github.com/areal-project/GameASG-Bench)。文中的 Figure 与 Table 图片均裁自原论文；流程图与中文解读根据论文第 2、3 节和官方仓库整理。
 
