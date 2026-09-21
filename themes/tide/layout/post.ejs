@@ -1,7 +1,9 @@
 <%
   const cats = page.categories ? page.categories.toArray() : [];
   const tags = page.tags ? page.tags.toArray() : [];
-  const tocHtml = toc(page.content, { list_number: false, min_depth: 2, max_depth: 3 });
+  const requestedTocDepth = Number(page.toc_depth);
+  const tocMaxDepth = Number.isFinite(requestedTocDepth) && requestedTocDepth >= 2 ? requestedTocDepth : 3;
+  const tocHtml = toc(page.content, { list_number: false, min_depth: 2, max_depth: tocMaxDepth });
   const hasToc = tocHtml && strip_html(tocHtml).trim().length > 0;
   const isEncrypted = String(page.content || '').includes('hexo-blog-encrypt');
   const commentsEnabled = theme.comments && theme.comments.enable && !isEncrypted;
