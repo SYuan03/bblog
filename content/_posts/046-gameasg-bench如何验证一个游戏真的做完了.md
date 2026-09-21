@@ -2,7 +2,7 @@
 title: "GameASG-Bench 如何验证一个游戏真的做完了"
 permalink: "/posts/论文解读/gameasg-bench.html"
 date: "2026-09-21T21:31:01+08:00"
-updated: "2026-09-22T03:26:38+08:00"
+updated: "2026-09-22T12:00:00+08:00"
 cover: "/generated-covers/046-gameasg-bench.webp"
 description: "从冻结测试契约、Armor Alley 真实断言和两类失败样例，拆解 GameASG-Bench 如何验收 47 个浏览器游戏任务。"
 wide_content: true
