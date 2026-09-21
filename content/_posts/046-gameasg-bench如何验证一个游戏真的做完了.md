@@ -20,24 +20,27 @@ tags:
 ---
 
 <style>
-.article-shell-deck .article-header{max-width:760px}.article-shell-deck .article-deck{display:grid;grid-template-columns:1fr;gap:1rem}.article-shell-deck .article-stats{justify-content:flex-start;gap:2rem}
-.gb-reading{--gb-column:760px;--gb-blue:var(--sea);--gb-orange:var(--coral);--gb-green:#3f8a68;--gb-ink:var(--ink);--gb-soft:var(--ink-soft);--gb-surface:var(--paper-elevated);--gb-line:var(--line-strong);width:min(100%,var(--gb-column));margin-inline:auto;color:var(--gb-ink)}
+html:not([data-theme="dark"]) body:has(.gb-reading){--paper:#fff;--paper-elevated:#f7f8fa;--ink:#20252d;--ink-soft:#68707c;--line:rgba(32,37,45,.1);--line-strong:rgba(32,37,45,.2);--sea:#2b5d91;background:#fff}
+.article-shell-deck{padding-top:2rem}.article-shell-deck .article-header{max-width:720px;margin-bottom:2.25rem}.article-shell-deck .article-header h1{max-width:24ch;margin:.72rem 0 1.05rem;font-family:var(--sans);font-weight:720;line-height:1.12}.article-shell-deck .article-deck{display:grid;grid-template-columns:1fr;gap:.85rem;padding-top:1rem}.article-shell-deck .article-deck>p{font-family:var(--sans);font-size:.93rem;line-height:1.65}.article-shell-deck .article-stats{justify-content:flex-start;gap:2rem}.article-shell-deck .article-stats dd{font-family:var(--sans);font-variant-numeric:tabular-nums}
+.gb-reading{--gb-column:720px;--gb-blue:var(--sea);--gb-orange:var(--coral);--gb-green:#3f8a68;--gb-ink:var(--ink);--gb-soft:var(--ink-soft);--gb-surface:var(--paper-elevated);--gb-line:var(--line-strong);width:min(100%,var(--gb-column));margin-inline:auto;color:var(--gb-ink);font-family:var(--sans);font-size:1.0625rem;line-height:1.78;-webkit-font-smoothing:antialiased}
 .gb-reading>*{max-width:100%}
+.gb-reading p,.gb-reading li{text-wrap:pretty}
 .gb-reading .gb-paper-meta{margin:0 0 8px;color:var(--gb-soft);font:400 .8rem/1.6 var(--sans)}
-.gb-reading .gb-source-links{display:flex;flex-wrap:wrap;gap:7px 18px;margin:0 0 30px;font-size:.92em}.gb-reading .gb-source-links a{font-family:var(--sans)}
+.gb-reading .gb-source-links{display:flex;flex-wrap:wrap;gap:7px 18px;margin:0 0 24px;font-size:.92em}.gb-reading .gb-source-links a{font-family:var(--sans)}
 .gb-reading .gb-lead{margin:0 0 24px;font-size:1.08em;line-height:1.78}
-.gb-reading .gb-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:22px 0 30px;border-block:1px solid var(--gb-line)}.gb-reading .gb-metric{min-height:102px;padding:17px 14px;border-right:1px solid var(--gb-line)}.gb-reading .gb-metric:last-child{border-right:0}.gb-reading .gb-metric strong{display:block;color:var(--gb-blue);font:650 clamp(1.65rem,3vw,2.25rem)/1 var(--serif)}.gb-reading .gb-metric span{display:block;margin-top:10px;color:var(--gb-soft);font:600 .76rem/1.45 var(--sans)}
+.gb-reading .gb-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:22px 0 30px;border-block:1px solid var(--gb-line)}.gb-reading .gb-metric{min-height:102px;padding:17px 14px;border-right:1px solid var(--gb-line)}.gb-reading .gb-metric:last-child{border-right:0}.gb-reading .gb-metric strong{display:block;color:var(--gb-blue);font:650 clamp(1.65rem,3vw,2.25rem)/1 var(--serif)}.gb-reading .gb-metric span{display:block;margin-top:10px;color:var(--gb-soft);font:600 .82rem/1.5 var(--sans)}
 .gb-reading .gb-deck{margin:28px 0 38px;border-block:1px solid var(--gb-line);background:var(--gb-surface)}.gb-reading .gb-deck>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:76px;padding:14px 16px;cursor:pointer;list-style:none}.gb-reading .gb-deck>summary::-webkit-details-marker{display:none}.gb-reading .gb-deck-title{display:grid;gap:3px}.gb-reading .gb-deck-title small{color:var(--gb-blue);font:800 .68rem/1.2 var(--mono);letter-spacing:.1em}.gb-reading .gb-deck-title strong{font-size:1rem}.gb-reading .gb-deck-action{color:var(--gb-blue);font:700 .8rem/1 var(--sans);white-space:nowrap}.gb-reading .gb-deck[open] .gb-deck-action::before{content:"收起";font-size:.8rem}.gb-reading .gb-deck[open] .gb-deck-action{font-size:0}.gb-reading .gb-player-shell{border-top:1px solid var(--gb-line);background:#252b31}.gb-reading .post-deck-embed{width:100%!important;max-width:100%;margin:0!important;transform:none!important}.gb-reading .post-deck-embed-frame{border:0;border-radius:0;box-shadow:none}.gb-reading .post-deck-embed-note{margin:0!important;padding:10px 14px!important;color:#c4ccd3!important;background:#252b31;border-top:1px solid #424950}.gb-reading .gb-deck-links{display:flex;justify-content:flex-end;padding:0 14px 13px;background:#252b31}.gb-reading .gb-deck-links a{color:#fff;padding:8px 12px;border:1px solid #ffffff4a;text-decoration:none;font:700 .78rem/1 var(--sans)}
-.gb-reading .gb-table-scroll{width:100%;margin:22px 0;overflow-x:auto}.gb-reading .gb-table-scroll table{display:table;width:100%;min-width:680px;margin:0;border-collapse:collapse;font:400 .82rem/1.5 var(--sans)}.gb-reading th,.gb-reading td{padding:9px 10px;border:1px solid var(--gb-line);text-align:left;vertical-align:top}.gb-reading th{background:color-mix(in srgb,var(--gb-blue) 8%,var(--gb-surface))}.gb-reading td:first-child{font-weight:650}.gb-reading code{font-size:.92em}
-.gb-reading .gb-figure{width:100%;margin:26px 0}.gb-reading .gb-figure img{display:block;width:100%;height:auto;margin:0;border:1px solid color-mix(in srgb,var(--gb-line) 65%,transparent);border-radius:0;background:#fff;box-shadow:none}.gb-reading .gb-figure figcaption{margin:8px 0 0;color:var(--gb-soft);font-size:.82em;line-height:1.55;text-align:left}.gb-reading .gb-figure figcaption strong{color:var(--gb-ink)}
-.gb-reading .gb-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--gb-line);list-style:none}.gb-reading .gb-flow li{min-height:128px;padding:14px;background:var(--gb-surface)}.gb-reading .gb-flow b{display:block;margin-bottom:7px;color:var(--gb-blue);font:750 .78rem/1.3 var(--sans)}.gb-reading .gb-flow span{display:block;color:var(--gb-soft);font-size:.78em;line-height:1.48}
+.gb-reading .gb-table-scroll{width:100%;margin:22px 0;overflow-x:auto}.gb-reading .gb-table-scroll table{display:table;width:100%;min-width:680px;margin:0;border-collapse:collapse;font:400 .875rem/1.55 var(--sans)}.gb-reading th,.gb-reading td{padding:9px 10px;border:1px solid var(--gb-line);text-align:left;vertical-align:top}.gb-reading th{background:color-mix(in srgb,var(--gb-blue) 8%,var(--gb-surface))}.gb-reading td:first-child{font-weight:650}.gb-reading code{font-size:.92em}
+.gb-reading .gb-figure{width:100%;margin:26px 0}.gb-reading .gb-figure img{display:block;width:100%;height:auto;margin:0;border:1px solid color-mix(in srgb,var(--gb-line) 65%,transparent);border-radius:0;background:#fff;box-shadow:none}.gb-reading .gb-figure figcaption{margin:8px 0 0;color:var(--gb-soft);font-size:.84rem;line-height:1.6;text-align:left}.gb-reading .gb-figure figcaption strong{color:var(--gb-ink)}
+.gb-reading .gb-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--gb-line);list-style:none}.gb-reading .gb-flow li{min-height:128px;padding:14px;background:var(--gb-surface)}.gb-reading .gb-flow b{display:block;margin-bottom:7px;color:var(--gb-blue);font:750 .8rem/1.35 var(--sans)}.gb-reading .gb-flow span{display:block;color:var(--gb-soft);font-size:.84rem;line-height:1.58}
 .gb-reading .gb-note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--gb-orange);background:color-mix(in srgb,var(--gb-orange) 7%,var(--gb-surface))}.gb-reading .gb-note.blue{border-color:var(--gb-blue);background:color-mix(in srgb,var(--gb-blue) 7%,var(--gb-surface))}.gb-reading .gb-note p{margin:.35em 0}
-.gb-reading .gb-formula{margin:22px 0;padding:18px;border-block:1px solid var(--gb-line);text-align:center}.gb-reading .gb-formula code{display:block;padding:0;color:var(--gb-ink);background:none;font-size:clamp(.8rem,1.5vw,.98rem)}.gb-reading .gb-formula span{display:block;margin-top:8px;color:var(--gb-soft);font:400 .78rem/1.5 var(--sans)}
-.gb-reading>figure.highlight,.gb-reading>.highlight-container{width:100%;max-width:100%;margin-inline:0;contain:inline-size}.gb-reading pre{max-width:100%;overflow:auto}
+.gb-reading .gb-formula{margin:22px 0;padding:18px;border-block:1px solid var(--gb-line);text-align:center}.gb-reading .gb-formula code{display:block;padding:0;color:var(--gb-ink);background:none;font-size:clamp(.8rem,1.5vw,.98rem)}.gb-reading .gb-formula span{display:block;margin-top:8px;color:var(--gb-soft);font:400 .84rem/1.55 var(--sans)}
+.gb-reading>figure.highlight,.gb-reading>.highlight-container{width:100%;max-width:100%;margin-inline:0;contain:inline-size}.gb-reading pre{max-width:100%;overflow:auto;font-size:.84rem;line-height:1.68}
 .gb-reading .gb-evidence-details{margin:24px 0;border-block:1px solid var(--gb-line)}.gb-reading .gb-evidence-details>summary{display:flex;justify-content:space-between;gap:16px;padding:15px 2px;color:var(--gb-ink);cursor:pointer;font:700 .86rem/1.4 var(--sans)}.gb-reading .gb-evidence-details>summary span:last-child{color:var(--gb-soft);font-weight:500}.gb-reading .gb-evidence-details .gb-figure{margin:8px 0 26px}
 .gb-reading .gb-case-path{margin:18px 0 24px;padding-left:1.25rem}.gb-reading .gb-case-path li{margin:.55rem 0;padding-left:.25rem}
 @media(max-width:760px){.article-shell-deck .article-header{max-width:100%}.gb-reading .gb-metrics{grid-template-columns:1fr 1fr}.gb-reading .gb-metric:nth-child(2){border-right:0}.gb-reading .gb-metric:nth-child(-n+2){border-bottom:1px solid var(--gb-line)}.gb-reading .gb-flow{grid-template-columns:1fr 1fr}.gb-reading .gb-flow li:last-child{grid-column:1/-1}.gb-reading .gb-deck>summary{align-items:flex-start}.gb-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.gb-reading .gb-flow{grid-template-columns:1fr}.gb-reading .gb-flow li:last-child{grid-column:auto}.gb-reading .gb-deck>summary{display:grid}.gb-reading .gb-deck-action{justify-self:start}.gb-reading .gb-metric{min-height:94px;padding:14px 11px}}
+@media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,920px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
 <div class="gb-reading">
@@ -51,6 +54,22 @@ tags:
   <a href="https://papers.cool/arxiv/2609.21293">papers.cool FAQ</a>
 </div>
 
+<details class="gb-deck" id="interactive-deck" open>
+  <summary>
+    <span class="gb-deck-title"><small>INTERACTIVE PAPER DECK</small><strong>26 页交互图解：从任务契约到真实输入检查</strong></span>
+    <span class="gb-deck-action">展开阅读</span>
+  </summary>
+  <div class="gb-player-shell">
+    <div class="post-deck-embed">
+      <div class="post-deck-embed-frame">
+        <iframe src="/lib/decks/gameasg-bench-visual-guide.html" title="GameASG-Bench 论文图解，共 26 页" allow="fullscreen" allowfullscreen loading="eager"></iframe>
+      </div>
+      <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端建议横屏阅读</span></p>
+    </div>
+    <div class="gb-deck-links"><a href="/lib/decks/gameasg-bench-visual-guide.html">沉浸模式 ↗</a></div>
+  </div>
+</details>
+
 <p class="gb-lead">GameASG-Bench 检查 Coding Agent 交付的游戏能否在真实输入、自然时间和可见画面中完成需求。最佳组合的平均 L2 通过率达到 93.2%，最终完整通过的任务仍只有 26/47。这个差距对应论文要测的集成失败。</p>
 
 <div class="gb-metrics" aria-label="GameASG-Bench 关键数字">
@@ -59,22 +78,6 @@ tags:
   <div class="gb-metric"><strong>93.2%</strong><span>最佳 agent stack 的平均 L2</span></div>
   <div class="gb-metric"><strong>26/47</strong><span>最佳严格成功数，即 55.3%</span></div>
 </div>
-
-<details class="gb-deck" id="interactive-deck">
-  <summary>
-    <span class="gb-deck-title"><small>INTERACTIVE PAPER DECK</small><strong>26 页交互图解：从任务契约到真实输入检查</strong></span>
-    <span class="gb-deck-action">展开阅读</span>
-  </summary>
-  <div class="gb-player-shell">
-    <div class="post-deck-embed">
-      <div class="post-deck-embed-frame">
-        <iframe src="/lib/decks/gameasg-bench-visual-guide.html" title="GameASG-Bench 论文图解，共 26 页" allow="fullscreen" loading="lazy"></iframe>
-      </div>
-      <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端建议横屏阅读</span></p>
-    </div>
-    <div class="gb-deck-links"><a href="/lib/decks/gameasg-bench-visual-guide.html">沉浸模式 ↗</a></div>
-  </div>
-</details>
 
 ## Q1: 这篇论文试图解决什么问题？
 
