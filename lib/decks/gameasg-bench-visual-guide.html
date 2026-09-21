@@ -5,276 +5,184 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <base target="_blank">
-  <title>GameASG-Bench：如何验证一个游戏真的做完了</title>
+  <title>GameASG-Bench 论文图解</title>
   <style>
-    :root{
-      --paper:#f8f5ee;--ink:#15191e;--text:#3d4651;--muted:#7f8791;--line:#cbc8bf;
-      --blue:#2676c9;--blue2:#e8f1fb;--orange:#e86c36;--orange2:#fae9df;--green:#3f8a68;
-      --green2:#e4f1ea;--red:#b8463f;--red2:#f8e8e5;--gray:#e9e9e5;--dark:#20262d;
-      --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
-      --serif:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",serif;
-      --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#e5e2db;color:var(--ink);font-family:var(--sans)}
-    button{font:inherit} a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}
-    #viewport{position:fixed;inset:0;overflow:hidden}
-    #deck{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);box-shadow:0 18px 70px #24242440}
-    .slide{position:absolute;inset:0;display:none;padding:28px 64px 24px;background:linear-gradient(90deg,transparent 0 63px,#e9e4da 63px 64px,transparent 64px),var(--paper)}
-    .slide.active{display:flex;flex-direction:column}
-    .top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--muted);font-size:15px;letter-spacing:.12em}
-    .top b{color:var(--blue);font-family:var(--mono);font-weight:700}
-    h1,h2,h3,p{margin:0} h1,h2{font-family:var(--serif);letter-spacing:-.035em}
-    h1{margin-top:8px;font-size:58px;line-height:1.1;font-weight:700}
-    h2{margin-top:10px;font-size:43px;line-height:1.15;font-weight:700}
-    h3{font-size:21px;line-height:1.3}
-    .lead{margin-top:8px;color:var(--text);font-family:var(--serif);font-size:21px;line-height:1.48}
-    .body{flex:1;min-height:0;margin-top:14px;display:flex;flex-direction:column;justify-content:center}
-    .foot{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:8px;border-top:1px solid var(--line);color:#8a929b;font-size:11px;line-height:1.35}
-    .foot .src{max-width:1320px}.foot .pg{font:700 13px/1 var(--mono);white-space:nowrap;color:#747c85}
-    .box{border:1.5px solid #aeb2b7;background:#fffdf9;padding:18px}.box.blue{border-color:var(--blue);background:var(--blue2)}.box.orange{border-color:var(--orange);background:var(--orange2)}.box.green{border-color:var(--green);background:var(--green2)}.box.red{border-color:var(--red);background:var(--red2)}
-    .label{display:inline-block;padding:4px 8px;border:1px solid var(--blue);color:var(--blue);font:700 13px/1 var(--mono);letter-spacing:.04em}.label.orange{border-color:var(--orange);color:var(--orange)}.label.green{border-color:var(--green);color:var(--green)}
-    .mono{font-family:var(--mono)}.muted{color:var(--muted)}.blue{color:var(--blue)}.orange{color:var(--orange)}.green{color:var(--green)}.red{color:var(--red)}
-    .arrow{position:relative;height:2px;background:var(--blue)}.arrow:after{content:"";position:absolute;right:-1px;top:-5px;border-left:9px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}
-    .arrow.orange{background:var(--orange)}.arrow.orange:after{border-left-color:var(--orange)}
-    .caption{color:#616a74;font-family:var(--serif);font-size:15px;line-height:1.45;text-align:center}
-    .note{font-size:15px;line-height:1.5;color:var(--text)}
-
-    /* 01 */
-    .cover-grid{height:100%;display:grid;grid-template-columns:1.03fr .97fr;gap:50px;align-items:center}
-    .cover-copy .eyebrow{color:var(--orange);font:800 17px/1 var(--mono);letter-spacing:.08em}.cover-copy h1{font-size:71px;line-height:1.02;margin-top:18px}.cover-copy .lead{font-size:28px;line-height:1.45;margin-top:24px;max-width:700px}
-    .cover-metrics{display:grid;grid-template-columns:repeat(3,1fr);margin-top:34px;border-top:2px solid var(--ink);padding-top:15px}.cover-metrics div{border-right:1px solid var(--line);padding-right:18px;margin-right:18px}.cover-metrics div:last-child{border:0}.cover-metrics strong{display:block;font:700 45px/1 var(--serif);color:var(--blue)}.cover-metrics span{display:block;margin-top:8px;color:#69717a;font-size:14px;line-height:1.35}
-    .cover-diagram{height:540px;position:relative;border-left:1px solid var(--line);padding-left:48px;display:grid;align-content:center;gap:17px}.cover-node{padding:18px 20px;background:#fff;border:1.5px solid var(--ink);font-size:20px;line-height:1.35;position:relative}.cover-node:after{content:"↓";position:absolute;left:50%;bottom:-31px;color:var(--blue);font-size:24px}.cover-node:last-child:after{display:none}.cover-node.test{border-color:var(--blue);background:var(--blue2)}.cover-node.fail{border-color:var(--orange);background:var(--orange2)}.cover-node strong{font-family:var(--mono);font-size:16px;margin-right:14px}
-
-    /* 02 */
-    .false-confidence{display:grid;grid-template-columns:1fr 82px 1fr;align-items:center;gap:22px;height:100%}.evidence-stack{display:grid;gap:13px}.evidence{display:grid;grid-template-columns:62px 1fr;align-items:center;gap:16px;padding:19px;border-left:6px solid var(--green);background:#fff}.evidence i{font:800 30px/1 var(--mono);color:var(--green);font-style:normal}.evidence strong{display:block;font-size:21px}.evidence span{display:block;margin-top:5px;color:#68717b;font-size:15px}.breaks{display:grid;gap:13px}.break{padding:17px 19px;border-left:6px solid var(--red);background:var(--red2);font-size:16px;line-height:1.45}.break strong{display:block;font-size:19px;margin-bottom:4px;color:#8f342f}.big-ne{font:800 70px/1 var(--serif);text-align:center;color:var(--orange)}
-
-    /* 03 */
-    .dilemma{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:28px;align-items:center;height:100%}.extreme{min-height:390px;padding:26px;border-top:7px solid #8c9298;background:#fff}.extreme h3{font-family:var(--serif);font-size:29px}.extreme ul{margin:22px 0 0;padding-left:21px;color:var(--text);font-size:17px;line-height:1.7}.extreme.bad{border-color:var(--orange)}.middle{min-height:500px;padding:28px 30px;border:2px solid var(--blue);background:var(--blue2);display:flex;flex-direction:column;justify-content:center}.middle h3{font-family:var(--serif);font-size:34px;color:#1d5e9f}.middle .api{margin:26px 0;background:var(--dark);color:#e9f0f5;padding:20px 24px;font:18px/1.8 var(--mono)}.middle p{font-size:18px;line-height:1.55;color:#35546f}
-
-    /* 04 */
-    .related{display:grid;grid-template-columns:210px repeat(4,1fr);border-top:2px solid var(--ink);margin-top:5px}.rc{padding:12px 13px;border-bottom:1px solid var(--line);font-size:14px;line-height:1.38}.rc.head{font-weight:800;text-align:center;background:#eeece6}.rc.name{font-weight:800;font-size:15px}.rc.focus{background:var(--blue2)}.rc.new{background:var(--orange2);color:#91401f;font-weight:750}.related-note{margin-top:16px;padding:14px 18px;border-left:5px solid var(--orange);background:#fff;font-size:16px;line-height:1.5;color:var(--text)}
-
-    /* 05 */
-    .task-pipeline{display:grid;grid-template-columns:1fr 55px 260px 55px 1fr;align-items:center;gap:10px}.docs{display:grid;gap:12px}.doc{display:grid;grid-template-columns:122px 1fr;gap:13px;padding:16px 18px;background:#fff;border-left:6px solid var(--blue)}.doc:nth-child(2){border-color:var(--orange)}.doc:nth-child(3){border-color:var(--green)}.doc b{font:800 17px/1.3 var(--mono)}.doc span{font-size:15px;line-height:1.45;color:#646d77}.agent{padding:46px 18px;text-align:center;background:var(--dark);color:white}.agent strong{font:700 31px/1.2 var(--serif)}.agent small{display:block;margin-top:10px;color:#c1c6cc;font-size:14px;line-height:1.4}.deliver{display:grid;gap:14px}.artifact{padding:22px;text-align:center;border:2px solid var(--blue);background:var(--blue2)}.artifact strong{display:block;font:800 27px/1 var(--mono)}.artifact span{display:block;margin-top:8px;font-size:15px;color:#47627d}.hidden{padding:17px;border:1.5px dashed var(--orange);font-size:15px;line-height:1.45}.isolation{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}.isolation p{font-size:16px;line-height:1.5;color:var(--text)}.isolation b{color:var(--blue)}
-
-    /* 06 */
-    .api-layout{display:grid;grid-template-columns:.95fr 1.05fr;gap:32px;height:100%;align-items:center}.api-code{background:var(--dark);color:#eaf0f3;padding:25px 28px;font:18px/1.72 var(--mono);overflow:hidden}.api-code .kw{color:#75b8f5}.api-code .fn{color:#f1a17d}.api-code .cm{color:#8e9aa6}.method-list{display:grid;gap:13px}.method{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:17px 18px;border-top:4px solid var(--blue);background:#fff}.method:nth-child(2){border-color:var(--orange)}.method:nth-child(3){border-color:var(--green)}.method:nth-child(4){border-color:#767c83}.method code{font:800 16px/1.35 var(--mono)}.method span{font-size:15px;line-height:1.45;color:#606975}
-
-    /* 07 */
-    .legal-flow{display:grid;grid-template-columns:1fr 50px 1fr 50px 1fr;align-items:center;gap:8px}.legal-node{min-height:235px;padding:22px;background:#fff;border-top:6px solid var(--green)}.legal-node.action{border-color:var(--blue)}.legal-node.observe{border-color:var(--orange)}.legal-node h3{font-family:var(--serif);font-size:27px}.legal-node p{margin-top:14px;color:var(--text);font-size:16px;line-height:1.55}.forbidden{display:grid;grid-template-columns:160px repeat(4,1fr);margin-top:25px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.forbidden div{padding:13px 14px;border-right:1px solid var(--line);font-size:14px;line-height:1.4}.forbidden div:first-child{font-weight:800;color:var(--red)}.forbidden div:last-child{border:0}
-
-    /* 08 */
-    .case-layout{display:grid;grid-template-columns:330px 1fr;gap:28px;height:100%;align-items:stretch}.case-card{padding:24px;background:var(--dark);color:white;display:flex;flex-direction:column;justify-content:space-between}.case-card h3{font-family:var(--serif);font-size:35px}.case-card p{margin-top:14px;color:#cbd1d7;font-size:16px;line-height:1.55}.case-card .game-metrics{display:grid;gap:12px}.game-metrics div{padding-top:11px;border-top:1px solid #ffffff35}.game-metrics b{display:block;color:#7fc0fa;font:800 14px/1 var(--mono)}.game-metrics span{display:block;margin-top:5px;font-size:15px}.trajectory{display:grid;grid-template-columns:1fr 36px 1fr 36px 1fr;align-items:center}.traj{padding:21px 18px;min-height:260px;background:#fff;border:1.5px solid #afb4b9}.traj h3{font-size:20px;color:var(--blue)}.traj pre{white-space:pre-wrap;margin:15px 0 0;font:14px/1.55 var(--mono);color:#3c4650}.traj.result{border-color:var(--orange);background:var(--orange2)}.case-rule{margin-top:18px;padding:14px 17px;border-left:5px solid var(--red);background:var(--red2);font-size:15px;line-height:1.45}
-
-    /* 09 */
-    .code-layout{display:grid;grid-template-columns:1.3fr .7fr;gap:26px;height:100%;align-items:center}.code-block{margin:0;background:#1d232a;color:#e7edf2;padding:24px 26px;font:15px/1.58 var(--mono);overflow:hidden}.code-block .c{color:#8b98a5}.code-block .b{color:#70b9fa}.code-block .o{color:#f09a73}.code-block .g{color:#82cba6}.assertions{display:grid;gap:13px}.assertion{padding:17px 18px;background:#fff;border-left:6px solid var(--blue)}.assertion:nth-child(2){border-color:var(--orange)}.assertion:nth-child(3){border-color:var(--green)}.assertion strong{display:block;font-size:19px}.assertion span{display:block;margin-top:6px;color:#646d76;font-size:15px;line-height:1.45}
-
-    /* 10 */
-    .layers{display:grid;grid-template-columns:.9fr 70px 1.1fr;align-items:center}.layer-card{min-height:410px;padding:25px 27px;background:#fff;border-top:7px solid #8b9198}.layer-card.l2{border-color:var(--blue);background:var(--blue2)}.layer-card h3{font-family:var(--serif);font-size:32px}.layer-card .stat{margin:18px 0;font:700 53px/1 var(--serif);color:#7b8289}.layer-card.l2 .stat{color:var(--blue)}.layer-card ul{margin:0;padding-left:20px;font-size:16px;line-height:1.68;color:var(--text)}.fresh{margin-top:20px;display:flex;gap:0}.fresh span{flex:1;padding:10px 12px;border:1px solid #9ebfe0;border-right:0;text-align:center;font:13px/1.25 var(--mono);background:#fff}.fresh span:last-child{border-right:1px solid #9ebfe0}.layer-sep{text-align:center;font:700 18px/1.4 var(--mono);color:var(--orange)}
-
-    /* 11 */
-    .priority-row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.priority{padding:21px 22px;background:#fff;border-top:7px solid #7e858d}.priority.p1{border-color:var(--blue);background:var(--blue2)}.priority.p2{border-color:var(--orange);background:var(--orange2)}.priority strong{display:block;font:800 34px/1 var(--mono)}.priority span{display:block;margin-top:9px;font-size:16px;line-height:1.48;color:var(--text)}.formula{margin-top:25px;padding:20px 26px;border-top:2px solid var(--ink);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.formula code{font:700 21px/1.55 var(--mono);color:#225f9d}.formula p{font-size:17px;line-height:1.5;color:var(--text)}.score-example{display:grid;grid-template-columns:1fr 42px 1fr;align-items:center;margin-top:22px}.score-example .score{padding:18px;text-align:center;background:#fff}.score-example .score strong{display:block;font:700 39px/1 var(--serif)}.score-example .score span{display:block;margin-top:7px;font-size:14px;color:#69717b}.score-example .score.fail{background:var(--red2);color:var(--red)}
-
-    /* 12 */
-    .corpus{display:grid;grid-template-columns:.95fr 1.05fr;gap:36px;align-items:center}.big-counts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.count{padding:20px;background:#fff;border-top:6px solid var(--blue)}.count:nth-child(2){border-color:var(--orange)}.count:nth-child(3){border-color:var(--green)}.count:nth-child(4){border-color:#747b83}.count strong{display:block;font:700 47px/1 var(--serif)}.count span{display:block;margin-top:8px;font-size:14px;color:#69717b;line-height:1.4}.bars{display:grid;gap:10px}.bar{display:grid;grid-template-columns:120px 1fr 44px;gap:12px;align-items:center;font-size:14px}.track{height:18px;background:#e3e4e2}.fill{height:100%;background:var(--blue)}.bar:nth-child(2) .fill,.bar:nth-child(5) .fill{background:var(--orange)}.bar b{text-align:right;font:700 13px/1 var(--mono)}.genre-note{margin-top:16px;font-size:14px;color:#68717b;line-height:1.45}
-
-    /* 13 */
-    .leaderboard{display:grid;grid-template-columns:250px 1fr 75px 75px;gap:8px 13px;align-items:center;margin-top:2px}.lh{padding-bottom:8px;border-bottom:2px solid var(--ink);font-size:13px;font-weight:800}.lrow{display:contents}.lname{font-size:14px}.lb{height:18px;background:#e3e5e5}.lb i{display:block;height:100%;background:var(--blue)}.lval,.ll1{text-align:right;font:700 13px/1 var(--mono)}.lrow.top .lname,.lrow.top .lval{font-weight:850;color:#174f87}.lrow.top .lb i{background:var(--orange)}.gap-callout{display:grid;grid-template-columns:1fr 60px 1fr;margin-top:22px;align-items:center}.gap-num{padding:18px;text-align:center;background:var(--blue2)}.gap-num strong{display:block;font:700 43px/1 var(--serif);color:var(--blue)}.gap-num span{display:block;margin-top:6px;font-size:14px}.gap-num.strict{background:var(--orange2)}.gap-num.strict strong{color:var(--orange)}.gap-callout .big-ne{font-size:46px}
-
-    /* 14 */
-    .tool-chart{display:grid;grid-template-columns:220px 1fr 90px;gap:14px 16px;align-items:center}.tool-chart .tname{font-size:16px}.tool-chart .tbar{height:34px;background:#e4e5e3;position:relative}.tool-chart .tbar i{display:block;height:100%;background:#868c92}.tool-chart .tbar.full i{background:var(--blue)}.tool-chart .tbar b{position:absolute;left:12px;top:7px;color:white;font:800 15px/1.3 var(--mono)}.tool-chart .tv{font:700 17px/1 var(--mono);text-align:right}.tool-notes{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px}.tool-notes div{padding:17px 19px;border-left:5px solid var(--orange);background:#fff;font-size:16px;line-height:1.5}.tool-notes div:last-child{border-color:var(--green)}
-
-    /* 15 */
-    .two-studies{display:grid;grid-template-columns:1fr 1fr;gap:35px}.study{padding:23px 25px;background:#fff;border-top:7px solid var(--blue)}.study:nth-child(2){border-color:var(--orange)}.study h3{font-family:var(--serif);font-size:28px}.mini-table{display:grid;grid-template-columns:100px repeat(3,1fr);margin-top:18px;border-top:2px solid var(--ink)}.mini-table div{padding:11px 9px;border-bottom:1px solid var(--line);text-align:right;font:14px/1.35 var(--mono)}.mini-table div:nth-child(4n+1){text-align:left;font-family:var(--sans);font-weight:750}.study p{margin-top:17px;font-size:15px;line-height:1.5;color:var(--text)}.bias-note{margin-top:18px;padding:13px 17px;background:var(--orange2);border-left:5px solid var(--orange);font-size:15px;line-height:1.45}
-
-    /* 16 */
-    .harness-layout{display:grid;grid-template-columns:.88fr 1.12fr;gap:36px;align-items:center}.same-total{padding:28px;border-top:7px solid var(--blue);background:#fff}.same-total h3{font-family:var(--serif);font-size:31px}.same-total .equal{margin:28px 0;font:700 64px/1 var(--serif);color:var(--blue)}.same-total p{font-size:16px;line-height:1.55;color:var(--text)}.venn{position:relative;height:410px}.circle{position:absolute;top:35px;width:310px;height:310px;border-radius:50%;display:flex;align-items:center;padding:52px;font-size:16px;line-height:1.4}.circle.cc{left:120px;background:#2676c93b;border:3px solid var(--blue);justify-content:flex-start}.circle.cx{right:120px;background:#e86c363b;border:3px solid var(--orange);justify-content:flex-end;text-align:right}.only{font:800 45px/1 var(--serif)}.shared{position:absolute;left:50%;top:150px;transform:translateX(-50%);text-align:center}.shared strong{display:block;font:800 55px/1 var(--serif)}.shared span{font-size:14px}.neither{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:15px;color:#626b75}.resource{position:absolute;top:355px;width:100%;display:flex;justify-content:space-between;padding:0 88px;font:13px/1.4 var(--mono);color:#59636d}
-
-    /* 17 */
-    .failure-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.failure{background:#fff;padding:24px;border-top:7px solid var(--orange)}.failure:nth-child(2){border-color:var(--red)}.failure h3{font-family:var(--serif);font-size:29px}.failure .stack{margin-top:8px;font:700 13px/1.4 var(--mono);color:var(--muted)}.failure ol{margin:20px 0 0;padding-left:22px;font-size:16px;line-height:1.6;color:var(--text)}.failure .caught{margin-top:18px;padding:14px 16px;background:var(--orange2);font-size:15px;line-height:1.45}.failure:nth-child(2) .caught{background:var(--red2)}
-
-    /* 18 */
-    .assessment{display:grid;grid-template-columns:1fr 1fr;gap:34px}.assessment section{padding:22px 24px;background:#fff;border-top:7px solid var(--green)}.assessment section:last-child{border-color:var(--orange)}.assessment h3{font-family:var(--serif);font-size:28px}.assessment ul{margin:18px 0 0;padding-left:21px;color:var(--text);font-size:16px;line-height:1.62}.closing{margin-top:22px;padding:18px 22px;border-left:6px solid var(--blue);background:var(--blue2);font-family:var(--serif);font-size:21px;line-height:1.5}.source-links{margin-top:15px;display:flex;gap:22px;font-size:14px;color:var(--blue)}
-
-    #controls{position:fixed;right:18px;bottom:16px;display:flex;align-items:center;gap:8px;z-index:20;background:#14191edb;color:white;padding:8px 10px;border-radius:4px;box-shadow:0 5px 18px #0004}
-    #controls button{width:36px;height:32px;border:1px solid #ffffff3b;background:transparent;color:white;cursor:pointer;border-radius:2px}#controls button:hover,#controls button:focus-visible{background:#ffffff18;outline:none}.counter{min-width:58px;text-align:center;font:12px/1 var(--mono);color:#d8dde1}
-    #progress{position:fixed;left:0;bottom:0;height:3px;background:var(--blue);z-index:21;transition:width .2s ease}
-    @media(max-width:700px){#controls{right:8px;bottom:8px;transform:scale(.9);transform-origin:right bottom}}
-    @media print{
-      @page{size:16in 9in;margin:0}html,body{width:auto;height:auto;overflow:visible;background:white}#viewport{position:static;overflow:visible}#deck{position:static;width:1600px;height:auto;transform:none!important;box-shadow:none}.slide{position:relative;display:flex!important;width:1600px;height:900px;page-break-after:always}.slide:last-child{page-break-after:auto}#controls,#progress{display:none}
-    }
+    :root{--paper:#f8f5ee;--ink:#182028;--text:#3f4a54;--muted:#737c84;--line:#cbc7be;--blue:#2676c9;--pale-blue:#eaf3fb;--orange:#e86c36;--pale-orange:#faebe3;--green:#368667;--pale-green:#e7f2ec;--red:#b6463f;--dark:#1e252c;--sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--serif:"Songti SC","STSong","Noto Serif CJK SC",serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#dedbd4;color:var(--ink);font-family:var(--sans)}a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}button{font:inherit}
+    #viewport{position:fixed;inset:0;overflow:hidden}#deck{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);box-shadow:0 22px 80px #20202035}
+    .slide{position:absolute;inset:0;display:none;padding:27px 64px 25px;background:linear-gradient(90deg,transparent 0 63px,#e8e3da 63px 64px,transparent 64px),var(--paper)}.slide.active{display:flex;flex-direction:column}
+    .top{display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--line);font-size:15px;color:var(--muted);letter-spacing:.08em}.top b{color:var(--blue);font:800 15px/1 var(--mono)}
+    h1,h2,h3,p{margin:0}h1,h2{font-family:var(--serif);letter-spacing:-.035em}h1{font-size:71px;line-height:1.04}h2{font-size:43px;line-height:1.15;margin-top:11px}h3{font-size:23px;line-height:1.32}.lead{font-family:var(--serif);font-size:22px;line-height:1.48;color:var(--text);margin-top:9px}.body{flex:1;min-height:0;margin-top:15px;display:flex;flex-direction:column;justify-content:center}.foot{display:flex;justify-content:space-between;gap:22px;align-items:center;padding-top:8px;border-top:1px solid var(--line);font-size:11px;line-height:1.35;color:#7a838c}.src{max-width:1325px}.pg{white-space:nowrap;font:750 13px/1 var(--mono)}
+    .eyebrow{font:800 17px/1 var(--mono);color:var(--orange);letter-spacing:.1em}.label{font:800 13px/1 var(--mono);color:var(--blue);letter-spacing:.06em}.label.orange{color:var(--orange)}.label.green{color:var(--green)}.mono{font-family:var(--mono)}.blue{color:var(--blue)}.orange{color:var(--orange)}.green{color:var(--green)}.red{color:var(--red)}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center;height:100%}.split.narrow{grid-template-columns:.82fr 1.18fr}.split.wide{grid-template-columns:1.18fr .82fr}.rule-block{padding:22px 24px;border-top:6px solid var(--blue);background:#fff}.rule-block.orange{border-color:var(--orange)}.rule-block.green{border-color:var(--green)}.rule-block h3{font-family:var(--serif);font-size:29px}.rule-block p,.rule-block li{font-size:16px;line-height:1.52;color:var(--text)}.rule-block p{margin-top:12px}.rule-block ul{margin:14px 0 0;padding-left:21px}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin-top:32px}.metric{padding:17px 20px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{display:block;font:750 45px/1 var(--serif);color:var(--blue)}.metric span{display:block;margin-top:8px;font-size:14px;line-height:1.35;color:#69727b}
+    .cover{display:grid;grid-template-columns:1.04fr .96fr;gap:52px;align-items:center;height:100%}.cover h1{margin-top:18px}.cover .lead{font-size:28px;margin-top:25px}.cover-art{position:relative;height:560px;border-left:1px solid var(--line);padding-left:52px;display:flex;flex-direction:column;justify-content:center;gap:20px}.cover-step{position:relative;padding:21px 24px;border:1.5px solid var(--ink);background:#fff;font-size:21px}.cover-step b{font:800 15px/1 var(--mono);color:var(--blue);margin-right:16px}.cover-step:after{content:"↓";position:absolute;left:50%;bottom:-34px;color:var(--orange);font-size:24px}.cover-step:last-child:after{display:none}.cover-step:last-child{border-color:var(--orange);background:var(--pale-orange)}
+    .big-claim{font-family:var(--serif);font-size:39px;line-height:1.34}.big-claim strong{color:var(--blue)}.note{font-size:16px;line-height:1.52;color:var(--text)}
+    .evidence{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.ev{display:grid;grid-template-columns:58px 1fr;gap:15px;align-items:start;padding:18px 20px;background:#fff;border-left:6px solid var(--green)}.ev:nth-child(3),.ev:nth-child(4){border-color:var(--orange);background:var(--pale-orange)}.ev b{font:800 29px/1 var(--mono);color:var(--green)}.ev:nth-child(3) b,.ev:nth-child(4) b{color:var(--orange)}.ev strong{font-size:19px}.ev span{display:block;margin-top:5px;font-size:14px;line-height:1.4;color:#66717a}
+    .balance{display:grid;grid-template-columns:1fr 100px 1fr;align-items:center;gap:25px}.extreme{min-height:405px;padding:27px 28px;border-top:7px solid #858c93;background:#fff}.extreme.orange{border-color:var(--orange)}.extreme h3{font-family:var(--serif);font-size:31px}.extreme ul{margin:24px 0 0;padding-left:22px;font-size:17px;line-height:1.72;color:var(--text)}.middle-mark{text-align:center;font:800 72px/1 var(--serif);color:var(--blue)}.contract-center{margin-top:24px;padding:20px;background:var(--dark);color:#e8eef3;font:18px/1.75 var(--mono)}
+    .matrix{display:grid;grid-template-columns:210px repeat(4,1fr);border-top:2px solid var(--ink)}.matrix div{padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px;line-height:1.34}.matrix .head{background:#eceae5;font-weight:800;text-align:center}.matrix .name{font-weight:800}.matrix .focus{background:var(--pale-blue)}.matrix .accent{background:var(--pale-orange);font-weight:800;color:#8e3b1d}
+    .roles{display:grid;grid-template-columns:190px 260px 220px 1fr;border-top:2px solid var(--ink)}.roles div{padding:13px 15px;border-bottom:1px solid var(--line);font-size:15px;line-height:1.36}.roles .head{background:#eceae5;font-weight:800}.roles .human{border-left:6px solid var(--orange)}.roles .agent{border-left:6px solid var(--blue)}
+    .paper-frame{height:610px;padding:16px;background:#fff;border:1px solid #d6d2c9;display:flex;align-items:center;justify-content:center}.paper-frame img{display:block;max-width:100%;max-height:100%;object-fit:contain}.paper-frame.tight{height:540px}.paper-caption{margin-top:8px;text-align:center;font-size:13px;line-height:1.35;color:#666f78}
+    .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;align-items:stretch}.flow-step{position:relative;min-height:225px;padding:20px 17px;border-top:6px solid var(--blue);background:#fff}.flow-step:nth-child(even){border-color:var(--orange)}.flow-step b{display:block;font:800 15px/1.3 var(--mono);color:var(--blue)}.flow-step:nth-child(even) b{color:var(--orange)}.flow-step strong{display:block;margin-top:14px;font-family:var(--serif);font-size:22px}.flow-step p{margin-top:11px;font-size:14px;line-height:1.45;color:var(--text)}.flow-step:after{content:"→";position:absolute;right:-20px;top:94px;z-index:2;font-size:24px;color:#7c848b}.flow-step:last-child:after{display:none}.flow-note{margin-top:26px;padding:14px 18px;border-left:5px solid var(--green);background:var(--pale-green);font-size:16px;line-height:1.45}
+    .isolation{display:grid;grid-template-columns:1fr 88px 1fr;align-items:center}.container-box{min-height:365px;padding:27px 29px;border:2px solid var(--blue);background:#fff}.container-box.eval{border-color:var(--orange)}.container-box h3{font-family:var(--serif);font-size:31px}.container-box code{display:block;margin:20px 0;padding:17px 19px;background:var(--dark);color:#eaf0f4;font:15px/1.65 var(--mono)}.container-box li{font-size:16px;line-height:1.58;color:var(--text)}.container-box ul{padding-left:21px}.iso-arrow{text-align:center;font-size:45px;color:var(--orange)}
+    .api{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:center}.code{margin:0;padding:24px 26px;background:var(--dark);color:#e8eef2;font:15px/1.55 var(--mono);white-space:pre-wrap;overflow:hidden}.code .b{color:#7cc0fa}.code .o{color:#f0a27c}.code .g{color:#82cba6}.code .c{color:#96a1aa}.method-list{display:grid;gap:12px}.method{display:grid;grid-template-columns:175px 1fr;gap:16px;padding:16px 18px;border-top:4px solid var(--blue);background:#fff}.method:nth-child(2){border-color:var(--orange)}.method:nth-child(3){border-color:var(--green)}.method:nth-child(4){border-color:#777e85}.method code{font:800 17px/1.3 var(--mono)}.method span{font-size:15px;line-height:1.45;color:#5f6a73}
+    .prepare{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center}.stage{min-height:270px;padding:23px 22px;background:#fff;border-top:6px solid var(--green)}.stage.act{border-color:var(--blue)}.stage.observe{border-color:var(--orange)}.stage h3{font-family:var(--serif);font-size:27px;margin-top:13px}.stage p{font-size:16px;line-height:1.52;color:var(--text);margin-top:14px}.stage-arrow{text-align:center;font-size:33px;color:#7b848b}.forbid{margin-top:22px;padding:15px 18px;border-left:5px solid var(--red);background:#f8e9e6;font-size:15px;line-height:1.45}
+    .code-side{display:grid;grid-template-columns:1.15fr .85fr;gap:29px;align-items:center}.annotations{display:grid;gap:13px}.annotation{padding:16px 18px;border-left:6px solid var(--blue);background:#fff}.annotation:nth-child(2){border-color:var(--orange)}.annotation:nth-child(3){border-color:var(--green)}.annotation strong{font-size:18px}.annotation span{display:block;margin-top:6px;font-size:14px;line-height:1.42;color:#616b74}
+    .case-spec{display:grid;grid-template-columns:.8fr 1.2fr;gap:32px}.game{height:100%;padding:27px;background:var(--dark);color:#fff}.game h3{font-family:var(--serif);font-size:38px}.game p{margin-top:18px;color:#cdd3d8;font-size:17px;line-height:1.55}.game .win{margin-top:27px;padding:15px 17px;border-left:5px solid #70b6f0;background:#ffffff12;font-size:15px;line-height:1.45}.requirements{display:grid;grid-template-columns:1fr 1fr;gap:14px}.req{padding:17px 18px;background:#fff;border-top:5px solid var(--blue)}.req:nth-child(2n){border-color:var(--orange)}.req strong{font-size:18px}.req p{margin-top:7px;font-size:14px;line-height:1.4;color:#626c75}
+    .trajectory{display:grid;grid-template-columns:1fr 48px 1fr 48px 1fr;align-items:center}.traj{min-height:310px;padding:22px 20px;background:#fff;border-top:6px solid var(--green)}.traj:nth-of-type(2){border-color:var(--blue)}.traj:nth-of-type(3){border-color:var(--orange)}.traj h3{font-family:var(--serif);font-size:28px}.traj pre{margin:16px 0 0;white-space:pre-wrap;font:14px/1.5 var(--mono);color:#3e4952}.trace-arrow{text-align:center;font-size:33px;color:#7d858c}
+    .logic{display:grid;grid-template-columns:1fr 1fr;gap:25px}.logic-block{padding:23px;background:#fff;border-top:7px solid var(--blue)}.logic-block:nth-child(2){border-color:var(--orange)}.logic-block h3{font-family:var(--serif);font-size:28px}.logic-block code{display:block;margin-top:18px;padding:18px;background:var(--dark);color:#eef2f5;font:15px/1.55 var(--mono)}.logic-block p{margin-top:15px;font-size:15px;line-height:1.48;color:var(--text)}
+    .two-paper{display:grid;grid-template-columns:1fr 1fr;gap:25px}.two-paper figure{margin:0;height:570px;padding:12px;background:#fff;border:1px solid #d5d1c8;display:flex;flex-direction:column}.two-paper img{width:100%;height:520px;object-fit:contain}.two-paper figcaption{font-size:12px;line-height:1.35;color:#6c747c;text-align:center}
+    .scoring{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.priority{padding:22px 24px;background:#fff;border-top:7px solid #858c92}.priority.p1{border-color:var(--blue);background:var(--pale-blue)}.priority.p2{border-color:var(--orange);background:var(--pale-orange)}.priority strong{font:800 37px/1 var(--mono)}.priority p{margin-top:10px;font-size:16px;line-height:1.48;color:var(--text)}.formula{margin-top:24px;padding:20px 23px;border-top:2px solid var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.formula code{font:700 21px/1.5 var(--mono);color:#1c5f9e}.formula p{font-size:16px;line-height:1.48;color:var(--text)}
+    .case-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.failure{padding:24px 25px;background:#fff;border-top:7px solid var(--orange)}.failure:nth-child(2){border-color:var(--blue)}.failure h3{font-family:var(--serif);font-size:29px}.failure .stack{margin-top:7px;font:13px/1.4 var(--mono);color:var(--muted)}.failure ol{margin:18px 0 0;padding-left:22px;font-size:15px;line-height:1.55;color:var(--text)}.failure .caught{margin-top:16px;padding:13px 15px;background:var(--pale-orange);font-size:14px;line-height:1.43}.failure:nth-child(2) .caught{background:var(--pale-blue)}
+    #controls{position:fixed;right:18px;bottom:16px;z-index:5;display:flex;align-items:center;background:#1d242bdc;color:white;border-radius:4px;overflow:hidden;box-shadow:0 8px 28px #0003}#controls button{width:44px;height:40px;border:0;border-right:1px solid #ffffff28;background:transparent;color:white;cursor:pointer}#controls button:hover{background:#ffffff18}.counter{padding:0 12px;font:700 13px/1 var(--mono)}#progress{position:fixed;left:0;bottom:0;height:4px;background:var(--orange);z-index:6;transition:width .2s ease}
   </style>
 </head>
 <body>
 <div id="viewport"><main id="deck" aria-label="GameASG-Bench 论文图解">
 
-  <section class="slide active" data-title="封面">
-    <div class="top"><b>PAPER NOTE · 2026.09</b><span>GameASG-Bench · arXiv:2609.21293</span></div>
-    <div class="body"><div class="cover-grid">
-      <div class="cover-copy">
-        <div class="eyebrow">CODING AGENT × GAME DEVELOPMENT</div>
-        <h1>如何验证一个游戏<br>真的做完了</h1>
-        <p class="lead">GameASG-Bench 把测试契约写进生成任务，让浏览器去检查操作、状态和画面是否对得上。</p>
-        <div class="cover-metrics"><div><strong>47</strong><span>浏览器游戏任务</span></div><div><strong>885</strong><span>L2 行为检查</span></div><div><strong>55.3%</strong><span>最佳严格成功率</span></div></div>
-      </div>
-      <div class="cover-diagram" aria-label="从需求到严格交付的评测流程">
-        <div class="cover-node"><strong>01</strong>自然语言玩法需求</div>
-        <div class="cover-node"><strong>02</strong>Coding Agent 生成 index.html</div>
-        <div class="cover-node test"><strong>03</strong>真实浏览器输入与状态观测</div>
-        <div class="cover-node fail"><strong>04</strong>所有核心检查通过才算交付</div>
-      </div>
-    </div></div>
-    <div class="foot"><span class="src">来源：Zhang et al., GameASG-Bench, 2026。本文数据均为论文作者报告。</span><span class="pg">01 / 18</span></div>
+  <section class="slide" data-title="封面">
+    <div class="body"><div class="cover"><div><div class="eyebrow">GAMEASG-BENCH · PAPER WALKTHROUGH</div><h1>如何验证一个游戏<br>真的做完了</h1><p class="lead">从人写规格与隐藏测试，到真实浏览器输入、严格成功率和可复现失败。</p><div class="metrics"><div class="metric"><strong>47</strong><span>完整浏览器游戏任务</span></div><div class="metric"><strong>336</strong><span>L1 静态检查</span></div><div class="metric"><strong>885</strong><span>L2 行为检查</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div class="cover-art"><div class="cover-step"><b>SPEC</b>人类先写可测试的玩法契约</div><div class="cover-step"><b>BUILD</b>Agent 交付自包含 index.html</div><div class="cover-step"><b>VERIFY</b>隐藏测试复现、操作并判定</div></div></div></div>
+    <div class="foot"><span class="src">GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development · arXiv:2609.21293</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="动机">
-    <div class="top"><b>01 · MOTIVATION</b><span>代码存在，不代表行为成立</span></div>
-    <h2>一份能打开的 index.html，可能处处断线</h2>
-    <p class="lead">游戏把完整应用常见的集成故障压缩在一个页面里：输入、共享状态、渲染和状态机必须同时正确。</p>
-    <div class="body"><div class="false-confidence">
-      <div class="evidence-stack">
-        <div class="evidence"><i>✓</i><div><strong>HTML 可以加载</strong><span>语法、标签和入口文件都存在</span></div></div>
-        <div class="evidence"><i>✓</i><div><strong>代码里有对应变量</strong><span>ammo、score、paused 看起来齐全</span></div></div>
-        <div class="evidence"><i>✓</i><div><strong>画面能够渲染</strong><span>Canvas 或 WebGL 持续产出帧</span></div></div>
-      </div>
-      <div class="big-ne">≠</div>
-      <div class="breaks">
-        <div class="break"><strong>输入断了</strong>鼠标拖动没有触发上菜，玩家无法完成主循环。</div>
-        <div class="break"><strong>状态断了</strong>暂停界面出现了，但单位和生产队列仍在推进。</div>
-        <div class="break"><strong>组合断了</strong>场景加载和驾驶单测都过了，连在一起却冻结模拟时间。</div>
-        <div class="break"><strong>恢复断了</strong>重新开始后，上一局的结果或临时对象仍然残留。</div>
-      </div>
-    </div></div>
-    <div class="foot"><span class="src">论文 §1、§4.6、附录 A.1。</span><span class="pg">02 / 18</span></div>
+  <section class="slide" data-title="Motivation">
+    <div class="top"><b>02 · MOTIVATION</b><span>页面能打开，不代表游戏完成</span></div><h2>常见代理指标只能覆盖某一层</h2>
+    <div class="body"><div class="evidence"><div class="ev"><b>01</b><div><strong>成功加载</strong><span>能排除启动崩溃，无法证明交互和状态机。</span></div></div><div class="ev"><b>02</b><div><strong>静态截图</strong><span>能看一帧布局，无法证明控制、动画和终局。</span></div></div><div class="ev"><b>03</b><div><strong>源码关键词</strong><span>出现 win、ammo 或 restart 也可能只是注释和空壳。</span></div></div><div class="ev"><b>04</b><div><strong>Agent 自测</strong><span>容易只走接口捷径，漏掉真实鼠标、触摸和自然时间。</span></div></div></div><div class="rule-block orange" style="margin-top:24px"><p>完整游戏把输入、运行时状态、渲染反馈、资源变化和终局锁连成一条因果链。评测必须沿着这条链执行。</p></div></div>
+    <div class="foot"><span class="src">论文 §1、§2.3、§4.6。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="评测难题">
-    <div class="top"><b>02 · THE ORACLE PROBLEM</b><span>怎样到达状态，又不绑死实现</span></div>
-    <h2>完整应用评测卡在两个极端之间</h2>
-    <p class="lead">纯 GUI 难以稳定复现罕见状态；直接摸内部变量又会把测试写死在某一种实现上。</p>
-    <div class="body"><div class="dilemma">
-      <div class="extreme"><h3>只靠用户操作</h3><ul><li>到达后期状态耗时</li><li>碰撞和时序容易漂移</li><li>很难定位究竟哪条需求失败</li></ul></div>
-      <div class="middle"><span class="label">论文选择的中间层</span><h3 style="margin-top:16px">公开的行为契约</h3><div class="api">legal scenario<br>+ player action<br>+ stable snapshot<br>+ invariant</div><p>测试知道怎样准备合法状态、怎样操作、看哪些结果。游戏内部的数据结构仍由 Agent 自己决定。</p></div>
-      <div class="extreme bad"><h3>直接注入内部状态</h3><ul><li>依赖变量名和对象结构</li><li>不同实现难以复用同一测试</li><li>测试可能绕过真实玩法路径</li></ul></div>
-    </div></div>
-    <div class="foot"><span class="src">论文 §1、§2；测试设计受到 behavioral interface specification 与 controllability 思路影响。</span><span class="pg">03 / 18</span></div>
+  <section class="slide" data-title="评测设计难点">
+    <div class="top"><b>03 · THE ORACLE PROBLEM</b><span>可复现性与实现自由度</span></div><h2>测试既要到达罕见状态，也要避免绑定内部变量</h2>
+    <div class="body"><div class="balance"><div class="extreme"><h3>只用 GUI 慢慢玩</h3><ul><li>后期状态耗时</li><li>碰撞与时序容易漂移</li><li>失败难以定位到单条需求</li></ul></div><div class="middle-mark">⇄</div><div class="extreme orange"><h3>直接改内部状态</h3><ul><li>依赖对象名和数据结构</li><li>同一测试难以跨实现</li><li>可能绕过真正的玩法路径</li></ul></div></div><div class="contract-center">legal scenario + player action + stable snapshot + invariant</div></div>
+    <div class="foot"><span class="src">论文 §2.2。GameASG-Bench 把中间层写成公开的 evaluation interface specification。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="相关工作">
-    <div class="top"><b>03 · RELATED WORK</b><span>作者如何定位这项工作</span></div>
-    <h2>差别集中在两个问题：测试何时定义，怎样拿到运行证据</h2>
-    <div class="body">
-      <div class="related" role="table" aria-label="相关 benchmark 比较">
-        <div class="rc head">工作</div><div class="rc head">产物范围</div><div class="rc head">状态准备</div><div class="rc head">运行证据</div><div class="rc head">评价标准</div>
-        <div class="rc name">APPS / EvalPlus</div><div class="rc">函数</div><div class="rc">输入样例</div><div class="rc">返回值</div><div class="rc">预先定义测试</div>
-        <div class="rc name">SWE-bench</div><div class="rc">已有仓库修改</div><div class="rc">仓库与 issue</div><div class="rc">测试套件</div><div class="rc">已有项目测试</div>
-        <div class="rc name">WebGameBench</div><div class="rc">完整浏览器游戏</div><div class="rc">候选状态准备</div><div class="rc">真实浏览器交互</div><div class="rc">规格引导</div>
-        <div class="rc name">GameCraft-Bench</div><div class="rc">完整 Godot 项目</div><div class="rc">可回放演示</div><div class="rc">回放与多模态证据</div><div class="rc">隐藏 rubric</div>
-        <div class="rc name">GameGen-Verifier</div><div class="rc">生成游戏</div><div class="rc">运行时状态注入</div><div class="rc">前置、交互、后置</div><div class="rc">从规格抽取 keypoint</div>
-        <div class="rc name">GameXpert-Bench</div><div class="rc">生成、修复、迭代</div><div class="rc">生成后汇总事件</div><div class="rc">代码检查与现场交互</div><div class="rc">产物池加人工审核</div>
-        <div class="rc name focus">GameASG-Bench</div><div class="rc focus">单页浏览器游戏</div><div class="rc focus">预先声明合法场景</div><div class="rc focus">语义快照、真实输入、浏览器信号</div><div class="rc new">生成前固定契约与检查</div>
-      </div>
-      <div class="related-note">表中 GameASG-Bench 对其他工作的描述来自论文 §5.3。它的辨识度来自“生成前固定”：Agent 看得到接口规范，但看不到可执行检查。</div>
-    </div>
-    <div class="foot"><span class="src"><a href="https://arxiv.org/abs/2605.17637">WebGameBench</a> · <a href="https://arxiv.org/abs/2606.17861">GameCraft-Bench</a> · <a href="https://arxiv.org/abs/2605.07442">GameGen-Verifier</a> · <a href="https://arxiv.org/abs/2608.21833">GameXpert-Bench</a></span><span class="pg">04 / 18</span></div>
+  <section class="slide" data-title="Related work">
+    <div class="top"><b>04 · RELATED WORK</b><span>比较任务范围、状态准备与运行证据</span></div><h2>GameASG-Bench 的辨识度来自“生成前固定”</h2>
+    <div class="body"><div class="matrix"><div class="head">工作</div><div class="head">产物</div><div class="head">状态准备</div><div class="head">运行证据</div><div class="head">评价方式</div><div class="name">APPS / EvalPlus</div><div>函数</div><div>输入样例</div><div>返回值</div><div>预先定义测试</div><div class="name">SWE-bench</div><div>仓库修改</div><div>仓库与 issue</div><div>项目测试</div><div>已有测试套件</div><div class="name">WebGameBench</div><div>浏览器游戏</div><div>候选状态</div><div>真实浏览器交互</div><div>规格引导</div><div class="name">GameCraft-Bench</div><div>Godot 项目</div><div>可回放演示</div><div>回放与多模态证据</div><div>隐藏 rubric</div><div class="name">GameGen-Verifier</div><div>生成游戏</div><div>运行时注入</div><div>前置、交互、后置</div><div>规格抽取 keypoint</div><div class="name">GameXpert-Bench</div><div>生成与修复</div><div>生成后汇总事件</div><div>代码与现场交互</div><div>产物池加人工审核</div><div class="name focus">GameASG-Bench</div><div class="focus">单页浏览器游戏</div><div class="focus">预先声明合法场景</div><div class="focus">快照、真实输入、浏览器信号</div><div class="accent">规格和检查生成前固定</div></div></div>
+    <div class="foot"><span class="src">论文 §5.3。表内措辞按原文归纳。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="任务包">
-    <div class="top"><b>04 · TASK PACKAGE</b><span>人写规格，Agent 写游戏，测试独立执行</span></div>
-    <h2>每道题先写清楚“怎么玩”和“怎么验”</h2>
-    <p class="lead">47 个任务都要求交付一个自包含的 <span class="mono">index.html</span>。</p>
-    <div class="body">
-      <div class="task-pipeline">
-        <div class="docs"><div class="doc"><b>target.md</b><span>工作区、交付协议和简短玩法说明</span></div><div class="doc"><b>game-spec.md</b><span>玩家可见的机制、反馈、进度与终局</span></div><div class="doc"><b>tdd.md</b><span>场景、动作、快照字段、拒绝行为和不变量</span></div></div>
-        <div class="arrow"></div>
-        <div class="agent"><strong>Coding Agent</strong><small>干净工作区<br>新会话<br>可读取三份规格</small></div>
-        <div class="arrow orange"></div>
-        <div class="deliver"><div class="artifact"><strong>index.html</strong><span>HTML、CSS、JavaScript 集中交付</span></div><div class="hidden"><span class="label orange">HIDDEN</span><br><br><span class="mono">checks.json</span> 与 <span class="mono">checks.js</span> 不挂载到生成容器。</div></div>
-      </div>
-      <div class="isolation"><p><b>生成隔离：</b>每次尝试从原始任务文件和新会话开始。</p><p><b>评测隔离：</b>生成结束后，另一容器只读挂载产物与测试。</p></div>
-    </div>
-    <div class="foot"><span class="src">论文 §2.1、§3.2、附录 B；仓库 README。</span><span class="pg">05 / 18</span></div>
+  <section class="slide" data-title="谁写什么">
+    <div class="top"><b>05 · AUTHORSHIP AND VISIBILITY</b><span>先回答 checks 从哪来</span></div><h2>人类写规格、检查与优先级，Agent 写游戏</h2>
+    <div class="body"><div class="roles"><div class="head">文件</div><div class="head">作者</div><div class="head">Agent 可见性</div><div class="head">作用</div><div class="human mono">target.md</div><div>人类开发者</div><div>可见，直接进入提示</div><div>工作区、交付协议、玩法简介</div><div class="human mono">game-spec.md</div><div>人类开发者</div><div>可见</div><div>玩家可见机制和最低可玩循环</div><div class="human mono">tdd.md</div><div>人类开发者</div><div>可见</div><div>场景、动作、快照、拒绝与不变量</div><div class="human mono">checks.json</div><div>人类开发者</div><div>隐藏</div><div>L1 静态检查</div><div class="human mono">checks.js</div><div>人类开发者</div><div>隐藏</div><div>L2 浏览器行为检查</div><div class="human">参考实现</div><div>benchmark 团队</div><div>隐藏</div><div>人工验证后的正控制</div><div class="agent mono">index.html</div><div>Coding Agent</div><div>Agent 自己生成</div><div>最终交付物</div></div></div>
+    <div class="foot"><span class="src">论文 §2.1、§3.2、§3.3、附录 B。P0/P1/P2 在人工测试编写阶段分配。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="测试接口">
-    <div class="top"><b>05 · PUBLIC CONTRACT</b><span>四个方法组成统一测试面</span></div>
-    <h2>接口约束语义，不规定内部写法</h2>
-    <div class="body"><div class="api-layout">
-      <pre class="api-code"><span class="kw">window</span>.__gameTest = {
-  <span class="fn">reset</span>(options),
-  <span class="fn">loadScenario</span>(name, options),
-  <span class="fn">input</span>(action),
-  <span class="fn">getSnapshot</span>()
+  <section class="slide" data-title="原论文 Table 1">
+    <div class="top"><b>06 · ORIGINAL TABLE 1</b><span>三份公开任务文档</span></div><h2>Agent 知道要实现什么，也知道如何暴露可测试行为</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-1-task-documents.png" alt="原论文 Table 1"></div><div class="paper-caption">原论文 Table 1。三份文档都在 Agent 工作区，只有 target.md 直接传给 harness。</div></div>
+    <div class="foot"><span class="src">原论文 Table 1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="构建流程">
+    <div class="top"><b>07 · BENCHMARK CONSTRUCTION</b><span>根据论文 §2、§3 与附录 B 重绘</span></div><h2>测试在模型生成前就已经固定</h2>
+    <div class="body"><div class="flow"><div class="flow-step"><b>STEP 1</b><strong>人工选题</strong><p>完整可玩循环，可在有界浏览器执行中观察。</p></div><div class="flow-step"><b>STEP 2</b><strong>写公开规格</strong><p>target、game spec 和 TDD 共同定义任务。</p></div><div class="flow-step"><b>STEP 3</b><strong>写隐藏检查</strong><p>checks.json、checks.js 与优先级预先完成。</p></div><div class="flow-step"><b>STEP 4</b><strong>验证参考实现</strong><p>人工操作并跑自动检查，确认核心合规。</p></div><div class="flow-step"><b>STEP 5</b><strong>Agent 生成</strong><p>干净工作区、新会话，只能读公开文档。</p></div><div class="flow-step"><b>STEP 6</b><strong>独立评测</strong><p>预检交付，再跑 L1、L2 与严格计分。</p></div></div><div class="flow-note">47 个参考实现全部通过所有 L1 和适用的 L2 P0/P1。它们用于验证测试能接受人工确认合格的实现。</div></div>
+    <div class="foot"><span class="src">本页为二次重绘，不是论文原图。来源：论文 §2.1、§3.1 至 §3.3、§4.1、附录 B。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="容器隔离">
+    <div class="top"><b>08 · EXECUTION BOUNDARY</b><span>生成和评测互相隔离</span></div><h2>Agent 看得到契约，看不到可执行检查</h2>
+    <div class="body"><div class="isolation"><div class="container-box"><h3>生成容器</h3><code>read-only: target.md
+read-only: game-spec.md
+read-only: tdd.md
+read-write: workspace/</code><ul><li>每次从原始任务文件开始</li><li>新 agent session</li><li>不挂载 checks 与 runner</li></ul></div><div class="iso-arrow">→</div><div class="container-box eval"><h3>评测容器</h3><code>read-only: index.html
+read-only: checks.json
+read-only: checks.js
+read-only: runners/</code><ul><li>先做 delivery preflight</li><li>再执行 L1 与 L2</li><li>记录逐项结果和严格成功</li></ul></div></div></div>
+    <div class="foot"><span class="src">论文 §4.1、附录 B。预检要求成功退出、常规非 symlink 文件、非空且含 &lt;/html&gt;。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="公开测试接口">
+    <div class="top"><b>09 · PUBLIC TEST CONTRACT</b><span>同一入口，任务特定语义</span></div><h2>四个方法连接测试和真实游戏状态</h2>
+    <div class="body"><div class="api"><pre class="code"><span class="b">window</span>.__gameTest = {
+  <span class="o">reset</span>(options),
+  <span class="o">loadScenario</span>(name, options),
+  <span class="o">input</span>(action),
+  <span class="o">getSnapshot</span>()
 }
 
-<span class="cm">// 每次调用都返回 JSON 可序列化快照
-// 接口必须连接玩家实际看到的状态</span></pre>
-      <div class="method-list">
-        <div class="method"><code>reset</code><span>恢复初始状态，清掉上一局的临时对象、弹窗和结果锁。</span></div>
-        <div class="method"><code>loadScenario</code><span>建立普通游玩能够到达的前置状态，不能提前制造测试结果。</span></div>
-        <div class="method"><code>input</code><span>执行玩家级动作，例如移动、射击、下单、暂停和重启。</span></div>
-        <div class="method"><code>getSnapshot</code><span>输出稳定的语义摘要，不暴露私有对象图或源码名称。</span></div>
-      </div>
-    </div></div>
-    <div class="foot"><span class="src">论文 §2.2；公开任务中的 tdd.md。</span><span class="pg">06 / 18</span></div>
+<span class="c">// 返回 JSON 可序列化快照
+// 状态必须驱动画面</span></pre><div class="method-list"><div class="method"><code>reset</code><span>清掉上一局的临时状态、弹窗和结果锁。</span></div><div class="method"><code>loadScenario</code><span>准备正常游玩可达的起点，不能提前制造待测结果。</span></div><div class="method"><code>input</code><span>执行玩家级语义动作，例如下单、暂停和选择目标。</span></div><div class="method"><code>getSnapshot</code><span>返回稳定语义摘要，不暴露私有对象图。</span></div></div></div></div>
+    <div class="foot"><span class="src">论文 §2.2。方法名统一，场景、动作与快照字段由任务定义。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="合法场景">
-    <div class="top"><b>06 · PREPARE, ACT, OBSERVE</b><span>让罕见状态可达，同时保留因果链</span></div>
-    <h2>测试可以把棋盘摆好，但不能替玩家落子</h2>
-    <div class="body">
-      <div class="legal-flow">
-        <div class="legal-node"><span class="label green">PREPARE</span><h3 style="margin-top:14px">合法前置状态</h3><p>例如运输车已经接近敌方基地，但 <span class="mono">result</span> 仍是 <span class="mono">none</span>。测试不必从开局等十分钟。</p></div>
-        <div class="arrow"></div>
-        <div class="legal-node action"><span class="label">ACT</span><h3 style="margin-top:14px">玩家级动作</h3><p>等待、移动、开火或下达生产命令。行为必须对应玩家能做的事。</p></div>
-        <div class="arrow orange"></div>
-        <div class="legal-node observe"><span class="label orange">OBSERVE</span><h3 style="margin-top:14px">结果与不变量</h3><p>检查胜利、HUD、资源和结果锁是否同步；无关状态不能被偷偷改动。</p></div>
-      </div>
-      <div class="forbidden"><div>契约明确禁止</div><div>直接设置胜负、资金、血量或坐标</div><div>暴露生成代码的私有对象和函数名</div><div>用固定值或 <span class="mono">{ok:true}</span> 伪造机制</div><div>维护一套不反映到画面的测试状态</div></div>
-    </div>
-    <div class="foot"><span class="src">论文 §2.2；Armor Alley TDD §§4、8、9。</span><span class="pg">07 / 18</span></div>
+    <div class="top"><b>10 · PREPARE, ACT, OBSERVE</b><span>罕见状态可达，因果链仍保留</span></div><h2>测试可以摆好战场，仍要由玩家动作触发结果</h2>
+    <div class="body"><div class="prepare"><div class="stage"><span class="label green">PREPARE</span><h3>合法前置状态</h3><p>调整资源和位置，让后期情形可复现。初始快照必须仍然安全、非终局、未完成待测动作。</p></div><div class="stage-arrow">→</div><div class="stage act"><span class="label">ACT</span><h3>玩家级动作</h3><p>调用公开语义动作，或发送真实鼠标、键盘与触摸输入。</p></div><div class="stage-arrow">→</div><div class="stage observe"><span class="label orange">OBSERVE</span><h3>结果与不变量</h3><p>检查结果、资源、HUD、render revision 与未受影响状态。</p></div></div><div class="forbid">禁止：直接写胜负、血量或坐标来伪造结果；用固定快照替代真实游戏状态；让测试状态和可见玩法分叉。</div></div>
+    <div class="foot"><span class="src">论文 §2.2；Armor Alley tdd.md 的 scenario setup 与 interface integrity 约束。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Armor Alley 实例">
-    <div class="top"><b>07 · CONCRETE CASE</b><span>Armor Alley：直升机与地面战线</span></div>
-    <h2>一条测试轨迹怎样对应一条玩法需求</h2>
-    <div class="body"><div class="case-layout">
-      <div class="case-card"><div><h3>Armor Alley</h3><p>玩家驾驶直升机，同时生产地面单位。友军运输车抵达敌方基地时获胜。</p></div><div class="game-metrics"><div><b>SCENARIO</b><span>flight_control_sample</span></div><div><b>ACTION</b><span>真实鼠标向右移动</span></div><div><b>EXPECT</b><span>直升机向右，世界继续推进</span></div></div></div>
-      <div><div class="trajectory">
-        <div class="traj"><h3>1. 准备</h3><pre>{
-  phase: "playing",
-  result: "none",
-  helicopter: {
-    airborne: true,
-    screenX: 420
-  }
-}</pre></div>
-        <div class="arrow"></div>
-        <div class="traj"><h3>2. 操作</h3><pre>browser.mouseMove(
-  helicopterX + dx,
-  helicopterY
+  <section class="slide" data-title="checks.json">
+    <div class="top"><b>11 · REAL CHECKS.JSON</b><span>Armor Alley 的 L1 契约检查</span></div><h2>静态层先确认四个方法和动作 schema 存在</h2>
+    <div class="body"><div class="code-side"><pre class="code">{
+  <span class="b">"id"</span>: "p0-contract-methods-reset-input-snapshot",
+  <span class="b">"level"</span>: "P0",
+  <span class="b">"type"</span>: "regex_all",
+  <span class="b">"patterns"</span>: [
+    "... reset ...",
+    "... input ...",
+    "... getSnapshot ...",
+    "... loadScenario ..."
+  ],
+  <span class="b">"fix_hint"</span>:
+    "Define reset, loadScenario, input,
+     and getSnapshot on window.__gameTest."
+}</pre><div class="annotations"><div class="annotation"><strong>由人类编写</strong><span>checks.json 在生成前完成，并且不会挂载到生成容器。</span></div><div class="annotation"><strong>允许多种写法</strong><span>真实正则覆盖方法、对象属性和 Object.assign 等形式。</span></div><div class="annotation"><strong>证据上限明确</strong><span>正则可能匹配注释或字符串，所以 L1 不承担玩法正确性证明。</span></div></div></div></div>
+    <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.json；论文 §2.3、§3.2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="checks.js">
+    <div class="top"><b>12 · REAL CHECKS.JS</b><span>L2 把规格写成可执行轨迹</span></div><h2>一条行为检查同时描述输入、观察与空壳失败原因</h2>
+    <div class="body"><div class="split wide"><pre class="code"><span class="c">// GDD Coverage Map</span>
+M3 weapons
+  → p1-keyboard-sustained-fire-release
+
+<span class="c">// Rationality Map</span>
+real action:
+  browser.keyDown / browser.keyUp
+independent observation:
+  ammo / projectile / combat revision
+empty-shell failure:
+  fire flag without projectile, cost,
+  or release behavior</pre><div><p class="big-claim">`checks.js` 不是统一模板自动展开的壳。每道题的人类作者把具体玩法写成 task-specific JavaScript。</p><div class="rule-block orange" style="margin-top:24px"><p>Armor Alley 的 checks.js 有 814 行。它覆盖启动、飞行、武器、落地补给、生产、地面战争、雷达、暂停、终局和 P2 扩展项。</p></div></div></div></div>
+    <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.js。行数按 2026-09-21 获取的 main 分支文件计算。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Armor Alley 玩法">
+    <div class="top"><b>13 · ARMOR ALLEY</b><span>真实 task：直升机与地面战线</span></div><h2>测试覆盖的是完整战斗循环</h2>
+    <div class="body"><div class="case-spec"><div class="game"><h3>Armor Alley</h3><p>玩家驾驶直升机侦察、攻击和投放士兵，同时花钱生产坦克、导弹车、运输车与步兵。</p><div class="win">胜利：友方运输车到达敌方基地。失败：敌方运输车突破己方基地，或有限生命模式下防御能力耗尽。</div></div><div class="requirements"><div class="req"><strong>飞行</strong><p>指针相对直升机中心决定持续加速度，左右与上下方向不能反转。</p></div><div class="req"><strong>武器</strong><p>持续射击、炸弹、制导武器与投兵都有成本、效果和拒绝路径。</p></div><div class="req"><strong>经济</strong><p>资金、生产队列、单位上限和战后锁必须同步。</p></div><div class="req"><strong>战场</strong><p>地面单位自主推进，碉堡、炮塔、危险物与雷达参与状态变化。</p></div><div class="req"><strong>维护</strong><p>落地补给应逐步恢复资源，落地时水平移动受限。</p></div><div class="req"><strong>终局</strong><p>胜负出现后普通攻击和生产不能继续改变结果，重启要清空旧状态。</p></div></div></div></div>
+    <div class="foot"><span class="src">官方仓库 task/armor-alley/game-spec.md。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Armor Alley 场景">
+    <div class="top"><b>14 · ARMOR ALLEY TDD</b><span>持续射击测试的公开契约</span></div><h2>场景只准备攻击条件，不提前产生射击结果</h2>
+    <div class="body"><div class="trajectory"><div class="traj"><h3>准备</h3><pre>loadScenario(
+  "air_attack_with_targets"
 )
 
-await game.wait(600)</pre></div>
-        <div class="arrow orange"></div>
-        <div class="traj result"><h3>3. 判定</h3><pre>screenX 增大
-或 velocityXTrend
-   === "right"
+phase === "playing"
+result === "none"
+helicopter.airborne
+visibleTargets.length &gt; 0</pre></div><div class="trace-arrow">→</div><div class="traj"><h3>操作</h3><pre>keyDown("Space")
+wait 650 ms
+snapshot held
 
-worldRevision 增长</pre></div>
-      </div><div class="case-rule">同一套测试还会分别采样左、上、下，并检查相反方向产生相反的运动符号。只改快照字段或瞬移无法稳定通过。</div></div>
-    </div></div>
-    <div class="foot"><span class="src"><a href="https://github.com/areal-project/GameASG-Bench/blob/main/task/armor-alley/tdd.md">Armor Alley TDD</a> · <a href="https://github.com/areal-project/GameASG-Bench/blob/main/tests/armor-alley/checks.js">对应 checks.js</a></span><span class="pg">08 / 18</span></div>
+keyUp("Space")
+wait 300 ms
+snapshot released</pre></div><div class="trace-arrow">→</div><div class="traj"><h3>观察</h3><pre>按住期间：
+projectiles ↑
+或 revision ↑
+或 ammo ↓
+
+松开之后：
+增长进入平台期</pre></div></div><div class="forbid">场景预检失败时，检查直接 FAIL。这样可以区分“准备状态已经造假”和“玩家动作没有造成结果”。</div></div>
+    <div class="foot"><span class="src">Armor Alley tdd.md 与 tests/armor-alley/checks.js。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="真实测试代码">
-    <div class="top"><b>08 · REAL TEST CODE</b><span>持续开火：按下、观察、松开、再观察</span></div>
-    <h2>测试追踪开火行为从增长到停止</h2>
-    <div class="body"><div class="code-layout">
-      <pre class="code-block"><span class="c">// 摘自 p1-keyboard-sustained-fire-release
-// 省略辅助函数和错误分支</span>
-const before = setup.snap;
+  <section class="slide" data-title="真实键盘检查">
+    <div class="top"><b>15 · REAL BROWSER INPUT</b><span>checks.js 原始逻辑</span></div><h2>按下和松开都由浏览器输入通道触发</h2>
+    <div class="body"><div class="code-side"><pre class="code">const before = setup.snap;
 
 <span class="b">await browser.keyDown('Space');</span>
 await browser.sleep(650);
@@ -285,180 +193,106 @@ await browser.sleep(300);
 const released = await game.snapshot();
 const afterRelease = await game.wait(550);
 
-const grewWhileHeld =
-  count(held, 'projectiles') &gt; count(before, 'projectiles') ||
-  rev(held, 'projectiles') &gt; rev(before, 'projectiles') ||
-  num(held.helicopter?.ammo?.current) &lt;
-    num(before.helicopter?.ammo?.current);
-
-const plateauAfterRelease =
-  count(afterRelease, 'projectiles') &lt;=
-    count(released, 'projectiles') + 1 ||
-  rev(afterRelease, 'projectiles') === rev(released, 'projectiles');
-
-<span class="g">PASS = grewWhileHeld &amp;&amp; plateauAfterRelease;</span></pre>
-      <div class="assertions"><div class="assertion"><strong>真实输入</strong><span>直接发送键盘按下与松开，不调用测试接口替代开火。</span></div><div class="assertion"><strong>持续性</strong><span>按住期间，弹药、弹丸或战斗 revision 至少有一个变化。</span></div><div class="assertion"><strong>释放语义</strong><span>松开后弹丸数量或 revision 停止继续增长。</span></div></div>
-    </div></div>
-    <div class="foot"><span class="src">代码：仓库 <a href="https://github.com/areal-project/GameASG-Bench/blob/main/tests/armor-alley/checks.js">tests/armor-alley/checks.js</a>，摘录时删去了错误分支。</span><span class="pg">09 / 18</span></div>
+if (!grewWhileHeld)
+  return FAIL('held fire did not create evidence');
+if (!plateauAfterRelease)
+  return FAIL('fire continued after release');
+<span class="g">return PASS('real key path creates and stops fire');</span></pre><div class="annotations"><div class="annotation"><strong>不使用 contract fire rescue</strong><span>测试不会调用 input({type:'holdFire'}) 替代真正的 Space 键路径。</span></div><div class="annotation"><strong>两次松开后取样</strong><span>先记 released，再等待 550 ms，避免只捕捉到瞬时状态。</span></div><div class="annotation"><strong>多种等价证据</strong><span>允许不同实现用弹丸、revision、战斗事件或弹药表达同一行为。</span></div></div></div></div>
+    <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.js，p1-keyboard-sustained-fire-release。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="两层证据">
-    <div class="top"><b>09 · EVIDENCE LAYERS</b><span>L1 看源码，L2 跑游戏</span></div>
-    <h2>两层检查回答不同的问题</h2>
-    <div class="body"><div class="layers">
-      <div class="layer-card"><span class="label">L1 · STATIC</span><div class="stat">336</div><h3>源码级合规</h3><ul><li>43 个工具检查</li><li>288 个正则检查</li><li>5 个反模式检查</li><li>能发现缺失声明和结构问题</li><li>匹配到注释也可能通过</li></ul></div>
-      <div class="layer-sep">顺序执行<br>互不屏蔽</div>
-      <div class="layer-card l2"><span class="label">L2 · BROWSER</span><div class="stat">885</div><h3>受控行为执行</h3><ul><li>语义快照与真实鼠标、键盘输入</li><li>记录 animation frame、输入监听器</li><li>观察 Canvas/WebGL 活动与运行时异常</li><li>每条检查创建新的浏览器页面</li><li>输出 PASS、FAIL 或 NOT_APPLICABLE</li></ul><div class="fresh"><span>fresh page</span><span>run one check</span><span>close page</span></div></div>
-    </div></div>
-    <div class="foot"><span class="src">论文 §2.3、表 2。</span><span class="pg">10 / 18</span></div>
+  <section class="slide" data-title="断言逻辑">
+    <div class="top"><b>16 · PASS AND FAIL</b><span>同一需求的正向证据与停止条件</span></div><h2>测试要看到“开始增长”和“停止增长”</h2>
+    <div class="body"><div class="logic"><div class="logic-block"><h3>按住期间</h3><code>grewWhileHeld =
+  projectileCount ↑
+  OR projectileRevision ↑
+  OR combatRevision ↑
+  OR ammo ↓</code><p>多个信号允许实现采用不同弹丸生命周期。只写一个 firing 布尔值不足以通过。</p></div><div class="logic-block"><h3>松开之后</h3><code>plateauAfterRelease =
+  count(afterRelease)
+    ≤ count(released) + 1
+  OR projectileRevision
+    remains unchanged</code><p>允许一个已经在途的弹丸完成，禁止持续生成。按键监听器、定时器和弹药逻辑必须接到同一状态。</p></div></div></div>
+    <div class="foot"><span class="src">官方 checks.js 中的真实布尔条件，排版仅为便于阅读。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="计分方式">
-    <div class="top"><b>10 · SCORING</b><span>证据层与需求优先级分开</span></div>
-    <h2>严格成功是一个全量合取条件</h2>
-    <div class="body">
-      <div class="priority-row"><div class="priority"><strong>P0</strong><span>启动、测试接口、最低运行条件，共 102 个 L2 检查。</span></div><div class="priority p1"><strong>P1</strong><span>核心机制、交互和不变量，共 534 个 L2 检查。</span></div><div class="priority p2"><strong>P2</strong><span>高级模式和体验完整度，共 249 个 L2 检查，不进入严格成功条件。</span></div></div>
-      <div class="formula"><code>s<sub>g</sub> = delivery × evaluation × ∏ pass<sub>c</sub><br>c ∈ L1 ∪ applicable L2(P0,P1)</code><p>交付有效、评测完成，并且所有 L1 与适用的 L2 P0/P1 都通过，任务才记为 1。计划内未交付或未完成评测的任务同样记为失败。</p></div>
-      <div class="score-example"><div class="score"><strong class="blue">39 / 40</strong><span>必需检查通过</span></div><div class="big-ne">→</div><div class="score fail"><strong>任务 = 失败</strong><span>这项指标刻意不奖励“差不多完成”</span></div></div>
-    </div>
-    <div class="foot"><span class="src">论文 §2.4，公式 (1)。P1 当前允许返回 NOT_APPLICABLE，是作者明确记录的 runner 限制。</span><span class="pg">11 / 18</span></div>
+  <section class="slide" data-title="L1 与 L2">
+    <div class="top"><b>17 · ORIGINAL TABLE 2</b><span>证据层和优先级是两套标签</span></div><h2>336 个源码检查，885 个浏览器行为检查</h2>
+    <div class="body"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2"></div><div class="paper-caption">原论文 Table 2。L1 包含 43 个工具检查、288 个正则和 5 个反模式。L2 包含 102 个 P0、534 个 P1 和 249 个 P2。</div></div>
+    <div class="foot"><span class="src">原论文 Table 2。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="数据集">
-    <div class="top"><b>11 · BENCHMARK CORPUS</b><span>47 个任务如何组成</span></div>
-    <h2>规模不大，但每道题都有完整行为链</h2>
-    <div class="body"><div class="corpus">
-      <div class="big-counts"><div class="count"><strong>47</strong><span>任务与独立验证的参考实现</span></div><div class="count"><strong>12</strong><span>主要游戏类型</span></div><div class="count"><strong>32 / 15</strong><span>2D / 3D 游戏</span></div><div class="count"><strong>1,221</strong><span>L1 + L2 检查总数</span></div></div>
-      <div><div class="bars">
-        <div class="bar"><span>Puzzle</span><div class="track"><div class="fill" style="width:100%"></div></div><b>10</b></div>
-        <div class="bar"><span>Arcade</span><div class="track"><div class="fill" style="width:80%"></div></div><b>8</b></div>
-        <div class="bar"><span>Simulator</span><div class="track"><div class="fill" style="width:70%"></div></div><b>7</b></div>
-        <div class="bar"><span>Shooter</span><div class="track"><div class="fill" style="width:50%"></div></div><b>5</b></div>
-        <div class="bar"><span>Racing</span><div class="track"><div class="fill" style="width:40%"></div></div><b>4</b></div>
-        <div class="bar"><span>Sport</span><div class="track"><div class="fill" style="width:40%"></div></div><b>4</b></div>
-        <div class="bar"><span>Platform</span><div class="track"><div class="fill" style="width:30%"></div></div><b>3</b></div>
-        <div class="bar"><span>其他 5 类</span><div class="track"><div class="fill" style="width:60%"></div></div><b>6</b></div>
-      </div><p class="genre-note">参考实现技术：Canvas 2D 31 个、Three.js 14 个、Phaser 3 和 DOM 各 1 个。技术标签只描述参考实现，不限制 Agent 的方案。</p></div>
-    </div></div>
-    <div class="foot"><span class="src">论文 §3.4、图 1、表 2。所有 47 个参考实现通过全部 L1 与适用的 L2 P0/P1。</span><span class="pg">12 / 18</span></div>
+  <section class="slide" data-title="L2 执行细节">
+    <div class="top"><b>18 · L2 EXECUTION</b><span>每条检查使用一个新浏览器页面</span></div><h2>快照、真实输入与渲染信号相互校验</h2>
+    <div class="body"><div class="split"><div class="flow" style="grid-template-columns:repeat(3,1fr)"><div class="flow-step"><b>PAGE</b><strong>新页面</strong><p>加载提交的游戏，隔离上一条检查的状态。</p></div><div class="flow-step"><b>RUN</b><strong>单条检查</strong><p>准备场景、输入、等待、读取快照和渲染证据。</p></div><div class="flow-step"><b>CLOSE</b><strong>关闭页面</strong><p>完成或超时后销毁，再开始下一条。</p></div></div><div><p class="big-claim"><strong>共享浏览器 hook</strong> 记录 animation frame、输入监听器、Canvas/WebGL 活动和运行时异常。</p><div class="rule-block orange" style="margin-top:24px"><p>每条检查只组合它需要的信号。快照提供语义，真实输入确认玩家路径，渲染证据确认状态没有停留在隐藏变量里。</p></div></div></div></div>
+    <div class="foot"><span class="src">论文 §2.3。L1 失败不会阻止 L2 执行。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="模型表现">
-    <div class="top"><b>12 · RQ1</b><span>九组模型与 harness，最大 reasoning effort</span></div>
-    <h2>最佳结果是 26/47；L1 几乎看不出差距</h2>
-    <div class="body">
-      <div class="leaderboard"><div class="lh">模型 · Harness</div><div class="lh">严格任务成功率</div><div class="lh">成功数</div><div class="lh">L1</div>
-        <div class="lrow top"><div class="lname">GPT-6-Astra · Codex</div><div class="lb"><i style="width:55.3%"></i></div><div class="lval">26</div><div class="ll1">98.0</div></div>
-        <div class="lrow"><div class="lname">Claude-Opus-5 · Claude Code</div><div class="lb"><i style="width:51.1%"></i></div><div class="lval">24</div><div class="ll1">99.6</div></div>
-        <div class="lrow"><div class="lname">GPT-5.6-Sol · Codex</div><div class="lb"><i style="width:44.7%"></i></div><div class="lval">21</div><div class="ll1">98.9</div></div>
-        <div class="lrow"><div class="lname">DeepSeek-V4-Flash · Claude Code</div><div class="lb"><i style="width:38.3%"></i></div><div class="lval">18</div><div class="ll1">99.4</div></div>
-        <div class="lrow"><div class="lname">DeepSeek-V4-Pro · Claude Code</div><div class="lb"><i style="width:31.9%"></i></div><div class="lval">15</div><div class="ll1">99.6</div></div>
-        <div class="lrow"><div class="lname">Kimi-K3 · Claude Code</div><div class="lb"><i style="width:31.9%"></i></div><div class="lval">15</div><div class="ll1">97.7</div></div>
-        <div class="lrow"><div class="lname">GLM-5.2 · Claude Code</div><div class="lb"><i style="width:23.4%"></i></div><div class="lval">11</div><div class="ll1">98.8</div></div>
-        <div class="lrow"><div class="lname">Hunyuan-3 · Claude Code</div><div class="lb"><i style="width:21.3%"></i></div><div class="lval">10</div><div class="ll1">98.3</div></div>
-        <div class="lrow"><div class="lname">MiniMax-M3 · Claude Code</div><div class="lb"><i style="width:14.9%"></i></div><div class="lval">7</div><div class="ll1">98.3</div></div>
-      </div>
-      <div class="gap-callout"><div class="gap-num"><strong>93.2%</strong><span>GPT-6-Astra 平均 L2 通过率</span></div><div class="big-ne">≠</div><div class="gap-num strict"><strong>55.3%</strong><span>同一配置的严格任务成功率</span></div></div>
-    </div>
-    <div class="foot"><span class="src">论文表 3。每个任务与配置只运行一次；百分比为作者报告值。</span><span class="pg">13 / 18</span></div>
+  <section class="slide" data-title="严格计分">
+    <div class="top"><b>19 · STRICT TASK SUCCESS</b><span>交付式二元指标</span></div><h2>全部必需检查通过，任务才记为成功</h2>
+    <div class="body"><div class="scoring"><div class="priority"><strong>P0</strong><p>启动、测试接口和最低运行条件。共 102 个 L2 检查。</p></div><div class="priority p1"><strong>P1</strong><p>核心机制、交互、不变量和配套接口。共 534 个 L2 检查。</p></div><div class="priority p2"><strong>P2</strong><p>高级机制与体验完整度。单独报告，不进入严格成功。</p></div></div><div class="formula"><code>success = valid delivery
+  × completed evaluation
+  × all L1 pass
+  × all applicable L2 P0/P1 pass</code><p>39/40 个必需检查通过，任务仍记为 0。平均通过率回答“差多少”，严格成功率回答“能不能交付”。计划内未交付和未完成评测也进入分母。</p></div></div>
+    <div class="foot"><span class="src">论文 §2.4、公式 (1)。当前 runner 没有限制 P1 返回 NOT_APPLICABLE。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="工具访问">
-    <div class="top"><b>13 · RQ2A</b><span>DeepSeek-V4-Flash · Claude Code · 120 turns · Max</span></div>
-    <h2>浏览器执行和完整工具链把严格成功数翻了一倍</h2>
-    <p class="lead">四组实验都完成了 47 个任务的评测。条形长度表示严格成功任务数。</p>
-    <div class="body">
-      <div class="tool-chart">
-        <div class="tname">无工具，序列化 API</div><div class="tbar"><i style="width:38.9%"><b>7</b></i></div><div class="tv">14.9%</div>
-        <div class="tname">仅文件读写</div><div class="tbar"><i style="width:33.3%"><b>6</b></i></div><div class="tv">12.8%</div>
-        <div class="tname">文件 + 语法检查</div><div class="tbar"><i style="width:50%"><b>9</b></i></div><div class="tv">19.1%</div>
-        <div class="tname">完整工具访问</div><div class="tbar full"><i style="width:100%"><b>18</b></i></div><div class="tv">38.3%</div>
-      </div>
-      <div class="tool-notes"><div>语法检查能修复未闭合结构，却不会自动修好加速、滑行等玩法。论文中的 Turbo Smash Beast 就留下了这类错误。</div><div>完整工具让 Agent 在 Chromium 中看到真实交互和渲染问题。Garden Gulp 的成长循环、Neon Flow 的负半径 Canvas 错误都因此得到修复。</div></div>
-    </div>
-    <div class="foot"><span class="src">论文表 5、附录 A.2。工具条件同时改变了 Agent 可获得的反馈类型。</span><span class="pg">14 / 18</span></div>
+  <section class="slide" data-title="原论文 Figure 1">
+    <div class="top"><b>20 · ORIGINAL FIGURE 1</b><span>47 个任务的组成</span></div><h2>12 类游戏，32 个 2D，15 个 3D</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/figure-1-corpus.png" alt="原论文 Figure 1"></div><div class="paper-caption">原论文 Figure 1。技术标签描述参考实现，并不限制 Agent 的实现。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 1。论文只有这一张正式编号 Figure。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="预算与推理">
-    <div class="top"><b>14 · RQ2B / RQ3</b><span>预算决定能否交付，推理强度没有单调最优点</span></div>
-    <h2>多给 turn 有用；Max reasoning 在这次运行里输给了 High</h2>
-    <div class="body">
-      <div class="two-studies">
-        <div class="study"><h3>名义 turn budget</h3><div class="mini-table"><div>turn</div><div>30</div><div>60</div><div>120</div><div>完成评测</div><div>10</div><div>32</div><div>47</div><div>严格成功</div><div>7</div><div>13</div><div>18</div><div>条件成功率</div><div>70.0%</div><div>40.6%</div><div>38.3%</div></div><p>短预算经常在验证或交付前被截断。30 turns 的 70% 只统计那 10 个完成评测的任务。</p></div>
-        <div class="study"><h3>reasoning effort</h3><div class="mini-table"><div>effort</div><div>Low</div><div>High</div><div>Max</div><div>严格成功</div><div>7</div><div>19</div><div>18</div><div>L2 P1</div><div>71.7%</div><div>82.7%</div><div>86.7%</div><div>reason tokens</div><div>37,699</div><div>138,232</div><div>189,210</div></div><p>Max 的核心检查平均通过率最高；High 多完成一个完整任务，并少用 26.9% reasoning tokens。</p></div>
-      </div>
-      <div class="bias-note">这两张表来自单次运行。条件成功率受“哪些任务来得及完成”影响，High 与 Max 的 19 比 18 也不足以建立稳定排序。</div>
-    </div>
-    <div class="foot"><span class="src">论文表 6、表 7、附录 A.3。</span><span class="pg">15 / 18</span></div>
+  <section class="slide" data-title="主结果">
+    <div class="top"><b>21 · ORIGINAL TABLE 3</b><span>九个 agent stack 的端到端结果</span></div><h2>最佳严格成功 26/47，平均 L2 已达 93.2%</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-3-leaderboard.png" alt="原论文 Table 3"></div><div class="paper-caption">原论文 Table 3。高平均通过率与未完成任务同时存在。每个 task-configuration 组合只运行一次。</div></div>
+    <div class="foot"><span class="src">原论文 Table 3。GPT-6-Astra + Codex CLI：26/47，55.3%。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Harness">
-    <div class="top"><b>15 · RQ4</b><span>固定 DeepSeek-V4-Flash 与 Max reasoning</span></div>
-    <h2>总分相同，成功的题却不一样</h2>
-    <div class="body"><div class="harness-layout">
-      <div class="same-total"><h3>Claude Code 与 Codex CLI</h3><div class="equal">18 / 47 = 18 / 47</div><p>Claude Code 的 L1、P0 略高；Codex CLI 的 P1、P2 略高。Codex 生成的文件平均小 18.4%，平均输出 token 少 44.6%。</p></div>
-      <div class="venn" aria-label="两个 harness 的成功任务交集"><div class="circle cc"><div><div class="only">8</div><div>仅 Claude Code 成功</div></div></div><div class="circle cx"><div><div class="only">8</div><div>仅 Codex CLI 成功</div></div></div><div class="shared"><strong>10</strong><span>两者都成功</span></div><div class="neither">另有 21 个任务两者都失败</div><div class="resource"><span>85.2 KB · 203.6k 输出 token</span><span>69.5 KB · 112.8k 输出 token</span></div></div>
-    </div></div>
-    <div class="foot"><span class="src">论文表 8、§4.5。Harness 比较包含系统指令、上下文管理、工具 schema 与端点协议的整体差异。</span><span class="pg">16 / 18</span></div>
+  <section class="slide" data-title="资源使用">
+    <div class="top"><b>22 · ORIGINAL TABLE 4</b><span>产物大小、token 与报告成本</span></div><h2>更多 token 和更大文件没有稳定换来更多严格成功</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-4-resource-use.png" alt="原论文 Table 4"></div><div class="paper-caption">原论文 Table 4。成本按各 stack 报告口径统计，不能只靠 token 量解释完成度。</div></div>
+    <div class="foot"><span class="src">原论文 Table 4、§4.2。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="失败案例">
-    <div class="top"><b>16 · DIAGNOSTIC CASES</b><span>通过很多检查，仍会在组合处失败</span></div>
-    <h2>两个失败样本说明了 benchmark 在抓什么</h2>
-    <div class="body"><div class="failure-grid">
-      <div class="failure"><h3>Diner Dasher</h3><div class="stack">GPT-6-Astra · Codex CLI</div><ol><li>加载装有正确餐点的托盘场景。</li><li>从快照读取托盘和顾客的屏幕边界。</li><li>发送真实鼠标拖动与触摸序列。</li><li>两种输入都没有增加服务进度或收入。</li></ol><div class="caught">L1、L2 P0 和 P2 都通过，P1 的真实输入检查仍判定核心交互失败。</div></div>
-      <div class="failure"><h3>Turbo Smash Beast</h3><div class="stack">DeepSeek-V4-Flash · Claude Code</div><ol><li>接口自测会显式推进模拟时间，因此通过。</li><li>单独的真实驾驶测试从全新页面开始，也通过。</li><li>benchmark 先加载场景，再发送真实驾驶输入。</li><li>场景加载开启测试模式，意外关闭自然时间推进。</li></ol><div class="caught">单个路径各自正常，组合路径冻结了车辆。加速、滑行及相关检查失败。</div></div>
-    </div></div>
-    <div class="foot"><span class="src">论文 §4.6、表 9、附录 A.1。</span><span class="pg">17 / 18</span></div>
+  <section class="slide" data-title="工具与轮数消融">
+    <div class="top"><b>23 · ORIGINAL TABLES 5 AND 6</b><span>DeepSeek-V4-Flash · Claude Code</span></div><h2>完整工具提高 P1，短预算先截断交付</h2>
+    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-5-tool-ablation.png" alt="原论文 Table 5"><figcaption>Table 5。完整工具 18/47，受限工具 6 至 9/47。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-6-turn-budget.png" alt="原论文 Table 6"><figcaption>Table 6。30、60、120 turns 完成评测 10、32、47 个任务。</figcaption></figure></div></div>
+    <div class="foot"><span class="src">原论文 Tables 5、6。30 turns 的条件成功率 70.0%，全体成功率 14.9%。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="评价">
-    <div class="top"><b>17 · READING NOTES</b><span>这套方法适合回答什么，回答不了什么</span></div>
-    <h2>它把“完整交付”变成了可定位的工程指标</h2>
-    <div class="body">
-      <div class="assessment"><section><h3>方法做得扎实的地方</h3><ul><li>测试契约在生成前固定，减少事后迁就某个实现。</li><li>语义状态、真实输入和浏览器信号互相校验。</li><li>严格成功与平均通过率同时报告，能看见局部完成和完整交付的差别。</li><li>失败报告能落到具体需求和交互序列。</li></ul></section><section><h3>读结果时要带上的限制</h3><ul><li>47 个单页游戏不能代表后端、数据库或多人系统。</li><li>每个任务与配置只跑一次，没有方差或显著性分析。</li><li>公开接口增加实现负担，也留下针对契约优化的空间。</li><li>P1 当前可返回 NOT_APPLICABLE；作者明确记录了这一点。</li><li>评测主轴是功能合规；画面质量与游戏乐趣覆盖有限。</li></ul></section></div>
-      <div class="closing">对 Coding Agent，接下来的难题已经很具体：同一份状态要同时经得住 API 读取、真实操作、画面反馈和重启后的再次验证。</div>
-      <div class="source-links"><a href="https://arxiv.org/abs/2609.21293">论文主页</a><a href="https://arxiv.org/pdf/2609.21293">PDF</a><a href="https://github.com/areal-project/GameASG-Bench">代码与任务</a></div>
-    </div>
-    <div class="foot"><span class="src">事实与数据：GameASG-Bench v1，2026-09-18。方法评价为本文解读。</span><span class="pg">18 / 18</span></div>
+  <section class="slide" data-title="推理与 Harness">
+    <div class="top"><b>24 · ORIGINAL TABLES 7 AND 8</b><span>同分不代表相同行为</span></div><h2>High 成功更多，两个 harness 只共享 10 道成功题</h2>
+    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort.png" alt="原论文 Table 7"><figcaption>Table 7。High 为 19/47，Max 为 18/47。High 少用 26.9% reasoning tokens。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-8-harness.png" alt="原论文 Table 8"><figcaption>Table 8。两种 harness 都是 18/47，只有 10 道题共同成功。</figcaption></figure></div></div>
+    <div class="foot"><span class="src">原论文 Tables 7、8。结果来自单次运行，不能据此建立稳定的绝对排名。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实失败案例">
+    <div class="top"><b>25 · ORIGINAL TABLE 9</b><span>总榜背后的可复现缺口</span></div><h2>失败发生在输入、场景与自然时间的组合处</h2>
+    <div class="body"><div class="split narrow"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-9-diagnostics.png" alt="原论文 Table 9"></div><div class="case-grid" style="grid-template-columns:1fr"><div class="failure"><h3>Diner Dasher</h3><div class="stack">GPT-6-Astra + Codex CLI</div><ol><li>加载带正确餐点的托盘。</li><li>读取物品和顾客屏幕边界。</li><li>发送真实鼠标与触摸拖拽。</li><li>服务进度和收入都不增加。</li></ol><div class="caught">L1、L2 P0/P2 通过，P1 核心交互失败。</div></div><div class="failure"><h3>Turbo Smash Beast</h3><div class="stack">DeepSeek-V4-Flash + Claude Code</div><ol><li>加载场景会开启 test mode。</li><li>test mode 关闭自然时间模拟。</li><li>真实驾驶输入因此无法推进车辆。</li></ol><div class="caught">分开的自测都通过，组合轨迹暴露冻结。</div></div></div></div></div>
+    <div class="foot"><span class="src">原论文 Table 9、§4.6、附录 A.1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结论与边界">
+    <div class="top"><b>26 · TAKEAWAYS</b><span>读完后应该带走的判断</span></div><h2>这套 benchmark 的贡献是一条可复跑的行为证据链</h2>
+    <div class="body"><div class="split"><div><p class="big-claim"><strong>人类固定契约和隐藏检查</strong>，Agent 自由实现内部结构，评测器用合法场景、真实输入、稳定快照和渲染信号复核因果链。</p><div class="metrics" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><strong>93.2%</strong><span>最佳平均 L2</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div><div class="rule-block"><h3>适合回答</h3><p>单页浏览器游戏是否满足一组预先写好的核心行为要求。</p></div><div class="rule-block orange" style="margin-top:18px"><h3>仍需谨慎</h3><p>47 题、每配置一次运行、无后端和多人系统。P1 的 NOT_APPLICABLE 仍有计分漏洞。参考实现通过也不等于规格覆盖完备。</p></div><div class="rule-block green" style="margin-top:18px"><h3>可迁移的方法</h3><p>为交互式应用设计 prepare、act、observe 与 invariant，并让语义状态和可见行为共用同一底层状态。</p></div></div></div></div>
+    <div class="foot"><span class="src"><a href="https://arxiv.org/abs/2609.21293">论文</a> · <a href="https://github.com/areal-project/GameASG-Bench">代码与 47 个任务</a> · 解读与重绘：ChrisDing Blog</span><span class="pg"></span></div>
   </section>
 
 </main></div>
-<div id="controls" aria-label="幻灯片控制"><button id="prev" aria-label="上一页">←</button><span class="counter" id="counter">1 / 18</span><button id="next" aria-label="下一页">→</button><button id="full" aria-label="全屏">⛶</button></div><div id="progress"></div>
+<div id="controls" aria-label="幻灯片控制"><button id="prev" aria-label="上一页">←</button><span class="counter" id="counter">1 / 26</span><button id="next" aria-label="下一页">→</button><button id="full" aria-label="全屏">⛶</button></div><div id="progress"></div>
 <script>
   (() => {
     const slides = [...document.querySelectorAll('.slide')];
     const deck = document.getElementById('deck');
     const counter = document.getElementById('counter');
     const progress = document.getElementById('progress');
+    slides.forEach((slide, i) => { const pg = slide.querySelector('.pg'); if (pg) pg.textContent = `${String(i + 1).padStart(2,'0')} / ${slides.length}`; });
     let index = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
-    function scaleDeck(){
-      const scale = Math.min(innerWidth / 1600, innerHeight / 900);
-      deck.style.transform = `scale(${scale})`;
-      deck.style.left = `${(innerWidth - 1600 * scale) / 2}px`;
-      deck.style.top = `${(innerHeight - 900 * scale) / 2}px`;
-    }
-    function show(next, updateHash = true){
-      index = Math.max(0, Math.min(slides.length - 1, next));
-      slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
-      counter.textContent = `${index + 1} / ${slides.length}`;
-      progress.style.width = `${((index + 1) / slides.length) * 100}%`;
-      document.title = `${slides[index].dataset.title} · GameASG-Bench`;
-      if (updateHash) history.replaceState(null, '', `#${index + 1}`);
-    }
-    document.getElementById('prev').addEventListener('click', () => show(index - 1));
-    document.getElementById('next').addEventListener('click', () => show(index + 1));
-    document.getElementById('full').addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
-    addEventListener('keydown', (event) => {
-      if (['ArrowRight','PageDown',' '].includes(event.key)) { event.preventDefault(); show(index + 1); }
-      if (['ArrowLeft','PageUp'].includes(event.key)) { event.preventDefault(); show(index - 1); }
-      if (event.key === 'Home') show(0);
-      if (event.key === 'End') show(slides.length - 1);
-      if (event.key.toLowerCase() === 'f') document.getElementById('full').click();
-    });
-    addEventListener('resize', scaleDeck);
-    addEventListener('hashchange', () => show((parseInt(location.hash.slice(1), 10) || 1) - 1, false));
-    scaleDeck(); show(index, false);
+    function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`;}
+    function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));counter.textContent=`${index+1} / ${slides.length}`;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameASG-Bench`;if(updateHash)history.replaceState(null,'',`#${index+1}`);}
+    document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('full').addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());
+    addEventListener('keydown',event=>{if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home')show(0);if(event.key==='End')show(slides.length-1);if(event.key.toLowerCase()==='f')document.getElementById('full').click()});
+    addEventListener('resize',scaleDeck);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));scaleDeck();show(index,false);
   })();
 </script>
 </body>
