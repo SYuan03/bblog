@@ -24,7 +24,9 @@ npm run build
 npm run check
 ```
 
-`npm run check` verifies route count, local asset references, theme migration, and text parity for all 44 migrated posts.
+`npm run check` verifies route count, local asset references, theme migration, and text parity for all generated posts.
+
+For the complete article-to-production workflow, including covers, embedded HTML presentations, Git, Netlify, and production verification, follow [`docs/PUBLISHING.md`](docs/PUBLISHING.md). Agents should also read the repository-level [`AGENTS.md`](AGENTS.md).
 
 ## Writing
 
