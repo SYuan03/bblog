@@ -520,18 +520,60 @@
   });
 
   const tocLinks = [...document.querySelectorAll('.article-toc a')];
-  const headings = tocLinks.map((link) => {
-    try { return document.querySelector(decodeURIComponent(link.hash)); }
+  const headingForTocLink = (link) => {
+    try { return document.getElementById(decodeURIComponent(link.hash.slice(1))); }
     catch { return null; }
-  }).filter(Boolean);
-  if (headings.length && 'IntersectionObserver' in window) {
-    const tocObserver = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (!visible) return;
-      tocLinks.forEach((link) => link.classList.toggle('is-active', decodeURIComponent(link.hash) === `#${visible.target.id}`));
-    }, { rootMargin: '-15% 0px -70%' });
-    headings.forEach((heading) => tocObserver.observe(heading));
+  };
+  const headings = [...new Set(tocLinks.map(headingForTocLink).filter(Boolean))];
+  let tocFrame = 0;
+  const keepTocLinkVisible = (link) => {
+    const container = link.closest('.article-toc');
+    if (!container || container.scrollHeight <= container.clientHeight) return;
+    const containerRect = container.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    if (linkRect.top < containerRect.top) container.scrollTop -= containerRect.top - linkRect.top;
+    else if (linkRect.bottom > containerRect.bottom) container.scrollTop += linkRect.bottom - containerRect.bottom;
+  };
+  const updateActiveToc = () => {
+    tocFrame = 0;
+    if (!headings.length) return;
+    const threshold = Math.min(180, window.innerHeight * .2);
+    let active = headings[0];
+    headings.forEach((heading) => {
+      if (heading.getBoundingClientRect().top <= threshold) active = heading;
+    });
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) active = headings[headings.length - 1];
+    tocLinks.forEach((link) => link.classList.toggle('is-active', headingForTocLink(link) === active));
+    tocLinks.filter((link) => link.classList.contains('is-active') && link.getClientRects().length)
+      .forEach(keepTocLinkVisible);
+  };
+  const queueActiveToc = () => {
+    if (!tocFrame) tocFrame = requestAnimationFrame(updateActiveToc);
+  };
+  if (headings.length) {
+    updateActiveToc();
+    window.addEventListener('scroll', queueActiveToc, { passive: true });
+    window.addEventListener('resize', queueActiveToc);
+    window.addEventListener('hashchange', queueActiveToc);
   }
+
+  document.querySelectorAll('.article-toc-mobile .article-toc a').forEach((link) => {
+    link.addEventListener('click', () => {
+      const heading = headingForTocLink(link);
+      link.closest('details')?.removeAttribute('open');
+      if (!heading) return;
+      requestAnimationFrame(() => {
+        const hadTabIndex = heading.hasAttribute('tabindex');
+        const previousTabIndex = heading.getAttribute('tabindex');
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+        heading.addEventListener('blur', () => {
+          if (hadTabIndex) heading.setAttribute('tabindex', previousTabIndex);
+          else heading.removeAttribute('tabindex');
+        }, { once: true });
+      });
+    });
+  });
 
   document.querySelectorAll('.article-content h2[id], .article-content h3[id]').forEach((heading) => {
     const anchor = document.createElement('button');

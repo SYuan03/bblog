@@ -2,10 +2,11 @@
 title: "GameASG-Bench 如何验证一个游戏真的做完了"
 permalink: "/posts/论文解读/gameasg-bench.html"
 date: "2026-09-21T21:31:01+08:00"
-updated: "2026-09-22T00:02:00+08:00"
+updated: "2026-09-22T01:38:40+08:00"
 cover: "/generated-covers/046-gameasg-bench.webp"
-description: "逐文件拆解 GameASG-Bench：人类如何写规格与隐藏测试，Agent 能看到什么，L1/L2 怎样执行，以及真实浏览器输入为什么能抓住看似完成的游戏。"
+description: "拆解 GameASG-Bench 的问题定义、人工测试构建、公开行为契约、L1/L2 评测、真实游戏案例、四组实验与相关工作边界。"
 wide_content: true
+wide_toc: true
 hide_post_cover: true
 deck_pages: 26
 categories:
@@ -18,23 +19,22 @@ tags:
 ---
 
 <style>
-.gb-reading{--gb-blue:#2676c9;--gb-orange:#e86c36;--gb-green:#3f8a68;--gb-ink:#20262d;--gb-paper:#f8f5ee;--gb-line:#d7d2c8;color:var(--gb-ink)}
-.gb-reading .gb-button{display:inline-block;padding:11px 18px;border:1px solid #155b9f;background:var(--gb-blue);color:#fff!important;text-decoration:none!important;font-weight:700;white-space:nowrap}
-.gb-reading .gb-player-shell{width:100%;margin:4px 0 34px;border:1px solid #c5c2ba;background:#252b31;box-shadow:0 20px 60px #17202a24}
-.gb-reading .gb-player-bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:17px 20px;color:#eef3f7;background:#252b31}
-.gb-reading .gb-player-copy{display:grid;gap:3px}.gb-reading .gb-player-copy small{font:800 .72em/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#7fc1ff}.gb-reading .gb-player-copy strong{font-size:1.02em}.gb-reading .gb-player-copy span{font-size:.82em;color:#b9c2ca}
-.gb-reading .gb-player-shell .post-deck-embed{margin:0}.gb-reading .gb-player-shell .post-deck-embed-frame{border:0;border-top:1px solid #424950;background:#dcd9d2}.gb-reading .gb-player-shell .post-deck-embed-note{margin:0;padding:11px 17px;color:#c4ccd3;background:#252b31;border-top:1px solid #424950}
-.gb-reading .gb-source-links{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 34px;font-size:.94em}
-.gb-reading .gb-callout{padding:18px 22px;margin:22px 0;border-left:5px solid var(--gb-orange);background:#fff7f1}
-.gb-reading .gb-callout.blue{border-color:var(--gb-blue);background:#f1f7fd}.gb-reading .gb-callout.green{border-color:var(--gb-green);background:#f1f8f4}
-.gb-reading .gb-figure{margin:30px 0}.gb-reading .gb-figure img{display:block;width:100%;height:auto;border:1px solid #dedad2;background:white}.gb-reading .gb-figure figcaption{margin-top:9px;color:#66707a;font-size:.9em;line-height:1.55}
-.gb-reading .gb-flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:24px 0}.gb-reading .gb-flow>div{position:relative;min-height:132px;padding:16px 14px;border-top:5px solid var(--gb-blue);background:#f7f7f5}.gb-reading .gb-flow>div:nth-child(2n){border-color:var(--gb-orange)}.gb-reading .gb-flow b{display:block;margin-bottom:8px;font-size:.95em}.gb-reading .gb-flow span{display:block;color:#5f6872;font-size:.86em;line-height:1.45}.gb-reading .gb-flow em{position:absolute;right:-10px;top:50%;z-index:2;font-style:normal;color:#8b9299;background:white;padding:2px}
-.gb-reading .gb-role-table,.gb-reading .gb-compare{width:100%;border-collapse:collapse;margin:20px 0;font-size:.92em}.gb-reading th,.gb-reading td{padding:10px 11px;border:1px solid var(--gb-line);text-align:left;vertical-align:top}.gb-reading th{background:#f1f0ec}.gb-reading code{font-size:.92em}.gb-reading pre{overflow:auto;max-height:none}
-.gb-reading .gb-two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:22px 0}.gb-reading .gb-two>*{min-width:0}.gb-reading .gb-mini{padding:18px;border-top:5px solid var(--gb-blue);background:#f7f7f5}.gb-reading .gb-mini:nth-child(2){border-color:var(--gb-orange)}.gb-reading .gb-mini h4{margin-top:0}
-.gb-reading .gb-inline-code{padding:2px 6px;border:1px solid #d8d8d3;background:#f4f4f1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
-.gb-reading .gb-deck-heading{margin-top:54px}
+.gb-reading{--gb-blue:var(--sea);--gb-orange:var(--coral);--gb-green:#3f8a68;--gb-ink:var(--ink);--gb-soft:var(--ink-soft);--gb-surface:var(--paper-elevated);--gb-line:var(--line-strong);color:var(--gb-ink)}
+.gb-reading>h2,.gb-reading>h3,.gb-reading>p,.gb-reading>ul,.gb-reading>ol,.gb-reading>blockquote{width:min(100%,760px);margin-left:auto;margin-right:auto}.gb-reading>figure.highlight,.gb-reading>.highlight-container{width:min(100%,860px);margin-left:auto;margin-right:auto}
+.gb-reading .gb-button{display:inline-block;padding:11px 18px;border:1px solid color-mix(in srgb,var(--gb-blue) 78%,#000);background:var(--gb-blue);color:#fff!important;text-decoration:none!important;font-weight:700;white-space:nowrap}
+.gb-reading .gb-player-shell{width:100%;margin:4px 0 34px;border:1px solid #c5c2ba;background:#252b31;box-shadow:0 20px 60px #17202a24}.gb-reading .gb-player-bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:17px 20px;color:#eef3f7;background:#252b31}.gb-reading .gb-player-copy{display:grid;gap:3px}.gb-reading .gb-player-copy small{font:800 .72em/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#7fc1ff}.gb-reading .gb-player-copy strong{font-size:1.02em}.gb-reading .gb-player-copy span{font-size:.82em;color:#b9c2ca}.gb-reading .gb-player-shell .post-deck-embed{margin:0}.gb-reading .gb-player-shell .post-deck-embed-frame{border:0;border-top:1px solid #424950;background:#dcd9d2}.gb-reading .gb-player-shell .post-deck-embed-note{margin:0;padding:11px 17px;color:#c4ccd3;background:#252b31;border-top:1px solid #424950}
+.gb-reading .gb-source-links{display:flex;flex-wrap:wrap;gap:8px 20px;width:min(100%,760px);margin:0 auto 34px;font-size:.94em}.gb-reading .gb-source-links a{font-family:var(--sans)}
+.gb-reading .gb-paper-meta{width:min(100%,760px);margin:0 auto 10px;color:var(--gb-soft);font:400 .8rem/1.6 var(--sans)}
+.gb-reading .gb-callout{width:min(100%,760px);padding:18px 22px;margin:22px auto;border-left:5px solid var(--gb-orange);background:color-mix(in srgb,var(--gb-orange) 8%,var(--gb-surface))}.gb-reading .gb-callout.blue{border-color:var(--gb-blue);background:color-mix(in srgb,var(--gb-blue) 8%,var(--gb-surface))}.gb-reading .gb-callout.green{border-color:var(--gb-green);background:color-mix(in srgb,var(--gb-green) 8%,var(--gb-surface))}.gb-reading .gb-callout p{margin:.45em 0}
+.gb-reading .gb-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:28px 0;background:var(--gb-line);border:1px solid var(--gb-line)}.gb-reading .gb-metric{min-height:128px;padding:19px;background:var(--gb-surface)}.gb-reading .gb-metric strong{display:block;color:var(--gb-blue);font:650 clamp(1.8rem,3vw,2.65rem)/1 var(--serif)}.gb-reading .gb-metric span{display:block;margin-top:12px;color:var(--gb-soft);font:600 .78rem/1.45 var(--sans)}
+.gb-reading .gb-figure{margin:30px 0}.gb-reading .gb-figure img{display:block;width:100%;height:auto;border:1px solid color-mix(in srgb,var(--gb-line) 65%,transparent);border-radius:0;background:#fff;box-shadow:none}.gb-reading .gb-figure figcaption{margin:9px auto 0;color:var(--gb-soft);font-size:.86em;line-height:1.6;text-align:left}.gb-reading .gb-figure figcaption strong{color:var(--gb-ink)}
+.gb-reading .gb-flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:24px 0}.gb-reading .gb-flow>div{position:relative;min-height:142px;padding:16px 14px;border-top:5px solid var(--gb-blue);background:var(--gb-surface)}.gb-reading .gb-flow>div:nth-child(2n){border-color:var(--gb-orange)}.gb-reading .gb-flow b{display:block;margin-bottom:8px;font-size:.92em}.gb-reading .gb-flow span{display:block;color:var(--gb-soft);font-size:.82em;line-height:1.5}.gb-reading .gb-flow em{position:absolute;right:-10px;top:50%;z-index:2;padding:2px;color:var(--gb-soft);background:var(--paper);font-style:normal}
+.gb-reading .gb-role-table,.gb-reading .gb-compare,.gb-reading .gb-evidence{width:100%;border-collapse:collapse;margin:22px 0;font:400 .86em/1.55 var(--sans)}.gb-reading th,.gb-reading td{padding:10px 11px;border:1px solid var(--gb-line);text-align:left;vertical-align:top}.gb-reading th{background:color-mix(in srgb,var(--gb-blue) 8%,var(--gb-surface))}.gb-reading td:first-child{font-weight:650}.gb-reading code{font-size:.92em}.gb-reading pre{overflow:auto;max-height:none}
+.gb-reading .gb-two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:22px 0}.gb-reading .gb-two>*{min-width:0}.gb-reading .gb-mini{padding:18px;border-top:5px solid var(--gb-blue);background:var(--gb-surface)}.gb-reading .gb-mini:nth-child(2){border-color:var(--gb-orange)}.gb-reading .gb-mini h4{margin-top:0}.gb-reading .gb-inline-code{padding:2px 6px;border:1px solid var(--gb-line);background:var(--gb-surface);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+.gb-reading .gb-formula{width:min(100%,760px);margin:24px auto;padding:20px;border-block:1px solid var(--gb-line);text-align:center}.gb-reading .gb-formula code{display:block;padding:0;color:var(--gb-ink);background:none;font-size:clamp(.82rem,1.5vw,1rem)}.gb-reading .gb-formula span{display:block;margin-top:9px;color:var(--gb-soft);font:400 .8rem/1.55 var(--sans)}
 .gb-reading #interactive-deck{scroll-margin-top:88px}
-@media(max-width:900px){.gb-reading .gb-player-shell{margin-bottom:28px}.gb-reading .gb-player-bar{align-items:flex-start;padding:14px;gap:12px}.gb-reading .gb-player-copy span{display:none}.gb-reading .gb-button{padding:9px 12px;font-size:.84em}.gb-reading .gb-flow{grid-template-columns:1fr 1fr}.gb-reading .gb-flow em{display:none}.gb-reading .gb-two{grid-template-columns:1fr}.gb-reading .gb-compare{display:block;overflow-x:auto;white-space:nowrap}.gb-reading .gb-button{text-align:center}}
+@media(max-width:900px){.gb-reading .gb-player-shell{margin-bottom:28px}.gb-reading .gb-player-bar{align-items:flex-start;padding:14px;gap:12px}.gb-reading .gb-player-copy span{display:none}.gb-reading .gb-button{padding:9px 12px;font-size:.84em}.gb-reading .gb-metrics{grid-template-columns:1fr 1fr}.gb-reading .gb-flow{grid-template-columns:1fr 1fr}.gb-reading .gb-flow em{display:none}.gb-reading .gb-two{grid-template-columns:1fr}.gb-reading .gb-compare,.gb-reading .gb-role-table,.gb-reading .gb-evidence{display:block;overflow-x:auto;white-space:nowrap}.gb-reading .gb-button{text-align:center}}
+@media(max-width:520px){.gb-reading .gb-metric{min-height:108px;padding:15px}.gb-reading .gb-flow{grid-template-columns:1fr}.gb-reading .gb-player-copy strong{font-size:.9em}}
 </style>
 
 <div class="gb-reading">
@@ -52,102 +52,129 @@ tags:
   </div>
 </div>
 
+<p class="gb-paper-meta">Xiuhui Zhang, Yi Chen, Shusheng Xu, Fan Li, Huan Wang, Tongkai Yang, Binhang Yuan · arXiv:2609.21293 · 2026-09-18</p>
+
 <div class="gb-source-links">
   <a href="https://arxiv.org/abs/2609.21293">论文主页</a>
   <a href="https://arxiv.org/pdf/2609.21293">论文 PDF</a>
   <a href="https://github.com/areal-project/GameASG-Bench">官方代码与 47 个任务</a>
-  <a href="#原论文表格索引">跳到原论文表格</a>
+  <a href="#附录：原图与资料">原图索引</a>
 </div>
 
-## 先说结论
+## 导读：93.2% 的行为检查通过率，55.3% 的完整交付率
 
-GameASG-Bench 直接验证 Coding Agent 能否交付一个可玩的、能被稳定复现和验证的完整浏览器游戏，而不把“网页像不像游戏”当作完成标准。每道题要求模型在干净工作区里写出一个自包含的 `index.html`。评测端再用预先固定的静态检查和浏览器行为检查验证它。
+一个 GPT-6-Astra 生成的 Diner Dasher 可以启动，测试接口也能调用，L1 以及 L2 的 P0、P2 检查都通过了。玩家用鼠标或触摸把餐点拖给顾客时，订单却没有任何进展。这个失败样例概括了 GameASG-Bench 的出发点：完整应用的各个部件分别存在，不代表它们在真实操作下能够协同工作。
 
-这套 benchmark 最值得研究的是测试边界。人类开发者先写玩法规格、测试接口规格和隐藏检查。Agent 能读到规格，但拿不到 `checks.json`、`checks.js` 或以前的测试报告。这样既给了模型足够明确的工程契约，也避免模型直接针对断言字符串做题。
+<div class="gb-metrics" aria-label="GameASG-Bench 关键数字">
+  <div class="gb-metric"><strong>47</strong><span>浏览器游戏任务，覆盖 12 个主要类型</span></div>
+  <div class="gb-metric"><strong>1,221</strong><span>336 条 L1 与 885 条 L2 自动检查</span></div>
+  <div class="gb-metric"><strong>93.2%</strong><span>最佳 agent stack 的平均 L2 通过率</span></div>
+  <div class="gb-metric"><strong>26/47</strong><span>最佳严格成功数，即 55.3%</span></div>
+</div>
 
-论文包含 47 个任务、336 个 L1 静态检查和 885 个 L2 浏览器行为检查。表现最好的 GPT-6-Astra + Codex CLI 通过了 26/47 个任务，严格成功率 55.3%。它的平均 L2 通过率却有 93.2%。这两个数字之间的差距正是论文的主要发现：一个游戏可以让绝大多数检查通过，仍然在某条必需机制上失败。
+GameASG-Bench 要求 Coding Agent 在干净工作区里交付一个自包含的 `index.html`。第一方 HTML、CSS 和 JavaScript 必须放在这个文件中，任务允许时可以从稳定 CDN 加载第三方库。任务作者在生成开始前写好玩法规格、公开测试接口和隐藏检查；Agent 能看到行为契约，看不到 `checks.json`、`checks.js` 或历史测试报告。评测器随后把合法场景、玩家级动作、语义快照和浏览器证据组合起来，逐条复核需求。
+
+论文的主要贡献是一套预先声明、可以复跑的评测协议，47 个游戏任务是这套协议的载体。它给出了清楚的责任边界：任务作者提前定义正确行为，Agent 选择内部实现，评测器用固定检查收集行为证据。
+
+## 1. 问题定义：可运行不等于完成
+
+函数题通常有清晰的输入和返回值，仓库修复题通常继承已有测试。一个游戏则把控制、状态机、动画、渲染、资源变化、反馈、胜负和重启装进同一个持续运行的系统。某个函数局部正确，仍可能更新错对象、在暂停时继续运行，或者只改了快照而没有改变画面。
+
+<table class="gb-evidence">
+  <thead><tr><th>常见证据</th><th>能证明什么</th><th>仍然证明不了什么</th></tr></thead>
+  <tbody>
+    <tr><td>页面成功打开</td><td>HTML 至少没有在启动阶段直接崩溃</td><td>输入、玩法循环、终局和重启是否工作</td></tr>
+    <tr><td>单张截图像游戏</td><td>某一帧具有角色、HUD 或场景</td><td>玩家操作能否推动状态和渲染</td></tr>
+    <tr><td>源码出现 <code>win</code>、<code>ammo</code></td><td>存在相应字符串或代码结构</td><td>这些分支是否能被真实路径触发</td></tr>
+    <tr><td>语义 API 返回正确字段</td><td>测试接口表面上满足契约</td><td>接口状态是否和键鼠输入、自然时间、画面共用同一状态</td></tr>
+    <tr><td>平均检查通过率很高</td><td>大部分被测行为已经实现</td><td>是否仍缺一条阻断交付的核心需求</td></tr>
+  </tbody>
+</table>
+
+浏览器游戏适合作为这个问题的受控代理。它比单个函数更接近完整应用，又能被限制在单页、有限时间和固定视口中。输入改变状态，状态再改变反馈或渲染，若干状态转移组成终局，因此一个短游戏可以集中测试多种集成行为。
+
+评测的难点在于既要可控，又不能绑死实现。纯 GUI playtesting 很难稳定走到“敌方运输车接近基地”之类的罕见状态；直接改某个候选实现的内部变量，又要求所有 Agent 使用相同对象名和数据结构。论文用公开语义接口准备合法前置条件，再按需求选择语义动作或真实浏览器输入。检查由此只依赖行为含义，对候选代码的私有结构不作假设。
+
+## 2. 核心设计：在生成前固定测试契约
+
+论文用公开接口给不同私有实现建立共同观察面。接口规定场景、动作、稳定快照、拒绝行为和不变量，Agent 在实现游戏时一并实现它，同时仍可自由选择引擎、对象图和代码布局。
+
+### 公开契约与隐藏验收分开
+
+公开部分告诉 Agent 必须支持哪些行为，以及评测如何观察这些行为。隐藏部分把这些要求实现成固定断言。两部分都在生成前完成，所以测试不会在看到候选代码后临时迁就实现，也不会把具体断言暴露给 Agent。
+
+<table class="gb-role-table">
+  <thead><tr><th>参与方</th><th>生成前</th><th>生成时</th><th>生成后</th></tr></thead>
+  <tbody>
+    <tr><td>任务作者</td><td>写玩法规格、接口规格、L1/L2 检查和优先级</td><td>不修改测试以适配当前候选</td><td>用同一套检查验收产物</td></tr>
+    <tr><td>Coding Agent</td><td>拿不到隐藏检查</td><td>实现游戏与 <code>window.__gameTest</code></td><td>提交一个自包含 <code>index.html</code></td></tr>
+    <tr><td>评测器</td><td>持有冻结的检查</td><td>与生成环境隔离</td><td>跑交付预检、L1、L2 并计算严格成功</td></tr>
+  </tbody>
+</table>
+
+### 合法场景只准备前置条件
+
+`loadScenario` 可以缩短漫长或稀有状态的准备过程，例如补充资源、移动角色或生成目标。它不能直接造成待测结果。一个“接近胜利”的场景仍然需要玩家行动才能获胜，一个危险场景也不能预先扣血。这个限制保留了动作与结果之间的因果关系。
+
+测试接口必须操作画面使用的同一份底层状态。单项 L2 会按需要组合接口快照、键鼠输入、Canvas 哈希、revision、animation frame 和运行时异常，并非每项检查都使用全部信号。其中真实输入与 Canvas 哈希来自浏览器侧，revision 则是候选快照的一部分；多种证据组合后，单独维护一份“只给测试看”的影子状态更容易被发现。
+
+## 3. 基准构建：从游戏概念到可验收任务
+
+### 任务边界与语料构成
+
+每个任务必须包含完整可玩循环：玩家输入改变状态，游戏产生可观察进展或终局，并且支持重启。作者排除了依赖后端、账号、外部数据库、付费或私有资产、无界多人基础设施，以及无法在有限浏览器执行中到达和观察的行为。最终语料有 47 个任务，覆盖 12 类游戏，其中 32 个是 2D，15 个是 3D。
 
 <figure class="gb-figure">
   <img src="/lib/papers/gameasg-bench/figure-1-corpus.png" alt="GameASG-Bench 47 个任务的类型、2D/3D 与参考实现技术分布">
-  <figcaption>原论文 Figure 1。47 个任务覆盖 12 类游戏，其中 32 个为 2D、15 个为 3D。参考实现主要使用 Canvas 2D 和 Three.js。论文明确说明：这里统计的是参考实现技术，并不限制 Agent 必须采用同一种技术。</figcaption>
+  <figcaption><strong>原论文 Figure 1。</strong>参考实现主要使用 Canvas 2D 和 Three.js。这里的 technology 只描述参考实现，不限制 Agent 必须采用同一种技术。</figcaption>
 </figure>
 
-## Motivation：完整应用没有一个天然的判题器
+### 任务材料、可见性与冻结时点
 
-函数题有输入和返回值，仓库修复题通常有现成测试。一个游戏把控制、状态机、渲染、动画、资源、反馈和终局绑在一起。以下几种“看起来完成了”的证据都不够：
-
-- 页面能打开，只能说明 HTML 没有在启动阶段崩掉。
-- 截图里有角色、HUD 和按钮，只能说明某一帧像游戏。
-- 源码里出现 `win`、`ammo`、`restart`，不能证明这些变量真的接上了玩法。
-- Agent 自己写的测试可能只走测试接口，漏掉鼠标、触摸和自然时间推进。
-- 平均通过率会掩盖必需机制失败。一个任务如果只漏掉 1 个 P1 检查，平均分可能仍然很高，严格成功则必须记为失败。
-
-评测还面临一个工程矛盾。纯 GUI 操作很难稳定到达“敌军运输车已经接近基地”这类罕见状态；直接修改实现内部变量又会把测试绑在某个对象名和数据结构上。GameASG-Bench 采用一个公开的语义接口来准备合法状态、执行玩家级动作并读取稳定快照。测试知道“要发生什么”，无需知道游戏内部怎样组织对象。
-
-## Related work：差别不只在任务更长
-
-论文把自己放在完整应用与游戏生成评测这一支。下面的比较按论文第 5 节整理；名称链接到各工作的原始页面。
-
-<table class="gb-compare">
-  <thead><tr><th>工作</th><th>主要产物</th><th>状态与证据</th><th>GameASG-Bench 的差别</th></tr></thead>
-  <tbody>
-    <tr><td><a href="https://arxiv.org/abs/2105.09938">APPS</a> / <a href="https://arxiv.org/abs/2305.01210">EvalPlus</a></td><td>边界明确的函数程序</td><td>输入、返回值、扩展测试</td><td>GameASG-Bench 处理持续运行、可交互、可渲染的完整产物。</td></tr>
-    <tr><td><a href="https://www.swebench.com/">SWE-bench</a></td><td>已有仓库中的修复</td><td>Issue、仓库上下文、项目测试</td><td>这里从空工作区生成完整单页游戏，并额外定义可测试的运行时接口。</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2605.17637">WebGameBench</a></td><td>浏览器游戏</td><td>真实浏览器交互与规格引导</td><td>GameASG-Bench 强调生成前固定的人写接口规格与隐藏检查。</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2606.17861">GameCraft-Bench</a></td><td>Godot 项目</td><td>回放、多模态证据、隐藏 rubric</td><td>GameASG-Bench 的交付协议更窄，统一为自包含的浏览器 `index.html`。</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2605.07442">GameGen-Verifier</a></td><td>生成游戏</td><td>从规格抽取 keypoint，运行时状态注入</td><td>本文限制场景必须是正常游玩可达的合法状态，且不能预先制造待测结果。</td></tr>
-    <tr><td><a href="https://arxiv.org/abs/2608.21833">GameXpert-Bench</a></td><td>生成、修复与迭代</td><td>代码检查、现场交互、人工审核</td><td>GameASG-Bench 给出固定、可复跑的 L1/L2 检查和严格成功定义。</td></tr>
-  </tbody>
-</table>
-
-任务范围窄也带来好处。所有产物都能在同一种浏览器沙箱里运行，同一套 runner 可以记录输入监听、动画帧、Canvas/WebGL 活动、异常与语义快照。它牺牲了后端、多文件工程和长期服务行为，换来可复现的端到端检查。
-
-## `checks.json` 和 `checks.js` 到底从哪来
-
-论文第 3.2 节写得很明确：每个游戏概念选定后，**人类开发者**写 `game-spec.md`，再定义 `tdd.md` 里的场景、动作、快照字段、期望结果、拒绝行为和不变量。L1 检查写入 `checks.json`，L2 检查实现于 `checks.js`，P0/P1/P2 的优先级也由人类在测试编写阶段分配。
-
-每道题还有一个独立验证过的参考实现。人类会实际操作它，检查核心状态转移、终局与重启，并确认测试接口和屏幕上的游戏同步。随后，同一套 L1 与 L2 检查会跑在参考实现上。47 个参考实现全部通过了所有 L1 和适用的 L2 P0/P1 检查。
-
-因此这些文件不是模型生成后再让另一个模型临时编出来的，也不是从提交代码中自动猜出来的。它们在生成开始之前就已经固定。
+论文第 3.2 节说明，`game-spec.md`、`tdd.md`、`checks.json` 和 `checks.js` 均由人类开发者在候选生成前写定并冻结，P0/P1/P2 也在此时人工分配。生成完成后，评测端不会再从候选代码推导或调整这些材料。
 
 <figure class="gb-figure">
   <img src="/lib/papers/gameasg-bench/table-1-task-documents.png" alt="原论文 Table 1：三份任务文档及其作用">
-  <figcaption>原论文 Table 1。三份文档都会放进 Agent 的工作区；只有 `target.md` 直接进入 harness 的生成提示，Agent 再从工作区读取其余两份规格。</figcaption>
+  <figcaption><strong>原论文 Table 1。</strong>三份文档都在 Agent 工作区中；只有 <code>target.md</code> 直接进入 harness 的生成提示，Agent 需要自行读取另外两份规格。</figcaption>
 </figure>
 
 <table class="gb-role-table">
-  <thead><tr><th>文件或产物</th><th>作者</th><th>Agent 是否可见</th><th>作用</th></tr></thead>
+  <thead><tr><th>文件或产物</th><th>编写者</th><th>Agent 可见性</th><th>内容</th></tr></thead>
   <tbody>
-    <tr><td><code>target.md</code></td><td>人类 benchmark 作者</td><td>可见，直接作为生成任务</td><td>工作区规则、交付协议、简短玩法说明。</td></tr>
-    <tr><td><code>game-spec.md</code></td><td>人类 benchmark 作者</td><td>可见</td><td>玩家看到的机制、反馈、资源变化、终局和最低可玩循环。</td></tr>
-    <tr><td><code>tdd.md</code></td><td>人类 benchmark 作者</td><td>可见</td><td>公开测试接口、合法场景、动作、快照字段、拒绝语义与不变量。</td></tr>
-    <tr><td><code>checks.json</code></td><td>人类 benchmark 作者</td><td>不可见</td><td>L1 静态检查，包括结构、正则、工具检查和反模式。</td></tr>
-    <tr><td><code>checks.js</code></td><td>人类 benchmark 作者</td><td>不可见</td><td>L2 浏览器检查，组合场景准备、真实输入、语义快照与浏览器证据。</td></tr>
-    <tr><td>参考实现</td><td>benchmark 团队</td><td>不可见</td><td>人工验证后的正控制，用于确认测试不会把合格游戏误判为失败。</td></tr>
-    <tr><td><code>index.html</code></td><td>Coding Agent</td><td>Agent 自己生成</td><td>最终交付物，HTML、CSS 与 JavaScript 自包含。</td></tr>
+    <tr><td><code>target.md</code></td><td>任务作者</td><td>可见，直接传入 harness</td><td>工作区规则、交付协议和简短玩法说明</td></tr>
+    <tr><td><code>game-spec.md</code></td><td>任务作者</td><td>可见</td><td>目标、控制、实体、状态转移、反馈、终局和最低可玩循环</td></tr>
+    <tr><td><code>tdd.md</code></td><td>任务作者</td><td>可见</td><td>场景、动作、快照字段、拒绝语义与不变量</td></tr>
+    <tr><td><code>checks.json</code></td><td>任务作者</td><td>隐藏</td><td>L1 结构、工具、正则和反模式检查</td></tr>
+    <tr><td><code>checks.js</code></td><td>任务作者</td><td>隐藏</td><td>L2 浏览器行为检查</td></tr>
+    <tr><td>参考实现</td><td>benchmark 团队</td><td>不提供给 Agent</td><td>人工复核后的正控制；公开仓库未附实现文件</td></tr>
+    <tr><td><code>index.html</code></td><td>Coding Agent</td><td>Agent 自己生成</td><td>最终交付的 HTML、CSS 与 JavaScript</td></tr>
   </tbody>
 </table>
 
-## 一道题从编写到计分的完整路径
-
-下面是根据论文第 2、3 节和附录 B 重绘的流程，不是论文原图。
-
-<div class="gb-flow" aria-label="GameASG-Bench 完整工作流">
-  <div><b>1. 人工选题</b><span>要求有完整可玩循环，能在有界浏览器执行中到达并观察。</span><em>→</em></div>
-  <div><b>2. 人工写规格</b><span>`target.md`、`game-spec.md`、`tdd.md` 先固定。</span><em>→</em></div>
-  <div><b>3. 人工写隐藏测试</b><span>`checks.json`、`checks.js` 与优先级在生成前完成。</span><em>→</em></div>
-  <div><b>4. 验证参考实现</b><span>人工操作并运行自动检查，确认核心合规。</span><em>→</em></div>
-  <div><b>5. Agent 生成</b><span>干净工作区、新会话，只能读三份公开文档。</span><em>→</em></div>
-  <div><b>6. 独立评测</b><span>预检交付，再跑 L1、L2，最后计算严格成功。</span></div>
+<div class="gb-flow" aria-label="GameASG-Bench 从选题到评测的构建流程">
+  <div><b>1. 选择概念</b><span>完整循环，可在有界浏览器会话中执行。</span><em>→</em></div>
+  <div><b>2. 写玩法规格</b><span>目标、机制、反馈、终局和重启。</span><em>→</em></div>
+  <div><b>3. 写测试契约</b><span>合法场景、动作、观察与不变量。</span><em>→</em></div>
+  <div><b>4. 写隐藏检查</b><span>L1/L2 断言和 P0/P1/P2 优先级。</span><em>→</em></div>
+  <div><b>5. 验证参考实现</b><span>人工操作后再跑自动验收。</span><em>→</em></div>
+  <div><b>6. 生成与评测</b><span>新会话生成，隔离环境运行固定检查。</span></div>
 </div>
 
-生成和评测放在两个容器。生成容器有可写工作区，但测试与 runner 不挂载进去。Agent 结束后，系统先做交付预检：进程成功退出，`index.html` 必须是常规文件、非符号链接、非空，并包含 `</html>`。通过后，评测容器以只读方式挂载提交和测试。
+### 参考实现作为正控制
 
-每个 task 与 configuration 组合只跑一次。论文使用固定的 1280×800 无头 Chromium。这个细节很重要：表里的差异包含模型、harness、工具权限和单次运行随机性的共同影响，不能直接读成模型能力的精确总体排名。
+每道题都有一份独立验证的参考实现。人工检查覆盖真实用户操作、核心状态转移、终局、重启，以及测试接口与可见玩法的一致性。随后，同一套 L1 和 L2 检查运行在参考实现上。47 份参考实现全部通过所有 L1 和适用的 L2 P0/P1 检查。
 
-## `tdd.md` 不是测试代码，它是一份公开的行为协议
+这个过程证明测试能够接受至少一份人工确认满足核心要求的实现。它只验证正向可接受性，不能说明测试能捕获所有错误。
 
-所有游戏暴露同一个入口：
+## 4. 评测协议：准备、操作、观察与计分
+
+### 交付预检与环境隔离
+
+生成和评测位于两个容器。生成容器有可写工作区，测试与 runner 不会挂载进去。Agent 结束后，系统先检查进程成功退出，`index.html` 是常规文件、不是符号链接、文件非空，并且包含 `</html>`。通过预检后，评测容器以只读方式挂载提交和测试。
+
+### 四个公共测试方法
+
+所有游戏都暴露同一个入口，具体场景名、动作和快照字段由任务自己的 `tdd.md` 定义：
 
 ```js
 window.__gameTest = {
@@ -158,32 +185,55 @@ window.__gameTest = {
 }
 ```
 
-四个方法的名字统一，具体场景、动作和快照字段由任务决定。
+- `reset` 恢复初始状态，并清除弹窗、终局锁和临时对象。
+- `loadScenario` 建立正常游玩可达的前置条件，但不提前制造被测结果。
+- `input` 执行玩家级语义动作，例如下单、选择目标或暂停。
+- `getSnapshot` 返回 JSON 可序列化的稳定语义摘要，不暴露私有对象图。
 
-- `reset` 回到初始状态，并清除上一局的弹窗、结果锁和临时对象。
-- `loadScenario` 把游戏放到正常游玩可达的状态。它可以调整位置和资源来缩短准备时间，但不能直接制造胜利、伤害或订单完成。
-- `input` 执行玩家级语义动作，例如下单、选择目标或暂停。部分 L2 检查会绕过该方法，直接发送鼠标、键盘或触摸输入。
-- `getSnapshot` 返回 JSON 可序列化的语义摘要。字段需要稳定，但 Agent 可以自由决定内部对象图和代码结构。
+L2 通常按 prepare、act、observe 执行：先建立合法场景，再调用语义动作或发送真实浏览器输入，最后比较状态、渲染和不变量。每条检查在一个新页面里运行，完成或超时后关闭。共享浏览器 hook 记录 animation frame、输入监听器和 Canvas/WebGL 活动；检查还可以读取快照、渲染输出和运行时异常。
 
-接口的状态必须和画面共用同一份底层状态。测试端不接受一套只给 `__gameTest` 看的影子状态。L2 会把快照变化与真实输入、Canvas 哈希、渲染 revision、动画帧和异常记录相互对照。
+### 两个证据层与三个需求优先级
 
-## Armor Alley：从玩法要求到隐藏断言
+<figure class="gb-figure">
+  <img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2：L1 与 L2 检查数量">
+  <figcaption><strong>原论文 Table 2。</strong>L1 有 336 条，L2 有 885 条。L1/L2 表示证据来自源码还是运行行为；P0/P1/P2 表示需求优先级。两套标签相互独立。</figcaption>
+</figure>
 
-Armor Alley 是一款横向卷轴直升机战术游戏。玩家既驾驶直升机，又花钱生产地面单位。友方运输车到达敌方基地后获胜，敌方运输车突破己方基地则失败。公开 `game-spec.md` 还要求持续飞行、持续射击、炸弹、制导武器、士兵投放、落地补给、生产队列、雷达、暂停、胜负锁和重启。
+L1 检查 HTML 以及内联或直接链接的本地脚本，包括 43 条工具检查、288 条正则和 5 条反模式检查。它适合发现缺失接口、语法问题和明显空壳，但正则也可能命中注释或字符串，所以论文只把 L1 解释为源码级证据。
 
-这里选“按住空格持续开火，松开后停止”这一条，因为它能把规格如何落到测试里完整串起来。
+L2 在无头 Chromium 中执行 `checks.js`。102 条 P0 检查覆盖启动、接口和最低运行条件；534 条 P1 检查覆盖核心机制、交互和不变量；249 条 P2 检查描述高级玩法与完整度。每条 L2 返回 `PASS`、`FAIL` 或 `NOT_APPLICABLE`，并记录耗时和诊断信息。
 
-### 1. `game-spec.md` 写玩家能观察到的因果链
+均值的分母也不同。Mean L1 和 overall L2 会先计算每个任务的检查通过率，再对已完成评测的任务取平均；P0、P1、P2 则把所有已评测任务中的 applicable checks 汇总后计算。93.2% 是 mean L2，不代表 93.2% 的任务完整成功。
 
-公开需求要求：按住开火键会持续消耗弹药，并生成向目标或朝向移动的可见弹丸；松开后持续射击停止。只有数字下降不够，只有屏幕特效也不够。
+### 严格成功的判定规则
 
-### 2. `tdd.md` 给出合法起点和可观察字段
+对任务 `g`，令 `d_g` 表示交付有效，`e_g` 表示评测完成，`L_g` 是全部 L1，`B_g` 是适用的 L2 P0/P1。每条检查通过时 `p_g,c = 1`，否则为 0：
 
-测试场景 `air_attack_with_targets` 必须处于 `phase === "playing"`、`result === "none"`、直升机在空中，并且存在可攻击目标。快照公开弹药、弹丸数量、战斗 revision 和通知等语义字段。场景只能准备条件，不能提前开火或造成伤害。
+<div class="gb-formula">
+  <code>s_g = d_g · e_g · ∏(p_g,c),　c ∈ L_g ∪ B_g</code>
+  <code>SR(G) = (1 / |G|) · Σ s_g</code>
+  <span>L2 P2 不进入严格成功。任意一个必需检查失败，整道任务的 s_g 就是 0。</span>
+</div>
 
-### 3. `checks.json` 先检查契约外壳
+当前 runner 会把 `NOT_APPLICABLE` 排除在适用检查分母之外，却没有限制 P1 返回这个状态，这是计分协议中已知的边界。
 
-下面是官方仓库中 Armor Alley 的真实 L1 条目，正则被缩短为便于阅读的形式。原文件会同时检查四个方法的多种合法 JavaScript 写法。
+## 5. 贯穿案例：Armor Alley 的持续射击
+
+Armor Alley 是一款横向卷轴直升机战术游戏。玩家驾驶直升机，也能花钱生产地面单位；友方运输车到达敌方基地后获胜，敌方运输车突破己方基地则失败。官方任务文件可直接查看：[game-spec.md](https://github.com/areal-project/GameASG-Bench/blob/main/task/armor-alley/game-spec.md)、[tdd.md](https://github.com/areal-project/GameASG-Bench/blob/main/task/armor-alley/tdd.md)、[checks.json](https://github.com/areal-project/GameASG-Bench/blob/main/tests/armor-alley/checks.json) 和 [checks.js](https://github.com/areal-project/GameASG-Bench/blob/main/tests/armor-alley/checks.js)。
+
+“按住开火，松开后停止”是一条公开需求。沿着它进入隐藏断言的过程，可以看到一处契约缺口：公开文件规定了持续射击的语义，却没有指定 Space 键。
+
+### 公开规格固定因果链
+
+`game-spec.md` 要求按住开火键时持续消耗弹药，并产生朝向目标或飞行方向移动的可见弹丸；松开按键后停止持续射击。单独让弹药数字下降，或者只画一层特效，都没有满足完整因果链。
+
+`tdd.md` 对 `air_attack_with_targets` 的公开定义是：直升机有一些武器，并且至少一个敌人或威胁可被接近或选中；场景不能预先命中目标、结算伤害或移除对象。快照公开弹药、弹丸数量、战斗 revision 和通知等字段。
+
+隐藏的 `legalScenario` predicate 实际只检查 `phase === "playing"`、`result === "none"` 和直升机在空中，没有再次验证武器或目标。这是测试覆盖的一处缝隙：公开场景契约更强，下面这条 L2 的前置断言更弱。
+
+### L1 验证接口外壳
+
+`checks.json` 中有一条真实的 P0 检查。以下摘录保留其字段与含义；官方正则支持多种合法 JavaScript 写法，此处省略正则细节：
 
 ```json
 {
@@ -201,11 +251,11 @@ Armor Alley 是一款横向卷轴直升机战术游戏。玩家既驾驶直升�
 }
 ```
 
-另一个 P1 条目会搜索 `startBattle`、`setFlightIntent`、`holdFire`、`dropBomb`、`orderUnit` 等动作分支。L1 的目标是快速发现缺失接口和明显空壳。论文也承认它的上限：正则可能匹配到注释或字符串，所以 L1 通过并不代表玩法成立。
+另一条 P1 会查找 `startBattle`、`setFlightIntent`，以及 `holdFire`、`dropBomb`、`orderUnit` 三者中的至少一种动作分支。L1 只能确认源码中存在契约外壳，行为仍交给 L2。
 
-### 4. `checks.js` 用真实键盘输入验证持续射击
+### L2 把持续射击映射到真实 Space 键
 
-下面保留了官方检查的核心代码。测试没有调用 `input({type: 'holdFire'})` 来“帮”游戏开火，而是向浏览器发送真实 Space 键按下与松开。
+这段代码来自官方 `checks.js` 的 `p1-keyboard-sustained-fire-release`。检查绕过 `input({type: "holdFire"})`，直接向浏览器发送 Space 的 keydown 和 keyup：
 
 ```js
 const setup = await legalScenario(
@@ -245,129 +295,171 @@ if (!grewWhileHeld)
   return FAIL('held fire did not create projectile/combat/ammo evidence');
 if (!plateauAfterRelease)
   return FAIL('fire continued growing after release');
-return PASS('real key path creates and stops sustained fire');
+return PASS('real key path creates and stops sustained fire without contract fire rescue');
 ```
 
-这条检查的完整判定链是：
+判定链有五步：隐藏 predicate 检查基础起点；浏览器按住 Space 650 ms；弹丸、战斗 revision 或弹药至少出现一种变化；松开后分两次取样；弹丸计数没有继续显著增长，或者 projectile revision 保持不变。这条检查旨在发现只有语义 API 能开火、真实按键没有接上玩法，以及松开后仍持续射击等问题。
 
-1. `legalScenario` 先验证起点没有提前满足结果。
-2. 浏览器按下 Space，等待 650 ms。
-3. 弹丸数量、弹丸 revision、战斗 revision 或弹药至少一个发生正确变化。
-4. 浏览器松开 Space，再分两次取样。
-5. 弹丸增长进入平台期，证明 release 真的终止了持续射击。
+它没有完整执行公开规格的全部因果链。按住阶段只要弹药下降、弹丸计数上升或 revision 变化中的任一项成立即可，不要求弹丸可见、方向正确或命中目标；松开后的 plateau 也是两个条件取其一。这条检查只提供有针对性的行为证据，持续射击需求中的弹丸可见性、方向和命中仍未被穷尽验证。
 
-它能排除几类常见空壳：只实现 `holdFire` 语义 API 却没有键盘监听；快照里写 `firing: true` 但没有弹丸、战斗或弹药变化；松开按键后计时器仍在生成弹丸。
+这里存在公开契约与隐藏检查的错位。`game-spec.md` 只写了 hold/release fire，`tdd.md` 公开的是 `holdFire` 语义 action，两份文件都没有把 Space 指定为物理按键。一个完整实现如果选择鼠标或其他按键，并正确实现公开的 `holdFire`，仍可能在这条隐藏检查上失败。真实输入能排除 API 空壳。要让严格成功只反映已公开的要求，具体输入映射也需要写进公开规格。
 
-### 5. 同一个游戏还会检查方向、伤害、经济和终局
+同一个任务还会从 `flight_control_sample` 发送真实鼠标移动，验证左右和上下位移符号相反；从 `air_hazard_nearby` 尽量让直升机朝有坐标的危险移动，坐标不可用时则向下移动，再观察生命、战斗 revision、爆炸或警告。合法生产检查要求资金下降，并观察队列增长或 production revision；随后还要出现队列完成、友军数增长或新的 production revision 之一。另一条非法订单检查验证资金、队列与友军数量保持不变。完整因果链是测试设计目标，字段变化只是其中一种证据。
 
-Armor Alley 的方向检查会分别从 `flight_control_sample` 场景开始，向右、左、上、下移动真实鼠标。它要求左右位移符号相反、上下位移符号相反，并确认世界仍在推进。危险检查则从安全且非终局的 `air_hazard_nearby` 开始，让直升机朝可见危险移动，随后寻找生命、战斗 revision、爆炸效果或警告变化。
+## 6. 实验结果：高平均分下的交付缺口
 
-这解释了为什么 `checks.js` 很长。它不只问“有没有按钮”，还要验证准备状态、动作渠道、结果证据、拒绝路径和无关状态不变。
+### 设置与读数口径
 
-## 两层检查分别能证明什么
+RQ1 比较九个 agent stack。这里的 stack 是模型与 harness 的组合，harness 为 Claude Code 2.1.206 或 Codex CLI 0.153.4。RQ1 全部使用各 stack 的最大 reasoning effort 和完整工具权限；RQ2 至 RQ4 以 DeepSeek-V4-Flash、Claude Code、最大 reasoning effort、完整工具和 120 轮名义预算为共同基线，再改变一个因素。
 
-<figure class="gb-figure">
-  <img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2：L1 与 L2 检查数量">
-  <figcaption>原论文 Table 2。L1 有 336 条，L2 有 885 条。层级和优先级是两套正交标签：L1/L2 表示证据来自源码还是运行行为，P0/P1/P2 表示需求重要性。</figcaption>
-</figure>
+所有实验使用同一批 47 个任务。每个 task-configuration 组合只运行一次，从干净工作区开始；L2 使用固定 1280×800 的无头 Chromium。这些是论文条件下的单次观测，无法给出方差估计或稳定排名。
 
-L1 runner 检查 HTML 及其内联或本地脚本，支持工具检查、正则和反模式。每一条都会留下结果与修复提示。L1 即使失败，L2 仍然继续运行，这样报告能区分“契约没声明”和“玩法运行失败”。
-
-L2 在无头 Chromium 中执行 `checks.js`。每一条检查创建一个新页面，结束或超时后关闭，再开始下一条。共享浏览器 hook 记录 animation frame、输入监听器、Canvas/WebGL 活动和运行时异常。单个检查按需要组合这些证据，不要求每条都使用全部信号。
-
-P0 覆盖启动、测试接口和最低运行条件。P1 对应核心机制、交互、不变量与相关接口。P2 记录高级玩法和完整度，不进入严格成功条件。L2 返回 `PASS`、`FAIL` 或 `NOT_APPLICABLE`。论文特别指出，当前 runner 没有限制 P1 返回 `NOT_APPLICABLE`，这是一个真实的计分边界。
-
-## 严格成功为什么比平均通过率低得多
-
-对任务 `g`，严格成功需要同时满足：交付有效、评测完成、全部 L1 通过、所有适用的 L2 P0/P1 通过。任何一个必需检查失败，整个任务记 0。P2 不影响严格成功。
-
-这是一种产品交付式指标。一个射击游戏的 99 条要求都工作，唯独玩家按键不能开火，它仍然没有完成。平均检查通过率适合观察“差多少”，严格成功率回答“能不能交付”。论文同时报告两者，避免只看一个数字。
+### RQ1：九个 agent stack 的端到端交付
 
 <figure class="gb-figure">
   <img src="/lib/papers/gameasg-bench/table-3-leaderboard.png" alt="原论文 Table 3：九个模型与 harness 组合的严格成功率和检查通过率">
-  <figcaption>原论文 Table 3。GPT-6-Astra + Codex CLI 的严格成功为 26/47，平均 L2 为 93.2%。Claude-Opus-5 为 24/47，GPT-5.6-Sol 为 21/47。所有结果来自每个 task-configuration 组合的一次运行。</figcaption>
+  <figcaption><strong>原论文 Table 3。</strong>GPT-6-Astra + Codex CLI 的严格成功为 26/47，平均 L2 为 93.2%。Claude-Opus-5 为 24/47，GPT-5.6-Sol 为 21/47。</figcaption>
 </figure>
 
-最直观的一组对比来自 GPT-6-Astra：平均 L2 已到 93.2%，严格成功仍只有 55.3%。Claude-Opus-5 的 L1 最高，为 99.6%，严格成功是 51.1%。源码级合规在所有模型上都接近满分，但可交付率没有同步接近满分。
+九个 stack 的平均 L1 都在 97.7% 至 99.6% 之间，严格成功却分布在 14.9% 至 55.3%。即使 GPT-6-Astra 的平均 L2 达到 93.2%，仍有 21 个任务没有满足全部必需检查；它的 47 个产物中也只有 40 个通过全部 L1。
+
+两个指标的排序还会冲突。GPT-5.6-Sol 的平均 L2 为 91.3%，高于 Claude-Opus-5 的 90.4%，严格成功数却是 21 对 24。按 mean L2 排名会把这两个 stack 的严格成功顺序排反。
 
 <figure class="gb-figure">
   <img src="/lib/papers/gameasg-bench/table-4-resource-use.png" alt="原论文 Table 4：各模型与 harness 组合的产物大小、token 和报告成本">
-  <figcaption>原论文 Table 4。更大的产物或更多 token 没有稳定对应更多严格成功。例如 Claude-Opus-5 的平均输入 token 远高于 GPT-6-Astra，严格成功少 2 个任务。</figcaption>
+  <figcaption><strong>原论文 Table 4。</strong>更多 token 或更大的文件没有稳定对应更多严格成功。GPT-6-Astra 平均输出 55.5k token，严格成功 26 个；两个 DeepSeek 变体约为 203k，分别成功 18 和 15 个。</figcaption>
 </figure>
 
-## 工具、轮数、推理强度和 harness 分别改变了什么
+### RQ2：工具权限与轮数预算
 
 <div class="gb-two">
-  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-5-tool-ablation.png" alt="原论文 Table 5：工具权限消融"><figcaption>原论文 Table 5。DeepSeek-V4-Flash 在无工具、仅文件、文件加语法检查、完整工具下分别成功 7、6、9、18 个任务。完整工具主要拉高 P1 行为检查。</figcaption></figure>
-  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-6-turn-budget.png" alt="原论文 Table 6：30、60、120 轮预算"><figcaption>原论文 Table 6。30/60/120 轮时，完成评测的任务数为 10/32/47。短预算首先伤害的是“有没有交付并进入评测”，条件成功率会因此看起来比全体成功率高。</figcaption></figure>
+  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-5-tool-ablation.png" alt="原论文 Table 5：工具权限消融"><figcaption><strong>原论文 Table 5。</strong>DeepSeek-V4-Flash 在无工具、仅文件、文件加语法检查、完整工具下分别严格成功 7、6、9、18 个任务。完整工具的 P1 通过率为 86.7%。</figcaption></figure>
+  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-6-turn-budget.png" alt="原论文 Table 6：30、60、120 轮预算"><figcaption><strong>原论文 Table 6。</strong>30、60、120 轮时分别只有 10、32、47 个任务完成评测，按全部 47 个计划任务计算的严格成功为 7、13、18。</figcaption></figure>
 </div>
 
-完整工具让 DeepSeek-V4-Flash 从 6 至 9 个严格成功上升到 18 个。只增加语法检查并没有稳定改善 P1，说明能解析不等于能玩。轮数结果还暴露了 benchmark 的工程属性：30 轮只有 10/47 个任务完成评测，其中 7 个严格成功；把未完成任务从分母拿掉会得到 70.0% 的条件成功率，但全体任务成功率仍是 14.9%。
+完整工具带来的变化主要出现在运行行为。L1 在四种工具条件下都接近 99%，完整工具却把 P1 提高到 86.7%，严格成功升至 18/47。只加入 `node --check` 让严格成功从 6 增到 9，但 P1 从 66.2% 降到 63.4%；`node --check` 的增益没有体现在 P1 通过率上。
+
+轮数表需要同时看两个分母。30 轮时仅 10 个任务进入评测，其中 7 个成功，条件成功率看起来有 70.0%；按预先计划的全部 47 个任务计算，仍只有 14.9%。更高预算让更多任务完成生成并进入评测，数据不能据此证明已评测任务本身的行为质量也随预算提高。
+
+### RQ3：High 严格成功 19/47，Max 为 18/47
 
 <div class="gb-two">
-  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort.png" alt="原论文 Table 7：推理强度比较"><figcaption>原论文 Table 7。High 比 Max 少用 26.9% 的 reasoning tokens，却多成功 1 个任务。Max 的 P0/P1/P2 通过率更高，严格成功并不单调。</figcaption></figure>
-  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-8-harness.png" alt="原论文 Table 8：Claude Code 与 Codex CLI harness 比较"><figcaption>原论文 Table 8。两种 harness 都是 18/47，但只有 10 个任务共同成功，另有 8 个各自独占成功，21 个都失败。</figcaption></figure>
+  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort.png" alt="原论文 Table 7：推理强度比较"><figcaption><strong>原论文 Table 7。</strong>High 严格成功 19/47，Max 为 18/47。High 少用 26.9% 的 reasoning token；Max 的 P0/P1/P2 通过率更高。</figcaption></figure>
+  <figure class="gb-figure"><img src="/lib/papers/gameasg-bench/table-8-harness.png" alt="原论文 Table 8：Claude Code 与 Codex CLI harness 比较"><figcaption><strong>原论文 Table 8。</strong>两种 harness 都严格成功 18/47，但只有 10 个任务共同成功，各有 8 个独占成功，另有 21 个都失败。</figcaption></figure>
 </div>
 
-同一个 DeepSeek-V4-Flash 在 Claude Code 与 Codex CLI 上得到相同总数，却解决了不同任务。harness 包含系统指令、上下文管理、工具 schema、命令执行和 endpoint 协议，因此它本身就是被测 agent stack 的一部分。只报总分会把这种差异抹掉。
+Low、High、Max 的严格成功分别为 7、19、18。与此同时，聚合 P1 从 71.7% 上升到 82.7% 和 86.7%。Max 的更高聚合 P1 没有转化为更多严格成功；每个配置又是一次独立生成，论文没有提供逐任务配对因果证据。
 
-## 两个失败案例为什么比总榜更有用
+### RQ4：相同总分对应不同成功集合
+
+Claude Code 与 Codex CLI 在固定模型和 reasoning effort 下都得到 18 个严格成功，成功集合却明显不同。harness 会改变系统指令、上下文管理、工具 schema、命令执行和 endpoint 协议。只写模型名或只看总分，都会丢失实际被测 agent stack 的重要信息。
+
+论文还比较了同一 Sortie 任务的修复轨迹。Codex CLI 的真实输入测试发现了坐标偏移；Claude Code 的自测发现 reset 后残留状态。两条路径都最终成功，但用不同证据找到了不同错误，这也解释了相同总分为何不代表相同能力分布。
+
+## 7. 失败诊断：真实输入与状态组合暴露缺口
 
 <figure class="gb-figure">
   <img src="/lib/papers/gameasg-bench/table-9-diagnostics.png" alt="原论文 Table 9：Diner Dasher 与 Turbo Smash Beast 的诊断证据">
-  <figcaption>原论文 Table 9。两个产物都能正常启动，行为缺口出现在组合操作中。</figcaption>
+  <figcaption><strong>原论文 Table 9。</strong>Diner Dasher 的真实拖拽未推动订单；Turbo Smash Beast 在场景加载后停止了自然时间。</figcaption>
 </figure>
 
-### Diner Dasher：API 能服务，真实拖拽不工作
+### Diner Dasher：接口可调用，真实拖拽无效
 
-测试先加载 `tray_with_correct_item`，从快照读取托盘物品和顾客的屏幕边界，再从两个矩形中心发送真实鼠标拖拽。拖完后，它要求服务计数、当日收入或顾客完成数至少有一个增加；若顾客已被服务，托盘数量还必须下降。最后再比较 Canvas 哈希或 render revision，确认画面真的变化。
-
-GPT-6-Astra 的失败产物通过 L1，也通过 L2 的 P0/P2，但鼠标和触摸拖拽都没有推动服务流程。这类问题不会出现在接口存在性检查或静态截图里。
+测试从 `tray_with_correct_item` 读取托盘物品和顾客的屏幕边界，再用 CDP 从两个矩形中心发送真实鼠标拖拽。拖完后，订单、当日收入或已服务顾客数至少要有一个增加；若顾客已被服务，托盘数量必须下降。Canvas 哈希可用时，检查还要求哈希或 render revision 至少有一个变化。以下是[官方检查](https://github.com/areal-project/GameASG-Bench/blob/main/tests/diner-dasher/checks.js)的核心逻辑：
 
 ```js
 const setup = await game.loadScenario('tray_with_correct_item');
-const from = center(firstTrayItem(setup).bounds);
-const to = center(firstCustomer(setup).bounds);
+const item = firstTrayItem(setup);
+const customer = firstCustomer(setup);
+const from = center(item && item.bounds);
+const to = center(customer && customer.bounds);
+if (!hasFinitePoint(from) || !hasFinitePoint(to))
+  return FAIL('missing tray/customer bounds for real drag');
+
+const beforeHash = await game.canvasHash();
+const beforeScore = moneyToday(setup);
+const beforeServed = countServed(setup);
+const beforeTray = trayCount(setup);
+
 await game.realMouseDrag(from, to);
 const after = await game.snapshot();
+const afterHash = await game.canvasHash();
 
-if (served(after) <= served(setup) &&
-    moneyToday(after) <= moneyToday(setup)) {
-  return FAIL('correct real drag produced no service progress');
+if (countServed(after) <= beforeServed &&
+    moneyToday(after) <= beforeScore &&
+    customersServedToday(after) <= customersServedToday(setup)) {
+  return FAIL('correct real drag produced no order, score, or service progress');
 }
+if (trayCount(after) >= beforeTray && countServed(after) > beforeServed)
+  return FAIL('served item but tray did not decrease');
+if (beforeHash != null && afterHash != null &&
+    beforeHash === afterHash &&
+    after.observability?.renderRevision === setup.observability?.renderRevision)
+  return FAIL('no visible render evidence changed after real drag');
 ```
 
-### Turbo Smash Beast：场景加载和自然时间单独都能跑，组合后停住
+论文中的 GPT-6-Astra 失败产物通过 L1 和 L2 P0/P2，鼠标与触摸拖拽都没有推动服务流程。接口能调用，场景也能渲染，但真实玩家路径没有接上服务逻辑。
 
-失败实现里，`reset` 或 `loadScenario` 会开启 test mode，并关闭自然时间模拟。Agent 自测了两条独立路径：通过测试接口显式推进时间，以及从新页面直接做真实驾驶。两条都通过。benchmark 的 L2 先加载合法场景，再发送真实鼠标按住并等待浏览器自然时间。这个组合让车辆完全不前进，随后加速、滑行和相关检查一起失败。
+### Turbo Smash Beast：场景加载关闭了自然时间
 
-真实加速检查会在 `readyUnlockedLevel` 中按下鼠标，分别等待 350 ms 和 450 ms，要求 `speedRatio` 连续增长，`forwardProgress` 和 `motionRevision` 增长，HUD 速度也同步上升。松开检查再要求车辆短暂滑行，然后减速。场景、输入、时间和 HUD 缺一不可。
+这个失败实现的 `reset` 或 `loadScenario` 会进入 test mode，并停止自然时间模拟。Agent 分别自测了两条路径：通过测试接口显式推进时间，以及从新页面直接真实驾驶。两条都能工作。benchmark 的 L2 把它们组合起来，先加载 `readyUnlockedLevel` 合法场景，再按住真实鼠标并等待浏览器时间，于是车辆完全不前进。
 
-## 这套 benchmark 仍然有哪些边界
+[官方检查](https://github.com/areal-project/GameASG-Bench/blob/main/tests/turbo-smash-beast/checks.js)在按下后等待 350 ms 和 450 ms，要求 `speedRatio` 连续增长，`forwardProgress` 与 `motionRevision` 增长，HUD 速度同步上升；松开后还需要短暂滑行并减速。场景、输入、自然时间和 HUD 任一环节断开，整条核心机制都会失败。
 
-- 47 个任务都限制为自包含浏览器单页。结果不能直接外推到后端服务、多人同步、大型资产管线或长期运行系统。
-- 每个 task-configuration 组合只跑一次。模型与 harness 排名包含随机性，论文没有给多次运行的方差或置信区间。
-- 语义接口提高了可控性，也增加了实现负担。Agent 需要同时写游戏和测试适配层，能力测量包含了“能否正确实现公开测试契约”。
-- L1 主要给出源码证据，正则可能命中注释。论文没有把它解释成玩法正确性。
-- P1 的 `NOT_APPLICABLE` 当前缺少硬性限制，可能让某些必需检查退出分母。
-- 参考实现通过说明测试能接受一组人工确认合格的实现，不能证明测试覆盖了规格里的每一种错误。
+## 8. 与相邻基准的评测边界
 
-这篇论文最有价值的部分在于它把完整应用评测拆成了可检查的职责边界：人类先固定行为契约和隐藏检查，Agent 自由实现内部结构，评测器用合法场景、真实输入、稳定快照和渲染证据复核因果链。55.3% 的榜单数字会随模型更新，测试设计更值得迁移到编辑器、数据产品或交互式科研工具。
+GameASG-Bench 连接了代码生成、完整应用生成与游戏行为验证三条工作线。下表按产物范围、测试标准的来源和行为证据比较最相邻的 benchmark，依据论文第 5 节整理。
 
-## 原论文表格索引
+<table class="gb-compare">
+  <thead><tr><th>工作</th><th>产物范围</th><th>评测路径</th><th>与 GameASG-Bench 的边界</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://arxiv.org/abs/2105.09938">APPS</a> / <a href="https://arxiv.org/abs/2305.01210">EvalPlus</a></td><td>边界清晰的函数程序</td><td>输入输出与扩展测试</td><td>GameASG-Bench 处理持续运行、输入、状态和渲染相互依赖的完整产物。</td></tr>
+    <tr><td><a href="https://www.swebench.com/">SWE-bench</a></td><td>已有仓库中的修复</td><td>Issue、仓库上下文与项目测试</td><td>GameASG-Bench 从空工作区生成一个完整单页游戏，并额外要求实现公开评测接口。</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2605.17637">WebGameBench</a></td><td>完整浏览器游戏</td><td>规格引导的浏览器交互，可在最终用户动作前准备候选状态</td><td>GameASG-Bench 固定四方法接口框架，并在每题生成前声明合法场景语义，由候选实现该接口。</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2606.17861">GameCraft-Bench</a></td><td>完整 Godot 项目</td><td>可回放 demo、场景初始化与隐藏 rubric</td><td>GameASG-Bench 的范围更窄，交付统一为浏览器 <code>index.html</code>，以固定 L1/L2 断言验收。</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2605.07442">GameGen-Verifier</a></td><td>生成游戏</td><td>抽取 precondition-interaction-postcondition keypoint，并向每个实现注入运行时状态</td><td>GameASG-Bench 由任务作者预先定义场景、动作和观察语义，场景不能直接制造待测结果。</td></tr>
+    <tr><td><a href="https://arxiv.org/abs/2608.21833">GameXpert-Bench</a></td><td>生成、修复与迭代</td><td>生成轨在产物完成后汇集事件并加入人工审核，形成共享 event rubric</td><td>GameASG-Bench 的规格和可执行检查在生成前冻结，重点是同一检查跨私有实现复跑。</td></tr>
+  </tbody>
+</table>
 
-为了不丢失原文信息，下面保留其余实验表的原图入口：
+论文的辨识度来自 predeclared evaluation interface：先定义可达前置条件、玩家级动作、稳定观察和不变量，再让 Agent 同时实现游戏与接口。这套设计给出更可复跑的逐项诊断，同时增加了接口负担，并把任务限制在单页浏览器范围内。
 
-- [Table 1：任务文档](/lib/papers/gameasg-bench/table-1-task-documents.png)
-- [Table 2：检查数量](/lib/papers/gameasg-bench/table-2-check-counts.png)
-- [Table 3：主结果](/lib/papers/gameasg-bench/table-3-leaderboard.png)
-- [Table 4：资源消耗](/lib/papers/gameasg-bench/table-4-resource-use.png)
-- [Table 5：工具消融](/lib/papers/gameasg-bench/table-5-tool-ablation.png)
-- [Table 6：轮数预算](/lib/papers/gameasg-bench/table-6-turn-budget.png)
-- [Table 7：推理强度](/lib/papers/gameasg-bench/table-7-reasoning-effort.png)
-- [Table 8：harness 比较](/lib/papers/gameasg-bench/table-8-harness.png)
-- [Table 9：失败诊断](/lib/papers/gameasg-bench/table-9-diagnostics.png)
+## 9. 局限与可迁移经验
 
-论文：[GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development](https://arxiv.org/abs/2609.21293)。代码与任务：[areal-project/GameASG-Bench](https://github.com/areal-project/GameASG-Bench)。文中的 Figure 与 Table 图片均裁自原论文；流程图与中文解读根据论文第 2、3 节和官方仓库整理。
+### 结论的适用范围
+
+- 47 个任务都要求自包含浏览器单页。结果不能直接外推到后端服务、多人同步、大型资产管线或长期运行系统。
+- 每个 task-configuration 组合只跑一次。论文没有报告重复运行方差或置信区间，模型与 harness 的名次不宜解读为精确总体排序。
+- 公开接口增加了实现负担。分数同时包含游戏开发能力与遵守测试契约的能力。
+- L1 正则可能匹配注释；P1 的 `NOT_APPLICABLE` 又没有硬限制。两者都会影响严格成功的解释。
+- 47 个参考实现全部通过，说明正控制能够被接受。论文没有报告系统性的 mutation testing 或负控制实验，因此尚不能量化检查漏过错误实现的概率。
+- 严格成功依赖检查覆盖面和人工优先级。未被写成 L1 或 L2 P0/P1 的要求，不会进入这个乘积式验收指标。
+
+### 可迁移到其他生成任务的五条设计原则
+
+1. 在生成前写观察契约。先明确场景、动作、结果、拒绝路径和不变量，再让 Agent 实现。
+2. 场景准备只缩短前置路径。最终结果仍由被测动作触发，避免把答案直接塞进初始状态。
+3. 组合语义状态与独立证据。真实输入、自然时间、渲染变化和运行时异常可以约束自报快照。
+4. 同时报告局部通过率与整体验收。前者便于诊断，后者揭示任何核心短板造成的交付失败。
+5. 把 model、harness、工具和预算作为同一个 agent stack 报告。论文中的 harness 对照表明，相同总分也可能来自不同成功集合。
+
+55.3% 是特定模型、harness 与单次运行条件下的结果。更容易迁移的是它的评测协议：生成前声明行为表面，用合法场景准备前置条件，以语义动作或真实输入触发结果，再用快照和运行证据交叉验证。这套流程可以把完整应用的失败定位到具体需求和组合路径。
+
+## 附录：原图与资料
+
+本文已在对应章节嵌入原论文全部 1 张 Figure 和 9 张 Table。逐图入口如下：
+
+- [Figure 1：47 个任务的类型、维度与参考技术](/lib/papers/gameasg-bench/figure-1-corpus.png)
+- [Table 1：三份任务文档](/lib/papers/gameasg-bench/table-1-task-documents.png)
+- [Table 2：L1/L2 检查数量](/lib/papers/gameasg-bench/table-2-check-counts.png)
+- [Table 3：九个 agent stack 的主结果](/lib/papers/gameasg-bench/table-3-leaderboard.png)
+- [Table 4：产物大小、token 与成本](/lib/papers/gameasg-bench/table-4-resource-use.png)
+- [Table 5：工具权限消融](/lib/papers/gameasg-bench/table-5-tool-ablation.png)
+- [Table 6：30、60、120 轮预算](/lib/papers/gameasg-bench/table-6-turn-budget.png)
+- [Table 7：推理强度比较](/lib/papers/gameasg-bench/table-7-reasoning-effort.png)
+- [Table 8：Claude Code 与 Codex CLI harness 比较](/lib/papers/gameasg-bench/table-8-harness.png)
+- [Table 9：Diner Dasher 与 Turbo Smash Beast 诊断](/lib/papers/gameasg-bench/table-9-diagnostics.png)
+
+论文：[GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development](https://arxiv.org/abs/2609.21293)。代码与任务：[areal-project/GameASG-Bench](https://github.com/areal-project/GameASG-Bench)。图表均裁自原论文；中文流程图与解读根据论文第 2 至 5 节及官方仓库整理。
 
 </div>
