@@ -48,6 +48,7 @@ tags:
   <a href="https://arxiv.org/abs/2609.21293">论文主页</a>
   <a href="https://arxiv.org/pdf/2609.21293">论文 PDF</a>
   <a href="https://github.com/areal-project/GameASG-Bench">官方代码与 47 个任务</a>
+  <a href="https://papers.cool/arxiv/2609.21293">papers.cool FAQ</a>
 </div>
 
 <p class="gb-lead">GameASG-Bench 检查 Coding Agent 交付的游戏能否在真实输入、自然时间和可见画面中完成需求。最佳组合的平均 L2 通过率达到 93.2%，最终完整通过的任务仍只有 26/47。这个差距对应论文要测的集成失败。</p>
@@ -75,15 +76,25 @@ tags:
   </div>
 </details>
 
-## 1. 评测缺口：能运行不等于可交付
+## Q1: 这篇论文试图解决什么问题？
 
-一个 GPT-6-Astra 生成的 Diner Dasher 能启动，测试接口也可调用，L1 以及 L2 的 P0、P2 均通过。玩家把餐点拖给顾客时，订单却没有任何进展。浏览器画面、源码关键字和接口字段分别证明了局部存在，真实玩家路径仍然断开。
+一个 GPT-6-Astra 生成的 Diner Dasher 能启动，测试接口也可调用，L1 以及 L2 的 P0、P2 均通过。玩家把餐点拖给顾客时，订单却没有任何进展。源码、接口字段和浏览器画面分别证明了局部功能存在，真实玩家路径仍然断开。
 
-游戏把输入、状态机、动画、渲染、资源、终局和重启放在同一个持续运行的系统中。纯 GUI 测试很难稳定走到稀有状态；测试若直接修改候选代码的私有变量，又会绑死对象名和数据结构。GameASG-Bench 的解法是先公开一层语义契约，用它准备合法前置条件和读取稳定快照，再用键鼠、自然时间、Canvas 变化和运行时异常复核行为。
+GameASG-Bench 要测的是 Coding Agent 交付的完整应用是否满足每一项核心行为需求。游戏把输入、状态机、动画、渲染、资源、终局和重启放在同一个持续运行的系统中，任何一处接线错误都可能让“能打开”的程序无法游玩。函数测试和源码扫描很难覆盖这种集成失败，单一的“看起来可玩”评分又无法指出究竟坏在哪里。
 
-### 与相邻基准的边界
+难点还在于，47 个候选可以采用完全不同的内部结构。测试如果直接改写私有变量，就会绑定某个对象名或数据结构；只从 GUI 重新玩到稀有状态，又慢且不稳定。论文因此把一层语义评测契约放进生成任务，再用真实键鼠、自然时间、状态快照、Canvas/WebGL 活动和运行时异常交叉验证。
 
-论文第 5 节所列的近邻工作，差异主要落在“任务从哪里开始”和“正确性如何定义”。
+## Q2: 有哪些相关研究？
+
+论文把相关工作分成三条线，三者解决的问题并不相同：
+
+- APPS、EvalPlus 把正确性落实到有界程序的输入输出，SWE-bench 把任务扩展到已有仓库中的 issue 修复；WebGen-Bench、E2EDev 继续走向完整应用，Vision2Web 和 VISTA 更强调视觉与交互证据。
+- GameGPT、Play2Code、ALIVE 和 GameCWM 等工作把角色协作、自动游玩或执行反馈用于生成、测试与训练，重点是怎样让生成过程变好。
+- WebGameBench、GameCraft-Bench、GameGen-Verifier 和 GameXpert-Bench 评估游戏生成及其行为验证，GameXpert-Bench 还覆盖修复与多轮优化。它们与本文最接近，关键差别在于评测契约何时产生、场景如何准备、最终依据什么证据判定。
+
+### 最接近的基准怎样划分边界
+
+下表比较任务起点和正确性定义。GameASG-Bench 的区别是，在候选生成前固定公开接口和隐藏检查，随后用同一组断言复跑不同实现。
 
 <div class="gb-table-scroll">
 <table>
@@ -99,9 +110,11 @@ tags:
 </table>
 </div>
 
-它把验收条件放在候选生成之前：任务作者先写完公开契约和隐藏断言，再让 Agent 开始实现。
+## Q3: 论文如何解决这个问题？
 
-## 2. 基准构建：47 个任务与冻结契约
+GameASG-Bench 先把“怎样观察行为”写进需求，再让 Agent 自由决定“怎样实现游戏”。公开接口负责建立可复现场景和读取语义状态，隐藏测试负责检查源码与真实运行；两者都在候选生成前冻结。
+
+### 47 个任务如何选出来
 
 每个任务都要有可在有限浏览器会话中完成的玩法循环：玩家输入改变状态，游戏给出可观察进展或终局，并能重启。依赖后端、账号、外部数据库、付费或私有资产、无界多人设施的设计被排除。最终语料覆盖 12 类游戏，其中 32 个为 2D，15 个为 3D。
 
@@ -110,7 +123,9 @@ tags:
   <figcaption><strong>原论文 Figure 1。</strong>参考实现主要使用 Canvas 2D 和 Three.js；technology 不限制 Agent 的实现选择。点击图片可查看原尺寸。</figcaption>
 </figure>
 
-任务作者在生成前人工编写并冻结玩法规格、接口规格、L1/L2 检查和 P0/P1/P2 优先级。Agent 能读到 <code>target.md</code>、<code>game-spec.md</code> 和 <code>tdd.md</code>，看不到 <code>checks.json</code>、<code>checks.js</code>、参考实现或历史报告。
+### 公开文档与隐藏检查从哪里来
+
+任务作者在生成前人工编写并冻结玩法规格、接口规格、L1/L2 检查和 P0/P1/P2 优先级。它们不是模型根据候选代码临时生成的。Agent 能读到 <code>target.md</code>、<code>game-spec.md</code> 和 <code>tdd.md</code>，看不到 <code>checks.json</code>、<code>checks.js</code>、参考实现或历史报告。
 
 <figure class="gb-figure">
   <a href="/lib/papers/gameasg-bench/table-1-task-documents.png"><img src="/lib/papers/gameasg-bench/table-1-task-documents.png" alt="原论文 Table 1：三份任务文档及其作用"></a>
@@ -139,9 +154,45 @@ tags:
   <li><b>05 · 验证</b><span>人工试玩参考实现，再跑固定检查；随后才生成候选。</span></li>
 </ol>
 
-47 份参考实现全部通过 L1 以及适用的 L2 P0/P1。这说明检查至少接受一份人工确认可玩的实现。论文没有系统性的 mutation testing 或负控制，因此它没有量化漏检错误实现的概率。
+47 份参考实现都经过人工试玩，并通过 L1 以及适用的 L2 P0/P1。这是正控制，说明检查至少接受一份人工确认可玩的实现。论文没有系统性的 mutation testing 或负控制，因此没有量化错误实现被漏检的概率。
 
-## 3. 从需求到断言：Armor Alley 持续射击
+### 统一接口怎样跨实现工作
+
+Agent 最终交付一个自包含 <code>index.html</code>。生成与评测位于两个容器；系统先检查进程退出、文件存在且非符号链接、内容非空并包含 <code>&lt;/html&gt;</code>，再把提交和测试以只读方式挂进评测容器。
+
+每个游戏都暴露同一个入口，具体场景名、动作和快照字段由本题的 <code>tdd.md</code> 决定：
+
+```js
+window.__gameTest = {
+  reset(options),
+  loadScenario(name, options),
+  input(action),
+  getSnapshot()
+}
+```
+
+<code>loadScenario</code> 只能准备正常游玩可达的前置条件，不能直接造成胜利、伤害或得分。它解决的是“怎样稳定抵达待测状态”，不是替测试制造正确结果。
+
+### L1、L2 与严格成功怎样计算
+
+L1 读取交付文件，检查语法、接口声明、源码模式和反模式。L2 在无头 Chromium 中逐条打开新页面，执行 prepare、act、observe：加载合法场景，调用语义动作或发送真实键鼠，再比较快照、Canvas/WebGL 活动、animation frame、自然时间和运行时异常。每条检查只选与需求有关的证据，不要求所有信号同时出现。
+
+<figure class="gb-figure">
+  <a href="/lib/papers/gameasg-bench/table-2-check-counts.png"><img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2：L1 与 L2 检查数量"></a>
+  <figcaption><strong>原论文 Table 2。</strong>L1/L2 表示源码证据与运行行为；P0/P1/P2 表示前置条件、核心需求和扩展能力，两套标签相互独立。</figcaption>
+</figure>
+
+L1 包含 43 条工具检查、288 条正则和 5 条反模式检查。L2 包含 102 条 P0、534 条 P1 和 249 条 P2，结果为 <code>PASS</code>、<code>FAIL</code> 或 <code>NOT_APPLICABLE</code>。Mean L1 和 overall L2 先算每题通过率再取平均；P0/P1/P2 汇总所有适用检查。93.2% 因此是平均 L2，不是完整成功率。
+
+<div class="gb-formula">
+  <code>s_g = delivery_g · evaluation_g · ∏ pass(g,c),　c ∈ L1_g ∪ L2(P0,P1)_g</code>
+  <code>StrictSuccess = (1 / 47) · Σ s_g</code>
+  <span>P2 不进入严格成功。任意一条 L1、P0 或 P1 失败，整题记为 0。</span>
+</div>
+
+当前 runner 会从分母中排除 <code>NOT_APPLICABLE</code>，却没有硬性限制 P1 返回它。这是严格成功口径需要注意的一处实现边界。
+
+### 真实 case：Armor Alley 的持续射击
 
 Armor Alley 是横向卷轴直升机战术游戏。“按住开火，松开后停止”从自然语言变成自动验收，要经过公开玩法、公开场景、源码检查和真实输入四层。对应的官方文件可直接核对：[game-spec.md](https://github.com/areal-project/GameASG-Bench/blob/main/task/armor-alley/game-spec.md)、[tdd.md](https://github.com/areal-project/GameASG-Bench/blob/main/task/armor-alley/tdd.md)、[checks.json](https://github.com/areal-project/GameASG-Bench/blob/main/tests/armor-alley/checks.json)、[checks.js](https://github.com/areal-project/GameASG-Bench/blob/main/tests/armor-alley/checks.js)。
 
@@ -162,7 +213,7 @@ Armor Alley 是横向卷轴直升机战术游戏。“按住开火，松开后�
 }
 ```
 
-L1 只证明接口外壳写进了源码。L2 的 <code>p1-keyboard-sustained-fire-release</code> 在开火阶段绕过 <code>input({type: "holdFire"})</code>，直接向浏览器发送 Space；最后的等待仍通过评测 helper 推进：
+L1 只证明接口外壳写进了源码。下面的 JavaScript 按官方 L2 检查压缩而成。<code>p1-keyboard-sustained-fire-release</code> 在开火阶段绕过 <code>input({type: "holdFire"})</code>，直接向浏览器发送 Space；最后的等待仍通过评测 helper 推进：
 
 ```js
 const setup = await legalScenario(
@@ -201,45 +252,17 @@ if (!plateauAfterRelease) return FAIL('fire continued after release');
 return PASS('real key path creates and stops sustained fire');
 ```
 
-检查链很具体：加载合法场景，按住 650 ms，观察弹丸、战斗 revision 或弹药变化，松开后再取两次样本，寻找弹丸数最多增加 1 或 projectile revision 不再变化的停止证据。它能抓住“测试 API 会开火，真实按键没接上”以及 keyup 后仍连射。
+检查先加载合法场景，再按住 Space 650 ms，观察弹丸、战斗 revision 或弹药变化；松开后取两次样本，接受“弹丸数至多增加 1”或“projectile revision 不再变化”中的任一停止证据。它能抓住“测试 API 会开火，真实按键没接上”，也能捕捉一部分释放后仍连射的实现。
 
-这条真实检查也暴露出契约缺口。公开 <code>game-spec.md</code> 只写 hold/release，<code>tdd.md</code> 公开的是 <code>holdFire</code> 语义动作，都没有指定 Space。一个使用其他按键、同时正确实现公开语义的候选，仍可能在隐藏检查上失败。真实输入提高了证据强度，输入映射却也应进入公开规格。
+这条检查也暴露出契约缺口。公开 <code>game-spec.md</code> 只写 hold/release，<code>tdd.md</code> 公开的是 <code>holdFire</code> 语义动作，都没有指定 Space。一个使用其他按键、同时正确实现公开语义的候选，仍可能在隐藏检查上失败。真实输入提高了证据强度，输入映射也应进入公开规格。
 
-## 4. 评测协议：L1、L2 与严格成功
+## Q4: 论文做了哪些实验？
 
-Agent 最终交付一个自包含 <code>index.html</code>。生成与评测位于两个容器；系统先检查进程退出、文件存在且非符号链接、内容非空并包含 <code>&lt;/html&gt;</code>，再把提交和测试以只读方式挂进评测容器。
+论文先验证 47 份参考实现，再围绕四个研究问题比较 agent stack。每个 task-configuration 只运行一次，从干净工作区开始；L2 使用固定的 1280×800 无头 Chromium。结果适合分析失败模式，不足以估计重复运行方差。
 
-每个游戏都暴露同一个入口，具体场景名、动作和快照字段由本题的 <code>tdd.md</code> 决定：
+### RQ1：当前 agent stack 能交付多少完整游戏
 
-```js
-window.__gameTest = {
-  reset(options),
-  loadScenario(name, options),
-  input(action),
-  getSnapshot()
-}
-```
-
-<code>loadScenario</code> 只能准备正常游玩可达的前置条件，不能直接造成胜利、伤害或得分。L2 通常执行 prepare、act、observe：新页面加载合法场景，调用语义动作或发送真实键鼠，再比较快照、Canvas/WebGL、animation frame、自然时间和运行时异常。不同检查按需求选择证据，不要求每条都使用全部信号。
-
-<figure class="gb-figure">
-  <a href="/lib/papers/gameasg-bench/table-2-check-counts.png"><img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2：L1 与 L2 检查数量"></a>
-  <figcaption><strong>原论文 Table 2。</strong>L1/L2 表示源码证据与运行行为；P0/P1/P2 表示前置条件、核心需求和扩展能力，两套标签相互独立。</figcaption>
-</figure>
-
-L1 包含 43 条工具检查、288 条正则和 5 条反模式检查。L2 包含 102 条 P0、534 条 P1 和 249 条 P2，结果为 <code>PASS</code>、<code>FAIL</code> 或 <code>NOT_APPLICABLE</code>。Mean L1 和 overall L2 先算每题通过率再取平均；P0/P1/P2 汇总所有适用检查。93.2% 因此是平均 L2，不是完整成功率。
-
-<div class="gb-formula">
-  <code>s_g = delivery_g · evaluation_g · ∏ pass(g,c),　c ∈ L1_g ∪ L2(P0,P1)_g</code>
-  <code>StrictSuccess = (1 / 47) · Σ s_g</code>
-  <span>P2 不进入严格成功。任意一条 L1、P0 或 P1 失败，整题记为 0。</span>
-</div>
-
-当前 runner 会从分母中排除 <code>NOT_APPLICABLE</code>，却没有硬性限制 P1 返回它。这是严格成功口径需要注意的一处实现边界。
-
-## 5. 实验结果：93.2% 平均 L2，55.3% 严格成功
-
-RQ1 比较九个模型与 harness 组合。每个 task-configuration 只运行一次，从干净工作区开始；L2 使用固定 1280×800 无头 Chromium。论文没有重复运行方差，因此表中名次是这些单次观测，不是稳定总体排名。
+九个模型与 harness 组合均使用最大推理强度和完整工具。主指标是严格成功，平均 L1、平均 L2 和分优先级通过率用于诊断。
 
 <figure class="gb-figure">
   <a href="/lib/papers/gameasg-bench/table-3-leaderboard.png"><img src="/lib/papers/gameasg-bench/table-3-leaderboard.png" alt="原论文 Table 3：九个模型与 harness 组合的严格成功率和检查通过率"></a>
@@ -248,7 +271,21 @@ RQ1 比较九个模型与 harness 组合。每个 task-configuration 只运行�
 
 - 九个 stack 的平均 L1 都在 97.7% 至 99.6%，严格成功却从 7/47 到 26/47。源码结构容易补齐，运行中的组合路径仍会失败。
 - GPT-5.6-Sol 的平均 L2 为 91.3%，高于 Claude-Opus-5 的 90.4%；严格成功却是 21 对 24。平均分和整题交付会给出不同排序。
-- 完整工具把 DeepSeek-V4-Flash 的严格成功从无工具时的 7/47 提高到 18/47。High reasoning 得到 19/47，Max 为 18/47；更多推理 token 没有形成单调收益。Claude Code 与 Codex CLI 都是 18/47，但仅有 10 个共同成功任务。
+- Table 4 显示，产物大小和 token 消耗与严格成功没有稳定的正相关关系。
+
+### RQ2：工具访问和轮次预算改变了什么
+
+这组消融固定 DeepSeek-V4-Flash、Claude Code 和最大推理强度。无工具、仅文件、文件加语法检查、完整工具四种条件的严格成功分别为 7/47、6/47、9/47 和 18/47。完整工具同时改变了多项能力，Table 5 不能单独识别浏览器执行的因果贡献；附录 trace 只证明浏览器测试曾帮助部分运行在提交前发现行为错误。
+
+轮次从 30、60 增加到 120 时，完成评测的任务数从 10、32 增加到 47，严格成功依次为 7/47、13/47 和 18/47。在这组运行中，更大预算伴随更多任务走完实现、测试和交付，也伴随更高的严格成功数。
+
+### RQ3：推理越多并不保证严格成功越高
+
+同一模型和工具条件下，Low、High、Maximum 的严格成功分别是 7/47、19/47 和 18/47。P1 通过率仍从 71.7% 升到 82.7% 和 86.7%，说明局部核心检查与整题成功可以朝不同方向变化。High 比 Maximum 少用 26.9% 的推理 token，却多成功 1 个任务。
+
+### RQ4：相同模型换一个 harness 会怎样
+
+DeepSeek-V4-Flash 在 Claude Code 与 Codex CLI 下都得到 18/47，但只有 10 个共同成功任务；各有 8 个任务只在其中一个 harness 下成功，另有 21 个两边都失败。相同总分掩盖了不同的成功集合，也说明结果属于模型、系统指令、上下文管理、工具和预算组成的完整 agent stack。
 
 <details class="gb-evidence-details">
   <summary><span>展开 RQ1 至 RQ4 的原始消融表</span><span>原论文 Tables 4 至 8</span></summary>
@@ -298,17 +335,32 @@ if (beforeHash === afterHash &&
 
 失败实现的 <code>reset</code> 或 <code>loadScenario</code> 会进入 test mode，并停止自然时间模拟。Agent 单独自测过“通过接口推进时间”和“新页面里真实驾驶”，两条都工作。L2 把两条路径组合起来：先加载 <code>readyUnlockedLevel</code>，再按住真实鼠标并等待 350 ms 和 450 ms。此时 <code>speedRatio</code>、<code>forwardProgress</code>、<code>motionRevision</code> 和 HUD 速度都没有按要求增长。
 
-这两个案例说明 L2 的价值在组合。它不只问某个按钮、字段或画面是否存在，还检查场景准备、真实输入、自然时间、状态与可见反馈能否在同一次执行中连起来。
+这两个案例说明 L2 的价值在组合。它检查场景准备、真实输入、自然时间、状态与可见反馈能否在同一次执行中连起来，失败报告也能落到具体断点。
 
-## 6. 结论边界与可迁移经验
+## Q5: 有什么可以进一步探索的点？
+
+论文没有单列 future work。下面六点是根据实验结果和协议边界作出的推演，不是作者已经验证的结论。
+
+1. **动态分配推理与工具预算。** High effort 用更少 token 得到 19/47，Maximum 为 18/47；本次观测中，完整工具也高于受限工具。下一步可以让 Agent 根据浏览器失败证据决定何时继续推理、何时调用语法或运行测试。
+2. **把 L2 诊断送回修复循环。** 当前 benchmark 主要负责最终评测。若把失败的不变量、真实输入路径和渲染证据转成定向修复信号，可以检验“执行反馈是否真能提高严格成功”，而不是只提高平均通过率。
+3. **自动生成并审查评测契约。** <code>tdd.md</code>、<code>checks.json</code> 和 <code>checks.js</code> 目前依赖人工编写。可以研究从玩法规格提取场景、动作和不变量，但生成后的契约仍需独立审核，避免测试和候选共享同一误解。
+4. **补上规格与 checker 的边界测试。** Armor Alley 的 Space 映射说明真实输入假设应公开；P1 的 <code>NOT_APPLICABLE</code> 也应限制或单列报告。加入 mutation testing 和负控制，还能估计错误实现被误接受的概率。
+5. **重复运行并拆解 harness。** 每个配置当前只跑一次。多次运行、报告方差，并分别消融系统提示、上下文管理和工具策略，才能区分随机性、模型能力与 harness 效果。
+6. **扩展证据和任务范围。** 现有协议可继续加入视觉模型判断、帧率、内存与快速连续输入等检查，也可迁移到前端应用；后端、多玩家和大型资产管线仍需要新的隔离与状态控制方案。
+
+## Q6: 总结一下论文的主要内容
+
+GameASG-Bench 用 47 个自包含浏览器游戏评估从自然语言需求到完整软件产物的端到端生成。任务作者先人工写好公开的玩法与评测接口，再冻结隐藏的 L1/L2 检查；Agent 交付 <code>index.html</code> 和 <code>window.__gameTest</code>，评测器把语义快照与真实输入、自然时间、渲染活动和运行时异常组合起来。严格成功要求交付有效、评测完成，并通过全部 L1 和适用的 L2 P0/P1。最佳 stack 的平均 L2 达到 93.2%，严格成功仍只有 26/47，这个差值说明局部正确不等于完整交付。
+
+### 阅读结论时要保留的边界
 
 - 47 个任务都是自包含浏览器单页，结果不能直接外推到后端、多人与大型资产管线。
-- 每个配置只生成一次，没有方差或置信区间；模型与 harness 排名不宜作精确能力排序。
-- 分数同时包含游戏实现能力与遵守测试契约的能力。Armor Alley 的 Space 键错位表明，隐藏断言也可能超出公开规格。
+- 每个配置只生成一次，没有方差或置信区间；模型与 harness 排名不宜视为稳定的能力排序。
+- 分数同时包含游戏实现能力与遵守测试契约的能力。Armor Alley 的 Space 键错位说明隐藏断言也可能超出公开规格。
 - 参考实现提供了正控制，论文没有系统负控制；检查覆盖不到的错误不会进入严格成功。
 - L1 正则可能命中注释，P1 又可返回 <code>NOT_APPLICABLE</code>。两者都会影响最终解释。
 
-更值得迁移的是评测流程：生成前写清可达前置条件、动作、结果、拒绝路径和不变量；场景只缩短准备过程；最后用真实输入、自然时间、渲染变化和运行时异常约束候选自报的语义快照。报告时同时给局部检查通过率和整题成功率，并把模型、harness、工具与预算作为一个 agent stack。
+如果要把这套方法迁移到别的应用，最小配方是：生成前写清可达前置条件、动作、结果、拒绝路径和不变量；场景只负责缩短准备过程；最后用真实输入、自然时间、渲染变化和运行时异常约束候选自报的语义快照。报告同时保留局部检查通过率和整题成功率，并把模型、harness、工具与预算视为一个 agent stack。
 
 论文：[GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development](https://arxiv.org/abs/2609.21293)。代码与任务：[areal-project/GameASG-Bench](https://github.com/areal-project/GameASG-Bench)。本文原图均裁自论文，流程与代码解读依据论文第 2 至 5 节及官方仓库整理。
 
