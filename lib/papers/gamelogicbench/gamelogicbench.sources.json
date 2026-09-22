@@ -1,0 +1,246 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "GameLogicBench: Evaluating Coding Agents on Runtime Game Logic with Tick-Level State Assertions",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper", "paper-source"]
+  },
+  "artifacts": {
+    "article": "content/_posts/047-gamelogicbench逐帧验证游戏逻辑.md",
+    "deck": "lib/decks/gamelogicbench-visual-guide.html",
+    "embed_src": "/lib/decks/gamelogicbench-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "GameLogicBench",
+      "url": "https://arxiv.org/abs/2609.21562",
+      "revision": "v2, 2026-09-21",
+      "used_for": ["problem", "method", "results", "limitations", "figures", "tables"]
+    },
+    {
+      "id": "paper-source",
+      "kind": "paper-source",
+      "title": "GameLogicBench TeX source",
+      "url": "https://export.arxiv.org/e-print/2609.21562",
+      "revision": "v2",
+      "used_for": ["figure-assets", "table-values", "appendix-prompts", "captions"]
+    },
+    {
+      "id": "harness",
+      "kind": "code",
+      "title": "NJU-LINK/GameLogicBench",
+      "url": "https://github.com/NJU-LINK/GameLogicBench",
+      "revision": "d9854d616e4f7beaa6c4321b7c8452c6509e41c2",
+      "used_for": ["harness-boundary", "frozen-judge", "task-repository-link"]
+    },
+    {
+      "id": "task-repo",
+      "kind": "dataset",
+      "title": "NJU-LINK/GameLogicBench-Tasks",
+      "url": "https://github.com/NJU-LINK/GameLogicBench-Tasks",
+      "revision": "unavailable: HTTP 404 checked 2026-09-22",
+      "used_for": ["public-artifact-gap", "checker-availability"]
+    },
+    {
+      "id": "godot-nodes",
+      "kind": "official-documentation",
+      "title": "Godot 4.4: Nodes and Scenes",
+      "url": "https://docs.godotengine.org/en/4.4/getting_started/step_by_step/nodes_and_scenes.html",
+      "revision": "4.4",
+      "used_for": ["part-0"]
+    },
+    {
+      "id": "godot-signals",
+      "kind": "official-documentation",
+      "title": "Godot 4.4: Using signals",
+      "url": "https://docs.godotengine.org/en/4.4/getting_started/step_by_step/signals.html",
+      "revision": "4.4",
+      "used_for": ["part-0"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 36,
+    "rendered_page_ranges": [{"start": 1, "end": 36}],
+    "source_visuals_expected": 21,
+    "visual_inventory_complete": true,
+    "inventory_note": "The arXiv comment says 9 figures and 13 tables, but the v2 PDF and TeX source contain 9 numbered figures and 12 numbered tables. Inventory follows the rendered PDF."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1: 这篇论文试图解决什么问题？"},
+    {"role": "related-work", "locator": "Q2: 有哪些相关研究？"},
+    {"role": "method", "locator": "Q3: 论文如何解决这个问题？"},
+    {"role": "experiments", "locator": "Q4: 做了哪些实验？效果如何？"},
+    {"role": "future-work", "locator": "Q5: 有哪些值得继续探索的问题？"},
+    {"role": "summary", "locator": "Q6: 总结"}
+  ],
+  "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 2.2, Sourcing; Section 2.4"}],
+      "evidence": [{"artifact": "article", "quote": "从开源 Godot 项目、已发布游戏和功能能力 taxonomy 收集候选机制。"}]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 2.2-2.3; Figure 3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "三名人工标注者判断规则能否写成唯一值、合法事件顺序或守恒量。"},
+        {"artifact": "article", "quote": "独立 review agent 复跑，再由三名人工标注者录取、退修或淘汰。"}
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "harness"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 2.1; Section 3.1"},
+        {"source_id": "harness", "locator": "README, frozen judge and held-out scenarios"}
+      ],
+      "evidence": [{"artifact": "article", "quote": "隐藏的是具体测试实例与 judge 代码，不是另外一套规则。"}]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 3.1, 4.1 and 4.5; Table 3; Figure 8"}],
+      "evidence": [
+        {"artifact": "article", "quote": "主表的 `solve rate = solved tasks / 72`"},
+        {"artifact": "article", "quote": "一个 scenario 只有在它的全部 seed 都通过时才算 strict pass"}
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "unknown",
+      "source_ids": ["paper", "harness", "task-repo"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.1; Appendix F.2-F.4"},
+        {"source_id": "harness", "locator": "README at revision d9854d6"},
+        {"source_id": "task-repo", "locator": "repository URL returned 404 on 2026-09-22"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "harness 按 `game → solution → judge` 的顺序组装项目"},
+        {"artifact": "article", "quote": "所有 seed 都在时限内到达，并且整条轨迹从未触墙。"},
+        {"artifact": "article", "quote": "task-specific checker 的具体断言仍然无法公开审计。"}
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "paper-source"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 3.2 and 4.1-4.7; Tables 3-5; Figures 5-8"}],
+      "evidence": [
+        {"artifact": "article", "quote": "Claude-Opus-5 + Claude Code：38/72，即 52.78%"},
+        {"artifact": "article", "quote": "主表中的每个组合只运行一次"}
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Introduction; Table 1"}],
+      "evidence": [{"artifact": "article", "quote": "GameLogicBench 的覆盖面较窄，但每个 verdict 都能复现，也能定位运行途中发生的违规。"}]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "unknown",
+      "source_ids": ["paper", "harness", "task-repo"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 6; Section 4.4; Section 4.7"},
+        {"source_id": "harness", "locator": "README task-library link"},
+        {"source_id": "task-repo", "locator": "repository URL returned 404 on 2026-09-22"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "截至本文核查时间（2026-09-22），该链接返回 404。"},
+        {"artifact": "article", "quote": "主表每个 model + scaffold 组合只有一次完整运行。"}
+      ]
+    },
+    {
+      "id": "benchmark-size",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Section 2.4"}],
+      "evidence": [{"artifact": "article", "quote": "72 个任务、403 个手工场景、1,451 个测试用例"}]
+    },
+    {
+      "id": "ablation",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "paper-source"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.6; Table 5"}],
+      "evidence": [{"artifact": "article", "quote": "236/666 个 mutant 逃过检查"}]
+    },
+    {
+      "id": "godot-primer",
+      "claim_type": "author-claim",
+      "source_ids": ["godot-nodes", "godot-signals"],
+      "source_locators": [
+        {"source_id": "godot-nodes", "locator": "Nodes; Scenes"},
+        {"source_id": "godot-signals", "locator": "Using signals"}
+      ],
+      "evidence": [{"artifact": "article", "quote": "Godot 用 scene（场景）和 node tree（节点树）组织游戏。"}]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 1, Figure 1","status":"reused","rationale":"Shows observed cost versus solve rate for all configurations.","placements":[{"artifact":"article","locator":"Figure 1。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 1","asset_paths":["/lib/papers/gamelogicbench/figure-1-cost.png"]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 2, Figure 2","status":"reused","rationale":"Summarizes task tiers, solve/judge isolation, and headline results.","placements":[{"artifact":"article","locator":"原论文 Figure 2。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 2","asset_paths":["/lib/papers/gamelogicbench/figure-2-overview.png"]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 4, Figure 3","status":"reused","rationale":"Shows the complete task construction and verification pipeline.","placements":[{"artifact":"article","locator":"原论文 Figure 3。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 3","asset_paths":["/lib/papers/gamelogicbench/figure-3-construction.png"]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 5, Figure 4","status":"reused","rationale":"Reports task genres, capability coverage, and token scale.","placements":[{"artifact":"article","locator":"原论文 Figure 4。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 4","asset_paths":["/lib/papers/gamelogicbench/figure-4-statistics.png"]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 7, Figure 5","status":"reused","rationale":"Shows tier effects on success, experimentation, and tool calls.","placements":[{"artifact":"article","locator":"原论文 Figure 5。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 5","asset_paths":["/lib/papers/gamelogicbench/figure-5-tier.png"]},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 8, Figure 6","status":"reused","rationale":"Compares tool volume and operation types across scaffolds.","placements":[{"artifact":"article","locator":"Figure 6。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 6","asset_paths":["/lib/papers/gamelogicbench/figure-6-tools.png"]},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 9, Figure 7","status":"reused","rationale":"Shows upstream source retrieval and Repo score changes.","placements":[{"artifact":"article","locator":"原论文 Figure 7。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 7","asset_paths":["/lib/papers/gamelogicbench/figure-7-retrieval.png"]},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 14, Figure 8","status":"reused","rationale":"Reports capability-conditioned strict scenario pass rates.","placements":[{"artifact":"article","locator":"原论文 Figure 8。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 8","asset_paths":["/lib/papers/gamelogicbench/figure-8-capabilities.png"]},
+    {"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"p. 15, Figure 9","status":"reused","rationale":"Shows per-task outcomes for all 20 configurations.","placements":[{"artifact":"article","locator":"Figure 9。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Figure 9","asset_paths":["/lib/papers/gamelogicbench/figure-9-coverage.png"]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 2, Table 1","status":"reused","rationale":"Provides the paper's related-work comparison axes and values.","placements":[{"artifact":"article","locator":"原论文 Table 1。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 1","asset_paths":["/lib/papers/gamelogicbench/table-1-comparison.png"]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 5, Table 2","status":"reused","rationale":"Reports library scale by tier.","placements":[{"artifact":"article","locator":"Table 2。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 2","asset_paths":["/lib/papers/gamelogicbench/table-2-composition.png"]},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 6, Table 3","status":"reused","rationale":"Contains the main model and scaffold results.","placements":[{"artifact":"article","locator":"原论文 Table 3。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 3","asset_paths":["/lib/papers/gamelogicbench/table-3-results.png"]},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 8, Table 4","status":"reused","rationale":"Reports repeated-attempt stability metrics.","placements":[{"artifact":"article","locator":"Table 4。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 4","asset_paths":["/lib/papers/gamelogicbench/table-4-variance.png"]},
+    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p. 8, Table 5","status":"reused","rationale":"Reports terminal-only and preview-only ablations.","placements":[{"artifact":"article","locator":"原论文 Table 5。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 5","asset_paths":["/lib/papers/gamelogicbench/table-5-ablation.png"]},
+    {"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"p. 13, Table 6","status":"reused","rationale":"Records the model prices used for cost calculations.","placements":[{"artifact":"article","locator":"Table 6。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 6","asset_paths":["/lib/papers/gamelogicbench/table-6-model-card.png"]},
+    {"id":"table-7","kind":"table","label":"Table 7","source_id":"paper","source_locator":"p. 13, Table 7","status":"reused","rationale":"Defines the seven gameplay-logic capability classes.","placements":[{"artifact":"article","locator":"Table 7。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 7","asset_paths":["/lib/papers/gamelogicbench/table-7-capabilities.png"]},
+    {"id":"table-8","kind":"table","label":"Table 8","source_id":"paper","source_locator":"p. 15, Table 8","status":"reused","rationale":"Reports mean tool-use profiles across configurations.","placements":[{"artifact":"article","locator":"Table 8。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 8","asset_paths":["/lib/papers/gamelogicbench/table-8-tool-profile.png"]},
+    {"id":"table-9","kind":"table","label":"Table 9","source_id":"paper","source_locator":"p. 16, Table 9","status":"reused","rationale":"Reports tool-call quantiles across scaffolds.","placements":[{"artifact":"article","locator":"Table 9。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 9","asset_paths":["/lib/papers/gamelogicbench/table-9-tool-quantiles.png"]},
+    {"id":"table-10","kind":"table","label":"Table 10","source_id":"paper","source_locator":"p. 16, Table 10","status":"reused","rationale":"Breaks down Bash calls by operation type.","placements":[{"artifact":"article","locator":"Table 10。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 10","asset_paths":["/lib/papers/gamelogicbench/table-10-bash.png"]},
+    {"id":"table-11","kind":"table","label":"Table 11","source_id":"paper","source_locator":"p. 16, Table 11","status":"reused","rationale":"Reports token use by configuration.","placements":[{"artifact":"article","locator":"Table 11。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 11","asset_paths":["/lib/papers/gamelogicbench/table-11-tokens.png"]},
+    {"id":"table-12","kind":"table","label":"Table 12","source_id":"paper","source_locator":"p. 17, Table 12","status":"reused","rationale":"Reports Claude Code cache-write and cache-read traffic.","placements":[{"artifact":"article","locator":"Table 12。"}],"permission_status":"verified-allowed","permission_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","credit":"原论文 Table 12","asset_paths":["/lib/papers/gamelogicbench/table-12-cache.png"]}
+  ],
+  "figures": [
+    {"path":"/lib/papers/gamelogicbench/figure-1-cost.png","origin":"paper-original","source_visual_id":"figure-1","source_id":"paper","source_locator":"p. 1, Figure 1","credit":"原论文 Figure 1（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-2-overview.png","origin":"paper-original","source_visual_id":"figure-2","source_id":"paper","source_locator":"p. 2, Figure 2","credit":"原论文 Figure 2（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-3-construction.png","origin":"paper-original","source_visual_id":"figure-3","source_id":"paper","source_locator":"p. 4, Figure 3","credit":"原论文 Figure 3（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-4-statistics.png","origin":"paper-original","source_visual_id":"figure-4","source_id":"paper","source_locator":"p. 5, Figure 4","credit":"原论文 Figure 4（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-5-tier.png","origin":"paper-original","source_visual_id":"figure-5","source_id":"paper","source_locator":"p. 7, Figure 5","credit":"原论文 Figure 5（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-6-tools.png","origin":"paper-original","source_visual_id":"figure-6","source_id":"paper","source_locator":"p. 8, Figure 6","credit":"原论文 Figure 6（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-7-retrieval.png","origin":"paper-original","source_visual_id":"figure-7","source_id":"paper","source_locator":"p. 9, Figure 7","credit":"原论文 Figure 7（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-8-capabilities.png","origin":"paper-original","source_visual_id":"figure-8","source_id":"paper","source_locator":"p. 14, Figure 8","credit":"原论文 Figure 8（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/figure-9-coverage.png","origin":"paper-original","source_visual_id":"figure-9","source_id":"paper","source_locator":"p. 15, Figure 9","credit":"原论文 Figure 9（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/table-1-comparison.png","origin":"paper-original","source_visual_id":"table-1","source_id":"paper","source_locator":"p. 2, Table 1","credit":"原论文 Table 1（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-2-composition.png","origin":"paper-original","source_visual_id":"table-2","source_id":"paper","source_locator":"p. 5, Table 2","credit":"原论文 Table 2（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-3-results.png","origin":"paper-original","source_visual_id":"table-3","source_id":"paper","source_locator":"p. 6, Table 3","credit":"原论文 Table 3（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/table-4-variance.png","origin":"paper-original","source_visual_id":"table-4","source_id":"paper","source_locator":"p. 8, Table 4","credit":"原论文 Table 4（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-5-ablation.png","origin":"paper-original","source_visual_id":"table-5","source_id":"paper","source_locator":"p. 8, Table 5","credit":"原论文 Table 5（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gamelogicbench/table-6-model-card.png","origin":"paper-original","source_visual_id":"table-6","source_id":"paper","source_locator":"p. 13, Table 6","credit":"原论文 Table 6（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-7-capabilities.png","origin":"paper-original","source_visual_id":"table-7","source_id":"paper","source_locator":"p. 13, Table 7","credit":"原论文 Table 7（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-8-tool-profile.png","origin":"paper-original","source_visual_id":"table-8","source_id":"paper","source_locator":"p. 15, Table 8","credit":"原论文 Table 8（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-9-tool-quantiles.png","origin":"paper-original","source_visual_id":"table-9","source_id":"paper","source_locator":"p. 16, Table 9","credit":"原论文 Table 9（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-10-bash.png","origin":"paper-original","source_visual_id":"table-10","source_id":"paper","source_locator":"p. 16, Table 10","credit":"原论文 Table 10（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-11-tokens.png","origin":"paper-original","source_visual_id":"table-11","source_id":"paper","source_locator":"p. 16, Table 11","credit":"原论文 Table 11（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/gamelogicbench/table-12-cache.png","origin":"paper-original","source_visual_id":"table-12","source_id":"paper","source_locator":"p. 17, Table 12","credit":"原论文 Table 12（CC BY 4.0）","license_status":"verified-allowed","license_basis":"arXiv 2609.21562v2 is licensed CC BY 4.0.","used_in":["article"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.78,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening","densest","largest-table-or-code","final"],
+    "browser_qa_note": "Fresh dist tested on 2026-09-22. Article, embedded deck, and standalone deck passed at 1600x1000, 1512x982, and 390x844. Critical slides 1, 3, 6, 12, 16, 19, and 26 had no clipping; all 27 rendered article images loaded and were centered. Buttons, keyboard, direct hash, overview Escape, fullscreen entry/exit, and return-to-article after hash navigation were exercised. The only console message was the site's pre-existing missing favicon.ico request."
+  }
+}

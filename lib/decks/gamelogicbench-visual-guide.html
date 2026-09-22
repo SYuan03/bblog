@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <base target="_blank">
+  <title>GameLogicBench 论文图解</title>
+  <style>
+    :root{--paper:#fbfcfe;--ink:#1f2630;--text:#48525e;--muted:#727d88;--line:#ccd3dc;--purple:#6652a3;--purple-pale:#eeeaf8;--teal:#117d72;--teal-pale:#e6f4f1;--amber:#bd6d19;--amber-pale:#fff0dd;--red:#b84b48;--dark:#20262d;--sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171c22;color:var(--ink);font-family:var(--sans)}a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}button{font:inherit}
+    #viewport{position:fixed;inset:0;overflow:hidden}#deck{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);box-shadow:0 22px 80px #0005}
+    .slide{position:absolute;inset:0;display:none;padding:28px 64px 24px;background:linear-gradient(90deg,transparent 0 63px,#e2e6eb 63px 64px,transparent 64px),var(--paper)}.slide.active{display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--line);font-size:16px;color:var(--muted);letter-spacing:.045em}.top b{color:var(--purple);font:800 15px/1 var(--mono)}
+    h1,h2,h3,p{margin:0}h1{font-size:72px;line-height:1.06;letter-spacing:-.045em}h2{font-size:46px;line-height:1.17;letter-spacing:-.035em;margin-top:13px}h3{font-size:25px;line-height:1.32}.lead{font-size:25px;line-height:1.5;color:var(--text);margin-top:18px}.body{flex:1;min-height:0;margin-top:16px;display:flex;flex-direction:column;justify-content:center}.foot{display:flex;justify-content:space-between;gap:22px;align-items:center;padding-top:8px;border-top:1px solid var(--line);font-size:12px;line-height:1.35;color:#6e7781}.src{max-width:1320px}.pg{white-space:nowrap;font:750 13px/1 var(--mono)}
+    .eyebrow{font:800 16px/1 var(--mono);color:var(--teal);letter-spacing:.12em}.purple{color:var(--purple)}.teal{color:var(--teal)}.amber{color:var(--amber)}.cover{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center;height:100%}.cover h1{margin-top:20px}.cover .lead{font-size:27px}.cover-art{height:560px;padding:22px;border:1px solid var(--line);background:#fff;display:flex;align-items:center}.cover-art img{display:block;max-width:100%;max-height:100%;margin:auto;object-fit:contain}.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line);margin-top:28px}.metric{padding:16px 15px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{display:block;color:var(--purple);font:760 40px/1 var(--sans)}.metric span{display:block;margin-top:8px;color:var(--muted);font-size:14px;line-height:1.35}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:center;height:100%}.big{font-size:35px;line-height:1.36;letter-spacing:-.02em}.big strong{color:var(--purple)}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:17px}.card{padding:21px 23px;background:#fff;border-top:6px solid var(--purple)}.card:nth-child(even){border-color:var(--teal)}.card.amber{border-color:var(--amber);background:var(--amber-pale)}.card h3{font-size:25px}.card p,.card li{margin-top:8px;color:var(--text);font-size:17px;line-height:1.48}.card ul{margin:8px 0 0;padding-left:20px}
+    .scene-tree{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}.tree{padding:24px 26px;background:#fff;border:1px solid var(--line);font:20px/1.8 var(--mono)}.tree .child{padding-left:32px;color:var(--text)}.tree .child2{padding-left:64px;color:var(--muted)}.callouts{display:grid;gap:13px}.callout{padding:17px 20px;border-left:6px solid var(--purple);background:#fff}.callout:nth-child(2){border-color:var(--teal)}.callout:nth-child(3){border-color:var(--amber)}.callout strong{font-size:21px}.callout span{display:block;margin-top:5px;font-size:16px;line-height:1.45;color:var(--text)}
+    .code{margin:0;padding:22px 24px;background:var(--dark);color:#e9eef3;font:17px/1.48 var(--mono);white-space:pre-wrap;overflow:hidden}.code .p{color:#b8a8f5}.code .t{color:#77cbbd}.code .a{color:#f0b06f}.code-side{display:grid;grid-template-columns:1.12fr .88fr;gap:30px;align-items:center}.bad-good{display:grid;grid-template-columns:1fr 80px 1fr;gap:24px;align-items:center}.state{min-height:390px;padding:28px;background:#fff;border-top:7px solid var(--red)}.state.good{border-color:var(--teal)}.state h3{font-size:31px}.state .timeline{margin-top:25px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}.tick{padding:14px 8px;background:var(--paper);text-align:center;font:16px/1.45 var(--mono)}.state p{margin-top:23px;font-size:18px;line-height:1.5;color:var(--text)}.versus{text-align:center;font-size:44px;color:var(--amber)}
+    .matrix{display:grid;grid-template-columns:220px repeat(4,1fr);border-top:2px solid var(--ink)}.matrix div{padding:12px 13px;border-bottom:1px solid var(--line);font-size:17px;line-height:1.3}.matrix .head{background:#eceff3;font-weight:800;text-align:center}.matrix .name{font-weight:800}.matrix .ours{background:var(--teal-pale);font-weight:800}.paper-frame{height:600px;padding:15px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}.paper-frame img{display:block;max-width:100%;max-height:100%;object-fit:contain}.paper-caption{margin-top:8px;text-align:center;font-size:13px;line-height:1.35;color:var(--muted)}
+    .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.tier{min-height:360px;padding:24px;background:#fff;border-top:7px solid var(--purple)}.tier:nth-child(2){border-color:var(--teal)}.tier:nth-child(3){border-color:var(--amber)}.tier b{font:800 16px/1 var(--mono);color:var(--purple)}.tier:nth-child(2) b{color:var(--teal)}.tier:nth-child(3) b{color:var(--amber)}.tier h3{margin-top:14px;font-size:31px}.tier p{margin-top:14px;color:var(--text);font-size:17px;line-height:1.48}.tier .n{margin-top:25px;font:750 46px/1 var(--sans)}.boundary{display:grid;grid-template-columns:1fr 58px 1fr 58px 1fr;align-items:center}.zone{min-height:350px;padding:23px 21px;background:#fff;border-top:6px solid var(--purple)}.zone.hidden{border-color:var(--amber)}.zone h3{font-size:27px}.zone ul{margin:17px 0 0;padding-left:20px;color:var(--text);font-size:17px;line-height:1.6}.arrow{text-align:center;color:var(--teal);font-size:34px}
+    .cal{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.cal-item{min-height:330px;padding:22px 20px;background:#fff;border-top:7px solid var(--teal)}.cal-item.bad{border-color:var(--red);background:#fff7f6}.cal-item b{font:800 14px/1 var(--mono);color:var(--teal)}.cal-item.bad b{color:var(--red)}.cal-item h3{margin-top:14px;font-size:24px}.cal-item p{margin-top:14px;color:var(--text);font-size:16px;line-height:1.48}.verdict{margin-top:18px;font:800 22px/1 var(--mono)}.judge{display:grid;grid-template-columns:1fr 84px 1fr;align-items:center}.container{min-height:390px;padding:27px;background:#fff;border:2px solid var(--purple)}.container:last-child{border-color:var(--teal)}.container h3{font-size:31px}.container ul{padding-left:21px;margin-top:18px;color:var(--text);font-size:17px;line-height:1.58}.container code{display:block;margin-top:19px;padding:15px;background:var(--dark);color:#e8eef3;font:15px/1.55 var(--mono)}
+    .case{display:grid;grid-template-columns:.8fr 1.2fr;gap:30px;align-items:center}.case-title{padding:28px;background:var(--dark);color:#fff}.case-title h3{font-size:40px}.case-title p{margin-top:15px;color:#cbd2d8;font-size:18px;line-height:1.5}.case-body{display:grid;grid-template-columns:1fr 1fr;gap:13px}.case-step{padding:16px 17px;background:#fff;border-top:5px solid var(--purple)}.case-step:nth-child(even){border-color:var(--teal)}.case-step strong{font-size:19px}.case-step span{display:block;margin-top:6px;color:var(--text);font-size:15px;line-height:1.45}.case-result{grid-column:1/-1;padding:16px 18px;background:var(--teal-pale);font-size:16px;line-height:1.45}.ablation{display:grid;grid-template-columns:.9fr 1.1fr;gap:30px;align-items:center}.ablation .paper-frame{height:500px}.bars{display:grid;gap:16px}.bar{padding:17px 19px;background:#fff;border-left:7px solid var(--red)}.bar strong{font-size:23px}.bar span{display:block;margin-top:7px;color:var(--text);font-size:17px;line-height:1.45}.limits{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.limit{padding:21px 23px;background:#fff;border-top:6px solid var(--amber)}.limit strong{font-size:23px}.limit span{display:block;margin-top:8px;color:var(--text);font-size:16px;line-height:1.5}
+    #controls{position:fixed;right:18px;bottom:16px;z-index:8;display:flex;align-items:stretch;min-height:48px;background:#141a20ed;color:#fff;border:1px solid #ffffff2b;border-radius:5px;overflow:hidden;box-shadow:0 10px 34px #0005;backdrop-filter:blur(12px)}#controls button,#controls .control-link{min-width:52px;padding:0 14px;border:0;border-right:1px solid #ffffff22;background:transparent;color:#fff;cursor:pointer;font-weight:750;white-space:nowrap}#controls .control-link{display:flex;align-items:center;text-decoration:none}#controls .control-link[hidden]{display:none}#controls button:hover,#controls button:focus-visible,#controls .control-link:hover,#controls .control-link:focus-visible{background:#ffffff18;outline:none}.nav-label,.utility-label,.return-label{margin-left:7px}.utility-icon{font-size:19px}.current-title{display:flex;align-items:center;max-width:220px;padding:0 15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c7d0d7;font-size:14px;border-right:1px solid #ffffff22}.counter{display:flex;align-items:center;padding:0 14px;font:750 14px/1 var(--mono);white-space:nowrap;border-right:1px solid #ffffff22}#progress{position:fixed;left:0;bottom:0;height:5px;background:var(--teal);z-index:9;transition:width .2s ease}
+    #overview-panel[hidden]{display:none}#overview-panel{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:28px;background:#11171ddf;backdrop-filter:blur(10px)}.overview-card{width:min(1180px,100%);max-height:min(760px,calc(100vh - 56px));overflow:auto;border:1px solid #ffffff2a;background:var(--paper);box-shadow:0 24px 90px #0008}.overview-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line);background:#fbfcfef2;backdrop-filter:blur(12px)}.overview-head strong{font-size:27px}.overview-head button{width:42px;height:42px;border:1px solid var(--line);background:#fff;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}.overview-grid button{min-height:94px;padding:17px 18px;border:0;background:#fff;color:var(--ink);text-align:left;cursor:pointer}.overview-grid button:hover,.overview-grid button[aria-current="true"]{background:var(--purple-pale)}.overview-grid b{display:block;font:800 13px/1 var(--mono);color:var(--purple)}.overview-grid span{display:block;margin-top:9px;font-size:17px;font-weight:750}
+    @media(max-width:680px){#controls{left:50%;right:auto;bottom:10px;transform:translateX(-50%);min-height:44px}.nav-label,.utility-label,.current-title{display:none}#controls button,#controls .control-link{min-width:46px;padding:0 8px}.counter{padding:0 10px}.overview-grid{grid-template-columns:1fr 1fr}#overview-panel{padding:12px}.overview-card{max-height:calc(100vh - 24px)}}
+    @media print{@page{size:16in 9in;margin:0}html,body{width:auto;height:auto;overflow:visible;background:#fff}#viewport{position:static;overflow:visible}#deck{position:static;width:1600px;height:auto;transform:none!important;box-shadow:none}.slide,.slide.active{position:relative;display:flex;flex-direction:column;width:1600px;height:900px;page-break-after:always;break-after:page}#controls,#progress,#overview-panel{display:none!important}}
+  </style>
+</head>
+<body>
+<div id="viewport"><main id="deck" aria-label="GameLogicBench 论文图解">
+
+  <section class="slide" data-title="封面">
+    <div class="body"><div class="cover"><div><div class="eyebrow">GAMELOGICBENCH · PAPER WALKTHROUGH</div><h1>游戏最后没出错，<br>不代表中途没违规则</h1><p class="lead">从 Godot 的 scene tree 与 physics tick 开始，理解 72 个 gameplay-logic 任务怎样被构建、校准和逐帧验收。</p><div class="metrics"><div class="metric"><strong>72</strong><span>Godot 任务</span></div><div class="metric"><strong>403</strong><span>手工 scenario</span></div><div class="metric"><strong>1,451</strong><span>test case</span></div><div class="metric"><strong>52.78%</strong><span>最佳单次结果</span></div></div></div><div class="cover-art"><img src="/lib/papers/gamelogicbench/figure-2-overview.png" alt="论文 benchmark 总览"></div></div></div>
+    <div class="foot"><span class="src">GameLogicBench · arXiv:2609.21562v2 · 2026-09-21</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Godot 的基本单位">
+    <div class="top"><b>02 · PART 0 / GODOT</b><span>Scene 是 Node tree</span></div><h2>先把 Godot 想成一棵会运行的组件树</h2>
+    <div class="body"><div class="scene-tree"><div class="tree"><strong>Level.tscn</strong><div class="child">├─ Player · CharacterBody2D</div><div class="child2">│　├─ Sprite2D</div><div class="child2">│　├─ CollisionShape2D</div><div class="child2">│　└─ Camera2D</div><div class="child">├─ Enemy · CharacterBody2D</div><div class="child">└─ HUD · Control</div></div><div class="callouts"><div class="callout"><strong>Node</strong><span>渲染、碰撞、相机、声音和输入等职责由不同节点承担。</span></div><div class="callout"><strong>Scene</strong><span>保存后的节点树可以像一种新节点那样被重复实例化。</span></div><div class="callout"><strong>Script</strong><span>脚本挂在节点上，通过回调和 signal 与整个 scene tree 协作。</span></div></div></div></div>
+    <div class="foot"><span class="src">Godot 4.4 官方文档：Nodes and Scenes。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="GDScript 最小例子">
+    <div class="top"><b>03 · PART 0 / GDSCRIPT</b><span>一段可挂到 CharacterBody2D 的脚本</span></div><h2>输入、物理帧、状态与 signal 在同一段代码里相遇</h2>
+    <div class="body"><div class="code-side"><pre class="code"><span class="p">extends</span> CharacterBody2D
+
+<span class="p">signal</span> health_changed(value: int)
+<span class="a">@export</span> var speed := 220.0
+var health := 3
+
+func <span class="t">_physics_process</span>(_delta: float):
+    var d := Input.get_vector(
+        "left", "right", "up", "down")
+    velocity = d * speed
+    move_and_slide()
+
+func <span class="t">take_damage</span>(amount: int):
+    health = max(health - amount, 0)
+    health_changed.emit(health)</pre><div class="callouts"><div class="callout"><strong>每个 physics tick</strong><span>读取输入、更新 velocity，再让引擎处理碰撞与移动。</span></div><div class="callout"><strong>Signal</strong><span>角色发出 health_changed，UI 可以订阅，而不用被写死在角色逻辑里。</span></div><div class="callout"><strong>为什么难测</strong><span>同一个结果可能跨多个 node、回调和物理状态共同产生。</span></div></div></div></div>
+    <div class="foot"><span class="src">示例为本文整理；语义依据 Godot 4.4 官方文档。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="为什么要逐 tick">
+    <div class="top"><b>04 · PART 0 / TICK</b><span>一次物理更新就是一个可检查时刻</span></div><h2>只看终局，会把错误轨迹压成一个正确数字</h2>
+    <div class="body"><div class="bad-good"><div class="state"><h3>只看最后一帧</h3><div class="timeline"><div class="tick">t0<br>10</div><div class="tick">t1<br>0</div><div class="tick">t2<br>10</div><div class="tick">END<br>10</div></div><p>资源先被错误扣空，又被补回。终点与正确实现相同，过程已经违规则。</p></div><div class="versus">→</div><div class="state good"><h3>逐 tick 断言</h3><div class="timeline"><div class="tick">t0<br>✓</div><div class="tick">t1<br>✕</div><div class="tick">t2<br>—</div><div class="tick">END<br>—</div></div><p>在第一次破坏守恒或事件顺序时就失败，不让后续状态掩盖它。</p></div></div></div>
+    <div class="foot"><span class="src">论文 §1、§3.1。tick = 一个离散的游戏仿真更新步。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="研究问题">
+    <div class="top"><b>05 · MOTIVATION</b><span>现有评测缺少哪三件事</span></div><h2>评测需要同时看到更多场景、更完整轨迹和可复现 verdict</h2>
+    <div class="body"><div class="cards"><div class="card"><h3>固定示例不够</h3><p>一条 preview 能通过，不代表换布局、输入顺序或数值后仍然正确。</p></div><div class="card"><h3>最终状态不够</h3><p>跨帧规则可能中途被破坏，最后又回到看似合法的状态。</p></div><div class="card amber"><h3>录像不够</h3><p>资源守恒、内部时序和状态继承问题未必直接出现在画面里。</p></div><div class="card amber"><h3>模型 judge 不够稳定</h3><p>交互选择和打分都含模型判断，重复运行可能给出不同 verdict，成本也高。</p></div></div></div>
+    <div class="foot"><span class="src">论文 §1。作者的目标不是评价美术与体验，而是确定性验证 gameplay logic。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Related work">
+    <div class="top"><b>06 · RELATED WORK</b><span>比较单位：运行中产物的判定方法</span></div><h2>GameLogicBench 把范围收窄，以换取逐帧和确定性</h2>
+    <div class="body"><div class="matrix"><div class="head">Benchmark</div><div class="head">项目形态</div><div class="head">判定</div><div class="head">Tick-level</div><div class="head">Scenario</div><div class="name">GameDevBench</div><div>Godot patch</div><div>Test scripts</div><div>部分</div><div>1</div><div class="name">JAMER</div><div>Godot / 两类</div><div>Engine verify</div><div>否</div><div>1</div><div class="name">GameCraft-Bench</div><div>完整 Godot 游戏</div><div>VLM judge</div><div>否</div><div>1</div><div class="name">GameEngineBench</div><div>UE5 patch</div><div>Tests + LLM</div><div>部分</div><div>1</div><div class="name ours">GameLogicBench</div><div class="ours">Godot patch / 两类项目</div><div class="ours">Engine assertions</div><div class="ours">全部</div><div class="ours">2–12</div></div></div>
+    <div class="foot"><span class="src">根据原论文 Table 1 重排。完整原表见正文证据图册。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Benchmark 总览">
+    <div class="top"><b>07 · ORIGINAL FIGURE 2</b><span>任务 → 求解 → 判分 → 结果</span></div><h2>Agent 在公开 preview 中调试，judge 在隐藏 scenario 中验收</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-2-overview.png" alt="原论文 Figure 2"></div><div class="paper-caption">原论文 Figure 2。求解容器和判分容器均断网；评分路径不调用语言模型。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="三个任务层级">
+    <div class="top"><b>08 · TASK TIERS</b><span>分的是 integration scope，不是游戏品类</span></div><h2>从一个机制，到多个机制，再到真实项目</h2>
+    <div class="body"><div class="tiers"><div class="tier"><b>ATOM</b><h3>隔离一个机制</h3><p>在为 benchmark 新做的最小游戏中实现寻路、冷却、碰撞等一个功能。</p><div class="n">21</div></div><div class="tier"><b>COMBO</b><h3>机制相互作用</h3><p>时间、空间或同帧请求互相影响；只把每个部件单独做对仍可能失败。</p><div class="n">28</div></div><div class="tier"><b>REPO</b><h3>真实项目集成</h3><p>补回一个真实开源项目的组件，必须读懂调用方、资源和共享状态。</p><div class="n">23</div></div></div></div>
+    <div class="foot"><span class="src">论文 §2、Table 2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="信息边界">
+    <div class="top"><b>09 · INFORMATION BOUNDARY</b><span>隐藏的是实例，不是规则</span></div><h2>Agent 知道行为契约，但不知道 judge 会怎样组合条件</h2>
+    <div class="body"><div class="boundary"><div class="zone"><h3>Agent 可见</h3><ul><li>任务 brief 与可修改文件</li><li>项目代码和接口</li><li>一个 baseline scenario</li><li>可更换 seed 的 preview</li></ul></div><div class="arrow">→</div><div class="zone"><h3>Agent 交付</h3><ul><li>指定 GDScript 文件</li><li>允许范围内的 helper</li><li>不交自评报告</li><li>不修改冻结 judge</li></ul></div><div class="arrow">→</div><div class="zone hidden"><h3>Judge 隐藏</h3><ul><li>具体 scenario 与 seed</li><li>断言实现</li><li>调用顺序变化</li><li>失败归因逻辑</li></ul></div></div></div>
+    <div class="foot"><span class="src">论文 §2.1、§3.1；官方 harness README。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="任务如何构建">
+    <div class="top"><b>10 · ORIGINAL FIGURE 3</b><span>人类把关两端，Agent 完成中间工程</span></div><h2>一个候选机制要经过筛选、试验、构建、校准和复审</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-3-construction.png" alt="原论文 Figure 3"></div><div class="paper-caption">原论文 Figure 3。约 200 个候选想法 → 122 个完成构建与 Agent review → 72 个被人工录取。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 3、§2.2–2.3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="四类校准样例">
+    <div class="top"><b>11 · CRITERION VALIDATION</b><span>先验证 judge，再拿 judge 评模型</span></div><h2>既要放过不同的正确实现，也要抓住缺一项能力的错误实现</h2>
+    <div class="body"><div class="cal"><div class="cal-item"><b>POSITIVE</b><h3>Proper solution</h3><p>所有 scenario 与 seed 都通过，并远离容差边界。</p><div class="verdict teal">MUST PASS</div></div><div class="cal-item"><b>NEUTRALITY</b><h3>Behavior-preserving control</h3><p>内部写法不同，但可观察行为相同。</p><div class="verdict teal">MUST PASS</div></div><div class="cal-item bad"><b>COMMON ERROR</b><h3>Naive solution</h3><p>包含常见逻辑错误，用来证明测试不是只看能否运行。</p><div class="verdict">MUST FAIL</div></div><div class="cal-item bad"><b>TARGETED ERROR</b><h3>Single-capability mutant</h3><p>每次只删掉一项能力，必须被对应 scenario 抓住。</p><div class="verdict">MUST FAIL</div></div></div></div>
+    <div class="foot"><span class="src">论文 §2.3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Mutant 消融">
+    <div class="top"><b>12 · WHY MUTANTS MATTER</b><span>正确解通过，不代表 judge 没有漏洞</span></div><h2>未用 mutant 反查时，127 个错误实现通过了原 criterion</h2>
+    <div class="body"><div class="ablation"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/table-5-ablation.png" alt="原论文 Table 5"></div><div class="bars"><div class="bar"><strong>127 / 666</strong><span>控制版 criterion 放过的 mutant，暴露 19/36 题中的 24 个缺失检查。</span></div><div class="bar"><strong>Terminal-only</strong><span>236/666 个 mutant 逃逸，34/36 题至少漏一个。</span></div><div class="bar"><strong>Preview-only</strong><span>508/666 个 mutant 逃逸，36/36 题全部有漏网。</span></div></div></div></div>
+    <div class="foot"><span class="src">论文 §4.6、Table 5。127/666 是修补前 criterion 的独立审计结果。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="求解与判分隔离">
+    <div class="top"><b>13 · EVALUATION PROTOCOL</b><span>两个断网容器，两套权限</span></div><h2>Agent 能运行公开 preview，不能接触冻结 judge</h2>
+    <div class="body"><div class="judge"><div class="container"><h3>SOLVE container</h3><ul><li>项目、brief、一个公开 scenario</li><li>可以启动 Godot、换 seed、读调试输出</li><li>模型 API 可用；其他 outbound access 被封</li><li>最终只提交允许的脚本</li></ul><code>godot --headless --fixed-fps 60 ...</code></div><div class="arrow">→</div><div class="container"><h3>JUDGE container</h3><ul><li>Agent workspace 的副本</li><li>冻结的隐藏 judge</li><li>固定 timestep</li><li>每个 scenario × seed 逐 tick 断言</li></ul><code>same submission + scenario + seed<br>= same verdict</code></div></div></div>
+    <div class="foot"><span class="src">论文 §3.1；官方 harness README 说明 judge 通过复制顺序覆盖冻结文件。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="逐帧 judge">
+    <div class="top"><b>14 · TICK-LEVEL ASSERTIONS</b><span>示意代码，不是官方 judge 源码</span></div><h2>同一组规则要在每个隐藏 scenario 和 seed 上保持成立</h2>
+    <div class="body"><div class="code-side"><pre class="code"><span class="p">for</span> scenario in hidden_scenarios:
+  <span class="p">for</span> seed in scenario.seeds:
+    var run = launch_fixed_timestep(
+      scenario, seed)
+
+    while not run.finished:
+      run.advance_one_tick()
+      assert(resources_are_conserved(run))
+      assert(event_order_is_legal(run))
+      assert(no_collision_violation(run))
+
+    assert(run.completed_required_goal())</pre><div class="callouts"><div class="callout"><strong>Scenario</strong><span>定义结构：地图、输入计划和要施压的能力轴。</span></div><div class="callout"><strong>Seed</strong><span>实例化数值参数，一个 scenario 可展开成多个 test case。</span></div><div class="callout"><strong>Tick</strong><span>在错误刚发生时失败，不让后续状态掩盖它。</span></div></div></div></div>
+    <div class="foot"><span class="src">按论文 §3.1 写成的等价伪代码；公开仓库未提供具体任务 judge。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Atom 真实 case">
+    <div class="top"><b>15 · CASE / ATOM</b><span>Enemy Navigation</span></div><h2>到终点还不够：整条轨迹不能碰墙</h2>
+    <div class="body"><div class="case"><div class="case-title"><h3>decide(state)<br>→ Vector2</h3><p>Agent 每个物理帧只返回一个移动方向。地图、门洞、起点和终点会随 scenario 与 seed 改变。</p></div><div class="case-body"><div class="case-step"><strong>Source</strong><span>论文 Appendix F.2 的完整 brief。</span></div><div class="case-step"><strong>Setup</strong><span>程序化生成带墙和门洞的 arena。</span></div><div class="case-step"><strong>Action</strong><span>每个 physics tick 调用 Agent 的 <code>decide</code>。</span></div><div class="case-step"><strong>Observe</strong><span>当前位置、到达状态、圆形身体是否碰墙。</span></div><div class="case-result"><strong>PASS：</strong>所有 seed 都在时限内到达且从未触墙。先穿墙再到终点仍然 FAIL。</div></div></div></div>
+    <div class="foot"><span class="src">原论文 Appendix F.2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Combo 真实 case">
+    <div class="top"><b>16 · CASE / COMBO</b><span>Platform Guard</span></div><h2>巡逻、视线、跳跃和返回必须在同一条运行轨迹里兼容</h2>
+    <div class="body"><div class="case"><div class="case-title"><h3>Platform Guard</h3><p>每帧返回 move、jump 和 chasing。平台宽度、gap、tower、访客时序都会变化。</p></div><div class="case-body"><div class="case-step"><strong>巡逻</strong><span>安静期覆盖 home platform 至少 34%。</span></div><div class="case-step"><strong>可见性</strong><span>距离够近且视线无阻挡；不能追墙后的目标。</span></div><div class="case-step"><strong>对峙</strong><span>落地后接近到 130 units 内，空中掠过不算。</span></div><div class="case-step"><strong>返回</strong><span>失去目标后，离开 home 不得超过 6 秒。</span></div><div class="case-result"><strong>逐帧检查：</strong>坠落、ghost chase、未真正落地接近和逾期不归都能在发生时被定位。</div></div></div></div>
+    <div class="foot"><span class="src">原论文 Appendix F.3；数值均来自公开 brief。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Repo 真实 case">
+    <div class="top"><b>17 · CASE / REPO</b><span>AMSG Character Movement</span></div><h2>补一个组件，要同时守住整个角色 rig 的运行契约</h2>
+    <div class="body"><div class="case"><div class="case-title"><h3>CharacterMovement<br>Component.gd</h3><p>类、导出属性、状态字段和方法签名都已冻结；动画、相机和控制器依赖它们。</p></div><div class="case-body"><div class="case-step"><strong>Preview</strong><span>从 +X 方向走上一个合法高度的台阶。</span></div><div class="case-step"><strong>Hidden scenario</strong><span>从 −X 接近，远处再放一堵超过限制的高墙。</span></div><div class="case-step"><strong>Behavior</strong><span>爬合法台阶，不能把高墙也当成台阶。</span></div><div class="case-step"><strong>Whole-game state</strong><span>步态、蹲伏、跳跃、减速和 0.1 秒离地确认还要继续正确。</span></div><div class="case-result"><strong>Repo 的难点：</strong>先读懂周围代码怎样消费组件状态，再补回逻辑；不能只按 brief 写一个孤立函数。</div></div></div></div>
+    <div class="foot"><span class="src">论文 §2.1、Appendix F.4。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="数据集组成">
+    <div class="top"><b>18 · ORIGINAL FIGURE 4</b><span>72 题、七类能力与 token 规模</span></div><h2>空间、决策承诺和状态机是覆盖最多的能力</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-4-statistics.png" alt="原论文 Figure 4"></div><div class="paper-caption">原论文 Figure 4。一个 scenario 可以属于多个能力类别，所以中间柱状图不能直接相加成 403。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 4、§2.4。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="主结果">
+    <div class="top"><b>19 · ORIGINAL TABLE 3</b><span>20 个 model + scaffold 组合</span></div><h2>最佳单次结果 38/72；同一模型换 scaffold 可差 18 个百分点</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/table-3-results.png" alt="原论文 Table 3"></div><div class="paper-caption">Claude-Opus-5 + Claude Code：52.78%。每个组合只跑一次，不能当作稳定能力排名。</div></div>
+    <div class="foot"><span class="src">原论文 Table 3、§4.1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="成本与成功率">
+    <div class="top"><b>20 · ORIGINAL FIGURE 1</b><span>更贵不稳定对应更高成功率</span></div><h2>相同 solve rate 的配置，总成本最多相差 25 倍</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-1-cost.png" alt="原论文 Figure 1"></div><div class="paper-caption">原论文 Figure 1。标线是观察到的 cost–performance frontier，不是新的评分标准。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 1、§4.1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Tier 效应">
+    <div class="top"><b>21 · ORIGINAL FIGURE 5</b><span>Atom → Combo → Repo</span></div><h2>范围扩大后，Agent 做了更多运行实验，成功率仍持续下降</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-5-tier.png" alt="原论文 Figure 5"></div><div class="paper-caption">Claude Code 下聚合 solve rate：45.2% → 31.5% → 21.7%；Repo 的代码检查调用明显增加。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 5、§4.2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Scaffold 效应">
+    <div class="top"><b>22 · ORIGINAL FIGURE 6</b><span>工具界面改变调用模式</span></div><h2>交互更少不等于一定更好或更差</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-6-tools.png" alt="原论文 Figure 6"></div><div class="paper-caption">Codex 的调用量较少，并把检查与执行主要放在 Bash；Claude Code 与 OpenCode 有专用读写工具。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 6、§4.3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="能力画像">
+    <div class="top"><b>23 · ORIGINAL FIGURE 8</b><span>多数失败项目能运行，只是行为不对</span></div><h2>Engine contract 最容易；Commitment、Spatial、Timing 最难</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-8-capabilities.png" alt="原论文 Figure 8"></div><div class="paper-caption">20 个配置 pooled：Engine contract 88.75%；后三类能力在 53.4%–58.57% 之间。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 8、§4.5。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="源码检索污染">
+    <div class="top"><b>24 · ORIGINAL FIGURE 7</b><span>开放网络后，Repo 题可能退化成检索</span></div><h2>四个配置找到并直接复用了上游源码，成绩全部上升</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-7-retrieval.png" alt="原论文 Figure 7"></div><div class="paper-caption">最大变化：Kimi-K3 + Claude Code 从 3 个 Repo 题增至 12 个（+9）。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 7、§4.7。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="逐题覆盖">
+    <div class="top"><b>25 · ORIGINAL FIGURE 9</b><span>同一总分背后，解出的题可能完全不同</span></div><h2>Repo 不只是平均更难，很多具体任务几乎没人解出</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gamelogicbench/figure-9-coverage.png" alt="原论文 Figure 9"></div><div class="paper-caption">每列是一道任务，每行是一个 model + scaffold 配置，绿色表示该次运行通过整题。</div></div>
+    <div class="foot"><span class="src">原论文 Figure 9、Appendix C。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结论与边界">
+    <div class="top"><b>26 · TAKEAWAYS</b><span>把 leaderboard 放回测量方法里理解</span></div><h2>可信的 runtime benchmark，要同时验证提交和 judge</h2>
+    <div class="body"><div class="split"><div><p class="big"><strong>多个 judge-selected scenario</strong> 防止只对公开示例过拟合；<strong>tick-level assertion</strong> 防止终局掩盖过程错误；<strong>mutant calibration</strong> 防止 judge 本身漏掉缺失能力的实现。</p><div class="metrics" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><strong>74.3%</strong><span>失败 scenario 中，项目能运行但机制违约</span></div><div class="metric"><strong>21.7%</strong><span>Claude Code 下 Repo 聚合 solve rate</span></div></div></div><div class="limits"><div class="limit"><strong>它不测什么</strong><span>美术、内容深度、整体玩家体验。</span></div><div class="limit"><strong>当前范围</strong><span>Godot 4.4、GDScript、单容器，无网络同步。</span></div><div class="limit"><strong>统计边界</strong><span>主表每个配置只有一次完整运行。</span></div><div class="limit"><strong>公开性边界</strong><span>harness 可见；论文所链接的 task repo 在本文核查时返回 404。</span></div></div></div></div>
+    <div class="foot"><span class="src"><a href="https://arxiv.org/abs/2609.21562">论文</a> · <a href="https://github.com/NJU-LINK/GameLogicBench">官方 harness</a> · 图表按 CC BY 4.0 引用</span><span class="pg"></span></div>
+  </section>
+
+</main></div>
+<div id="controls" aria-label="幻灯片控制">
+  <a id="return-to-article" class="control-link" href="/posts/论文解读/gamelogicbench.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label">返回文章</span></a>
+  <button id="prev" aria-label="上一页"><span aria-hidden="true">←</span><span class="nav-label">上一页</span></button>
+  <button id="toc" aria-label="打开目录"><span class="utility-icon" aria-hidden="true">☰</span><span class="utility-label">目录</span></button>
+  <span class="current-title" id="current-title">封面</span>
+  <span class="counter" id="counter">1 / 26</span>
+  <button id="next" aria-label="下一页"><span class="nav-label">下一页</span><span aria-hidden="true">→</span></button>
+  <button id="full" aria-label="全屏"><span class="utility-icon" aria-hidden="true">⛶</span><span class="utility-label">全屏</span></button>
+</div>
+<div id="overview-panel" hidden>
+  <div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title">
+    <div class="overview-head"><strong id="overview-title">26 页目录</strong><button id="close-overview" aria-label="关闭目录">×</button></div>
+    <div class="overview-grid" id="overview-grid"></div>
+  </div>
+</div>
+<div id="progress"></div>
+<script>
+  (() => {
+    const slides=[...document.querySelectorAll('.slide')];
+    const deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnToArticle=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
+    const isEmbedded=window.self!==window.top;
+    if(!isEmbedded)returnToArticle.hidden=false;
+    slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
+    let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+    function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+    function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameLogicBench`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+    function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}function syncFullscreenButton(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出全屏':'全屏'}
+    document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());document.addEventListener('fullscreenchange',syncFullscreenButton);syncFullscreenButton();
+    addEventListener('keydown',event=>{if(!overview.hidden){if(event.key==='Escape')closeOverview();return}if(event.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home')show(0);if(event.key==='End')show(slides.length-1);if(event.key.toLowerCase()==='f')fullButton.click();if(event.key.toLowerCase()==='o')openOverview()});
+    let touchStartX=null;addEventListener('touchstart',event=>{if(event.target.closest('#controls,#overview-panel'))return;touchStartX=event.changedTouches[0].clientX},{passive:true});addEventListener('touchend',event=>{if(touchStartX===null)return;const dx=event.changedTouches[0].clientX-touchStartX;touchStartX=null;if(Math.abs(dx)>48)show(index+(dx<0?1:-1))},{passive:true});addEventListener('resize',scaleDeck);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));scaleDeck();show(index,false);
+  })();
+</script>
+</body>
+</html>
