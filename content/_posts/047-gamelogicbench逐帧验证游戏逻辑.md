@@ -2,7 +2,7 @@
 title: "GameLogicBench：如何逐帧验证 Coding Agent 写对了游戏逻辑"
 permalink: "/posts/论文解读/gamelogicbench.html"
 date: "2026-09-22T13:30:00+08:00"
-updated: "2026-09-22T13:30:00+08:00"
+updated: "2026-09-22T18:07:17+08:00"
 cover: "/generated-covers/047-gamelogicbench.webp"
 description: "从 Godot 的场景树与物理帧讲起，拆解 GameLogicBench 如何用 72 个任务、403 个手工场景、1,451 个测试用例和逐帧断言评测游戏逻辑。"
 wide_content: true
@@ -26,6 +26,7 @@ html:not([data-theme="dark"]) body:has(.glb-reading){--paper:#fff;--paper-elevat
 .glb-reading{--glb-column:740px;--glb-accent:var(--glb-purple);--glb-teal:var(--glb-teal);--glb-ink:var(--ink);--glb-soft:var(--ink-soft);--glb-surface:var(--paper-elevated);--glb-line:var(--line-strong);width:min(100%,var(--glb-column));margin-inline:auto;color:var(--glb-ink);font-family:var(--sans);font-size:1.0625rem;line-height:1.78;-webkit-font-smoothing:antialiased}
 .glb-reading>*{max-width:100%}.glb-reading p,.glb-reading li{text-wrap:pretty}.glb-reading .glb-paper-meta{margin:0 0 8px;color:var(--glb-soft);font:400 .8rem/1.6 var(--sans)}.glb-reading .glb-source-links{display:flex;flex-wrap:wrap;gap:7px 18px;margin:0 0 24px;font-size:.92em}.glb-reading .glb-source-links a{font-family:var(--sans)}.glb-reading .glb-lead{margin:0 0 24px;font-size:1.08em;line-height:1.78}
 .glb-reading .glb-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:22px 0 30px;border-block:1px solid var(--glb-line)}.glb-reading .glb-metric{min-height:102px;padding:17px 14px;border-right:1px solid var(--glb-line)}.glb-reading .glb-metric:last-child{border-right:0}.glb-reading .glb-metric strong{display:block;color:var(--glb-accent);font:650 clamp(1.65rem,3vw,2.2rem)/1 var(--serif)}.glb-reading .glb-metric span{display:block;margin-top:10px;color:var(--glb-soft);font:600 .82rem/1.5 var(--sans)}
+.glb-reading .glb-keypoints{margin:0 0 38px;padding:18px 22px;border-left:5px solid var(--glb-accent);background:color-mix(in srgb,var(--glb-accent) 6%,var(--glb-surface))}.glb-reading .glb-keypoints h3{margin:0 0 9px;font-size:1rem}.glb-reading .glb-keypoints ul{margin:0;padding-left:1.25rem}.glb-reading .glb-keypoints li{margin:.42rem 0}.glb-reading .glb-keypoints strong{color:var(--glb-ink);font-weight:760}
 .glb-reading .glb-deck{margin:28px 0 38px;border-block:1px solid var(--glb-line);background:var(--glb-surface)}.glb-reading .glb-deck>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:76px;padding:14px 16px;cursor:pointer;list-style:none}.glb-reading .glb-deck>summary::-webkit-details-marker{display:none}.glb-reading .glb-deck-title{display:grid;gap:3px}.glb-reading .glb-deck-title small{color:var(--glb-accent);font:800 .68rem/1.2 var(--mono);letter-spacing:.1em}.glb-reading .glb-deck-title strong{font-size:1rem}.glb-reading .glb-deck-action{color:var(--glb-accent);font:700 .8rem/1 var(--sans);white-space:nowrap}.glb-reading .glb-deck[open] .glb-deck-action::before{content:"收起";font-size:.8rem}.glb-reading .glb-deck[open] .glb-deck-action{font-size:0}.glb-reading .glb-player-shell{border-top:1px solid var(--glb-line);background:#20262d}.glb-reading .post-deck-embed{width:100%!important;max-width:100%;margin:0!important;transform:none!important}.glb-reading .post-deck-embed-frame{border:0;border-radius:0;box-shadow:none}.glb-reading .post-deck-embed-note{margin:0!important;padding:10px 14px!important;color:#cbd2d8!important;background:#20262d;border-top:1px solid #424950}.glb-reading .glb-deck-links{display:flex;justify-content:flex-end;padding:0 14px 13px;background:#20262d}.glb-reading .glb-deck-links a{color:#fff;padding:8px 12px;border:1px solid #ffffff4a;text-decoration:none;font:700 .78rem/1 var(--sans)}
 .glb-reading .glb-part0{margin:34px 0 42px;padding:22px 24px;border-top:5px solid var(--glb-teal);background:var(--glb-surface)}.glb-reading .glb-part0 h3{margin:0 0 12px;font-size:1.38rem}.glb-reading .glb-kicker{display:block;margin-bottom:7px;color:var(--glb-teal);font:800 .72rem/1 var(--mono);letter-spacing:.1em}.glb-reading .glb-concept-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:20px 0;background:var(--glb-line)}.glb-reading .glb-concept{padding:16px;background:#fff}.glb-reading .glb-concept strong{display:block;margin-bottom:5px;color:var(--glb-accent)}.glb-reading .glb-concept span{display:block;color:var(--glb-soft);font-size:.9rem;line-height:1.62}
 .glb-reading .glb-table-scroll{width:100%;margin:22px 0;overflow-x:auto}.glb-reading .glb-table-scroll table{display:table;width:100%;min-width:690px;margin:0;border-collapse:collapse;font:400 .875rem/1.55 var(--sans)}.glb-reading th,.glb-reading td{padding:9px 10px;border:1px solid var(--glb-line);text-align:left;vertical-align:top}.glb-reading th{background:color-mix(in srgb,var(--glb-accent) 8%,var(--glb-surface))}.glb-reading td:first-child{font-weight:650}.glb-reading code{font-size:.92em}
@@ -33,7 +34,7 @@ html:not([data-theme="dark"]) body:has(.glb-reading){--paper:#fff;--paper-elevat
 .glb-reading .glb-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--glb-line);list-style:none}.glb-reading .glb-flow li{min-height:126px;padding:14px;background:var(--glb-surface)}.glb-reading .glb-flow b{display:block;margin-bottom:7px;color:var(--glb-accent);font:750 .8rem/1.35 var(--sans)}.glb-reading .glb-flow span{display:block;color:var(--glb-soft);font-size:.84rem;line-height:1.58}
 .glb-reading .glb-note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--coral);background:color-mix(in srgb,var(--coral) 7%,var(--glb-surface))}.glb-reading .glb-note.purple{border-color:var(--glb-accent);background:color-mix(in srgb,var(--glb-accent) 7%,var(--glb-surface))}.glb-reading .glb-note.teal{border-color:var(--glb-teal);background:color-mix(in srgb,var(--glb-teal) 7%,var(--glb-surface))}.glb-reading .glb-note p{margin:.35em 0}
 .glb-reading .glb-trace{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;background:var(--glb-line)}.glb-reading .glb-trace>div{padding:14px;background:#fff}.glb-reading .glb-trace b{display:block;color:var(--glb-accent);font-size:.79rem}.glb-reading .glb-trace span{display:block;margin-top:6px;color:var(--glb-soft);font-size:.82rem;line-height:1.5}
-.glb-reading .glb-case{margin:24px 0;padding:18px 20px;border-block:1px solid var(--glb-line)}.glb-reading .glb-case h3{margin:0 0 8px}.glb-reading .glb-case-meta{margin:0 0 14px;color:var(--glb-soft);font-size:.86rem}.glb-reading .glb-case ol{padding-left:1.2rem}.glb-reading .glb-case li{margin:.55rem 0}.glb-reading .glb-verdict{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;background:var(--glb-line)}.glb-reading .glb-verdict div{padding:13px 15px;background:var(--glb-surface);font-size:.88rem;line-height:1.55}.glb-reading .glb-verdict strong{display:block;margin-bottom:4px;color:var(--glb-teal)}
+.glb-reading .glb-case{margin:24px 0;padding:18px 20px;border-block:1px solid var(--glb-line)}.glb-reading .glb-case h4{margin:0 0 8px;font-size:1.08rem}.glb-reading .glb-case-meta{margin:0 0 14px;color:var(--glb-soft);font-size:.86rem}.glb-reading .glb-case ol{padding-left:1.2rem}.glb-reading .glb-case li{margin:.55rem 0}.glb-reading .glb-verdict{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;background:var(--glb-line)}.glb-reading .glb-verdict div{padding:13px 15px;background:var(--glb-surface);font-size:.88rem;line-height:1.55}.glb-reading .glb-verdict strong{display:block;margin-bottom:4px;color:var(--glb-teal)}
 .glb-reading .glb-evidence-details{margin:24px 0;border-block:1px solid var(--glb-line)}.glb-reading .glb-evidence-details>summary{display:flex;justify-content:space-between;gap:16px;padding:15px 2px;color:var(--glb-ink);cursor:pointer;font:700 .86rem/1.4 var(--sans)}.glb-reading .glb-evidence-details>summary span:last-child{color:var(--glb-soft);font-weight:500}.glb-reading .glb-gallery{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:8px 0 28px}.glb-reading .glb-gallery .glb-figure{margin:0}.glb-reading .glb-gallery .glb-figure img{width:100%}
 .glb-reading>figure.highlight,.glb-reading>.highlight-container{width:100%;max-width:100%;margin-inline:0;contain:inline-size}.glb-reading pre{max-width:100%;overflow:auto;font-size:.84rem;line-height:1.68}.glb-reading .glb-code-label{display:block;margin:22px 0 0;color:var(--glb-soft);font:700 .76rem/1.4 var(--sans)}
 @media(max-width:760px){.article-shell-deck .article-header{max-width:100%}.glb-reading .glb-metrics{grid-template-columns:1fr 1fr}.glb-reading .glb-metric:nth-child(2){border-right:0}.glb-reading .glb-metric:nth-child(-n+2){border-bottom:1px solid var(--glb-line)}.glb-reading .glb-flow,.glb-reading .glb-trace{grid-template-columns:1fr 1fr}.glb-reading .glb-flow li:last-child,.glb-reading .glb-trace>div:last-child{grid-column:1/-1}.glb-reading .glb-deck>summary{align-items:flex-start}.glb-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.glb-reading .glb-gallery{grid-template-columns:1fr}.glb-reading .glb-verdict{grid-template-columns:1fr}}
@@ -76,6 +77,15 @@ html:not([data-theme="dark"]) body:has(.glb-reading){--paper:#fff;--paper-elevat
   <div class="glb-metric"><strong>1,451</strong><span>scenario 经 seed 取值后得到的 test case</span></div>
   <div class="glb-metric"><strong>52.78%</strong><span>论文中最佳单次 solve rate</span></div>
 </div>
+
+<aside class="glb-keypoints" aria-label="阅读全文前需要记住的三个结论">
+  <h3>先记住三件事</h3>
+  <ul>
+    <li><strong>GameLogicBench 评的是完整运行轨迹。</strong>最终抵达目标仍不够；中间任意一个 tick 触墙、超时或违反事件顺序，test case 就失败。</li>
+    <li><strong>一次提交必须通过全部 scenario × seed。</strong>每个 test case 先独立判定，某一项 task 的所有计分 case 都通过，才记为 solved。</li>
+    <li><strong>最佳单次结果是 38/72；只测公开 preview 会把平均 solve rate 高估 58.1 个百分点。</strong>隐藏场景负责区分“记住示例”和“实现规则”。</li>
+  </ul>
+</aside>
 
 <section class="glb-part0" id="part-0-godot">
 <span class="glb-kicker">PART 0 · READING PRIMER</span>
@@ -173,7 +183,13 @@ GameLogicBench 不评价“这款游戏好不好玩”，也不评价美术和�
 
 ## Q3: 论文如何解决这个问题？
 
-### 三个 tier 描述集成范围
+这一节按实际发生顺序展开：**先定义 task，再说明 task 如何进入 benchmark，随后划清 Agent 与 judge 的信息边界，最后跟着一次 submission 看判分。**
+
+### 先确定评测单位：一道 task 包含什么
+
+GameLogicBench 的一道 task 不只是一段需求文字。完整的评测单位包含五部分：写明规则与接口的 brief、可运行的 Godot 项目、一个公开 preview、Agent 可以提交的文件范围，以及只在判分阶段出现的 hidden scenarios、seeds 与 judge。Agent 要交付的是指定 GDScript 或组件；**judge 只根据运行状态和事件记录判行为，不要求某种内部代码结构。**
+
+三个 tier 描述的是需要接入多少现有系统：
 
 - **Atom**：在为 benchmark 新做的最小游戏里隔离一个机制，例如敌人寻路；21 题。
 - **Combo**：仍是最小游戏，但几个机制会在时间、空间或并发调用中互相影响，例如巡逻、视线、跳跃和追逐同时成立；28 题。
@@ -181,19 +197,7 @@ GameLogicBench 不评价“这款游戏好不好玩”，也不评价美术和�
 
 三类任务不是难度标签，而是 integration scope（集成范围）。论文的数据确实显示 Repo 更难，但不能反过来把所有 Repo 都理解成“难题”，也不能把 Atom 理解成简单算法题。
 
-### Agent 看见什么，judge 又知道什么
-
-每题给 Agent 一个任务说明和 Godot 项目，其中有可运行的 preview 与调试输出。Agent 知道功能规则、允许修改的文件、接口和“场景每次会重新生成”等事实；它只看到一个公开的 baseline scenario（基线场景）。隐藏 judge 使用同一接口，但会选择其他布局、输入序列、调用顺序和 seed。隐藏的是具体测试实例与 judge 代码，不是另外一套规则。
-
-<div class="glb-trace" aria-label="GameLogicBench 信息与执行边界">
-  <div><b>BRIEF</b><span>告诉 Agent 要实现的行为、接口和可修改文件。</span></div>
-  <div><b>PREVIEW</b><span>一个公开 scenario，可换 seed 运行并查看调试输出。</span></div>
-  <div><b>PATCH</b><span>Agent 只交付指定脚本及允许的 helper。</span></div>
-  <div><b>HIDDEN JUDGE</b><span>换 scenario、seed、调用时序，并读取运行状态。</span></div>
-  <div><b>VERDICT</b><span>只要任何一个 test case 破坏规则，任务失败。</span></div>
-</div>
-
-### 从候选机制到可计分任务
+### 72 道 task 从哪里来
 
 <figure class="glb-figure">
   <a href="/lib/papers/gamelogicbench/figure-3-construction.png"><img src="/lib/papers/gamelogicbench/figure-3-construction.png" alt="GameLogicBench 的任务构建与验证流水线"></a>
@@ -208,96 +212,130 @@ GameLogicBench 不评价“这款游戏好不好玩”，也不评价美术和�
   <li><b>05 · REVIEW</b><span>独立 review agent 复跑，再由三名人工标注者录取、退修或淘汰。</span></li>
 </ol>
 
-大约 200 个候选想法中，122 个走完构建、校准和 Agent review，最终 72 个进入 benchmark。标注者先判断一种行为能否客观测量，Agent 再把它做成项目和 judge，随后用反例检查 judge 有没有漏掉必须满足的能力。这里的“标注”包含了一整套可执行测试的构建与校准，不是给样本贴一个静态标签。
-
-### 为什么要同时放“两个正确解”和“多个错误解”
-
-一套测试只跑过 reference solution，只能说明它能接受一种写法；它可能把变量名、控制流程或某个偶然数值当成正确性的必要条件。GameLogicBench 因此设置四类 calibration artifact（校准样例）：
-
-<div class="glb-table-scroll">
-<table>
-  <thead><tr><th>校准样例</th><th>必须得到的结果</th><th>它在检查什么</th></tr></thead>
-  <tbody>
-    <tr><td>proper solution</td><td>所有 scenario 与 seed 都通过，并离容差边界有余量</td><td>任务确实可解</td></tr>
-    <tr><td>behavior-preserving control</td><td>通过</td><td>另一种内部实现只要可观察行为相同，也应被接受</td></tr>
-    <tr><td>naive solution</td><td>失败</td><td>常见的“看似能跑”实现不能蒙混过关</td></tr>
-    <tr><td>single-capability mutant</td><td>至少被一个专门 scenario 抓住</td><td>每次只删掉一项能力，验证 judge 对这项缺失确实敏感</td></tr>
-  </tbody>
-</table>
-</div>
-
-Mutant 校准确实找到了会改变榜单结果的漏洞。作者在 36 题审计子集上检查“未经过 mutant 修补”的 criterion（判定规则）：666 个 mutant 中有 127 个错误实现通过，暴露出 19 道任务里的 24 个缺失检查。修补后，9 个模型 × 2 个 scaffold 的历史提交里，有 3 个结果从 PASS 改成 FAIL，涉及 2 道任务和 3 个模型；正确解与行为等价的 control 仍然通过。
-
-### Judge 如何把 scenario、seed 和 tick 串起来
-
-求解和判分运行在两个独立、断网的容器中。judge 拿到 Agent 工作目录的副本和冻结的测试文件；对每个 scenario 与 seed，它用固定 timestep 启动游戏。scenario 定义测试结构，例如“从相反方向接近台阶，前方再放一堵过高的墙”；seed 再为台阶高度、距离或输入时序等参数取具体数值，于是形成一个 test case。
-
-官方仓库目前公开的是评测 harness，而不是 72 道题各自的 judge。能直接核查到的隔离机制是：harness 按 `game → solution → judge` 的顺序组装项目，最后覆盖冻结的 judge 文件；隐藏 seed 通过命令行参数传入，不写进 Agent 可见的项目目录。论文链接的 `GameLogicBench-Tasks` 仓库在本文核查时返回 404，所以 task-specific checker 的具体断言仍然无法公开审计。
-
-下面的代码只把论文协议写成伪代码，帮助读者看清逐 tick 断言的粒度；它不是官方 task-specific judge 源码。
-
-```gdscript
-for scenario in hidden_scenarios:
-    for seed in scenario.seeds:
-        var run = launch_fixed_timestep(scenario, seed)
-        while not run.finished:
-            run.advance_one_tick()
-            assert(run.state.resources >= 0)
-            assert(event_order_is_legal(run.event_history))
-            assert(no_collision_violation(run.state))
-        assert(run.completed_required_goal())
-```
-
-judge 还会改变接口允许的调用计划，包括 concurrent calls（同一阶段出现多个调用）、re-entry（一次流程尚未退出又再次进入）和 stretched time base（拉长时间步尺度）。这些变化只影响执行条件，功能要求不变。断言读取运行状态（runtime state）与事件历史（event history），不读 Agent 的源码，也不接受 Agent 自己上报“我通过了”。
-
-判分按四层汇总。每个 test case 先得到二元 PASS/FAIL；一个 scenario 只有在它的全部 seed 都通过时才算 strict pass；一项 task 的所有计分 case 都通过，才记为 solved；主表的 `solve rate = solved tasks / 72`。没有可判定 solution 的运行和不可用的 computation 都算失败，不会从分母中剔除。Figure 8 的能力分数另按 scenario 统计：先要求一个 scenario 的所有 seed 通过，再在带有相应能力标签的 scenario 上汇总。一个 scenario 可以有多个能力标签，所以七类能力的分母不能相加。
-
-### 真实 case 1：Atom / Enemy Navigation
-
-<div class="glb-case">
-  <h3>一个方向向量，为什么也值得逐帧测</h3>
-  <p class="glb-case-meta">来源：论文 Appendix F.2 的完整任务 brief</p>
-  <ol>
-    <li><strong>任务。</strong>Agent 只实现 <code>res://logic/controller.gd</code> 中的 <code>decide(state) -&gt; Vector2</code>。返回值表示本物理帧的移动方向。</li>
-    <li><strong>公开输入。</strong><code>state</code> 给出当前位置、目标、角色半径、物理世界、navigation map、<code>dt</code> 和累计时间；preview 展示一张固定示例地图。</li>
-    <li><strong>隐藏变化。</strong>墙、门洞、起点和终点会程序化重排；不同 seed 生成不同数值实例。</li>
-    <li><strong>逐帧观察。</strong>每一帧都要确认圆形角色没有碰墙；结束前还要确认它在时限内抵达终点。</li>
-  </ol>
-  <div class="glb-verdict"><div><strong>PASS</strong>所有 seed 都在时限内到达，并且整条轨迹从未触墙。</div><div><strong>FAIL</strong>哪怕最终到了终点，只要中间一帧擦过墙角，仍然失败。</div></div>
-</div>
-
-这个 case 也说明了 terminal-only（只看最终状态）的盲点：controller 可以先穿墙、再到终点。终局满足“抵达”，运行轨迹已经违反碰撞规则。
-
-### 真实 case 2：Combo / Platform Guard
-
-<div class="glb-case">
-  <h3>同一个 controller 同时承担巡逻、视线、跳跃与返回</h3>
-  <p class="glb-case-meta">来源：论文 Appendix F.3 的完整任务 brief</p>
-  <ol>
-    <li><strong>任务。</strong><code>decide(state)</code> 每帧返回 <code>{"move": float, "jump": bool, "chasing": int}</code>。</li>
-    <li><strong>场景。</strong>两块平台之间有落差和深坑，tower（障碍塔）会遮挡视线；平台宽度、gap、访客出现时间和出生点都会变化。</li>
-    <li><strong>动作。</strong>安静时覆盖 home platform（初始驻守平台）至少 34% 的可行走范围；看见 intruder（入侵者）后接近到 130 units 内，而且必须站在地面上；失去目标后 6 秒内返回 home。</li>
-    <li><strong>观察。</strong>judge 逐帧检查是否坠落、是否把墙后的目标谎报为 <code>chasing</code>、跳跃轨迹是否真正落到目标旁、离家是否超时。</li>
-  </ol>
-  <div class="glb-verdict"><div><strong>PASS</strong>不同布局和访客时序下，所有职责都持续成立。</div><div><strong>FAIL</strong>只靠距离判断“可见”、在空中掠过目标、或追完后一直留在远端，都属于明确失败。</div></div>
-</div>
-
-这里的 34%、130 units 和 6 秒都来自公开 brief，不是本文自行推测。真正的隐藏 scenario 与 judge 源码没有随论文主仓库公开，因此本文不会把示意伪代码冒充官方实现。
-
-### 真实 case 3：Repo / AMSG Character Movement
-
-Repo 示例要求 Agent 在一个 MIT 许可的第三人称角色 kit 中重建 `CharacterMovementComponent.gd`。它要保持原有类、导出属性、状态字段和方法签名，让动画、相机、控制器和数据资源继续读取同一个组件。功能包括三种 gait（步行、奔跑、冲刺）、松开输入后的减速、蹲下与头顶阻挡、任意方向的台阶攀爬、落地后跳跃，以及离地 0.1 秒后才确认下落。
-
-论文正文给出了一组具体的公开/隐藏差异：preview 让角色从 `+X` 方向走上一个合法台阶；某个计分 scenario 改为从 `-X` 接近，并在路径更远处放一堵超过最大台阶高度的墙。正确实现必须爬上台阶，但不能把后面的高墙也当成台阶。judge 会检查角色能否从不同方向识别可攀爬高度，同时维持整套 character rig（角色控制系统）的接口和状态约束。
-
-### 规模与覆盖
+作者先收集约 200 个候选机制。三名人工标注者筛掉无法确定性判定的想法；Agent 再协助完成可行性试验、任务蓝图、Godot 项目和 judge。122 个候选走完构建、校准与独立 Agent review，三名标注者最终录取 72 个。这里的“标注”不是给现成样本贴标签，而是**把自然语言规则做成可执行场景和断言，再用正确与错误实现反复校准。**
 
 <figure class="glb-figure">
   <a href="/lib/papers/gamelogicbench/figure-4-statistics.png"><img src="/lib/papers/gamelogicbench/figure-4-statistics.png" alt="GameLogicBench 的游戏类型、能力场景与 token 规模"></a>
   <figcaption><strong>原论文 Figure 4。</strong>72 题覆盖 12 种来源类型。403 个 scenario 可以同时标记多个能力类别，因此中间七根柱子的数量之和大于 403。右图表明在配对设置下，GameLogicBench 的输出 token 约为 GameDevBench 的 15 倍，非缓存输入接近 4 倍。</figcaption>
 </figure>
 
-每道任务有 2–12 个 scenario、10–38 个 test case。Repo 平均含 209 个游戏文件、17,599 行游戏代码；Atom 与 Combo 平均都只有 5 个游戏文件，代码量分别为 316 与 421 行。Repo 题需要先找到真正控制行为的代码位置，再维持周边系统依赖的接口和共享状态。
+每道任务有 2–12 个 scenario、10–38 个 test case。Repo 平均含 209 个游戏文件、17,599 行游戏代码；Atom 与 Combo 平均都只有 5 个游戏文件，代码量分别为 316 与 421 行。这个规模差解释了 Repo 的主要额外负担：Agent 要先找到真正控制行为的位置，还得维持周边系统依赖的接口与共享状态。
+
+### Agent 可以看见什么，judge 隐藏什么
+
+每题给 Agent 一个任务说明和 Godot 项目，其中有可运行的 preview 与调试输出。Agent 知道功能规则、允许修改的文件、接口和“场景每次会重新生成”等事实；它只看到一个公开的 baseline scenario（基线场景）。隐藏 judge 使用同一接口，但会选择其他布局、输入序列、调用顺序和 seed。隐藏的是具体测试实例与 judge 代码，不是另外一套规则。
+
+<div class="glb-trace" aria-label="GameLogicBench 信息与执行边界">
+  <div><b>BRIEF</b><span>告诉 Agent 要实现的行为、接口和可修改文件。</span></div>
+  <div><b>PREVIEW</b><span>一个公开 scenario，可换 seed 运行并查看调试输出。</span></div>
+  <div><b>PATCH</b><span>Agent 只交付指定脚本及允许的 helper。</span></div>
+  <div><b>HIDDEN JUDGE</b><span>换 scenario、seed、调用时序，并读取运行状态。</span></div>
+  <div><b>VERDICT</b><span>只要任何一个 test case 破坏规则，任务失败。</span></div>
+</div>
+
+### Judge 怎样执行一次 submission
+
+求解和判分在两个独立、断网的容器里进行。Agent 交付一次 submission 后，judge 按下面六步给出 verdict：
+
+1. solve container 把 brief、Godot 项目和公开 preview 交给 Agent；Agent 可以运行、调试并重新选择 preview seed。
+2. 求解结束后，harness 复制 Agent 的 workspace，交给另一个 judge container。
+3. harness 按 <code>game → solution → judge</code> 的顺序组装评测项目。冻结的 judge 文件最后覆盖，因此 Agent 在求解阶段改动同名文件也不会改变判分逻辑。
+4. judge 遍历每个 scored scenario 及其 seeds。scenario 规定测试结构，seed 把高度、距离、时间等参数实例化，二者共同产生一个 test case。
+5. 每个 test case 都用 fixed timestep 推进。judge 可以改变接口允许的 call schedule，包括 concurrent calls、re-entry 和 stretched time base，并在每个 tick 读取 runtime state 与 event history。
+6. tick-level 与终局断言全部满足才输出 PASS。运行时、submission、scenario、seed 和 judge 文件相同，verdict 也相同；评分路径中没有语言模型。
+
+官方仓库目前公开了评测 harness，没有公开 72 道题各自的 checker。可以直接核查的部分包括双容器隔离、workspace 复制、<code>game → solution → judge</code> 覆盖顺序和 seed 传入方式。论文链接的 <code>GameLogicBench-Tasks</code> 仓库截至 2026-09-22 返回 404，因而**已知的是统一执行协议和论文公开的 task brief；未知的是每道题的完整断言实现。**
+
+下面是根据论文 Evaluation Protocol 重写的伪代码，用来表示判分顺序。它不是官方 task-specific judge 源码。
+
+```gdscript
+for scenario in hidden_scenarios:
+    for seed in scenario.seeds:
+        var run = launch_fixed_timestep(scenario, seed)
+        while not run.finished:
+            apply_allowed_calls(scenario.schedule_for(run.tick))
+            run.advance_one_tick()
+            var state = read_runtime_state(run)
+            var events = read_event_history(run)
+            assert(scenario.tick_rules_hold(state, events))
+        assert(scenario.terminal_rules_hold(run))
+```
+
+### 真实 case 1：Atom / Enemy Navigation
+
+<div class="glb-case">
+  <h4>Enemy Navigation：终点正确，路径仍可能失败</h4>
+  <p class="glb-case-meta">一手来源：论文 Appendix F.2 的完整 task brief；统一执行协议来自 Evaluation Protocol。</p>
+  <ol>
+    <li><strong>Agent 收到什么：</strong>一个固定 preview，以及 <code>self_pos</code>、<code>goal_pos</code>、角色 <code>radius</code>、<code>world</code>、<code>nav_map</code>、<code>dt</code> 和累计时间 <code>t</code>。</li>
+    <li><strong>Agent 实现什么：</strong>只提交 <code>res://logic/controller.gd</code> 及其 helper。<code>decide(state) -&gt; Vector2</code> 每个 physics frame 返回方向；非零向量会被归一化，角色沿该方向前进固定距离，<code>Vector2.ZERO</code> 表示停留。</li>
+    <li><strong>Judge 怎样准备场景：</strong>arena 由程序生成，墙、门洞、起点和终点会改变；不同 seed 再给这些参数取值。公开 brief 承诺的是规则，Agent 看不到计分布局。</li>
+    <li><strong>Judge 观察什么：</strong>固定 timestep 下逐帧检查圆形角色是否接触墙体，结束前再检查是否在时限内到达目标。角色半径算进碰撞，擦到墙角也失败。</li>
+  </ol>
+  <div class="glb-verdict"><div><strong>PASS</strong>每个计分 seed 都按时到达，且从起点到终点没有任何一帧触墙。</div><div><strong>FAIL</strong>路径只按角色中心点规划，没有为半径留余量；角色在某一帧擦过门洞角落，之后即使到达终点，这个 test case 仍是 FAIL。</div></div>
+  <p class="glb-case-meta">证据边界：碰撞与到达条件来自公开 brief；最后一格是按该条件写出的具体失败轨迹，不是作者公开的模型运行日志。task-specific checker 源码未公开。</p>
+</div>
+
+这个 case 把 terminal-only（只看最终状态）的盲点说得很直接：终局只有“已抵达”，逐 tick 轨迹里却保留了先触墙再到达的违规。
+
+### 真实 case 2：Combo / Platform Guard
+
+<div class="glb-case">
+  <h4>Platform Guard：state 里有坐标，不等于角色看得见</h4>
+  <p class="glb-case-meta">一手来源：论文 Appendix F.3 的完整 task brief；统一执行协议来自 Evaluation Protocol。</p>
+  <ol>
+    <li><strong>Agent 收到什么：</strong>角色位置和速度、是否着地、全部平台和 tower、home platform、<code>vision_range</code>，以及所有 intruder 的真实坐标。<code>intruders</code> 是完整名单，不能直接当作“已看见目标”。</li>
+    <li><strong>Agent 实现什么：</strong><code>decide(state)</code> 每帧返回 <code>{"move": float, "jump": bool, "chasing": int}</code>。安静期要覆盖 home platform 至少 <strong>34%</strong> 的可行走范围；看见目标后要在地面上接近至 <strong>130 units</strong>；环境恢复安静后要在 <strong>6 秒</strong>内回家。</li>
+    <li><strong>Judge 怎样准备场景：</strong>程序改变平台宽度、gap、出生点和访客时序，还会放置遮挡视线的 tower。一次 watch 共 1,800 frames，即 <strong>30 秒、60 Hz</strong>。</li>
+    <li><strong>Judge 观察什么：</strong>每帧记录 fall、ghost chase、unconfronted visitor、overstayed absence 与 patrol coverage。进入 130 units 时若仍在空中，不算完成 confrontation。</li>
+  </ol>
+  <div class="glb-verdict"><div><strong>PASS</strong>所有 seed 中，巡逻覆盖、视线判断、落地 confrontation 与及时返回都持续满足 brief。</div><div><strong>FAIL</strong>一个 intruder 出现在 tower 后方。controller 因为 <code>intruders</code> 列表含有它就填入 <code>chasing=id</code>；judge 同一帧确认射线被 tower 挡住，记录 ghost chase。</div></div>
+  <p class="glb-case-meta">证据边界：数值、state 字段和错误类别都来自公开 brief；失败轨迹按其中的 ghost-chase 定义展开。隐藏场景参数与 checker 源码未公开。</p>
+</div>
+
+### 真实 case 3：Repo / AMSG Character Movement
+
+<div class="glb-case">
+  <h4>AMSG Character Movement：能从正面上台阶，不代表组件写对了</h4>
+  <p class="glb-case-meta">一手来源：论文 Appendix F.4 的完整 task brief，以及正文 §3 的公开/隐藏 scenario 示例。</p>
+  <ol>
+    <li><strong>Agent 收到什么：</strong>一个真实第三人称角色 kit 和缺少方法体的 <code>CharacterMovementComponent.gd</code>。类、export、状态字段与方法签名冻结；动画、相机、PlayerController 和其他组件都在读写这个接口。</li>
+    <li><strong>Agent 实现什么：</strong>三种 gait、松开输入后的减速、蹲伏与头顶阻挡、全方向台阶、落地跳跃，以及离地 <strong>0.1 秒</strong>后才确认 falling。调用方有输入时每 step 调 <code>add_movement_input(...)</code>，松开后停止调用；<code>rotation_mode</code>、<code>gait</code> 和 <code>stance</code> 可在移动中被外部组件改写。</li>
+    <li><strong>Judge 怎样准备场景：</strong>公开 preview 让角色沿 <code>+X</code> 走上合法台阶。论文披露的计分 scenario 改为沿 <code>-X</code> 接近，合法台阶后面还有一堵超过最大 stair height 的墙。</li>
+    <li><strong>Judge 观察什么：</strong>角色要从不同方向爬上合法高度，同时不能把高墙误判成台阶。动画和控制组件还会持续读取速度、姿态与空中状态，因此冻结接口也不能被破坏。</li>
+  </ol>
+  <div class="glb-verdict"><div><strong>PASS</strong><code>-X</code> 场景中能登上合法台阶，却不会跨上后方的过高墙体；接口与运动状态仍符合调用方契约。</div><div><strong>FAIL</strong>实现把探测射线写死在 <code>+X</code>。它能通过 preview；换成 <code>-X</code> 后探测仍朝 <code>+X</code>，角色撞在合法台阶上，计分 case 失败。</div></div>
+  <p class="glb-case-meta">证据边界：方向变化和高墙来自论文披露的真实计分场景；最后一格把“方向写死”具体化为失败轨迹。完整 task-specific checker 仍未公开。</p>
+</div>
+
+### 分数怎样从 tick 汇总到 72 道题
+
+看完三个 case，再把 PASS/FAIL 汇总成榜单分数。GameLogicBench 使用严格的四层合取关系：
+
+1. **Test case PASS**：这个 scenario × seed 的所有逐 tick 断言和终局断言都成立。
+2. **Scenario strict pass**：该 scenario 的每个 seed 都 PASS。
+3. **Task solved**：该 task 的所有计分 test case 都 PASS；任何一个 case 失败，整题记为 unsolved。
+4. **Solve rate = solved tasks / 72**。没有可判定 solution 的运行和不可用的 computation 都算失败，不会从分母中剔除。
+
+因此，1,451 个 test case 不是被摊成一个“平均通过率”。它们先在各自 task 内做严格合取，再统计 72 道题里解出了多少道。Figure 8 的能力分数采用另一种分组：一个 scenario 的所有 seed 先严格通过，然后在带有对应能力标签的 scenario 上汇总。scenario 可以有多个标签，所以七类能力的分母不能相加。
+
+### Checker calibration：减少误杀与漏判
+
+一套测试只跑过 reference solution，可能把变量名、控制流程或某个偶然数值误当成正确性的必要条件。GameLogicBench 用四类 calibration artifact 检查两件事：正确行为会不会被误杀，缺失能力的实现能不能漏过。
+
+<div class="glb-table-scroll">
+<table>
+  <thead><tr><th>校准样例</th><th>必须得到的结果</th><th>它在检查什么</th></tr></thead>
+  <tbody>
+    <tr><td>proper solution</td><td>所有 scenario 与 seed 都通过，并离容差边界有余量</td><td>任务确实可解</td></tr>
+    <tr><td>behavior-preserving control</td><td>通过</td><td>内部结构不同，只要可观察行为相同，也应被接受</td></tr>
+    <tr><td>naive solution</td><td>失败</td><td>常见的“看似能跑”实现不能蒙混过关</td></tr>
+    <tr><td>single-capability mutant</td><td>至少被一个专门 scenario 抓住</td><td>每次只删一项能力，验证 judge 对这项缺失确实敏感</td></tr>
+  </tbody>
+</table>
+</div>
+
+这一步确实改过判分。作者在 36 题审计子集上回看修补前的 criterion：<strong>666 个 mutant 中有 127 个错误实现通过，暴露出 19 道任务里的 24 个缺失检查。</strong>修补后，9 个模型 × 2 个 scaffold 的历史提交里，有 3 个结果从 PASS 变为 FAIL，涉及 2 道任务和 3 个模型；proper solution 与 behavior-preserving control 仍然通过。换句话说，mutant calibration 不只是流程说明，它修复了会改动榜单的 judge 漏洞。
 
 ## Q4: 做了哪些实验？效果如何？
 
@@ -312,7 +350,7 @@ Repo 示例要求 Agent 在一个 MIT 许可的第三人称角色 kit 中重建 
 
 ### 结果 1：集成范围越大，所有模型都明显掉分
 
-固定 Claude Code 后，12 个模型都从 Atom 到 Combo、再到 Repo 下降。聚合 solve rate 是 45.2% → 31.5% → 21.7%。与此同时，平均 turn 增加，Agent 启动 Godot 的次数更多，重新选择 preview seed 的 session 比例从 Atom 的 38.9% 上升到 Repo 的 55.8%。Agent 确实在尝试运行反馈，但项目范围扩大后，它们仍然难以同时满足全部规则。
+固定 Claude Code 后，12 个模型都从 Atom 到 Combo、再到 Repo 下降。聚合 solve rate 是 <strong>45.2% → 31.5% → 21.7%</strong>。与此同时，平均 turn 增加，Agent 启动 Godot 的次数更多，重新选择 preview seed 的 session 比例从 Atom 的 38.9% 上升到 Repo 的 55.8%。Agent 确实在尝试运行反馈，但项目范围扩大后，它们仍然难以同时满足全部规则。
 
 <figure class="glb-figure">
   <a href="/lib/papers/gamelogicbench/figure-5-tier.png"><img src="/lib/papers/gamelogicbench/figure-5-tier.png" alt="原论文 Figure 5：任务层级对 solve rate、轮数、运行实验和工具调用的影响"></a>
@@ -321,7 +359,7 @@ Repo 示例要求 Agent 在一个 MIT 许可的第三人称角色 kit 中重建 
 
 ### 结果 2：多数失败项目能运行，但机制行为不合格
 
-作者把失败 scenario 分成三类：74.3% 是 mechanism failure（机制失败），即提交可以运行和判分，但行为违反了契约；17.2% 没有可判定的提交；8.5% 的求解过程本身不可用。把全部配置和 scenario 合并统计后，Engine contract 的 strict pass rate 为 88.75%，在 20 个配置中的 19 个排第一；Commitment、Spatial 与 Timing 只有 53.4%–58.57%，在 20 个配置中的 17 个排倒数三位。
+作者把失败 scenario 分成三类：<strong>74.3% 是 mechanism failure（机制失败）</strong>，即提交可以运行和判分，但行为违反了契约；17.2% 没有可判定的提交；8.5% 的求解过程本身不可用。把全部配置和 scenario 合并统计后，Engine contract 的 strict pass rate 为 88.75%，在 20 个配置中的 19 个排第一；Commitment、Spatial 与 Timing 只有 53.4%–58.57%，在 20 个配置中的 17 个排倒数三位。
 
 <figure class="glb-figure">
   <a href="/lib/papers/gamelogicbench/figure-8-capabilities.png"><img src="/lib/papers/gamelogicbench/figure-8-capabilities.png" alt="原论文 Figure 8：20 个配置在七类能力上的严格场景通过率"></a>
