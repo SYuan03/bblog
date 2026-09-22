@@ -44,60 +44,60 @@
 <div id="viewport"><main id="deck" aria-label="GameASG-Bench 论文图解">
 
   <section class="slide" data-title="封面">
-    <div class="body"><div class="cover"><div><div class="eyebrow">GAMEASG-BENCH · PAPER WALKTHROUGH</div><h1>如何验证一个游戏<br>真的做完了</h1><p class="lead">从人写规格与隐藏测试，到真实浏览器输入、严格成功率和可复现失败。</p><div class="metrics"><div class="metric"><strong>47</strong><span>完整浏览器游戏任务</span></div><div class="metric"><strong>336</strong><span>L1 静态检查</span></div><div class="metric"><strong>885</strong><span>L2 行为检查</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div class="cover-art"><div class="cover-step"><b>SPEC</b>人类先写可测试的玩法契约</div><div class="cover-step"><b>BUILD</b>Agent 交付自包含 index.html</div><div class="cover-step"><b>VERIFY</b>隐藏测试复现、操作并判定</div></div></div></div>
+    <div class="body"><div class="cover"><div><div class="eyebrow">GAMEASG-BENCH · PAPER WALKTHROUGH</div><h1>如何验证一个游戏<br>真的做完了</h1><p class="lead">从人类事先写好公开规格和隐藏检查，到评测器在浏览器中实际操作游戏，再到严格判断成品是否达到交付标准。</p><div class="metrics"><div class="metric"><strong>47</strong><span>完整浏览器游戏任务</span></div><div class="metric"><strong>336</strong><span>L1 静态检查</span></div><div class="metric"><strong>885</strong><span>L2 行为检查</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div class="cover-art"><div class="cover-step"><b>SPEC</b>人类先写公开规格和隐藏检查</div><div class="cover-step"><b>BUILD</b>Agent 交付可独立运行的 index.html</div><div class="cover-step"><b>VERIFY</b>评测器准备场景、执行真实输入并判定结果</div></div></div></div>
     <div class="foot"><span class="src">GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development · arXiv:2609.21293</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Motivation">
-    <div class="top"><b>02 · MOTIVATION</b><span>页面能打开，不代表游戏完成</span></div><h2>常见代理指标只能覆盖某一层</h2>
-    <div class="body"><div class="evidence"><div class="ev"><b>01</b><div><strong>成功加载</strong><span>能排除启动崩溃，无法证明交互和状态机。</span></div></div><div class="ev"><b>02</b><div><strong>静态截图</strong><span>能看一帧布局，无法证明控制、动画和终局。</span></div></div><div class="ev"><b>03</b><div><strong>源码关键词</strong><span>出现 win、ammo 或 restart 也可能只是注释和空壳。</span></div></div><div class="ev"><b>04</b><div><strong>Agent 自测</strong><span>容易只走接口捷径，漏掉真实鼠标、触摸和自然时间。</span></div></div></div><div class="rule-block orange" style="margin-top:24px"><p>完整游戏把输入、运行时状态、渲染反馈、资源变化和终局锁连成一条因果链。评测必须沿着这条链执行。</p></div></div>
+    <div class="top"><b>02 · MOTIVATION</b><span>页面能打开，不代表游戏完成</span></div><h2>常用指标往往只看到游戏的一小部分</h2>
+    <div class="body"><div class="evidence"><div class="ev"><b>01</b><div><strong>成功加载</strong><span>能排除启动崩溃，无法证明交互和状态变化。</span></div></div><div class="ev"><b>02</b><div><strong>静态截图</strong><span>能看一帧布局，无法证明控制、动画和胜负流程。</span></div></div><div class="ev"><b>03</b><div><strong>源码关键词</strong><span>win、ammo 或 restart 可能只出现在注释里，相关代码也可能没有接到实际玩法。</span></div></div><div class="ev"><b>04</b><div><strong>Agent 自测</strong><span>容易只测试接口，漏掉真实鼠标或触摸输入，以及游戏按真实时钟自行推进的过程。</span></div></div></div><div class="rule-block orange" style="margin-top:24px"><p>玩家输入要真正改变游戏状态，状态变化还要反映到画面、资源和胜负结果中。评测必须把这些环节连起来执行。</p></div></div>
     <div class="foot"><span class="src">论文 §1、§2.3、§4.6。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="评测设计难点">
-    <div class="top"><b>03 · THE ORACLE PROBLEM</b><span>可复现性与实现自由度</span></div><h2>测试既要到达罕见状态，也要避免绑定内部变量</h2>
-    <div class="body"><div class="balance"><div class="extreme"><h3>只用 GUI 慢慢玩</h3><ul><li>后期状态耗时</li><li>碰撞与时序容易漂移</li><li>失败难以定位到单条需求</li></ul></div><div class="middle-mark">⇄</div><div class="extreme orange"><h3>直接改内部状态</h3><ul><li>依赖对象名和数据结构</li><li>同一测试难以跨实现</li><li>可能绕过真正的玩法路径</li></ul></div></div><div class="contract-center">legal scenario + player action + stable snapshot + invariant</div></div>
-    <div class="foot"><span class="src">论文 §2.2。GameASG-Bench 把中间层写成公开的 evaluation interface specification。</span><span class="pg"></span></div>
+    <div class="top"><b>03 · THE ORACLE PROBLEM</b><span>如何为不同实现建立统一的判定依据</span></div><h2>测试要能快速准备后期局面，又不能依赖某一种代码结构</h2>
+    <div class="body"><div class="balance"><div class="extreme"><h3>完全按玩家路径从头玩</h3><ul><li>到达后期局面太慢</li><li>碰撞和时序难稳定复现</li><li>失败后很难定位是哪项需求没实现</li></ul></div><div class="middle-mark">⇄</div><div class="extreme orange"><h3>测试脚本直接读写实现细节</h3><ul><li>会绑定变量名和对象结构</li><li>换一种实现，同一测试就可能失效</li><li>还可能绕过本该由玩家完成的操作</li></ul></div></div><div class="contract-center">legal scenario（合法起点） → player-level action（玩家动作） →<br>stable snapshot（含义固定的状态摘要） → invariant（始终应成立的约束）</div></div>
+    <div class="foot"><span class="src">论文把这层约定称为 evaluation interface specification（评测接口规范）。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Related work">
-    <div class="top"><b>04 · RELATED WORK</b><span>比较任务范围、状态准备与运行证据</span></div><h2>GameASG-Bench 的辨识度来自“生成前固定”</h2>
-    <div class="body"><div class="matrix"><div class="head">工作</div><div class="head">产物</div><div class="head">状态准备</div><div class="head">运行证据</div><div class="head">评价方式</div><div class="name">APPS / EvalPlus</div><div>函数</div><div>输入样例</div><div>返回值</div><div>预先定义测试</div><div class="name">SWE-bench</div><div>仓库修改</div><div>仓库与 issue</div><div>项目测试</div><div>已有测试套件</div><div class="name">WebGameBench</div><div>浏览器游戏</div><div>候选状态</div><div>真实浏览器交互</div><div>规格引导</div><div class="name">GameCraft-Bench</div><div>Godot 项目</div><div>可回放演示</div><div>回放与多模态证据</div><div>隐藏 rubric</div><div class="name">GameGen-Verifier</div><div>生成游戏</div><div>运行时注入</div><div>前置、交互、后置</div><div>规格抽取 keypoint</div><div class="name">GameXpert-Bench</div><div>生成与修复</div><div>生成后汇总事件</div><div>代码与现场交互</div><div>产物池加人工审核</div><div class="name focus">GameASG-Bench</div><div class="focus">单页浏览器游戏</div><div class="focus">预先声明合法场景</div><div class="focus">快照、真实输入、浏览器信号</div><div class="accent">规格和检查生成前固定</div></div></div>
+    <div class="top"><b>04 · RELATED WORK</b><span>比较任务范围、状态准备与运行证据</span></div><h2>和现有工作的关键区别：评测规则在生成前写好</h2>
+    <div class="body"><div class="matrix"><div class="head">工作</div><div class="head">产物</div><div class="head">状态准备</div><div class="head">运行证据</div><div class="head">评价方式</div><div class="name">APPS / EvalPlus</div><div>函数</div><div>输入样例</div><div>返回值</div><div>预先定义测试</div><div class="name">SWE-bench</div><div>仓库修改</div><div>仓库与 issue</div><div>项目测试</div><div>已有测试套件</div><div class="name">WebGameBench</div><div>浏览器游戏</div><div>先准备游戏状态</div><div>真实浏览器交互</div><div>按规格驱动测试</div><div class="name">GameCraft-Bench</div><div>Godot 项目</div><div>可回放演示</div><div>回放与多模态证据</div><div>隐藏评分规则（rubric）</div><div class="name">GameGen-Verifier</div><div>生成游戏</div><div>运行时注入状态</div><div>前置、交互、后置</div><div>从规格抽取检查点</div><div class="name">GameXpert-Bench</div><div>生成与修复</div><div>生成后汇总事件</div><div>检查源码 + 实际操作</div><div>从多份成品汇总事件，并经人工审核形成评分规则</div><div class="name focus">GameASG-Bench</div><div class="focus">单页浏览器游戏</div><div class="focus">预先声明合法场景</div><div class="focus">快照、真实输入、浏览器信号</div><div class="accent">规格和检查生成前固定</div></div></div>
     <div class="foot"><span class="src">论文 §5.3。表内措辞按原文归纳。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="谁写什么">
-    <div class="top"><b>05 · AUTHORSHIP AND VISIBILITY</b><span>先回答 checks 从哪来</span></div><h2>人类写规格、检查与优先级，Agent 写游戏</h2>
-    <div class="body"><div class="roles"><div class="head">文件</div><div class="head">作者</div><div class="head">Agent 可见性</div><div class="head">作用</div><div class="human mono">target.md</div><div>人类开发者</div><div>可见，直接进入提示</div><div>工作区、交付协议、玩法简介</div><div class="human mono">game-spec.md</div><div>人类开发者</div><div>可见</div><div>玩家可见机制和最低可玩循环</div><div class="human mono">tdd.md</div><div>人类开发者</div><div>可见</div><div>场景、动作、快照、拒绝与不变量</div><div class="human mono">checks.json</div><div>人类开发者</div><div>隐藏</div><div>L1 静态检查</div><div class="human mono">checks.js</div><div>人类开发者</div><div>隐藏</div><div>L2 浏览器行为检查</div><div class="human">参考实现</div><div>benchmark 团队</div><div>隐藏</div><div>人工验证后的正控制</div><div class="agent mono">index.html</div><div>Coding Agent</div><div>Agent 自己生成</div><div>最终交付物</div></div></div>
+    <div class="top"><b>05 · AUTHORSHIP AND VISIBILITY</b><span>checks.json / checks.js 到底是谁写的</span></div><h2>人类写规格、检查与优先级，Agent 写游戏</h2>
+    <div class="body"><div class="roles"><div class="head">文件</div><div class="head">作者</div><div class="head">生成时 Agent 能否看到</div><div class="head">作用</div><div class="human mono">target.md</div><div>人类开发者</div><div>可见，直接进入提示</div><div>工作区、交付协议、玩法简介</div><div class="human mono">game-spec.md</div><div>人类开发者</div><div>可见</div><div>玩家可见的玩法，以及一局游戏至少要包含什么</div><div class="human mono">tdd.md</div><div>人类开发者</div><div>可见</div><div>测试场景、动作、快照与拒绝规则</div><div class="human mono">checks.json</div><div>人类开发者</div><div>隐藏</div><div>L1 静态检查</div><div class="human mono">checks.js</div><div>人类开发者</div><div>隐藏</div><div>L2 浏览器行为检查</div><div class="human">参考实现</div><div>作者团队</div><div>隐藏</div><div>人工确认合格，作为测试的正对照（positive control）</div><div class="agent mono">index.html</div><div>Coding Agent</div><div>Agent 自己生成</div><div>最终交付物</div></div></div>
     <div class="foot"><span class="src">论文 §2.1、§3.2、§3.3、附录 B。P0/P1/P2 在人工测试编写阶段分配。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="原论文 Table 1">
-    <div class="top"><b>06 · ORIGINAL TABLE 1</b><span>三份公开任务文档</span></div><h2>Agent 知道要实现什么，也知道如何暴露可测试行为</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-1-task-documents.png" alt="原论文 Table 1"></div><div class="paper-caption">原论文 Table 1。三份文档都在 Agent 工作区，只有 target.md 直接传给 harness。</div></div>
+    <div class="top"><b>06 · ORIGINAL TABLE 1</b><span>三份公开任务文档</span></div><h2>Agent 既能看到玩法要求，也能看到评测接口规范</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-1-task-documents.png" alt="原论文 Table 1"></div><div class="paper-caption">原论文 Table 1。三份文档 Agent 都能读取；harness（Agent 执行框架）只把 target.md 作为初始提示，其余两份由 Agent 自行打开。</div></div>
     <div class="foot"><span class="src">原论文 Table 1。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="构建流程">
     <div class="top"><b>07 · BENCHMARK CONSTRUCTION</b><span>根据论文 §2、§3 与附录 B 重绘</span></div><h2>测试在模型生成前就已经固定</h2>
-    <div class="body"><div class="flow"><div class="flow-step"><b>STEP 1</b><strong>人工选题</strong><p>完整可玩循环，可在有界浏览器执行中观察。</p></div><div class="flow-step"><b>STEP 2</b><strong>写公开规格</strong><p>target、game spec 和 TDD 共同定义任务。</p></div><div class="flow-step"><b>STEP 3</b><strong>写隐藏检查</strong><p>checks.json、checks.js 与优先级预先完成。</p></div><div class="flow-step"><b>STEP 4</b><strong>验证参考实现</strong><p>人工操作并跑自动检查，确认核心合规。</p></div><div class="flow-step"><b>STEP 5</b><strong>Agent 生成</strong><p>干净工作区、新会话，只能读公开文档。</p></div><div class="flow-step"><b>STEP 6</b><strong>独立评测</strong><p>预检交付，再跑 L1、L2 与严格计分。</p></div></div><div class="flow-note">47 个参考实现全部通过所有 L1 和适用的 L2 P0/P1。它们用于验证测试能接受人工确认合格的实现。</div></div>
+    <div class="body"><div class="flow"><div class="flow-step"><b>STEP 1</b><strong>人工选题</strong><p>完整可玩循环，能在有限时长的浏览器测试中运行并观察结果。</p></div><div class="flow-step"><b>STEP 2</b><strong>写公开规格</strong><p>target、game spec 和 TDD 共同定义任务。</p></div><div class="flow-step"><b>STEP 3</b><strong>写隐藏检查</strong><p>生成开始前写好 checks.json、checks.js，并为每项检查标出 P0/P1/P2。</p></div><div class="flow-step"><b>STEP 4</b><strong>验证参考实现</strong><p>人工操作并跑自动检查，确认核心玩法和评测接口符合规格。</p></div><div class="flow-step"><b>STEP 5</b><strong>Agent 生成</strong><p>每次使用全新的工作区副本和 Agent 会话，只能读取公开文档。</p></div><div class="flow-step"><b>STEP 6</b><strong>独立评测</strong><p>先检查 index.html 是否有效，再运行 L1、L2 并判断任务是否完整通过。</p></div></div><div class="flow-note">这 47 个参考实现就是正对照（positive controls）：先由人确认合格，再验证自动测试不会误判它们。</div></div>
     <div class="foot"><span class="src">本页为二次重绘，不是论文原图。来源：论文 §2.1、§3.1 至 §3.3、§4.1、附录 B。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="容器隔离">
-    <div class="top"><b>08 · EXECUTION BOUNDARY</b><span>生成和评测互相隔离</span></div><h2>Agent 看得到契约，看不到可执行检查</h2>
+    <div class="top"><b>08 · EXECUTION BOUNDARY</b><span>生成和评测互相隔离</span></div><h2>Agent 看得到公开规范，看不到隐藏检查</h2>
     <div class="body"><div class="isolation"><div class="container-box"><h3>生成容器</h3><code>read-only: target.md
 read-only: game-spec.md
 read-only: tdd.md
-read-write: workspace/</code><ul><li>每次从原始任务文件开始</li><li>新 agent session</li><li>不挂载 checks 与 runner</li></ul></div><div class="iso-arrow">→</div><div class="container-box eval"><h3>评测容器</h3><code>read-only: index.html
+read-write: workspace/</code><ul><li>每次从原始任务文件开始</li><li>每次新建 Agent 会话</li><li>Agent 看不到 checks.* 和评测脚本</li></ul></div><div class="iso-arrow">→</div><div class="container-box eval"><h3>评测容器</h3><code>read-only: index.html
 read-only: checks.json
 read-only: checks.js
-read-only: runners/</code><ul><li>先做 delivery preflight</li><li>再执行 L1 与 L2</li><li>记录逐项结果和严格成功</li></ul></div></div></div>
-    <div class="foot"><span class="src">论文 §4.1、附录 B。预检要求成功退出、常规非 symlink 文件、非空且含 &lt;/html&gt;。</span><span class="pg"></span></div>
+read-only: runners/</code><ul><li>先检查 index.html 是否为有效交付</li><li>再执行 L1 与 L2</li><li>记录每项结果，并判断任务是否完整通过</li></ul></div></div></div>
+    <div class="foot"><span class="src">论文 §4.1、附录 B。生成过程必须正常结束；index.html 必须是非空的普通文件，不能是符号链接，并且包含 &lt;/html&gt;。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="公开测试接口">
-    <div class="top"><b>09 · PUBLIC TEST CONTRACT</b><span>同一入口，任务特定语义</span></div><h2>四个方法连接测试和真实游戏状态</h2>
+    <div class="top"><b>09 · PUBLIC TEST CONTRACT</b><span>接口名统一；场景、动作和字段由每个任务自己定义</span></div><h2>四个固定方法，把测试接到游戏真正使用的状态上</h2>
     <div class="body"><div class="api"><pre class="code"><span class="b">window</span>.__gameTest = {
   <span class="o">reset</span>(options),
   <span class="o">loadScenario</span>(name, options),
@@ -105,19 +105,19 @@ read-only: runners/</code><ul><li>先做 delivery preflight</li><li>再执行 L1
   <span class="o">getSnapshot</span>()
 }
 
-<span class="c">// 返回 JSON 可序列化快照
-// 状态必须驱动画面</span></pre><div class="method-list"><div class="method"><code>reset</code><span>清掉上一局的临时状态、弹窗和结果锁。</span></div><div class="method"><code>loadScenario</code><span>准备正常游玩可达的起点，不能提前制造待测结果。</span></div><div class="method"><code>input</code><span>执行玩家级语义动作，例如下单、暂停和选择目标。</span></div><div class="method"><code>getSnapshot</code><span>返回稳定语义摘要，不暴露私有对象图。</span></div></div></div></div>
+		<span class="c">// 返回可序列化为 JSON 的状态摘要
+		// 接口读写的是实际驱动画面的同一份状态</span></pre><div class="method-list"><div class="method"><code>reset</code><span>清除上一局状态和临时效果，回到初始局面。</span></div><div class="method"><code>loadScenario</code><span>载入一个正常游玩也能到达的合法局面，但不能在载入时就完成待测动作或直接给出胜负。</span></div><div class="method"><code>input</code><span>执行玩家级动作，例如生产单位、暂停和选择目标。</span></div><div class="method"><code>getSnapshot</code><span>用固定字段返回评测关心的状态摘要，不要求暴露程序内部的对象和函数。</span></div></div></div></div>
     <div class="foot"><span class="src">论文 §2.2。方法名统一，场景、动作与快照字段由任务定义。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="合法场景">
-    <div class="top"><b>10 · PREPARE, ACT, OBSERVE</b><span>罕见状态可达，因果链仍保留</span></div><h2>测试可以摆好战场，仍要由玩家动作触发结果</h2>
-    <div class="body"><div class="prepare"><div class="stage"><span class="label green">PREPARE</span><h3>合法前置状态</h3><p>调整资源和位置，让后期情形可复现。初始快照必须仍然安全、非终局、未完成待测动作。</p></div><div class="stage-arrow">→</div><div class="stage act"><span class="label">ACT</span><h3>玩家级动作</h3><p>调用公开语义动作，或发送真实鼠标、键盘与触摸输入。</p></div><div class="stage-arrow">→</div><div class="stage observe"><span class="label orange">OBSERVE</span><h3>结果与不变量</h3><p>检查结果、资源、HUD、render revision 与未受影响状态。</p></div></div><div class="forbid">禁止：直接写胜负、血量或坐标来伪造结果；用固定快照替代真实游戏状态；让测试状态和可见玩法分叉。</div></div>
-    <div class="foot"><span class="src">论文 §2.2；Armor Alley tdd.md 的 scenario setup 与 interface integrity 约束。</span><span class="pg"></span></div>
+    <div class="top"><b>10 · PREPARE, ACT, OBSERVE</b><span>快速进入后期局面，但不跳过真正的玩家操作</span></div><h2>测试可以摆好战场，仍要由玩家动作触发结果</h2>
+    <div class="body"><div class="prepare"><div class="stage"><span class="label green">PREPARE</span><h3>合法前置状态</h3><p>可以调整资源和位置，快速来到待测局面；但游戏在载入后不能已经结束，待测行为也不能已经发生。</p></div><div class="stage-arrow">→</div><div class="stage act"><span class="label">ACT</span><h3>玩家级动作</h3><p>调用公开接口执行“生产单位”“选择目标”等玩家动作，或直接发送鼠标、键盘与触摸事件。</p></div><div class="stage-arrow">→</div><div class="stage observe"><span class="label orange">OBSERVE</span><h3>结果与约束</h3><p>检查胜负、资源和 HUD 是否按预期变化，revision（事件计数器）是否递增，以及本不该变化的字段是否保持不变。</p></div></div><div class="forbid">禁止：直接设好胜负，或靠改血量、坐标伪造待测结果；用固定快照替代真实游戏状态；让测试接口报告的状态与玩家实际看到的状态不一致。</div></div>
+    <div class="foot"><span class="src">论文 §2.2；Armor Alley tdd.md 的 scenario setup（场景准备）与 interface integrity（接口状态必须对应真实玩法）约束。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="checks.json">
-    <div class="top"><b>11 · REAL CHECKS.JSON</b><span>Armor Alley 的 L1 契约检查</span></div><h2>静态层先确认四个方法和动作 schema 存在</h2>
+    <div class="top"><b>11 · REAL CHECKS.JSON</b><span>Armor Alley 的 L1 接口检查</span></div><h2>这条 L1 检查只确认源码里出现了四个接口方法</h2>
     <div class="body"><div class="code-side"><pre class="code">{
   <span class="b">"id"</span>: "p0-contract-methods-reset-input-snapshot",
   <span class="b">"level"</span>: "P0",
@@ -131,12 +131,12 @@ read-only: runners/</code><ul><li>先做 delivery preflight</li><li>再执行 L1
   <span class="b">"fix_hint"</span>:
     "Define reset, loadScenario, input,
      and getSnapshot on window.__gameTest."
-}</pre><div class="annotations"><div class="annotation"><strong>由人类编写</strong><span>checks.json 在生成前完成，并且不会挂载到生成容器。</span></div><div class="annotation"><strong>允许多种写法</strong><span>真实正则覆盖方法、对象属性和 Object.assign 等形式。</span></div><div class="annotation"><strong>证据上限明确</strong><span>正则可能匹配注释或字符串，所以 L1 不承担玩法正确性证明。</span></div></div></div></div>
+}</pre><div class="annotations"><div class="annotation"><strong>由人类编写</strong><span>checks.json 在生成前完成，并且不会挂载到生成容器。</span></div><div class="annotation"><strong>允许多种写法</strong><span>整份 checks.json 用多组正则兼容方法简写、对象属性赋值和 Object.assign 等声明方式。</span></div><div class="annotation"><strong>L1 只能证明代码里出现过</strong><span>注释或字符串也可能被正则命中，所以 L1 不能证明玩法真的可用。</span></div></div></div></div>
     <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.json；论文 §2.3、§3.2。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="checks.js">
-    <div class="top"><b>12 · REAL CHECKS.JS</b><span>L2 把规格写成可执行轨迹</span></div><h2>一条行为检查同时描述输入、观察与空壳失败原因</h2>
+    <div class="top"><b>12 · REAL CHECKS.JS</b><span>L2 把规格写成可执行步骤</span></div><h2>一条 L2 检查写清操作、证据和失败条件</h2>
     <div class="body"><div class="split wide"><pre class="code"><span class="c">// GDD Coverage Map</span>
 M3 weapons
   → p1-keyboard-sustained-fire-release
@@ -148,26 +148,29 @@ independent observation:
   ammo / projectile / combat revision
 empty-shell failure:
   fire flag without projectile, cost,
-  or release behavior</pre><div><p class="big-claim">`checks.js` 不是统一模板自动展开的壳。每道题的人类作者把具体玩法写成 task-specific JavaScript。</p><div class="rule-block orange" style="margin-top:24px"><p>Armor Alley 的 checks.js 有 814 行。它覆盖启动、飞行、武器、落地补给、生产、地面战争、雷达、暂停、终局和 P2 扩展项。</p></div></div></div></div>
+  or release behavior</pre><div><p class="big-claim"><code>checks.js</code> 不是由同一个模板批量生成。每个任务的作者都会用 JavaScript 手写与该游戏玩法对应的行为检查。</p><div class="rule-block orange" style="margin-top:24px"><p>Armor Alley 的 checks.js 有 814 行。它覆盖启动、飞行、武器、落地补给、生产、地面战争、雷达、暂停、胜负流程和 P2 扩展项。</p></div></div></div></div>
     <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.js。行数按 2026-09-21 获取的 main 分支文件计算。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Armor Alley 玩法">
-    <div class="top"><b>13 · ARMOR ALLEY</b><span>真实 task：直升机与地面战线</span></div><h2>测试覆盖的是完整战斗循环</h2>
-    <div class="body"><div class="case-spec"><div class="game"><h3>Armor Alley</h3><p>玩家驾驶直升机侦察、攻击和投放士兵，同时花钱生产坦克、导弹车、运输车与步兵。</p><div class="win">胜利：友方运输车到达敌方基地。失败：敌方运输车突破己方基地，或有限生命模式下防御能力耗尽。</div></div><div class="requirements"><div class="req"><strong>飞行</strong><p>指针相对直升机中心决定持续加速度，左右与上下方向不能反转。</p></div><div class="req"><strong>武器</strong><p>持续射击、炸弹、制导武器与投兵都有成本、效果和拒绝路径。</p></div><div class="req"><strong>经济</strong><p>资金、生产队列、单位上限和战后锁必须同步。</p></div><div class="req"><strong>战场</strong><p>地面单位自主推进，碉堡、炮塔、危险物与雷达参与状态变化。</p></div><div class="req"><strong>维护</strong><p>落地补给应逐步恢复资源，落地时水平移动受限。</p></div><div class="req"><strong>终局</strong><p>胜负出现后普通攻击和生产不能继续改变结果，重启要清空旧状态。</p></div></div></div></div>
+    <div class="top"><b>13 · ARMOR ALLEY</b><span>真实任务：直升机与地面战线</span></div><h2>测试覆盖的是完整战斗循环</h2>
+    <div class="body"><div class="case-spec"><div class="game"><h3>Armor Alley</h3><p>玩家驾驶直升机侦察、攻击和投放士兵，同时花钱生产坦克、导弹车、运输车与步兵。</p><div class="win">胜利：友方运输车到达敌方基地。失败：敌方运输车突破己方基地；在有限生命模式下，直升机生命耗尽、无法继续防守也会失败。</div></div><div class="requirements"><div class="req"><strong>飞行</strong><p>鼠标指针在直升机中心的哪一侧，直升机就持续向哪一侧加速；测试会分别检查四个方向。</p></div><div class="req"><strong>武器</strong><p>每种武器都要正确消耗弹药并产生可见效果；没有弹药或有效目标时，操作应被拒绝，也不能误扣其他资源。</p></div><div class="req"><strong>经济</strong><p>资金、生产队列和单位上限要与 HUD 同步；战斗结束后不能再下生产订单。</p></div><div class="req"><strong>战场</strong><p>地面单位要自主推进；碉堡、炮塔、空中障碍和雷达不能只是装饰。</p></div><div class="req"><strong>降落整备</strong><p>降落到安全区后，燃料、弹药和受损状态要逐步恢复；整备期间水平移动受限。</p></div><div class="req"><strong>胜负与重启</strong><p>胜负出现后，普通攻击和生产不能继续改变结果；重启要清空旧状态。</p></div></div></div></div>
     <div class="foot"><span class="src">官方仓库 task/armor-alley/game-spec.md。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Armor Alley 场景">
-    <div class="top"><b>14 · ARMOR ALLEY TDD</b><span>持续射击测试的公开契约</span></div><h2>场景只准备攻击条件，不提前产生射击结果</h2>
+    <div class="top"><b>14 · ARMOR ALLEY TDD</b><span>持续射击测试的公开规范</span></div><h2>场景只准备攻击条件，不提前产生射击结果</h2>
     <div class="body"><div class="trajectory"><div class="traj"><h3>准备</h3><pre>loadScenario(
   "air_attack_with_targets"
 )
 
+tdd.md:
+visibleTargets.length &gt; 0
+
+checks.js:
 phase === "playing"
 result === "none"
-helicopter.airborne
-visibleTargets.length &gt; 0</pre></div><div class="trace-arrow">→</div><div class="traj"><h3>操作</h3><pre>keyDown("Space")
+helicopter.airborne</pre></div><div class="trace-arrow">→</div><div class="traj"><h3>操作</h3><pre>keyDown("Space")
 wait 650 ms
 snapshot held
 
@@ -175,16 +178,16 @@ keyUp("Space")
 wait 300 ms
 snapshot released</pre></div><div class="trace-arrow">→</div><div class="traj"><h3>观察</h3><pre>按住期间：
 projectiles ↑
-或 revision ↑
+  或 projectile/combat revision ↑
 或 ammo ↓
 
 松开之后：
-增长进入平台期</pre></div></div><div class="forbid">场景预检失败时，检查直接 FAIL。这样可以区分“准备状态已经造假”和“玩家动作没有造成结果”。</div></div>
+  增长停止</pre></div></div><div class="forbid"><code>tdd.md</code> 要求场景中有可攻击目标；这条 <code>checks.js</code> 实际只把 playing、尚未分出胜负和直升机已升空作为前置判断。通过后，测试才会按下 Space。</div></div>
     <div class="foot"><span class="src">Armor Alley tdd.md 与 tests/armor-alley/checks.js。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实键盘检查">
-    <div class="top"><b>15 · REAL BROWSER INPUT</b><span>checks.js 原始逻辑</span></div><h2>按下和松开都由浏览器输入通道触发</h2>
+    <div class="top"><b>15 · REAL BROWSER INPUT</b><span>checks.js 原始逻辑</span></div><h2>浏览器实际收到 Space 的按下和松开事件</h2>
     <div class="body"><div class="code-side"><pre class="code">const before = setup.snap;
 
 <span class="b">await browser.keyDown('Space');</span>
@@ -200,7 +203,7 @@ if (!grewWhileHeld)
   return FAIL('held fire did not create evidence');
 if (!plateauAfterRelease)
   return FAIL('fire continued after release');
-<span class="g">return PASS('real key path creates and stops fire');</span></pre><div class="annotations"><div class="annotation"><strong>不使用 contract fire rescue</strong><span>测试不会调用 input({type:'holdFire'}) 替代真正的 Space 键路径。</span></div><div class="annotation"><strong>两次松开后取样</strong><span>先记 released，再等待 550 ms，避免只捕捉到瞬时状态。</span></div><div class="annotation"><strong>多种等价证据</strong><span>允许不同实现用弹丸、revision、战斗事件或弹药表达同一行为。</span></div></div></div></div>
+<span class="g">return PASS('real key path creates and stops fire');</span></pre><div class="annotations"><div class="annotation"><strong>只认真实按键路径</strong><span>射击阶段只发送真实 Space 键。即使 input({type:'holdFire'}) 可用，也不能拿它替代键盘事件。</span></div><div class="annotation"><strong>松开后连续取两次快照</strong><span>松开 300 ms 后先取一次，再等 550 ms 取第二次，确认弹丸不再持续增加。</span></div><div class="annotation"><strong>多种等价证据</strong><span>弹丸数量、弹丸/战斗事件计数器（projectile/combat revision）或弹药减少，都可以作为已经开火的证据；测试不要求某一种内部数据结构。</span></div></div></div></div>
     <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.js，p1-keyboard-sustained-fire-release。</span><span class="pg"></span></div>
   </section>
 
@@ -210,74 +213,74 @@ if (!plateauAfterRelease)
   projectileCount ↑
   OR projectileRevision ↑
   OR combatRevision ↑
-  OR ammo ↓</code><p>多个信号允许实现采用不同弹丸生命周期。只写一个 firing 布尔值不足以通过。</p></div><div class="logic-block"><h3>松开之后</h3><code>plateauAfterRelease =
+  OR ammo ↓</code><p>不同游戏保存和清理弹丸的方式不同，所以检查接受四种等价证据。只把开火标志 <code>firing</code> 设为 true，不能证明游戏真的生成了弹丸或消耗了弹药。</p></div><div class="logic-block"><h3>松开之后</h3><code>plateauAfterRelease =
   count(afterRelease)
     ≤ count(released) + 1
   OR projectileRevision
-    remains unchanged</code><p>允许一个已经在途的弹丸完成，禁止持续生成。按键监听器、定时器和弹药逻辑必须接到同一状态。</p></div></div></div>
+    remains unchanged</code><p>松开后允许最多再多出 1 发，因为松键前触发的弹丸可能稍后才生成；此后弹丸数量或 revision 必须停止增长。</p></div></div></div>
     <div class="foot"><span class="src">官方 checks.js 中的真实布尔条件，排版仅为便于阅读。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="L1 与 L2">
     <div class="top"><b>17 · ORIGINAL TABLE 2</b><span>证据层和优先级是两套标签</span></div><h2>336 个源码检查，885 个浏览器行为检查</h2>
-    <div class="body"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2"></div><div class="paper-caption">原论文 Table 2。L1 包含 43 个工具检查、288 个正则和 5 个反模式。L2 包含 102 个 P0、534 个 P1 和 249 个 P2。</div></div>
+    <div class="body"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2"></div><div class="paper-caption">原论文 Table 2。L1：43 项由工具完成的结构和语法检查、288 项正则断言、5 项 anti-pattern 规则（禁止出现的写法）。L2：P0 102 项、P1 534 项、P2 249 项。</div></div>
     <div class="foot"><span class="src">原论文 Table 2。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="L2 执行细节">
     <div class="top"><b>18 · L2 EXECUTION</b><span>每条检查使用一个新浏览器页面</span></div><h2>快照、真实输入与渲染信号相互校验</h2>
-    <div class="body"><div class="split"><div class="flow" style="grid-template-columns:repeat(3,1fr)"><div class="flow-step"><b>PAGE</b><strong>新页面</strong><p>加载提交的游戏，隔离上一条检查的状态。</p></div><div class="flow-step"><b>RUN</b><strong>单条检查</strong><p>准备场景、输入、等待、读取快照和渲染证据。</p></div><div class="flow-step"><b>CLOSE</b><strong>关闭页面</strong><p>完成或超时后销毁，再开始下一条。</p></div></div><div><p class="big-claim"><strong>共享浏览器 hook</strong> 记录 animation frame、输入监听器、Canvas/WebGL 活动和运行时异常。</p><div class="rule-block orange" style="margin-top:24px"><p>每条检查只组合它需要的信号。快照提供语义，真实输入确认玩家路径，渲染证据确认状态没有停留在隐藏变量里。</p></div></div></div></div>
+    <div class="body"><div class="split"><div class="flow" style="grid-template-columns:repeat(3,1fr)"><div class="flow-step"><b>PAGE</b><strong>新页面</strong><p>加载提交的游戏，隔离上一条检查的状态。</p></div><div class="flow-step"><b>RUN</b><strong>单条检查</strong><p>准备场景、输入、等待、读取快照和渲染证据。</p></div><div class="flow-step"><b>CLOSE</b><strong>关闭页面</strong><p>完成或超时后销毁，再开始下一条。</p></div></div><div><p class="big-claim">评测程序（runner）会注入一个 <strong>browser hook（浏览器观测探针）</strong>，记录动画帧、输入监听器、Canvas/WebGL 活动和运行时异常。</p><div class="rule-block orange" style="margin-top:24px"><p>并非每条测试都同时看所有信号。snapshot 说明游戏自己报告了什么状态；真实输入确认玩家实际使用的操作路径可用；Canvas/WebGL 等渲染信号则确认画面确实在更新。</p></div></div></div></div>
     <div class="foot"><span class="src">论文 §2.3。L1 失败不会阻止 L2 执行。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="严格计分">
-    <div class="top"><b>19 · STRICT TASK SUCCESS</b><span>交付式二元指标</span></div><h2>全部必需检查通过，任务才记为成功</h2>
-    <div class="body"><div class="scoring"><div class="priority"><strong>P0</strong><p>启动、测试接口和最低运行条件。共 102 个 L2 检查。</p></div><div class="priority p1"><strong>P1</strong><p>核心机制、交互、不变量和配套接口。共 534 个 L2 检查。</p></div><div class="priority p2"><strong>P2</strong><p>高级机制与体验完整度。单独报告，不进入严格成功。</p></div></div><div class="formula"><code>success = valid delivery
+    <div class="top"><b>19 · STRICT TASK SUCCESS</b><span>一道任务最终只记 0 或 1</span></div><h2>全部必需检查通过，任务才记为成功</h2>
+    <div class="body"><div class="scoring"><div class="priority"><strong>P0</strong><p>启动、测试接口和最低运行条件。共 102 个 L2 检查。</p></div><div class="priority p1"><strong>P1</strong><p>核心机制、交互、必须始终成立的约束，以及支持这些玩法的接口行为。共 534 个 L2 检查。</p></div><div class="priority p2"><strong>P2</strong><p>高级机制与体验完整度。单独报告，不进入严格成功。</p></div></div><div class="formula"><code>success = valid delivery
   × completed evaluation
   × all L1 pass
-  × all applicable L2 P0/P1 pass</code><p>39/40 个必需检查通过，任务仍记为 0。平均通过率回答“差多少”，严格成功率回答“能不能交付”。计划内未交付和未完成评测也进入分母。</p></div></div>
-    <div class="foot"><span class="src">论文 §2.4、公式 (1)。当前 runner 没有限制 P1 返回 NOT_APPLICABLE。</span><span class="pg"></span></div>
+  × all applicable L2 P0/P1 pass</code><p>必需检查即使通过 39/40，整道任务仍记为失败。平均通过率能看出还差多少；strict task success（严格任务成功）只问这份游戏能否按要求交付。全部 47 个计划任务都在分母里。</p></div></div>
+    <div class="foot"><span class="src">论文 §2.4、公式 (1)。当前评测程序仍允许 P1 返回 NOT_APPLICABLE（不适用），并把该项排除在统计之外。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="原论文 Figure 1">
     <div class="top"><b>20 · ORIGINAL FIGURE 1</b><span>47 个任务的组成</span></div><h2>12 类游戏，32 个 2D，15 个 3D</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/figure-1-corpus.png" alt="原论文 Figure 1"></div><div class="paper-caption">原论文 Figure 1。技术标签描述参考实现，并不限制 Agent 的实现。</div></div>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/figure-1-corpus.png" alt="原论文 Figure 1"></div><div class="paper-caption">原论文 Figure 1。图中的渲染技术只统计参考实现；Agent 生成的游戏可以使用其他技术。</div></div>
     <div class="foot"><span class="src">原论文 Figure 1。论文只有这一张正式编号 Figure。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="主结果">
-    <div class="top"><b>21 · ORIGINAL TABLE 3</b><span>九个 agent stack 的端到端结果</span></div><h2>最佳严格成功 26/47，平均 L2 已达 93.2%</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-3-leaderboard.png" alt="原论文 Table 3"></div><div class="paper-caption">原论文 Table 3。高平均通过率与未完成任务同时存在。每个 task-configuration 组合只运行一次。</div></div>
+    <div class="top"><b>21 · ORIGINAL TABLE 3</b><span>9 种 agent stack（模型与编码工具的组合）</span></div><h2>平均 L2 通过率达 93.2%，严格成功却只有 26/47</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-3-leaderboard.png" alt="原论文 Table 3"></div><div class="paper-caption">原论文 Table 3。最佳配置的 L2 平均通过率达到 93.2%，但仍只有 26/47 个任务通过全部必需检查。每个任务在每种配置下只运行一次。</div></div>
     <div class="foot"><span class="src">原论文 Table 3。GPT-6-Astra + Codex CLI：26/47，55.3%。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="资源使用">
-    <div class="top"><b>22 · ORIGINAL TABLE 4</b><span>产物大小、token 与报告成本</span></div><h2>更多 token 和更大文件没有稳定换来更多严格成功</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-4-resource-use.png" alt="原论文 Table 4"></div><div class="paper-caption">原论文 Table 4。成本按各 stack 报告口径统计，不能只靠 token 量解释完成度。</div></div>
+    <div class="top"><b>22 · ORIGINAL TABLE 4</b><span>生成文件大小、token 用量与 API 成本</span></div><h2>文件更大、token 用得更多，并没有稳定对应更多成功任务</h2>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-4-resource-use.png" alt="原论文 Table 4"></div><div class="paper-caption">原论文 Table 4。Input tokens 合并了系统报告的 input、cache-read 和 cache-write 三项。表中这些资源量与完整通过的任务数没有稳定的对应关系。</div></div>
     <div class="foot"><span class="src">原论文 Table 4、§4.2。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="工具与轮数消融">
-    <div class="top"><b>23 · ORIGINAL TABLES 5 AND 6</b><span>DeepSeek-V4-Flash · Claude Code</span></div><h2>完整工具提高 P1，短预算先截断交付</h2>
-    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-5-tool-ablation.png" alt="原论文 Table 5"><figcaption>Table 5。完整工具 18/47，受限工具 6 至 9/47。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-6-turn-budget.png" alt="原论文 Table 6"><figcaption>Table 6。30、60、120 turns 完成评测 10、32、47 个任务。</figcaption></figure></div></div>
-    <div class="foot"><span class="src">原论文 Tables 5、6。30 turns 的条件成功率 70.0%，全体成功率 14.9%。</span><span class="pg"></span></div>
+    <div class="top"><b>23 · ORIGINAL TABLES 5 AND 6</b><span>DeepSeek-V4-Flash · Claude Code</span></div><h2>完整工具配置的 P1 通过率最高；轮数太少时，许多任务来不及完成评测</h2>
+    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-5-tool-ablation.png" alt="原论文 Table 5"><figcaption>Table 5。完整工具 18/47，受限工具 6 至 9/47。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-6-turn-budget.png" alt="原论文 Table 6"><figcaption>Table 6。轮数上限为 30/60/120 时，分别只有 10/32/47 个任务完成评测。</figcaption></figure></div></div>
+    <div class="foot"><span class="src">原论文 Tables 5、6。30 轮时，完成评测的 10 题中有 7 题成功；若以全部 47 题为分母，则为 14.9%。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="推理与 Harness">
-    <div class="top"><b>24 · ORIGINAL TABLES 7 AND 8</b><span>同分不代表相同行为</span></div><h2>High 成功更多，两个 harness 只共享 10 道成功题</h2>
-    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort.png" alt="原论文 Table 7"><figcaption>Table 7。High 为 19/47，Max 为 18/47。High 少用 26.9% reasoning tokens。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-8-harness.png" alt="原论文 Table 8"><figcaption>Table 8。两种 harness 都是 18/47，只有 10 道题共同成功。</figcaption></figure></div></div>
+    <div class="top"><b>24 · ORIGINAL TABLES 7 AND 8</b><span>同样是 18/47，成功的题目却不一样</span></div><h2>High 比 Max 多成功 1 题；两个执行框架各成功 18 题，但共同成功的只有 10 题</h2>
+    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort.png" alt="原论文 Table 7"><figcaption>Table 7。High：19/47；Max：18/47。High 使用的 reasoning tokens（推理 token）比 Max 少 26.9%。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-8-harness.png" alt="原论文 Table 8"><figcaption>Table 8。两种 harness（Agent 执行框架）各成功 18/47，但只有 10 题重合。</figcaption></figure></div></div>
     <div class="foot"><span class="src">原论文 Tables 7、8。结果来自单次运行，不能据此建立稳定的绝对排名。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实失败案例">
-    <div class="top"><b>25 · ORIGINAL TABLE 9</b><span>总榜背后的可复现缺口</span></div><h2>失败发生在输入、场景与自然时间的组合处</h2>
-    <div class="body"><div class="split narrow"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-9-diagnostics.png" alt="原论文 Table 9"></div><div class="case-grid" style="grid-template-columns:1fr"><div class="failure"><h3>Diner Dasher</h3><div class="stack">GPT-6-Astra + Codex CLI</div><ol><li>加载带正确餐点的托盘。</li><li>读取物品和顾客屏幕边界。</li><li>发送真实鼠标与触摸拖拽。</li><li>服务进度和收入都不增加。</li></ol><div class="caught">L1、L2 P0/P2 通过，P1 核心交互失败。</div></div><div class="failure"><h3>Turbo Smash Beast</h3><div class="stack">DeepSeek-V4-Flash + Claude Code</div><ol><li>加载场景会开启 test mode。</li><li>test mode 关闭自然时间模拟。</li><li>真实驾驶输入因此无法推进车辆。</li></ol><div class="caught">分开的自测都通过，组合轨迹暴露冻结。</div></div></div></div></div>
+    <div class="top"><b>25 · ORIGINAL TABLE 9</b><span>总榜看不到的具体失败</span></div><h2>两类具体失败：真实拖拽无效，场景加载后游戏停住</h2>
+    <div class="body"><div class="split narrow"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-9-diagnostics.png" alt="原论文 Table 9"></div><div class="case-grid" style="grid-template-columns:1fr"><div class="failure"><h3>Diner Dasher</h3><div class="stack">GPT-6-Astra + Codex CLI</div><ol><li>载入 <code>tray_with_correct_item</code> 场景，托盘上已有顾客点的餐。</li><li>从 snapshot 读取餐点和顾客的屏幕边界，以中心点作为拖拽起止位置。</li><li>分别发送真实鼠标与触摸拖拽。</li><li>两条路径下，服务进度和收入都没有增加。</li></ol><div class="caught">L1、L2 P0/P2 通过，P1 核心交互失败。</div></div><div class="failure"><h3>Turbo Smash Beast</h3><div class="stack">DeepSeek-V4-Flash + Claude Code</div><ol><li><code>reset</code> 或 <code>loadScenario</code> 会打开 test mode（测试模式）。</li><li>该模式停掉了游戏按真实时钟自行推进的主循环。</li><li>随后发送真实驾驶输入，车辆仍然不动。</li></ol><div class="caught">接口自测会手动推进时间，真实驾驶自测从新页面开始；两条都没有覆盖“先加载场景，再等待游戏自行运行”。</div></div></div></div></div>
     <div class="foot"><span class="src">原论文 Table 9、§4.6、附录 A.1。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与边界">
-    <div class="top"><b>26 · TAKEAWAYS</b><span>读完后应该带走的判断</span></div><h2>这套 benchmark 的贡献是一条可复跑的行为证据链</h2>
-    <div class="body"><div class="split"><div><p class="big-claim"><strong>人类固定契约和隐藏检查</strong>，Agent 自由实现内部结构，评测器用合法场景、真实输入、稳定快照和渲染信号复核因果链。</p><div class="metrics" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><strong>93.2%</strong><span>最佳平均 L2</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div><div class="rule-block"><h3>适合回答</h3><p>单页浏览器游戏是否满足一组预先写好的核心行为要求。</p></div><div class="rule-block orange" style="margin-top:18px"><h3>仍需谨慎</h3><p>47 题、每配置一次运行、无后端和多人系统。P1 的 NOT_APPLICABLE 仍有计分漏洞。参考实现通过也不等于规格覆盖完备。</p></div><div class="rule-block green" style="margin-top:18px"><h3>可迁移的方法</h3><p>为交互式应用设计 prepare、act、observe 与 invariant，并让语义状态和可见行为共用同一底层状态。</p></div></div></div></div>
+    <div class="top"><b>26 · TAKEAWAYS</b><span>读完后应该带走的判断</span></div><h2>核心贡献：一条可重复执行的行为证据链</h2>
+    <div class="body"><div class="split"><div><p class="big-claim"><strong>人类先写好公开的评测接口规范和隐藏检查</strong>，Agent 可以自由决定代码结构。评测器再把场景准备、真实输入、状态快照（snapshot）和渲染信号串起来，验证玩家操作是否真的引发规格要求的状态和画面变化。</p><div class="metrics" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><strong>93.2%</strong><span>最佳平均 L2</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div><div class="rule-block"><h3>适合回答</h3><p>单页浏览器游戏是否满足一组预先写好的核心行为要求。</p></div><div class="rule-block orange" style="margin-top:18px"><h3>仍需谨慎</h3><p>结论只来自 47 个任务，而且每种配置只跑一次；也不覆盖需要后端、账号或大型多人服务的游戏。当前评测程序还允许 P1 返回 <code>NOT_APPLICABLE</code>（不适用），并把该项排除在统计之外。</p></div><div class="rule-block green" style="margin-top:18px"><h3>可迁移的方法</h3><p>把测试写成 prepare（准备合法起点）→ act（执行玩家动作）→ observe（读取结果），再检查 invariant（不应被破坏的约束）。</p></div></div></div></div>
     <div class="foot"><span class="src"><a href="https://arxiv.org/abs/2609.21293">论文</a> · <a href="https://github.com/areal-project/GameASG-Bench">代码与 47 个任务</a> · 解读与重绘：ChrisDing Blog</span><span class="pg"></span></div>
   </section>
 
@@ -338,7 +341,7 @@ if (!plateauAfterRelease)
     function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
     function syncFullscreenButton(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出全屏':'全屏';}
     document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());document.addEventListener('fullscreenchange',syncFullscreenButton);syncFullscreenButton();
-    addEventListener('keydown',event=>{if(!overview.hidden){if(event.key==='Escape')closeOverview();return}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home')show(0);if(event.key==='End')show(slides.length-1);if(event.key.toLowerCase()==='f')document.getElementById('full').click();if(event.key.toLowerCase()==='o')openOverview()});
+    addEventListener('keydown',event=>{if(!overview.hidden){if(event.key==='Escape')closeOverview();return}if(event.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home')show(0);if(event.key==='End')show(slides.length-1);if(event.key.toLowerCase()==='f')document.getElementById('full').click();if(event.key.toLowerCase()==='o')openOverview()});
     let touchStartX = null;
     addEventListener('touchstart',event=>{if(event.target.closest('#controls,#overview-panel'))return;touchStartX=event.changedTouches[0].clientX},{passive:true});
     addEventListener('touchend',event=>{if(touchStartX===null)return;const dx=event.changedTouches[0].clientX-touchStartX;touchStartX=null;if(Math.abs(dx)>48)show(index+(dx<0?1:-1))},{passive:true});
