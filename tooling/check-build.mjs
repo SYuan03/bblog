@@ -25,7 +25,7 @@ async function exists(file) {
   }
 }
 
-for (const required of ["index.html", "404.html", "about/dongdong/index.html", "now/index.html", "atom.xml", "search.xml", "sitemap.xml"]) {
+for (const required of ["index.html", "404.html", "about/dongdong/index.html", "now/index.html", "tools/index.html", "tools/jingtu/index.html", "atom.xml", "search.xml", "sitemap.xml"]) {
   if (!(await exists(path.join(outputRoot, required)))) throw new Error(`Missing build output: ${required}`);
 }
 
@@ -115,6 +115,21 @@ if (!$now('meta[name="description"]').attr("content") || !$now('meta[property="o
 }
 if ($now('.site-nav a[aria-current="page"]').attr("href") !== "/now/") {
   throw new Error("The Now page navigation item is not active");
+}
+
+const toolsHtml = await readFile(path.join(outputRoot, "tools", "index.html"), "utf8");
+const $tools = cheerio.load(toolsHtml);
+if ($tools(".tools-page h1").text().trim() !== "顺手的小工具，打开就能用。" || !$tools('.tool-card[href="/tools/jingtu/"]').length) {
+  throw new Error("The Tools page is missing its heading or Jingtu card");
+}
+if ($tools('.site-nav a[aria-current="page"]').attr("href") !== "/tools/") {
+  throw new Error("The Tools page navigation item is not active");
+}
+
+const jingtuHtml = await readFile(path.join(outputRoot, "tools", "jingtu", "index.html"), "utf8");
+const $jingtu = cheerio.load(jingtuHtml);
+if (!$jingtu("#copyButton").length || $jingtu('script[src="app.js"]').length !== 1 || $jingtu('link[href="styles.css"]').length !== 1) {
+  throw new Error("Jingtu is missing its copy action or local assets");
 }
 
 const atomXml = await readFile(path.join(outputRoot, "atom.xml"), "utf8");

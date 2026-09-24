@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f7fb" />
+    <meta name="description" content="本地处理图片中的浅色平铺水印，支持粘贴、取色修补、修复画笔、前后对比、复制和 PNG 下载。" />
+    <title>净图 · 本地图片去水印</title>
+    <link rel="icon" href="/MyImgs/icon1.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="净图首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M8 11.5A8 8 0 0 1 16 4a8 8 0 0 1 8 7.5v9A7.5 7.5 0 0 1 16.5 28h-1A7.5 7.5 0 0 1 8 20.5v-9Z" fill="currentColor" opacity=".16"/>
+            <path d="m10.5 18.5 3.2 3.1 7.8-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/>
+          </svg>
+        </span>
+        <span>净图</span>
+      </a>
+      <div class="topbar-actions">
+        <a class="back-link" href="/tools/"><span aria-hidden="true">←</span> 工具集</a>
+        <div class="privacy-pill">
+          <span class="privacy-dot"></span>
+          图片仅在本机处理
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="eyebrow">FOR MAC · 无需上传</div>
+        <h1>粘贴图片，<span>水印就淡出。</span></h1>
+        <p>按下 <kbd>⌘</kbd><span class="key-plus">+</span><kbd>V</kbd>，自动处理浅色平铺水印。<br />支持截图、PNG、JPG 和 WebP。</p>
+      </section>
+
+      <section class="workspace" id="workspace" aria-live="polite">
+        <div class="dropzone" id="dropzone" tabindex="0">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+          <div class="drop-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <rect x="6" y="6" width="36" height="36" rx="12" fill="currentColor" opacity=".1"/>
+              <path d="M24 31V17m0 0-5 5m5-5 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <h2>把图片粘贴到这里</h2>
+          <p>也可以拖入图片，或 <button id="chooseButton" type="button">选择文件</button></p>
+          <div class="paste-hint">
+            <span><kbd>⌘</kbd><span>+</span><kbd>V</kbd></span>
+            <small>现在就试试</small>
+          </div>
+        </div>
+
+        <div class="editor" id="editor" hidden>
+          <aside class="panel controls-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="step-label">智能处理</p>
+                <h2>清除设置</h2>
+              </div>
+              <button class="icon-button" id="resetButton" type="button" aria-label="换一张图片" title="换一张图片">
+                <svg viewBox="0 0 24 24"><path d="M4 7h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H8M8 3 4 7l4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg>
+              </button>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <label for="strength">自动清除强度</label>
+                <output id="strengthValue">62%</output>
+              </div>
+              <input id="strength" class="range" type="range" min="20" max="95" value="62" />
+              <div class="range-labels"><span>保守</span><span>强力</span></div>
+            </div>
+
+            <div class="tool-grid" role="group" aria-label="修补工具">
+              <button class="tool active" id="autoTool" type="button">
+                <svg viewBox="0 0 24 24"><path d="m12 3 1.2 3.8L17 8l-3.8 1.2L12 13l-1.2-3.8L7 8l3.8-1.2L12 3Zm6 9 .7 2.3L21 15l-2.3.7L18 18l-.7-2.3L15 15l2.3-.7L18 12ZM6 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3Z" fill="currentColor"/></svg>
+                <span>智能清除</span>
+              </button>
+              <button class="tool" id="pickerTool" type="button">
+                <svg viewBox="0 0 24 24"><path d="m14.8 5.2 4 4m-2.2-6 4.2 4.2a1.5 1.5 0 0 1 0 2.1l-8.9 8.9-5.3.9 1-5.2 8.8-8.9a1.5 1.5 0 0 1 2.2 0ZM7.6 14.1l4.3 4.3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/></svg>
+                <span>取色清除</span>
+              </button>
+              <button class="tool" id="brushTool" type="button">
+                <svg viewBox="0 0 24 24"><path d="M14.5 4.5 19.5 9 11 17.5l-5.5.8.9-5.4 8.1-8.4ZM5.5 18.3c-.4 1.4-1.5 2.2-3 2.2 1-1 1.1-2.3.8-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/></svg>
+                <span>修复画笔</span>
+              </button>
+            </div>
+
+            <div class="brush-controls" id="brushControls" hidden>
+              <div class="control-label">
+                <label for="brushSize">画笔大小</label>
+                <output id="brushValue">36 px</output>
+              </div>
+              <input id="brushSize" class="range" type="range" min="8" max="120" value="36" />
+            </div>
+
+            <div class="tip" id="toolTip">
+              <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5m0-8v.2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/></svg>
+              <span>适合示例中的浅灰色平铺水印，调整强度可减少误伤。</span>
+            </div>
+
+            <div class="panel-actions">
+              <button class="secondary-button" id="undoButton" type="button" disabled>
+                <svg viewBox="0 0 20 20"><path d="M4 7h8a5 5 0 0 1 5 5v0M4 7l3-3M4 7l3 3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/></svg>
+                撤销
+              </button>
+              <button class="copy-button" id="copyButton" type="button">
+                <svg viewBox="0 0 20 20"><rect x="6.5" y="6.5" width="9" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13 6.5V5.8A1.8 1.8 0 0 0 11.2 4H5.8A1.8 1.8 0 0 0 4 5.8v5.4A1.8 1.8 0 0 0 5.8 13h.7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/></svg>
+                复制图片
+              </button>
+              <button class="primary-button" id="downloadButton" type="button">
+                下载 PNG
+                <svg viewBox="0 0 20 20"><path d="M10 3v9m0 0 3-3m-3 3L7 9M4 14v2h12v-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/></svg>
+              </button>
+            </div>
+          </aside>
+
+          <div class="canvas-panel">
+            <div class="canvas-toolbar">
+              <div class="segmented" role="group" aria-label="预览模式">
+                <button id="beforeView" type="button">原图</button>
+                <button class="active" id="afterView" type="button">处理后</button>
+                <button id="compareView" type="button">对比</button>
+              </div>
+              <div class="image-meta" id="imageMeta"></div>
+            </div>
+            <div class="canvas-stage" id="canvasStage">
+              <div class="canvas-shell" id="canvasShell">
+                <canvas id="resultCanvas"></canvas>
+                <canvas id="originalCanvas"></canvas>
+                <div class="compare-line" id="compareLine" hidden><span></span></div>
+                <div class="brush-cursor" id="brushCursor" hidden></div>
+              </div>
+              <div class="processing" id="processing" hidden>
+                <span class="spinner"></span>
+                <span>正在净化图片…</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features" id="features">
+        <article>
+          <span class="feature-number">01</span>
+          <h3>粘贴即处理</h3>
+          <p>不用先保存截图，复制后回到网页按 ⌘V 即可。</p>
+        </article>
+        <article>
+          <span class="feature-number">02</span>
+          <h3>隐私留在本机</h3>
+          <p>不上传服务器，刷新页面后图片自动消失。</p>
+        </article>
+        <article>
+          <span class="feature-number">03</span>
+          <h3>可控的修补</h3>
+          <p>自动结果不理想时，可取色或用画笔局部修复。</p>
+        </article>
+        <article>
+          <span class="feature-number">04</span>
+          <h3>直接复制结果</h3>
+          <p>处理完成后复制 PNG，回到聊天或文档直接粘贴。</p>
+        </article>
+      </section>
+    </main>
+
+    <footer><span>净图</span><a href="/tools/">ChrisDing 工具集</a></footer>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<%
+  const tools = Array.isArray(page.tools) ? page.tools : [];
+%>
+<section class="tools-page section-shell reveal">
+  <header class="tools-hero">
+    <p class="eyebrow">Tools · Local first</p>
+    <div class="tools-hero-copy">
+      <h1>顺手的小工具，<br>打开就能用。</h1>
+      <div>
+        <p><%= page.description %></p>
+        <span class="tools-local-note"><i aria-hidden="true"></i> 能留在本机的数据，就不传到服务器</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="tools-catalog" aria-labelledby="tools-catalog-title">
+    <div class="tools-catalog-heading">
+      <h2 id="tools-catalog-title">全部工具</h2>
+      <span><%= String(tools.length).padStart(2, '0') %></span>
+    </div>
+    <div class="tools-grid">
+      <% tools.forEach((tool, index) => { %>
+        <a class="tool-card" href="<%= url_for(tool.href) %>">
+          <div class="tool-card-copy">
+            <div class="tool-card-meta">
+              <span><%= tool.category %></span>
+              <span class="tool-card-status"><i aria-hidden="true"></i><%= tool.privacy %></span>
+            </div>
+            <h2><%= tool.name %></h2>
+            <p><%= tool.description %></p>
+            <% if (Array.isArray(tool.features)) { %>
+              <ul aria-label="功能">
+                <% tool.features.forEach((feature) => { %><li><%= feature %></li><% }) %>
+              </ul>
+            <% } %>
+            <span class="tool-card-open">打开工具 <b aria-hidden="true">↗</b></span>
+          </div>
+          <% if (index === 0) { %>
+            <div class="tool-card-preview" aria-hidden="true">
+              <div class="tool-preview-window">
+                <div class="tool-preview-bar"><i></i><i></i><i></i><span>净图</span></div>
+                <div class="tool-preview-body">
+                  <div class="tool-preview-controls">
+                    <b></b><b></b><b></b>
+                    <span></span><span></span>
+                  </div>
+                  <div class="tool-preview-image">
+                    <span class="tool-preview-watermark">SAMPLE · SAMPLE · SAMPLE</span>
+                    <i></i>
+                    <em>处理后</em>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+</section>
