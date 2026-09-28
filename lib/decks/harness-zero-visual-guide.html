@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Harness-Zero · 论文图解</title>
+<style>
+:root{--paper:#f7f4ec;--ink:#171b20;--body:#424b56;--muted:#7c858f;--line:#cfd2d2;--blue:#245c9c;--orange:#b9552d;--green:#287462;--red:#a0443d;--sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;--serif:"Songti SC",STSong,serif;--mono:"SFMono-Regular",Consolas,monospace}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#171b20;color:var(--ink);font-family:var(--sans)}button,a{font:inherit}.deck{position:fixed;width:1600px;height:900px;transform-origin:top left}.slide{position:absolute;inset:0;display:none;padding:48px 58px 54px;background:var(--paper);overflow:hidden}.slide.active{display:grid;grid-template-rows:auto auto 1fr auto;gap:17px}.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--muted);font-size:16px}.top b{color:var(--blue);font-family:var(--mono);font-size:14px;letter-spacing:.08em}.slide h1,.slide h2{margin:0;font-family:var(--serif);font-weight:700;line-height:1.15}.slide h1{max-width:1150px;font-size:70px}.slide h2{max-width:1300px;font-size:48px}.lead{max-width:1200px;margin:0;color:var(--body);font-size:24px;line-height:1.55}.body{min-height:0;display:flex;align-items:center}.foot{display:flex;justify-content:space-between;gap:20px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.foot a{color:var(--blue)}.pg{font-family:var(--mono)}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:52px;width:100%;align-items:end}.hero .statement{font:700 34px/1.5 var(--serif)}.hero .statement strong{color:var(--blue)}.hero .numbers{border-left:1px solid var(--line);padding-left:42px}.hero .number{margin:20px 0}.hero .number b{display:block;color:var(--blue);font:700 52px/1 var(--serif)}.hero .number span{display:block;margin-top:8px;color:var(--body);font-size:18px}
+.problem{display:grid;grid-template-columns:1fr 80px 1fr;gap:18px;width:100%;align-items:center}.panel{padding:28px;border:1px solid var(--line);background:#fff}.panel h3{margin:0 0 12px;font-size:25px}.panel p,.panel li{color:var(--body);font-size:19px;line-height:1.55}.arrow{color:var(--orange);font-size:54px;text-align:center}.tag{display:inline-block;margin-bottom:12px;color:var(--blue);font:700 13px/1 var(--mono);letter-spacing:.08em}
+.objects{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:var(--line)}.object{min-height:360px;padding:30px;background:#fff}.object code{display:block;margin-bottom:22px;color:var(--blue);font:700 48px/1 var(--mono)}.object h3{font-size:25px}.object p{color:var(--body);font-size:19px;line-height:1.55}.object .keep{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--green);font-weight:700}
+.paper-figure{display:flex;width:100%;height:100%;align-items:center;justify-content:center}.paper-figure img{display:block;max-width:100%;max-height:570px;border:1px solid var(--line);background:#fff}.caption{max-width:1100px;margin:8px auto 0;color:var(--muted);font-size:15px;text-align:center}
+.loop{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;width:100%;background:var(--line)}.step{min-height:250px;padding:24px;background:#fff}.step b{display:block;color:var(--blue);font:700 15px/1.2 var(--mono)}.step h3{font-size:23px}.step p{color:var(--body);font-size:17px;line-height:1.5}.decision{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:100%;margin-top:18px;background:var(--line)}.decision div{padding:17px;background:#fff}.decision strong{color:var(--green)}.decision .replace strong{color:var(--orange)}
+.boundary{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:100%;background:var(--line)}.boundary>div{min-height:390px;padding:30px;background:#fff}.boundary .private{background:#fbefea}.boundary h3{margin:0 0 18px;font-size:28px}.boundary .private h3{color:var(--orange)}.boundary li{margin:14px 0;color:var(--body);font-size:20px;line-height:1.45}
+.case{display:grid;grid-template-columns:.8fr 1.2fr;gap:34px;width:100%;align-items:stretch}.sheet{display:grid;grid-template-columns:55px repeat(3,1fr);grid-auto-rows:55px;border:1px solid var(--line);background:#fff}.cell{display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font:600 16px/1 var(--mono)}.cell.head{background:#eceff1;color:var(--muted)}.cell.example{background:#dce9f7;color:var(--blue)}.cell.bad{background:#f3d6cd;color:var(--red)}.case-flow{display:grid;gap:1px;background:var(--line)}.case-flow>div{padding:16px 19px;background:#fff}.case-flow b{color:var(--blue);font:700 14px/1.2 var(--mono)}.case-flow p{margin:5px 0 0;color:var(--body);font-size:17px;line-height:1.45}
+.code{width:100%;margin:0;padding:24px 28px;border:1px solid var(--line);background:#1d2329;color:#e7ebef;font:16px/1.5 var(--mono);white-space:pre-wrap}.code .c{color:#8fa2b5}.code .k{color:#7fc0ff}.code .s{color:#a9d4aa}.code-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:30px;width:100%;align-items:center}.notes{display:grid;gap:12px}.note{padding:17px;border-left:4px solid var(--blue);background:#fff}.note b{display:block;font-size:17px}.note span{display:block;margin-top:5px;color:var(--body);font-size:16px;line-height:1.45}
+.data{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;width:100%;background:var(--line)}.domain{padding:27px;background:#fff}.domain h3{margin:0 0 14px;font-size:25px}.domain strong{display:block;color:var(--blue);font:700 38px/1 var(--serif)}.domain p{color:var(--body);font-size:17px;line-height:1.5}.train{display:flex;justify-content:space-between;gap:18px;width:100%;margin-top:22px;padding:18px 22px;border-block:1px solid var(--line);color:var(--body);font-size:16px}
+.chart{display:grid;gap:14px;width:100%}.bar{display:grid;grid-template-columns:270px 1fr 85px;gap:15px;align-items:center;font-size:18px}.track{height:28px;background:#e2e5e7}.fill{height:100%;background:var(--blue)}.fill.orange{background:var(--orange)}.fill.green{background:var(--green)}.bar strong{font:700 20px/1 var(--mono);text-align:right}.chart-note{margin-top:18px;padding:15px 18px;border-left:4px solid var(--orange);background:#fff;color:var(--body);font-size:18px}
+.table-wrap{width:100%;overflow:hidden;border:1px solid var(--line);background:#fff}.table{width:100%;border-collapse:collapse;font-size:17px}.table th,.table td{padding:12px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left}.table th{background:#e9edf1}.table tr:last-child td{border-bottom:0}.table .best{color:var(--green);font-weight:800}.table .bad{color:var(--red);font-weight:750}.table small{color:var(--muted)}
+.recover{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;align-items:center}.big-number{padding:42px;border:1px solid var(--line);background:#fff;text-align:center}.big-number strong{display:block;color:var(--blue);font:700 100px/1 var(--serif)}.big-number span{display:block;margin-top:14px;color:var(--body);font-size:22px}.pattern-list{display:grid;gap:10px}.pattern{display:grid;grid-template-columns:1fr auto;gap:12px;padding:15px 18px;background:#fff;border-left:4px solid var(--green);font-size:18px}.pattern b{font-family:var(--mono)}
+.limits{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:100%;background:var(--line)}.limit{min-height:170px;padding:25px;background:#fff}.limit b{display:block;color:var(--orange);font:700 15px/1.2 var(--mono)}.limit strong{display:block;margin:12px 0 7px;font-size:27px}.limit span{color:var(--body);font-size:18px;line-height:1.45}
+#controls{position:fixed;left:50%;bottom:max(15px,env(safe-area-inset-bottom));z-index:20;display:flex;align-items:center;gap:7px;padding:7px;background:#111820e8;color:#fff;transform:translateX(-50%);box-shadow:0 5px 20px #0004}#controls button,#controls a{min-height:38px;padding:0 12px;border:1px solid #ffffff38;background:transparent;color:#fff;text-decoration:none;cursor:pointer}#controls button:hover,#controls a:hover{background:#ffffff17}.counter{min-width:70px;text-align:center;font:700 13px/1 var(--mono)}.current-title{max-width:180px;overflow:hidden;color:#ccd3da;font-size:12px;text-overflow:ellipsis;white-space:nowrap}#return-to-article[hidden]{display:none}#progress{position:fixed;left:0;bottom:0;z-index:25;height:3px;background:var(--blue);transition:width .2s}
+#overview-panel{position:fixed;inset:0;z-index:30;padding:48px;background:#10161ddd}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:100%;margin:auto;padding:24px;background:#f7f4ec;overflow:auto}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.overview-head button{border:0;background:none;font-size:28px;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{padding:13px;border:1px solid var(--line);background:#fff;text-align:left;cursor:pointer}.overview-grid button[aria-current="true"]{border-color:var(--blue);color:var(--blue)}.overview-grid b{display:block;font:700 12px/1 var(--mono)}.overview-grid span{display:block;margin-top:6px;font-size:15px}
+@media(max-width:720px){#controls{width:calc(100% - 14px);justify-content:center}.current-title{display:none}#controls button,#controls a{padding:0 9px}.overview-grid{grid-template-columns:1fr 1fr}.utility-label,.return-label{display:none}}
+@media print{html,body{height:auto;overflow:visible;background:#fff}.deck{position:static;width:auto;height:auto;transform:none!important}.slide{position:relative;display:grid!important;width:1600px;height:900px;page-break-after:always}#controls,#progress,#overview-panel{display:none!important}}
+</style>
+</head>
+<body>
+<main class="deck" id="deck">
+  <section class="slide" data-title="核心问题">
+    <div class="top"><b>01 · HARNESS-ZERO</b><span>Harness Distillation via Agent-as-Harness</span></div>
+    <h1>专用 harness 可以下线，<br>它教会模型的流程留下来</h1>
+    <div class="body"><div class="hero"><p class="statement">训练时，harnessing agent 把 <code>h*</code> 的指导逐步翻译成 <code>h</code> 中可执行的 response；部署时只保留 <strong>distilled student + minimal h</strong>。</p><div class="numbers"><div class="number"><b>23.3 → 44.3</b><span>Qwen3.5-9B 三领域 macro average</span></div><div class="number"><b>82.3%</b><span>28 种 harness-exclusive behavior 平均恢复率</span></div></div></div></div>
+    <div class="foot"><span>Ye et al., arXiv:2609.24974v1</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="为什么蒸馏 harness">
+    <div class="top"><b>02 · MOTIVATION</b><span>优化的是外部系统，收益也会留在外部系统</span></div>
+    <h2>每个领域维护一套最优 harness，部署复杂度会一直增长</h2>
+    <div class="body"><div class="problem"><div class="panel"><span class="tag">SHARED HARNESS</span><h3>只保留一套通用接口</h3><p>部署简单，但丢掉领域流程、专用检查和工具带来的收益。</p></div><div class="arrow">↔</div><div class="panel"><span class="tag">SPECIALIZED HARNESSES</span><h3>每个领域都带一套 <code>h*</code></h3><p>效果更好，却要继续维护路由、上下文、模型调用和版本兼容。</p></div></div></div>
+    <div class="foot"><span>论文 §1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="三个对象">
+    <div class="top"><b>03 · NOTATION</b><span>先分清谁在训练，谁在部署</span></div>
+    <h2><code>h</code>、<code>h*</code>、<code>K</code> 不是三套同类 harness</h2>
+    <div class="body"><div class="objects"><div class="object"><code>h</code><h3>target harness</h3><p>student 实际运行的固定接口：一个 Bash <code>execute</code> 工具和固定 system prompt。</p><div class="keep">训练与部署都保留</div></div><div class="object"><code>h*</code><h3>evolved student-side harness</h3><p>tools、middleware、skills、memory，直接包住 student 时可以读状态、拦动作或增加工具。</p><div class="keep" style="color:var(--orange)">仅用于产生指导</div></div><div class="object"><code>K</code><h3>private reference harness</h3><p>把 <code>h*</code> 改写成 action recipes、review middleware、guidance 和 failure patterns。</p><div class="keep" style="color:var(--orange)">仅供 harnessing agent 读取</div></div></div></div>
+    <div class="foot"><span>论文 §3.1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="论文总览图">
+    <div class="top"><b>04 · ORIGINAL FIGURE 1</b><span>Evolve → Review → SFT → Deploy</span></div>
+    <h2>所有 supervision 都先被翻译到目标 action space</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/harness-zero/figure-1-overview.png" alt="Harness-Zero 论文 Figure 1"></div><div class="caption">作者官方 Figure 1。右下角明确标出：部署保留 <code>h</code>，移除 <code>h*</code>、<code>K</code> 与 harnessing agent。</div></div></div>
+    <div class="foot"><span>官方仓库 assets/harness-zero.png，Apache-2.0。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="PASS / REPLACE">
+    <div class="top"><b>05 · RESPONSE BOUNDARY</b><span>review 发生在 proposal 执行之前</span></div>
+    <h2>harnessing agent 只改下一步，然后把控制权还给 student</h2>
+    <div class="body" style="display:block"><div class="loop"><div class="step"><b>1 · PROPOSE</b><h3>student 生成 <code>y_t</code></h3><p>这条 response 尚未进入 environment。</p></div><div class="step"><b>2 · REVIEW</b><h3>读取轨迹与 <code>K</code></h3><p>只能使用 student-visible evidence。</p></div><div class="step"><b>3 · DECIDE</b><h3>PASS / REPLACE</h3><p>correction 必须是完整 response。</p></div><div class="step"><b>4 · EXECUTE</b><h3>通过 <code>h</code> 运行</h3><p>最多一个合法 <code>execute</code>。</p></div><div class="step"><b>5 · OBSERVE</b><h3>结果写回轨迹</h3><p>student 从新 observation 继续。</p></div></div><div class="decision"><div><strong>PASS</strong>原 response 合理，不为风格或轻微低效而改写。</div><div class="replace"><strong>REPLACE</strong>用最小、连贯、可执行的 correction 修复关键流程。</div></div></div>
+    <div class="foot"><span>论文 §3.2、Appendix C；官方 review.py。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="可见性边界">
+    <div class="top"><b>06 · EVIDENCE BOUNDARY</b><span>private review 不能泄漏进训练轨迹</span></div>
+    <h2>student 学的是自己做过的检查，不是 reviewer 的批语</h2>
+    <div class="body"><div class="boundary"><div><h3>进入 student-visible trajectory</h3><ul><li>任务与固定 system prompt</li><li>accepted response</li><li><code>execute</code> 的输出和 exit code</li><li>后续 student 可以据此修复</li></ul></div><div class="private"><h3>仅存在于 private review</h3><ul><li><code>K</code> 与 component 私有路径</li><li>被拒绝的原 proposal</li><li>PASS/REPLACE reason</li><li>middleware 的触发提示</li></ul></div></div></div>
+    <div class="foot"><span>论文 §3.2–3.3、Appendix C–D。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Spreadsheet 真实 case">
+    <div class="top"><b>07 · WORKED EXAMPLE</b><span>preserving pre-filled cells</span></div>
+    <h2>答案区域里的示例单元格，本身就是不能改写的规格</h2>
+    <div class="body"><div class="case"><div><div class="sheet"><div class="cell head"></div><div class="cell head">B</div><div class="cell head">C</div><div class="cell head">D</div><div class="cell head">3</div><div class="cell example">18</div><div class="cell">?</div><div class="cell">?</div><div class="cell head">4</div><div class="cell example">24</div><div class="cell">?</div><div class="cell">?</div><div class="cell head">5</div><div class="cell bad">20 ✕</div><div class="cell">?</div><div class="cell">?</div></div><p class="caption">蓝色 B3/B4 是 worked examples；B5 被批量写入后改变了原值。</p></div><div class="case-flow"><div><b>h* / MIDDLEWARE</b><p>finish 时直接读取 sandbox，diff 输入与输出 workbook。</p></div><div><b>K / REVIEW RULE</b><p>不读 sandbox，只检查轨迹里有没有 input–output comparison 的证据。</p></div><div><b>REPLACE</b><p>若 student 直接 finish，替换成普通 Bash/Python 验证命令。</p></div><div><b>SFT SIGNAL</b><p>命令输出进入可见轨迹，模型学会“验证后再提交”。</p></div></div></div></div>
+    <div class="foot"><span>论文 Appendix B.2，Code 1–3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="验证动作如何落地">
+    <div class="top"><b>08 · STUDENT-NATIVE ACTION</b><span>根据 Code 1–3 压缩改写</span></div>
+    <h2><code>K</code> 不替 student 偷读文件，而是生成 student 自己能执行的检查</h2>
+    <div class="body"><div class="code-grid"><pre class="code"><span class="c"># accepted response 中的 execute</span>
+wb_in  = openpyxl.load_workbook(INPUT)
+wb_out = openpyxl.load_workbook(OUTPUT)
+
+changed = []
+for cell in answer_range:
+    <span class="k">if</span> input[cell].value is not None \
+       and input[cell].data_type != <span class="s">"f"</span> \
+       and output[cell].value != input[cell].value:
+        changed.append(cell)
+
+print(<span class="s">"PASS"</span> if not changed else changed)
+raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为什么能学</b><span>命令、输出、修复都属于 student 的 action space 和 context。</span></div><div class="note"><b>为什么不是答案泄漏</b><span>reviewer 不知道正确 workbook；它只要求执行可复用的 consistency check。</span></div><div class="note"><b>最终学到什么</b><span>提交前比较输入与输出，并保护 pre-filled examples。</span></div></div></div></div>
+    <div class="foot"><span>示意代码来自论文 Appendix B.2，不是额外 benchmark checker。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="数据与训练">
+    <div class="top"><b>09 · DATA & TRAINING</b><span>三个领域分别微调</span></div>
+    <h2>同一个最小 <code>h</code>，三套领域轨迹</h2>
+    <div class="body" style="display:block"><div class="data"><div class="domain"><h3>SpreadsheetBench</h3><strong>300 / 100</strong><p>train / held-out test；最终 487 条成功轨迹。</p></div><div class="domain"><h3>AppWorld</h3><strong>147 / 168</strong><p>train / test tasks；168 题组成 56 个 scenario；最终 282 条轨迹。</p></div><div class="domain"><h3>USPTO</h3><strong>500 / 100</strong><p>train / disjoint test；训练覆盖 10 个 reaction classes；保留全部 500 条轨迹。</p></div></div><div class="train"><span>Qwen3.5-9B</span><span>LoRA r=32, α=32</span><span>batch 8</span><span>65,536 tokens</span><span>2 epochs</span><span>seed 42</span></div></div>
+    <div class="foot"><span>论文 §4.1、Appendix D–E。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Agent vs Code harness">
+    <div class="top"><b>10 · TABLE 1 REDRAWN</b><span>frontier models，不做参数更新</span></div>
+    <h2>同一个 evolved harness，经 agent 解释后平均更强</h2>
+    <div class="body"><div class="chart"><div class="bar"><span>minimal <code>h</code></span><div class="track"><div class="fill" style="width:68.6%"></div></div><strong>68.6</strong></div><div class="bar"><span><code>h</code> + empty review</span><div class="track"><div class="fill orange" style="width:69.2%"></div></div><strong>69.2</strong></div><div class="bar"><span>code-as-harness <code>h*</code></span><div class="track"><div class="fill" style="width:78.1%"></div></div><strong>78.1</strong></div><div class="bar"><span>agent-as-harness <code>K</code></span><div class="track"><div class="fill green" style="width:81.1%"></div></div><strong>81.1</strong></div><div class="chart-note">空 <code>K</code> 只比 minimal <code>h</code> 高 0.6 分。增益来自 evolved guidance，不是“多一次模型调用”本身。</div></div></div>
+    <div class="foot"><span>根据论文 Table 1 重绘；六个 benchmark–model setting 的平均百分比。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="蒸馏主结果">
+    <div class="top"><b>11 · TABLE 2 REDRAWN</b><span>部署时移除 h*、K、harnessing agent</span></div>
+    <h2>蒸馏后的 9B 模型，在 minimal <code>h</code> 下达到 44.3%</h2>
+    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>Setting</th><th>Spreadsheet</th><th>AppWorld</th><th>USPTO</th><th>Avg.</th></tr></thead><tbody><tr><td>Base + <code>h</code></td><td>31.0</td><td>26.8</td><td>12.0</td><td>23.3</td></tr><tr><td>Base + <code>h*</code></td><td>39.0</td><td>48.2</td><td class="best">38.0</td><td>41.7</td></tr><tr><td>Base + DeepAgents</td><td>35.0</td><td>19.6</td><td>7.0</td><td>20.5</td></tr><tr><td>Base + Claude Code</td><td>31.0</td><td>10.7</td><td>6.0</td><td>15.9</td></tr><tr><td><strong>Harness-Zero + h</strong></td><td class="best">44.0</td><td class="best">58.9</td><td>30.0</td><td class="best">44.3</td></tr></tbody></table></div></div>
+    <div class="foot"><span>根据论文 Table 2 重绘；pass@1 / SGC，single run。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="什么轨迹值得蒸馏">
+    <div class="top"><b>12 · TABLE 3 REDRAWN</b><span>collection success ≠ distillation value</span></div>
+    <h2>Oracle 把采集成功率推到 98.6%，蒸馏后却只有 15.0%</h2>
+    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>USPTO trajectory source</th><th>Collection</th><th>Test under <code>h</code></th></tr></thead><tbody><tr><td>Teacher rollout</td><td>52.0</td><td>12.0</td></tr><tr><td>Teacher under <code>h*</code></td><td>62.0</td><td class="bad">3.0</td></tr><tr><td>Student under <code>h*</code></td><td>39.4</td><td>12.0</td></tr><tr><td>Empty <code>K</code> review</td><td>44.2</td><td>11.0</td></tr><tr><td>Oracle-answer review</td><td class="best">98.6</td><td>15.0</td></tr><tr><td><strong>Harness-Zero <code>K</code></strong></td><td>59.4</td><td class="best">30.0</td></tr></tbody></table></div></div>
+    <div class="foot"><span>根据论文 Table 3 重绘；同一 500-task split 与训练 recipe。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Behavior recovery">
+    <div class="top"><b>13 · TABLE 4 REDRAWN</b><span>28 harness-exclusive patterns</span></div>
+    <h2>82.3% 表示在专门挑出的 support tasks 上恢复行为</h2>
+    <div class="body"><div class="recover"><div class="big-number"><strong>82.3%</strong><span>28 个 pattern 的平均 recovery</span></div><div class="pattern-list"><div class="pattern"><span>Protect pre-filled cells</span><b>24/26 · 92%</b></div><div class="pattern"><span>Retrieve complete pages</span><b>21/53 · 40%</b></div><div class="pattern"><span>Validate with RDKit</span><b>60/60 · 100%</b></div><div class="pattern"><span>Choose action vs. answer</span><b>24/33 · 73%</b></div><div class="note" style="border-color:var(--orange)"><b>解读边界</b><span>support set 按构造让 base + <code>h</code> 为 0%、base + <code>h*</code> 为 100%；它不是自然分布上的总体行为准确率。</span></div></div></div></div>
+    <div class="foot"><span>根据论文 Table 4、Appendix G 重绘。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结论与限制">
+    <div class="top"><b>14 · TAKEAWAYS</b><span>什么可以留下，什么暂时留不下</span></div>
+    <h2>Action-space 对齐是方法成立的前提，强 reviewer 与训练成本是代价</h2>
+    <div class="body"><div class="limits"><div class="limit"><b>WHAT WORKS</b><strong>程序化流程</strong><span>inspection、verification、recovery 容易通过 response 示范并由 SFT 吸收。</span></div><div class="limit"><b>WHAT LAGS</b><strong>深领域知识</strong><span>USPTO：distilled 30.0%，仍低于 <code>h*</code> 的 38.0%。</span></div><div class="limit"><b>REVIEWER</b><strong>弱模型会改坏</strong><span>Qwen3.6-35B-A3B 上 agent-as-harness 比 code-as-harness 低 12 分。</span></div><div class="limit"><b>COLLECTION COST</b><strong>100.1s → 237.2s</strong><span>USPTO 平均延迟约 2.4×；部署阶段不再支付。</span></div></div></div>
+    <div class="foot"><span><a href="https://arxiv.org/abs/2609.24974">论文</a> · <a href="https://github.com/metaevo-ai/harness-zero">代码与数据</a></span><span class="pg"></span></div>
+  </section>
+</main>
+
+<div id="controls" aria-label="幻灯片控制">
+  <a id="return-to-article" href="/posts/论文解读/harness-zero.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label"> 返回文章</span></a>
+  <button id="prev" type="button" aria-label="上一页">←</button>
+  <button id="toc" type="button" aria-label="打开目录">☰</button>
+  <span class="current-title" id="current-title">核心问题</span>
+  <span class="counter" id="counter">1 / 14</span>
+  <button id="next" type="button" aria-label="下一页">→</button>
+  <button id="full" type="button" aria-label="全屏">⛶ <span class="utility-label">全屏</span></button>
+</div>
+<div id="overview-panel" hidden>
+  <div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title">
+    <div class="overview-head"><strong id="overview-title">14 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div>
+    <div class="overview-grid" id="overview-grid"></div>
+  </div>
+</div>
+<div id="progress"></div>
+<script>
+(() => {
+  const slides=[...document.querySelectorAll('.slide')];
+  const deck=document.getElementById('deck');
+  const counter=document.getElementById('counter');
+  const currentTitle=document.getElementById('current-title');
+  const progress=document.getElementById('progress');
+  const overview=document.getElementById('overview-panel');
+  const overviewGrid=document.getElementById('overview-grid');
+  const returnLink=document.getElementById('return-to-article');
+  const fullButton=document.getElementById('full');
+  const isEmbedded=window.self!==window.top;
+  if(!isEmbedded) returnLink.hidden=false;
+  let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+
+  function scaleDeck(){
+    const scale=Math.min(innerWidth/1600,innerHeight/900);
+    deck.style.transform=`scale(${scale})`;
+    deck.style.left=`${(innerWidth-1600*scale)/2}px`;
+    deck.style.top=`${(innerHeight-900*scale)/2}px`;
+  }
+  function show(next,updateHash=true){
+    index=Math.max(0,Math.min(slides.length-1,next));
+    slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));
+    [...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));
+    counter.textContent=`${index+1} / ${slides.length}`;
+    currentTitle.textContent=slides[index].dataset.title;
+    progress.style.width=`${((index+1)/slides.length)*100}%`;
+    document.title=`${slides[index].dataset.title} · Harness-Zero`;
+    if(updateHash) history.replaceState(null,'',`#${index+1}`);
+  }
+  function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
+  function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
+  async function toggleFullscreen(){
+    if(document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  }
+  function syncFullscreen(){
+    const active=Boolean(document.fullscreenElement);
+    fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');
+    fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏';
+  }
+
+  slides.forEach((slide,i)=>{
+    const pg=slide.querySelector('.pg');
+    if(pg) pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;
+    const button=document.createElement('button');
+    button.type='button';
+    button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;
+    button.addEventListener('click',()=>{show(i);closeOverview()});
+    overviewGrid.appendChild(button);
+  });
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));
+  document.getElementById('next').addEventListener('click',()=>show(index+1));
+  document.getElementById('toc').addEventListener('click',openOverview);
+  document.getElementById('close-overview').addEventListener('click',closeOverview);
+  overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});
+  fullButton.addEventListener('click',toggleFullscreen);
+  document.addEventListener('fullscreenchange',syncFullscreen);
+  addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));
+  addEventListener('resize',scaleDeck);
+  addEventListener('keydown',event=>{
+    if(event.key==='Escape'){
+      if(!overview.hidden){closeOverview();return}
+      if(document.fullscreenElement){document.exitFullscreen();return}
+    }
+    if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}
+    if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}
+    if(event.key==='Home'){event.preventDefault();show(0)}
+    if(event.key==='End'){event.preventDefault();show(slides.length-1)}
+    if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}
+  });
+  show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+</body>
+</html>
