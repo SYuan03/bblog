@@ -1,0 +1,200 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses",
+    "kind": "research",
+    "primary_source_ids": ["paper", "repo"]
+  },
+  "artifacts": {
+    "article": "content/_posts/049-agentic-harness-engineering让agent自己改进harness.md",
+    "deck": "lib/decks/agentic-harness-engineering-visual-guide.html",
+    "embed_src": "/lib/decks/agentic-harness-engineering-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses",
+      "url": "https://arxiv.org/abs/2604.25850",
+      "revision": "v4, 2026-05-18",
+      "used_for": ["problem", "related-work", "method", "experiments", "cases", "limitations", "figures", "tables", "appendices"]
+    },
+    {
+      "id": "repo",
+      "kind": "code",
+      "title": "china-qijizhifeng/agentic-harness-engineering",
+      "url": "https://github.com/china-qijizhifeng/agentic-harness-engineering",
+      "revision": "8b2a55d97590363fe50c3cc6b5e833b020a4bb4c",
+      "used_for": ["orchestration", "change-attribution", "evolved-harness", "prompts", "figure-assets", "license"]
+    },
+    {
+      "id": "dataset-registry",
+      "kind": "code",
+      "title": "harbor-framework/harbor-datasets",
+      "url": "https://github.com/harbor-framework/harbor-datasets",
+      "revision": "37db108843a49bb31a592e37a75e2c40dc3f9749",
+      "used_for": ["task-package-availability-check"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 35,
+    "rendered_page_ranges": [{"start": 1, "end": 35}],
+    "source_visuals_expected": 24,
+    "visual_inventory_complete": true,
+    "inventory_note": "Inventory covers Figures 1-13, Tables 1-5, Algorithm 1, four appendix prompt blocks that function as important implementation visuals, and the official repository banner used for the cover."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么需要自动做 harness engineering？"},
+    {"role": "related-work", "locator": "Q2. 它和 prompt evolution、agent workflow search 有什么区别？"},
+    {"role": "method", "locator": "Q3. AHE 的闭环具体怎样运行？"},
+    {"role": "experiments", "locator": "Q4. 实验、真实 case 和 judge 到底说明了什么？"},
+    {"role": "future-work", "locator": "Q5. 对 Claude Code、Codex 这类 harness 研究有什么启发？"},
+    {"role": "summary", "locator": "Q6. 这篇论文的证据边界和最终判断是什么？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 5"}],
+      "evidence": [{"artifact": "article", "quote": "把 coding agent 的 harness 当成一个可以自动维护的软件系统"}]
+    },
+    {
+      "id": "three-observability-pillars",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3; Figure 2"}],
+      "evidence": [{"artifact": "article", "quote": "Experience observability 的关键是 progressive disclosure"}]
+    },
+    {
+      "id": "outer-loop-and-attribution",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "repo"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Algorithm 1; Appendix B.2"},
+        {"source_id": "repo", "locator": "evolve.py: load_change_manifest and evaluate_changes at 8b2a55d"}
+      ],
+      "evidence": [{"artifact": "article", "quote": "用 task-level flip 结算上一轮 manifest"}]
+    },
+    {
+      "id": "publish-state-guard",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "repo"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Appendix C.2.2-C.2.4; Figures 9-11"},
+        {"source_id": "repo", "locator": "experiments/evolved_harness/tools/shell_tools/run_shell_command.py at 8b2a55d"}
+      ],
+      "evidence": [{"artifact": "article", "quote": "shell tool 同时记录 protected output，并在后续删除命令执行前返回 block"}]
+    },
+    {
+      "id": "path-tracing-case",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix C.1.2, pp. 28-29"}],
+      "evidence": [{"artifact": "article", "quote": "正确文件曾经存在，但 verifier 运行时已经被删"}]
+    },
+    {
+      "id": "mcmc-case",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix C.1.3; Figure 7"}],
+      "evidence": [{"artifact": "article", "quote": "约 2.872 / 16.43，6/6 tests pass"}]
+    },
+    {
+      "id": "main-results-and-metric",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 4.1-4.2; Table 1; Appendix A, Eq. 1"}],
+      "evidence": [{"artifact": "article", "quote": "AHE 的总分最高，主要来自 55 个 Medium tasks"}]
+    },
+    {
+      "id": "transfer-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.3; Table 2; Figure 3; Table 5"}],
+      "evidence": [{"artifact": "article", "quote": "Aggregate success 从 NexAU₀ 的 75.2% 到 75.6%，只高 0.4 pp；tokens/trial 从 526k 降到 461k"}]
+    },
+    {
+      "id": "component-ablation",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.4.1; Table 3"}],
+      "evidence": [{"artifact": "article", "quote": "system prompt only 为 67.4%"}]
+    },
+    {
+      "id": "regression-blindness",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.4.2; Figure 4; Appendix D, Figures 12-13"}],
+      "evidence": [{"artifact": "article", "quote": "regression prediction 是 11.8% / 11.1%"}]
+    },
+    {
+      "id": "task-checker-availability",
+      "claim_type": "unknown",
+      "source_ids": ["repo", "dataset-registry"],
+      "source_locators": [
+        {"source_id": "repo", "locator": "README dataset setup and repository tree at 8b2a55d"},
+        {"source_id": "dataset-registry", "locator": "public datasets directory at 37db1088, checked 2026-09-28"}
+      ],
+      "evidence": [{"artifact": "article", "quote": "公开目录里没有 Terminal-Bench 2 task pack"}]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "repo"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Limitations; Sections 4.2-4.4; Appendix D"},
+        {"source_id": "repo", "locator": "README Agent Debugger licensing note at 8b2a55d"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "主结果来自一条十轮 campaign，没有多 seed 的均值和方差"},
+        {"artifact": "article", "quote": "Agent Debugger 的核心只部分开源"}
+      ]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 2, Figure 1","status":"reused","rationale":"The iteration curve and four peak edits are central to the paper's claim.","placements":[{"artifact":"article","locator":"论文 Figure 1"},{"artifact":"deck","locator":"69.7 → 77.0"}],"permission_status":"verified-allowed","permission_basis":"Identical asset is distributed in the official MIT-licensed repository at revision 8b2a55d.","credit":"论文 Figure 1；官方仓库 assets/figures/training_curve.png","asset_paths":["/lib/papers/agentic-harness-engineering/figure-1-training-curve.png"]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 4, Figure 2","status":"reused","rationale":"The original pipeline cleanly connects all three observability surfaces.","placements":[{"artifact":"article","locator":"论文 Figure 2"},{"artifact":"deck","locator":"ORIGINAL FIGURE 2"}],"permission_status":"verified-allowed","permission_basis":"Identical asset is distributed in the official MIT-licensed repository at revision 8b2a55d.","credit":"论文 Figure 2；官方仓库 assets/figures/method.png","asset_paths":["/lib/papers/agentic-harness-engineering/figure-2-method.png"]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 8, Figure 3","status":"reused","rationale":"The chart exposes every cross-model operating point and its non-monotonic within-family pattern.","placements":[{"artifact":"article","locator":"论文 Figure 3"},{"artifact":"deck","locator":"12 · TRANSFER"}],"permission_status":"verified-allowed","permission_basis":"Identical asset is distributed in the official MIT-licensed repository at revision 8b2a55d.","credit":"论文 Figure 3；官方仓库 assets/figures/transfer_model.png","asset_paths":["/lib/papers/agentic-harness-engineering/figure-3-transfer.png"]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 9, Figure 4","status":"omitted","rationale":"The four aggregate precision and recall values are stated directly in the article and final deck slide; reproducing the chart adds no additional denominator detail.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 27, Figure 5","status":"reused","rationale":"This is the clearest source-side comparison of prompt, tool, and middleware edits.","placements":[{"artifact":"article","locator":"论文 Figure 5"},{"artifact":"deck","locator":"ORIGINAL FIGURE 5"}],"permission_status":"verified-allowed","permission_basis":"Identical asset is distributed in the official MIT-licensed repository at revision 8b2a55d.","credit":"论文 Figure 5；官方仓库 assets/figures/case_study.png","asset_paths":["/lib/papers/agentic-harness-engineering/figure-5-case-study.png"]},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 28, Figure 6","status":"omitted","rationale":"The db-wal-recovery trace is supplementary to the two fully narrated cases selected for the article.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 30, Figure 7","status":"redrawn","rationale":"The five-step MCMC failure and passing trajectories are converted into a readable article and deck sequence.","placements":[{"artifact":"article","locator":"Case 2：为什么“两个数字文件都在”仍然 FAIL？"},{"artifact":"deck","locator":"09 · CASE 2"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据论文 Figure 7 与 Appendix C.1.3 重绘","asset_paths":[]},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 31, Figure 8","status":"omitted","rationale":"The article explains the iteration-2 prompt and timeout edits in prose; the full manifest card is not needed for the selected cases.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"p. 32, Figure 9","status":"omitted","rationale":"The path-tracing narrative and inspected guard code convey the same publish-state mechanism more directly.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-10","kind":"figure","label":"Figure 10","source_id":"paper","source_locator":"p. 33, Figure 10","status":"omitted","rationale":"The MCMC narrative and inspected middleware code replace the dense manifest card.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-11","kind":"figure","label":"Figure 11","source_id":"paper","source_locator":"p. 34, Figure 11","status":"omitted","rationale":"The hard-block and framework-reminder changes are described next to the code path and limitations.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-12","kind":"figure","label":"Figure 12","source_id":"paper","source_locator":"p. 35, Figure 12","status":"omitted","rationale":"Per-round fix variance is summarized by the aggregate values and single-campaign limitation.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"figure-13","kind":"figure","label":"Figure 13","source_id":"paper","source_locator":"p. 35, Figure 13","status":"omitted","rationale":"Per-round regression counts are summarized with the exact cumulative 5/43 and 40 missed regressions.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 6, Table 1","status":"redrawn","rationale":"The complete difficulty breakdown is necessary to show that AHE does not lead the Hard tier.","placements":[{"artifact":"article","locator":"Harness / loop"},{"artifact":"deck","locator":"TABLE 1 REDRAWN"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据论文 Table 1 数据重绘","asset_paths":[]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 7, Table 2","status":"redrawn","rationale":"The aggregate accuracy and token columns separate weak accuracy transfer from stronger efficiency transfer.","placements":[{"artifact":"article","locator":"SWE-bench Verified"},{"artifact":"deck","locator":"526k → 461k"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据论文 Table 2 数据重绘","asset_paths":[]},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 8, Table 3","status":"redrawn","rationale":"The component isolation is needed to show prompt-only regression and non-additive interactions.","placements":[{"artifact":"article","locator":"system prompt only 为 67.4%"},{"artifact":"deck","locator":"13 · ABLATION"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据论文 Table 3 数据重绘","asset_paths":[]},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 16, Table 4","status":"omitted","rationale":"The few operating-point values needed for interpretation are stated in prose; the full hyperparameter table is retained in the source manifest locator.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p. 17, Table 5","status":"redrawn","rationale":"The aggregate Succ/Mtok row is combined with Table 2 in the article to make the efficiency result readable.","placements":[{"artifact":"article","locator":"Succ / Mtok"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据论文 Table 5 数据重绘","asset_paths":[]},
+    {"id":"algorithm-1","kind":"algorithm","label":"Algorithm 1","source_id":"paper","source_locator":"p. 5, Algorithm 1","status":"redrawn","rationale":"The six-stage loop is redrawn as an execution sequence in both artifacts.","placements":[{"artifact":"article","locator":"一轮不是“改完再看总分”"},{"artifact":"deck","locator":"05 · ALGORITHM 1"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据论文 Algorithm 1 重绘","asset_paths":[]},
+    {"id":"appendix-prompt-seed","kind":"appendix-visual","label":"Appendix B.1 Code Agent Seed System Prompt","source_id":"paper","source_locator":"pp. 17-18, Appendix B.1","status":"omitted","rationale":"Its single-shell-tool scope and three rules are summarized in Part 0 and the method section.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"appendix-prompt-evolve","kind":"appendix-visual","label":"Appendix B.2 Evolve Agent Prompt","source_id":"paper","source_locator":"pp. 17-21, Appendix B.2","status":"omitted","rationale":"The workspace boundary, evidence-first reading order, component table, and manifest schema are explained without reproducing the multi-page prompt.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"appendix-prompt-source","kind":"appendix-visual","label":"Appendix B.3.1 Source-code Exploration Agent Prompt","source_id":"paper","source_locator":"pp. 21-24, Appendix B.3.1","status":"omitted","rationale":"This bootstrap prompt is implementation detail outside the core evaluation path.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"appendix-prompt-web","kind":"appendix-visual","label":"Appendix B.3.2 Web-research Agent Prompt","source_id":"paper","source_locator":"pp. 24-26, Appendix B.3.2","status":"omitted","rationale":"The web-research bootstrap prompt is not needed to understand the evidence loop or evaluated harness.","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},
+    {"id":"repo-banner","kind":"appendix-visual","label":"Official repository banner","source_id":"repo","source_locator":"assets/figures/banner.jpg at 8b2a55d","status":"reused","rationale":"Used only as the listing cover and padded to the blog's 1600x900 canvas.","placements":[{"artifact":"article","locator":"049-agentic-harness-engineering.webp"}],"permission_status":"verified-allowed","permission_basis":"Official repository is MIT licensed at revision 8b2a55d.","credit":"作者官方仓库 banner，MIT","asset_paths":["/generated-covers/049-agentic-harness-engineering.webp"]}
+  ],
+  "figures": [
+    {"path":"/generated-covers/049-agentic-harness-engineering.webp","origin":"paper-original","source_visual_id":"repo-banner","source_id":"repo","source_locator":"assets/figures/banner.jpg at 8b2a55d","credit":"作者官方仓库 banner，MIT","license_status":"verified-allowed","license_basis":"Official repository is MIT licensed at revision 8b2a55d.","used_in":["article"]},
+    {"path":"/lib/papers/agentic-harness-engineering/figure-1-training-curve.png","origin":"paper-original","source_visual_id":"figure-1","source_id":"repo","source_locator":"assets/figures/training_curve.png at 8b2a55d","credit":"论文 Figure 1；作者官方仓库，MIT","license_status":"verified-allowed","license_basis":"Official repository is MIT licensed at revision 8b2a55d.","used_in":["article"]},
+    {"path":"/lib/papers/agentic-harness-engineering/figure-2-method.png","origin":"paper-original","source_visual_id":"figure-2","source_id":"repo","source_locator":"assets/figures/method.png at 8b2a55d","credit":"论文 Figure 2；作者官方仓库，MIT","license_status":"verified-allowed","license_basis":"Official repository is MIT licensed at revision 8b2a55d.","used_in":["article","deck"]},
+    {"path":"/lib/papers/agentic-harness-engineering/figure-3-transfer.png","origin":"paper-original","source_visual_id":"figure-3","source_id":"repo","source_locator":"assets/figures/transfer_model.png at 8b2a55d","credit":"论文 Figure 3；作者官方仓库，MIT","license_status":"verified-allowed","license_basis":"Official repository is MIT licensed at revision 8b2a55d.","used_in":["article","deck"]},
+    {"path":"/lib/papers/agentic-harness-engineering/figure-5-case-study.png","origin":"paper-original","source_visual_id":"figure-5","source_id":"repo","source_locator":"assets/figures/case_study.png at 8b2a55d","credit":"论文 Figure 5；作者官方仓库，MIT","license_status":"verified-allowed","license_basis":"Official repository is MIT licensed at revision 8b2a55d.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first": true, "toc_h2_only": true, "surface": "neutral-light", "body_font": "sans-serif", "body_font_px": 17, "line_height": 1.76, "figures_centered": true, "internal_scroll_for_tables_and_code": true, "page_horizontal_overflow": false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body": true, "embedded_deck": true, "standalone_deck": true},
+    "language_review": {"technical_terms_contextualized": true, "actors_disambiguated": true, "read_aloud_complete": true, "facts_rechecked_after_rewrite": true},
+    "interactions": {"buttons": true, "keyboard": true, "hash_navigation": true, "fullscreen": true, "escape": true, "standalone_return_to_article": true, "immersive_mode_exit": true, "usable_state_after_exit": true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"]
+  }
+}

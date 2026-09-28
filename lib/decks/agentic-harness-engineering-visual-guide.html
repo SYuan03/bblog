@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Agentic Harness Engineering · 论文图解</title>
+<style>
+:root{--paper:#f7f4ec;--ink:#171b20;--body:#424b56;--muted:#7c858f;--line:#cfd2d2;--blue:#245c9c;--orange:#b9552d;--green:#287462;--red:#a0443d;--sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;--serif:"Songti SC",STSong,serif;--mono:"SFMono-Regular",Consolas,monospace}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#171b20;color:var(--ink);font-family:var(--sans)}button,a{font:inherit}.deck{position:fixed;width:1600px;height:900px;transform-origin:top left}.slide{position:absolute;inset:0;display:none;padding:48px 58px 54px;background:var(--paper);overflow:hidden}.slide.active{display:grid;grid-template-rows:auto auto 1fr auto;gap:17px}.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--muted);font-size:16px}.top b{color:var(--blue);font:700 14px/1 var(--mono);letter-spacing:.08em}.slide h1,.slide h2{margin:0;font-family:var(--serif);font-weight:700;line-height:1.15}.slide h1{max-width:1180px;font-size:68px}.slide h2{max-width:1320px;font-size:47px}.lead{max-width:1200px;margin:0;color:var(--body);font-size:24px;line-height:1.5}.body{min-height:0;display:flex;align-items:center}.foot{display:flex;justify-content:space-between;gap:20px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.foot a{color:var(--blue)}.pg{font-family:var(--mono)}
+.hero{display:grid;grid-template-columns:1.18fr .82fr;gap:48px;width:100%;align-items:end}.statement{font:700 33px/1.5 var(--serif)}.statement strong{color:var(--blue)}.numbers{border-left:1px solid var(--line);padding-left:40px}.number{margin:18px 0}.number b{display:block;color:var(--blue);font:700 50px/1 var(--serif)}.number span{display:block;margin-top:8px;color:var(--body);font-size:18px}.interest{display:inline-block;margin-top:18px;padding:8px 12px;border:1px solid var(--blue);color:var(--blue);font:800 16px/1 var(--mono)}
+.problem{display:grid;grid-template-columns:1fr 82px 1fr;gap:18px;width:100%;align-items:center}.panel{padding:27px;border:1px solid var(--line);background:#fff}.panel h3{margin:0 0 12px;font-size:25px}.panel p,.panel li{color:var(--body);font-size:18px;line-height:1.55}.arrow{color:var(--orange);font-size:52px;text-align:center}.tag{display:inline-block;margin-bottom:12px;color:var(--blue);font:700 13px/1 var(--mono);letter-spacing:.08em}
+.paper-figure{display:flex;width:100%;height:100%;align-items:center;justify-content:center}.paper-figure img{display:block;max-width:100%;max-height:560px;border:1px solid var(--line);background:#fff}.caption{max-width:1150px;margin:8px auto 0;color:var(--muted);font-size:14px;line-height:1.45;text-align:center}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:var(--line)}.pillar{min-height:350px;padding:27px;background:#fff}.pillar code{display:block;color:var(--blue);font:700 15px/1 var(--mono)}.pillar h3{margin:18px 0 10px;font-size:27px}.pillar p{color:var(--body);font-size:18px;line-height:1.55}.pillar .out{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);color:var(--green);font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;width:100%;background:var(--line)}.step{min-height:260px;padding:21px;background:#fff}.step b{display:block;color:var(--blue);font:700 14px/1.2 var(--mono)}.step h3{margin:14px 0 9px;font-size:22px}.step p{color:var(--body);font-size:16px;line-height:1.5}.loop-note{margin-top:18px;padding:15px 18px;border-left:4px solid var(--orange);background:#fff;color:var(--body);font-size:18px}
+.layers{display:grid;grid-template-columns:.92fr 1.08fr;gap:28px;width:100%;align-items:center}.file-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.file{padding:14px 16px;border:1px solid var(--line);background:#fff}.file b{display:block;color:var(--blue);font:700 14px/1.2 var(--mono)}.file span{display:block;margin-top:5px;color:var(--body);font-size:16px}.evidence{display:grid;gap:1px;background:var(--line)}.evidence>div{padding:17px 19px;background:#fff}.evidence b{color:var(--green);font:700 14px/1.2 var(--mono)}.evidence p{margin:5px 0 0;color:var(--body);font-size:17px;line-height:1.45}
+.manifest{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;width:100%;align-items:center}.code{width:100%;margin:0;padding:23px 26px;border:1px solid var(--line);background:#1d2329;color:#e7ebef;font:16px/1.52 var(--mono);white-space:pre-wrap}.code .c{color:#8fa2b5}.code .k{color:#7fc0ff}.code .s{color:#a9d4aa}.verdicts{display:grid;gap:10px}.verdict{padding:16px 18px;background:#fff;border-left:4px solid var(--green)}.verdict.bad{border-color:var(--red)}.verdict b{display:block;font-size:18px}.verdict span{display:block;margin-top:5px;color:var(--body);font-size:16px;line-height:1.45}
+.case{display:grid;grid-template-columns:.78fr 1.22fr;gap:28px;width:100%;align-items:stretch}.case-card{padding:26px;border:1px solid var(--line);background:#fff}.case-card h3{margin:0 0 12px;font-size:26px}.case-card p{color:var(--body);font-size:18px;line-height:1.55}.trace{display:grid;gap:1px;background:var(--line)}.trace>div{padding:13px 16px;background:#fff}.trace b{color:var(--blue);font:700 13px/1.2 var(--mono)}.trace p{margin:4px 0 0;color:var(--body);font-size:16px;line-height:1.4}.trace .fail{background:#fbefea}.trace .pass{background:#edf7f2}.trace .fail b{color:var(--red)}.trace .pass b{color:var(--green)}
+.table-wrap{width:100%;overflow:hidden;border:1px solid var(--line);background:#fff}.table{width:100%;border-collapse:collapse;font-size:17px}.table th,.table td{padding:11px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left}.table th{background:#e9edf1}.table tr:last-child td{border-bottom:0}.table .best{color:var(--green);font-weight:800}.table .bad{color:var(--red);font-weight:750}.chart{display:grid;gap:13px;width:100%}.bar{display:grid;grid-template-columns:260px 1fr 82px;gap:15px;align-items:center;font-size:18px}.track{height:27px;background:#e2e5e7}.fill{height:100%;background:var(--blue)}.fill.orange{background:var(--orange)}.fill.green{background:var(--green)}.bar strong{font:700 20px/1 var(--mono);text-align:right}.chart-note{margin-top:14px;padding:14px 17px;border-left:4px solid var(--orange);background:#fff;color:var(--body);font-size:17px}
+.limits{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:100%;background:var(--line)}.limit{min-height:170px;padding:24px;background:#fff}.limit b{display:block;color:var(--orange);font:700 14px/1.2 var(--mono)}.limit strong{display:block;margin:11px 0 7px;font-size:26px}.limit span{color:var(--body);font-size:17px;line-height:1.45}
+#controls{position:fixed;left:50%;bottom:max(15px,env(safe-area-inset-bottom));z-index:20;display:flex;align-items:center;gap:7px;padding:7px;background:#111820e8;color:#fff;transform:translateX(-50%);box-shadow:0 5px 20px #0004}#controls button,#controls a{min-height:38px;padding:0 12px;border:1px solid #ffffff38;background:transparent;color:#fff;text-decoration:none;cursor:pointer}#controls button:hover,#controls a:hover{background:#ffffff17}.counter{min-width:70px;text-align:center;font:700 13px/1 var(--mono)}.current-title{max-width:180px;overflow:hidden;color:#ccd3da;font-size:12px;text-overflow:ellipsis;white-space:nowrap}#return-to-article[hidden]{display:none}#progress{position:fixed;left:0;bottom:0;z-index:25;height:3px;background:var(--blue);transition:width .2s}
+#overview-panel{position:fixed;inset:0;z-index:30;padding:48px;background:#10161ddd}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:100%;margin:auto;padding:24px;background:#f7f4ec;overflow:auto}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.overview-head button{border:0;background:none;font-size:28px;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{padding:13px;border:1px solid var(--line);background:#fff;text-align:left;cursor:pointer}.overview-grid button[aria-current="true"]{border-color:var(--blue);color:var(--blue)}.overview-grid b{display:block;font:700 12px/1 var(--mono)}.overview-grid span{display:block;margin-top:6px;font-size:15px}
+@media(max-width:720px){#controls{width:calc(100% - 14px);justify-content:center}.current-title{display:none}#controls button,#controls a{padding:0 9px}.overview-grid{grid-template-columns:1fr 1fr}.utility-label,.return-label{display:none}}
+@media print{html,body{height:auto;overflow:visible;background:#fff}.deck{position:static;width:auto;height:auto;transform:none!important}.slide{position:relative;display:grid!important;width:1600px;height:900px;page-break-after:always}#controls,#progress,#overview-panel{display:none!important}}
+</style>
+</head>
+<body>
+<main class="deck" id="deck">
+  <section class="slide" data-title="论文结论">
+    <div class="top"><b>01 · AGENTIC HARNESS ENGINEERING</b><span>Observability-Driven Automatic Evolution</span></div>
+    <h1>把 harness 变成可编辑、可追责、可回滚的优化对象</h1>
+    <div class="body"><div class="hero"><div><p class="statement">AHE 不训练 base model。它让另一个 agent 读执行证据，直接修改 <strong>prompt、tool、middleware 与 memory</strong>，再用下一轮真实 task delta 判断这次修改是否成立。</p><span class="interest">作者兴趣度 10 / 10</span></div><div class="numbers"><div class="number"><b>69.7 → 77.0</b><span>Terminal-Bench 2 pass@1</span></div><div class="number"><b>32 h</b><span>89 题 × 2 rollouts × 10 rounds</span></div></div></div></div>
+    <div class="foot"><span>Lin et al., arXiv:2604.25850v4</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="为什么难">
+    <div class="top"><b>02 · MOTIVATION</b><span>模型固定，优化模型外的执行系统</span></div>
+    <h2>自动改 prompt 很容易；自动改完整 harness 有三个结构性难点</h2>
+    <div class="body"><div class="problem"><div class="panel"><span class="tag">HETEROGENEOUS ACTION SPACE</span><h3>修改面不是一种文本</h3><p>system prompt、tool schema、Python implementation、middleware、skills、sub-agent config 与 memory 的语义完全不同。</p></div><div class="arrow">＋</div><div class="panel"><span class="tag">WEAK FEEDBACK</span><h3>轨迹长，因果链又散</h3><p>一次 rollout 可跨数百步。最后的 PASS/FAIL 很难说明是哪条命令、哪个 guard 或哪次 cleanup 造成结果。</p></div></div></div>
+    <div class="foot"><span>论文 §1–3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="三层 observability">
+    <div class="top"><b>03 · CORE IDEA</b><span>每个修改都要能被下一轮证伪</span></div>
+    <h2>三个 observability 分别解决“改什么、根据什么改、怎么知道改对了”</h2>
+    <div class="body"><div class="pillars"><div class="pillar"><code>01 / COMPONENT</code><h3>组件可观测</h3><p>七类组件都落成固定路径下的文件。一个逻辑修改对应一个 Git commit，可以逐文件回滚。</p><div class="out">输出：明确、可执行的修改空间</div></div><div class="pillar"><code>02 / EXPERIENCE</code><h3>经验可观测</h3><p>Agent Debugger 把约 10M tokens 的 raw traces 压成 benchmark overview、per-task report，并保留逐步回钻。</p><div class="out">输出：带根因的证据语料</div></div><div class="pillar"><code>03 / DECISION</code><h3>决策可观测</h3><p>change manifest 写下 failure evidence、root cause、predicted fixes 与 risk tasks；下一轮按 task flip 结算。</p><div class="out">输出：可证伪的 edit contract</div></div></div></div>
+    <div class="foot"><span>论文 §3；Figure 2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="论文总览图">
+    <div class="top"><b>04 · ORIGINAL FIGURE 2</b><span>Components → traces → evidence → edits</span></div>
+    <h2>一个闭环里，三种 artifact 都能被另一个 agent 直接读取</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-2-method.png" alt="AHE 论文 Figure 2"></div><div class="caption">论文 Figure 2，作者官方仓库版本。左侧是可编辑 harness，右侧把 raw trace 压成可回钻证据，再由 Evolve Agent 写回组件。</div></div></div>
+    <div class="foot"><span>官方仓库 assets/figures/method.png，MIT。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="一次迭代怎么跑">
+    <div class="top"><b>05 · ALGORITHM 1</b><span>rollout → clean → attribute → distill → evolve → commit</span></div>
+    <h2>第 t 轮先评估第 t-1 轮的修改，再生成第 t 轮候选</h2>
+    <div class="body" style="display:block"><div class="flow"><div class="step"><b>1 · ROLLOUT</b><h3>每题 k 次</h3><p>同一个当前 harness 在 fresh E2B sandbox 中执行。</p></div><div class="step"><b>2 · CLEAN</b><h3>规范化轨迹</h3><p>原始 message、tool output 与 verifier result 写成文件。</p></div><div class="step"><b>3 · ATTRIBUTE</b><h3>结算旧预测</h3><p>用 task-level flips 检查上一轮 manifest，回滚无效修改。</p></div><div class="step"><b>4 · DISTILL</b><h3>压成证据层</h3><p>先读 overview，需要时回钻 detail 与 raw trace。</p></div><div class="step"><b>5 · EVOLVE</b><h3>修改 harness</h3><p>选正确组件层，写 change manifest。</p></div><div class="step"><b>6 · COMMIT</b><h3>版本化</h3><p>一项逻辑修改一个 commit；保留 best-so-far。</p></div></div><div class="loop-note">论文用 <strong>k = 2</strong>。因此每题不是只有一个 0/1，而是能暴露“同题一条过、一条不过”的 partial-pass 信号。</div></div>
+    <div class="foot"><span>论文 Algorithm 1；Appendix A。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="七类组件与证据层">
+    <div class="top"><b>06 · EDIT SURFACE</b><span>目录结构本身就是控制面</span></div>
+    <h2>同一种失败模式，应落到最有执行力的组件层</h2>
+    <div class="body"><div class="layers"><div class="file-grid"><div class="file"><b>systemprompt.md</b><span>全局行为规则</span></div><div class="file"><b>tool_descriptions/</b><span>调用前可见契约</span></div><div class="file"><b>tools/</b><span>能力与硬拦截</span></div><div class="file"><b>middleware/</b><span>跨步骤状态和注入</span></div><div class="file"><b>skills/</b><span>按需工作流</span></div><div class="file"><b>sub_agents/</b><span>隔离式委派</span></div><div class="file"><b>LongTermMEMORY.md</b><span>跨任务边界案例</span></div><div class="file"><b>Git history</b><span>diff 与回滚边界</span></div></div><div class="evidence"><div><b>OVERVIEW</b><p>跨 89 题汇总 recurring failure classes。</p></div><div><b>DETAIL/{TASK}.MD</b><p>逐题根因、pass/fail 对照与证据定位。</p></div><div><b>RAW TRACE</b><p>只有摘要不足时才回看原始消息和工具调用。</p></div><div><b>READ-ONLY BOUNDARY</b><p>runs、verifier、tracer、model config 不可写，防止 optimizer 改考试本身。</p></div></div></div></div>
+    <div class="foot"><span>论文 §3.1–3.2；Appendix B.2；官方代码。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="change manifest">
+    <div class="top"><b>07 · DECISION CONTRACT</b><span>理由不算证据，下一轮 task delta 才算</span></div>
+    <h2>每个 edit 在落地时就写明：预计修谁，也可能伤到谁</h2>
+    <div class="body"><div class="manifest"><pre class="code"><span class="c">// change_manifest.json</span>
+{
+  <span class="k">"id"</span>: <span class="s">"chg-8"</span>,
+  <span class="k">"files"</span>: [<span class="s">"tools/.../run_shell_command.py"</span>],
+  <span class="k">"failure_pattern"</span>: <span class="s">"post-validation state destruction"</span>,
+  <span class="k">"predicted_fixes"</span>: [<span class="s">"path-tracing"</span>, ...],
+  <span class="k">"risk_tasks"</span>: [...],
+  <span class="k">"constraint_level"</span>: <span class="s">"tool_impl"</span>
+}</pre><div class="verdicts"><div class="verdict"><b>EFFECTIVE</b><span>预测任务全部从 fail 变 pass，且风险未命中。</span></div><div class="verdict"><b>PARTIALLY_EFFECTIVE / MIXED</b><span>只修到部分任务，或同时出现预测内 regression。</span></div><div class="verdict bad"><b>INEFFECTIVE / HARMFUL</b><span>没有命中 predicted fix，或只触发 regression。文件级 rollback。</span></div></div></div></div>
+    <div class="foot"><span>Appendix B.2；官方 evolve.py: evaluate_changes。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实 case：path-tracing">
+    <div class="top"><b>08 · CASE 1</b><span>正确产物被自己的 cleanup 删除</span></div>
+    <h2><code>path-tracing</code>：从 0/2 到 2/2，靠的是执行层保护</h2>
+    <div class="body"><div class="case"><div class="case-card"><h3>任务与 judge</h3><p>Agent 要生成 <code>/app/reconstructed.ppm</code>。Terminal-Bench 2 verifier 只读这个文件，并与 reference image 做逐像素比较。</p><p>失败 rollout 已经生成正确图片并做过自检，随后为了“清理”执行 <code>rm -rf ... /app/reconstructed.ppm</code>。</p></div><div class="trace"><div><b>S1 · BUILD</b><p>render 正确，结构性 acceptance check 通过。</p></div><div class="fail"><b>F1 · DESTROY</b><p>最后一步 cleanup 删除唯一 deliverable；shell exit code 为 0，Agent 误以为可提交。</p></div><div><b>HARNESS EDIT</b><p>final/evaluator-style check 通过后，shell tool 记录 protected files/roots；后续 destructive command 在执行前被拦截。</p></div><div class="pass"><b>PASS</b><p>Agent 收到明确 block，保留图片并结束。下一轮 2/2，verifier 找到且逐像素匹配。</p></div></div></div></div>
+    <div class="foot"><span>论文 Appendix C.1.2、C.2.2；官方 evolved_harness。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实 case：MCMC">
+    <div class="top"><b>09 · CASE 2</b><span>“文件存在”不等于真实计算正确</span></div>
+    <h2><code>mcmc-sampling-stan</code>：proxy result 骗过自检，骗不过 verifier</h2>
+    <div class="body"><div class="case"><div class="case-card"><h3>任务与 judge</h3><p>安装 rstan 2.32.7，用 30 条观测拟合 hierarchical beta-binomial model，写出 alpha、beta posterior means。</p><p>Verifier 会重新运行 <code>analysis.R</code>，要求 alpha ∈ [2.84, 2.91]，beta ∈ [16.1, 16.7]。</p></div><div class="trace"><div class="fail"><b>FAIL TRACE</b><p>用 grid integration 得到 proxy 数值并写文件；真实 MCMC 放后台后被提前 kill。最终只检查“文件存在且可解析”。Verifier 重跑未收敛脚本，得到约 1e19 / 2.60e17，2/6 tests fail。</p></div><div><b>TOOL + MIDDLEWARE</b><p>publish-state guard 保护 <code>analysis.R</code>；ExecutionRiskHintsMiddleware 识别 inline proxy 与 shallow validation，并在下一次 model turn 以 FRAMEWORK reminder 提升显著性。</p></div><div class="pass"><b>PASS TRACE</b><p>完整跑 <code>iter=100000</code>，再在 <code>/tmp</code> 独立复跑，约 2.872 / 16.43；6/6 tests pass，后四轮保持 2/2。</p></div></div></div></div>
+    <div class="foot"><span>论文 Appendix C.1.3、Figure 7、C.2.3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="原图：三种修改层级">
+    <div class="top"><b>10 · ORIGINAL FIGURE 5</b><span>middleware / prompt / tool</span></div>
+    <h2>同一个 failure pattern，可以用软规则、动态提醒或硬拦截处理</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-5-case-study.png" alt="AHE 论文 Figure 5"></div><div class="caption">论文 Figure 5。作者列出三种真实修改：execution-risk middleware、7 条 prompt rules、带 timeout 的 shell tool。</div></div></div>
+    <div class="foot"><span>官方仓库 assets/figures/case_study.png，MIT。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="主结果">
+    <div class="top"><b>11 · TABLE 1 REDRAWN</b><span>Terminal-Bench 2，89 tasks</span></div>
+    <h2>同一 GPT-5.4 high，AHE 达到 77.0%，但 Hard 仍低于 Codex</h2>
+    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>Harness / loop</th><th>All</th><th>Easy</th><th>Medium</th><th>Hard</th></tr></thead><tbody><tr><td>OpenCode</td><td>47.2</td><td>75.0</td><td>52.7</td><td>33.3</td></tr><tr><td>Terminus-2</td><td>62.9</td><td>75.0</td><td>74.5</td><td>40.0</td></tr><tr><td>Codex</td><td>71.9</td><td>75.0</td><td>80.0</td><td class="best">56.7</td></tr><tr><td>NexAU₀</td><td>69.7</td><td>87.5</td><td>78.2</td><td>51.7</td></tr><tr><td>ACE</td><td>68.9</td><td>91.7</td><td>78.2</td><td>48.9</td></tr><tr><td>TF-GRPO</td><td>72.3</td><td class="best">100.0</td><td>79.4</td><td>55.6</td></tr><tr><td><strong>AHE</strong></td><td class="best">77.0</td><td class="best">100.0</td><td class="best">88.2</td><td>53.3</td></tr></tbody></table></div></div>
+    <div class="foot"><span>根据论文 Table 1 重绘；每题 k=2，timeout / infra abort 计失败。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="迁移能力">
+    <div class="top"><b>12 · TRANSFER</b><span>冻结 harness，不再 evolution</span></div>
+    <h2>跨 benchmark 的主要收益是省 token；跨模型则五个 operating point 全部为正</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-3-transfer.png" alt="AHE 论文 Figure 3"></div><div class="caption">论文 Figure 3。Terminal-Bench 2 上，GPT-5.4 medium/high/xhigh 与三个跨 family 模型均高于各自 NexAU₀ seed。SWE-bench Verified 上 AHE 75.6% vs seed 75.2%，tokens/trial 526k → 461k。</div></div></div>
+    <div class="foot"><span>论文 §4.3、Table 2、Figure 3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="组件消融与归因">
+    <div class="top"><b>13 · ABLATION</b><span>单组件有效，不代表叠加更好</span></div>
+    <h2>memory、tool、middleware 都能单独增益；system prompt 单独使用会退化</h2>
+    <div class="body"><div class="chart"><div class="bar"><span>NexAU₀</span><div class="track"><div class="fill" style="width:69.7%"></div></div><strong>69.7</strong></div><div class="bar"><span>+ memory only</span><div class="track"><div class="fill green" style="width:75.3%"></div></div><strong>75.3</strong></div><div class="bar"><span>+ tool only</span><div class="track"><div class="fill green" style="width:73%"></div></div><strong>73.0</strong></div><div class="bar"><span>+ middleware only</span><div class="track"><div class="fill green" style="width:71.9%"></div></div><strong>71.9</strong></div><div class="bar"><span>+ system prompt only</span><div class="track"><div class="fill orange" style="width:67.4%"></div></div><strong>67.4</strong></div><div class="bar"><span>AHE full</span><div class="track"><div class="fill" style="width:77%"></div></div><strong>77.0</strong></div><div class="chart-note">三个正向单组件增益相加是 +11.1 pp，高于 full AHE 的 +7.3 pp。作者认为多层都在做 closure verification，叠加后会重复消耗 Hard task 的 turn budget。</div></div></div>
+    <div class="foot"><span>根据论文 Table 3 重绘。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结论与限制">
+    <div class="top"><b>14 · TAKEAWAYS</b><span>值得学的是实验结构，也要看清它没证明什么</span></div>
+    <h2>这是一套强工程方法；因果归因、成本和泛化仍留下明显缺口</h2>
+    <div class="body"><div class="limits"><div class="limit"><b>WHY IT MATTERS</b><strong>完整 harness 可被自动修改</strong><span>工作面覆盖 prompt、tool、middleware、skill、sub-agent 与 memory，且每次修改可审计。</span></div><div class="limit"><b>ATTRIBUTION GAP</b><strong>修复预测强，回归预测弱</strong><span>fix precision / recall 为 33.7% / 51.4%；regression 为 11.8% / 11.1%。</span></div><div class="limit"><b>EVIDENCE LIMIT</b><strong>单次 10-round campaign</strong><span>没有多 seed evolution；SWE-bench aggregate 只高 seed 0.4 pp，且三个小 repo 退化。</span></div><div class="limit"><b>OPERATING POINT</b><strong>budget 与模型耦合</strong><span>同 family 增益不是单调的；更强 reasoning 可能把 trial 推过 timeout。</span></div></div></div>
+    <div class="foot"><span><a href="https://arxiv.org/abs/2604.25850">论文</a> · <a href="https://github.com/china-qijizhifeng/agentic-harness-engineering">官方代码</a></span><span class="pg"></span></div>
+  </section>
+</main>
+
+<div id="controls" aria-label="幻灯片控制">
+  <a id="return-to-article" href="/posts/论文解读/agentic-harness-engineering.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label"> 返回文章</span></a>
+  <button id="prev" type="button" aria-label="上一页">←</button>
+  <button id="toc" type="button" aria-label="打开目录">☰</button>
+  <span class="current-title" id="current-title">论文结论</span>
+  <span class="counter" id="counter">1 / 14</span>
+  <button id="next" type="button" aria-label="下一页">→</button>
+  <button id="full" type="button" aria-label="全屏">⛶ <span class="utility-label">全屏</span></button>
+</div>
+<div id="overview-panel" hidden><div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title"><div class="overview-head"><strong id="overview-title">14 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div><div class="overview-grid" id="overview-grid"></div></div></div>
+<div id="progress"></div>
+<script>
+(() => {
+  const slides=[...document.querySelectorAll('.slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
+  if(window.self===window.top)returnLink.hidden=false;
+  let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · Agentic Harness Engineering`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+  function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
+  async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
+  function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
+  slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
+  show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+</body>
+</html>
