@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Harness-of-Harness · 论文图解</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--paper:#f8f5ee;--ink:#171b20;--text:#3f4853;--muted:#7b8490;--line:#cfd2d2;--blue:#2869ad;--blue2:#dce9f6;--orange:#d76536;--orange2:#f6e2d7;--green:#28705d;--green2:#dcebe5;--red:#a94842;--red2:#f3dfdc;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans CJK SC",Arial,sans-serif;--serif:"Songti SC",STSong,"Noto Serif CJK SC",serif}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#11161c;color:var(--ink);font-family:var(--sans)}button,a{font:inherit}a{color:inherit}.deck{position:absolute;width:1600px;height:900px;transform-origin:top left;background:var(--paper)}.slide{position:absolute;inset:0;display:none;padding:42px 58px 50px;background:var(--paper)}.slide.active{display:flex;flex-direction:column}.top{display:flex;align-items:center;justify-content:space-between;gap:28px;height:24px;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--muted);font:700 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase}.top b{color:var(--blue)}h1,h2,h3,p{margin-top:0}h1{max-width:1260px;margin:30px 0 14px;font:700 58px/1.08 var(--serif);letter-spacing:-.025em}h2{max-width:1370px;margin:25px 0 10px;font:700 42px/1.16 var(--serif);letter-spacing:-.018em}h3{margin-bottom:8px;font-size:22px;line-height:1.25}.lead{max-width:1260px;margin:0 0 22px;color:var(--text);font-size:23px;line-height:1.48}.body{display:flex;flex:1;min-height:0;align-items:center}.foot{display:flex;align-items:center;justify-content:space-between;gap:20px;height:24px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.25}.foot a{text-decoration:underline;text-underline-offset:2px}.pg{font:700 12px/1 var(--mono);white-space:nowrap}code,.mono{font-family:var(--mono)}strong{font-weight:760}.blue{color:var(--blue)}.orange{color:var(--orange)}.green{color:var(--green)}.red{color:var(--red)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;width:100%;align-items:center}.hero-copy{padding-right:8px}.eyebrow{display:inline-block;margin-bottom:16px;color:var(--blue);font:800 14px/1 var(--mono);letter-spacing:.11em}.hero h1{margin:0 0 18px}.hero .dek{max-width:720px;color:var(--text);font-size:24px;line-height:1.5}.thesis{margin-top:24px;padding:17px 19px;border-left:5px solid var(--blue);background:#eef3f7;color:var(--text);font-size:18px;line-height:1.55}.hero-figure{display:flex;flex-direction:column;min-width:0}.hero-figure img{display:block;width:100%;max-height:580px;object-fit:contain;background:#fff;border:1px solid var(--line)}.caption{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.45}.metrics{display:grid;grid-template-columns:repeat(4,1fr);width:100%;margin-top:24px;border-block:1px solid var(--line)}.metric{padding:19px 17px;border-right:1px solid var(--line)}.metric:last-child{border-right:0}.metric b{display:block;color:var(--blue);font:750 31px/1 var(--serif)}.metric span{display:block;margin-top:8px;color:var(--muted);font-size:14px;line-height:1.35}
+.paper-figure{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:0}.paper-figure img{display:block;max-width:100%;max-height:610px;object-fit:contain;background:#fff;border:1px solid var(--line)}.paper-figure.tight img{max-height:545px}.two{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;align-items:stretch}.two.wide-left{grid-template-columns:1.16fr .84fr}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:var(--line);border:1px solid var(--line)}.panel{padding:22px;background:#fff}.panel p,.panel li{color:var(--text);font-size:17px;line-height:1.55}.panel p:last-child{margin-bottom:0}.panel ul{margin:9px 0 0;padding-left:20px}.panel li{margin:7px 0}.panel .tag{display:inline-block;margin-bottom:12px;color:var(--blue);font:800 12px/1 var(--mono);letter-spacing:.08em}.panel.accent{background:var(--blue2)}.panel.warm{background:var(--orange2)}.panel.good{background:var(--green2)}.panel.bad{background:var(--red2)}
+.problem-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:32px;width:100%;align-items:center}.problem-grid img{display:block;width:100%;max-height:540px;object-fit:contain;background:#fff;border:1px solid var(--line)}.risks{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}.risk{display:grid;grid-template-columns:72px 1fr;gap:16px;padding:17px;background:#fff}.risk b{color:var(--orange);font:800 24px/1 var(--mono)}.risk strong{display:block;margin-bottom:4px;font-size:19px}.risk span{color:var(--text);font-size:16px;line-height:1.5}
+.fixed-changing{display:grid;grid-template-columns:1fr 78px 1fr;gap:18px;width:100%;align-items:center}.column-title{margin-bottom:12px;color:var(--muted);font:800 13px/1 var(--mono);letter-spacing:.09em}.stack{display:grid;gap:9px}.stack div{padding:15px 17px;border:1px solid var(--line);background:#fff}.stack b{display:block;margin-bottom:5px;font-size:18px}.stack span{color:var(--text);font-size:15px;line-height:1.45}.arrow{color:var(--blue);font:800 46px/1 var(--serif);text-align:center}.equation{padding:22px;border:1px solid var(--line);background:#fff;font:700 23px/1.6 var(--mono);text-align:center}.equation em{font-family:var(--serif);font-style:normal;color:var(--blue)}
+.compare{width:100%;border-collapse:collapse;background:#fff;font-size:16px}.compare th,.compare td{padding:12px 14px;border:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.42}.compare th{background:#e9eef2;color:var(--ink);font-size:14px}.compare td:first-child{font-weight:720}.compare tr.highlight td{background:var(--blue2)}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%}.role{min-height:300px;padding:24px;border:1px solid var(--line);background:#fff}.role .num{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-bottom:18px;background:var(--blue);color:#fff;font:800 20px/1 var(--mono)}.role h3{font-family:var(--serif);font-size:28px}.role ul{margin:14px 0 0;padding-left:20px}.role li{margin:8px 0;color:var(--text);font-size:17px;line-height:1.48}.role.dev{border-top:6px solid var(--orange)}.role.qa{border-top:6px solid var(--green)}.role.plan{border-top:6px solid var(--blue)}
+.timeline{display:grid;grid-template-columns:repeat(6,1fr);width:100%;border:1px solid var(--line);background:#fff}.step{position:relative;min-height:260px;padding:20px 17px;border-right:1px solid var(--line)}.step:last-child{border-right:0}.step:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:112px;z-index:2;width:26px;height:26px;background:var(--paper);color:var(--blue);font:800 22px/26px var(--mono);text-align:center}.step b{color:var(--blue);font:800 12px/1 var(--mono);letter-spacing:.08em}.step h3{margin-top:15px;font-size:20px}.step p{color:var(--text);font-size:15px;line-height:1.48}
+.state-pair{display:grid;grid-template-columns:1fr 74px 1fr;gap:20px;width:100%;align-items:center}.state{min-height:360px;padding:24px;border:1px solid var(--line);background:#fff}.state h3{font:700 29px/1.2 var(--serif)}.state .symbol{color:var(--blue);font:800 38px/1 var(--mono)}.state ul{margin:18px 0 0;padding-left:20px}.state li{margin:9px 0;color:var(--text);font-size:17px;line-height:1.45}.state.evidence{border-top:6px solid var(--green)}.state.artifact{border-top:6px solid var(--orange)}
+.codebox{width:100%;padding:22px 24px;overflow:hidden;border:1px solid #3a424c;background:#20262d;color:#e8edf1;font:16px/1.55 var(--mono);white-space:pre-wrap}.codebox .c{color:#92a0ac}.codebox .k{color:#8dc7ff}.codebox .s{color:#98d8b9}.codebox .x{color:#ff9e87}.schema{display:grid;grid-template-columns:.95fr 1.05fr;gap:24px;width:100%;align-items:stretch}.schema .codebox{font-size:14px}.legend{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}.legend div{padding:16px 18px;background:#fff}.legend b{display:block;margin-bottom:5px;color:var(--blue);font:760 14px/1.3 var(--mono)}.legend span{color:var(--text);font-size:16px;line-height:1.46}
+.judges{display:grid;grid-template-columns:1fr 90px 1fr;gap:22px;width:100%;align-items:center}.judge{min-height:390px;padding:24px;border:1px solid var(--line);background:#fff}.judge h3{font:700 28px/1.2 var(--serif)}.judge .badge{display:inline-block;margin-bottom:14px;padding:6px 9px;background:var(--blue2);color:var(--blue);font:800 12px/1 var(--mono)}.judge ul{margin:16px 0 0;padding-left:20px}.judge li{margin:9px 0;color:var(--text);font-size:16px;line-height:1.48}.judge.external{border-top:6px solid var(--orange)}.judge.internal{border-top:6px solid var(--green)}.wall{text-align:center}.wall b{display:block;color:var(--red);font:900 44px/1 var(--mono)}.wall span{display:block;margin-top:8px;color:var(--muted);font-size:13px;line-height:1.4}
+.bench{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}.bench>div{padding:21px;border:1px solid var(--line);background:#fff}.bench h3{font-family:var(--serif);font-size:25px}.bench .n{margin:8px 0 14px;color:var(--blue);font:800 27px/1 var(--mono)}.bench p{color:var(--text);font-size:15px;line-height:1.5}.bench .hidden{margin-top:13px;padding-top:11px;border-top:1px solid var(--line);color:var(--orange);font-size:13px;line-height:1.45}
+.results-table{width:100%;border-collapse:collapse;background:#fff;font-size:17px}.results-table th,.results-table td{padding:14px 16px;border:1px solid var(--line);text-align:left}.results-table th{background:#e9eef2;font-size:14px}.results-table td:not(:first-child){font-family:var(--mono)}.results-table .best{color:var(--blue);font-weight:800}.result-note{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:18px;background:var(--line);border:1px solid var(--line)}.result-note div{padding:14px 16px;background:#fff}.result-note b{display:block;margin-bottom:4px;color:var(--blue);font:800 12px/1 var(--mono)}.result-note span{color:var(--text);font-size:14px;line-height:1.4}
+.image-note{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;width:100%;align-items:center}.image-note img{display:block;width:100%;max-height:520px;object-fit:contain;background:#fff;border:1px solid var(--line)}.callouts{display:grid;gap:11px}.callout{padding:16px 18px;border-left:5px solid var(--blue);background:#fff}.callout.orange{border-color:var(--orange)}.callout.green{border-color:var(--green)}.callout b{display:block;margin-bottom:5px;font-size:18px}.callout span{color:var(--text);font-size:15px;line-height:1.45}
+.case-grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:24px;width:100%;align-items:stretch}.brief{padding:22px;border:1px solid var(--line);background:#fff}.brief h3{font-family:var(--serif);font-size:27px}.brief p,.brief li{color:var(--text);font-size:16px;line-height:1.5}.brief ul{padding-left:20px}.trace{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}.trace div{padding:17px;background:#fff}.trace b{color:var(--blue);font:800 12px/1 var(--mono)}.trace p{margin:8px 0 0;color:var(--text);font-size:15px;line-height:1.46}.trace .bad{background:var(--red2)}.trace .bad b{color:var(--red)}.trace .good{background:var(--green2)}.trace .good b{color:var(--green)}
+.statusline{display:flex;gap:8px;align-items:center;margin-top:14px}.statusline span{padding:7px 9px;background:#eef1f3;font:750 12px/1 var(--mono)}.statusline .fail{background:var(--red2);color:var(--red)}.statusline .pass{background:var(--green2);color:var(--green)}
+.atlas{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:10px;width:100%;height:568px}.atlas figure{position:relative;min-width:0;margin:0;border:1px solid var(--line);background:#fff;overflow:hidden}.atlas figure.wide{grid-column:span 2}.atlas img{width:100%;height:100%;object-fit:contain}.atlas figcaption{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;background:rgba(20,25,30,.86);color:#fff;font:700 11px/1.3 var(--sans)}
+.limits{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;width:100%;background:var(--line);border:1px solid var(--line)}.limit{padding:21px;background:#fff}.limit b{display:block;margin-bottom:8px;color:var(--orange);font:800 12px/1 var(--mono);letter-spacing:.08em}.limit strong{display:block;margin-bottom:8px;font-size:21px}.limit span{color:var(--text);font-size:16px;line-height:1.5}
+#controls{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));z-index:20;display:flex;align-items:center;gap:6px;transform:translateX(-50%);padding:6px;background:rgba(18,23,29,.94);color:#fff;border:1px solid #48515c;box-shadow:0 8px 28px rgba(0,0,0,.28)}#controls button,#controls a{height:38px;padding:0 13px;border:0;background:#2b333d;color:#fff;cursor:pointer;text-decoration:none}#controls button:hover,#controls a:hover{background:#3b4652}#controls .counter{min-width:64px;text-align:center;font:700 12px/1 var(--mono)}#controls .current-title{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c9d0d8;font-size:12px}#return-to-article{display:flex;align-items:center}#return-to-article[hidden]{display:none}#progress{position:fixed;left:0;bottom:0;z-index:30;height:3px;background:var(--blue);transition:width .18s ease}
+#overview-panel{position:fixed;inset:0;z-index:40;padding:38px;background:rgba(11,15,19,.92)}#overview-panel[hidden]{display:none}.overview-card{width:min(1180px,100%);height:100%;margin:auto;padding:22px;background:#f7f5ef;overflow:auto}.overview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.overview-head strong{font:700 28px/1.2 var(--serif)}.overview-head button{width:42px;height:42px;border:1px solid var(--line);background:#fff;font-size:26px}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:center;padding:13px;border:1px solid var(--line);background:#fff;text-align:left}.overview-grid button[aria-current="true"]{border-color:var(--blue);background:var(--blue2)}.overview-grid button b{color:var(--blue);font:800 12px/1 var(--mono)}.overview-grid button span{font-size:14px;line-height:1.35}
+@media(max-width:700px){#controls{bottom:max(8px,env(safe-area-inset-bottom));max-width:calc(100vw - 12px)}#controls button,#controls a{height:34px;padding:0 10px}.utility-label,.return-label,.current-title{display:none!important}.overview-grid{grid-template-columns:1fr 1fr}#overview-panel{padding:12px}.overview-card{padding:15px}}
+@media print{html,body{height:auto;overflow:visible;background:#fff}.deck{position:static;transform:none!important;width:1600px;height:auto}.slide{position:relative;display:flex!important;width:1600px;height:900px;page-break-after:always}#controls,#progress,#overview-panel{display:none!important}}
+</style>
+</head>
+<body>
+<main class="deck" id="deck">
+  <section class="slide" data-title="核心结论">
+    <div class="top"><b>01 · PAPER MAP</b><span>arXiv:2609.01481 · 2026-09-01 · CC BY 4.0</span></div>
+    <div class="body"><div style="width:100%"><div class="hero"><div class="hero-copy"><span class="eyebrow">HARNESS-OF-HARNESS</span><h1>怎样让 Codex 连续开发几天？</h1><p class="dek">HoH 固定模型与底层 coding harness，在外面增加 Planner、Developer、QA Tester 和跨轮 evidence state，把长期开发变成一系列版本化、可核验的候选。</p><div class="thesis"><strong>这套方法靠严格的状态边界工作：</strong>只有 Developer 能写项目，QA 检查冻结候选，下一轮只能继承与该候选绑定的证据。</div></div><div class="hero-figure"><img src="/lib/papers/harness-of-harness/figure-1-fusepoint-trajectory.webp" alt="Fusepoint 70 轮开发轨迹"><div class="caption">论文 Figure 1：Fusepoint 从 bare-bones prototype 迭代到 playable FPS 的 70 轮轨迹。</div></div></div><div class="metrics"><div class="metric"><b>49.58 → 71.52</b><span>GameCraft-Bench · Codex</span></div><div class="metric"><b>0.31 → 0.54</b><span>FrontierSWE · Codex</span></div><div class="metric"><b>60.41 → 66.50</b><span>ProgramBench · Codex</span></div><div class="metric"><b>65 / 81</b><span>Loop 70 已关闭 issue</span></div></div></div></div>
+    <div class="foot"><span>论文 Abstract、Figure 1、Table 1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="为什么长任务会失控">
+    <div class="top"><b>02 · MOTIVATION</b><span>持续开发需要独立的状态与验证</span></div>
+    <h2>代码会留下，关于代码的可靠认识却会不断过期</h2>
+    <p class="lead">几小时后，Agent 会同时面对持续增长的历史，以及互相脱节的 artifact、需求、回归风险和测试结论。</p>
+    <div class="body"><div class="problem-grid"><div><img src="/lib/papers/harness-of-harness/figure-2-development-modes.webp" alt="人类在环与自主软件开发对比"><div class="caption">论文 Figure 2：右侧要求系统自己完成 observe → plan → develop → test 的闭环。</div></div><div class="risks"><div class="risk"><b>01</b><div><strong>决定被遗忘</strong><span>早期 requirement、设计取舍和已知限制埋进长轨迹，后续修改不再知道什么不能破坏。</span></div></div><div class="risk"><b>02</b><div><strong>下一步没有唯一答案</strong><span>同一 PRD 可以对应多条开发路线；Agent 容易停在局部修补或重复尝试。</span></div></div><div class="risk"><b>03</b><div><strong>“能运行”不等于“做完”</strong><span>完整软件的正确性分散在编译、交互、状态迁移、视觉、音频与稳定性里。</span></div></div></div></div></div>
+    <div class="foot"><span>论文 §1、Figure 2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="HoH 改变什么">
+    <div class="top"><b>03 · SCOPE</b><span>固定 operational layer，持续改变 project state</span></div>
+    <h2>HoH 不改 Codex，也不训练模型；它改的是外层开发协议</h2>
+    <div class="body"><div style="width:100%"><div class="fixed-changing"><div><div class="column-title">一次 run 内固定</div><div class="stack"><div><b>Model</b><span>GPT-5.5 / DeepSeek-V4-Pro / MiniMax-M3</span></div><div><b>Coding harness</b><span>Codex / OpenCode / Pi</span></div><div><b>Role contracts</b><span>权限、输入、输出 schema 与 Runtime policy</span></div></div></div><div class="arrow">→</div><div><div class="column-title">每轮继续演化</div><div class="stack"><div><b>Development document · D<sub>t</sub></b><span>本轮 scope、acceptance 与 preservation constraints</span></div><div><b>Artifact · A<sub>t</sub></b><span>代码、资源、配置和版本化项目</span></div><div><b>Evidence · E<sub>t</sub></b><span>verified records、gap records 与 candidate identity</span></div></div></div></div><div class="equation" style="margin-top:26px"><em>(A<sub>t−1</sub>, E<sub>t−1</sub>)</em> → Planner → Developer → QA Tester → <em>(A<sub>t</sub>, E<sub>t</sub>)</em></div></div></div>
+    <div class="foot"><span>论文 §3；Supplementary §A.1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="与相关工作的边界">
+    <div class="top"><b>04 · RELATED WORK</b><span>角色名称相似，不代表控制对象相同</span></div>
+    <h2>HoH 把验证证据绑定到候选版本，跨轮状态不再只是对话摘要</h2>
+    <div class="body"><table class="compare" aria-label="Harness-of-Harness 与相关工作比较"><thead><tr><th>路线</th><th>优化或保存什么</th><th>验证从哪里来</th><th>与 HoH 的关键差异</th></tr></thead><tbody><tr><td>Long context / memory</td><td>对话、摘要、外部 memory</td><td>通常仍由同一 Agent 自判</td><td>记住过去，不等于知道哪条事实已在当前候选上通过</td></tr><tr><td>MetaGPT / ChatDev</td><td>角色文档与消息流程</td><td>角色间 review</td><td>HoH 固定 read/write boundary、冻结候选和 evidence schema</td></tr><tr><td>AgileCoder / EvoDev / EvoMAC</td><td>sprint、feature dependency、test feedback</td><td>迭代计划与测试</td><td>HoH 将 artifact state 与 QA evidence 分成两条持久通道</td></tr><tr><td>Meta-Harness / AHE</td><td>prompt、tool、middleware、harness code</td><td>跨任务 benchmark</td><td>它们改底层 harness；HoH 固定底层 harness，持续改项目</td></tr><tr><td>LongHorizon-Harness</td><td>单任务 task state 与 audit report</td><td>只读 Auditor</td><td>更通用；HoH 专门面向版本化软件与独立 QA</td></tr><tr class="highlight"><td>Harness-of-Harness</td><td>项目 artifact + candidate-bound evidence</td><td>隔离 QA + 最终 benchmark verifier</td><td>同一 harness/model 被固定角色反复调用</td></tr></tbody></table></div>
+    <div class="foot"><span>论文 §2；此页比较为基于论文与官方实现的作者整理。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="方法总览">
+    <div class="top"><b>05 · FRAMEWORK</b><span>三个角色，两条跨轮状态，一个只写者</span></div>
+    <h2>一轮包含一次受控的状态提交</h2>
+    <div class="body"><div class="paper-figure"><img src="/lib/papers/harness-of-harness/figure-3-hoh-framework.webp" alt="Harness-of-Harness 方法总览"></div></div>
+    <div class="foot"><span>论文 Figure 3：模型、底层 harness、角色定义固定；artifact 与 evidence 逐轮变化。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="两条跨轮状态">
+    <div class="top"><b>06 · STATE</b><span>artifact 说明“现在有什么”，evidence 说明“我们凭什么相信”</span></div>
+    <h2>代码和证据必须分开保存，又必须绑定到同一个候选</h2>
+    <div class="body"><div class="state-pair"><div class="state artifact"><div class="symbol">A<sub>t</sub></div><h3>Artifact state</h3><ul><li>真实代码、资源、配置与项目元数据</li><li>由 Developer 从 <code>A<sub>t−1</sub></code> warm-start</li><li>冻结后复制到隔离 QA workspace</li><li>candidate identity 防止测试结论串到另一个版本</li></ul></div><div class="arrow">+</div><div class="state evidence"><div class="symbol">E<sub>t</sub></div><h3>Evidence state</h3><ul><li>verified records：已有证据支持的行为</li><li>gap records：尚未满足或出现回归的行为</li><li>截图、replay、日志、runtime trace、公开测试</li><li>下一轮 Planner 只能把它当作有来源的观察，而不是永久真理</li></ul></div></div></div>
+    <div class="foot"><span>论文 §3.1–3.3；Supplementary §A.2–A.4。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="角色与权限">
+    <div class="top"><b>07 · ROLE CONTRACTS</b><span>Developer 是唯一写入者</span></div>
+    <h2>三个角色的分工由权限边界保证</h2>
+    <div class="body"><div class="roles"><div class="role plan"><div class="num">01</div><h3>Project Planner</h3><ul><li>读取 PRD 与上一轮 evidence</li><li>只读检查项目结构</li><li>选择 bounded but locally complete increment</li><li>输出 development document <code>D<sub>t</sub></code></li><li><strong>不能修改生产 artifact</strong></li></ul></div><div class="role dev"><div class="num">02</div><h3>Developer</h3><ul><li>从旧 artifact warm-start</li><li>读取 PRD 与本轮 development document</li><li>建立 baseline，实施修改并自测</li><li>保留已验证行为</li><li><strong>唯一拥有 read-write workspace</strong></li></ul></div><div class="role qa"><div class="num">03</div><h3>QA Tester</h3><ul><li>读取冻结候选的隔离副本</li><li>黑盒运行与白盒检查交叉验证</li><li>输出 verified / gap records</li><li>不能修代码，也看不到外部 hidden score</li><li><strong>只报告证据，不替 Developer 补丁</strong></li></ul></div></div></div>
+    <div class="foot"><span>论文 Table 2、§3.2；官方 hoh-lite role binding（revision ae7cc6f）。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="一轮怎样运行">
+    <div class="top"><b>08 · ALGORITHM 1</b><span>每轮只提交一个范围有限但可完整验收的增量</span></div>
+    <h2>Planner 选边界，Developer 写候选，QA 只对冻结版本出证据</h2>
+    <div class="body"><div class="timeline"><div class="step"><b>1 · PLAN</b><h3>选增量</h3><p>用 PRD 与旧 evidence 选择本轮最值得做的一条完整用户路径。</p></div><div class="step"><b>2 · PRESERVE</b><h3>列保护项</h3><p>写明哪些已验证行为不能回归，以及如何重查。</p></div><div class="step"><b>3 · DEVELOP</b><h3>改 artifact</h3><p>Developer 在现有项目上实现；不是从空仓库重复生成。</p></div><div class="step"><b>4 · SELF-TEST</b><h3>建立 baseline</h3><p>修改前后都运行公开检查，记录失败和修复。</p></div><div class="step"><b>5 · FREEZE</b><h3>冻结候选</h3><p>复制到隔离 QA 区，生成与候选绑定的 identity。</p></div><div class="step"><b>6 · ASSESS</b><h3>更新 evidence</h3><p>QA 只观察、复现和判定；verified / gap 进入下一轮。</p></div></div></div>
+    <div class="foot"><span>论文 Algorithm 1；Supplementary §A.1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="权限的代码实现">
+    <div class="top"><b>09 · RUNTIME ENFORCEMENT</b><span>官方 hoh-lite · Python 3.12+ · Apache-2.0</span></div>
+    <h2>Planner 和 Tester 的只读边界会在初始化时被验证</h2>
+    <div class="body"><div class="two wide-left"><pre class="codebox"><span class="k">class</span> WorkspaceAccess(str, Enum):
+    READ_ONLY = <span class="s">"read-only"</span>
+    READ_WRITE = <span class="s">"read-write"</span>
+
+@dataclass(frozen=<span class="k">True</span>)
+<span class="k">class</span> RoleBinding:
+    role: RoleName
+    workspace_access: WorkspaceAccess
+    godot_mcp: GodotMCPAccess
+
+    <span class="k">def</span> __post_init__(self):
+        <span class="k">if</span> self.role <span class="k">is not</span> RoleName.DEVELOPER:
+            <span class="k">if</span> self.workspace_access <span class="k">is not</span> READ_ONLY:
+                <span class="x">raise ValueError(...)</span></pre><div class="legend"><div><b>PLANNER / TESTER</b><span>只读 workspace；无法靠一句 prompt 承诺来获得写权限。</span></div><div><b>DEVELOPER</b><span>唯一 read-write；修改面集中，便于冻结和归因。</span></div><div><b>RUNTIME POLICY</b><span>权限实现来自公开代码；论文主实验使用更完整的内部 orchestration。</span></div></div></div></div>
+    <div class="foot"><span>HoH 官方仓库 revision ae7cc6f：hoh-lite role bindings。代码为官方实现节选。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Evidence 怎样结构化">
+    <div class="top"><b>10 · EVIDENCE SCHEMA</b><span>“测试通过”不是可复用的跨轮状态</span></div>
+    <h2>每条 claim 都带 candidate、scope、observation 和 limitation</h2>
+    <div class="body"><div class="schema"><pre class="codebox">{
+  <span class="s">"candidate_id"</span>: <span class="s">"loop-70-..."</span>,
+  <span class="s">"final_status"</span>: <span class="x">"FAIL"</span>,
+  <span class="s">"verified_records"</span>: [
+    {
+      <span class="s">"claim"</span>: <span class="s">"clean boot works"</span>,
+      <span class="s">"method"</span>: <span class="s">"runtime replay"</span>,
+      <span class="s">"evidence"</span>: [<span class="s">"log"</span>, <span class="s">"screenshot"</span>]
+    }
+  ],
+  <span class="s">"gap_records"</span>: [
+    {
+      <span class="s">"claim"</span>: <span class="s">"encounter reaches combat"</span>,
+      <span class="s">"observed"</span>: <span class="s">"idle / walk only"</span>,
+      <span class="s">"impact"</span>: <span class="s">"golden path blocked"</span>
+    }
+  ]
+}</pre><div class="legend"><div><b>CANDIDATE-BOUND</b><span>QA 结论只属于它真正运行过的冻结候选，不能无条件继承给下一版。</span></div><div><b>MULTI-MODAL</b><span>允许截图、replay、日志、runtime trace、自动测试和结构检查共同支持一条 claim。</span></div><div><b>GAPS ARE STATE</b><span>失败不是丢掉一轮；gap 会成为下一轮 Planner 的输入。</span></div><div><b>ARTICLE NOTE</b><span>此页 JSON 是根据论文 Listing 1 与 Fusepoint receipt 压缩的说明性结构，不是原文件逐字复制。</span></div></div></div></div>
+    <div class="foot"><span>论文 Listing 1；Supplementary §A.4；Fusepoint Loop 70 Tester receipt。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="内部 QA 与最终 judge">
+    <div class="top"><b>11 · TWO JUDGES</b><span>过程反馈与最终得分严格隔离</span></div>
+    <h2>内部 QA 能帮助下一轮；外部 hidden verifier 只能在结束后结算</h2>
+    <div class="body"><div class="judges"><div class="judge internal"><span class="badge">INTERNAL QA TESTER</span><h3>生成 E<sub>t</sub></h3><ul><li>输入：PRD、本轮 development document、冻结候选</li><li>可用：运行、replay、截图、日志、runtime trace、公开测试</li><li>输出：verified records、gap records、最终 PASS/FAIL</li><li>结果会进入下一轮 Planner</li></ul></div><div class="wall"><b>║</b><span>不可回流的边界</span></div><div class="judge external"><span class="badge">BENCHMARK VERIFIER</span><h3>生成论文分数</h3><ul><li>GameCraft：binary gate + 四个 rubric dimension</li><li>FrontierSWE：官方 task verifier reward</li><li>ProgramBench：hidden behavioral tests</li><li>隐藏测试、分数和 rationale 不进入 HoH 循环</li></ul></div></div></div>
+    <div class="foot"><span>论文 §3–4、Supplementary §B–D。两层 judge 不能互相替代。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="三套 benchmark 怎样判">
+    <div class="top"><b>12 · EVALUATION</b><span>三套任务，三种外部 verifier</span></div>
+    <h2>先看提交经过什么 judge，再看表格里的数字</h2>
+    <div class="body"><div class="bench"><div><h3>GameCraft-Bench</h3><div class="n">45 tasks</div><p>15 个 game family 各采 3 题。运行失败时 binary gate <code>B=0</code>，Overall 直接归零；可运行后再按四个 rubric dimension 加权。</p><div class="hidden">Agent 看到任务与公开环境；最终 rubric 由 benchmark evaluator 结算。</div></div><div><h3>FrontierSWE</h3><div class="n">15 / 17 tasks</div><p>4 Implementation、9 Performance、2 Research。排除 Tinker API 登录不可用的 <code>frogsgame-rl</code>，以及 driver 版本不足的 <code>modular-stack-wan21</code>。</p><div class="hidden">官方 verifier 给每题 reward；headline 为 15 题无权均值。</div></div><div><h3>ProgramBench</h3><div class="n">count undisclosed</div><p>Agent 根据 executable 与文档重建程序。每题得到 hidden behavioral tests 的通过比例，再对任务做 macro average。</p><div class="hidden">论文未披露完整 task 数、清单、环境和逐题结果，这是复核缺口。</div></div></div></div>
+    <div class="foot"><span>论文 §4.1、Table 1；Supplementary Tables 4–8、metric definitions。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="主结果">
+    <div class="top"><b>13 · MAIN RESULTS</b><span>Vanilla → HoH@3；每个 task-condition 一次有效 run</span></div>
+    <h2>三种 harness/model 的总体指标都提高，但不能当成生成方差估计</h2>
+    <div class="body"><div style="width:100%"><table class="results-table"><thead><tr><th>Harness + model</th><th>GameCraft Overall</th><th>FrontierSWE mean reward</th><th>ProgramBench Avg. Test Pass Rate</th></tr></thead><tbody><tr><td>Codex + GPT-5.5 high</td><td>49.58 → <span class="best">71.52</span></td><td>0.31 → <span class="best">0.54</span></td><td>60.41 → <span class="best">66.50</span></td></tr><tr><td>OpenCode + DeepSeek-V4-Pro</td><td>26.90 → <span class="best">48.98</span></td><td>0.23 → <span class="best">0.31</span></td><td>45.27 → <span class="best">57.56</span></td></tr><tr><td>Pi + MiniMax-M3</td><td>42.16 → <span class="best">58.78</span></td><td>0.26 → <span class="best">0.55</span></td><td>35.83 → <span class="best">52.68</span></td></tr></tbody></table><div class="result-note"><div><b>WHAT IMPROVED</b><span>平均指标在 3 套 benchmark、3 种完整 harness/model 组合上方向一致。</span></div><div><b>WHAT IS NOT REPEATED</b><span>没有同一 task-condition 的多 seed generation；bootstrap 只重采 task。</span></div><div><b>WHAT REMAINS HIDDEN</b><span>ProgramBench 缺 task 数、逐题结果和运行环境，无法复核失败分布。</span></div></div></div></div>
+    <div class="foot"><span>论文 Table 1；Supplementary protocol。数值单位：GameCraft 0–100，FrontierSWE 0–1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="提升来自哪些维度">
+    <div class="top"><b>14 · GAMECRAFT COMPONENTS</b><span>四个 rubric dimension 都提升</span></div>
+    <h2>提升不只来自“项目终于能启动”，内容深度和呈现也一起变化</h2>
+    <div class="body"><div class="image-note"><div><img src="/lib/papers/harness-of-harness/figure-4-gamecraft-components.webp" alt="GameCraft 四个维度结果"><div class="caption">论文 Figure 4：error bars 为跨 45 个 task 的 20,000 次 bootstrap percentile interval。</div></div><div class="callouts"><div class="callout"><b>Core Mechanics</b><span>基础玩法与核心循环。三种 harness/model 都提高。</span></div><div class="callout orange"><b>Content Depth</b><span>更完整的状态、反馈与 progression；权重与 Art and Presentation 同为 0.35。</span></div><div class="callout green"><b>Binary gate 仍先执行</b><span>如果项目无法编译或运行，四个维度不会把 Overall 从 0 救回来。</span></div></div></div></div>
+    <div class="foot"><span>论文 Figure 4；GameCraft Overall = 100 · B · (0.15M + 0.35D + 0.15V + 0.35A)。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="定性产物对比">
+    <div class="top"><b>15 · QUALITATIVE ARTIFACTS</b><span>图片展示结果，不能还原逐步失败轨迹</span></div>
+    <h2>三轮 HoH 更常把核心交互、UI 和场景细节同时补齐</h2>
+    <div class="body"><div class="image-note"><div><img src="/lib/papers/harness-of-harness/figure-6-gamecraft-examples.webp" alt="三款游戏 Vanilla 与 HoH 产物对比"><div class="caption">论文 Figure 6：Momentum Lab、Kitchen Rush、Ant Empire。</div></div><div class="callouts"><div class="callout"><b>Momentum Lab</b><span>Overall <strong>34.05 → 70.61</strong>；从基础平台场景走向更完整的动量玩法。</span></div><div class="callout orange"><b>Kitchen Rush</b><span>Overall <strong>42.62 → 73.38</strong>；订单、厨房状态与管理反馈更完整。</span></div><div class="callout green"><b>Ant Empire</b><span>Overall <strong>65.52 → 87.88</strong>；殖民地状态、资源与进展展示更成熟。</span></div><div class="callout"><b>证据边界</b><span>这些是按结果展示的作者选择案例，不能替代逐题生成方差或随机 case study。</span></div></div></div></div>
+    <div class="foot"><span>论文 Figure 6；分数来自 Supplementary qualitative table。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="不是多跑几遍">
+    <div class="top"><b>16 · BUDGET CONTROL</b><span>同样的 development pass，不同的信息闭环</span></div>
+    <h2>Repeated Vanilla 也会进步，但 HoH 每轮更有效地使用新增 token</h2>
+    <div class="body"><div class="image-note"><div><img src="/lib/papers/harness-of-harness/figure-9-budget-tradeoff.webp" alt="HoH 和 Vanilla Continuation 的预算对比"><div class="caption">论文 Figure 9：累计 score 与 token trajectory。</div></div><div><table class="compare"><thead><tr><th>Protocol</th><th>Pass 1</th><th>Pass 2</th><th>Pass 3</th><th>Tokens@3</th></tr></thead><tbody><tr><td>Vanilla / Continue</td><td>49.58</td><td>54.99</td><td>58.24</td><td>6.33M</td></tr><tr class="highlight"><td>HoH</td><td>59.71</td><td>64.84</td><td>71.52</td><td>8.41M</td></tr></tbody></table><div class="callout green" style="margin-top:16px"><b>同预算附近的关键点</b><span>HoH@2 用 5.67M tokens 得到 64.84，已经超过三轮 Vanilla 的 58.24 / 6.33M。</span></div><div class="callout orange"><b>仍不是严格等 compute</b><span>Matched pass 不等于 matched wall-clock、invocation 数或 token；论文另用 budget efficiency 辅助解释。</span></div></div></div></div>
+    <div class="foot"><span>论文 Table 2、Figure 9；Supplementary Tables 9–10。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="跨轮状态消融">
+    <div class="top"><b>17 · ABLATION</b><span>Plan、evidence、warm-start 分别移除</span></div>
+    <h2>三条跨轮通道都重要；丢掉 artifact 最贵</h2>
+    <div class="body"><div class="image-note"><div><img src="/lib/papers/harness-of-harness/figure-10-ablation.webp" alt="HoH 消融结果"><div class="caption">论文 Figure 10：最终 GameCraft score 与累计 token。</div></div><div class="callouts"><div class="callout green"><b>Full HoH@3 · 71.52 / 8.41M</b><span>规划、QA evidence 与 artifact warm-start 全部保留。</span></div><div class="callout"><b>No Plan Update · 63.39</b><span>Planner 不再根据上轮 evidence 重新选择本轮增量。</span></div><div class="callout orange"><b>No Evidence Feedback · 65.23</b><span>下一轮拿不到独立 QA 的 verified/gap records。</span></div><div class="callout orange"><b>No Warm-Start · 63.67 / 11.12M</b><span>每轮从空 workspace 重建；分数下降，同时 token 反而最多。</span></div></div></div></div>
+    <div class="foot"><span>论文 Table 3、Figure 10；Supplementary ablation protocol。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="FrontierSWE 的长期轨迹">
+    <div class="top"><b>18 · FRONTIERSWE</b><span>持续迭代能提高部分任务，不保证跨过每个 verifier</span></div>
+    <h2>Dominance 上升与长期零分可以同时存在</h2>
+    <div class="body"><div class="two"><div><div class="paper-figure tight"><img src="/lib/papers/harness-of-harness/figure-5-frontierswe-dominance.webp" alt="FrontierSWE 十轮 Dominance"></div><div class="caption">Figure 5：Codex 从 Vanilla 27.33% 到 HoH@10 72.67%，HoH@9 为 76.00%。</div></div><div><div class="paper-figure tight"><img src="/lib/papers/harness-of-harness/figure-8-frontierswe-categories.webp" alt="FrontierSWE 分类结果"></div><div class="caption">Figure 8：4 Implementation、9 Performance、2 Research tasks。</div></div></div></div>
+    <div class="foot"><span>论文 Figures 5、8。Codex 的 Cranelift、Dependent Type Checker、FFmpeg、Inference System 到 HoH@3 仍为 0。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="调用成本与负面结果">
+    <div class="top"><b>19 · COST / NEGATIVE RESULTS</b><span>provider token accounting 不可跨 harness 直接比较</span></div>
+    <h2>总体平均上涨，不代表每个任务、每个阶段都变好</h2>
+    <div class="body"><div class="image-note"><div><img src="/lib/papers/harness-of-harness/figure-11-token-distribution.webp" alt="三种 harness 调用 token 分布"><div class="caption">论文 Figure 11：每次 coding-harness invocation 的 token 分布。</div></div><div class="callouts"><div class="callout orange"><b>单题回退</b><span>Pi 的 Spire Descent <strong>26.61 → 10.96</strong>，Pipe Crisis <strong>53.26 → 37.65</strong>；整体单调不等于 task-level 单调。</span></div><div class="callout"><b>生成方差未知</b><span>每个 task-condition 一次有效 run，没有共同生成 seed，也没有同题重复采样。</span></div><div class="callout"><b>不同 provider 不同记账</b><span>cache 与 input/output token 的统计口径不同，Figure 11 适合看同一 harness/model 内部，不适合横向算单价。</span></div></div></div></div>
+    <div class="foot"><span>论文 Figure 11；Supplementary complete task scores and token accounting。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Loop 70：任务与实现">
+    <div class="top"><b>20 · REAL RECEIPT / LOOP 70</b><span>Fusepoint official repository · revision 55b442fc</span></div>
+    <h2>Developer 完成了代码任务，不代表用户路径已经被验证</h2>
+    <div class="body"><div class="case-grid"><div class="brief"><h3>Planner 要修什么？</h3><p>关闭 4 个 <code>combat_readability</code> issue，同时保留：</p><ul><li>clean boot</li><li>A / B / C 三档 roster：3 / 5 / 10</li><li>mouse-look、武器组件与终局逻辑</li></ul><div class="statusline"><span>Loop 70</span><span>4 issues</span><span>candidate-bound</span></div></div><div class="trace"><div><b>PLAN</b><p>选择 combat readability 作为 bounded increment，并把现有玩法列为 preservation constraints。</p></div><div><b>DEVELOP</b><p>Developer receipt 标为 PASS；3 tasks，修改 6 个 paths。</p></div><div class="good"><b>LOCAL SUCCESS</b><p>clean boot 通过；rifle 不再错误绑定 <code>Pistol_*</code> 组件。</p></div><div class="bad"><b>UNVERIFIED PATH</b><p>这些改动还没有证明 encounter 能完整进入 aim / fire / reload / hit / death。</p></div></div></div></div>
+    <div class="foot"><span>Fusepoint Loop 70 Planner / Developer receipts；官方仓库 revision 55b442fc。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Loop 70：QA 为什么判失败">
+    <div class="top"><b>21 · REAL RECEIPT / VERDICT</b><span>setup → action → observation → FAIL</span></div>
+    <h2>QA 运行的是完整路径：局部修复通过，golden path 仍被阻断</h2>
+    <div class="body"><div class="image-note"><div><img src="/lib/papers/harness-of-harness/figure-1-fusepoint-trajectory.webp" alt="Fusepoint 开发轨迹"><div class="caption">Figure 1：论文截点为 Loop 70；81 issues 中关闭 65、未解决 16，17 个曾关闭 issue 因回归重开。</div></div><div class="callouts"><div class="callout green"><b>Setup / action</b><span>QA 在冻结候选上 clean boot，进入 encounter，并 replay 返回主菜单再尝试重新开局。</span></div><div class="callout orange"><b>Observation 1</b><span>敌人只出现 idle / walk；没有 aim、fire、reload、hit、death，combat golden path 未成立。</span></div><div class="callout orange"><b>Observation 2</b><span>Replay 后 DeployButton 无法再次启动流程；llvmpipe sample 只有 8 FPS。</span></div><div class="callout" style="border-color:var(--red)"><b class="red">Verdict · FAIL / BLOCKED</b><span>Developer receipt 的 PASS 只说明实现任务结束；独立 QA 的失败证据才决定下一轮状态。</span></div></div></div></div>
+    <div class="foot"><span>Fusepoint Loop 70 Tester receipt。当前仓库已到 Loop 96，不应与论文截点混淆。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结果图谱与最终判断">
+    <div class="top"><b>22 · QUALITATIVE ATLAS / TAKEAWAYS</b><span>全部论文 Figure 1–16 已覆盖</span></div>
+    <h2>最值得复用的是 candidate-bound evidence；最需要补的是重复实验与 QA 校准</h2>
+    <div class="body"><div class="two wide-left"><div class="atlas"><figure class="wide"><img src="/lib/papers/harness-of-harness/figure-7-gamecraft-groups.webp" alt="GameCraft reporting groups"><figcaption>Figure 7 · five reporting groups</figcaption></figure><figure><img src="/lib/papers/harness-of-harness/figure-12-action.webp" alt="Action game examples"><figcaption>Figure 12 · Action</figcaption></figure><figure><img src="/lib/papers/harness-of-harness/figure-13-timing.webp" alt="Timing game examples"><figcaption>Figure 13 · Timing</figcaption></figure><figure><img src="/lib/papers/harness-of-harness/figure-14-strategy.webp" alt="Strategy game examples"><figcaption>Figure 14 · Strategy</figcaption></figure><figure><img src="/lib/papers/harness-of-harness/figure-15-simulation.webp" alt="Simulation game examples"><figcaption>Figure 15 · Simulation</figcaption></figure><figure class="wide"><img src="/lib/papers/harness-of-harness/figure-16-adventure.webp" alt="Adventure game examples"><figcaption>Figure 16 · Adventure</figcaption></figure></div><div class="limits"><div class="limit"><b>PROVEN</b><strong>完整 HoH 协议有效</strong><span>三种 harness/model、三套 benchmark 的总体指标均高于 Vanilla；matched passes 与三项消融支持跨轮状态有用。</span></div><div class="limit"><b>NOT PROVEN</b><strong>没有同题生成方差</strong><span>一次有效 run 无法回答稳定性；bootstrap 只重采任务。</span></div><div class="limit"><b>OPEN PROBLEM</b><strong>QA 还未校准</strong><span>需要测 false positive / negative、停止条件、rollback 和 fixed-budget 分配。</span></div><div class="limit"><b>AUTHOR INTEREST</b><strong>9.5 / 10</strong><span>对 Claude Code、Codex 式完整 harness 的多日自治开发非常直接。</span></div></div></div></div>
+    <div class="foot"><span><a href="https://arxiv.org/abs/2609.01481">论文</a> · <a href="https://github.com/Flesymeb/HarnessOfHarness">HoH 代码</a> · <a href="https://github.com/Flesymeb/fusepoint">Fusepoint</a></span><span class="pg"></span></div>
+  </section>
+</main>
+
+<div id="controls" aria-label="幻灯片控制">
+  <a id="return-to-article" href="/posts/论文解读/harness-of-harness.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label"> 返回文章</span></a>
+  <button id="prev" type="button" aria-label="上一页">←</button>
+  <button id="toc" type="button" aria-label="打开目录">☰</button>
+  <span class="current-title" id="current-title">核心结论</span>
+  <span class="counter" id="counter">1 / 22</span>
+  <button id="next" type="button" aria-label="下一页">→</button>
+  <button id="full" type="button" aria-label="全屏">⛶ <span class="utility-label">全屏</span></button>
+</div>
+<div id="overview-panel" hidden><div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title"><div class="overview-head"><strong id="overview-title">22 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div><div class="overview-grid" id="overview-grid"></div></div></div>
+<div id="progress"></div>
+<script>
+(() => {
+  const slides=[...document.querySelectorAll('.slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
+  if(window.self===window.top)returnLink.hidden=false;
+  let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · Harness-of-Harness`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+  function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
+  function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
+  async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
+  function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
+  slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
+  show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+</body>
+</html>

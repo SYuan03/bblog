@@ -503,6 +503,13 @@
       (active ? focusExit : primaryFocusToggle)?.focus({ preventScroll: true });
     });
   });
+  addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !body.classList.contains('focus-mode')) return;
+    if (document.fullscreenElement || document.querySelector('dialog[open]')) return;
+    event.preventDefault();
+    setFocusMode(false);
+    primaryFocusToggle?.focus({ preventScroll: true });
+  });
 
   document.querySelector('[data-share]')?.addEventListener('click', async (event) => {
     const button = event.currentTarget;

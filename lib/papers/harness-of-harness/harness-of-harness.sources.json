@@ -1,0 +1,1635 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Harness-of-Harness: Multi-Day Autonomous Software Development with Continual Improvement",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper",
+      "hoh-repo",
+      "fusepoint-repo"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/051-harness-of-harness多日自主软件开发.md",
+    "deck": "lib/decks/harness-of-harness-visual-guide.html",
+    "embed_src": "/lib/decks/harness-of-harness-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Harness-of-Harness: Multi-Day Autonomous Software Development with Continual Improvement",
+      "url": "https://arxiv.org/abs/2609.01481",
+      "revision": "v1, 2026-09-01",
+      "used_for": [
+        "problem",
+        "related-work",
+        "method",
+        "experiments",
+        "results",
+        "limitations",
+        "figures",
+        "tables",
+        "appendices",
+        "license"
+      ]
+    },
+    {
+      "id": "hoh-repo",
+      "kind": "code",
+      "title": "Flesymeb/HarnessOfHarness",
+      "url": "https://github.com/Flesymeb/HarnessOfHarness",
+      "revision": "ae7cc6fbea312ab50657f6b6036b04974846e151",
+      "used_for": [
+        "orchestration",
+        "role-permissions",
+        "runtime-receipts",
+        "implementation",
+        "license"
+      ]
+    },
+    {
+      "id": "fusepoint-repo",
+      "kind": "data",
+      "title": "Flesymeb/fusepoint",
+      "url": "https://github.com/Flesymeb/fusepoint",
+      "revision": "55b442fc10c3851505bbf29db2a6c1489edd9b5e",
+      "used_for": [
+        "multi-day-case",
+        "loop-70-planner-receipt",
+        "loop-70-developer-receipt",
+        "loop-70-tester-receipt",
+        "issue-trajectory"
+      ]
+    },
+    {
+      "id": "gamecraft-paper",
+      "kind": "paper",
+      "title": "GameCraft-Bench: Can Agents Build Playable Games End-to-End in a Real Game Engine?",
+      "url": "https://arxiv.org/abs/2606.17861",
+      "revision": "arXiv:2606.17861",
+      "used_for": [
+        "benchmark-provenance",
+        "metric-definition"
+      ]
+    },
+    {
+      "id": "frontierswe",
+      "kind": "benchmark",
+      "title": "FrontierSWE",
+      "url": "https://frontierswe.com/blog",
+      "revision": "Protocol referenced by Harness-of-Harness v1",
+      "used_for": [
+        "benchmark-provenance",
+        "task-verifiers"
+      ]
+    },
+    {
+      "id": "programbench-paper",
+      "kind": "paper",
+      "title": "ProgramBench: Can Language Models Rebuild Programs From Scratch?",
+      "url": "https://arxiv.org/abs/2605.03546",
+      "revision": "arXiv:2605.03546",
+      "used_for": [
+        "benchmark-provenance",
+        "hidden-behavioral-tests"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 53,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 53
+      }
+    ],
+    "source_visuals_expected": 43,
+    "visual_inventory_complete": true,
+    "inventory_note": "The rendered v1 PDF contains Figures 1-16, Tables 1-25, Algorithm 1, and Listing 1. Every numbered item is inventoried. All 16 paper figures are retained with CC BY 4.0 credit; tables, Algorithm 1, and Listing 1 are either redrawn/summarized in HTML or explicitly omitted."
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "Q1. 为什么现有 coding harness 很难连续开发几天？"
+    },
+    {
+      "role": "related-work",
+      "locator": "Q2. HoH 和多 Agent、长上下文、harness 自优化有什么区别？"
+    },
+    {
+      "role": "method",
+      "locator": "Q3. 一轮 HoH 到底怎样运行？"
+    },
+    {
+      "role": "experiments",
+      "locator": "Q4. 实验怎么评，结果和真实 case 说明什么？"
+    },
+    {
+      "role": "future-work",
+      "locator": "Q5. 对 Claude Code、Codex harness 研究有什么启发？"
+    },
+    {
+      "role": "summary",
+      "locator": "Q6. 这篇论文目前能证明什么，不能证明什么？"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Abstract; Sections 1 and 3; Figure 3; Algorithm 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "HoH 固定模型和底层 harness，改变的是外层开发协议。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "hoh-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2"
+        },
+        {
+          "source_id": "hoh-repo",
+          "locator": "README and hoh-lite runtime at ae7cc6f"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "方法落在候选冻结、权限隔离和证据归属上。"
+        }
+      ]
+    },
+    {
+      "id": "state-and-role-contract",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "hoh-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3; Algorithm 1; Supplementary Tables 4-5"
+        },
+        {
+          "source_id": "hoh-repo",
+          "locator": "RoleBinding and runtime receipt implementation at ae7cc6f"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Planner 或 Tester 如果拿到读写 workspace，初始化就会报错。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "gamecraft-paper",
+        "frontierswe",
+        "programbench-paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1; Supplementary Tables 9-12"
+        },
+        {
+          "source_id": "gamecraft-paper",
+          "locator": "Benchmark task families and Overall metric"
+        },
+        {
+          "source_id": "frontierswe",
+          "locator": "Official task taxonomy and verifiers"
+        },
+        {
+          "source_id": "programbench-paper",
+          "locator": "Clean-room program reconstruction protocol"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "从 15 个 game family 各采 3 题，seed 20260707。"
+        },
+        {
+          "artifact": "article",
+          "quote": "frogsgame-rl"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "hoh-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3; Section 4.1; Supplementary §A-B"
+        },
+        {
+          "source_id": "hoh-repo",
+          "locator": "role prompt and runtime policy at ae7cc6f"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "外部隐藏测试、分数和 rubric 不进入 HoH 循环。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1; Supplementary metric definitions, Equations 6-13"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "GameCraft Overall = 100 · B · (0.15M + 0.35D + 0.15V + 0.35A)"
+        },
+        {
+          "artifact": "article",
+          "quote": "ProgramBench 的 Pass Rate† 不是 solved-task rate"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "hoh-repo",
+        "fusepoint-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3; Listing 1; Section 5"
+        },
+        {
+          "source_id": "hoh-repo",
+          "locator": "Runtime receipts and isolated QA at ae7cc6f"
+        },
+        {
+          "source_id": "fusepoint-repo",
+          "locator": "Loop 70 Planner, Developer, and Tester receipts at 55b442fc"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Tester 先验证 clean boot"
+        },
+        {
+          "artifact": "article",
+          "quote": "这个 PASS 只表示开发阶段结束"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1; Figures 4-8; Supplementary Tables 14-19"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "49.58 → 71.52"
+        },
+        {
+          "artifact": "article",
+          "quote": "Pi + MiniMax-M3"
+        }
+      ]
+    },
+    {
+      "id": "budget-control",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.3; Table 2; Figure 9; Supplementary Tables 20-21"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "HoH@2 用 5.67M tokens 得到 64.84，已经超过三轮 Vanilla Continuation 的 58.24 和 6.33M。"
+        }
+      ]
+    },
+    {
+      "id": "ablation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.3; Table 3; Figure 10; Supplementary Tables 22-23"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "去掉 Warm-Start 后是 63.67。后者还把 token 从 8.41M 推到 11.12M"
+        }
+      ]
+    },
+    {
+      "id": "fusepoint-case",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "fusepoint-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 1; Section 5"
+        },
+        {
+          "source_id": "fusepoint-repo",
+          "locator": "Loop 70 receipts and README at 55b442fc"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "advance 只产生 idle/walk sample"
+        },
+        {
+          "artifact": "article",
+          "quote": "llvmpipe sample 只有 8 FPS"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "hoh-repo",
+        "fusepoint-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Supplementary run protocol, task tables, PXI definition, artifact-release note"
+        },
+        {
+          "source_id": "hoh-repo",
+          "locator": "Public hoh-lite package at ae7cc6f"
+        },
+        {
+          "source_id": "fusepoint-repo",
+          "locator": "Repository state at 55b442fc"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每个 task-condition 只有一次有效 run"
+        },
+        {
+          "artifact": "article",
+          "quote": "ProgramBench 披露不足"
+        },
+        {
+          "artifact": "article",
+          "quote": "附录定义 PXI scoring，却没有出现它所说的 main-paper PXI result table"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 1, Figure 1",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents fusepoint 70-loop development and issue trajectory.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 1"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 1"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 1（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-1-fusepoint-trajectory.webp"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents human-in-the-loop and autonomous software-development modes.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 2"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 2（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-2-development-modes.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 3",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents harness-of-harness framework and cross-loop state.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 3"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 3"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 3（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-3-hoh-framework.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 12, Figure 4",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents gamecraft-bench component scores.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 4"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 4"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 4（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-4-gamecraft-components.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 12, Figure 5",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents frontierswe dominance through ten loops.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 5"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 5（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-5-frontierswe-dominance.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p. 13, Figure 6",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents qualitative gamecraft artifact comparison.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 6"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 6"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 6（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-6-gamecraft-examples.webp"
+      ]
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p. 39, Figure 7",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents gamecraft reporting-group results.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 7"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 7"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 7（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-7-gamecraft-groups.webp"
+      ]
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p. 43, Figure 8",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents frontierswe category results.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 8"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 8"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 8（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-8-frontierswe-categories.webp"
+      ]
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p. 44, Figure 9",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents score-token trajectories for hoh and vanilla continuation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 9"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 9"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 9（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-9-budget-tradeoff.webp"
+      ]
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p. 47, Figure 10",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents cross-iteration ablation results.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 10"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 10"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 10（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-10-ablation.webp"
+      ]
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "p. 49, Figure 11",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents per-invocation coding-harness token distributions.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 11"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 11"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 11（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-11-token-distribution.webp"
+      ]
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "p. 50, Figure 12",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents action-game qualitative atlas.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 12"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 12"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 12（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-12-action.webp"
+      ]
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "p. 50, Figure 13",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents timing-game qualitative atlas.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 13"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 13"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 13（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-13-timing.webp"
+      ]
+    },
+    {
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "p. 51, Figure 14",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents strategy-game qualitative atlas.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 14"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 14"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 14（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-14-strategy.webp"
+      ]
+    },
+    {
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "p. 51, Figure 15",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents simulation-game qualitative atlas.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 15"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 15"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 15（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-15-simulation.webp"
+      ]
+    },
+    {
+      "id": "figure-16",
+      "kind": "figure",
+      "label": "Figure 16",
+      "source_id": "paper",
+      "source_locator": "p. 52, Figure 16",
+      "status": "reused",
+      "rationale": "The original visual is retained because it directly presents adventure-game qualitative atlas.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 16"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 16"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record for v1 identifies the paper as CC BY 4.0; the article and deck credit each retained figure.",
+      "credit": "原论文 Figure 16（CC BY 4.0）",
+      "asset_paths": [
+        "/lib/papers/harness-of-harness/figure-16-adventure.webp"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 11, Table 1",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from main results across gamecraft-bench, frontierswe, and programbench. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "49.58 →"
+        },
+        {
+          "artifact": "deck",
+          "locator": "49.58 →"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 1 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 13, Table 2",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from pass-controlled hoh versus vanilla continuation comparison. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Vanilla / Continuation"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Repeated Vanilla"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 2 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 14, Table 3",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from gamecraft-bench cross-iteration ablation aggregates. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "去掉 Plan Update"
+        },
+        {
+          "artifact": "deck",
+          "locator": "No Plan Update"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 3 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 22, Table 4",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from role inputs, invocation contracts, and materialized outputs. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "PROJECT PLANNER"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Project Planner"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 4 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 26, Table 5",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from development and inspection capabilities. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Planner 或 Tester 如果拿到读写 workspace"
+        },
+        {
+          "artifact": "deck",
+          "locator": "RUNTIME ENFORCEMENT"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 5 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 30, Table 6",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from harness-model configurations and versions. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Codex + GPT-5.5 high"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Codex + GPT-5.5 high"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 6 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p. 30, Table 7",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from run configuration and repetition protocol. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "每个 task-condition 只有 1 次有效 run"
+        },
+        {
+          "artifact": "deck",
+          "locator": "每个 task-condition 一次有效 run"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 7 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 31, Table 8",
+      "status": "omitted",
+      "rationale": "Computing environments for artifact development and evaluation. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 31, Table 9",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from composition of evaluated benchmark subsets. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "GameCraft-Bench · 45 tasks"
+        },
+        {
+          "artifact": "deck",
+          "locator": "45 tasks"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 9 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "p. 32, Table 10",
+      "status": "omitted",
+      "rationale": "GameCraft task catalog and reporting-group mapping. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "p. 33, Table 11",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from frontierswe task categories and construction scope. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "4 个 Implementation、9 个 Performance、2 个 Research"
+        },
+        {
+          "artifact": "deck",
+          "locator": "4 Implementation、9 Performance、2 Research"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 11 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-12",
+      "kind": "table",
+      "label": "Table 12",
+      "source_id": "paper",
+      "source_locator": "p. 34, Table 12",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from frontierswe tasks excluded from the evaluated subset. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "frogsgame-rl"
+        },
+        {
+          "artifact": "deck",
+          "locator": "frogsgame-rl"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 12 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-13",
+      "kind": "table",
+      "label": "Table 13",
+      "source_id": "paper",
+      "source_locator": "p. 35, Table 13",
+      "status": "redrawn",
+      "rationale": "The relevant protocol or aggregate values from information channels retained by ablation variants. are reconstructed in reader-facing HTML.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "去掉 Evidence Feedback"
+        },
+        {
+          "artifact": "deck",
+          "locator": "No Evidence Feedback"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Table 13 重绘或整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-14",
+      "kind": "table",
+      "label": "Table 14",
+      "source_id": "paper",
+      "source_locator": "p. 39, Table 14",
+      "status": "omitted",
+      "rationale": "Complete GameCraft task scores for Codex. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-15",
+      "kind": "table",
+      "label": "Table 15",
+      "source_id": "paper",
+      "source_locator": "p. 40, Table 15",
+      "status": "omitted",
+      "rationale": "Complete GameCraft task scores for OpenCode. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-16",
+      "kind": "table",
+      "label": "Table 16",
+      "source_id": "paper",
+      "source_locator": "p. 41, Table 16",
+      "status": "omitted",
+      "rationale": "Complete GameCraft task scores for Pi. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-17",
+      "kind": "table",
+      "label": "Table 17",
+      "source_id": "paper",
+      "source_locator": "p. 43, Table 17",
+      "status": "omitted",
+      "rationale": "Complete FrontierSWE task rewards for Codex. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-18",
+      "kind": "table",
+      "label": "Table 18",
+      "source_id": "paper",
+      "source_locator": "p. 43, Table 18",
+      "status": "omitted",
+      "rationale": "Complete FrontierSWE task rewards for OpenCode. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-19",
+      "kind": "table",
+      "label": "Table 19",
+      "source_id": "paper",
+      "source_locator": "p. 44, Table 19",
+      "status": "omitted",
+      "rationale": "Complete FrontierSWE task rewards for Pi. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-20",
+      "kind": "table",
+      "label": "Table 20",
+      "source_id": "paper",
+      "source_locator": "p. 45, Table 20",
+      "status": "omitted",
+      "rationale": "Task-level GameCraft scores for the budget-controlled comparison. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-21",
+      "kind": "table",
+      "label": "Table 21",
+      "source_id": "paper",
+      "source_locator": "p. 46, Table 21",
+      "status": "omitted",
+      "rationale": "Task-level cumulative token usage for the budget-controlled comparison. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-22",
+      "kind": "table",
+      "label": "Table 22",
+      "source_id": "paper",
+      "source_locator": "p. 47, Table 22",
+      "status": "omitted",
+      "rationale": "Task-level GameCraft ablation scores. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-23",
+      "kind": "table",
+      "label": "Table 23",
+      "source_id": "paper",
+      "source_locator": "p. 48, Table 23",
+      "status": "omitted",
+      "rationale": "Mean cumulative coding-harness tokens for ablation variants. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-24",
+      "kind": "table",
+      "label": "Table 24",
+      "source_id": "paper",
+      "source_locator": "p. 49, Table 24",
+      "status": "omitted",
+      "rationale": "Aggregate FrontierSWE resource usage. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-25",
+      "kind": "table",
+      "label": "Table 25",
+      "source_id": "paper",
+      "source_locator": "p. 52, Table 25",
+      "status": "omitted",
+      "rationale": "Scores for the 15 qualitative GameCraft examples. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "algorithm-1",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper",
+      "source_locator": "p. 9, Algorithm 1",
+      "status": "redrawn",
+      "rationale": "The six-stage plan-preserve-develop-test-freeze-assess loop is redrawn as a horizontal process.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "论文的 Algorithm 1 可以压缩成六步"
+        },
+        {
+          "artifact": "deck",
+          "locator": "08 · ALGORITHM 1"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Algorithm 1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "listing-1",
+      "kind": "algorithm",
+      "label": "Listing 1",
+      "source_id": "paper",
+      "source_locator": "pp. 27-28, Listing 1",
+      "status": "redrawn",
+      "rationale": "The normalized evidence report is shortened to show the claim-record-status contract without reproducing the full listing.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "这段是论文 Listing 1 的缩减摘录"
+        },
+        {
+          "artifact": "deck",
+          "locator": "论文 Listing 1"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据原论文 Listing 1 缩减整理",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/harness-of-harness/figure-1-fusepoint-trajectory.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p. 1, Figure 1",
+      "credit": "原论文 Figure 1（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-2-development-modes.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2",
+      "credit": "原论文 Figure 2（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-3-hoh-framework.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 3",
+      "credit": "原论文 Figure 3（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-4-gamecraft-components.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p. 12, Figure 4",
+      "credit": "原论文 Figure 4（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-5-frontierswe-dominance.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p. 12, Figure 5",
+      "credit": "原论文 Figure 5（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-6-gamecraft-examples.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p. 13, Figure 6",
+      "credit": "原论文 Figure 6（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-7-gamecraft-groups.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "p. 39, Figure 7",
+      "credit": "原论文 Figure 7（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-8-frontierswe-categories.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-8",
+      "source_id": "paper",
+      "source_locator": "p. 43, Figure 8",
+      "credit": "原论文 Figure 8（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-9-budget-tradeoff.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "p. 44, Figure 9",
+      "credit": "原论文 Figure 9（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-10-ablation.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-10",
+      "source_id": "paper",
+      "source_locator": "p. 47, Figure 10",
+      "credit": "原论文 Figure 10（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-11-token-distribution.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "p. 49, Figure 11",
+      "credit": "原论文 Figure 11（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-12-action.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-12",
+      "source_id": "paper",
+      "source_locator": "p. 50, Figure 12",
+      "credit": "原论文 Figure 12（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-13-timing.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-13",
+      "source_id": "paper",
+      "source_locator": "p. 50, Figure 13",
+      "credit": "原论文 Figure 13（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-14-strategy.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-14",
+      "source_id": "paper",
+      "source_locator": "p. 51, Figure 14",
+      "credit": "原论文 Figure 14（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-15-simulation.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-15",
+      "source_id": "paper",
+      "source_locator": "p. 51, Figure 15",
+      "credit": "原论文 Figure 15（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/harness-of-harness/figure-16-adventure.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-16",
+      "source_id": "paper",
+      "source_locator": "p. 52, Figure 16",
+      "credit": "原论文 Figure 16（CC BY 4.0）",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record for Harness-of-Harness v1 identifies the work as CC BY 4.0.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.76,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_qa_note": "Fresh build checked on 2026-09-29 at 1600x1000, 1512x982, and 390x844. Article, embedded deck, and standalone deck have no page-level horizontal overflow; all 16 article figures load and remain inside the reading column. Opening, slides 9/13, and final slide were visually inspected. Buttons, Arrow/Home/End navigation, URL hashes, fullscreen entry, Escape exit, standalone return link, article focus-mode entry, and both button/Escape focus-mode exit passed. Article and standalone-deck consoles reported zero errors and warnings."
+  }
+}
