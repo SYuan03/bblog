@@ -1,5 +1,5 @@
 ---
-title: "LongHorizon-Harness：把长任务变成可审计的状态推进"
+title: "LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks"
 permalink: "/posts/论文解读/longhorizon-harness.html"
 date: "2026-09-28T22:30:00+08:00"
 updated: "2026-09-28T22:30:00+08:00"

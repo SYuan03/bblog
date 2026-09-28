@@ -1,5 +1,5 @@
 ---
-title: "Harness-Zero：把 Agent Harness 的能力蒸馏进模型"
+title: "Harness-Zero: Harness Distillation via Agent-as-Harness"
 permalink: "/posts/论文解读/harness-zero.html"
 date: "2026-09-28T20:30:00+08:00"
 updated: "2026-09-28T20:30:00+08:00"

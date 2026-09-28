@@ -1,5 +1,5 @@
 ---
-title: "GameLogicBench：如何逐帧验证 Coding Agent 写对了游戏逻辑"
+title: "GameLogicBench: Evaluating Coding Agents on Runtime Game Logic with Tick-Level State Assertions"
 permalink: "/posts/论文解读/gamelogicbench.html"
 date: "2026-09-22T13:30:00+08:00"
 updated: "2026-09-22T18:07:17+08:00"

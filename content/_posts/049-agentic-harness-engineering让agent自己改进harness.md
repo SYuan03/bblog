@@ -1,5 +1,5 @@
 ---
-title: "Agentic Harness Engineering：让 Agent 自己改进 Harness"
+title: "Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses"
 permalink: "/posts/论文解读/agentic-harness-engineering.html"
 date: "2026-09-28T21:30:00+08:00"
 updated: "2026-09-28T21:30:00+08:00"
