@@ -1,0 +1,219 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Learning Generalizable Behaviors for Terminal Agents",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper", "project-site", "project-repo", "tmax-dataset"]
+  },
+  "artifacts": {
+    "article": "content/_posts/056-learning-generalizable-behaviors-for-terminal-agents.md",
+    "deck": "lib/decks/river-terminal-agents-visual-guide.html",
+    "embed_src": "/lib/decks/river-terminal-agents-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Learning Generalizable Behaviors for Terminal Agents",
+      "url": "https://arxiv.org/abs/2608.22631",
+      "revision": "v3, 2026-09-24",
+      "used_for": ["problem", "related-work", "method", "audit", "cases", "training", "results", "limitations", "figures", "tables", "license"]
+    },
+    {
+      "id": "project-site",
+      "kind": "project-page",
+      "title": "Learning Generalizable Behaviors for Terminal Agents (RIVER)",
+      "url": "https://terminal-river.github.io/",
+      "revision": "checked 2026-09-29",
+      "used_for": ["project-summary", "audit-cases", "artifact-availability"]
+    },
+    {
+      "id": "project-repo",
+      "kind": "code",
+      "title": "Terminal-River/terminal-river.github.io",
+      "url": "https://github.com/Terminal-River/terminal-river.github.io",
+      "revision": "6da2749578df2779b8a7e134ccb8d063d84693aa, checked 2026-09-29",
+      "used_for": ["project-page-source", "case-files", "artifact-availability", "license-check"]
+    },
+    {
+      "id": "tmax-dataset",
+      "kind": "dataset",
+      "title": "allenai/TMax-15K",
+      "url": "https://huggingface.co/datasets/allenai/TMax-15K",
+      "revision": "e3ded940596cc611c9815684ba51a7e8ee0cffc9, checked 2026-09-29",
+      "used_for": ["task-provenance", "source-environment-format", "license"]
+    },
+    {
+      "id": "endless-terminals",
+      "kind": "paper",
+      "title": "Endless Terminals: Scaling RL Environments for Terminal Agents",
+      "url": "https://arxiv.org/abs/2601.16443",
+      "revision": "cited by the primary paper",
+      "used_for": ["related-work"]
+    },
+    {
+      "id": "tmax-paper",
+      "kind": "paper",
+      "title": "TMax: A Simple Recipe for Terminal Agents",
+      "url": "https://arxiv.org/abs/2606.23321",
+      "revision": "cited by the primary paper",
+      "used_for": ["related-work", "source-environment-provenance"]
+    },
+    {
+      "id": "hardtests",
+      "kind": "paper",
+      "title": "HardTests: Synthesizing High-Quality Test Cases for LLM Coding",
+      "url": "https://arxiv.org/abs/2505.24098",
+      "revision": "cited by the primary paper",
+      "used_for": ["related-work"]
+    },
+    {
+      "id": "evolvecoder",
+      "kind": "paper",
+      "title": "EvolveCoder: Evolving Test Cases via Adversarial Verification for Code Reinforcement Learning",
+      "url": "https://arxiv.org/abs/2603.12698",
+      "revision": "cited by the primary paper",
+      "used_for": ["related-work"]
+    },
+    {
+      "id": "compositional-generalization",
+      "kind": "paper",
+      "title": "From Reasoning Traces to Reusable Modules: Understanding Compositional Generalization in Language Model Reasoning",
+      "url": "https://arxiv.org/abs/2606.18089",
+      "revision": "cited by the primary paper",
+      "used_for": ["related-work", "mechanism"]
+    },
+    {
+      "id": "spurious-rewards",
+      "kind": "paper",
+      "title": "Spurious Rewards: Rethinking Training Signals in RLVR",
+      "url": "https://arxiv.org/abs/2506.10947",
+      "revision": "cited by the primary paper",
+      "used_for": ["related-work", "reward-misspecification"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 36,
+    "rendered_page_ranges": [{"start": 1, "end": 36}],
+    "source_visuals_expected": 21,
+    "visual_inventory_complete": true,
+    "inventory_note": "The PDF contains Figures 1-11, Tables 1-9 and Algorithm 1. All 36 rendered pages and the extracted text were checked. The arXiv record uses the non-exclusive distribution license and the project-page repository has no declared license, so no original pixels are reused. Six evidence-dense visuals are redrawn; the remaining source visuals are represented in prose or intentionally omitted below."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么 terminal-agent RL 不能只靠扩大环境数量？"},
+    {"role": "related-work", "locator": "Q2. 它与 Endless-Terminals、TMax 和“更强测试”路线的边界在哪里？"},
+    {"role": "method", "locator": "Q3. 14,399 个环境怎样变成 3.5K，judge 又怎样产生一条 reward？"},
+    {"role": "experiments", "locator": "Q4. 实验结果支持哪些结论？"},
+    {"role": "future-work", "locator": "Q5. 对 Claude Code、Codex 这类完整 harness，哪些结论最值得复用？"},
+    {"role": "summary", "locator": "Q6. 最后怎样评价这篇论文？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1, 3 and 5"}],
+      "evidence": [{"artifact": "article", "quote": "Policy 会沿着 verifier 的实际判定边界学习，即使这条边界偏离了 instruction"}]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "tmax-paper", "tmax-dataset"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.2; Appendix B.2 and Figure 10"}, {"source_id": "tmax-dataset", "locator": "dataset card and tasks.zip at revision e3ded94"}],
+      "evidence": [{"artifact": "article", "quote": "RIVER 从 TMax 的 14,399 个训练环境开始"}]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "project-site"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix C.1-C.3 and Table 7"}, {"source_id": "project-site", "locator": "Problem and Case Files sections"}],
+      "evidence": [{"artifact": "article", "quote": "14,399 个环境没有经过人工逐条标注"}, {"artifact": "article", "quote": "Claude Opus 4.8 在看不到 GPT 标签的情况下复判 120 个环境"}]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "project-site"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.2; Appendix C.1 and C.4"}, {"source_id": "project-site", "locator": "False-positive case files"}],
+      "evidence": [{"artifact": "article", "quote": "Policy 能看见 instruction、command history、terminal observations，以及容器权限允许读取的文件"}, {"artifact": "article", "quote": "ground truth、reference implementation 和 hidden tests 应当只对 verifier 可见"}]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Equation 1; Section 3.2; Appendix A.2-A.3 and Tables 5-6"}],
+      "evidence": [{"artifact": "article", "quote": "如果本 turn 的 command 和 observation 都与更早 turn 的 Jaccard similarity 大于 0.8"}, {"artifact": "article", "quote": "主表的 Average 是四个 benchmark 的不加权平均"}]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "unknown",
+      "source_ids": ["paper", "project-site", "project-repo", "tmax-dataset"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix C.4, tasks 003722 and 006064"}, {"source_id": "project-site", "locator": "Case Files section"}, {"source_id": "project-repo", "locator": "build_inputs/cases.json at revision 6da2749; no training or checker implementation"}],
+      "evidence": [{"artifact": "article", "quote": "未把缺失的 checker 代码补成“官方实现”"}, {"artifact": "article", "quote": "`task_003722` 要从 `broadcast.mp4` 中 OCR 新闻 ticker"}, {"artifact": "article", "quote": "`task_006064` 要求 Rust 程序保留 `a-z` 与空格"}]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Table 1; Figure 4; Table 2; Figures 6-8"}],
+      "evidence": [{"artifact": "article", "quote": "River-8B 在论文重测的 open-source RL-trained 8B agents 中，四项与平均分均最高"}, {"artifact": "article", "quote": "四个 benchmark 共 589 tasks；每个 checkpoint 运行 3 seeds"}]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "endless-terminals", "tmax-paper", "hardtests", "evolvecoder", "compositional-generalization", "spurious-rewards"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 2"}, {"source_id": "endless-terminals", "locator": "paper overview cited in Section 2"}, {"source_id": "tmax-paper", "locator": "paper overview cited in Sections 1-2"}, {"source_id": "hardtests", "locator": "paper overview cited in Section 2"}, {"source_id": "compositional-generalization", "locator": "paper overview cited in Section 2"}],
+      "evidence": [{"artifact": "article", "quote": "RIVER 把研究对象换成 reward integrity，并尝试解释 RL 到底改变了 trajectory 的哪一层"}]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "project-repo", "tmax-dataset"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 4-5; Appendices B-D"}, {"source_id": "project-repo", "locator": "README and repository tree at revision 6da2749"}, {"source_id": "tmax-dataset", "locator": "dataset card at revision e3ded94"}],
+      "evidence": [{"artifact": "article", "quote": "官方训练 artifacts 未公开"}, {"artifact": "article", "quote": "Behavior AUC、RSA 与 domain transfer 都符合 hypothesis"}]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 4, Figure 1","status":"omitted","rationale":"The conceptual skill/behavior split is re-expressed as editable HTML on deck slide 4 and prose; the original composite is not reproduced because reuse permission is not established.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 5, Figure 2","status":"redrawn","rationale":"The full filtering and RL pipeline is redrawn as an original SVG with actors, counts and reward boundaries.","placements":[{"artifact":"article","locator":"根据原论文 Figure 2、Algorithm 1、§3.2 与 Appendix A-C 重绘"},{"artifact":"deck","locator":"根据论文 Figure 2、Algorithm 1、§3.2 与 Appendix A-C 重绘"}],"asset_paths":["/lib/papers/river-terminal-agents/pipeline.svg"],"permission_status":"not-applicable","permission_basis":"No original pixels reused.","credit":"根据原论文 Figure 2 数据与流程重绘"},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 8, Figure 3","status":"omitted","rationale":"The behavior-verifier ablation is summarized with its positive and negative results in article section 4 and deck slide 14; exact plotted values are not restated because the source figure is not licensed for reuse.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 9, Figure 4","status":"omitted","rationale":"The exact headline relative RL-gain values are preserved in prose and deck slide 15; the full per-size plot is not reproduced without reuse permission.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 10, Figure 5","status":"redrawn","rationale":"Skill-skill and task-task structural correlations are combined with the paper's AUC analysis in one original explanatory SVG.","placements":[{"artifact":"article","locator":"根据原论文 Figures 1、5 与 §5.1-5.2 重绘"},{"artifact":"deck","locator":"SFT 与 RL 改变的层级不同"}],"asset_paths":["/lib/papers/river-terminal-agents/behavior.svg"],"permission_status":"not-applicable","permission_basis":"No original pixels reused.","credit":"根据原论文 Figure 5 与 Section 5.2 数据重绘"},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 11, Figure 6","status":"omitted","rationale":"The zero, narrow, size-matched-diverse and diverse SFT comparison is summarized in prose; exact bars are omitted because reuse permission is not established.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 12, Figure 7","status":"omitted","rationale":"The TermiGen partial-reward failure mode and diverse-SFT mitigation are summarized in prose; the multi-panel training curves are secondary to the main reward-integrity path.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 12, Figure 8","status":"omitted","rationale":"Per-behavior changes across eight domains are summarized by the held-out transfer result; the dense 6x8 bar grid is not reproduced.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"p. 23, Figure 9","status":"omitted","rationale":"The atomic-skill coverage comparison is described with the three SFT dataset sizes and roles; the full coverage plot is not required to understand the training recipe.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-10","kind":"figure","label":"Figure 10","source_id":"paper","source_locator":"p. 25, Figure 10","status":"omitted","rationale":"The 14,399-to-3.5K funnel is represented in the pipeline redraw; the category-by-category original funnel is omitted because the article does not rely on its individual bars.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"figure-11","kind":"figure","label":"Figure 11","source_id":"paper","source_locator":"p. 26, Figure 11","status":"redrawn","rationale":"The three clean rates and the independent re-judge evidence are redrawn into an original audit SVG.","placements":[{"artifact":"article","locator":"根据原论文 Figure 11、Table 7 与 Appendix C 重绘"},{"artifact":"deck","locator":"根据论文 Figure 11、Table 7 与 Appendix C 重绘"}],"asset_paths":["/lib/papers/river-terminal-agents/audit.svg"],"permission_status":"not-applicable","permission_basis":"No original pixels reused.","credit":"根据原论文 Figure 11 与 Table 7 数据重绘"},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 7, Table 1","status":"redrawn","rationale":"River-8B and the strongest baseline are redrawn across all four benchmarks and the unweighted average.","placements":[{"artifact":"article","locator":"根据原论文 Table 1 重绘"},{"artifact":"deck","locator":"根据论文 Table 1 重绘"}],"asset_paths":["/lib/papers/river-terminal-agents/results.svg"],"permission_status":"not-applicable","permission_basis":"Numerical data redrawn without original styling.","credit":"根据原论文 Table 1 数据重绘"},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 13, Table 2","status":"redrawn","rationale":"The held-out overall scores for SFT and 2/4/6/8-domain RL are redrawn as an original comparison.","placements":[{"artifact":"article","locator":"根据原论文 Table 2 与 Figure 8 重绘"},{"artifact":"deck","locator":"根据论文 Table 2、Figure 8 重绘"}],"asset_paths":["/lib/papers/river-terminal-agents/transfer.svg"],"permission_status":"not-applicable","permission_basis":"Numerical data redrawn without original styling.","credit":"根据原论文 Table 2 数据重绘"},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 19, Table 3","status":"omitted","rationale":"SFT optimizer hyperparameters are secondary implementation details and are summarized by the 78K trajectory description.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 20, Table 4","status":"omitted","rationale":"Core GRPO settings, delta and rollout cap are reproduced in prose and code; the complete training hyperparameter table is omitted.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p. 21, Table 5","status":"omitted","rationale":"Task counts, score types and focus areas are reproduced in prose; a separate table would duplicate the evaluation explanation.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"p. 21, Table 6","status":"omitted","rationale":"The decisive 64-turn and 600-second budgets are preserved in prose; serving-engine details are secondary.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"table-7","kind":"table","label":"Table 7","source_id":"paper","source_locator":"p. 27, Table 7","status":"omitted","rationale":"The complete 2x2 counts and conditional rates are integrated into the audit redraw; the original table layout is not reproduced separately.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"table-8","kind":"table","label":"Table 8","source_id":"paper","source_locator":"p. 30, Table 8","status":"omitted","rationale":"The random-3.5K comparison is secondary to the main filtered-set evidence and is reported in the evidence notes rather than a separate visual.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"table-9","kind":"table","label":"Table 9","source_id":"paper","source_locator":"p. 36, Table 9","status":"omitted","rationale":"The two strongest features and the 12-feature aggregate AUC are preserved in prose; the full definition table is not reproduced.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""},
+    {"id":"algorithm-1","kind":"algorithm","label":"Algorithm 1","source_id":"paper","source_locator":"p. 5, Algorithm 1","status":"omitted","rationale":"Every algorithm stage is represented in the Figure 2 pipeline redraw and article execution order; the original algorithm box is not reproduced separately.","placements":[],"asset_paths":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":""}
+  ],
+  "figures": [
+    {"path":"/generated-covers/056-learning-generalizable-behaviors-for-terminal-agents.webp","origin":"generated","source_id":"paper","source_locator":"paper overview","credit":"原创封面图","license_status":"not-applicable","license_basis":"Original explanatory graphic.","used_in":["article"]},
+    {"path":"/lib/papers/river-terminal-agents/pipeline.svg","origin":"author-redrawn","source_visual_id":"figure-2","source_id":"paper","source_locator":"Figure 2; Algorithm 1; Section 3.2","credit":"根据原论文 Figure 2 数据与流程重绘","license_status":"not-applicable","license_basis":"No original pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/river-terminal-agents/behavior.svg","origin":"author-redrawn","source_visual_id":"figure-5","source_id":"paper","source_locator":"Figure 5; Section 5.2","credit":"根据原论文 Figure 5 与 Section 5.2 数据重绘","license_status":"not-applicable","license_basis":"No original pixels reused.","used_in":["article"]},
+    {"path":"/lib/papers/river-terminal-agents/audit.svg","origin":"author-redrawn","source_visual_id":"figure-11","source_id":"paper","source_locator":"Figure 11; Table 7; Appendix C","credit":"根据原论文 Figure 11 与 Table 7 数据重绘","license_status":"not-applicable","license_basis":"No original pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/river-terminal-agents/results.svg","origin":"author-redrawn","source_visual_id":"table-1","source_id":"paper","source_locator":"Table 1","credit":"根据原论文 Table 1 数据重绘","license_status":"not-applicable","license_basis":"Numerical data redrawn without original styling.","used_in":["article","deck"]},
+    {"path":"/lib/papers/river-terminal-agents/transfer.svg","origin":"author-redrawn","source_visual_id":"table-2","source_id":"paper","source_locator":"Table 2 and Figure 8","credit":"根据原论文 Table 2 数据重绘","license_status":"not-applicable","license_basis":"Numerical data redrawn without original styling.","used_in":["article","deck"]},
+    {"path":"/lib/papers/river-terminal-agents/judge-cases.svg","origin":"generated","source_id":"paper","source_locator":"Appendix C.4, tasks 003722 and 006064","credit":"根据原论文真实 rollout 原创绘制","license_status":"not-applicable","license_basis":"Original explanatory graphic.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first": true, "toc_h2_only": true, "surface": "neutral-light", "body_font": "sans-serif", "body_font_px": 17, "line_height": 1.76, "figures_centered": true, "internal_scroll_for_tables_and_code": true, "page_horizontal_overflow": false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening","densest","largest-table-or-code","final"]
+  }
+}

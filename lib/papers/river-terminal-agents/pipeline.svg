@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="t d">
+  <title id="t">RIVER training pipeline</title><desc id="d">From broad-skill supervised fine-tuning and 14399 TMax environments through rubric and oracle filtering to 3500 environments, GRPO and repetition shaping.</desc>
+  <rect width="1400" height="760" fill="#fbfaf7"/>
+  <style>.h{font:700 34px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#1e2730}.k{font:700 15px ui-monospace,SFMono-Regular,monospace;fill:#2d669f;letter-spacing:1px}.b{font:600 21px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#1e2730}.s{font:400 17px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#5f6c77}.n{font:700 31px ui-monospace,SFMono-Regular,monospace;fill:#2d669f}.box{fill:#fff;stroke:#cfd6dc;stroke-width:2}.blue{fill:#eef5fb;stroke:#2d669f}.green{fill:#eef8f3;stroke:#2b7863}.orange{fill:#fff4ec;stroke:#b75b35}.arrow{stroke:#83909a;stroke-width:3;fill:none;marker-end:url(#a)}.muted{font:500 14px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#7d8993}</style>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#83909a"/></marker></defs>
+  <text x="70" y="68" class="k">RIVER · REWARD-INTEGRITY VERIFIED ENVIRONMENTS FOR RL</text>
+  <text x="70" y="118" class="h">先补 atomic skills，再修正 RL 的 reward signal</text>
+  <rect x="70" y="172" width="1260" height="150" class="box blue" rx="6"/>
+  <text x="100" y="208" class="k">OPTIONAL WARM START</text><text x="100" y="250" class="b">OpenThoughts → broad-skill SFT</text>
+  <text x="100" y="286" class="s">Qwen3-8B：格式转换和过滤后约 78K trajectories；目的是让较弱 base model 先具备广泛的单步操作能力。</text>
+  <path d="M700 322V365" class="arrow"/>
+  <rect x="70" y="382" width="235" height="205" class="box" rx="6"/>
+  <text x="94" y="418" class="k">SOURCE POOL</text><text x="94" y="474" class="n">14,399</text><text x="94" y="508" class="b">TMax envs</text><text x="94" y="548" class="s">instruction.md</text><text x="94" y="574" class="s">Docker + verifier</text>
+  <path d="M305 484H365" class="arrow"/>
+  <rect x="380" y="382" width="265" height="205" class="box orange" rx="6"/>
+  <text x="405" y="418" class="k">FILTER 1</text><text x="405" y="459" class="b">GPT-5.4 rubric audit</text><text x="405" y="500" class="s">读 instruction、Docker、</text><text x="405" y="528" class="s">verifier，给出 8 类 verdict</text><text x="405" y="567" class="s">TMax clean：35.8%</text>
+  <path d="M645 484H705" class="arrow"/>
+  <rect x="720" y="382" width="265" height="205" class="box" rx="6"/>
+  <text x="745" y="418" class="k">FILTER 2</text><text x="745" y="459" class="b">Oracle pass@2</text><text x="745" y="500" class="s">GPT-5.4 + Terminus-2</text><text x="745" y="528" class="s">去掉 pass@2 = 0 的任务</text><text x="745" y="567" class="s">筛除过难或 infra 不兼容</text>
+  <path d="M985 484H1045" class="arrow"/>
+  <rect x="1060" y="382" width="270" height="205" class="box green" rx="6"/>
+  <text x="1085" y="418" class="k">TRAINING SET</text><text x="1085" y="474" class="n">≈3.5K</text><text x="1085" y="508" class="b">RIVER-TMax</text><text x="1085" y="548" class="s">GRPO / DPPO</text><text x="1085" y="574" class="s">+ repetition shaping</text>
+  <rect x="70" y="635" width="1260" height="67" fill="#1e2730" rx="4"/>
+  <text x="97" y="678" font-family="ui-monospace,SFMono-Regular,monospace" font-size="17" fill="#f7f8f9">reward = task verifier PASS   ·   repeated command AND observation (Jaccard &gt; 0.8) ⇒ token advantage −δ, δ=0.05, cap=0.15/rollout</text>
+  <text x="70" y="736" class="muted">根据原论文 Figure 2、Algorithm 1、§3.2、Appendix A-C 重绘；数值与角色均来自 arXiv:2608.22631v3。</text>
+</svg>
