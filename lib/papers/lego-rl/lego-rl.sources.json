@@ -1,0 +1,202 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "LEGO-RL: Harness-Native Reinforcement Learning for Coding Agents",
+    "kind": "research",
+    "primary_source_ids": ["paper", "code", "upstream-issue", "upstream-pr"]
+  },
+  "artifacts": {
+    "article": "content/_posts/052-lego-rl.md",
+    "deck": "lib/decks/lego-rl-visual-guide.html",
+    "embed_src": "/lib/decks/lego-rl-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "LEGO-RL: Harness-Native Reinforcement Learning for Coding Agents",
+      "url": "https://arxiv.org/abs/2608.17393",
+      "revision": "v1, 2026-08-18",
+      "used_for": ["problem", "related-work", "method", "experiments", "results", "limitations", "figures", "tables", "appendices", "license"]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "LegoX/Lego-RL",
+      "url": "https://github.com/LegoX/Lego-RL",
+      "revision": "a3e28f171be165b5e8cda45030f336ec103690a7",
+      "used_for": ["agent-loop", "proxy-capture", "routing-replay", "task-index", "termination-reasons", "license"]
+    },
+    {
+      "id": "dataset",
+      "kind": "dataset",
+      "title": "Lego-X/Lego-RL-2699",
+      "url": "https://huggingface.co/datasets/Lego-X/Lego-RL-2699",
+      "revision": "URL confirmed in paper and official README; remote revision unavailable from this environment on 2026-09-29",
+      "used_for": ["training-index", "task-provenance"]
+    },
+    {
+      "id": "upstream-issue",
+      "kind": "dataset",
+      "title": "openforis/pysepal issue #813: avoid to force developer to set total each time",
+      "url": "https://github.com/openforis/pysepal/issues/813",
+      "revision": "issue created 2023-04-07; closed 2023-04-11; retrieved 2026-09-29",
+      "used_for": ["case-provenance", "agent-visible-requirement"]
+    },
+    {
+      "id": "upstream-pr",
+      "kind": "checker",
+      "title": "openforis/pysepal PR #814: fix: only use tqdm parameters after reset",
+      "url": "https://github.com/openforis/pysepal/pull/814",
+      "revision": "patch commit 95cc92634cfaabde91e68a98cf9614c9eedc37e6; merge commit a8a99cc7a2479065547a2991e90d199f87323e48",
+      "used_for": ["reference-patch", "upstream-test", "case-verification"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 31,
+    "rendered_page_ranges": [{"start": 1, "end": 31}],
+    "source_visuals_expected": 27,
+    "visual_inventory_complete": true,
+    "inventory_note": "The v1 PDF contains Figures 1-17 and Tables 1-10. All 17 figures are reused in the deck under the paper's CC0 license. All 10 tables are redrawn or summarized in HTML and inventoried below."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么完整 coding harness 很难直接拿来做 RL？"},
+    {"role": "related-work", "locator": "Q2. 它和现有 agentic RL 框架的边界在哪里？"},
+    {"role": "method", "locator": "Q3. LEGO-RL 的训练闭环、数据和 judge 到底怎样工作？"},
+    {"role": "experiments", "locator": "Q4. 实验怎样设置，结果到底说明了什么？"},
+    {"role": "future-work", "locator": "Q5. 对 Claude Code、Codex harness 研究有什么直接启发？"},
+    {"role": "summary", "locator": "Q6. 这篇论文能证明什么，还缺什么？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "code"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 3; Figure 1"}, {"source_id": "code", "locator": "README and src/verl_patch/agent_loop at a3e28f1"}],
+      "evidence": [{"artifact": "article", "quote": "LEGO-RL 保留每个 coding harness 的原生 control flow。"}]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "dataset"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.3 and Appendix J"}, {"source_id": "dataset", "locator": "Lego-RL-2699 dataset URL"}],
+      "evidence": [{"artifact": "article", "quote": "任务来自 OpenSWE candidate pools。"}]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "upstream-pr"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix J, Figures 15-16"}, {"source_id": "upstream-pr", "locator": "PR #814 patch, test_update_progress"}],
+      "evidence": [{"artifact": "article", "quote": "作者保存 base commit"}]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "code"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix A, Table 6; Appendix J"}, {"source_id": "code", "locator": "Harbor agent loop and task-index implementation at a3e28f1"}],
+      "evidence": [{"artifact": "article", "quote": "Harbor 初始化仓库，只把 issue text 交给 Agent。"}]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.1, Equation 1; Section 4.1"}],
+      "evidence": [{"artifact": "article", "quote": "如果 8 条全错或全对，8 个 advantage 都是 0"}]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "upstream-issue", "upstream-pr", "code"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix J, instance 12rambau__sepal_ui-814"}, {"source_id": "upstream-issue", "locator": "Issue #813 body"}, {"source_id": "upstream-pr", "locator": "PR #814 patch to alert.py and test_Alert.py"}, {"source_id": "code", "locator": "utils/create_task_index.py at a3e28f1"}],
+      "evidence": [{"artifact": "article", "quote": "原始需求由项目维护者提出"}, {"artifact": "article", "quote": "Agent 结束后，host 才把 tests/test.patch"}]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.2, Figure 3, Table 2"}],
+      "evidence": [{"artifact": "article", "quote": "OpenHands SDK、Claude Code、OpenCode 中分别提高 6.4、5.8、9.4 个绝对百分点"}]
+    },
+    {
+      "id": "rollout-training-alignment",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "code"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.4, Table 3, Appendix B Table 7"}, {"source_id": "code", "locator": "vllm_chat_completion_proxy.py and builtin_swe_agent_loop.py at a3e28f1"}],
+      "evidence": [{"artifact": "article", "quote": "把每个 token 的 route 故意错一位后跌到 0.7503"}]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 2 and Table 1"}],
+      "evidence": [{"artifact": "article", "quote": "与 LEGO-RL 最接近的路线选择在 model API 边界接入现成 harness"}]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "code"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 4-5 and Appendices A-J"}, {"source_id": "code", "locator": "repository tree at a3e28f1"}],
+      "evidence": [{"artifact": "article", "quote": "每个主要配置只有一次 run。"}]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 2, Figure 1","status":"reused","rationale":"训练基础设施是方法主图，直接保留以避免丢失组件和数据流。","placements":[{"artifact":"article","locator":"原论文 Figure 1。Native harness"},{"artifact":"deck","locator":"原论文 Figure 1（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv abstract page identifies CC0 1.0 as the article license.","credit":"原论文 Figure 1（CC0）","asset_paths":["/lib/papers/lego-rl/figure-1-infrastructure.webp"]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 7, Figure 2","status":"reused","rationale":"五阶段运维闭环直接解释系统如何被实际运行。","placements":[{"artifact":"deck","locator":"原论文 Figure 2（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 2（CC0）","asset_paths":["/lib/papers/lego-rl/figure-2-workflow.webp"]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 9, Figure 3","status":"reused","rationale":"三种 harness 的完整训练曲线用于解释主结果。","placements":[{"artifact":"article","locator":"原论文 Figure 3。三种 harness"},{"artifact":"deck","locator":"原论文 Figure 3（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 3（CC0）","asset_paths":["/lib/papers/lego-rl/figure-3-training-curves.webp"]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 11, Figure 4","status":"reused","rationale":"展示不同 harness 的 trajectory admission 差异。","placements":[{"artifact":"article","locator":"原论文 Figure 4。被排除的 trajectory"},{"artifact":"deck","locator":"原论文 Figures 4-5（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 4（CC0）","asset_paths":["/lib/papers/lego-rl/figure-4-termination.webp"]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 11, Figure 5","status":"reused","rationale":"0/8 与 8/8 分布是任务筛选动机的核心证据。","placements":[{"artifact":"article","locator":"原论文 Figure 5。0/8 与 8/8"},{"artifact":"deck","locator":"原论文 Figures 4-5（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 5（CC0）","asset_paths":["/lib/papers/lego-rl/figure-5-reward-distributions.webp"]},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 12, Figure 6","status":"reused","rationale":"四个 task pool 的消融直接支持 difficulty screening。","placements":[{"artifact":"article","locator":"原论文 Figure 6。四个 951-task pools"},{"artifact":"deck","locator":"原论文 Figure 6（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 6（CC0）","asset_paths":["/lib/papers/lego-rl/figure-6-task-selection.webp"]},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 14, Figure 7","status":"reused","rationale":"Live UI 的 failure diagnosis 需要保留原始 panel。","placements":[{"artifact":"article","locator":"原论文 Figure 7。左侧 environment-failure run"},{"artifact":"deck","locator":"原论文 Figures 7-8（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 7（CC0）","asset_paths":["/lib/papers/lego-rl/figure-7-live-diagnosis.webp"]},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 14, Figure 8","status":"reused","rationale":"展示单题 rollout 与 task-level heterogeneity。","placements":[{"artifact":"article","locator":"原论文 Figure 8。Claude Code production run"},{"artifact":"deck","locator":"原论文 Figures 7-8（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 8（CC0）","asset_paths":["/lib/papers/lego-rl/figure-8-live-behavior.webp"]},
+    {"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"p. 16, Figure 9","status":"reused","rationale":"同步和异步 timeline 直接说明 stall 如何产生。","placements":[{"artifact":"article","locator":"原论文 Figure 9。异步执行允许新 rollout"},{"artifact":"deck","locator":"原论文 Figures 9-10"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 9（CC0）","asset_paths":["/lib/papers/lego-rl/figure-9-schedule.webp"]},
+    {"id":"figure-10","kind":"figure","label":"Figure 10","source_id":"paper","source_locator":"p. 16, Figure 10","status":"reused","rationale":"Nydus 对网络与磁盘成本的影响适合直接看图。","placements":[{"artifact":"article","locator":"原论文 Figure 10。100 个 images"},{"artifact":"deck","locator":"原论文 Figures 9-10"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 10（CC0）","asset_paths":["/lib/papers/lego-rl/figure-10-nydus.webp"]},
+    {"id":"figure-11","kind":"figure","label":"Figure 11","source_id":"paper","source_locator":"p. 24, Figure 11","status":"reused","rationale":"Reasoning share 的变化需要保留任务与字符加权两条曲线。","placements":[{"artifact":"article","locator":"原论文 Figure 11。Reasoning share"},{"artifact":"deck","locator":"原论文 Figures 11-12"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 11（CC0）","asset_paths":["/lib/papers/lego-rl/figure-11-reasoning-share.webp"]},
+    {"id":"figure-12","kind":"figure","label":"Figure 12","source_id":"paper","source_locator":"p. 25, Figure 12","status":"reused","rationale":"首尾 420 条 trajectory 的行为对比是模型变化的主要证据。","placements":[{"artifact":"article","locator":"原论文 Figure 12。Tool allocation"},{"artifact":"deck","locator":"原论文 Figures 11-12"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 12（CC0）","asset_paths":["/lib/papers/lego-rl/figure-12-behaviors.webp"]},
+    {"id":"figure-13","kind":"figure","label":"Figure 13","source_id":"paper","source_locator":"p. 27, Figure 13","status":"reused","rationale":"Task grid 展示 Live UI 的 instance-level 入口。","placements":[{"artifact":"deck","locator":"原论文 Figures 13-14"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 13（CC0）","asset_paths":["/lib/papers/lego-rl/figure-13-task-grid.webp"]},
+    {"id":"figure-14","kind":"figure","label":"Figure 14","source_id":"paper","source_locator":"p. 28, Figure 14","status":"reused","rationale":"Termination 与 alignment panels 展示可观测性细节。","placements":[{"artifact":"deck","locator":"原论文 Figures 13-14"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 14（CC0）","asset_paths":["/lib/papers/lego-rl/figure-14-diagnostics.webp"]},
+    {"id":"figure-15","kind":"figure","label":"Figure 15","source_id":"paper","source_locator":"p. 30, Figure 15","status":"reused","rationale":"真实 raw instance 是解释数据 provenance 的必要 case。","placements":[{"artifact":"article","locator":"原论文 Figure 15。Raw record"},{"artifact":"deck","locator":"原论文 Figure 15（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 15（CC0）","asset_paths":["/lib/papers/lego-rl/figure-15-raw-instance.webp"]},
+    {"id":"figure-16","kind":"figure","label":"Figure 16","source_id":"paper","source_locator":"p. 30, Figure 16","status":"reused","rationale":"Harbor directory 直接说明 hidden verifier 的注入边界。","placements":[{"artifact":"article","locator":"原论文 Figure 16。Host-side task package"},{"artifact":"deck","locator":"原论文 Figures 15-17（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 16（CC0）","asset_paths":["/lib/papers/lego-rl/figure-16-harbor-task.webp"]},
+    {"id":"figure-17","kind":"figure","label":"Figure 17","source_id":"paper","source_locator":"p. 31, Figure 17","status":"reused","rationale":"Thin index row 补齐数据在 trainer 中的最终表示。","placements":[{"artifact":"article","locator":"原论文 Figure 17。Trainer index"},{"artifact":"deck","locator":"原论文 Figures 15-17（CC0）"}],"permission_status":"public-domain","permission_basis":"arXiv CC0 1.0.","credit":"原论文 Figure 17（CC0）","asset_paths":["/lib/papers/lego-rl/figure-17-task-index.webp"]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 4, Table 1","status":"redrawn","rationale":"按 rollout ownership 与能力边界重绘为 related-work 比较表。","placements":[{"artifact":"article","locator":"论文把相关工作分成几类"},{"artifact":"deck","locator":"功能勾选来自作者整理"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 1 重绘","asset_paths":[]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 10, Table 2","status":"redrawn","rationale":"主结果按 harness 和 baseline 重绘，保留全部数值。","placements":[{"artifact":"article","locator":"同协议 KAT-Coder"},{"artifact":"deck","locator":"训练后的 Qwen3.5"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 2 重绘","asset_paths":[]},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 13, Table 3","status":"redrawn","rationale":"Alignment 三项指标在正文重绘为紧凑表。","placements":[{"artifact":"article","locator":"Median Pearson r"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 3 重绘","asset_paths":[]},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 15, Table 4","status":"redrawn","rationale":"Stage-wise wall-clock 数据在系统代价段落中重述。","placements":[{"artifact":"article","locator":"3,699 条 OpenHands SDK trials"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 4 整理","asset_paths":[]},
+    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p. 17, Table 5","status":"redrawn","rationale":"Sandbox optimization 数值与 Figure 10 一起解释。","placements":[{"artifact":"article","locator":"network 21.6GB→1.59GB"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 5 整理","asset_paths":[]},
+    {"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"p. 20, Table 6","status":"redrawn","rationale":"六类 reward-integrity failure 在 Q1 重绘为完整表。","placements":[{"artifact":"article","locator":"失败方式"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 6 重绘","asset_paths":[]},
+    {"id":"table-7","kind":"table","label":"Table 7","source_id":"paper","source_locator":"p. 21, Table 7","status":"redrawn","rationale":"Routing replay negative control 在 Part 0 与实验段落重述。","placements":[{"artifact":"article","locator":"把每个 token 的 route 故意错一位"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 7 整理","asset_paths":[]},
+    {"id":"table-8","kind":"table","label":"Table 8","source_id":"paper","source_locator":"p. 22, Table 8","status":"redrawn","rationale":"Collapsed run 的首尾统计在真实 failure 段落重述。","placements":[{"artifact":"article","locator":"29 个 logged steps 内"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 8 整理","asset_paths":[]},
+    {"id":"table-9","kind":"table","label":"Table 9","source_id":"paper","source_locator":"p. 26, Table 9","status":"redrawn","rationale":"行为变化数值与 Figures 11-12 一起重述。","placements":[{"artifact":"article","locator":"修改后重新读文件从 73.6% 增到 98.1%"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 9 整理","asset_paths":[]},
+    {"id":"table-10","kind":"table","label":"Table 10","source_id":"paper","source_locator":"p. 29, Table 10","status":"redrawn","rationale":"主实验 hyperparameters 在实验设置段落完整摘录关键项。","placements":[{"artifact":"article","locator":"三次 production run 都从 Qwen3.5-35B-A3B 开始"}],"permission_status":"not-applicable","permission_basis":"","credit":"根据原论文 Table 10 整理","asset_paths":[]}
+  ],
+  "figures": [
+    {"path":"/lib/papers/lego-rl/figure-1-infrastructure.webp","origin":"paper-original","source_visual_id":"figure-1","source_id":"paper","source_locator":"Figure 1","credit":"原论文 Figure 1（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-2-workflow.webp","origin":"paper-original","source_visual_id":"figure-2","source_id":"paper","source_locator":"Figure 2","credit":"原论文 Figure 2（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["deck"]},
+    {"path":"/lib/papers/lego-rl/figure-3-training-curves.webp","origin":"paper-original","source_visual_id":"figure-3","source_id":"paper","source_locator":"Figure 3","credit":"原论文 Figure 3（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-4-termination.webp","origin":"paper-original","source_visual_id":"figure-4","source_id":"paper","source_locator":"Figure 4","credit":"原论文 Figure 4（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-5-reward-distributions.webp","origin":"paper-original","source_visual_id":"figure-5","source_id":"paper","source_locator":"Figure 5","credit":"原论文 Figure 5（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-6-task-selection.webp","origin":"paper-original","source_visual_id":"figure-6","source_id":"paper","source_locator":"Figure 6","credit":"原论文 Figure 6（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-7-live-diagnosis.webp","origin":"paper-original","source_visual_id":"figure-7","source_id":"paper","source_locator":"Figure 7","credit":"原论文 Figure 7（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-8-live-behavior.webp","origin":"paper-original","source_visual_id":"figure-8","source_id":"paper","source_locator":"Figure 8","credit":"原论文 Figure 8（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-9-schedule.webp","origin":"paper-original","source_visual_id":"figure-9","source_id":"paper","source_locator":"Figure 9","credit":"原论文 Figure 9（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-10-nydus.webp","origin":"paper-original","source_visual_id":"figure-10","source_id":"paper","source_locator":"Figure 10","credit":"原论文 Figure 10（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-11-reasoning-share.webp","origin":"paper-original","source_visual_id":"figure-11","source_id":"paper","source_locator":"Figure 11","credit":"原论文 Figure 11（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-12-behaviors.webp","origin":"paper-original","source_visual_id":"figure-12","source_id":"paper","source_locator":"Figure 12","credit":"原论文 Figure 12（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-13-task-grid.webp","origin":"paper-original","source_visual_id":"figure-13","source_id":"paper","source_locator":"Figure 13","credit":"原论文 Figure 13（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["deck"]},
+    {"path":"/lib/papers/lego-rl/figure-14-diagnostics.webp","origin":"paper-original","source_visual_id":"figure-14","source_id":"paper","source_locator":"Figure 14","credit":"原论文 Figure 14（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["deck"]},
+    {"path":"/lib/papers/lego-rl/figure-15-raw-instance.webp","origin":"paper-original","source_visual_id":"figure-15","source_id":"paper","source_locator":"Figure 15","credit":"原论文 Figure 15（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-16-harbor-task.webp","origin":"paper-original","source_visual_id":"figure-16","source_id":"paper","source_locator":"Figure 16","credit":"原论文 Figure 16（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]},
+    {"path":"/lib/papers/lego-rl/figure-17-task-index.webp","origin":"paper-original","source_visual_id":"figure-17","source_id":"paper","source_locator":"Figure 17","credit":"原论文 Figure 17（CC0）","license_status":"public-domain","license_basis":"arXiv CC0 1.0","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first": true, "toc_h2_only": true, "surface": "neutral-light", "body_font": "sans-serif", "body_font_px": 17, "line_height": 1.76, "figures_centered": true, "internal_scroll_for_tables_and_code": true, "page_horizontal_overflow": false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"]
+  }
+}
