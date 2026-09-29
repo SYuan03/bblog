@@ -37,6 +37,7 @@ Rules:
 - Write naturally and avoid generic AI-style introductions or invented claims.
 - Keep the permalink stable after publication.
 - Prefer the author's supplied title, summary, and cover.
+- For paper explainers, use the paper's original English title verbatim in frontmatter and the visible H1. Put Chinese framing in the description, cover, deck, or article body instead of appending it to the title.
 - Verify facts and links; distinguish confirmed facts from interpretation.
 - Do not copy third-party images or text without permission. Link and credit the original source.
 

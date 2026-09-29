@@ -1,0 +1,434 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents",
+    "kind": "research",
+    "primary_source_ids": ["paper"]
+  },
+  "artifacts": {
+    "article": "content/_posts/058-grow-the-harness-not-the-context.md",
+    "deck": "lib/decks/grow-the-harness-visual-guide.html",
+    "embed_src": "/lib/decks/grow-the-harness-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents",
+      "url": "https://arxiv.org/abs/2609.26760",
+      "revision": "v2 (2026-09-24)",
+      "used_for": ["problem", "method", "evaluation", "results", "case", "limitations", "visuals"]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv record for 2609.26760",
+      "url": "https://arxiv.org/abs/2609.26760",
+      "revision": "checked 2026-09-29",
+      "used_for": ["title", "authors", "version", "license", "official-code availability"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 16,
+    "rendered_page_ranges": [{"start": 1, "end": 16}],
+    "source_visuals_expected": 12,
+    "visual_inventory_complete": true,
+    "inventory_note": "All 16 PDF pages, including Appendices A-B, were reviewed through extracted text and rendered pages. The paper contains Figures 1-6, Algorithm 1, and Tables 1-5. Every figure and Algorithm 1 is reused under CC BY 4.0. Tables 1-5 are represented as redrawn HTML tables, formulas, or article prose with explicit locators."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么要让 harness 增长，而不是继续扩充 context？"},
+    {"role": "related-work", "locator": "Q2. 它和 workflow search、skill library、memory 以及其他 harness work 有什么区别？"},
+    {"role": "method", "locator": "Q3. 一条失败怎样变成可复用的 harness code？"},
+    {"role": "experiments", "locator": "Q4. Benchmark 怎样分、怎样判，结果到底有多强？"},
+    {"role": "future-work", "locator": "Q5. 对 Claude Code、Codex 这类完整 harness 有什么启发？"},
+    {"role": "summary", "locator": "Q6. 这篇论文最后该怎样评价？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "论文只更新 harness program"},
+        {"artifact": "deck", "quote": "把重复控制写进 harness，别让模型在每个 task 里重新想一遍"}
+      ]
+    },
+    {
+      "id": "method-and-checkpointing",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 3.2-3.6; Algorithm 1"}],
+      "evidence": [
+        {"artifact": "article", "quote": "执行当前 harness，记录 function-level trace，把多条失败放进窗口，局部生成候选代码"},
+        {"artifact": "article", "quote": "若 gate success 下降，系统会回滚从上个 checkpoint 以来的整个 repair sequence"}
+      ]
+    },
+    {
+      "id": "repair-31-case",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Figure 2, Repair 31 / BrowseComp-Plus Task 819"}],
+      "evidence": [
+        {"artifact": "article", "quote": "_evidence_for_prompt 把每篇文档截到 2,600 characters，包含答案的片段被切掉"},
+        {"artifact": "article", "quote": "Energetic; melodic; banging; clubby; bacon."}
+      ]
+    },
+    {
+      "id": "task-splits-and-visibility",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.1; Appendix A.1-A.3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "两个 benchmark 都按 200 train / 50 gate / 50 final 划分，seed 为 42"},
+        {"artifact": "article", "quote": "所有方法只拿 accessibility-tree text，不用截图"}
+      ]
+    },
+    {
+      "id": "judges-and-evaluation-formula",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.1, Equations 8-9; Appendix A.2-A.4"}],
+      "evidence": [
+        {"artifact": "article", "quote": "BrowseComp-Plus 是固定且人工核验 retrieval corpus 上的 deep-search benchmark"},
+        {"artifact": "article", "quote": "SR = successful task-run pairs / (3 × 50)"},
+        {"artifact": "article", "quote": "Total Online Cost 是一次 50-task run 的 deployed-agent LLM 费用"}
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.2; Table 1; Figure 1"}],
+      "evidence": [
+        {"artifact": "article", "quote": "五组设置中，Growing Harness 的平均成功率最高"},
+        {"artifact": "article", "quote": "减少 76.0% 至 91.8% 的 LLM calls 和 74.4% 至 98.6% 的 deployed-agent online cost"}
+      ]
+    },
+    {
+      "id": "ablation",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.4; Table 2; Figure 4"}],
+      "evidence": [
+        {"artifact": "article", "quote": "Full 36%，去掉 Failure-Window 为 28%，去掉 Gate Validation 为 22%，去掉 Function-Level Guidance 为 18%"},
+        {"artifact": "article", "quote": "每个 variant 只优化一次、共 10 steps"}
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 2"}],
+      "evidence": [
+        {"artifact": "article", "quote": "最清楚的比较轴是：训练后到底留下什么，以及部署时还要让 LLM 做多少控制"}
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "unknown",
+      "source_ids": ["paper", "arxiv-record"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 4-5; Appendices A-B; no code or artifact URL"},
+        {"source_id": "arxiv-record", "locator": "abs page links checked 2026-09-29"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "没有给出官方代码、learned harness、trace、split、task-level logs 或 optimizer prompts"},
+        {"artifact": "article", "quote": "Total Online Cost 明确排除 evaluator 与 offline optimizer"}
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 2, Figure 1",
+      "status": "reused",
+      "rationale": "The success-cost frontier is central to the deployment-efficiency claim and is directly reused under CC BY 4.0.",
+      "placements": [{"artifact": "article", "locator": "原论文 Figure 1，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Figure 1, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/figure-1-success-cost.png"]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2",
+      "status": "reused",
+      "rationale": "The overview contains the full learning loop and the paper's only concrete repair trace.",
+      "placements": [{"artifact": "article", "locator": "原论文 Figure 2，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Figure 2, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/figure-2-overview.png"]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 3",
+      "status": "reused",
+      "rationale": "The gate curves show how accepted and rolled-back repairs differ between the two benchmark-specific harnesses.",
+      "placements": [{"artifact": "article", "locator": "原论文 Figure 3，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Figure 3, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/figure-3-convergence.png"]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 10, Figure 4",
+      "status": "reused",
+      "rationale": "The ablation trajectories reveal the regression that the held-out gate is designed to prevent.",
+      "placements": [{"artifact": "article", "locator": "原论文 Figure 4，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Figure 4, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/figure-4-ablation.png"]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 15, Figure 5",
+      "status": "reused",
+      "rationale": "The task-level plots expose the distributions behind aggregate calls, context, cost, and token claims.",
+      "placements": [{"artifact": "article", "locator": "原论文 Figure 5，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Figure 5, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/figure-5-efficiency.png"]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p. 15, Figure 6",
+      "status": "reused",
+      "rationale": "The post-hoc diagrams show that identical scaffolds grow into different benchmark-specific control structures.",
+      "placements": [{"artifact": "article", "locator": "原论文 Figure 6，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Figure 6, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/figure-6-structures.png"]
+    },
+    {
+      "id": "algorithm-1",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper",
+      "source_locator": "p. 5, Algorithm 1",
+      "status": "reused",
+      "rationale": "The algorithm is the most precise source for window updates, retry limits, gate checks, and rollback semantics.",
+      "placements": [{"artifact": "article", "locator": "原论文 Algorithm 1，CC BY 4.0"}],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "credit": "Li et al., Algorithm 1, arXiv:2609.26760v2, CC BY 4.0",
+      "asset_paths": ["/lib/papers/growing-harness/algorithm-1.png"]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 1",
+      "status": "redrawn",
+      "rationale": "The six Tool-Calling comparisons are redrawn as a compact HTML table while the full original table remains visible in the paper.",
+      "placements": [{"artifact": "article", "locator": "六组主结果"}],
+      "permission_status": "not-applicable",
+      "permission_basis": "Numerical values are presented in a new HTML table without copying the source layout.",
+      "credit": "根据原论文 Table 1 数据整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 2",
+      "status": "redrawn",
+      "rationale": "All four ablation values and their single-run scope are represented in article prose and the deck.",
+      "placements": [{"artifact": "article", "locator": "Full 36%，去掉 Failure-Window 为 28%"}],
+      "permission_status": "not-applicable",
+      "permission_basis": "Numerical values are restated without source table styling.",
+      "credit": "根据原论文 Table 2 数据整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 13, Table 3",
+      "status": "redrawn",
+      "rationale": "The shared final-evaluation limits are incorporated into the evaluation-protocol subsection and deck.",
+      "placements": [{"artifact": "article", "locator": "每题最多 50 次 online LLM calls"}],
+      "permission_status": "not-applicable",
+      "permission_basis": "Configuration values are restated in prose.",
+      "credit": "根据原论文 Table 3 配置整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 13, Table 4",
+      "status": "omitted",
+      "rationale": "Provider token prices are inputs to the reported cost metric but do not help the reading flow; the cost formula and exclusion boundary are retained.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Represented through the cost formula and metric boundary.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 14, Table 5",
+      "status": "redrawn",
+      "rationale": "The complete benchmark-specific model and K, Q, Rmax, L settings are retained in prose and the training slide.",
+      "placements": [{"artifact": "article", "locator": "K=8, Q=1, Rmax=5, L=10"}],
+      "permission_status": "not-applicable",
+      "permission_basis": "Configuration values are restated in prose.",
+      "credit": "根据原论文 Table 5 配置整理",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/growing-harness/figure-1-success-cost.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1",
+      "credit": "Li et al., Figure 1, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/growing-harness/figure-2-overview.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 2",
+      "credit": "Li et al., Figure 2, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/growing-harness/figure-3-convergence.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "Figure 3",
+      "credit": "Li et al., Figure 3, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/growing-harness/figure-4-ablation.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "Figure 4",
+      "credit": "Li et al., Figure 4, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/growing-harness/figure-5-efficiency.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "Figure 5",
+      "credit": "Li et al., Figure 5, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/growing-harness/figure-6-structures.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "Figure 6",
+      "credit": "Li et al., Figure 6, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/growing-harness/algorithm-1.png",
+      "origin": "paper-original",
+      "source_visual_id": "algorithm-1",
+      "source_id": "paper",
+      "source_locator": "Algorithm 1",
+      "credit": "Li et al., Algorithm 1, arXiv:2609.26760v2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
+      "used_in": ["article"]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.76,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {"width": 1600, "height": 1000, "passed": true},
+      {"width": 1512, "height": 982, "passed": true},
+      {"width": 390, "height": 844, "passed": true}
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"]
+  }
+}
