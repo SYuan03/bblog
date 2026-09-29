@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meta-Harness: End-to-End Optimization of Model Harnesses · 论文图解</title>
+<style>
+:root{--paper:#f8f5ee;--ink:#20252b;--muted:#66717b;--line:#cfd4da;--blue:#285d9b;--orange:#ad5735;--green:#2b7562;--red:#a0443d;--sans:Arial,"PingFang SC","Microsoft YaHei",sans-serif;--serif:Georgia,"Songti SC",serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#151a20;color:var(--ink);font-family:var(--sans)}a{color:inherit}button,a{font:inherit}
+#deck{position:fixed;width:1600px;height:900px;transform-origin:top left;background:var(--paper)}.slide{display:none;position:absolute;inset:0;padding:48px 72px 58px;background:var(--paper)}.slide.active{display:flex;flex-direction:column}.top,.foot{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:16px}.top{height:28px;border-bottom:1px solid var(--line);padding-bottom:12px}.top b{color:var(--blue);font:800 15px/1 var(--mono);letter-spacing:1.4px}.slide>h1{max-width:1380px;margin:46px 0 18px;font:700 66px/1.04 var(--serif)}.slide>h2{max-width:1380px;margin:30px 0 12px;font:700 47px/1.08 var(--serif)}.lead{max-width:1320px;margin:0;color:var(--muted);font-size:22px;line-height:1.48}.body{display:flex;flex:1;align-items:center;min-height:0;padding:22px 0 18px}.foot{height:25px;border-top:1px solid var(--line);padding-top:12px;font-size:14px}.foot span:first-child{max-width:1320px}.pg{font-family:var(--mono)}
+.hero{display:grid;grid-template-columns:1.12fr .88fr;gap:50px;align-items:end;flex:1}.hero .question{font:700 49px/1.12 var(--serif)}.hero .answer{border-left:6px solid var(--blue);padding:8px 0 8px 28px;color:var(--muted);font-size:23px;line-height:1.48}.hero .score{color:var(--blue);font:800 56px/1 var(--mono)}.hero .score small{display:block;margin-top:13px;color:var(--muted);font:600 16px/1.4 var(--sans)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%}.panel{min-width:0;padding:23px 25px;border:1px solid var(--line);background:#fff}.panel.blue{border-top:5px solid var(--blue)}.panel.orange{border-top:5px solid var(--orange)}.panel.green{border-top:5px solid var(--green)}.panel.red{border-top:5px solid var(--red)}.tag{display:block;margin-bottom:10px;color:var(--blue);font:800 14px/1 var(--mono);letter-spacing:1px}.panel h3{margin:0 0 10px;font:700 26px/1.2 var(--serif)}.panel p,.panel li{margin:.35em 0;color:var(--muted);font-size:18px;line-height:1.47}.panel ul{margin:0;padding-left:1.1em}.metric{color:var(--blue);font:800 42px/1 var(--mono)}.metric small{display:block;margin-top:12px;color:var(--muted);font:600 16px/1.4 var(--sans)}
+.figure{display:flex;align-items:center;justify-content:center;width:100%;height:100%}.figure img{display:block;max-width:100%;max-height:595px;object-fit:contain}.figure.medium img{max-height:545px}.figure.compact img{max-height:480px}.pair-images{display:grid;grid-template-columns:1fr 1fr;gap:26px;width:100%;height:100%;align-items:center}.pair-images figure{min-width:0;margin:0;text-align:center}.pair-images img{display:block;max-width:100%;max-height:485px;margin:auto;object-fit:contain}.pair-images figcaption{margin-top:8px;color:var(--muted);font-size:14px}.image-side{display:grid;grid-template-columns:1.14fr .86fr;gap:28px;align-items:center;width:100%}.image-side>div:first-child{min-width:0}.image-side img{display:block;width:100%;max-height:555px;object-fit:contain}.stack{display:grid;gap:14px}.callout{padding:16px 18px;border-left:5px solid var(--blue);background:#fff}.callout.orange{border-color:var(--orange)}.callout.green{border-color:var(--green)}.callout.red{border-color:var(--red)}.callout b{display:block;margin-bottom:5px;color:var(--ink);font-size:19px}.callout span{color:var(--muted);font-size:16px;line-height:1.45}
+.flow{display:flex;align-items:stretch;width:100%}.step{position:relative;flex:1;min-width:0;padding:21px 17px;border:1px solid var(--line);background:#fff}.step+.step{margin-left:34px}.step+.step:before{content:"";position:absolute;left:-35px;top:50%;width:34px;height:2px;background:var(--blue)}.step+.step:after{content:"";position:absolute;left:-8px;top:calc(50% - 5px);border-left:9px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}.step b{display:block;margin-bottom:8px;color:var(--blue);font:800 14px/1.3 var(--mono)}.step strong{display:block;margin-bottom:8px;font-size:20px}.step span{display:block;color:var(--muted);font-size:16px;line-height:1.45}
+.table{width:100%;border-collapse:collapse;background:#fff;font-size:16px;line-height:1.36}.table th,.table td{padding:10px 11px;border:1px solid var(--line);text-align:left;vertical-align:top}.table th{background:#eef4fb;color:#26394d}.table td:first-child{font-weight:700}.best{color:var(--green);font-weight:800}.warn{color:var(--orange);font-weight:750}.code{width:100%;margin:0;padding:20px 22px;overflow:hidden;border:1px solid #39414a;background:#20262d;color:#e8edf2;font:15px/1.5 var(--mono);white-space:pre-wrap}.code .c{color:#96a3af}.code .k{color:#7ab5f3}.code .s{color:#dcb17a}.code .g{color:#83c9a7}
+.timeline{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;width:100%;background:var(--line)}.event{min-width:0;padding:18px 14px;background:#fff}.event b{display:block;color:var(--blue);font:800 14px/1 var(--mono)}.event strong{display:block;margin:9px 0 7px;font-size:19px}.event span{display:block;color:var(--muted);font-size:15px;line-height:1.4}.event.bad{background:#fff2ef}.event.good{background:#edf7f2}.limits{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:var(--line)}.limit{min-height:180px;padding:22px;background:#fff}.limit b{display:block;color:var(--orange);font:800 14px/1 var(--mono);letter-spacing:1px}.limit strong{display:block;margin:11px 0 8px;font-size:21px}.limit span{color:var(--muted);font-size:16px;line-height:1.45}
+#controls{position:fixed;z-index:20;left:50%;bottom:14px;display:flex;align-items:center;gap:8px;transform:translateX(-50%);padding:7px 9px;border:1px solid #4a535e;background:rgba(22,27,33,.94);color:#f3f5f7;box-shadow:0 8px 24px rgba(0,0,0,.25)}#controls button,#controls a{height:34px;padding:0 11px;border:1px solid #58626d;background:#262d35;color:#fff;text-decoration:none;cursor:pointer}#controls button:hover,#controls a:hover{background:#35404b}.current-title{min-width:170px;max-width:310px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.counter{font:700 13px/1 var(--mono)}#progress{position:fixed;z-index:21;left:0;bottom:0;height:4px;background:var(--blue);transition:width .2s}.return-label,.utility-label{font-size:12px}
+#overview-panel{position:fixed;z-index:30;inset:0;background:rgba(10,13,16,.78);padding:46px}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:calc(100vh - 92px);margin:auto;overflow:auto;background:#f8f5ee;padding:24px}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.overview-head button{width:36px;height:36px;border:1px solid var(--line);background:#fff;font-size:24px}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);background:#fff;text-align:left}.overview-grid button[aria-current="true"]{border-color:var(--blue);background:#eef4fb}.overview-grid b{font-family:var(--mono);color:var(--blue)}
+@media(max-width:760px){#controls{bottom:8px;gap:4px}.current-title,.utility-label,.return-label{display:none}#controls button,#controls a{padding:0 10px}.overview-grid{grid-template-columns:1fr 1fr}}
+@media print{html,body{overflow:visible;background:#fff}#deck{position:static;width:auto;height:auto;transform:none!important}.slide{display:flex!important;position:relative;width:1600px;height:900px;page-break-after:always}#controls,#overview-panel,#progress{display:none!important}}
+</style>
+</head>
+<body>
+<main id="deck">
+  <section class="slide" data-title="核心结论">
+    <div class="top"><b>META-HARNESS · PAPER DEEP DIVE</b><span>arXiv:2603.28052v1 · 2026-03-30</span></div>
+    <div class="hero"><div><div class="question">把每次失败的代码、分数和完整执行轨迹都留下，coding agent 能否自己写出更好的 harness？</div><p class="lead" style="margin-top:26px">Meta-Harness 让 Claude Code 像工程师一样检索全部历史、提出代码改动，再由外部 evaluator 独立验收。外层搜索规则反而很简单。</p></div><div><div class="score">9.6 / 10<small>博客作者兴趣度：直接研究完整 harness 的自动工程化</small></div><div class="callout green" style="margin-top:24px"><b>三个结果</b><span>分类 48.6%；IMO-level math 38.8%；TerminalBench-2 上 Opus 4.6 为 76.4%。</span></div><img src="/lib/papers/meta-harness/figure-1-tbench.svg" alt="TerminalBench-2 harness performance" style="display:block;width:100%;max-height:220px;margin-top:18px;object-fit:contain"></div></div>
+    <div class="foot"><span>标题：Meta-Harness: End-to-End Optimization of Model Harnesses</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="论文在优化什么">
+    <div class="top"><b>02 · OBJECT</b><span>model weights stay frozen</span></div><h2>Harness 包含 system prompt，也包含围绕模型运行的程序</h2>
+    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">STATE</span><h3>存什么</h3><p>Memory、历史样例、环境状态与中间结果。</p></div><div class="panel green"><span class="tag">ACCESS</span><h3>取什么</h3><p>检索规则、路由、去重、排序与 context budget。</p></div><div class="panel orange"><span class="tag">CONTROL</span><h3>何时交给模型</h3><p>Prompt construction、tool loop、completion check 与 retry。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §1、§3。搜索目标是 harness code；被包裹的 base model 固定。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="主循环">
+    <div class="top"><b>03 · OUTER LOOP</b><span>propose → validate → evaluate → log</span></div><h2>Proposer 不直接改线上系统；外层程序控制验证与计分</h2>
+    <div class="body figure medium"><img src="/lib/papers/meta-harness/figure-2-loop.svg" alt="Meta-Harness search loop"></div>
+    <div class="foot"><span>原论文 Figure 2，CC BY 4.0。每个候选的 code、score、trace 都进入下一轮可检索文件系统。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="为什么需要文件系统">
+    <div class="top"><b>04 · MOTIVATION</b><span>diagnostic footprint ≫ one prompt</span></div><h2>一次 harness 评测最多产生约 1,000 万 tokens，摘要会丢掉因果线索</h2>
+    <div class="body"><div class="grid2"><div class="panel orange"><span class="tag">COMPRESSED OPTIMIZER</span><h3>先替 proposer 决定“什么重要”</h3><p>Score-only 只留下结果；summary 把多条失败压成短解释；window 只看近期候选。</p><p>如果真正的错误来自十轮前的 prompt 变化，信息在进入 proposer 前就消失了。</p></div><div class="panel blue"><span class="tag">META-HARNESS</span><h3>把历史变成外部工作区</h3><p>Claude Code 自己用 grep、cat 和脚本选择要读的 code、score 与 raw trace。</p><p>TerminalBench search 每轮中位读取 82 个文件，其中 source 41%、trace 40%。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §1、§3、Appendix A.1，Tables 1、8。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="和已有优化器差在哪">
+    <div class="top"><b>05 · RELATED WORK</b><span>target · feedback · update unit</span></div><h2>它把“反馈带宽”和“可执行代码空间”同时放大</h2>
+    <div class="body"><table class="table"><thead><tr><th>路线</th><th>改什么</th><th>Proposer 看什么</th><th>与 Meta-Harness 的边界</th></tr></thead><tbody><tr><td>GEPA</td><td>prompt / text artifact</td><td>单 candidate 的 rollout feedback / summary</td><td>反馈丰富，但不保留全 population 的 raw traces。</td></tr><tr><td>AlphaEvolve / OpenEvolve</td><td>指定函数或程序</td><td>program archive + scalar scores</td><td>有 code search；历史诊断信号更薄。</td></tr><tr><td>TTT-Discover</td><td>test-time artifact</td><td>window + PUCT reuse</td><td>搜索规则更强；proposer 输入更受结构约束。</td></tr><tr><td>ACE / MCE</td><td>memory / natural-language skills</td><td>在线样例与反思</td><td>是被优化的 harness baseline，不是通用 code optimizer。</td></tr><tr><td>HarnessForge / Co-Harness</td><td>harness + model weights</td><td>失败归因与成功轨迹</td><td>共同优化 matched pair；本文只改 harness、冻结模型。</td></tr></tbody></table></div>
+    <div class="foot"><span>来源：论文 §2、Appendix F；HarnessForge arXiv:2606.01779；Co-Harness arXiv:2607.22688。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="完整历史是否真的有用">
+    <div class="top"><b>06 · ABLATION</b><span>same classification search setting</span></div><h2>Raw traces 不是装饰：去掉后，最优候选也追不上 full-history 的中位数</h2>
+    <div class="body"><div class="grid3"><div class="panel orange"><span class="tag">SCORES ONLY</span><div class="metric">34.6 / 41.3</div><p>median / best accuracy；能看 code 与 score，不能看 trace。</p></div><div class="panel orange"><span class="tag">+ SUMMARY</span><div class="metric">34.9 / 38.7</div><p>加入 LLM summary 仍未恢复诊断信息。</p></div><div class="panel green"><span class="tag">FULL HISTORY</span><div class="metric">50.0 / 56.7</div><p>code + score + raw execution traces。</p></div></div></div>
+    <div class="foot"><span>来源：论文 Table 3。这里报告 search-set candidate 分布，不是最终 held-out test 表。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="分类搜索结果">
+    <div class="top"><b>07 · TEXT CLASSIFICATION</b><span>40 proposals · 3 search datasets</span></div><h2>四次评测追平其他优化器的最终水平，40 次后拉开十余点</h2>
+    <div class="body"><div class="pair-images"><figure><img src="/lib/papers/meta-harness/figure-1-search.svg" alt="Harness optimizer search progress"><figcaption>Figure 1 左：best-so-far search accuracy</figcaption></figure><figure><img src="/lib/papers/meta-harness/figure-4-curves.svg" alt="Search curves across optimizers"><figcaption>Figure 4：每个 candidate 与 best-so-far 曲线</figcaption></figure></div></div>
+    <div class="foot"><span>原论文 Figures 1、4，CC BY 4.0。比较使用同一 Opus 4.6 proposer 与相同 candidate-evaluation budget。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="分类测试与成本">
+    <div class="top"><b>08 · CLASSIFICATION TEST</b><span>held-out test results</span></div><h2>48.6% 平均准确率，比 ACE 高 7.7 pp；context 只有约四分之一</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-3-pareto.svg" alt="Accuracy versus context Pareto frontier"></div><div class="stack"><div class="callout green"><b>Meta-Harness</b><span>48.6% accuracy；Table 2 报 11.4K context。</span></div><div class="callout"><b>ACE</b><span>40.9%；50.8K context。</span></div><div class="callout orange"><b>单位冲突</b><span>Table 2 写 tokens；Figure 3 与 Appendix Table 9 写 characters。论文未解释换算，不能把两者混用。</span></div></div></div>
+    <div class="foot"><span>原论文 Figure 3，CC BY 4.0；Table 2、Appendix Table 9。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="分类 harness 长什么样">
+    <div class="top"><b>09 · DISCOVERED PROGRAMS</b><span>not merely more few-shot examples</span></div><h2>搜索得到的是不同的 retrieval 与 prompt-construction 程序</h2>
+    <div class="body"><div class="pair-images"><figure><img src="/lib/papers/meta-harness/figure-5-draft-verification.webp" alt="Draft-verification harness"><figcaption>Figure 5：先 draft，再检索 confirmers 与 challengers</figcaption></figure><figure><img src="/lib/papers/meta-harness/figure-6-label-primed.webp" alt="Label-primed query-anchored harness"><figcaption>Figure 6：label primer + coverage + local contrastive pairs</figcaption></figure></div></div>
+    <div class="foot"><span>原论文 Figures 5–6，CC BY 4.0。最终 48.6% 系统采用右侧结构。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Search 与 test 没有混吗">
+    <div class="top"><b>10 · SPLIT CHECK</b><span>classification evidence boundary</span></div><h2>候选只看 search-set 分数；test results 在 finalization 前冻结</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-7-val-test.png" alt="Search versus test accuracy"></div><div class="stack"><div class="callout green"><b>论文协议</b><span>Proposer never sees test-set results；从 Pareto frontier 才做最终 test。</span></div><div class="callout"><b>公开代码</b><span><code>meta_harness.py</code> 分离 validation evolution 与显式 <code>--test</code> finalization。</span></div><div class="callout orange"><b>但不是访问控制</b><span>公开 repo 含 test data；隔离依赖运行流程，不是文件权限。</span></div></div></div>
+    <div class="foot"><span>原论文 Figure 7；论文 §3；官方 repo revision 0cbc31e。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Math harness">
+    <div class="top"><b>11 · RETRIEVAL-AUGMENTED MATH</b><span>250 search · 200 unseen eval</span></div><h2>搜索把同一个 BM25 变成四条题型专用 retrieval policy</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-8-math-router.webp" alt="Discovered math retrieval harness"></div><div class="stack"><div class="callout"><b>Search model</b><span>GPT-OSS-20B 在 250 题上挑选 109 个候选中的最终 harness。</span></div><div class="callout green"><b>Evaluation</b><span>200 道未见 IMO-level problems；每题三次采样。</span></div><div class="callout orange"><b>精确说法</b><span>GPT-OSS-20B 既参与 search 又参与 eval；另外四个模型才是真正 unseen models。</span></div></div></div>
+    <div class="foot"><span>原论文 Figure 8，CC BY 4.0；§4.2、Appendix C.2–C.3。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Math 结果">
+    <div class="top"><b>12 · MATH RESULTS</b><span>pass@1 · average of 3 samples/problem</span></div><h2>38.8% 平均准确率，比 no-retrieval 高 4.7 pp；五列都上涨</h2>
+    <div class="body"><table class="table"><thead><tr><th>Harness</th><th>GPT-5.4 nano</th><th>GPT-5.4 mini</th><th>Gemini 3.1 FL</th><th>Gemini 3 Flash</th><th>GPT-OSS-20B</th><th>Avg</th></tr></thead><tbody><tr><td>No Retriever</td><td>23.0</td><td>28.8</td><td>28.6</td><td>42.6</td><td>47.6</td><td>34.1</td></tr><tr><td>BM25</td><td>30.2</td><td>29.2</td><td>32.8</td><td class="best">46.6</td><td>48.9</td><td>37.5</td></tr><tr><td>Meta-Harness</td><td class="best">31.7</td><td class="best">30.4</td><td class="best">34.9</td><td>46.3</td><td class="best">50.6</td><td class="best">38.8</td></tr></tbody></table></div>
+    <div class="foot"><span>来源：论文 Table 6。Retrieval corpus 535,356 题，经 exact-prefix 与 Jaccard ≥0.8 去污染。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="TerminalBench 的证据边界">
+    <div class="top"><b>13 · DISCOVERY BENCHMARK</b><span>same 89 public tasks for search and final score</span></div><h2>TerminalBench-2 结果不是 held-out 泛化实验，而是同一 public benchmark 上的 discovery</h2>
+    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">SEARCH</span><h3>89 public tasks</h3><p>候选用同一整套任务获得反馈；起点为 Terminus 2 与 Terminus-KIRA。</p></div><div class="panel orange"><span class="tag">AUDIT</span><h3>Manual + regex</h3><p>作者检查 task-specific string leakage，但没有独立 task split。</p></div><div class="panel green"><span class="tag">FINAL</span><h3>89 × 5 trials</h3><p>官方 artifact 的 76.4% 是 445 次 trial 汇总。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §4.3；官方 TerminalBench artifact README revision 57fefdb。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实搜索轨迹">
+    <div class="top"><b>14 · ITERATIONS 1–7</b><span>one concrete causal chain</span></div><h2>六次回归后，proposer 换到一条更安全的改动路径</h2>
+    <div class="body"><div class="timeline"><div class="event bad"><b>BASE</b><strong>64.4%</strong><span>Terminus-KIRA search score。</span></div><div class="event bad"><b>ITER 1</b><strong>58.9%</strong><span>marker fix + loop breaker + prompt cleanup；变量混在一起。</span></div><div class="event bad"><b>ITER 2</b><strong>57.8%</strong><span>completion 改写仍带同一 prompt。</span></div><div class="event"><b>ITER 3</b><strong>63.3%</strong><span>识别 confound，只保留 structural fixes。</span></div><div class="event bad"><b>ITER 4–6</b><strong>regress</strong><span>completion flow、prompt、smart wait 仍不稳。</span></div><div class="event good"><b>ITER 7</b><strong>pivot</strong><span>不改 loop，只在第一次 LLM call 前加 env snapshot。</span></div><div class="event good"><b>WHY</b><strong>additive</strong><span>给 hard tasks 更多信息，不碰已验证的脆弱控制流。</span></div></div></div>
+    <div class="foot"><span>来源：论文 Appendix A.2。前四个数字是 search-run score；不要与 76.4% final result 混用。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="官方代码具体做了什么">
+    <div class="top"><b>15 · INSPECTED IMPLEMENTATION</b><span>agent.py · revision 57fefdb</span></div><h2><code>_gather_env_snapshot()</code> 在 Agent 开始前一次性探测 sandbox</h2>
+    <div class="body"><pre class="code"><span class="c"># 官方实现的关键路径；为版面删去 parse/format 细节</span>
+bootstrap_cmd = (
+  <span class="s">"pwd; ls -la /app/; "</span>
+  <span class="s">"python3 --version; gcc --version; g++ --version; "</span>
+  <span class="s">"node --version; java -version; rustc --version; go version; "</span>
+  <span class="s">"pip3 --version; pip --version; apt-get --version; free -h"</span>
+)
+result = <span class="k">await</span> asyncio.wait_for(
+  env.exec(command=bootstrap_cmd, timeout_sec=<span class="g">15</span>), timeout=<span class="g">20</span>
+)
+snapshot = <span class="s">"[Environment Snapshot]\n"</span> + format_sections(result.stdout)
+initial_prompt = initial_prompt + <span class="s">"\n\n"</span> + snapshot
+<span class="c"># 任何异常都返回空串 / 被 silent fallback 吞掉，不阻断原 agent。</span></pre></div>
+    <div class="foot"><span>官方代码：meta-harness-tbench2-artifact/agent.py:873–991。展示为忠实节选，不是论文伪代码。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="TerminalBench 最终 harness">
+    <div class="top"><b>16 · DISCOVERED CODING HARNESS</b><span>Terminus-KIRA + environment bootstrap</span></div><h2>最终改动很小：把原本要花 2–4 turns 探索的信息提前交给 Agent</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-9-tbench-harness.webp" alt="Discovered TerminalBench harness"></div><div class="stack"><div class="callout green"><b>Claude Opus 4.6</b><span>76.4%；Terminus-KIRA 74.7%。官方 artifact：89 tasks × 5 trials。</span></div><div class="callout"><b>Claude Haiku 4.5</b><span>37.6%；下一名 Goose 35.5%。</span></div><div class="callout orange"><b>Where it helped</b><span>比 Terminus-KIRA 多赢 7/89 tasks，最大改善在 protein-assembly 与 path-tracing。</span></div></div></div>
+    <div class="foot"><span>原论文 Figure 9，CC BY 4.0；论文 §4.3、Appendix B.3；官方 artifact README。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="三组实验不能混读">
+    <div class="top"><b>17 · EVIDENCE MAP</b><span>what each experiment can establish</span></div><h2>同一套 Meta-Harness，在三个 domain 上回答的是三种不同问题</h2>
+    <div class="body"><table class="table"><thead><tr><th>Domain</th><th>Search signal</th><th>真正 held-out 的东西</th><th>可以说什么</th><th>不能说什么</th></tr></thead><tbody><tr><td>Classification</td><td>3 datasets 的 search split</td><td>原 dataset test + 9 个 OOD datasets</td><td>harness strategy 可跨 dataset 转移</td><td>context 单位有 tokens / chars 冲突</td></tr><tr><td>Math</td><td>250 problems + GPT-OSS-20B</td><td>200 problems + 4 unseen models</td><td>retrieval policy 跨题与跨模型有效</td><td>不能把 GPT-OSS-20B 也叫 unseen</td></tr><tr><td>TerminalBench-2</td><td>全部 89 public tasks</td><td>没有独立 task split</td><td>同 benchmark discovery 可超过强手写 harness</td><td>不能据此证明 OOD task 泛化</td></tr></tbody></table></div>
+    <div class="foot"><span>来源：论文 §3–§5、Appendix C；结合官方代码与 artifact 复核。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结论与限制">
+    <div class="top"><b>18 · TAKEAWAYS</b><span>useful result, narrower claim</span></div><h2>最值得复用的是“完整可检索历史 + 外部验收”，不是某个神奇 mutation operator</h2>
+    <div class="body"><div class="grid2"><div class="panel green"><span class="tag">WHAT SURVIVES</span><h3>工程闭环很强</h3><p>Proposer 读 raw traces、写可执行代码；outer loop 做 import validation、benchmark、frontier 与 final test freezing。</p><p>搜索产物可读、可审计，也能直接迁移到不同 base model。</p></div><div class="panel orange"><span class="tag">WHAT REMAINS OPEN</span><h3>泛化与归因仍不完整</h3><p>只研究 Claude Code + Opus 4.6 proposer；TerminalBench 没有 held-out tasks；开源 repo 自称 cleaned release，仅确认“能运行”。</p><p>未来应比较 proposer、独立 benchmark split、搜索成本与代码复杂度。</p></div></div></div>
+    <div class="foot"><span><a href="/posts/论文解读/meta-harness.html" target="_top">返回文章</a> · <a href="https://arxiv.org/abs/2603.28052">原论文</a> · <a href="https://github.com/stanford-iris-lab/meta-harness">官方代码</a></span><span class="pg"></span></div>
+  </section>
+</main>
+
+<div id="controls" aria-label="幻灯片控制">
+  <a id="return-to-article" href="/posts/论文解读/meta-harness.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label"> 返回文章</span></a>
+  <button id="prev" type="button" aria-label="上一页">←</button><button id="toc" type="button" aria-label="打开目录">☰</button>
+  <span class="current-title" id="current-title">核心结论</span><span class="counter" id="counter">1 / 18</span>
+  <button id="next" type="button" aria-label="下一页">→</button><button id="full" type="button" aria-label="全屏">⛶ <span class="utility-label">全屏</span></button>
+</div>
+<div id="overview-panel" hidden><div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title"><div class="overview-head"><strong id="overview-title">18 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div><div class="overview-grid" id="overview-grid"></div></div></div>
+<div id="progress"></div>
+<script>
+(() => {
+  const slides=[...document.querySelectorAll('#deck .slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
+  if(window.self===window.top)returnLink.hidden=false;
+  let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · Meta-Harness`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+  function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
+  function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
+  async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
+  function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
+  slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
+  show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+</body>
+</html>
