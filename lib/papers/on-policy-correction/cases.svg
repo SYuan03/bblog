@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">两条 imitation-induced planning failure</title>
+  <desc id="desc">Payroll case 中模型算对结果却循环查看 29 次并在 78 步内未提交；WebArena case 中模型跳过筛选，把 351 条全部评论当成 346 条 Approved 评论。</desc>
+  <rect width="1400" height="760" fill="#fff"/>
+  <style>.t{font:700 34px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20252b}.s{font:500 18px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#68737e}.h{font:700 25px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20252b}.tag{font:750 14px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}.p{font:500 17px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#495660}.n{font:750 29px ui-monospace,SFMono-Regular,Menlo,monospace}.line{stroke:#cfd6dc;stroke-width:2}.note{font:500 16px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#53606b}</style>
+  <text x="56" y="62" class="t">同样的知识，换了规划节奏，就接不上原来的 harness</text><text x="56" y="96" class="s">Appendix D 给出的两条具体 rollout；左边是“算对但不提交”，右边是“过早提交”</text>
+  <g transform="translate(56 140)"><rect width="620" height="500" fill="#f7f9fa" stroke="#d5dce1"/><text x="30" y="42" class="tag" fill="#2d669f">CASE 1 · PAYROLL AUDIT · QWEN</text><text x="30" y="84" class="h">算对部门汇总，却没有 finish</text>
+    <line x1="74" y1="132" x2="74" y2="426" class="line"/>
+    <circle cx="74" cy="151" r="14" fill="#2b7863"/><text x="108" y="157" class="p">Evolved harness 给出 compute → verify once → finish</text>
+    <circle cx="74" cy="235" r="14" fill="#2b7863"/><text x="108" y="229" class="p">SFT-imitation 模型仍算出正确 department aggregates</text><text x="108" y="256" class="p">知识没有丢</text>
+    <circle cx="74" cy="326" r="14" fill="#bd5b4f"/><text x="108" y="320" class="p">同一 view 重复 29 次，prompt 约重读 20 次</text><text x="108" y="347" class="p">规划节奏变成无界复查</text>
+    <circle cx="74" cy="418" r="14" fill="#bd5b4f"/><text x="108" y="412" class="n" fill="#a3443d">78 steps → 0</text><text x="108" y="445" class="p">没有提交 finish，正确结果也计失败</text>
+  </g>
+  <g transform="translate(724 140)"><rect width="620" height="500" fill="#f7f9fa" stroke="#d5dce1"/><text x="30" y="42" class="tag" fill="#6e5aa8">CASE 2 · WEBARENA · GEMMA</text><text x="30" y="84" class="h">把全部评论数当成 Approved 数</text>
+    <line x1="74" y1="132" x2="74" y2="426" class="line"/>
+    <circle cx="74" cy="151" r="14" fill="#2b7863"/><text x="108" y="145" class="p">Harness 要求定位 status column</text><text x="108" y="172" class="p">filter Approved → read filtered total → structured finish</text>
+    <circle cx="74" cy="248" r="14" fill="#bd5b4f"/><text x="108" y="242" class="p">SFT-imitation 模型复制 expert 的 terse style</text><text x="108" y="269" class="p">却没有形成 filter-then-count 子目标</text>
+    <circle cx="74" cy="344" r="14" fill="#bd5b4f"/><text x="108" y="338" class="n" fill="#a3443d">351</text><text x="194" y="338" class="p">unfiltered “records found”</text><text x="108" y="369" class="p">直接提前提交</text>
+    <circle cx="74" cy="426" r="14" fill="#2b7863"/><text x="108" y="420" class="n" fill="#2b7863">truth = 346</text><text x="108" y="451" class="p">正确路径必须先筛选 Approved</text>
+  </g>
+  <text x="56" y="704" class="note">根据论文 Appendix D 重绘。论文提供叙述性 case，不提供原始 task 文件、完整逐 turn log 或 checker code。</text>
+</svg>
