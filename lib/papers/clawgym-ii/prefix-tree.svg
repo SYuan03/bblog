@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">How ClawGym II reconstructs and filters a rollout prefix tree</title>
+  <desc id="desc">The main task trajectory shares an initial prefix with retries, compaction calls, and subagent calls. Retry dead leaves and auxiliary trajectories are filtered, while valid main branches retain the rollout reward and count shared tokens once.</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#69737e"/></marker><style>.t{font-family:Arial,"PingFang SC",sans-serif;fill:#20252b}.m{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.h{font-size:49px;font-weight:700}.s{font-size:20px;fill:#66717b}.n{fill:#fff;stroke:#285d9b;stroke-width:4}.ok{fill:#edf7f2;stroke:#2b7562;stroke-width:4}.bad{fill:#fff0ef;stroke:#a0443d;stroke-width:4}.aux{fill:#f3f4f6;stroke:#8a929b;stroke-width:4;stroke-dasharray:10 8}.ln{stroke:#69737e;stroke-width:4;fill:none;marker-end:url(#a)}.lbl{font-size:19px;font-weight:700}.small{font-size:16px;fill:#59636e}</style></defs>
+  <rect width="1600" height="900" fill="#f8f5ee"/>
+  <text x="76" y="75" class="t m" font-size="15" font-weight="700" fill="#285d9b">PREFIX TREE · PAPER §3.2</text>
+  <text x="76" y="137" class="t h">黑盒 harness 交出来的是分叉调用，不是一条干净 transcript</text>
+  <text x="76" y="179" class="t s">proxy 先按 longest-prefix 关系还原树，再决定哪些叶子能进入 loss。</text>
+  <circle cx="180" cy="430" r="52" class="n"/><text x="180" y="424" text-anchor="middle" class="t lbl">task</text><text x="180" y="450" text-anchor="middle" class="t small">root prompt</text>
+  <path d="M232 430 H336" class="ln"/>
+  <rect x="336" y="372" width="210" height="116" rx="8" class="n"/><text x="441" y="414" text-anchor="middle" class="t lbl">call 1</text><text x="441" y="445" text-anchor="middle" class="t small">observe → edit files</text><text x="441" y="470" text-anchor="middle" class="t m" font-size="14">shared tokens</text>
+  <path d="M546 430 H654" class="ln"/>
+  <rect x="654" y="372" width="210" height="116" rx="8" class="n"/><text x="759" y="414" text-anchor="middle" class="t lbl">call 2</text><text x="759" y="445" text-anchor="middle" class="t small">tool result → plan</text><text x="759" y="470" text-anchor="middle" class="t m" font-size="14">shared tokens</text>
+  <path d="M864 430 C944 430 944 304 1030 304" class="ln"/><rect x="1030" y="246" width="238" height="116" rx="8" class="ok"/><text x="1149" y="287" text-anchor="middle" class="t lbl">main continuation</text><text x="1149" y="318" text-anchor="middle" class="t small">valid leaf · keep</text><text x="1149" y="343" text-anchor="middle" class="t m" font-size="14">inherits rollout reward R</text>
+  <path d="M864 430 C944 430 944 430 1030 430" class="ln"/><rect x="1030" y="382" width="238" height="96" rx="8" class="bad"/><text x="1149" y="420" text-anchor="middle" class="t lbl">retry attempt</text><text x="1149" y="450" text-anchor="middle" class="t small">dead leaf · discard</text>
+  <path d="M864 430 C944 430 944 560 1030 560" class="ln"/><rect x="1030" y="512" width="238" height="96" rx="8" class="aux"/><text x="1149" y="550" text-anchor="middle" class="t lbl">compaction branch</text><text x="1149" y="580" text-anchor="middle" class="t small">auxiliary · exclude</text>
+  <path d="M864 430 C944 430 944 686 1030 686" class="ln"/><rect x="1030" y="638" width="238" height="96" rx="8" class="aux"/><text x="1149" y="676" text-anchor="middle" class="t lbl">subagent branch</text><text x="1149" y="706" text-anchor="middle" class="t small">auxiliary · exclude</text>
+  <rect x="1330" y="246" width="204" height="488" rx="8" fill="#fff" stroke="#cfd4da" stroke-width="2"/>
+  <text x="1354" y="288" class="t lbl">进入训练前</text>
+  <text x="1354" y="334" class="t small">1. 每段保留最长</text><text x="1374" y="360" class="t small">valid continuation</text>
+  <text x="1354" y="405" class="t small">2. 叶子过多则整条</text><text x="1374" y="431" class="t small">rollout 丢弃</text>
+  <text x="1354" y="476" class="t small">3. compaction 与</text><text x="1374" y="502" class="t small">subagent 不分 reward</text>
+  <text x="1354" y="547" class="t small">4. shared prefix</text><text x="1374" y="573" class="t small">每 rollout 只计一次</text>
+  <line x1="1354" y1="610" x2="1510" y2="610" stroke="#cfd4da"/>
+  <text x="1354" y="648" class="t m" font-size="15">GRPO: Â_i per rollout</text>
+  <text x="1354" y="680" class="t m" font-size="15">PPO: γ = λ = 1</text>
+  <text x="1354" y="712" class="t m" font-size="15">no sibling backup</text>
+  <rect x="76" y="776" width="1192" height="62" rx="6" fill="#20252b"/>
+  <text x="102" y="815" font-family="Arial,'PingFang SC',sans-serif" font-size="18" fill="#fff">论文没有公开 over-branching threshold、代码或真实 prefix-tree trace；图中结构只复述公开算法，不补写实现细节。</text>
+  <text x="76" y="872" class="t small">Source: ClawGym II, Sections 3.2.1–3.2.3. Explanatory redraw.</text>
+</svg>

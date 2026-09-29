@@ -1,0 +1,208 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "ClawGym II: Exploring Black-Box RL on Agent Harness",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper", "bench", "syndata", "clawgym-paper", "code"]
+  },
+  "artifacts": {
+    "article": "content/_posts/053-clawgym-ii.md",
+    "deck": "lib/decks/clawgym-ii-visual-guide.html",
+    "embed_src": "/lib/decks/clawgym-ii-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "ClawGym II: Exploring Black-Box RL on Agent Harness",
+      "url": "https://arxiv.org/abs/2608.16798",
+      "revision": "v1, 2026-08-17",
+      "used_for": ["problem", "related-work", "method", "experiments", "results", "limitations", "figures", "tables", "appendix-judge-prompt", "license"]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "SsmallSong/ClawGym-II",
+      "url": "https://github.com/SsmallSong/ClawGym-II",
+      "revision": "repository size 0 in GitHub API; checked 2026-09-29",
+      "used_for": ["reproducibility-gap"]
+    },
+    {
+      "id": "bench",
+      "kind": "checker",
+      "title": "ClawGym/ClawGym-Bench",
+      "url": "https://github.com/ClawGym/ClawGym-Bench",
+      "revision": "c8cbd1d0df033af24fc14064d40d6964ca8f611f",
+      "used_for": ["task-provenance", "public-vs-hidden-inputs", "checker-code", "judge", "aggregation", "real-case"]
+    },
+    {
+      "id": "syndata",
+      "kind": "code",
+      "title": "ClawGym/ClawGym-SynData",
+      "url": "https://github.com/ClawGym/ClawGym-SynData",
+      "revision": "98d0478ca2a0fbda22fcbba5da3e5e03da95f20d",
+      "used_for": ["task-generation", "checker-generation", "rubric-generation", "model-review"]
+    },
+    {
+      "id": "clawgym-paper",
+      "kind": "paper",
+      "title": "ClawGym: A Scalable Framework for Building Effective Claw Agents",
+      "url": "https://arxiv.org/abs/2604.26904",
+      "revision": "source retrieved 2026-09-29",
+      "used_for": ["syndata-provenance", "benchmark-construction", "human-review"]
+    },
+    {
+      "id": "pinchbench",
+      "kind": "dataset",
+      "title": "pinchbench-skill",
+      "url": "https://github.com/pinchbench/pinchbench-skill",
+      "revision": "18dd9d9a4f6659f87ad48724c41902631892f398, dated 2026-04-10",
+      "used_for": ["external-benchmark", "task-count"]
+    },
+    {
+      "id": "polar",
+      "kind": "paper",
+      "title": "Polar: Agentic RL on Any Harness at Scale",
+      "url": "https://arxiv.org/abs/2605.24220",
+      "revision": "cited by ClawGym II; checked 2026-09-29",
+      "used_for": ["related-work"]
+    },
+    {
+      "id": "dressage",
+      "kind": "code",
+      "title": "Dressage: Scalable RL for Any Agent and Any Sandbox",
+      "url": "https://github.com/Accio-Lab/Dressage",
+      "revision": "repository linked by ClawGym II; checked 2026-09-29",
+      "used_for": ["related-work"]
+    },
+    {
+      "id": "openforgerl",
+      "kind": "paper",
+      "title": "OpenForgeRL: Train Harness-native Agents in Any Environment",
+      "url": "https://arxiv.org/abs/2607.21557",
+      "revision": "cited by ClawGym II; checked 2026-09-29",
+      "used_for": ["related-work"]
+    },
+    {
+      "id": "lego-rl",
+      "kind": "paper",
+      "title": "LEGO-RL: Harness-Native Reinforcement Learning for Coding Agents",
+      "url": "https://arxiv.org/abs/2608.17393",
+      "revision": "v1, 2026-08-18",
+      "used_for": ["related-work"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 20,
+    "rendered_page_ranges": [{"start": 1, "end": 20}],
+    "source_visuals_expected": 11,
+    "visual_inventory_complete": true,
+    "inventory_note": "The v1 PDF contains Figures 1-8, Tables 1-2, and an important Appendix A judge-prompt box. The arXiv license is non-exclusive distribution, so no original visual is copied. Figure 1 and Tables 1-2 are redrawn; the remaining plots are inventoried as omitted and their claims are summarized in prose or HTML tables."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么要绕过 harness 内部逻辑做 RL？"},
+    {"role": "related-work", "locator": "Q2. 它和 ClawGym、POLAR、LEGO-RL 等工作到底差在哪里？"},
+    {"role": "method", "locator": "Q3. 从一次 model call 到 reward，完整流程怎样工作？"},
+    {"role": "experiments", "locator": "Q4. 实验结果支持了哪些结论？"},
+    {"role": "future-work", "locator": "Q5. 对 Claude Code、Codex harness 研究有什么直接启发？"},
+    {"role": "summary", "locator": "Q6. 最后怎样评价这篇论文？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 2; Figure 1"}],
+      "evidence": [{"artifact": "article", "quote": "训练接口放在 model-serving boundary。"}]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["clawgym-paper", "syndata", "bench", "pinchbench"],
+      "source_locators": [{"source_id": "clawgym-paper", "locator": "Section 2, synthetic task generation and benchmark construction"}, {"source_id": "syndata", "locator": "data_synthesis/persona2task and data_synthesis/skill2task at 98d0478"}, {"source_id": "bench", "locator": "README and data/benchmark_data.jsonl at c8cbd1d"}, {"source_id": "pinchbench", "locator": "repository tree at 2026-04-10 commit"}],
+      "evidence": [{"artifact": "article", "quote": "ClawGym-SynData 约有 13.5K 题，来自两条合成路线。"}, {"artifact": "article", "quote": "ClawGym-Bench 从未用于训练的合成题中筛选 200 题。"}]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["clawgym-paper", "syndata", "bench"],
+      "source_locators": [{"source_id": "clawgym-paper", "locator": "Section 2.3-2.4; human evaluation of 50 training tasks"}, {"source_id": "syndata", "locator": "persona2task stages 04-11 and skill2task pipeline"}, {"source_id": "bench", "locator": "README; benchmark_data.jsonl rules and hook_code"}],
+      "evidence": [{"artifact": "article", "quote": "GPT-5 生成 mock workspace、checker 与 rubric；GPT-5.4 检查 plausibility、difficulty、checker alignment 和互补性。"}, {"artifact": "article", "quote": "human reviewer 最终 accept、revise 或 reject。"}]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["bench"],
+      "source_locators": [{"source_id": "bench", "locator": "data/benchmark_data.jsonl line 1; evaluation/localclawbench/internalbench/workspace.py and runner.py"}],
+      "evidence": [{"artifact": "article", "quote": "Rollout 结束后，runner 才在最终 workspace 上执行 checker。"}]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": ["paper", "bench"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.1, Evaluation Datasets and Metrics"}, {"source_id": "bench", "locator": "reward.py mean_numeric; judge.py score_judge_scores; runner.py combine_scores and save_run_summary"}],
+      "evidence": [{"artifact": "article", "quote": "s_task = 0.7 · s_code + 0.3 · s_rubric"}, {"artifact": "article", "quote": "公开 runner 的 save_run_summary() 却直接对每次 rollout 的连续 final_score 求 mean_score"}]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["bench"],
+      "source_locators": [{"source_id": "bench", "locator": "data/benchmark_data.jsonl line 1, embedded reward/test.py lines 253-348"}, {"source_id": "bench", "locator": "evaluation/localclawbench/internalbench/judge.py and runner.py at c8cbd1d"}],
+      "evidence": [{"artifact": "article", "quote": "任务内容是为志愿者污染修复团队准备周报。"}, {"artifact": "article", "quote": "Python checker 返回 15 个等权 0/1 metrics"}]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3; Figures 2-8; Tables 1-2"}],
+      "evidence": [{"artifact": "article", "quote": "ClawII-OC-30A3B / OpenClaw"}, {"artifact": "article", "quote": "JobBench-Easy 从 20.46 提高到 27.20"}]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "polar", "dressage", "openforgerl", "lego-rl", "clawgym-paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Related Work and Section 3.7"}, {"source_id": "polar", "locator": "abstract and method overview"}, {"source_id": "dressage", "locator": "official README"}, {"source_id": "openforgerl", "locator": "abstract"}, {"source_id": "lego-rl", "locator": "Sections 1-4"}],
+      "evidence": [{"artifact": "article", "quote": "ClawGym II 的辨识度在 prefix-tree reconstruction 和 fork-aware PPO/GRPO"}]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "code", "bench"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 2-4 and Appendix A"}, {"source_id": "code", "locator": "GitHub API repository size 0 on 2026-09-29"}, {"source_id": "bench", "locator": "judge.py, runner.py and embedded case checker at c8cbd1d"}],
+      "evidence": [{"artifact": "article", "quote": "官方 ClawGym II 代码页截至核查时为空"}, {"artifact": "article", "quote": "没有多 seed 重复训练或置信区间"}]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 5, Figure 1","status":"redrawn","rationale":"方法总图用原创 SVG 重绘，保留任务、sandbox、proxy、prefix tree、verifier 和 update 的完整因果链。","placements":[{"artifact":"article","locator":"根据原论文 Figure 1 与 §2.1–§2.3 重绘"},{"artifact":"deck","locator":"根据论文 Figure 1 与 §2.1–§2.3 重绘"}],"permission_status":"not-applicable","permission_basis":"No original pixels reused; paper license is non-exclusive distribution.","credit":"根据原论文 Figure 1 与方法正文重绘","asset_paths":["/lib/papers/clawgym-ii/pipeline.svg"]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 9, Figure 2","status":"omitted","rationale":"OpenClaw training curves are summarized in prose; direct reuse is not permitted by the paper license.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 10, Figure 3","status":"omitted","rationale":"Claude Code training curves are summarized in prose; direct reuse is not permitted.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 12, Figure 4","status":"omitted","rationale":"Mix-harness curve has no complete numeric table; the reported qualitative result and evidence gap are stated in text.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 13, Figure 5","status":"omitted","rationale":"JobBench-style curve is summarized using the exact start and end scores.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 13, Figure 6","status":"omitted","rationale":"OfficeQA-style curve is summarized using the exact start and end scores.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 14, Figure 7","status":"omitted","rationale":"Cold-start dynamics are described in prose, including the missing repeated-run evidence.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 16, Figure 8","status":"omitted","rationale":"White-box training dynamics are summarized alongside the exact Table 2 transfer results.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"pp. 7-8, Table 1","status":"redrawn","rationale":"Main 30A3B results are redrawn as proportional bars and repeated in an HTML table with initialization caveats.","placements":[{"artifact":"article","locator":"根据论文 Table 1 重绘"},{"artifact":"deck","locator":"根据论文 Table 1 重绘"}],"permission_status":"not-applicable","permission_basis":"Numerical data redrawn without original table styling.","credit":"根据原论文 Table 1 数据重绘","asset_paths":["/lib/papers/clawgym-ii/results.svg"]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 15, Table 2","status":"redrawn","rationale":"Cross-harness transfer is redrawn to make the train/evaluation harness switch explicit.","placements":[{"artifact":"article","locator":"根据论文 Table 2 重绘"},{"artifact":"deck","locator":"根据论文 Figures 5–6、Table 2 重绘"}],"permission_status":"not-applicable","permission_basis":"Numerical data redrawn without original table styling.","credit":"根据原论文 Table 2 数据重绘","asset_paths":["/lib/papers/clawgym-ii/transfer.svg"]},
+    {"id":"appendix-a-judge","kind":"appendix-visual","label":"Appendix A Rubric-Based Judge prompt","source_id":"paper","source_locator":"pp. 18-19, Appendix A","status":"omitted","rationale":"The prompt behavior and its difference from the public judge implementation are summarized; the full prompt box is not reproduced.","placements":[],"permission_status":"not-applicable","permission_basis":"arXiv non-exclusive distribution license","credit":"","asset_paths":[]}
+  ],
+  "figures": [
+    {"path":"/generated-covers/053-clawgym-ii.webp","origin":"generated","source_id":"paper","source_locator":"paper overview","credit":"原创封面图","license_status":"not-applicable","license_basis":"Original explanatory graphic.","used_in":["article"]},
+    {"path":"/lib/papers/clawgym-ii/pipeline.svg","origin":"author-redrawn","source_visual_id":"figure-1","source_id":"paper","source_locator":"Figure 1 and Sections 2.1-2.3","credit":"根据原论文 Figure 1 与方法正文重绘","license_status":"not-applicable","license_basis":"No original pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/clawgym-ii/prefix-tree.svg","origin":"generated","source_id":"paper","source_locator":"Sections 2.2.1-2.2.3","credit":"根据原论文 prefix-tree 机制原创绘制","license_status":"not-applicable","license_basis":"Original explanatory graphic.","used_in":["article","deck"]},
+    {"path":"/lib/papers/clawgym-ii/judge-case.svg","origin":"generated","source_id":"bench","source_locator":"benchmark_data.jsonl line 1; reward.py; judge.py; runner.py","credit":"根据官方 case 与 judge 实现原创绘制","license_status":"not-applicable","license_basis":"Original explanatory graphic.","used_in":["article","deck"]},
+    {"path":"/lib/papers/clawgym-ii/results.svg","origin":"author-redrawn","source_visual_id":"table-1","source_id":"paper","source_locator":"Table 1","credit":"根据原论文 Table 1 数据重绘","license_status":"not-applicable","license_basis":"Numerical data redrawn without original styling.","used_in":["article","deck"]},
+    {"path":"/lib/papers/clawgym-ii/transfer.svg","origin":"author-redrawn","source_visual_id":"table-2","source_id":"paper","source_locator":"Table 2","credit":"根据原论文 Table 2 数据重绘","license_status":"not-applicable","license_basis":"Numerical data redrawn without original styling.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first": true, "toc_h2_only": true, "surface": "neutral-light", "body_font": "sans-serif", "body_font_px": 17, "line_height": 1.76, "figures_centered": true, "internal_scroll_for_tables_and_code": true, "page_horizontal_overflow": false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"]
+  }
+}

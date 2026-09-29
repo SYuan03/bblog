@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ClawGym II · 论文图解</title>
+<style>
+:root{--paper:#f8f5ee;--ink:#20252b;--muted:#66717b;--line:#cfd4da;--blue:#285d9b;--orange:#ad5735;--green:#2b7562;--red:#a0443d;--dark:#20262d;--sans:Arial,"PingFang SC","Microsoft YaHei",sans-serif;--serif:Georgia,"Songti SC",serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#151a20;color:var(--ink);font-family:var(--sans)}a{color:inherit}button,a{font:inherit}
+#deck{position:fixed;width:1600px;height:900px;transform-origin:top left;background:var(--paper)}.slide{display:none;position:absolute;inset:0;padding:48px 72px 58px;background:var(--paper)}.slide.active{display:flex;flex-direction:column}.top,.foot{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:16px}.top{height:28px;border-bottom:1px solid var(--line);padding-bottom:12px}.top b{color:var(--blue);font:800 15px/1 var(--mono);letter-spacing:1.4px}.slide>h1{max-width:1240px;margin:62px 0 18px;font:700 76px/1.03 var(--serif)}.slide>h2{max-width:1370px;margin:30px 0 12px;font:700 48px/1.08 var(--serif)}.lead{max-width:1280px;margin:0;color:var(--muted);font-size:23px;line-height:1.48}.body{display:flex;flex:1;align-items:center;min-height:0;padding:24px 0 20px}.foot{height:25px;border-top:1px solid var(--line);padding-top:12px;font-size:14px}.foot span:first-child{max-width:1320px}.pg{font-family:var(--mono)}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:58px;align-items:end;flex:1}.hero .question{font:700 54px/1.12 var(--serif)}.hero .answer{border-left:6px solid var(--blue);padding:8px 0 8px 28px;color:var(--muted);font-size:25px;line-height:1.48}.hero .score{color:var(--blue);font:800 58px/1 var(--mono)}.hero .score small{display:block;margin-top:14px;color:var(--muted);font:600 16px/1.4 var(--sans)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%}.panel{min-width:0;padding:24px 26px;border:1px solid var(--line);background:#fff}.panel.blue{border-top:5px solid var(--blue)}.panel.orange{border-top:5px solid var(--orange)}.panel.green{border-top:5px solid var(--green)}.panel.red{border-top:5px solid var(--red)}.tag{display:block;margin-bottom:10px;color:var(--blue);font:800 14px/1 var(--mono);letter-spacing:1px}.panel h3{margin:0 0 10px;font:700 27px/1.2 var(--serif)}.panel p,.panel li{margin:.35em 0;color:var(--muted);font-size:19px;line-height:1.5}.panel ul{margin:0;padding-left:1.1em}.metric{color:var(--blue);font:800 43px/1 var(--mono)}.metric small{display:block;margin-top:12px;color:var(--muted);font:600 16px/1.4 var(--sans)}
+.figure{display:flex;align-items:center;justify-content:center;width:100%;height:100%}.figure img{display:block;max-width:100%;max-height:610px}.figure.small img{max-height:520px}.caption{margin-top:8px;color:var(--muted);font-size:14px;line-height:1.4}.image-side{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:center;width:100%}.image-side>div:first-child{min-width:0}.image-side img{display:block;width:100%;max-height:590px;object-fit:contain}.stack{display:grid;gap:14px}.callout{padding:17px 19px;border-left:5px solid var(--blue);background:#fff}.callout.orange{border-color:var(--orange)}.callout.green{border-color:var(--green)}.callout.red{border-color:var(--red)}.callout b{display:block;margin-bottom:5px;color:var(--ink);font-size:19px}.callout span{color:var(--muted);font-size:16px;line-height:1.45}
+.flow{display:flex;align-items:stretch;width:100%}.step{position:relative;flex:1;min-width:0;padding:22px 18px;border:1px solid var(--line);background:#fff}.step+.step{margin-left:34px}.step+.step:before{content:"";position:absolute;left:-35px;top:50%;width:34px;height:2px;background:var(--blue)}.step+.step:after{content:"";position:absolute;left:-8px;top:calc(50% - 5px);border-left:9px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}.step b{display:block;margin-bottom:8px;color:var(--blue);font:800 15px/1.3 var(--mono)}.step strong{display:block;margin-bottom:8px;font-size:21px}.step span{display:block;color:var(--muted);font-size:16px;line-height:1.45}
+.formula{width:100%;padding:24px 26px;text-align:center;border-block:1px solid var(--line);background:#fff;font:700 28px/1.55 var(--mono)}.formula small{display:block;margin-top:12px;color:var(--muted);font:400 16px/1.5 var(--sans)}
+.table{width:100%;border-collapse:collapse;background:#fff;font-size:17px;line-height:1.38}.table th,.table td{padding:12px 13px;border:1px solid var(--line);text-align:left;vertical-align:top}.table th{background:#eef4fb;color:#26394d}.table td:first-child{font-weight:700}.best{color:var(--green);font-weight:800}.warn{color:var(--orange);font-weight:750}.bad{color:var(--red);font-weight:750}.code{width:100%;margin:0;padding:22px 24px;overflow:hidden;border:1px solid #39414a;background:#20262d;color:#e8edf2;font:16px/1.55 var(--mono);white-space:pre-wrap}.code .c{color:#96a3af}.code .k{color:#7ab5f3}.code .s{color:#dcb17a}.code .g{color:#83c9a7}
+.bars{display:grid;gap:22px;width:100%}.barrow{display:grid;grid-template-columns:250px 1fr 120px;gap:16px;align-items:center}.barrow b{font-size:18px}.track{height:24px;background:#e1e5e9}.fill{height:100%;background:var(--blue)}.fill.base{background:#aeb9c5}.fill.orange{background:var(--orange)}.barrow strong{font:800 20px/1 var(--mono)}
+.lane{display:grid;grid-template-columns:190px 1fr;gap:18px;width:100%;align-items:center}.lane+.lane{margin-top:16px}.lane>strong{font:800 16px/1.3 var(--mono);color:var(--blue)}.nodes{display:flex;gap:10px;align-items:center}.node{padding:15px 18px;border:1px solid var(--line);background:#fff;font-size:16px}.node.hidden{border-color:var(--red);background:#fff0ef}.node.good{border-color:var(--green);background:#edf7f2}.node:after{content:"→";margin-left:18px;color:var(--blue)}.node:last-child:after{content:"";margin:0}
+.limits{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:var(--line)}.limit{min-height:190px;padding:23px;background:#fff}.limit b{display:block;color:var(--orange);font:800 14px/1 var(--mono);letter-spacing:1px}.limit strong{display:block;margin:11px 0 8px;font-size:22px}.limit span{color:var(--muted);font-size:17px;line-height:1.45}
+#controls{position:fixed;z-index:20;left:50%;bottom:14px;display:flex;align-items:center;gap:8px;transform:translateX(-50%);padding:7px 9px;border:1px solid #4a535e;background:rgba(22,27,33,.94);color:#f3f5f7;box-shadow:0 8px 24px rgba(0,0,0,.25)}#controls button,#controls a{height:34px;padding:0 11px;border:1px solid #58626d;background:#262d35;color:#fff;text-decoration:none;cursor:pointer}#controls button:hover,#controls a:hover{background:#35404b}.current-title{min-width:170px;max-width:290px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.counter{font:700 13px/1 var(--mono)}#progress{position:fixed;z-index:21;left:0;bottom:0;height:4px;background:var(--blue);transition:width .2s}.return-label,.utility-label{font-size:12px}
+#overview-panel{position:fixed;z-index:30;inset:0;background:rgba(10,13,16,.78);padding:46px}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:calc(100vh - 92px);margin:auto;overflow:auto;background:#f8f5ee;padding:24px}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.overview-head button{width:36px;height:36px;border:1px solid var(--line);background:#fff;font-size:24px}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);background:#fff;text-align:left}.overview-grid button[aria-current="true"]{border-color:var(--blue);background:#eef4fb}.overview-grid b{font-family:var(--mono);color:var(--blue)}
+@media(max-width:760px){#controls{bottom:8px;gap:4px}.current-title,.utility-label,.return-label{display:none}#controls button,#controls a{padding:0 10px}.overview-grid{grid-template-columns:1fr 1fr}}
+@media print{html,body{overflow:visible;background:#fff}#deck{position:static;width:auto;height:auto;transform:none!important}.slide{display:flex!important;position:relative;width:1600px;height:900px;page-break-after:always}#controls,#overview-panel,#progress{display:none!important}}
+</style>
+</head>
+<body>
+<main id="deck">
+  <section class="slide" data-title="核心结论">
+    <div class="top"><b>CLAWGYM II · PAPER DEEP DIVE</b><span>arXiv:2608.16798 · 2026-08-17</span></div>
+    <div class="hero"><div><div class="question">能不能不改 Claude Code 或 OpenClaw 的内部逻辑，直接用 RL 训练它背后的模型？</div><p class="lead" style="margin-top:28px">ClawGym II 在 model-serving boundary 截获真实 token 与 log-prob，再把零散调用恢复成 prefix tree。Harness 继续负责工具、上下文和重试，trainer 只接收可归因的轨迹与 reward。</p></div><div><div class="score">9.8 / 10<small>作者兴趣度：与完整 Agent harness 的训练直接相关</small></div><div class="callout green" style="margin-top:30px"><b>30A3B · ClawGym-Bench</b><span>OpenClaw：52.64 → 62.62；Claude Code：37.06 → 51.87。</span></div></div></div>
+    <div class="foot"><span>标题：ClawGym II: Exploring Black-Box RL on Agent Harness</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="研究动机">
+    <div class="top"><b>02 · MOTIVATION</b><span>保留部署时真正使用的 harness</span></div><h2>白盒 agent loop 容易训练，完整 harness 才接近真实使用</h2><p class="lead">Claude Code、OpenClaw 会自己构造 prompt、执行工具、重试、调用 subagent、压缩上下文。把它们重写进训练框架，会改变 policy 实际面对的交互分布。</p>
+    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">WHITE-BOX</span><h3>训练框架看见全部 control flow</h3><p>可以直接定义 state、action、tool loop 和 credit assignment，但部署 harness 的行为被替换了。</p></div><div class="panel orange"><span class="tag">BLACK-BOX</span><h3>只观察模型 API</h3><p>Harness 内部逻辑保持不动；可见的是一次次 model call 和最终 workspace。</p></div><div class="panel green"><span class="tag">TARGET</span><h3>让 reward 回到正确 token</h3><p>必须恢复长轨迹、过滤辅助分支，并保留 rollout 时的 token 与概率。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §1、§2.1、§2.2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="黑盒到底黑在哪里">
+    <div class="top"><b>03 · SYSTEM BOUNDARY</b><span>opaque harness ≠ opaque model</span></div><h2>训练系统不读 harness 内部状态，只守住所有生成都经过的模型端点</h2>
+    <div class="body"><div style="width:100%"><div class="lane"><strong>HARNESS PRIVATE</strong><div class="nodes"><span class="node">prompt assembly</span><span class="node">tools</span><span class="node">retry / compaction</span></div></div><div class="lane"><strong>OBSERVED</strong><div class="nodes"><span class="node good">input tokens</span><span class="node good">output tokens</span><span class="node good">rollout log-prob</span><span class="node good">task metadata</span></div></div><div class="lane"><strong>AFTER ROLLOUT</strong><div class="nodes"><span class="node hidden">hidden verifier</span><span class="node good">workspace reward</span><span class="node good">policy update</span></div></div><div class="callout orange" style="margin-top:30px"><b>边界条件</b><span>论文假设 harness 的所有模型生成都会经过可替换的 serving endpoint。如果某些决策绕过这个端点，训练系统就看不见它们。</span></div></div></div>
+    <div class="foot"><span>来源：论文 §2.1、Figure 1；图为解释性重绘。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="完整训练流水线">
+    <div class="top"><b>04 · PIPELINE</b><span>task → native harness → proxy → tree → verifier → update</span></div><h2>一个 rollout 的数据怎样从任务走到梯度</h2>
+    <div class="body figure"><img src="/lib/papers/clawgym-ii/pipeline.svg" alt="ClawGym II black-box RL pipeline"></div>
+    <div class="foot"><span>根据论文 Figure 1 与 §2.1–§2.3 重绘。原图许可不允许直接复用。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="为什么需要 Prefix Tree">
+    <div class="top"><b>05 · PREFIX TREE</b><span>model calls 不是天然的一条 transcript</span></div><h2>重试、compaction 和 subagent 会把一次 rollout 分成多个分支</h2>
+    <div class="body figure"><img src="/lib/papers/clawgym-ii/prefix-tree.svg" alt="Prefix tree reconstruction and filtering"></div>
+    <div class="foot"><span>来源：论文 §2.2.1–§2.2.3；图为解释性重绘。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Prefix Tree 的过滤规则">
+    <div class="top"><b>06 · TRAJECTORY FILTERING</b><span>先判断哪条分支代表主任务</span></div><h2>同一棵树里的 leaf 并不都该拿到最终 reward</h2>
+    <div class="body"><div class="grid4"><div class="panel red"><span class="tag">DROP</span><h3>Retry dead leaf</h3><p>格式错误后的旧尝试没有后续，被重试替代。</p></div><div class="panel red"><span class="tag">DROP ROLLOUT</span><h3>过度分叉</h3><p>leaf 超过预设阈值时，整次 rollout 被视为异常。阈值未披露。</p></div><div class="panel orange"><span class="tag">EXCLUDE</span><h3>Compaction / subagent</h3><p>它们的角色与主任务不同，直接广播终局 reward 会混淆 credit。</p></div><div class="panel green"><span class="tag">KEEP</span><h3>Main-agent paths</h3><p>保留有效 root-to-leaf 路径，共享 prefix 在一个 rollout 中只计一次。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §2.2.2–§2.2.3。Over-branching threshold 未公开。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="GRPO 怎样给分支记账">
+    <div class="top"><b>07 · GRPO</b><span>reward 属于 rollout，不属于某条 leaf</span></div><h2>同一 task 的多个 rollout 先做组内标准化，再把 advantage 写回树节点</h2>
+    <div class="body" style="flex-direction:column;justify-content:center;gap:26px"><div class="formula">Âᵢ = (Rᵢ − μq) / (σq + ε)<small>rollout gᵢ 中所有保留 trajectory 继承同一个 Rᵢ；共享 prefix token 只进入一次 loss。</small></div><div class="grid3"><div class="panel blue"><h3>分组单位</h3><p>同一 task 下的 n 个 rollout。</p></div><div class="panel green"><h3>优势单位</h3><p>每个 rollout 一个 Âᵢ，而不是每个 branch 一个 reward。</p></div><div class="panel orange"><h3>仍未解决</h3><p>同一 rollout 内各分支到底贡献了多少，终局 reward 无法区分。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §2.2.3，Equation 1。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="PPO 怎样处理分叉">
+    <div class="top"><b>08 · PPO</b><span>简化的 branch-local GAE</span></div><h2>PPO 把 sibling branches 分开回传，γ = λ = 1</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">ESTIMATOR</span><div class="formula" style="margin-top:25px">Âₜ = Rᵢ − Vφ(sₜ)</div><p>每条 trajectory 在自己的末 token 收到 rollout reward，再独立做 GAE backup。优势不穿过 branch point 传到 sibling。</p></div><div class="panel orange"><span class="tag">TRADE-OFF</span><h3>实现简单，方差与 bias 要自己承担</h3><p>critic 要从很早的中间 state 预测长程回报；没有 temporal discounting。论文把更完整的 tree-aware credit assignment 留给后续工作。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §2.2.3，Equation 2。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="训练与推理一致性">
+    <div class="top"><b>09 · TOKEN FIDELITY</b><span>harness 可改文字表示，不能改训练 token</span></div><h2>token-in-token-out 保留原始采样序列，importance correction 修正概率偏差</h2>
+    <div class="body"><div style="width:100%"><div class="flow"><div class="step"><b>1 · SAMPLE</b><strong>Inference engine</strong><span>保存 exact output tokens 与 log πrollout。</span></div><div class="step"><b>2 · ACT</b><strong>Harness text view</strong><span>可格式化 tool call、重序列化消息。</span></div><div class="step"><b>3 · TRAIN</b><strong>Trainer token view</strong><span>直接使用保存的 tokens，不重新编码 harness 文本。</span></div><div class="step"><b>4 · CORRECT</b><strong>Token-level ratio</strong><span>用截断 importance weight 降低概率 mismatch。</span></div></div><div class="formula" style="margin-top:28px">wₜ = min(exp(log πold(aₜ|sₜ) − log πrollout(aₜ|sₜ)), c̄)<small>这是 bias 与 variance 的折中。论文没有公开 c̄ 的数值。</small></div></div></div>
+    <div class="foot"><span>来源：论文 §2.2.4，Equations 3–4。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="Mix-harness 训练">
+    <div class="top"><b>10 · MIX-HARNESS</b><span>一个 policy，两种交互分布</span></div><h2>同题在不同 harness 下不能放进同一 advantage group</h2>
+    <div class="body"><div style="width:100%"><div class="lane"><strong>OpenClaw group</strong><div class="nodes"><span class="node">task q + H_OC</span><span class="node">8 rollouts</span><span class="node good">normalize Â inside group</span></div></div><div class="lane"><strong>Claude Code group</strong><div class="nodes"><span class="node">task q + H_CC</span><span class="node">8 rollouts</span><span class="node good">normalize Â inside group</span></div></div><div class="callout green" style="margin-top:34px"><b>共同更新一个 policy</b><span>任务可以相同，组内统计必须按 task-harness pair 分开。这样不会把 harness 导致的 reward 分布差异误当成 policy 优劣。</span></div></div></div>
+    <div class="foot"><span>来源：论文 §2.3。Mix-harness 只给曲线和定性结论，没有完整数值表。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="13.5K 训练任务从哪来">
+    <div class="top"><b>11 · CLAWGYM-SYNDATA</b><span>persona route + skill route</span></div><h2>GPT-5 生成任务与 workspace，GPT-5.4 做质量复核</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">PERSONA ROUTE</span><h3>9 大类、43 个子类</h3><p>GPT-5 根据 persona 与 7 类、26 种 atomic operations 生成任务，再生成 mock workspace、Python checker 和 rubric。</p></div><div class="panel orange"><span class="tag">SKILL ROUTE</span><h3>约 30K skills → 约 16K</h3><p>MiniMax-M2.5 先标注 ClawHub skills。每题使用 1 个主 skill，最多搭配 3 个辅助 skills，再由 GPT-5 生成任务。</p></div><div class="panel green"><span class="tag">MODEL REVIEW</span><h3>GPT-5.4 四项检查</h3><p>plausibility、difficulty、checker alignment，以及 rubric 是否只补 code checker 不擅长判断的维度。</p></div><div class="panel"><span class="tag">HUMAN SAMPLE</span><h3>50 题人工抽样</h3><p>四维平均 4.06 / 5。论文没有给多标注者一致性，也没有披露全量人工复核。</p></div></div></div>
+    <div class="foot"><span>来源：ClawGym 原论文 §2 与 ClawGym-SynData revision 98d0478。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="200 题 benchmark 怎样入选">
+    <div class="top"><b>12 · CLAWGYM-BENCH</b><span>held-out synthetic tasks</span></div><h2>先用模型成功率找出“强模型能做、小模型仍难”的题，再交给人复核</h2>
+    <div class="body"><div class="flow"><div class="step"><b>POOL</b><strong>未用于训练的合成题</strong><span>沿用 instruction + workspace + checker + rubric 结构。</span></div><div class="step"><b>CALIBRATE</b><strong>strong / small 各 4 次</strong><span>strong avg ≥ 0.2；small avg ≤ 0.6；strong &gt; small。</span></div><div class="step"><b>MODEL AUDIT</b><strong>GPT-5.4 诊断</strong><span>检查任务、checker 和 rubric。</span></div><div class="step"><b>HUMAN REVIEW</b><strong>accept / revise / reject</strong><span>最终入选 200 题：156 code-only，44 hybrid。</span></div></div></div>
+    <div class="foot"><span>来源：ClawGym 原论文 §2.4 与官方 Bench README。strong/small 的具体模型未披露。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实 case：Agent 看见什么">
+    <div class="top"><b>13 · REAL CASE</b><span>benchmark_data.jsonl line 1 · Messaging and Collaboration</span></div><h2>志愿者污染修复团队：从数据文件产出四个同步更新文件</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">VISIBLE TO AGENT</span><h3>Prompt + workspace</h3><p><code>data/tasks.csv</code>、<code>data/updates.jsonl</code>、原始公告、summarizer 和公开 tests。Agent 可运行命令并修改 workspace。</p><p>交付：summary JSON、pytest 输出、weekly status report、announcement rewrite。</p></div><div class="panel red"><span class="tag">HIDDEN DURING EXECUTION</span><h3>Reward 与 rubric</h3><p><code>reward/test.py</code>、两条 rubric 和 judge prompt 不暴露给 Agent。rollout 结束后，评测器在最终 workspace 上运行。</p><p>本题由合成管线生成，并由 benchmark 筛选流程复核，不是现实志愿组织人工编写。</p></div></div></div>
+    <div class="foot"><span>来源：ClawGym-Bench benchmark_data.jsonl line 1，revision c8cbd1d。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实 case：隐藏 checker">
+    <div class="top"><b>14 · CODE CHECKER</b><span>15 个等权 binary metrics</span></div><h2>代码分数衡量的是完成度，每条 assertion 各占 1/15</h2>
+    <div class="body"><div class="grid2"><pre class="code"><span class="c"># official reward/test.py</span>
+scores = {
+  <span class="s">"summary_json_exists"</span>: 0.0,
+  <span class="s">"tests_all_passed"</span>: 0.0,
+  <span class="s">"status_report_title_correct"</span>: 0.0,
+  <span class="s">"highlights_top3_correct"</span>: 0.0,
+  ... <span class="c"># 15 metrics total</span>
+}
+
+<span class="k">if</span> wc &lt; 120:
+    scores[<span class="s">"announcement_under_120_words"</span>] = 1.0
+
+<span class="k">return</span> scores</pre><div class="stack"><div class="callout green"><b>完全满足</b><span>15 / 15，code score = 1.00。</span></div><div class="callout orange"><b>部分满足</b><span>例如 12 / 15，code score = 0.80，并不会被自动二值化成 FAIL。</span></div><div class="callout red"><b>真实 blind spot</b><span>公告文件不存在时 <code>ann_text=""</code>，word count 是 0，<code>under_120_words</code> 仍会得 1。</span></div></div></div></div>
+    <div class="foot"><span>来源：官方 case 的 reward/test.py 第 253–348 行；解释性摘录。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="真实 case：最终分数">
+    <div class="top"><b>15 · HYBRID JUDGE</b><span>deterministic checker + GPT-5.4 rubric</span></div><h2>客观约束交给代码，语气与 actionability 交给 rubric</h2>
+    <div class="body figure"><img src="/lib/papers/clawgym-ii/judge-case.svg" alt="Real benchmark case scoring"></div>
+    <div class="foot"><span>来源：官方 Bench 的 reward.py、judge.py、runner.py 与 case line 1。论文 Appendix A 的 prompt 比公开实现多 transcript 与 changed files。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="实验配置">
+    <div class="top"><b>16 · EXPERIMENT SETUP</b><span>matched rollout budget</span></div><h2>GRPO 和 PPO 每次 update 都消耗 256 条 rollout，但看见的任务多样性不同</h2>
+    <div class="body"><div class="grid4"><div class="panel blue"><span class="tag">GRPO</span><div class="metric">32 × 8</div><p>32 tasks，每题 8 rollouts，用组内相对 advantage。</p></div><div class="panel orange"><span class="tag">PPO</span><div class="metric">256 × 1</div><p>256 tasks，每题 1 rollout，另需预训练 value model。</p></div><div class="panel green"><span class="tag">CONTEXT</span><div class="metric">64K</div><p>更长轨迹由 harness 自己做 context management。</p></div><div class="panel"><span class="tag">MODEL</span><div class="metric">30A3B</div><p>OpenClaw 从 ClawII-Cold 开始；Claude Code 从 Qwen3 base 开始。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §3.1–§3.2。两种 harness 的初始化不同，不能把最终分差全归因于 harness。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="主结果">
+    <div class="top"><b>17 · MAIN RESULTS</b><span>Qwen3-30A3B family · Table 1</span></div><h2>在对应 harness 内训练后，ClawGym-Bench 与 PinchBench 都提高</h2>
+    <div class="body figure"><img src="/lib/papers/clawgym-ii/results.svg" alt="Main benchmark results"></div>
+    <div class="foot"><span>根据论文 Table 1 重绘。OpenClaw baseline 是 ClawII-Cold-30A3B；Claude Code baseline 是 Qwen3-30A3B。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="跨任务与跨 harness">
+    <div class="top"><b>18 · TRANSFER</b><span>harder tasks + white-to-black</span></div><h2>同一 pipeline 能迁移，但训练 harness 仍留下明显偏好</h2>
+    <div class="body"><div class="image-side"><div><img src="/lib/papers/clawgym-ii/transfer.svg" alt="Cross-harness transfer results"></div><div class="stack"><div class="callout green"><b>JobBench-Easy</b><span>20.46 → 27.20，Claude Code rollout。</span></div><div class="callout green"><b>OfficeQA-Full</b><span>8.53 → 21.54，Claude Code rollout。</span></div><div class="callout orange"><b>White-to-black gap</b><span>WhiteBox policy 在 AgentLoop 得 59.90，换到 OpenClaw 只有 50.33；直接用 OpenClaw 训练为 62.62。</span></div></div></div></div>
+    <div class="foot"><span>根据论文 Figures 5–6、Table 2 重绘。JobBench-style / OfficeQA-style 训练任务数量未披露。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="相关工作与证据边界">
+    <div class="top"><b>19 · RELATED WORK</b><span>同一维度比较</span></div><h2>贡献主要在“黑盒轨迹恢复 + 原生 harness + tree-aware optimization”的组合</h2>
+    <div class="body"><table class="table"><thead><tr><th>工作</th><th>保留原生 harness</th><th>训练信号怎样接入</th><th>ClawGym II 的边界</th></tr></thead><tbody><tr><td>ClawGym</td><td>OpenClaw 数据与 benchmark</td><td>合成任务、checker、rubric 和 cold start</td><td>ClawGym II 复用数据资产，新增在线 RL 桥接。</td></tr><tr><td>POLAR / OpenForgeRL</td><td>是</td><td>model API boundary</td><td>同属 harness-native RL；本文重点是 prefix tree 与 forked trajectories。</td></tr><tr><td>Dressage</td><td>面向多 Agent / sandbox</td><td>可扩展 rollout infra</td><td>更偏通用系统基础设施，本文给出 OpenClaw / Claude Code 的树恢复算法。</td></tr><tr><td>LEGO-RL</td><td>是</td><td>proxy + sandbox + verifier + routing replay</td><td>LEGO-RL 更强调工程完整性；ClawGym II 更细讲黑盒分叉轨迹和 PPO / GRPO。</td></tr><tr><td>White-box AgentLoop</td><td>否</td><td>训练框架直接控制 loop</td><td>更易 credit assignment，但与部署 harness 有分布差异。</td></tr></tbody></table></div>
+    <div class="foot"><span>来源：论文 Related Work、§4.7；对 LEGO-RL 的描述来自其原论文与官方仓库。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="结论与研究入口">
+    <div class="top"><b>20 · TAKEAWAYS</b><span>对 Claude Code / Codex harness 研究最值得带走的点</span></div><h2>这篇论文给出了能运行的桥，但还没有证明“harness-general policy”已经学成</h2>
+    <div class="body"><div class="limits"><div class="limit"><b>USE</b><strong>API boundary 足够成为训练接口</strong><span>无需改写完整 harness，就能收集 policy tokens 与 reward。</span></div><div class="limit"><b>METHOD</b><strong>Forked trace 需要树结构</strong><span>共享 prefix 去重；retry、compaction 和 subagent 要分开处理。</span></div><div class="limit"><b>JUDGE</b><strong>任务分数是连续完成度</strong><span>公开 runner 对 final_score 求平均；论文称 Pass@1，二者表述并不完全一致。</span></div><div class="limit"><b>EVIDENCE</b><strong>训练方差未知</strong><span>没有重复 run 或置信区间；mix-harness 也缺完整数值表。</span></div><div class="limit"><b>REPRODUCIBILITY</b><strong>核心训练代码尚未公开</strong><span>companion 仓库检查时为空，无法独立核验 prefix-tree 实现。</span></div><div class="limit"><b>NEXT</b><strong>跨 harness 因果实验</strong><span>固定 task、model、budget 与 initialization，测 harness-conditioned transfer matrix。</span></div></div></div>
+    <div class="foot"><span><a href="/posts/论文解读/clawgym-ii.html" target="_top">返回文章</a> · <a href="https://arxiv.org/abs/2608.16798">原论文</a> · <a href="https://github.com/SsmallSong/ClawGym-II">官方代码页</a></span><span class="pg"></span></div>
+  </section>
+</main>
+
+<div id="controls" aria-label="幻灯片控制">
+  <a id="return-to-article" href="/posts/论文解读/clawgym-ii.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label"> 返回文章</span></a>
+  <button id="prev" type="button" aria-label="上一页">←</button><button id="toc" type="button" aria-label="打开目录">☰</button>
+  <span class="current-title" id="current-title">核心结论</span><span class="counter" id="counter">1 / 20</span>
+  <button id="next" type="button" aria-label="下一页">→</button><button id="full" type="button" aria-label="全屏">⛶ <span class="utility-label">全屏</span></button>
+</div>
+<div id="overview-panel" hidden><div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title"><div class="overview-head"><strong id="overview-title">20 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div><div class="overview-grid" id="overview-grid"></div></div></div>
+<div id="progress"></div>
+<script>
+(() => {
+  const slides=[...document.querySelectorAll('#deck .slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
+  if(window.self===window.top)returnLink.hidden=false;
+  let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
+  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · ClawGym II`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+  function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
+  function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
+  async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
+  function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
+  slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
+  show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+</body>
+</html>
