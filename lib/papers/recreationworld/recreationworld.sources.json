@@ -1,0 +1,246 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "RecreationWorld: Scalable and Verifiable Environments for Hybrid Computer-Use Agents",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper"]
+  },
+  "artifacts": {
+    "article": "content/_posts/060-recreationworld.md",
+    "deck": "lib/decks/recreationworld-visual-guide.html",
+    "embed_src": "/lib/decks/recreationworld-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "RecreationWorld: Scalable and Verifiable Environments for Hybrid Computer-Use Agents",
+      "url": "https://arxiv.org/abs/2609.22000",
+      "revision": "v2 (2026-09-21); v1 first posted 2026-09-18",
+      "used_for": ["problem", "related-work", "task-provenance", "method", "evaluation", "results", "case", "training", "limitations", "visuals"]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv record for 2609.22000",
+      "url": "https://export.arxiv.org/api/query?id_list=2609.22000",
+      "revision": "checked 2026-10-02",
+      "used_for": ["v1-date", "version", "license"]
+    },
+    {
+      "id": "official-code",
+      "kind": "code",
+      "title": "RecreationWorld official repository",
+      "url": "https://github.com/QwenLM/RecreationWorld",
+      "revision": "b5cda868f44932dc84ea68e3b3053bc418621aa3",
+      "used_for": ["task-manifests", "runners", "evaluation-code", "result-schema", "official-figures", "license"]
+    },
+    {
+      "id": "frozen-suite",
+      "kind": "dataset",
+      "title": "RecreationBench frozen task bundles",
+      "url": "https://huggingface.co/datasets/Qwen/RecreationBench",
+      "revision": "availability checked 2026-10-02; full external bundles not mirrored locally",
+      "used_for": ["task-bundle-availability", "fixtures", "hidden-suite-distribution"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 47,
+    "rendered_page_ranges": [{"start": 1, "end": 47}],
+    "source_visuals_expected": 32,
+    "visual_inventory_complete": true,
+    "inventory_note": "The complete 47-page v2 PDF, including appendices, was reviewed in extracted text and as rendered pages. The inventory includes Figures 1-20 and Tables 1-12. The arXiv source uses the non-exclusive distribution license, so only two matching assets distributed in the official MIT repository are reused; the Logbert case and headline table are redrawn, and other source layouts are omitted while their relevant facts are described in prose or original HTML diagrams."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么要用“复刻软件”研究 hybrid CUA？"},
+    {"role": "related-work", "locator": "Q2. 它和相邻工作到底差在哪里？"},
+    {"role": "method", "locator": "Q3. 250 个任务从哪里来，Agent 能看见什么？"},
+    {"role": "experiments", "locator": "Q4. 一个真实 case 怎样从 fixture 走到 PASS / FAIL？"},
+    {"role": "future-work", "locator": "Q5. 模型表现、harness 实验和训练迁移说明了什么？"},
+    {"role": "summary", "locator": "Q6. 这篇论文应该怎样评价？"}
+  ],
+  "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code", "frozen-suite"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 4.1-4.2; Appendix C.1-C.3"},
+        {"source_id": "official-code", "locator": "task/*.jsonl and src/recreation_bench/task.py at revision b5cda868"},
+        {"source_id": "frozen-suite", "locator": "official dataset root linked from README"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "RecreationBench 每个平台 50 个 task"},
+        {"artifact": "article", "quote": "Web 包含 44 个 synthetic site 和 6 个来自 public website 的站点"},
+        {"artifact": "deck", "quote": "250 held-out tasks"}
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.3; Figure 8; Appendix C.5"}],
+      "evidence": [
+        {"artifact": "article", "quote": "把每个 case 放到干净 reference 上执行"},
+        {"artifact": "article", "quote": "论文没有报告 reviewer 数量、inter-annotator agreement 或复核驳回率"},
+        {"artifact": "deck", "quote": "Expected outcome 不是模型猜的"}
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 4.1 and 4.5; Appendix C.6"},
+        {"source_id": "official-code", "locator": "src/recreation_bench/task.py; task manifests"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "Desktop 与 Android 尽量做到 source-blind：reference source、test suite、ground-truth screenshots 和 credentials 都放在受保护位置"},
+        {"artifact": "article", "quote": "Web 是明确例外，因为浏览器运行静态站点时必然收到 HTML、CSS、JavaScript 与 assets"},
+        {"artifact": "deck", "quote": "五个平台各 50 个 task，但来源和可见边界并不完全相同"}
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 4.4; Table 3; Appendix B"},
+        {"source_id": "official-code", "locator": "src/recreation_bench/result.py at revision b5cda868"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "Overall = (five-platform macro-average Prog + five-platform macro-average VLM) / 2"},
+        {"artifact": "article", "quote": "这是一个看似小、实际很关键的结果协议"},
+        {"artifact": "deck", "quote": "58.06 是两条 assertion 通道的五平台等权平均"}
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "official-code", "frozen-suite"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Figure 8; Appendix C.5, Windows: Logbert"},
+        {"source_id": "official-code", "locator": "src/recreation_bench/common_vlm.py and result.py at revision b5cda868"},
+        {"source_id": "frozen-suite", "locator": "external frozen suite linked by official README; not fully mirrored locally"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "evaluator 提供固定日志"},
+        {"artifact": "article", "quote": "Windows UI Automation 必须读到且只读到"},
+        {"artifact": "deck", "quote": "根据 Figure 8、Appendix C.5 与公开 task manifest 重绘"}
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Table 3; Section 5.1; Appendix B, Table 11"}],
+      "evidence": [
+        {"artifact": "article", "quote": "GPT-6 Astra 以 Prog 58.19、VLM 57.92、overall 58.06 排第一"},
+        {"artifact": "article", "quote": "Prog=100% 的 task 只占 2.8%"},
+        {"artifact": "deck", "quote": "best average, rare complete fidelity"}
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 7"}],
+      "evidence": [
+        {"artifact": "article", "quote": "它的边界不是“又一个 GUI benchmark”"},
+        {"artifact": "article", "quote": "同一个 task contract 横跨 Ubuntu、macOS、Windows、Android 与 Web"},
+        {"artifact": "deck", "quote": "benchmark + training + analysis"}
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "official-code", "frozen-suite"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 8; Sections 5.2 and 6.4; Appendices C.6-C.7"},
+        {"source_id": "official-code", "locator": "official repository revision b5cda868"},
+        {"source_id": "frozen-suite", "locator": "availability check 2026-10-02"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "有限 tests ≠ 行为等价"},
+        {"artifact": "article", "quote": "VLM judge 缺少校准报告"},
+        {"artifact": "deck", "quote": "单次 rollout 不足以说明小分差稳定"}
+      ]
+    },
+    {
+      "id": "programmable-harness-study",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 5.2; Figure 9; Appendix C.7"}],
+      "evidence": [
+        {"artifact": "article", "quote": "每个 task/configuration 只有一次 rollout"},
+        {"artifact": "article", "quote": "persistent runtime 的结果很实用，但它比较的是 complete configuration"},
+        {"artifact": "deck", "quote": "完整配置一起变化，不是单变量因果实验"}
+      ]
+    },
+    {
+      "id": "training-transfer",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3; Figures 5-6; Conclusion"}],
+      "evidence": [
+        {"artifact": "article", "quote": "每个平台选 7,000 条，组成 35,000 条 SFT mixture"},
+        {"artifact": "article", "quote": "没有 multiple seeds；没有 equal-data 的普通 coding trajectory 对照"},
+        {"artifact": "deck", "quote": "35,000 selected trajectories"}
+      ]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 1, Figure 1","status":"reused","rationale":"The corresponding overview asset is distributed by the official repository under MIT and is central to the three-part paper story.","placements":[{"artifact":"article","locator":"左侧是五平台 task"},{"artifact":"deck","locator":"原图：官方 GitHub assets/overview.png"}],"permission_status":"verified-allowed","permission_basis":"Official GitHub repository MIT License; identical overview asset at assets/overview.png.","credit":"官方 GitHub assets/overview.png（MIT），对应论文 Figure 1","asset_paths":["/lib/papers/recreationworld/official-overview.png"]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 2, Figure 2","status":"reused","rationale":"The matching workflow asset is distributed by the official repository under MIT and directly explains the hybrid loop.","placements":[{"artifact":"deck","locator":"EXPLORE–IMPLEMENT–VERIFY"}],"permission_status":"verified-allowed","permission_basis":"Official GitHub repository MIT License; matching workflow asset at assets/workflow.png.","credit":"官方 GitHub assets/workflow.png（MIT），对应论文 Figure 2","asset_paths":["/lib/papers/recreationworld/official-workflow.png"]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 4, Figure 3","status":"omitted","rationale":"Trajectory-length scatter is not required to explain the task or judge; its median and switch-rate findings are retained in Part 0.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 5, Figure 4","status":"omitted","rationale":"The platform task-generation pipeline is explained as an original construction sequence without copying the source layout.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 7, Figure 5","status":"omitted","rationale":"Training progress is summarized with the published endpoint claim; per-checkpoint source plot is not reproduced.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 7, Figure 6","status":"omitted","rationale":"Behavior-shift bars are summarized in prose; the original plot is not necessary for the benchmark causal path.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 8, Figure 7","status":"omitted","rationale":"Platform composition is captured in prose and a new HTML table rather than the original multi-panel chart.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 10, Figure 8","status":"redrawn","rationale":"The central Logbert case is redrawn as an original sequence that makes setup, actions, both evidence channels, and one derived fail trace explicit.","placements":[{"artifact":"article","locator":"浅色 FAIL 分支是根据公开断言推演的说明"},{"artifact":"deck","locator":"根据 Figure 8、Appendix C.5 与公开 task manifest 重绘"}],"permission_status":"not-applicable","permission_basis":"New SVG composition using published case facts; no source pixels reused.","credit":"根据 Figure 8、Appendix C.5 与公开 task manifest 重绘","asset_paths":["/lib/papers/recreationworld/logbert-case-redrawn.svg"]},
+    {"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"p. 11, Figure 9","status":"redrawn","rationale":"All reported direct-MCP versus SDK values and protocol caveats are reorganized into an article table and deck cards.","placements":[{"artifact":"article","locator":"Programmable SDK：少把每个 click 都送回模型"},{"artifact":"deck","locator":"让模型在 persistent REPL 里组合 GUI calls"}],"permission_status":"not-applicable","permission_basis":"Values are restated in new HTML layouts.","credit":"根据原论文 Figure 9 数据整理","asset_paths":[]},
+    {"id":"figure-10","kind":"figure","label":"Figure 10","source_id":"paper","source_locator":"p. 12, Figure 10","status":"omitted","rationale":"Reference exploration and verification analysis is summarized in prose; the dense multi-panel source plot is not copied.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-11","kind":"figure","label":"Figure 11","source_id":"paper","source_locator":"p. 13, Figure 11","status":"omitted","rationale":"Implementation progress curves are secondary to the core benchmark explanation.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-12","kind":"figure","label":"Figure 12","source_id":"paper","source_locator":"p. 14, Figure 12","status":"omitted","rationale":"Evaluation-hacking analysis is discussed through limitations without reproducing the source layout.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-13","kind":"figure","label":"Figure 13","source_id":"paper","source_locator":"p. 15, Figure 13","status":"omitted","rationale":"Resource-use distributions are not necessary for the article's main causal route.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-14","kind":"figure","label":"Figure 14","source_id":"paper","source_locator":"p. 16, Figure 14","status":"omitted","rationale":"Tool composition is summarized with the hybrid-loop statistics and harness study.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-15","kind":"figure","label":"Figure 15","source_id":"paper","source_locator":"p. 17, Figure 15","status":"omitted","rationale":"LOC comparisons are retained as a qualitative conclusion rather than a copied plot.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-16","kind":"figure","label":"Figure 16","source_id":"paper","source_locator":"p. 17, Figure 16","status":"omitted","rationale":"Artifact-structure analysis is summarized in prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-17","kind":"figure","label":"Figure 17","source_id":"paper","source_locator":"p. 18, Figure 17","status":"omitted","rationale":"Threshold conclusion is preserved via exact 17.6% and 2.8% values in the redrawn headline result graphic.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-18","kind":"figure","label":"Figure 18","source_id":"paper","source_locator":"p. 20, Figure 18","status":"omitted","rationale":"The TeXworks trajectory excerpt is useful supporting analysis but not essential to the six-question note.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-19","kind":"figure","label":"Figure 19","source_id":"paper","source_locator":"Appendix D, Figure 19","status":"omitted","rationale":"Appendix visual example is summarized by the paper's broader findings.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-20","kind":"figure","label":"Figure 20","source_id":"paper","source_locator":"Appendix D, Figure 20","status":"omitted","rationale":"Appendix visual comparison is not central to task construction, judging, or headline results.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 8, Table 1","status":"redrawn","rationale":"All five delivery contracts and test APIs are reorganized into article and deck tables.","placements":[{"artifact":"article","locator":"各平台的 programmatic 接口分别是"},{"artifact":"deck","locator":"TASK PROVENANCE"}],"permission_status":"not-applicable","permission_basis":"Values and labels are restated in new layouts.","credit":"根据原论文 Table 1 整理","asset_paths":[]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 9, Table 2","status":"omitted","rationale":"Benchmark composition statistics are summarized selectively in prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 11, Table 3","status":"redrawn","rationale":"The leading models and strict coverage values are redrawn with a warning against interpreting assertion average as solved-task rate.","placements":[{"artifact":"article","locator":"GPT-6 Astra 的 overall 为 58.06"},{"artifact":"deck","locator":"根据原论文 Table 3 重绘"}],"permission_status":"not-applicable","permission_basis":"New SVG layout using published numerical values.","credit":"根据原论文 Table 3 重绘","asset_paths":["/lib/papers/recreationworld/results-redrawn.svg"]},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 18, Table 4","status":"omitted","rationale":"Source-overlap values are summarized as a contamination limitation.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p. 20, Table 5","status":"omitted","rationale":"Tool-use comparison is secondary and is not copied.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"Appendix A, Table 6","status":"omitted","rationale":"Training configuration details are represented through evidence limitations rather than a reproduced table.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-7","kind":"table","label":"Table 7","source_id":"paper","source_locator":"Appendix A, Table 7","status":"omitted","rationale":"Task-generation configuration is not copied; construction logic is explained in sequence.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-8","kind":"table","label":"Table 8","source_id":"paper","source_locator":"Appendix A, Table 8","status":"omitted","rationale":"Inference configurations are cited in prose where relevant.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-9","kind":"table","label":"Table 9","source_id":"paper","source_locator":"Appendix B, Table 9","status":"omitted","rationale":"Per-platform auxiliary results are not required for the headline comparison.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-10","kind":"table","label":"Table 10","source_id":"paper","source_locator":"Appendix B, Table 10","status":"omitted","rationale":"Per-platform auxiliary results are not required for the core note.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-11","kind":"table","label":"Table 11","source_id":"paper","source_locator":"Appendix B, Table 11","status":"omitted","rationale":"Exact aggregate headline rows are already redrawn from Table 3; the full per-platform table is omitted for focus.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-12","kind":"table","label":"Table 12","source_id":"paper","source_locator":"Appendix D, Table 12","status":"omitted","rationale":"Appendix trajectory statistics are secondary to the main benchmark explanation.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]}
+  ],
+  "figures": [
+    {"path":"/lib/papers/recreationworld/official-overview.png","origin":"paper-original","source_visual_id":"figure-1","source_id":"official-code","source_locator":"assets/overview.png at revision b5cda868; matches paper Figure 1","credit":"官方 GitHub assets/overview.png（MIT），对应论文 Figure 1","license_status":"verified-allowed","license_basis":"Official repository is licensed MIT and distributes this asset.","used_in":["article","deck"]},
+    {"path":"/lib/papers/recreationworld/official-workflow.png","origin":"paper-original","source_visual_id":"figure-2","source_id":"official-code","source_locator":"assets/workflow.png at revision b5cda868; matches paper Figure 2","credit":"官方 GitHub assets/workflow.png（MIT），对应论文 Figure 2","license_status":"verified-allowed","license_basis":"Official repository is licensed MIT and distributes this asset.","used_in":["deck"]},
+    {"path":"/lib/papers/recreationworld/task-contract-redrawn.svg","origin":"generated","source_id":"paper","source_locator":"Sections 2.1, 4.1, 4.2, 4.5; Appendix C.6","credit":"根据论文 task contract 与 visibility boundary 重绘","license_status":"not-applicable","license_basis":"Original explanatory SVG composition.","used_in":["article","deck"]},
+    {"path":"/lib/papers/recreationworld/logbert-case-redrawn.svg","origin":"author-redrawn","source_visual_id":"figure-8","source_id":"paper","source_locator":"Figure 8; Appendix C.5","credit":"根据 Figure 8、Appendix C.5 与公开 task manifest 重绘","license_status":"not-applicable","license_basis":"Original SVG layout using published facts; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/recreationworld/results-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-3","source_id":"paper","source_locator":"Table 3","credit":"根据原论文 Table 3 重绘","license_status":"not-applicable","license_basis":"Original SVG layout using published numbers.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"],
+    "browser_qa_note": "Freshly rebuilt output was checked at 1600x1000, 1512x982, and 390x844. The article has exactly six semantic H2 sections, a working desktop rail and mobile TOC, no page-level horizontal overflow, centered figures, and internally scrolling tables and code. The embedded deck hid the standalone return control and advanced from slide 1 to 2. The standalone deck passed button, Arrow/Home, direct hash, overview Escape, browser fullscreen entry and Escape exit, mobile dense-slide fit checks, and stable return-to-article after direct hash navigation. Article focus mode exited by both Escape and its visible exit button. The only observed console issue before the final deck favicon patch was a harmless standalone favicon 404; the data favicon removes that request."
+  }
+}
