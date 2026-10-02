@@ -1,5 +1,5 @@
 ---
-title: "LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks"
+title: "[2026-08-03] LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks"
 permalink: "/posts/论文解读/longhorizon-harness.html"
 date: "2026-09-28T22:30:00+08:00"
 updated: "2026-09-28T22:30:00+08:00"

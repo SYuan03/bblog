@@ -1,5 +1,5 @@
 ---
-title: "GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development"
+title: "[2026-09-18] GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development"
 permalink: "/posts/论文解读/gameasg-bench.html"
 date: "2026-09-21T21:31:01+08:00"
 updated: "2026-09-22T12:46:00+08:00"

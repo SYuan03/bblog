@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+  <title id="title">等腰三角形 case 中 CE-GRPO 的分支</title>
+  <desc id="desc">AB 和 AC 等于 13，BC 等于 10，BD 等于 2。错误分支把任意 cevian AD 当成高，正确分支通过 Stewart 定理得到三倍根号十七。</desc>
+  <rect width="1100" height="620" fill="#fbfaf7"/>
+  <style>.t{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#17212b}.s{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#5b6570}.m{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.h{font-size:28px;font-weight:760}.b{font-size:19px;font-weight:700}.p{font-size:16px}.box{fill:#fff;stroke:#ccd4db;stroke-width:2}</style>
+  <text x="50" y="55" class="t h">同一个 prefix，结构假设不同，最终答案就分叉</text>
+  <text x="50" y="86" class="s p">根据原论文 Figure 5 与 Appendix C.1 重绘。</text>
+  <rect x="48" y="118" width="335" height="390" rx="6" class="box"/>
+  <text x="70" y="153" class="t b">已知状态</text>
+  <line x1="211" y1="202" x2="96" y2="420" stroke="#253746" stroke-width="4"/>
+  <line x1="211" y1="202" x2="325" y2="420" stroke="#253746" stroke-width="4"/>
+  <line x1="96" y1="420" x2="325" y2="420" stroke="#253746" stroke-width="4"/>
+  <line x1="211" y1="202" x2="142" y2="420" stroke="#c04d4a" stroke-width="4"/>
+  <circle cx="211" cy="202" r="6" fill="#17212b"/><circle cx="96" cy="420" r="6" fill="#17212b"/><circle cx="325" cy="420" r="6" fill="#17212b"/><circle cx="142" cy="420" r="6" fill="#c04d4a"/>
+  <text x="202" y="189" class="t b">A</text><text x="76" y="448" class="t b">B</text><text x="328" y="448" class="t b">C</text><text x="136" y="448" class="t b">D</text>
+  <text x="83" y="270" class="s p">AB = 13</text><text x="283" y="270" class="s p">AC = 13</text><text x="201" y="449" class="s p">BC = 10</text><text x="103" y="402" class="s p">2</text>
+  <text x="70" y="486" class="m p">prefix: “ABC 是等腰三角形，接下来求 AD”</text>
+
+  <path d="M383 310 H450" stroke="#6b7785" stroke-width="2.5" fill="none" marker-end="url(#a)"/>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6b7785"/></marker></defs>
+
+  <rect x="460" y="118" width="590" height="175" rx="6" fill="#faeceb" stroke="#dfaaa7" stroke-width="2"/>
+  <text x="482" y="153" class="t b" fill="#9a3937">错误 branch：把“等腰”过度推广到任意 cevian</text>
+  <text x="482" y="190" class="s p">假设 AD ⟂ BC，于是把 AD 当成高：</text>
+  <text x="482" y="226" class="m b">AD = √(13² − 5²) = 12</text>
+  <text x="482" y="262" class="t p">终局答案错误；该 continuation 获得低 reward。</text>
+
+  <rect x="460" y="333" width="590" height="175" rx="6" fill="#eaf5ef" stroke="#9cc7b2" stroke-width="2"/>
+  <text x="482" y="368" class="t b" fill="#216959">正确 branch：保留 D 的真实位置</text>
+  <text x="482" y="405" class="s p">用 Stewart 定理，BD = 2、DC = 8：</text>
+  <text x="482" y="441" class="m b">13²·8 + 13²·2 = 10(AD² + 16)</text>
+  <text x="482" y="477" class="m b">AD = √153 = 3√17</text>
+
+  <rect x="48" y="536" width="1002" height="50" fill="#eef2f5"/>
+  <text x="67" y="568" class="t p">局部 credit 的边界：prefix 之前的 token 不进 policy loss；重新生成的结构决策和全部后续 token 一起接收 branch-relative advantage。</text>
+  <text x="50" y="608" class="s p">来源：Guo et al., Figure 5 / Appendix C.1；该图只重绘公开题设、几何关系和文中描述的分支。</text>
+</svg>

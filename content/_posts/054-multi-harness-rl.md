@@ -1,5 +1,5 @@
 ---
-title: "What Does Multi-Harness RL Learn? Credit Assignment and Portability in Coding Agents"
+title: "[2026-09-03] What Does Multi-Harness RL Learn? Credit Assignment and Portability in Coding Agents"
 permalink: "/posts/论文解读/multi-harness-rl.html"
 date: "2026-09-29T20:10:00+08:00"
 updated: "2026-09-29T20:10:00+08:00"

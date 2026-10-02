@@ -37,7 +37,7 @@ Rules:
 - Write naturally and avoid generic AI-style introductions or invented claims.
 - Keep the permalink stable after publication.
 - Prefer the author's supplied title, summary, and cover.
-- For paper explainers, use the paper's original English title verbatim in frontmatter and the visible H1. Put Chinese framing in the description, cover, deck, or article body instead of appending it to the title.
+- For paper explainers with an arXiv record, use `[YYYY-MM-DD] Original English Title` in frontmatter and the visible H1. `YYYY-MM-DD` is the earliest arXiv v1 public date from the entry's `published` metadata or v1 submission record, not the latest revision date or PDF build date. Preserve the paper title's capitalization and punctuation after the prefix. Put Chinese framing in the description, cover, deck, or article body. Keep the permalink stable when adding or correcting a date prefix.
 - Verify facts and links; distinguish confirmed facts from interpretation.
 - Do not copy third-party images or text without permission. Link and credit the original source.
 

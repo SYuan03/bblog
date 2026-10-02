@@ -1,5 +1,5 @@
 ---
-title: "Harness-of-Harness: Multi-Day Autonomous Software Development with Continual Improvement"
+title: "[2026-09-01] Harness-of-Harness: Multi-Day Autonomous Software Development with Continual Improvement"
 permalink: "/posts/论文解读/harness-of-harness.html"
 date: "2026-09-29T07:30:00+08:00"
 updated: "2026-09-29T07:30:00+08:00"

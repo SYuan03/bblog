@@ -1,5 +1,5 @@
 ---
-title: "Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses"
+title: "[2026-04-28] Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses"
 permalink: "/posts/论文解读/agentic-harness-engineering.html"
 date: "2026-09-28T21:30:00+08:00"
 updated: "2026-09-28T21:30:00+08:00"

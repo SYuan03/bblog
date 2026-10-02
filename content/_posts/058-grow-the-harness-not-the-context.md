@@ -1,5 +1,5 @@
 ---
-title: "Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents"
+title: "[2026-09-22] Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents"
 permalink: "/posts/论文解读/grow-the-harness-not-the-context.html"
 date: "2026-09-29T18:20:00+08:00"
 updated: "2026-09-29T18:20:00+08:00"

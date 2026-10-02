@@ -1,5 +1,5 @@
 ---
-title: "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails"
+title: "[2026-09-08] Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails"
 permalink: "/posts/论文解读/co-evolving-harnesses-and-models.html"
 date: "2026-09-29T17:02:00+08:00"
 updated: "2026-09-29T17:02:00+08:00"

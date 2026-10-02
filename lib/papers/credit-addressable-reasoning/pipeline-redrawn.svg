@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Code-CoT 与 CE-GRPO 的训练流程</title>
+  <desc id="desc">从结构化监督、事件化推理、候选事件选择、共享前缀分支到混合训练的五步流程。</desc>
+  <rect width="1200" height="680" fill="#fbfaf7"/>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#17212b}.s{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;fill:#59636e}.m{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.box{fill:#fff;stroke:#cfd6dc;stroke-width:2}.arrow{stroke:#6b7785;stroke-width:2.5;fill:none;marker-end:url(#a)}.tag{font-size:18px;font-weight:700}.small{font-size:16px}.head{font-size:28px;font-weight:760}.num{font-size:18px;font-weight:800;fill:#fff}
+  </style>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6b7785"/></marker></defs>
+  <text x="54" y="58" class="t head">一条语义链，同时服务推理与 credit assignment</text>
+  <text x="54" y="90" class="s small">根据原论文 Figure 3 与 Sections 4.1-4.4 重绘；蓝色是一次回答，橙色是训练时新增的反事实分支。</text>
+
+  <rect x="52" y="132" width="202" height="205" rx="6" class="box"/>
+  <circle cx="78" cy="158" r="17" fill="#2c6fa3"/><text x="72" y="165" class="t num">1</text>
+  <text x="105" y="165" class="t tag">SFT 安装协议</text>
+  <text x="72" y="205" class="s small">18,302 条合成 trace</text>
+  <text x="72" y="237" class="m small" fill="#2c6fa3">&lt;perception&gt;</text>
+  <text x="72" y="266" class="m small" fill="#6d5aa7">PLAN:</text>
+  <text x="72" y="295" class="m small" fill="#28796d">&lt;think&gt; …</text>
+  <text x="72" y="324" class="m small" fill="#b45f32">&lt;action …&gt;</text>
+
+  <path d="M254 235 H295" class="arrow"/>
+  <rect x="300" y="132" width="202" height="205" rx="6" class="box"/>
+  <circle cx="326" cy="158" r="17" fill="#28796d"/><text x="320" y="165" class="t num">2</text>
+  <text x="353" y="165" class="t tag">生成完整回答</text>
+  <text x="320" y="205" class="s small">图像始终保留</text>
+  <text x="320" y="234" class="s small">代码 + plan + typed events</text>
+  <line x1="326" y1="270" x2="474" y2="270" stroke="#d7dce1" stroke-width="5"/>
+  <circle cx="342" cy="270" r="9" fill="#2c6fa3"/>
+  <circle cx="386" cy="270" r="9" fill="#28796d"/>
+  <circle cx="430" cy="270" r="9" fill="#b45f32"/>
+  <circle cx="474" cy="270" r="9" fill="#6d5aa7"/>
+  <text x="320" y="316" class="s small">每个完整 tag block 是一个 event</text>
+
+  <path d="M502 235 H543" class="arrow"/>
+  <rect x="548" y="132" width="202" height="205" rx="6" class="box"/>
+  <circle cx="574" cy="158" r="17" fill="#b45f32"/><text x="568" y="165" class="t num">3</text>
+  <text x="601" y="165" class="t tag">挑候选事件</text>
+  <text x="568" y="205" class="s small">结构先验先定“哪里可切”</text>
+  <text x="568" y="235" class="s small">type-normalized entropy</text>
+  <text x="568" y="264" class="s small">决定分支预算给谁</text>
+  <rect x="568" y="289" width="162" height="29" fill="#f7eee8" stroke="#e3b89e"/>
+  <text x="583" y="309" class="m small" fill="#8e4527">prefix │ event │ suffix</text>
+
+  <path d="M750 235 H791" class="arrow"/>
+  <rect x="796" y="132" width="352" height="205" rx="6" class="box"/>
+  <circle cx="822" cy="158" r="17" fill="#6d5aa7"/><text x="816" y="165" class="t num">4</text>
+  <text x="849" y="165" class="t tag">共享 prefix，重采完整 future</text>
+  <text x="816" y="202" class="s small">同一 image + question + prefix；G = 4</text>
+  <line x1="825" y1="241" x2="884" y2="241" stroke="#6d5aa7" stroke-width="6"/>
+  <path d="M884 241 L930 205 M884 241 L930 241 M884 241 L930 277" stroke="#6d5aa7" stroke-width="2" fill="none"/>
+  <rect x="938" y="190" width="178" height="30" fill="#eaf5ef"/><text x="950" y="211" class="s small">正确 + actions 有效: 1.3</text>
+  <rect x="938" y="226" width="178" height="30" fill="#f3f1fb"/><text x="950" y="247" class="s small">答案错误: 0.3</text>
+  <rect x="938" y="262" width="178" height="30" fill="#faeceb"/><text x="950" y="283" class="s small">协议无效: -1</text>
+  <text x="816" y="319" class="s small">reward 出现差异，才说明这里是 critical event</text>
+
+  <path d="M972 337 V382" class="arrow"/>
+  <rect x="548" y="390" width="600" height="204" rx="6" class="box"/>
+  <circle cx="574" cy="416" r="17" fill="#c04d4a"/><text x="568" y="423" class="t num">5</text>
+  <text x="601" y="423" class="t tag">1:1 混合两种 prompt，使用同一 GRPO objective</text>
+  <rect x="574" y="462" width="235" height="82" fill="#edf4f8" stroke="#b8d0df"/>
+  <text x="593" y="489" class="t tag">普通 problem</text>
+  <text x="593" y="520" class="s small">整条 response 共用 trajectory advantage</text>
+  <rect x="838" y="462" width="282" height="82" fill="#f4eff9" stroke="#cfbde0"/>
+  <text x="857" y="489" class="t tag">shared-prefix problem</text>
+  <text x="857" y="520" class="s small">prefix 不进 loss，只更新 event 及其后果</text>
+  <text x="574" y="573" class="s small">推理阶段不分支：一次调用，贪心解码，不用外部几何 solver。</text>
+
+  <rect x="52" y="390" width="450" height="204" rx="6" fill="#fff8ea" stroke="#e4c991" stroke-width="2"/>
+  <text x="72" y="425" class="t tag">“credit-addressable”的精确定义</text>
+  <text x="72" y="466" class="s small">推理时暴露出来的语义单元，</text>
+  <text x="72" y="498" class="s small">也正是训练时切 prefix、比较 future、分配 credit 的单元。</text>
+  <text x="72" y="548" class="s small">它不是给每个 event 单独打分；</text>
+  <text x="72" y="578" class="s small">局部 credit 仍来自完整 future 的最终 reward 差异。</text>
+
+  <text x="54" y="646" class="s small">来源：Guo et al., arXiv:2608.30457v1，Figure 3、Equations 3-7、Appendix A.4-A.5；本图为结构重绘。</text>
+</svg>

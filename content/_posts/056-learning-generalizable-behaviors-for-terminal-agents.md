@@ -1,5 +1,5 @@
 ---
-title: "Learning Generalizable Behaviors for Terminal Agents"
+title: "[2026-08-23] Learning Generalizable Behaviors for Terminal Agents"
 permalink: "/posts/论文解读/learning-generalizable-behaviors-for-terminal-agents.html"
 date: "2026-09-29T16:24:00+08:00"
 updated: "2026-09-29T16:24:00+08:00"

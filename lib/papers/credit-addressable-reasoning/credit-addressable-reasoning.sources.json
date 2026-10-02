@@ -1,0 +1,219 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Learning Where Outcomes Change: Credit-Addressable Reasoning for Multimodal Geometry",
+    "kind": "research",
+    "primary_source_ids": ["paper"]
+  },
+  "artifacts": {
+    "article": "content/_posts/059-learning-where-outcomes-change.md",
+    "deck": "lib/decks/credit-addressable-reasoning-visual-guide.html",
+    "embed_src": "/lib/decks/credit-addressable-reasoning-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Learning Where Outcomes Change: Credit-Addressable Reasoning for Multimodal Geometry",
+      "url": "https://arxiv.org/abs/2608.30457",
+      "revision": "v1 (2026-08-31)",
+      "used_for": ["problem", "related-work", "method", "data", "evaluation", "results", "case", "limitations", "visuals"]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv record for 2608.30457",
+      "url": "https://export.arxiv.org/api/query?id_list=2608.30457",
+      "revision": "checked 2026-10-02",
+      "used_for": ["v1-date", "version", "license"]
+    },
+    {
+      "id": "official-code",
+      "kind": "code",
+      "title": "CE-GRPO official repository",
+      "url": "https://github.com/gjn12-31/CE-GRPO",
+      "revision": "a6b03dcc8c4bfcfbb1f0e4f6890f10d715563145",
+      "used_for": ["artifact-availability", "reproducibility-limit"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 17,
+    "rendered_page_ranges": [{"start": 1, "end": 17}],
+    "source_visuals_expected": 19,
+    "visual_inventory_complete": true,
+    "inventory_note": "The complete 17-page PDF and appendices were reviewed in extracted text and rendered form. The inventory includes Figures 1-5 and Tables 1-14. The arXiv record exposes only the non-exclusive distribution license, so no original paper figure is reused. Central structures and numerical results are redrawn; remaining visuals are represented in prose or explicitly omitted with reasons."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 这篇论文真正想解决什么？"},
+    {"role": "related-work", "locator": "Q2. 它与程序推理和细粒度 credit 方法差在哪里？"},
+    {"role": "method", "locator": "Q3. Code-CoT 怎样把一条几何解题过程变成可检查的事件？"},
+    {"role": "experiments", "locator": "Q4. 实验怎样评，结果能支持什么？"},
+    {"role": "future-work", "locator": "Q5. 对其他推理任务有什么启发？"},
+    {"role": "summary", "locator": "Q6. 这篇论文该怎样评价？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 4"}],
+      "evidence": [
+        {"artifact": "article", "quote": "推理时出现的语义单元，同时成为训练时比较 future 和分配 credit 的位置"},
+        {"artifact": "deck", "quote": "inference event boundary = training branch boundary"}
+      ]
+    },
+    {
+      "id": "codecot-protocol",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.2; Appendix A.1; Table 8"}],
+      "evidence": [
+        {"artifact": "article", "quote": "一次 Code-CoT 回答包含 perception code、一个 plan、若干完整的 reasoning/action event 和最终答案"},
+        {"artifact": "article", "quote": "Checker 要求行号存在、复制内容一致"}
+      ]
+    },
+    {
+      "id": "data-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.3; Appendix A.2; Table 9"}],
+      "evidence": [
+        {"artifact": "article", "quote": "最终保留 18,302 条 trace"},
+        {"artifact": "article", "quote": "RL pool 是 11,450 道去重后的原始问题"}
+      ]
+    },
+    {
+      "id": "programmatic-reward",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Equation 2; Appendix A.1 and A.3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "R(x,y) = clip(correct(y) + 0.3 × action_valid_rate(y) - Ω(y), -1, 1.3)"},
+        {"artifact": "deck", "quote": "协议结构坏了直接记 -1"}
+      ]
+    },
+    {
+      "id": "cegrpo-mechanism",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 4.4; Equations 4-7; Appendix A.4-A.5"}],
+      "evidence": [
+        {"artifact": "article", "quote": "固定 event 之前的完整状态，采样四个直到答案的 continuation"},
+        {"artifact": "article", "quote": "Prefix 只是条件，不进入 policy loss"}
+      ]
+    },
+    {
+      "id": "concrete-case",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Figure 5; Appendix C.1"}],
+      "evidence": [
+        {"artifact": "article", "quote": "错误不是算错，而是把对称性用过了头"},
+        {"artifact": "article", "quote": "把等腰三角形的对称性过度推广"},
+        {"artifact": "deck", "quote": "错误分支 AD=12；正确分支 AD=3√17"}
+      ]
+    },
+    {
+      "id": "evaluation-protocol",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix B.1; Tables 11 and 13"}],
+      "evidence": [
+        {"artifact": "article", "quote": "九项 accuracy 的无权平均"},
+        {"artifact": "article", "quote": "Gemini-3.1-Pro-Preview 与 Gemini-2.5-Pro 独立判断"}
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Tables 2-7; Sections 5-6"}],
+      "evidence": [
+        {"artifact": "article", "quote": "比 trajectory-level GRPO 高 3.43"},
+        {"artifact": "article", "quote": "GeoLaux-mini 从 trajectory GRPO 的 75.45 升到 90.61"}
+      ]
+    },
+    {
+      "id": "selector-and-event-analysis",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Table 5; Figure 4; Table 14; Appendix C.2"}],
+      "evidence": [
+        {"artifact": "article", "quote": "结构负责定位，entropy 负责节省预算"},
+        {"artifact": "article", "quote": "每多一个 event 增加 3.77 个百分点"}
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 2; Appendix B.2"}],
+      "evidence": [
+        {"artifact": "article", "quote": "同时看“推理用什么结构”和“训练在哪里比较替代方案”"},
+        {"artifact": "deck", "quote": "现有工作通常只解决“结构化表示”或“细粒度 credit”中的一边"}
+      ]
+    },
+    {
+      "id": "reproducibility-limit",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["official-code"],
+      "source_locators": [{"source_id": "official-code", "locator": "repository root at revision a6b03dcc; README.md is the only tracked project file"}],
+      "evidence": [
+        {"artifact": "article", "quote": "官方 GitHub revision a6b03dcc 只有 README"},
+        {"artifact": "deck", "quote": "官方仓库只有 README，没有代码、数据、checker 或 checkpoint"}
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 5-7; Appendices A-C; Tables 12-14"},
+        {"source_id": "official-code", "locator": "repository root checked 2026-10-02"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "主结果没有重复 run、confidence interval 或 task-level prediction"},
+        {"artifact": "article", "quote": "硬件和每组 rollout 数不同"}
+      ]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 1, Figure 1","status":"redrawn","rationale":"The representation-gap and credit-gap comparison is reconstructed as original deck diagrams rather than copying the source figure.","placements":[{"artifact":"deck","locator":"Representation gap"}],"permission_status":"not-applicable","permission_basis":"New HTML diagram based on the paper's described mechanism.","credit":"根据原论文 Figure 1 重绘","asset_paths":[]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 2, Table 1","status":"redrawn","rationale":"The modality comparison is summarized with exact ranges and model-level findings in the article and deck.","placements":[{"artifact":"article","locator":"为什么先做 diagram + code 的对照实验"},{"artifact":"deck","locator":"代码不能代替图像"}],"permission_status":"not-applicable","permission_basis":"Numerical findings are restated without copying the source layout.","credit":"根据原论文 Table 1 数据整理","asset_paths":[]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 3, Figure 2","status":"redrawn","rationale":"The modality-gap trend is represented with exact reported gap values and the controlled-study explanation.","placements":[{"artifact":"article","locator":"六个开源或闭源模型里"},{"artifact":"deck","locator":"Diagram only, I"}],"permission_status":"not-applicable","permission_basis":"Values are restated in new prose and cards.","credit":"根据原论文 Figure 2 数据整理","asset_paths":[]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 4, Figure 3","status":"redrawn","rationale":"The five-stage method pipeline is central and is redrawn as an original SVG.","placements":[{"artifact":"article","locator":"蓝色部分是一条回答"},{"artifact":"deck","locator":"根据原论文 Figure 3"}],"permission_status":"not-applicable","permission_basis":"Original SVG composition based on the paper's stated five stages.","credit":"根据原论文 Figure 3 与 Sections 4.1-4.4 重绘","asset_paths":["/lib/papers/credit-addressable-reasoning/pipeline-redrawn.svg"]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 6, Table 2","status":"redrawn","rationale":"The principal four model rows and per-benchmark deltas are redrawn as an original SVG and discussed in prose.","placements":[{"artifact":"article","locator":"主结果不能只看 76.04"},{"artifact":"deck","locator":"根据原论文 Table 2 重绘"}],"permission_status":"not-applicable","permission_basis":"Numerical values are placed in a new layout.","credit":"根据原论文 Table 2 数据重绘","asset_paths":["/lib/papers/credit-addressable-reasoning/results-redrawn.svg"]},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 6, Table 3","status":"redrawn","rationale":"The two-stage comparison and its two losses are retained in article prose.","placements":[{"artifact":"article","locator":"与两阶段系统比较时"}],"permission_status":"not-applicable","permission_basis":"Numerical results are restated without copying table styling.","credit":"根据原论文 Table 3 数据整理","asset_paths":[]},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 6, Table 4","status":"redrawn","rationale":"All code-fidelity values and judge procedure are represented in article prose and the final deck slide.","placements":[{"artifact":"article","locator":"Code 质量也提高了"},{"artifact":"deck","locator":"code fidelity 从 55.21 提升到 80.43"}],"permission_status":"not-applicable","permission_basis":"Numerical values are restated.","credit":"根据原论文 Table 4 数据整理","asset_paths":[]},
+    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p. 7, Table 5","status":"redrawn","rationale":"Selector averages and unclosed-rate conclusions are redrawn in the deck and discussed in prose.","placements":[{"artifact":"article","locator":"selector ablation 中"},{"artifact":"deck","locator":"Random prefix"}],"permission_status":"not-applicable","permission_basis":"Numerical values are placed in a new chart layout.","credit":"根据原论文 Table 5 数据整理","asset_paths":[]},
+    {"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"p. 7, Table 6","status":"redrawn","rationale":"The valid-termination conclusion and 3.91-point mean gain are retained in the opening summary and discussion.","placements":[{"artifact":"article","locator":"主结果支持“event-localized credit 对长依赖几何推理更有效”"}],"permission_status":"not-applicable","permission_basis":"Result is restated in prose.","credit":"根据原论文 Table 6 数据整理","asset_paths":[]},
+    {"id":"table-7","kind":"table","label":"Table 7","source_id":"paper","source_locator":"p. 7, Table 7","status":"redrawn","rationale":"The strongest modality-gap conclusion is retained in the article's controlled-study explanation.","placements":[{"artifact":"article","locator":"六个开源或闭源模型里"}],"permission_status":"not-applicable","permission_basis":"Findings are restated in prose.","credit":"根据原论文 Table 7 数据整理","asset_paths":[]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 7, Figure 4","status":"redrawn","rationale":"The reported regression slopes, correlation, p-values, and nine-benchmark sample size are retained without copying the source scatterplot.","placements":[{"artifact":"article","locator":"每多一个 event 增加 3.77 个百分点"},{"artifact":"deck","locator":"+3.77 pp/event"}],"permission_status":"not-applicable","permission_basis":"Statistics are restated in a new diagnostic summary.","credit":"根据原论文 Figure 4 数据整理","asset_paths":[]},
+    {"id":"table-8","kind":"table","label":"Table 8","source_id":"paper","source_locator":"p. 11, Table 8","status":"redrawn","rationale":"All action roles and validity conditions are restated in article prose and a deck table.","placements":[{"artifact":"article","locator":"三类 action 的职责不同"},{"artifact":"deck","locator":"Event 类型决定它对当前几何状态做什么"}],"permission_status":"not-applicable","permission_basis":"Content is reorganized into new prose and table layout.","credit":"根据原论文 Table 8 整理","asset_paths":[]},
+    {"id":"table-9","kind":"table","label":"Table 9","source_id":"paper","source_locator":"p. 12, Table 9","status":"redrawn","rationale":"The complete eight-source SFT distribution is reproduced as a newly formatted HTML table.","placements":[{"artifact":"article","locator":"MultiMath-Geo"}],"permission_status":"not-applicable","permission_basis":"Numerical data are presented in a new layout.","credit":"根据原论文 Table 9 数据整理","asset_paths":[]},
+    {"id":"table-10","kind":"table","label":"Table 10","source_id":"paper","source_locator":"p. 14, Table 10","status":"redrawn","rationale":"Prompt inputs, expected outputs, and shared-prefix behavior are explained in the protocol and branching subsections.","placements":[{"artifact":"article","locator":"正式训练把 11,450 条普通 RL problem"}],"permission_status":"not-applicable","permission_basis":"Prompt roles are summarized without copying source wording or layout.","credit":"根据原论文 Table 10 整理","asset_paths":[]},
+    {"id":"table-11","kind":"table","label":"Table 11","source_id":"paper","source_locator":"p. 14, Table 11","status":"redrawn","rationale":"All nine benchmark sample counts and scopes are retained in article prose and the evaluation deck slide.","placements":[{"artifact":"article","locator":"各固定 test set 的样本量是"},{"artifact":"deck","locator":"测试规模"}],"permission_status":"not-applicable","permission_basis":"Counts are restated in prose.","credit":"根据原论文 Table 11 数据整理","asset_paths":[]},
+    {"id":"table-12","kind":"table","label":"Table 12","source_id":"paper","source_locator":"p. 15, Table 12","status":"redrawn","rationale":"The hardware, rollout, update, and learning-rate differences relevant to fairness are retained in the article.","placements":[{"artifact":"article","locator":"训练成本和公平性边界"}],"permission_status":"not-applicable","permission_basis":"Configuration facts are restated in prose.","credit":"根据原论文 Table 12 配置整理","asset_paths":[]},
+    {"id":"table-13","kind":"table","label":"Table 13","source_id":"paper","source_locator":"p. 15, Table 13","status":"redrawn","rationale":"Inference protocols and greedy decoding are represented in the article and evaluation deck slide.","placements":[{"artifact":"article","locator":"CE-GRPO 与其他作者训练的 post-training 方法使用 greedy decoding"},{"artifact":"deck","locator":"Code-CoT response 必须恰好有一个非空"}],"permission_status":"not-applicable","permission_basis":"Settings are restated in prose.","credit":"根据原论文 Table 13 配置整理","asset_paths":[]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 16, Figure 5","status":"redrawn","rationale":"The only published qualitative case is redrawn with the exact public geometry and branch outcomes.","placements":[{"artifact":"article","locator":"题设、数值、错误假设和 reward 方向均来自论文"},{"artifact":"deck","locator":"错误分支 AD=12；正确分支 AD=3√17"}],"permission_status":"not-applicable","permission_basis":"Original SVG geometry and layout based on the published facts; no source pixels reused.","credit":"根据原论文 Figure 5 与 Appendix C.1 重绘","asset_paths":["/lib/papers/credit-addressable-reasoning/triangle-case-redrawn.svg"]},
+    {"id":"table-14","kind":"table","label":"Table 14","source_id":"paper","source_locator":"p. 16, Table 14","status":"redrawn","rationale":"All selector metrics used in the mechanism claim are retained in article prose and deck diagnostics.","placements":[{"artifact":"article","locator":"300 道题的离线 selector validation"},{"artifact":"deck","locator":"0.222 → 0.287"}],"permission_status":"not-applicable","permission_basis":"Numerical values are restated in prose and cards.","credit":"根据原论文 Table 14 数据整理","asset_paths":[]}
+  ],
+  "figures": [
+    {"path":"/lib/papers/credit-addressable-reasoning/pipeline-redrawn.svg","origin":"author-redrawn","source_visual_id":"figure-3","source_id":"paper","source_locator":"Figure 3; Sections 4.1-4.4","credit":"根据原论文 Figure 3 与 Sections 4.1-4.4 重绘","license_status":"not-applicable","license_basis":"Original SVG composition using factual method structure; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/credit-addressable-reasoning/triangle-case-redrawn.svg","origin":"author-redrawn","source_visual_id":"figure-5","source_id":"paper","source_locator":"Figure 5; Appendix C.1","credit":"根据原论文 Figure 5 与 Appendix C.1 重绘","license_status":"not-applicable","license_basis":"Original SVG geometry using public problem facts; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/credit-addressable-reasoning/results-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-2","source_id":"paper","source_locator":"Table 2","credit":"根据原论文 Table 2 数据重绘","license_status":"not-applicable","license_basis":"Original SVG layout using published numerical results; no source pixels reused.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"],
+    "browser_qa_note": "Freshly rebuilt output checked at 1600x1000, 1512x982, and 390x844. The complete article, embedded deck, and standalone deck have no page-level horizontal overflow; figures are centered, while tables and code remain inside internal horizontal scrollers. Verified opening slide, related-work table, main-results figure, and final slide. Buttons, Arrow/Space/Home/End navigation, hash navigation, overview Escape, fullscreen entry and Escape exit, article focus-mode exit, and the stable return-to-article link after button, keyboard, and direct-hash navigation all passed. The standalone deck has no console warnings or errors. Article pages emit the site's pre-existing Twikoo MutationObserver error; the same error was reproduced on an unchanged older article and no new article-specific console error was observed."
+  }
+}

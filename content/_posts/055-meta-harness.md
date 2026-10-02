@@ -1,5 +1,5 @@
 ---
-title: "Meta-Harness: End-to-End Optimization of Model Harnesses"
+title: "[2026-03-30] Meta-Harness: End-to-End Optimization of Model Harnesses"
 permalink: "/posts/论文解读/meta-harness.html"
 date: "2026-09-29T22:20:00+08:00"
 updated: "2026-09-29T22:20:00+08:00"

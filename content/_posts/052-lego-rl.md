@@ -1,5 +1,5 @@
 ---
-title: "LEGO-RL: Harness-Native Reinforcement Learning for Coding Agents"
+title: "[2026-08-18] LEGO-RL: Harness-Native Reinforcement Learning for Coding Agents"
 permalink: "/posts/论文解读/lego-rl.html"
 date: "2026-09-29T13:30:00+08:00"
 updated: "2026-09-29T13:30:00+08:00"

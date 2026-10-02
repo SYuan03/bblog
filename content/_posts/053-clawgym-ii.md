@@ -1,5 +1,5 @@
 ---
-title: "ClawGym II: Exploring Black-Box RL on Agent Harness"
+title: "[2026-08-17] ClawGym II: Exploring Black-Box RL on Agent Harness"
 permalink: "/posts/论文解读/clawgym-ii.html"
 date: "2026-09-29T18:30:00+08:00"
 updated: "2026-09-29T18:30:00+08:00"
