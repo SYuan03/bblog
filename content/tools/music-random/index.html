@@ -1,0 +1,89 @@
+---
+layout: false
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f1e9" />
+    <meta name="description" content="从 ChrisDing1105 的网易云音乐喜欢歌单中，随机抽取 10 首歌。" />
+    <title>听点什么 · 从喜欢的音乐里随机抽 10 首</title>
+    <link rel="icon" href="/MyImgs/icon1.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/tools/music-random/" aria-label="听点什么首页">
+        <span class="brand-mark" aria-hidden="true">♪</span>
+        <span>听点什么</span>
+      </a>
+      <nav aria-label="页面导航">
+        <a href="/tools/">← 工具集</a>
+        <a href="https://music.163.com/playlist?id=5052412864" target="_blank" rel="noopener noreferrer">原歌单 ↗</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">ChrisDing1105 · Liked songs</p>
+          <h1>从喜欢里，<br /><em>抽 10 首。</em></h1>
+          <p class="hero-description">不做推荐算法，也不猜你现在的心情。每次从整张“喜欢的音乐”歌单里随机抽取十首，替选择困难按一次按钮。</p>
+          <div class="hero-actions">
+            <button class="draw-button" id="drawButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3h4v4M3 17l5-5 4 4 9-9M17 21h4v-4M14.5 14.5 21 21M3 7l3.5 3.5" /></svg>
+              <span>随机抽 10 首</span>
+            </button>
+            <span class="draw-note">同一轮不会重复，上一轮的歌会尽量避开</span>
+          </div>
+        </div>
+
+        <aside class="playlist-card" aria-label="歌单信息">
+          <div class="cover-shell">
+            <img id="playlistCover" alt="ChrisDing1105喜欢的音乐歌单封面" />
+            <span class="vinyl" aria-hidden="true"></span>
+          </div>
+          <div class="playlist-copy">
+            <span>NETEASE CLOUD MUSIC</span>
+            <h2 id="playlistName">ChrisDing1105喜欢的音乐</h2>
+            <p><b id="trackCount">—</b> 首歌 · 最近更新 <time id="updateTime">—</time></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="result-section" aria-labelledby="resultTitle">
+        <header class="result-header">
+          <div>
+            <p class="section-kicker">THIS ROUND</p>
+            <h2 id="resultTitle">这一轮听什么</h2>
+          </div>
+          <div class="result-actions">
+            <span class="source-status" id="sourceStatus" role="status"><i></i>正在读取歌单…</span>
+            <button class="copy-button" id="copyButton" type="button" disabled>复制歌单</button>
+          </div>
+        </header>
+
+        <ol class="song-list is-loading" id="songList" aria-live="polite" aria-busy="true">
+          <li class="empty-state">
+            <span class="loader" aria-hidden="true"></span>
+            <p>正在从喜欢的音乐里抽签…</p>
+          </li>
+        </ol>
+
+        <footer class="result-footer">
+          <p>点击歌曲会在网易云音乐打开。这里只展示歌单信息，不代理或下载音频。</p>
+          <button class="text-draw-button" id="drawAgainButton" type="button" disabled>换一组 10 首 <span aria-hidden="true">↻</span></button>
+        </footer>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>随机不是推荐，只是把旧喜欢重新翻出来。</span>
+      <a href="/tools/">ChrisDing 工具集</a>
+    </footer>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -25,7 +25,7 @@ async function exists(file) {
   }
 }
 
-for (const required of ["index.html", "404.html", "about/dongdong/index.html", "now/index.html", "tools/index.html", "tools/jingtu/index.html", "atom.xml", "search.xml", "sitemap.xml"]) {
+for (const required of ["index.html", "404.html", "about/dongdong/index.html", "now/index.html", "tools/index.html", "tools/jingtu/index.html", "tools/music-random/index.html", "tools/music-random/playlist.json", "atom.xml", "search.xml", "sitemap.xml"]) {
   if (!(await exists(path.join(outputRoot, required)))) throw new Error(`Missing build output: ${required}`);
 }
 
@@ -119,8 +119,8 @@ if ($now('.site-nav a[aria-current="page"]').attr("href") !== "/now/") {
 
 const toolsHtml = await readFile(path.join(outputRoot, "tools", "index.html"), "utf8");
 const $tools = cheerio.load(toolsHtml);
-if ($tools(".tools-page h1").text().trim() !== "顺手的小工具，打开就能用。" || !$tools('.tool-card[href="/tools/jingtu/"]').length) {
-  throw new Error("The Tools page is missing its heading or Jingtu card");
+if ($tools(".tools-page h1").text().trim() !== "顺手的小工具，打开就能用。" || !$tools('.tool-card[href="/tools/jingtu/"]').length || !$tools('.tool-card[href="/tools/music-random/"]').length) {
+  throw new Error("The Tools page is missing its heading or a required tool card");
 }
 if ($tools('.site-nav a[aria-current="page"]').attr("href") !== "/tools/") {
   throw new Error("The Tools page navigation item is not active");
@@ -130,6 +130,16 @@ const jingtuHtml = await readFile(path.join(outputRoot, "tools", "jingtu", "inde
 const $jingtu = cheerio.load(jingtuHtml);
 if (!$jingtu("#copyButton").length || $jingtu('script[src="app.js"]').length !== 1 || $jingtu('link[href="styles.css"]').length !== 1) {
   throw new Error("Jingtu is missing its copy action or local assets");
+}
+
+const musicHtml = await readFile(path.join(outputRoot, "tools", "music-random", "index.html"), "utf8");
+const $music = cheerio.load(musicHtml);
+if (!$music("#drawButton").length || !$music("#songList").length || $music('script[src="app.js"]').length !== 1 || $music('link[href="styles.css"]').length !== 1) {
+  throw new Error("Music Random is missing its draw action, result list, or local assets");
+}
+const musicSnapshot = JSON.parse(await readFile(path.join(outputRoot, "tools", "music-random", "playlist.json"), "utf8"));
+if (musicSnapshot.playlist?.id !== 5052412864 || musicSnapshot.songs?.length < 10 || musicSnapshot.songs.length !== musicSnapshot.playlist.trackCount) {
+  throw new Error("Music Random has an incomplete playlist snapshot");
 }
 
 const atomXml = await readFile(path.join(outputRoot, "atom.xml"), "utf8");

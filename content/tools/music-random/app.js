@@ -1,0 +1,200 @@
+const els = {
+  drawButton: document.querySelector('#drawButton'),
+  drawAgainButton: document.querySelector('#drawAgainButton'),
+  copyButton: document.querySelector('#copyButton'),
+  songList: document.querySelector('#songList'),
+  sourceStatus: document.querySelector('#sourceStatus'),
+  playlistCover: document.querySelector('#playlistCover'),
+  playlistName: document.querySelector('#playlistName'),
+  trackCount: document.querySelector('#trackCount'),
+  updateTime: document.querySelector('#updateTime'),
+  toast: document.querySelector('#toast'),
+};
+
+const state = {
+  recentIds: [],
+  currentSongs: [],
+  fallback: null,
+  busy: false,
+  toastTimer: null,
+};
+
+function secureRandomIndex(max) {
+  if (max <= 1) return 0;
+  const limit = Math.floor(0x1_0000_0000 / max) * max;
+  const values = new Uint32Array(1);
+  do crypto.getRandomValues(values); while (values[0] >= limit);
+  return values[0] % max;
+}
+
+function shuffle(values) {
+  const result = [...values];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const target = secureRandomIndex(index + 1);
+    [result[index], result[target]] = [result[target], result[index]];
+  }
+  return result;
+}
+
+function chooseTen(songs) {
+  const unique = [...new Map(songs.map((song) => [Number(song.id), song])).values()];
+  const recent = new Set(state.recentIds);
+  const fresh = shuffle(unique.filter((song) => !recent.has(Number(song.id))));
+  const repeated = shuffle(unique.filter((song) => recent.has(Number(song.id))));
+  const chosen = [...fresh, ...repeated].slice(0, 10);
+  if (chosen.length < 10) throw new Error('歌单中的可用歌曲不足 10 首');
+  state.recentIds = [...chosen.map((song) => Number(song.id)), ...state.recentIds].slice(0, 30);
+  return chosen;
+}
+
+function formatDate(isoDate) {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return '未知';
+  return new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
+}
+
+function albumImage(url) {
+  if (!url) return '';
+  return `${url}${url.includes('?') ? '&' : '?'}param=160y160`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  })[character]);
+}
+
+function renderSongs(songs) {
+  state.currentSongs = songs;
+  els.songList.classList.remove('is-loading');
+  els.songList.setAttribute('aria-busy', 'false');
+  els.songList.innerHTML = songs.map((song, index) => {
+    const artists = song.artists?.join(' / ') || '未知音乐人';
+    return `
+      <li class="song-item" style="--delay:${index * 35}ms">
+        <span class="song-number">${String(index + 1).padStart(2, '0')}</span>
+        <span class="album-cover" aria-hidden="true">
+          <span>${escapeHtml(song.name).slice(0, 1)}</span>
+          ${song.cover ? `<img src="${escapeHtml(albumImage(song.cover))}" alt="" loading="lazy" />` : ''}
+        </span>
+        <span class="song-copy">
+          <strong>${escapeHtml(song.name)}</strong>
+          <span>${escapeHtml(artists)} · ${escapeHtml(song.album || '未知专辑')}</span>
+        </span>
+        <a class="song-link" href="https://music.163.com/song?id=${encodeURIComponent(song.id)}" target="_blank" rel="noopener noreferrer" aria-label="在网易云音乐打开 ${escapeHtml(song.name)}">
+          <span>网易云</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14 14 6m0 0H8m6 0v6" /></svg>
+        </a>
+      </li>`;
+  }).join('');
+
+  els.songList.querySelectorAll('img').forEach((image) => {
+    image.addEventListener('error', () => image.remove(), { once: true });
+  });
+  els.copyButton.disabled = false;
+  els.drawAgainButton.disabled = false;
+}
+
+function updatePlaylist(payload, isFallback) {
+  const playlist = payload.playlist || {};
+  els.playlistName.textContent = playlist.name || 'ChrisDing1105喜欢的音乐';
+  els.trackCount.textContent = Number(playlist.trackCount || payload.songs?.length || 0).toLocaleString('zh-CN');
+  els.updateTime.textContent = formatDate(playlist.updateTime);
+  if (playlist.cover) els.playlistCover.src = albumImage(playlist.cover);
+  els.sourceStatus.classList.toggle('is-fallback', isFallback);
+  els.sourceStatus.innerHTML = `<i></i>${isFallback ? '本地快照' : '已同步网易云'} · ${els.trackCount.textContent} 首`;
+}
+
+async function loadFallback() {
+  if (state.fallback) return state.fallback;
+  const response = await fetch('playlist.json', { cache: 'no-cache' });
+  if (!response.ok) throw new Error('本地歌单快照不可用');
+  const payload = await response.json();
+  if (!Array.isArray(payload.songs) || payload.songs.length < 10) throw new Error('本地歌单快照不完整');
+  state.fallback = payload;
+  return payload;
+}
+
+async function loadLive() {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8_000);
+  try {
+    const response = await fetch('/.netlify/functions/netease-liked', {
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`在线同步失败：${response.status}`);
+    const payload = await response.json();
+    if (!Array.isArray(payload.songs) || payload.songs.length < 10) throw new Error('在线歌单数据不完整');
+    return payload;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function setBusy(isBusy) {
+  state.busy = isBusy;
+  els.drawButton.disabled = isBusy;
+  els.drawAgainButton.disabled = isBusy || !state.currentSongs.length;
+  els.drawButton.classList.toggle('is-loading', isBusy);
+  els.drawButton.querySelector('span').textContent = isBusy ? '正在抽取…' : '随机抽 10 首';
+  if (isBusy) els.sourceStatus.innerHTML = '<i></i>正在同步歌单…';
+}
+
+function showToast(message) {
+  els.toast.textContent = message;
+  els.toast.classList.add('show');
+  clearTimeout(state.toastTimer);
+  state.toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2200);
+}
+
+async function draw() {
+  if (state.busy) return;
+  setBusy(true);
+  let payload;
+  let isFallback = false;
+  try {
+    payload = await loadLive();
+  } catch (error) {
+    console.warn(error);
+    try {
+      payload = await loadFallback();
+      isFallback = true;
+    } catch (fallbackError) {
+      console.error(fallbackError);
+      els.sourceStatus.classList.add('is-fallback');
+      els.sourceStatus.innerHTML = '<i></i>歌单暂时不可用';
+      showToast('歌单读取失败，请稍后再试');
+      setBusy(false);
+      return;
+    }
+  }
+
+  try {
+    updatePlaylist(payload, isFallback);
+    renderSongs(chooseTen(payload.songs));
+  } catch (error) {
+    console.error(error);
+    showToast('这次抽取失败，请再试一次');
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function copySongs() {
+  if (!state.currentSongs.length) return;
+  const text = state.currentSongs.map((song, index) => {
+    const artists = song.artists?.join(' / ') || '未知音乐人';
+    return `${index + 1}. ${song.name} — ${artists}`;
+  }).join('\n');
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('这 10 首已经复制');
+  } catch {
+    showToast('浏览器没有允许复制，请手动选择歌名');
+  }
+}
+
+els.drawButton.addEventListener('click', draw);
+els.drawAgainButton.addEventListener('click', draw);
+els.copyButton.addEventListener('click', copySongs);
+draw();

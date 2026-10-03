@@ -10,9 +10,21 @@ tools:
     category: "图片工具"
     description: "粘贴图片，自动清除浅色平铺水印；复杂背景可取色或用修复画笔继续处理。"
     privacy: "图片不会上传"
+    preview: "jingtu"
     features:
       - "⌘V 粘贴"
       - "智能清除"
       - "局部修补"
       - "复制 PNG"
+  - name: "听点什么"
+    href: "/tools/music-random/"
+    category: "音乐工具"
+    description: "从 ChrisDing1105 的网易云‘喜欢的音乐’里随机抽 10 首，重新遇见被收藏后很少翻到的歌。"
+    privacy: "公开歌单 · 不需要登录"
+    preview: "music"
+    features:
+      - "完整歌单抽样"
+      - "一轮不重复"
+      - "一键复制"
+      - "网易云直达"
 ---
