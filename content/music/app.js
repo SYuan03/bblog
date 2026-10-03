@@ -124,10 +124,7 @@ function playSong(song) {
   els.playerPlaceholder.hidden = true;
   els.playerActive.hidden = false;
   els.playerShell.classList.add('is-playing');
-  const isLocalPreview = ['localhost', '127.0.0.1'].includes(location.hostname);
-  els.audioPlayer.src = isLocalPreview
-    ? `https://music.163.com/song/media/outer/url?id=${encodeURIComponent(song.id)}.mp3`
-    : `/.netlify/functions/netease-audio?id=${encodeURIComponent(song.id)}`;
+  els.audioPlayer.src = `https://music.163.com/song/media/outer/url?id=${encodeURIComponent(song.id)}.mp3`;
   els.audioPlayer.load();
   els.audioPlayer.play().catch(() => showToast('如果没有自动播放，请点播放器上的播放键'));
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
