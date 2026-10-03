@@ -24,6 +24,10 @@ export default async (request) => {
     // normally degrades to exhigh (320 kbps MP3).
     const ids = encodeURIComponent(`[${songId}]`);
     const candidates = [
+      `https://interface.music.163.com/api/song/enhance/player/url/v1?ids=${ids}&level=jymaster&encodeType=flac`,
+      `https://interface.music.163.com/api/song/enhance/player/url?ids=${ids}&br=320000`,
+      `https://interface3.music.163.com/api/song/enhance/player/url/v1?ids=${ids}&level=jymaster&encodeType=flac`,
+      `https://interface3.music.163.com/api/song/enhance/player/url?ids=${ids}&br=320000`,
       `https://music.163.com/api/song/enhance/player/url/v1?ids=${ids}&level=jymaster&encodeType=flac`,
       `https://music.163.com/api/song/enhance/player/url?ids=${ids}&br=320000`,
     ];
