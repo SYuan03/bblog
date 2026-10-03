@@ -26,7 +26,6 @@ const state = {
   fallback: null,
   busy: false,
   toastTimer: null,
-  playRequest: 0,
 };
 
 function secureRandomIndex(max) {
@@ -66,20 +65,6 @@ function formatDate(isoDate) {
 function albumImage(url) {
   if (!url) return '';
   return `${url}${url.includes('?') ? '&' : '?'}param=160y160`;
-}
-
-function qualityLabel({ bitrate = 0, level = '', type = '' } = {}) {
-  const kbps = Math.round(Number(bitrate) / 1000);
-  const tierNames = {
-    standard: '标准',
-    higher: '较高',
-    exhigh: '极高',
-    lossless: '无损',
-    hires: 'Hi-Res',
-    jymaster: '超清母带',
-  };
-  const tier = tierNames[level] || (type ? type.toUpperCase() : '音频');
-  return kbps ? `${tier} · ${kbps} kbps` : tier;
 }
 
 function escapeHtml(value) {
@@ -127,7 +112,7 @@ function renderSongs(songs) {
   els.drawAgainButton.disabled = false;
 }
 
-async function playSong(song) {
+function playSong(song) {
   if (state.playingId === Number(song.id) && els.audioPlayer.src) {
     if (els.audioPlayer.paused) els.audioPlayer.play().catch(() => showToast('浏览器阻止了自动播放，请点播放器上的播放键'));
     else els.audioPlayer.pause();
@@ -142,40 +127,19 @@ async function playSong(song) {
   state.playingId = Number(song.id);
   els.nowPlayingTitle.textContent = song.name;
   els.nowPlayingArtist.textContent = artists;
-  els.qualityBadge.textContent = '正在获取最高品质';
-  els.qualityBadge.classList.add('is-loading');
+  els.qualityBadge.textContent = '标准 · 128 kbps';
   els.playerPlaceholder.hidden = true;
   els.playerActive.hidden = false;
   els.playerShell.classList.add('is-playing');
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
   els.songList.querySelector(`[data-song-id="${CSS.escape(String(song.id))}"]`)?.closest('.song-item')?.classList.add('is-active');
-
-  const requestId = ++state.playRequest;
-  let audioUrl = `https://music.163.com/song/media/outer/url?id=${encodeURIComponent(song.id)}.mp3`;
-  let quality = { bitrate: 128_000, level: 'standard', type: 'mp3' };
-  try {
-    const response = await fetch(`/.netlify/functions/netease-audio?id=${encodeURIComponent(song.id)}`, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`高品质音源请求失败：${response.status}`);
-    const payload = await response.json();
-    if (!payload.url) throw new Error('高品质音源地址为空');
-    audioUrl = payload.url;
-    quality = payload;
-  } catch (error) {
-    console.warn(error);
-    if (requestId === state.playRequest) showToast('高品质音源暂不可用，已回退到 128 kbps');
-  }
-  if (requestId !== state.playRequest || state.playingId !== Number(song.id)) return;
-
-  els.qualityBadge.textContent = qualityLabel(quality);
-  els.qualityBadge.classList.remove('is-loading');
-  els.audioPlayer.src = audioUrl;
+  els.audioPlayer.src = `https://music.163.com/song/media/outer/url?id=${encodeURIComponent(song.id)}.mp3`;
   els.audioPlayer.load();
   els.audioPlayer.play().catch(() => showToast('如果没有自动播放，请点播放器上的播放键'));
 }
 
 function stopSong() {
   state.playingId = null;
-  state.playRequest += 1;
   els.audioPlayer.pause();
   els.audioPlayer.removeAttribute('src');
   els.audioPlayer.load();
