@@ -48,19 +48,14 @@ export default async () => {
       throw new Error("playlist unavailable");
     }
 
-    // Check a broad random slice, then keep only songs that NetEase currently
-    // exposes for web playback. This avoids drawing ten tracks that only work in-app.
-    const sampledIds = shuffle(playlist.trackIds.map((track) => Number(track.id))).slice(0, 160);
+    // A broad random slice keeps each draw representative without fetching the
+    // details of all 829 tracks on every click. The browser intersects this pool
+    // with the checked-in list of songs currently available for web playback.
+    const sampledIds = shuffle(playlist.trackIds.map((track) => Number(track.id))).slice(0, 100);
     const ids = encodeURIComponent(JSON.stringify(sampledIds));
-    const [songsPayload, playbackPayload] = await Promise.all([
-      fetchJson(`https://music.163.com/api/song/detail?ids=${ids}`),
-      fetchJson(`https://music.163.com/api/song/enhance/player/url?ids=${ids}&br=128000`),
-    ]);
-    const playableIds = new Set((playbackPayload.data || [])
-      .filter((item) => item.url && Number(item.code) === 200)
-      .map((item) => Number(item.id)));
+    const songsPayload = await fetchJson(`https://music.163.com/api/song/detail?ids=${ids}`);
     const byId = new Map((songsPayload.songs || []).map((song) => [Number(song.id), normalizeSong(song)]));
-    const songs = sampledIds.filter((id) => playableIds.has(id)).map((id) => byId.get(id)).filter(Boolean);
+    const songs = sampledIds.map((id) => byId.get(id)).filter(Boolean);
     if (songs.length < 10) throw new Error("song details unavailable");
 
     return new Response(JSON.stringify({
@@ -75,7 +70,6 @@ export default async () => {
         trackCount: Number(playlist.trackCount || playlist.trackIds.length),
         updateTime: new Date(Number(playlist.updateTime)).toISOString(),
       },
-      playableSampleCount: songs.length,
       songs,
     }), { status: 200, headers: responseHeaders });
   } catch (error) {

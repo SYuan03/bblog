@@ -204,7 +204,16 @@ async function draw() {
   let payload;
   let isFallback = false;
   try {
-    payload = await loadLive();
+    const fallback = await loadFallback();
+    const live = await loadLive();
+    const playableIds = new Set(fallback.songs.map((song) => Number(song.id)));
+    const playableLiveSongs = live.songs.filter((song) => playableIds.has(Number(song.id)));
+    if (playableLiveSongs.length < 10) throw new Error('在线抽样中的可试听歌曲不足');
+    payload = {
+      ...live,
+      playlist: { ...live.playlist, playableCount: fallback.playlist.playableCount },
+      songs: playableLiveSongs,
+    };
   } catch (error) {
     console.warn(error);
     try {
