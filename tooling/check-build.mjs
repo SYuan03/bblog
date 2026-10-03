@@ -138,7 +138,7 @@ if (!$music("#drawButton").length || !$music("#songList").length || !$music("#au
   throw new Error("Music is missing its draw action, result list, player, or local assets");
 }
 const musicSnapshot = JSON.parse(await readFile(path.join(outputRoot, "music", "playlist.json"), "utf8"));
-if (musicSnapshot.playlist?.id !== 5052412864 || musicSnapshot.songs?.length < 10 || musicSnapshot.songs.length !== musicSnapshot.playlist.trackCount) {
+if (musicSnapshot.playlist?.id !== 5052412864 || musicSnapshot.songs?.length < 10 || musicSnapshot.songs.length !== musicSnapshot.playlist.playableCount || musicSnapshot.songs.length > musicSnapshot.playlist.trackCount) {
   throw new Error("Music Random has an incomplete playlist snapshot");
 }
 if (!$music('a[href="/"]').length) throw new Error("Music is missing its route back to the blog");

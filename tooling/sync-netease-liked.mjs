@@ -44,16 +44,23 @@ if (!playlist || !Array.isArray(playlist.trackIds) || playlist.trackIds.length <
 
 const orderedIds = playlist.trackIds.map((track) => Number(track.id));
 const songsById = new Map();
+const playableIds = new Set();
 for (const group of batches(orderedIds, 100)) {
   const ids = encodeURIComponent(JSON.stringify(group));
-  const payload = await fetchJson(`https://music.163.com/api/song/detail?ids=${ids}`);
+  const [payload, playback] = await Promise.all([
+    fetchJson(`https://music.163.com/api/song/detail?ids=${ids}`),
+    fetchJson(`https://music.163.com/api/song/enhance/player/url?ids=${ids}&br=128000`),
+  ]);
   for (const song of payload.songs || []) songsById.set(Number(song.id), normalizeSong(song));
+  for (const item of playback.data || []) {
+    if (item.url && Number(item.code) === 200) playableIds.add(Number(item.id));
+  }
 }
 
-const songs = orderedIds.map((id) => songsById.get(id)).filter(Boolean);
-if (songs.length !== orderedIds.length) {
-  throw new Error(`Only resolved ${songs.length} of ${orderedIds.length} songs; refusing to write a partial snapshot`);
-}
+const unresolved = orderedIds.filter((id) => !songsById.has(id));
+if (unresolved.length) throw new Error(`Only resolved ${songsById.size} of ${orderedIds.length} song records`);
+const songs = orderedIds.filter((id) => playableIds.has(id)).map((id) => songsById.get(id));
+if (songs.length < 10) throw new Error(`Only ${songs.length} songs are currently playable`);
 
 const snapshot = {
   schemaVersion: 1,
@@ -65,6 +72,7 @@ const snapshot = {
     url: playlistUrl,
     cover: String(playlist.coverImgUrl || "").replace(/^http:/, "https:"),
     trackCount: Number(playlist.trackCount || songs.length),
+    playableCount: songs.length,
     updateTime: new Date(Number(playlist.updateTime)).toISOString(),
   },
   songs,
@@ -72,4 +80,4 @@ const snapshot = {
 
 await mkdir(path.dirname(outputFile), { recursive: true });
 await writeFile(outputFile, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
-console.log(`Wrote ${songs.length} songs from “${playlist.name}” to ${path.relative(projectRoot, outputFile)}`);
+console.log(`Wrote ${songs.length} currently playable songs from ${orderedIds.length} tracks in “${playlist.name}” to ${path.relative(projectRoot, outputFile)}`);

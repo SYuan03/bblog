@@ -149,7 +149,10 @@ function updatePlaylist(payload, isFallback) {
   els.updateTime.textContent = formatDate(playlist.updateTime);
   if (playlist.cover) els.playlistCover.src = albumImage(playlist.cover);
   els.sourceStatus.classList.toggle('is-fallback', isFallback);
-  els.sourceStatus.innerHTML = `<i></i>${isFallback ? '本地快照' : '已同步网易云'} · ${els.trackCount.textContent} 首`;
+  const sourceText = isFallback
+    ? `本地快照 · ${Number(playlist.playableCount || payload.songs.length).toLocaleString('zh-CN')} 首可试听`
+    : '已同步网易云 · 仅抽可试听歌曲';
+  els.sourceStatus.innerHTML = `<i></i>${sourceText}`;
 }
 
 async function loadFallback() {
