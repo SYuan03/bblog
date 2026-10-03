@@ -8,12 +8,20 @@ const els = {
   playlistName: document.querySelector('#playlistName'),
   trackCount: document.querySelector('#trackCount'),
   updateTime: document.querySelector('#updateTime'),
+  playerShell: document.querySelector('#playerShell'),
+  playerPlaceholder: document.querySelector('#playerPlaceholder'),
+  playerActive: document.querySelector('#playerActive'),
+  audioPlayer: document.querySelector('#audioPlayer'),
+  nowPlayingTitle: document.querySelector('#nowPlayingTitle'),
+  nowPlayingArtist: document.querySelector('#nowPlayingArtist'),
+  stopButton: document.querySelector('#stopButton'),
   toast: document.querySelector('#toast'),
 };
 
 const state = {
   recentIds: [],
   currentSongs: [],
+  playingId: null,
   fallback: null,
   busy: false,
   toastTimer: null,
@@ -71,16 +79,19 @@ function renderSongs(songs) {
   els.songList.innerHTML = songs.map((song, index) => {
     const artists = song.artists?.join(' / ') || '未知音乐人';
     return `
-      <li class="song-item" style="--delay:${index * 35}ms">
+      <li class="song-item${Number(song.id) === state.playingId ? ' is-active' : ''}" style="--delay:${index * 35}ms">
         <span class="song-number">${String(index + 1).padStart(2, '0')}</span>
-        <span class="album-cover" aria-hidden="true">
-          <span>${escapeHtml(song.name).slice(0, 1)}</span>
-          ${song.cover ? `<img src="${escapeHtml(albumImage(song.cover))}" alt="" loading="lazy" />` : ''}
-        </span>
-        <span class="song-copy">
-          <strong>${escapeHtml(song.name)}</strong>
-          <span>${escapeHtml(artists)} · ${escapeHtml(song.album || '未知专辑')}</span>
-        </span>
+        <button class="song-play" type="button" data-song-id="${encodeURIComponent(song.id)}" aria-label="播放 ${escapeHtml(song.name)}">
+          <span class="album-cover" aria-hidden="true">
+            <span>${escapeHtml(song.name).slice(0, 1)}</span>
+            ${song.cover ? `<img src="${escapeHtml(albumImage(song.cover))}" alt="" loading="lazy" />` : ''}
+            <i class="play-glyph">▶</i>
+          </span>
+          <span class="song-copy">
+            <strong>${escapeHtml(song.name)}</strong>
+            <span>${escapeHtml(artists)} · ${escapeHtml(song.album || '未知专辑')}</span>
+          </span>
+        </button>
         <a class="song-link" href="https://music.163.com/song?id=${encodeURIComponent(song.id)}" target="_blank" rel="noopener noreferrer" aria-label="在网易云音乐打开 ${escapeHtml(song.name)}">
           <span>网易云</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14 14 6m0 0H8m6 0v6" /></svg>
         </a>
@@ -90,8 +101,48 @@ function renderSongs(songs) {
   els.songList.querySelectorAll('img').forEach((image) => {
     image.addEventListener('error', () => image.remove(), { once: true });
   });
+  els.songList.querySelectorAll('.song-play').forEach((button) => {
+    button.addEventListener('click', () => {
+      const song = state.currentSongs.find((candidate) => Number(candidate.id) === Number(button.dataset.songId));
+      if (song) playSong(song);
+    });
+  });
   els.copyButton.disabled = false;
   els.drawAgainButton.disabled = false;
+}
+
+function playSong(song) {
+  if (state.playingId === Number(song.id) && els.audioPlayer.src) {
+    if (els.audioPlayer.paused) els.audioPlayer.play().catch(() => showToast('浏览器阻止了自动播放，请点播放器上的播放键'));
+    else els.audioPlayer.pause();
+    return;
+  }
+  const artists = song.artists?.join(' / ') || '未知音乐人';
+  state.playingId = Number(song.id);
+  els.nowPlayingTitle.textContent = song.name;
+  els.nowPlayingArtist.textContent = artists;
+  els.playerPlaceholder.hidden = true;
+  els.playerActive.hidden = false;
+  els.playerShell.classList.add('is-playing');
+  const isLocalPreview = ['localhost', '127.0.0.1'].includes(location.hostname);
+  els.audioPlayer.src = isLocalPreview
+    ? `https://music.163.com/song/media/outer/url?id=${encodeURIComponent(song.id)}.mp3`
+    : `/.netlify/functions/netease-audio?id=${encodeURIComponent(song.id)}`;
+  els.audioPlayer.load();
+  els.audioPlayer.play().catch(() => showToast('如果没有自动播放，请点播放器上的播放键'));
+  els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
+  els.songList.querySelector(`[data-song-id="${CSS.escape(String(song.id))}"]`)?.closest('.song-item')?.classList.add('is-active');
+}
+
+function stopSong() {
+  state.playingId = null;
+  els.audioPlayer.pause();
+  els.audioPlayer.removeAttribute('src');
+  els.audioPlayer.load();
+  els.playerActive.hidden = true;
+  els.playerPlaceholder.hidden = false;
+  els.playerShell.classList.remove('is-playing');
+  els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
 }
 
 function updatePlaylist(payload, isFallback) {
@@ -197,4 +248,17 @@ async function copySongs() {
 els.drawButton.addEventListener('click', draw);
 els.drawAgainButton.addEventListener('click', draw);
 els.copyButton.addEventListener('click', copySongs);
+els.stopButton.addEventListener('click', stopSong);
+els.audioPlayer.addEventListener('play', () => {
+  const active = els.songList.querySelector(`[data-song-id="${CSS.escape(String(state.playingId))}"]`)?.closest('.song-item');
+  active?.classList.add('is-playing');
+  if (active) active.querySelector('.play-glyph').textContent = '❚❚';
+});
+els.audioPlayer.addEventListener('pause', () => {
+  els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-playing'));
+  els.songList.querySelectorAll('.play-glyph').forEach((glyph) => { glyph.textContent = '▶'; });
+});
+els.audioPlayer.addEventListener('error', () => {
+  if (els.audioPlayer.getAttribute('src')) showToast('这首歌暂时不能播放，可以点右侧箭头去网易云');
+});
 draw();

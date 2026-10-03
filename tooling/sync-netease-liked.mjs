@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const playlistId = "5052412864";
 const playlistUrl = `https://music.163.com/playlist?id=${playlistId}`;
-const outputFile = path.join(projectRoot, "content", "tools", "music-random", "playlist.json");
+const outputFile = path.join(projectRoot, "content", "music", "playlist.json");
 const requestHeaders = {
   Referer: "https://music.163.com/",
   "User-Agent": "Mozilla/5.0 (compatible; ChrisDingBlog/1.0; +https://bblog.031105.xyz/)",

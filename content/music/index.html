@@ -7,19 +7,20 @@ layout: false
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f1e9" />
-    <meta name="description" content="从 ChrisDing1105 的网易云音乐喜欢歌单中，随机抽取 10 首歌。" />
-    <title>听点什么 · 从喜欢的音乐里随机抽 10 首</title>
+    <meta name="description" content="从 ChrisDing1105 的网易云音乐喜欢歌单中随机抽取 10 首，并使用网易云官方播放器直接播放。" />
+    <link rel="canonical" href="https://bblog.031105.xyz/music/" />
+    <title>Music / 音乐 · ChrisDing</title>
     <link rel="icon" href="/MyImgs/icon1.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="/tools/music-random/" aria-label="听点什么首页">
+      <a class="brand" href="/music/" aria-label="音乐首页">
         <span class="brand-mark" aria-hidden="true">♪</span>
-        <span>听点什么</span>
+        <span>Music / 音乐</span>
       </a>
       <nav aria-label="页面导航">
-        <a href="/tools/">← 工具集</a>
+        <a href="/">← 博客</a>
         <a href="https://music.163.com/playlist?id=5052412864" target="_blank" rel="noopener noreferrer">原歌单 ↗</a>
       </nav>
     </header>
@@ -64,6 +65,25 @@ layout: false
           </div>
         </header>
 
+        <section class="player-shell" id="playerShell" aria-label="音乐播放器">
+          <div class="player-placeholder" id="playerPlaceholder">
+            <span class="player-placeholder-icon" aria-hidden="true">▶</span>
+            <div>
+              <strong>点一首，直接在这里听</strong>
+              <span>音频从网易云音乐官方服务加载</span>
+            </div>
+          </div>
+          <div class="player-active" id="playerActive" hidden>
+            <div class="now-playing-copy">
+              <span>NOW PLAYING</span>
+              <strong id="nowPlayingTitle">—</strong>
+              <small id="nowPlayingArtist">—</small>
+            </div>
+            <audio id="audioPlayer" controls preload="metadata">当前浏览器不支持音频播放。</audio>
+            <button class="stop-button" id="stopButton" type="button" aria-label="停止播放" title="停止播放">×</button>
+          </div>
+        </section>
+
         <ol class="song-list is-loading" id="songList" aria-live="polite" aria-busy="true">
           <li class="empty-state">
             <span class="loader" aria-hidden="true"></span>
@@ -72,7 +92,7 @@ layout: false
         </ol>
 
         <footer class="result-footer">
-          <p>点击歌曲会在网易云音乐打开。这里只展示歌单信息，不代理或下载音频。</p>
+          <p>点歌曲可在本页播放；右侧箭头打开网易云原页。音频来自网易云官方服务，部分歌曲可能受版权限制。</p>
           <button class="text-draw-button" id="drawAgainButton" type="button" disabled>换一组 10 首 <span aria-hidden="true">↻</span></button>
         </footer>
       </section>
@@ -80,7 +100,7 @@ layout: false
 
     <footer class="page-footer">
       <span>随机不是推荐，只是把旧喜欢重新翻出来。</span>
-      <a href="/tools/">ChrisDing 工具集</a>
+      <a href="/">ChrisDing Blog</a>
     </footer>
 
     <div class="toast" id="toast" role="status"></div>
