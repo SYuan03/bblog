@@ -14,6 +14,7 @@ function json(payload, status = 200) {
 }
 
 export default async (request) => {
+  const diagnostics = [];
   try {
     const songId = new URL(request.url).searchParams.get("id") || "";
     if (!/^\d{1,20}$/.test(songId)) return json({ error: "Invalid song ID" }, 400);
@@ -22,14 +23,28 @@ export default async (request) => {
     // available without a user credential. In current public responses this
     // normally degrades to exhigh (320 kbps MP3).
     const ids = encodeURIComponent(`[${songId}]`);
-    const upstream = await fetch(
+    const candidates = [
       `https://music.163.com/api/song/enhance/player/url/v1?ids=${ids}&level=jymaster&encodeType=flac`,
-      { headers: requestHeaders, signal: AbortSignal.timeout(8_000) },
-    );
-    if (!upstream.ok) throw new Error(`upstream ${upstream.status}`);
-
-    const payload = await upstream.json();
-    const audio = payload.data?.[0];
+      `https://music.163.com/api/song/enhance/player/url?ids=${ids}&br=320000`,
+    ];
+    let audio;
+    for (const candidate of candidates) {
+      const upstream = await fetch(candidate, {
+        headers: requestHeaders,
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!upstream.ok) {
+        diagnostics.push({ status: upstream.status });
+        continue;
+      }
+      const payload = await upstream.json();
+      const result = payload.data?.[0];
+      diagnostics.push({ status: upstream.status, code: payload.code, hasUrl: Boolean(result?.url) });
+      if (result?.url) {
+        audio = result;
+        break;
+      }
+    }
     if (!audio?.url) throw new Error("no playable audio URL");
 
     const audioUrl = new URL(audio.url);
@@ -47,6 +62,6 @@ export default async (request) => {
     });
   } catch (error) {
     console.error("NetEase high-quality audio resolution failed", error);
-    return json({ error: "High-quality audio is temporarily unavailable" }, 502);
+    return json({ error: "High-quality audio is temporarily unavailable", diagnostics }, 502);
   }
 };
