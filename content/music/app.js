@@ -33,6 +33,7 @@ const state = {
   lyricLines: [],
   activeLyricIndex: -1,
   lyricRequest: null,
+  lyricFrame: null,
   lyricsExpanded: true,
   fallback: null,
   busy: false,
@@ -109,7 +110,35 @@ function parseLrc(rawLyric) {
   return lines.sort((left, right) => left.time - right.time);
 }
 
-function lineNear(lines, time) {
+function parseYrc(rawLyric) {
+  if (!rawLyric) return [];
+  const linePattern = /^\[(\d+),(\d+)\](.*)$/;
+  const wordPattern = /\((\d+),(\d+),\d+\)([^()]*)/g;
+  const lines = [];
+
+  rawLyric.split(/\r?\n/).forEach((sourceLine) => {
+    const lineMatch = sourceLine.match(linePattern);
+    if (!lineMatch) return;
+    const words = [...lineMatch[3].matchAll(wordPattern)].map((match) => ({
+      time: Number(match[1]) / 1000,
+      duration: Math.max(0.04, Number(match[2]) / 1000),
+      text: match[3],
+    }));
+    if (!words.length) return;
+    words[0].text = words[0].text.replace(/^\s+/, '');
+    words[words.length - 1].text = words[words.length - 1].text.replace(/\s+$/, '');
+    lines.push({
+      time: Number(lineMatch[1]) / 1000,
+      duration: Number(lineMatch[2]) / 1000,
+      text: words.map((word) => word.text).join(''),
+      words,
+    });
+  });
+
+  return lines.sort((left, right) => left.time - right.time);
+}
+
+function entryNear(lines, time, tolerance = 0.45) {
   let nearest = null;
   let distance = Number.POSITIVE_INFINITY;
   for (const line of lines) {
@@ -120,18 +149,30 @@ function lineNear(lines, time) {
     }
     if (line.time > time && nextDistance > distance) break;
   }
-  return distance <= 0.45 ? nearest?.text || '' : '';
+  return distance <= tolerance ? nearest : null;
+}
+
+function lineNear(lines, time) {
+  return entryNear(lines, time)?.text || '';
 }
 
 function normalizeLyrics(payload) {
   const originals = parseLrc(payload.original);
   const translations = parseLrc(payload.translation);
   const romanized = parseLrc(payload.romanized);
-  return originals.map((line) => ({
-    ...line,
-    translation: lineNear(translations, line.time),
-    romanized: lineNear(romanized, line.time),
-  }));
+  const wordLines = parseYrc(payload.wordByWord);
+  const baseLines = originals.length ? originals : wordLines;
+  return baseLines.map((line) => {
+    const timedWords = entryNear(wordLines, line.time, 0.75);
+    return {
+      ...line,
+      time: timedWords?.time ?? line.time,
+      duration: timedWords?.duration,
+      words: timedWords?.words || [],
+      translation: lineNear(translations, line.time),
+      romanized: lineNear(romanized, line.time),
+    };
+  }).sort((left, right) => left.time - right.time);
 }
 
 function setLyricsExpanded(expanded) {
@@ -143,6 +184,7 @@ function setLyricsExpanded(expanded) {
 }
 
 function showLyricsMessage(message) {
+  stopLyricAnimation();
   state.lyricLines = [];
   state.activeLyricIndex = -1;
   els.lyricsLines.classList.add('is-message');
@@ -161,7 +203,13 @@ function lyricLineMarkup(line, isActive) {
   const secondary = line.translation && line.translation !== line.text
     ? line.translation
     : line.romanized && line.romanized !== line.text ? line.romanized : '';
-  return `<li class="lyric-line${isActive ? ' is-active' : ''}"${isActive ? ' aria-current="true"' : ''}><span>${escapeHtml(line.text)}</span>${secondary ? `<small>${escapeHtml(secondary)}</small>` : ''}</li>`;
+  let primary = `<span>${escapeHtml(line.text)}</span>`;
+  if (isActive && line.words?.length) {
+    primary = `<span class="lyric-primary has-word-timing">${line.words.map((word, index) => `<span class="lyric-word" data-word-index="${index}">${escapeHtml(word.text)}</span>`).join('')}</span>`;
+  } else if (isActive) {
+    primary = `<span class="lyric-primary has-line-timing">${escapeHtml(line.text)}</span>`;
+  }
+  return `<li class="lyric-line${isActive ? ' is-active' : ''}"${isActive ? ' aria-current="true"' : ''}>${primary}${secondary ? `<small>${escapeHtml(secondary)}</small>` : ''}</li>`;
 }
 
 function lyricIndexAt(time) {
@@ -188,6 +236,50 @@ function syncLyrics(time, force = false) {
   els.lyricsLines.innerHTML = [nextIndex - 1, nextIndex, nextIndex + 1]
     .map((index, slot) => lyricLineMarkup(state.lyricLines[index], slot === 1))
     .join('');
+  updateKaraokeProgress(time);
+}
+
+function clampProgress(value) {
+  return Math.max(0, Math.min(1, value));
+}
+
+function updateKaraokeProgress(time) {
+  const line = state.lyricLines[state.activeLyricIndex];
+  if (!line) return;
+
+  if (line.words?.length) {
+    const wordElements = els.lyricsLines.querySelectorAll('.lyric-word');
+    line.words.forEach((word, index) => {
+      const progress = clampProgress((time - word.time) / word.duration);
+      wordElements[index]?.style.setProperty('--word-progress', `${progress * 100}%`);
+    });
+    return;
+  }
+
+  const nextLine = state.lyricLines[state.activeLyricIndex + 1];
+  const gap = nextLine ? Math.max(0.8, nextLine.time - line.time) : 4;
+  const estimatedSingingTime = Math.max(1.2, Math.min(5.5, [...line.text].length * 0.24));
+  const duration = Math.min(gap * 0.88, estimatedSingingTime);
+  const progress = clampProgress((time - line.time) / Math.max(0.8, duration));
+  els.lyricsLines.querySelector('.has-line-timing')?.style.setProperty('--line-progress', `${progress * 100}%`);
+}
+
+function startLyricAnimation() {
+  if (state.lyricFrame !== null) return;
+  const tick = () => {
+    state.lyricFrame = null;
+    if (els.audioPlayer.paused || state.playingId === null) return;
+    syncLyrics(els.audioPlayer.currentTime);
+    updateKaraokeProgress(els.audioPlayer.currentTime);
+    state.lyricFrame = requestAnimationFrame(tick);
+  };
+  state.lyricFrame = requestAnimationFrame(tick);
+}
+
+function stopLyricAnimation() {
+  if (state.lyricFrame === null) return;
+  cancelAnimationFrame(state.lyricFrame);
+  state.lyricFrame = null;
 }
 
 async function loadLyrics(song) {
@@ -220,7 +312,12 @@ async function loadLyrics(song) {
     }
     const hasTranslation = lines.some((line) => line.translation && line.translation !== line.text);
     const hasRomanized = !hasTranslation && lines.some((line) => line.romanized && line.romanized !== line.text);
-    els.lyricsStatus.textContent = hasTranslation ? '原文 · 翻译' : hasRomanized ? '原文 · 罗马音' : '随播放进度切换';
+    const hasWordTiming = lines.some((line) => line.words?.length > 1);
+    els.lyricsStatus.textContent = hasTranslation
+      ? `${hasWordTiming ? '逐字 · ' : ''}原文 / 翻译`
+      : hasRomanized
+        ? `${hasWordTiming ? '逐字 · ' : ''}原文 / 罗马音`
+        : hasWordTiming ? '逐字同步' : '随播放进度切换';
     renderLyrics(lines);
   } catch (error) {
     if (error.name === 'AbortError') return;
@@ -440,13 +537,18 @@ els.copyButton.addEventListener('click', copySongs);
 els.lyricToggle.addEventListener('click', () => setLyricsExpanded(!state.lyricsExpanded));
 els.stopButton.addEventListener('click', stopSong);
 els.audioPlayer.addEventListener('timeupdate', () => syncLyrics(els.audioPlayer.currentTime));
-els.audioPlayer.addEventListener('seeked', () => syncLyrics(els.audioPlayer.currentTime, true));
+els.audioPlayer.addEventListener('seeked', () => {
+  syncLyrics(els.audioPlayer.currentTime, true);
+  updateKaraokeProgress(els.audioPlayer.currentTime);
+});
 els.audioPlayer.addEventListener('play', () => {
   const active = els.songList.querySelector(`[data-song-id="${CSS.escape(String(state.playingId))}"]`)?.closest('.song-item');
   active?.classList.add('is-playing');
   active?.querySelector('.song-play')?.setAttribute('aria-label', `暂停 ${state.currentSongs.find((song) => Number(song.id) === Number(state.playingId))?.name || '当前歌曲'}`);
+  startLyricAnimation();
 });
 els.audioPlayer.addEventListener('pause', () => {
+  stopLyricAnimation();
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-playing'));
   els.songList.querySelectorAll('.song-play').forEach((button) => {
     const song = state.currentSongs.find((candidate) => Number(candidate.id) === Number(button.dataset.songId));

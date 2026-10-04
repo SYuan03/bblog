@@ -323,13 +323,33 @@ main { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
   line-height: 1.45;
   opacity: .64;
   transition: color .18s ease, font-size .18s ease, opacity .18s ease;
+  animation: lyric-shift .24s cubic-bezier(.2, .72, .28, 1) both;
 }
 .lyric-line span { display: block; }
 .lyric-line small { display: block; color: #aaa59d; font-size: 9px; }
-.lyric-line.is-active { color: var(--red-dark); font-size: 16px; font-weight: 700; opacity: 1; }
+.lyric-line.is-active { color: var(--ink); font-size: 16px; font-weight: 700; opacity: 1; text-shadow: 0 4px 18px rgba(152, 49, 44, .08); }
 .lyric-line.is-active small { color: var(--red-dark); font-weight: 500; }
 .lyric-line.is-empty { visibility: hidden; }
 .lyrics-message { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.lyric-primary { display: inline !important; }
+.lyric-primary.has-line-timing {
+  --line-progress: 0%;
+  color: transparent;
+  background: linear-gradient(90deg, var(--red-dark) 0 var(--line-progress), #5f5b55 var(--line-progress) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.lyric-word {
+  --word-progress: 0%;
+  display: inline !important;
+  color: transparent;
+  background: linear-gradient(90deg, var(--red-dark) 0 var(--word-progress), #5f5b55 var(--word-progress) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: pre-wrap;
+}
 
 .song-list {
   margin: 0;
@@ -419,6 +439,7 @@ main { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes song-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes lyric-shift { from { opacity: 0; transform: translateY(5px); } to { transform: none; } }
 
 @media (max-width: 820px) {
   .hero { grid-template-columns: minmax(0, 1fr) 240px; gap: 45px; }

@@ -23,7 +23,7 @@ export default async (request) => {
   }
 
   try {
-    const upstream = await fetch(`https://music.163.com/api/song/lyric?id=${songId}&lv=-1&tv=-1&rv=-1&kv=-1`, {
+    const upstream = await fetch(`https://music.163.com/api/song/lyric?id=${songId}&lv=-1&tv=-1&rv=-1&kv=-1&yv=-1`, {
       headers: requestHeaders,
       signal: AbortSignal.timeout(8_000),
     });
@@ -33,6 +33,7 @@ export default async (request) => {
     const original = lyricText(payload.lrc);
     const translation = lyricText(payload.tlyric);
     const romanized = lyricText(payload.romalrc);
+    const wordByWord = lyricText(payload.yrc);
 
     return new Response(JSON.stringify({
       songId: Number(songId),
@@ -41,6 +42,7 @@ export default async (request) => {
       original,
       translation,
       romanized,
+      wordByWord,
     }), { status: 200, headers: responseHeaders });
   } catch (error) {
     console.error("NetEase lyric fetch failed", error);
