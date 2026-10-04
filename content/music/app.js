@@ -73,6 +73,12 @@ function escapeHtml(value) {
   })[character]);
 }
 
+const songControlIcon = `
+  <span class="play-control">
+    <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 6.5 17.5 12l-9 5.5Z" /></svg>
+    <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7v10m7-10v10" /></svg>
+  </span>`;
+
 function renderSongs(songs) {
   state.currentSongs = songs;
   els.songList.classList.remove('is-loading');
@@ -86,7 +92,7 @@ function renderSongs(songs) {
           <span class="album-cover" aria-hidden="true">
             <span>${escapeHtml(song.name).slice(0, 1)}</span>
             ${song.cover ? `<img src="${escapeHtml(albumImage(song.cover))}" alt="" loading="lazy" />` : ''}
-            <i class="play-glyph">▶</i>
+            <i class="play-glyph">${songControlIcon}</i>
           </span>
           <span class="song-copy">
             <strong>${escapeHtml(song.name)}</strong>
@@ -267,11 +273,14 @@ els.stopButton.addEventListener('click', stopSong);
 els.audioPlayer.addEventListener('play', () => {
   const active = els.songList.querySelector(`[data-song-id="${CSS.escape(String(state.playingId))}"]`)?.closest('.song-item');
   active?.classList.add('is-playing');
-  if (active) active.querySelector('.play-glyph').textContent = '❚❚';
+  active?.querySelector('.song-play')?.setAttribute('aria-label', `暂停 ${state.currentSongs.find((song) => Number(song.id) === Number(state.playingId))?.name || '当前歌曲'}`);
 });
 els.audioPlayer.addEventListener('pause', () => {
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-playing'));
-  els.songList.querySelectorAll('.play-glyph').forEach((glyph) => { glyph.textContent = '▶'; });
+  els.songList.querySelectorAll('.song-play').forEach((button) => {
+    const song = state.currentSongs.find((candidate) => Number(candidate.id) === Number(button.dataset.songId));
+    button.setAttribute('aria-label', `播放 ${song?.name || '这首歌'}`);
+  });
 });
 els.audioPlayer.addEventListener('error', () => {
   if (els.audioPlayer.getAttribute('src')) showToast('这首歌暂时不能播放，可以点右侧箭头去网易云');
