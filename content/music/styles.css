@@ -299,31 +299,37 @@ main { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
 .lyrics-panel > header span { color: var(--red-dark); font-size: 8px; font-weight: 730; letter-spacing: .14em; }
 .lyrics-panel > header small { color: var(--soft); font-size: 9px; }
 .lyrics-viewport {
-  height: 172px;
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 28%, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 28%, #000 72%, transparent 100%);
+  height: 142px;
+  overflow: hidden;
 }
-.lyrics-viewport::-webkit-scrollbar { display: none; }
-.lyrics-lines { margin: 0; padding: 74px 20px; list-style: none; text-align: center; }
+.lyrics-lines {
+  height: 100%;
+  margin: 0;
+  padding: 10px 20px;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  text-align: center;
+}
+.lyrics-lines.is-message { display: grid; grid-template-rows: 1fr; place-items: center; }
 .lyric-line {
-  min-height: 31px;
-  margin: 0 0 9px;
+  min-height: 0;
+  margin: 0;
   display: grid;
   align-content: center;
   gap: 3px;
-  color: var(--soft);
+  color: #aaa59d;
   font-size: 12px;
   line-height: 1.45;
-  transition: color .2s ease, font-size .2s ease, opacity .2s ease;
+  opacity: .64;
+  transition: color .18s ease, font-size .18s ease, opacity .18s ease;
 }
 .lyric-line span { display: block; }
 .lyric-line small { display: block; color: #aaa59d; font-size: 9px; }
-.lyric-line.is-active { color: var(--red-dark); font-size: 16px; font-weight: 650; }
+.lyric-line.is-active { color: var(--red-dark); font-size: 16px; font-weight: 700; opacity: 1; }
 .lyric-line.is-active small { color: var(--red-dark); font-weight: 500; }
-.lyrics-message { min-height: 28px; color: var(--muted); font-size: 12px; line-height: 28px; }
+.lyric-line.is-empty { visibility: hidden; }
+.lyrics-message { color: var(--muted); font-size: 12px; line-height: 1.5; }
 
 .song-list {
   margin: 0;
@@ -449,8 +455,8 @@ main { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
   .player-active audio { grid-column: 1 / -1; grid-row: 2; }
   .player-actions { grid-column: 2; grid-row: 1; }
   .lyrics-panel > header { padding-inline: 12px; }
-  .lyrics-viewport { height: 154px; }
-  .lyrics-lines { padding: 65px 12px; }
+  .lyrics-viewport { height: 132px; }
+  .lyrics-lines { padding: 8px 12px; }
   .lyric-line { font-size: 11px; }
   .lyric-line.is-active { font-size: 14px; }
   .song-item { height: 74px; grid-template-columns: 20px minmax(0, 1fr) 27px; gap: 8px; }
