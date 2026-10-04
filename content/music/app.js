@@ -12,6 +12,8 @@ const els = {
   playerShell: document.querySelector('#playerShell'),
   playerPlaceholder: document.querySelector('#playerPlaceholder'),
   playerActive: document.querySelector('#playerActive'),
+  nowPlayingCover: document.querySelector('#nowPlayingCover'),
+  nowPlayingCoverShell: document.querySelector('#nowPlayingCoverShell'),
   audioPlayer: document.querySelector('#audioPlayer'),
   nowPlayingTitle: document.querySelector('#nowPlayingTitle'),
   nowPlayingArtist: document.querySelector('#nowPlayingArtist'),
@@ -19,6 +21,7 @@ const els = {
   lyricToggle: document.querySelector('#lyricToggle'),
   lyricsPanel: document.querySelector('#lyricsPanel'),
   lyricsViewport: document.querySelector('#lyricsViewport'),
+  lyricsArtwork: document.querySelector('#lyricsArtwork'),
   lyricsLines: document.querySelector('#lyricsLines'),
   lyricsStatus: document.querySelector('#lyricsStatus'),
   stopButton: document.querySelector('#stopButton'),
@@ -32,6 +35,7 @@ const state = {
   lyricCache: new Map(),
   lyricLines: [],
   activeLyricIndex: -1,
+  lyricWindowKey: '',
   lyricRequest: null,
   lyricFrame: null,
   lyricsExpanded: true,
@@ -85,7 +89,7 @@ function escapeHtml(value) {
   })[character]);
 }
 
-function parseLrc(rawLyric) {
+function parseLrc(rawLyric, keepEmpty = false) {
   if (!rawLyric) return [];
   const offsetMatch = rawLyric.match(/^\[offset:([+-]?\d+)\]/im);
   const offset = Number(offsetMatch?.[1] || 0) / 1000;
@@ -96,7 +100,7 @@ function parseLrc(rawLyric) {
     const matches = [...sourceLine.matchAll(timePattern)];
     if (!matches.length) return;
     const text = sourceLine.replace(timePattern, '').trim();
-    if (!text) return;
+    if (!text && !keepEmpty) return;
     matches.forEach((match) => {
       const fractionText = match[3] || '';
       const fraction = fractionText ? Number(fractionText) / (10 ** fractionText.length) : 0;
@@ -157,17 +161,23 @@ function lineNear(lines, time) {
 }
 
 function normalizeLyrics(payload) {
-  const originals = parseLrc(payload.original);
+  const originalTimeline = parseLrc(payload.original, true);
+  const originals = originalTimeline.filter((line) => line.text);
   const translations = parseLrc(payload.translation);
   const romanized = parseLrc(payload.romanized);
   const wordLines = parseYrc(payload.wordByWord);
   const baseLines = originals.length ? originals : wordLines;
   return baseLines.map((line) => {
     const timedWords = entryNear(wordLines, line.time, 0.75);
+    const nextTimelineEntry = originalTimeline.find((entry) => entry.time > line.time + 0.01);
+    const explicitEndTime = nextTimelineEntry && !nextTimelineEntry.text ? nextTimelineEntry.time : null;
     return {
       ...line,
       time: timedWords?.time ?? line.time,
       duration: timedWords?.duration,
+      endTime: timedWords?.duration
+        ? timedWords.time + timedWords.duration
+        : explicitEndTime,
       words: timedWords?.words || [],
       translation: lineNear(translations, line.time),
       romanized: lineNear(romanized, line.time),
@@ -187,6 +197,7 @@ function showLyricsMessage(message) {
   stopLyricAnimation();
   state.lyricLines = [];
   state.activeLyricIndex = -1;
+  state.lyricWindowKey = '';
   els.lyricsLines.classList.add('is-message');
   els.lyricsLines.innerHTML = `<li class="lyrics-message">${escapeHtml(message)}</li>`;
 }
@@ -194,6 +205,7 @@ function showLyricsMessage(message) {
 function renderLyrics(lines) {
   state.lyricLines = lines;
   state.activeLyricIndex = -1;
+  state.lyricWindowKey = '';
   els.lyricsLines.classList.remove('is-message');
   syncLyrics(els.audioPlayer.currentTime, true);
 }
@@ -207,12 +219,12 @@ function lyricLineMarkup(line, isActive) {
   if (isActive && line.words?.length) {
     primary = `<span class="lyric-primary has-word-timing">${line.words.map((word, index) => `<span class="lyric-word" data-word-index="${index}">${escapeHtml(word.text)}</span>`).join('')}</span>`;
   } else if (isActive) {
-    primary = `<span class="lyric-primary has-line-timing">${escapeHtml(line.text)}</span>`;
+    primary = `<span class="lyric-primary">${escapeHtml(line.text)}</span>`;
   }
-  return `<li class="lyric-line${isActive ? ' is-active' : ''}"${isActive ? ' aria-current="true"' : ''}>${primary}${secondary ? `<small>${escapeHtml(secondary)}</small>` : ''}</li>`;
+  return `<li class="lyric-line${isActive ? ' is-active' : ''}"${isActive ? ' aria-current="true"' : ''}><span class="lyric-line-marker" aria-hidden="true"></span>${primary}${secondary ? `<small>${escapeHtml(secondary)}</small>` : ''}</li>`;
 }
 
-function lyricIndexAt(time) {
+function lastStartedLyricIndex(time) {
   let low = 0;
   let high = state.lyricLines.length - 1;
   let result = -1;
@@ -228,14 +240,34 @@ function lyricIndexAt(time) {
   return result;
 }
 
+function lyricPositionAt(time) {
+  const startedIndex = lastStartedLyricIndex(time);
+  if (startedIndex < 0) {
+    return { activeIndex: -1, previousIndex: -1, nextIndex: 0 };
+  }
+  const startedLine = state.lyricLines[startedIndex];
+  if (Number.isFinite(startedLine.endTime) && time >= startedLine.endTime) {
+    return { activeIndex: -1, previousIndex: startedIndex, nextIndex: startedIndex + 1 };
+  }
+  return { activeIndex: startedIndex, previousIndex: startedIndex - 1, nextIndex: startedIndex + 1 };
+}
+
+function lyricRestMarkup() {
+  return '<li class="lyric-line is-active is-rest" aria-current="true" aria-label="间奏"><span class="lyric-line-marker" aria-hidden="true"></span><span class="lyric-rest" aria-hidden="true"><i></i><i></i><i></i></span></li>';
+}
+
 function syncLyrics(time, force = false) {
   if (!state.lyricLines.length) return;
-  const nextIndex = Math.max(0, lyricIndexAt(time));
-  if (!force && nextIndex === state.activeLyricIndex) return;
-  state.activeLyricIndex = nextIndex;
-  els.lyricsLines.innerHTML = [nextIndex - 1, nextIndex, nextIndex + 1]
-    .map((index, slot) => lyricLineMarkup(state.lyricLines[index], slot === 1))
-    .join('');
+  const position = lyricPositionAt(time);
+  const windowKey = `${position.previousIndex}:${position.activeIndex}:${position.nextIndex}`;
+  if (!force && windowKey === state.lyricWindowKey) return;
+  state.activeLyricIndex = position.activeIndex;
+  state.lyricWindowKey = windowKey;
+  els.lyricsLines.innerHTML = [
+    lyricLineMarkup(state.lyricLines[position.previousIndex], false),
+    position.activeIndex >= 0 ? lyricLineMarkup(state.lyricLines[position.activeIndex], true) : lyricRestMarkup(),
+    lyricLineMarkup(state.lyricLines[position.nextIndex], false),
+  ].join('');
   updateKaraokeProgress(time);
 }
 
@@ -247,21 +279,12 @@ function updateKaraokeProgress(time) {
   const line = state.lyricLines[state.activeLyricIndex];
   if (!line) return;
 
-  if (line.words?.length) {
-    const wordElements = els.lyricsLines.querySelectorAll('.lyric-word');
-    line.words.forEach((word, index) => {
-      const progress = clampProgress((time - word.time) / word.duration);
-      wordElements[index]?.style.setProperty('--word-progress', `${progress * 100}%`);
-    });
-    return;
-  }
-
-  const nextLine = state.lyricLines[state.activeLyricIndex + 1];
-  const gap = nextLine ? Math.max(0.8, nextLine.time - line.time) : 4;
-  const estimatedSingingTime = Math.max(1.2, Math.min(5.5, [...line.text].length * 0.24));
-  const duration = Math.min(gap * 0.88, estimatedSingingTime);
-  const progress = clampProgress((time - line.time) / Math.max(0.8, duration));
-  els.lyricsLines.querySelector('.has-line-timing')?.style.setProperty('--line-progress', `${progress * 100}%`);
+  if (!line.words?.length) return;
+  const wordElements = els.lyricsLines.querySelectorAll('.lyric-word');
+  line.words.forEach((word, index) => {
+    const progress = clampProgress((time - word.time) / word.duration);
+    wordElements[index]?.style.setProperty('--word-progress', `${progress * 100}%`);
+  });
 }
 
 function startLyricAnimation() {
@@ -317,7 +340,7 @@ async function loadLyrics(song) {
       ? `${hasWordTiming ? '逐字 · ' : ''}原文 / 翻译`
       : hasRomanized
         ? `${hasWordTiming ? '逐字 · ' : ''}原文 / 罗马音`
-        : hasWordTiming ? '逐字同步' : '随播放进度切换';
+        : hasWordTiming ? '逐字同步 · YRC' : '按行同步 · LRC';
     renderLyrics(lines);
   } catch (error) {
     if (error.name === 'AbortError') return;
@@ -390,7 +413,16 @@ function playSong(song) {
   const artists = song.artists?.join(' / ') || '未知音乐人';
   state.playingId = Number(song.id);
   els.nowPlayingTitle.textContent = song.name;
-  els.nowPlayingArtist.textContent = artists;
+  els.nowPlayingArtist.textContent = `${artists}${song.album ? ` · ${song.album}` : ''}`;
+  const artwork = song.cover ? albumImage(song.cover) : 'cover.svg';
+  els.nowPlayingCover.src = artwork;
+  els.lyricsArtwork.src = artwork;
+  els.lyricsArtwork.classList.remove('is-changing');
+  els.nowPlayingCoverShell.classList.remove('is-changing');
+  void els.lyricsArtwork.offsetWidth;
+  void els.nowPlayingCoverShell.offsetWidth;
+  els.lyricsArtwork.classList.add('is-changing');
+  els.nowPlayingCoverShell.classList.add('is-changing');
   els.qualityBadge.textContent = '标准 · 128 kbps';
   els.playerPlaceholder.hidden = true;
   els.playerActive.hidden = false;
@@ -414,6 +446,7 @@ function stopSong() {
   els.playerActive.hidden = true;
   els.playerPlaceholder.hidden = false;
   els.playerShell.classList.remove('is-playing');
+  els.playerShell.classList.remove('is-audible');
   els.lyricsPanel.hidden = true;
   showLyricsMessage('点一首歌后，这里会显示同步歌词');
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
@@ -542,12 +575,14 @@ els.audioPlayer.addEventListener('seeked', () => {
   updateKaraokeProgress(els.audioPlayer.currentTime);
 });
 els.audioPlayer.addEventListener('play', () => {
+  els.playerShell.classList.add('is-audible');
   const active = els.songList.querySelector(`[data-song-id="${CSS.escape(String(state.playingId))}"]`)?.closest('.song-item');
   active?.classList.add('is-playing');
   active?.querySelector('.song-play')?.setAttribute('aria-label', `暂停 ${state.currentSongs.find((song) => Number(song.id) === Number(state.playingId))?.name || '当前歌曲'}`);
   startLyricAnimation();
 });
 els.audioPlayer.addEventListener('pause', () => {
+  els.playerShell.classList.remove('is-audible');
   stopLyricAnimation();
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-playing'));
   els.songList.querySelectorAll('.song-play').forEach((button) => {

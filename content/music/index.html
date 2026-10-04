@@ -79,42 +79,52 @@ layout: false
           </div>
         </header>
 
-        <section class="player-shell" id="playerShell" aria-label="音乐播放器">
-          <div class="player-placeholder" id="playerPlaceholder">
-            <span class="player-placeholder-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M8.5 6.5 17.5 12l-9 5.5Z" /></svg>
-            </span>
-            <div>
-              <strong>点一首，直接在这里听</strong>
-              <span>当前使用网易云公开外链：标准 · 128 kbps</span>
+        <section class="listening-dock" id="listeningDock" aria-label="当前播放">
+          <section class="player-shell" id="playerShell" aria-label="音乐播放器">
+            <div class="player-placeholder" id="playerPlaceholder">
+              <span class="player-placeholder-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8.5 6.5 17.5 12l-9 5.5Z" /></svg>
+              </span>
+              <div>
+                <strong>点一首，直接在这里听</strong>
+                <span>当前使用网易云公开外链：标准 · 128 kbps</span>
+              </div>
             </div>
-          </div>
-          <div class="player-active" id="playerActive" hidden>
-            <div class="now-playing-copy">
-              <span class="now-playing-label">NOW PLAYING</span>
-              <strong id="nowPlayingTitle">—</strong>
-              <span class="now-playing-meta"><small id="nowPlayingArtist">—</small><b id="qualityBadge">标准 · 128 kbps</b></span>
+            <div class="player-active" id="playerActive" hidden>
+              <div class="now-playing-identity">
+                <span class="now-playing-cover" id="nowPlayingCoverShell" aria-hidden="true">
+                  <img id="nowPlayingCover" src="cover.svg" alt="" />
+                  <span class="playing-bars"><i></i><i></i><i></i></span>
+                </span>
+                <div class="now-playing-copy">
+                  <span class="now-playing-label">NOW PLAYING</span>
+                  <strong id="nowPlayingTitle">—</strong>
+                  <span class="now-playing-meta"><small id="nowPlayingArtist">—</small><b id="qualityBadge">标准 · 128 kbps</b></span>
+                </div>
+              </div>
+              <audio id="audioPlayer" controls preload="metadata">当前浏览器不支持音频播放。</audio>
+              <div class="player-actions">
+                <button class="lyric-toggle" id="lyricToggle" type="button" aria-controls="lyricsPanel" aria-expanded="true">收起歌词</button>
+                <button class="stop-button" id="stopButton" type="button" aria-label="停止播放" title="停止播放">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 8 8 8m0-8-8 8" /></svg>
+                </button>
+              </div>
             </div>
-            <audio id="audioPlayer" controls preload="metadata">当前浏览器不支持音频播放。</audio>
-            <div class="player-actions">
-              <button class="lyric-toggle" id="lyricToggle" type="button" aria-controls="lyricsPanel" aria-expanded="true">收起歌词</button>
-              <button class="stop-button" id="stopButton" type="button" aria-label="停止播放" title="停止播放">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 8 8 8m0-8-8 8" /></svg>
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        <section class="lyrics-panel" id="lyricsPanel" aria-label="同步歌词" hidden>
-          <header>
-            <span>SYNCED LYRICS</span>
-            <small id="lyricsStatus">正在读取歌词…</small>
-          </header>
-          <div class="lyrics-viewport" id="lyricsViewport">
-            <ol class="lyrics-lines" id="lyricsLines">
-              <li class="lyrics-message">正在读取歌词…</li>
-            </ol>
-          </div>
+          <section class="lyrics-panel" id="lyricsPanel" aria-label="同步歌词" hidden>
+            <header>
+              <span>SYNCED LYRICS</span>
+              <small id="lyricsStatus">正在读取歌词…</small>
+              <span class="lyrics-key" aria-hidden="true"><i></i><i></i><i></i></span>
+            </header>
+            <div class="lyrics-viewport" id="lyricsViewport">
+              <img class="lyrics-artwork" id="lyricsArtwork" src="cover.svg" alt="" aria-hidden="true" />
+              <ol class="lyrics-lines" id="lyricsLines">
+                <li class="lyrics-message">正在读取歌词…</li>
+              </ol>
+            </div>
+          </section>
         </section>
 
         <ol class="song-list is-loading" id="songList" aria-live="polite" aria-busy="true">
