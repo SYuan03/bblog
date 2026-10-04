@@ -16,6 +16,11 @@ const els = {
   nowPlayingTitle: document.querySelector('#nowPlayingTitle'),
   nowPlayingArtist: document.querySelector('#nowPlayingArtist'),
   qualityBadge: document.querySelector('#qualityBadge'),
+  lyricToggle: document.querySelector('#lyricToggle'),
+  lyricsPanel: document.querySelector('#lyricsPanel'),
+  lyricsViewport: document.querySelector('#lyricsViewport'),
+  lyricsLines: document.querySelector('#lyricsLines'),
+  lyricsStatus: document.querySelector('#lyricsStatus'),
   stopButton: document.querySelector('#stopButton'),
   toast: document.querySelector('#toast'),
 };
@@ -24,6 +29,11 @@ const state = {
   recentIds: [],
   currentSongs: [],
   playingId: null,
+  lyricCache: new Map(),
+  lyricLines: [],
+  activeLyricIndex: -1,
+  lyricRequest: null,
+  lyricsExpanded: true,
   fallback: null,
   busy: false,
   toastTimer: null,
@@ -72,6 +82,159 @@ function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
   })[character]);
+}
+
+function parseLrc(rawLyric) {
+  if (!rawLyric) return [];
+  const offsetMatch = rawLyric.match(/^\[offset:([+-]?\d+)\]/im);
+  const offset = Number(offsetMatch?.[1] || 0) / 1000;
+  const timePattern = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
+  const lines = [];
+
+  rawLyric.split(/\r?\n/).forEach((sourceLine) => {
+    const matches = [...sourceLine.matchAll(timePattern)];
+    if (!matches.length) return;
+    const text = sourceLine.replace(timePattern, '').trim();
+    if (!text) return;
+    matches.forEach((match) => {
+      const fractionText = match[3] || '';
+      const fraction = fractionText ? Number(fractionText) / (10 ** fractionText.length) : 0;
+      lines.push({
+        time: Math.max(0, (Number(match[1]) * 60) + Number(match[2]) + fraction + offset),
+        text,
+      });
+    });
+  });
+
+  return lines.sort((left, right) => left.time - right.time);
+}
+
+function lineNear(lines, time) {
+  let nearest = null;
+  let distance = Number.POSITIVE_INFINITY;
+  for (const line of lines) {
+    const nextDistance = Math.abs(line.time - time);
+    if (nextDistance < distance) {
+      nearest = line;
+      distance = nextDistance;
+    }
+    if (line.time > time && nextDistance > distance) break;
+  }
+  return distance <= 0.45 ? nearest?.text || '' : '';
+}
+
+function normalizeLyrics(payload) {
+  const originals = parseLrc(payload.original);
+  const translations = parseLrc(payload.translation);
+  const romanized = parseLrc(payload.romanized);
+  return originals.map((line) => ({
+    ...line,
+    translation: lineNear(translations, line.time),
+    romanized: lineNear(romanized, line.time),
+  }));
+}
+
+function setLyricsExpanded(expanded) {
+  state.lyricsExpanded = expanded;
+  els.lyricsPanel.hidden = !expanded || state.playingId === null;
+  els.lyricToggle.textContent = expanded ? '收起歌词' : '显示歌词';
+  els.lyricToggle.setAttribute('aria-expanded', String(expanded));
+  if (expanded && state.playingId !== null) syncLyrics(els.audioPlayer.currentTime, true);
+}
+
+function showLyricsMessage(message) {
+  state.lyricLines = [];
+  state.activeLyricIndex = -1;
+  els.lyricsLines.innerHTML = `<li class="lyrics-message">${escapeHtml(message)}</li>`;
+  els.lyricsViewport.scrollTop = 0;
+}
+
+function renderLyrics(lines) {
+  state.lyricLines = lines;
+  state.activeLyricIndex = -1;
+  els.lyricsLines.innerHTML = lines.map((line, index) => {
+    const secondary = line.translation && line.translation !== line.text
+      ? line.translation
+      : line.romanized && line.romanized !== line.text ? line.romanized : '';
+    return `<li class="lyric-line" data-lyric-index="${index}"><span>${escapeHtml(line.text)}</span>${secondary ? `<small>${escapeHtml(secondary)}</small>` : ''}</li>`;
+  }).join('');
+  syncLyrics(els.audioPlayer.currentTime, true);
+}
+
+function lyricIndexAt(time) {
+  let low = 0;
+  let high = state.lyricLines.length - 1;
+  let result = -1;
+  while (low <= high) {
+    const middle = Math.floor((low + high) / 2);
+    if (state.lyricLines[middle].time <= time + 0.08) {
+      result = middle;
+      low = middle + 1;
+    } else {
+      high = middle - 1;
+    }
+  }
+  return result;
+}
+
+function syncLyrics(time, force = false) {
+  if (!state.lyricLines.length) return;
+  const nextIndex = lyricIndexAt(time);
+  if (!force && nextIndex === state.activeLyricIndex) return;
+  state.activeLyricIndex = nextIndex;
+  els.lyricsLines.querySelectorAll('.is-active').forEach((line) => line.classList.remove('is-active'));
+  const active = nextIndex >= 0 ? els.lyricsLines.querySelector(`[data-lyric-index="${nextIndex}"]`) : null;
+  active?.classList.add('is-active');
+  if (!active || els.lyricsPanel.hidden) return;
+  const top = active.offsetTop - (els.lyricsViewport.clientHeight / 2) + (active.offsetHeight / 2);
+  els.lyricsViewport.scrollTo({
+    top: Math.max(0, top),
+    behavior: force || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+  });
+}
+
+async function loadLyrics(song) {
+  const songId = Number(song.id);
+  let requestController = null;
+  state.lyricRequest?.abort();
+  els.lyricsStatus.textContent = '正在读取歌词…';
+  showLyricsMessage('正在读取歌词…');
+  setLyricsExpanded(state.lyricsExpanded);
+
+  try {
+    let payload = state.lyricCache.get(songId);
+    if (!payload) {
+      requestController = new AbortController();
+      state.lyricRequest = requestController;
+      const response = await fetch(`/.netlify/functions/netease-lyric?id=${encodeURIComponent(songId)}`, {
+        cache: 'force-cache',
+        signal: requestController.signal,
+      });
+      if (!response.ok) throw new Error(`歌词接口返回 ${response.status}`);
+      payload = await response.json();
+      state.lyricCache.set(songId, payload);
+    }
+    if (state.playingId !== songId) return;
+    const lines = normalizeLyrics(payload);
+    if (payload.noLyric || !lines.length) {
+      els.lyricsStatus.textContent = payload.pureMusic ? '纯音乐' : '暂无滚动歌词';
+      showLyricsMessage(payload.pureMusic ? '这是一首纯音乐' : '这首歌暂时没有可用歌词');
+      return;
+    }
+    const hasTranslation = lines.some((line) => line.translation && line.translation !== line.text);
+    const hasRomanized = !hasTranslation && lines.some((line) => line.romanized && line.romanized !== line.text);
+    els.lyricsStatus.textContent = hasTranslation ? '原文 · 翻译' : hasRomanized ? '原文 · 罗马音' : '随播放进度自动滚动';
+    renderLyrics(lines);
+  } catch (error) {
+    if (error.name === 'AbortError') return;
+    console.warn(error);
+    if (state.playingId === songId) {
+      els.lyricsStatus.textContent = '读取失败';
+      showLyricsMessage('歌词暂时没有加载出来');
+    }
+  } finally {
+    if (!requestController || state.lyricRequest === requestController) state.lyricRequest = null;
+  }
 }
 
 const songControlIcon = `
@@ -138,14 +301,18 @@ function playSong(song) {
   els.playerPlaceholder.hidden = true;
   els.playerActive.hidden = false;
   els.playerShell.classList.add('is-playing');
+  els.lyricsPanel.hidden = !state.lyricsExpanded;
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
   els.songList.querySelector(`[data-song-id="${CSS.escape(String(song.id))}"]`)?.closest('.song-item')?.classList.add('is-active');
   els.audioPlayer.src = `https://music.163.com/song/media/outer/url?id=${encodeURIComponent(song.id)}.mp3`;
   els.audioPlayer.load();
   els.audioPlayer.play().catch(() => showToast('如果没有自动播放，请点播放器上的播放键'));
+  loadLyrics(song);
 }
 
 function stopSong() {
+  state.lyricRequest?.abort();
+  state.lyricRequest = null;
   state.playingId = null;
   els.audioPlayer.pause();
   els.audioPlayer.removeAttribute('src');
@@ -153,6 +320,8 @@ function stopSong() {
   els.playerActive.hidden = true;
   els.playerPlaceholder.hidden = false;
   els.playerShell.classList.remove('is-playing');
+  els.lyricsPanel.hidden = true;
+  showLyricsMessage('点一首歌后，这里会显示同步歌词');
   els.songList.querySelectorAll('.song-item').forEach((item) => item.classList.remove('is-active', 'is-playing'));
 }
 
@@ -271,7 +440,10 @@ async function copySongs() {
 els.drawButton.addEventListener('click', draw);
 els.drawAgainButton.addEventListener('click', draw);
 els.copyButton.addEventListener('click', copySongs);
+els.lyricToggle.addEventListener('click', () => setLyricsExpanded(!state.lyricsExpanded));
 els.stopButton.addEventListener('click', stopSong);
+els.audioPlayer.addEventListener('timeupdate', () => syncLyrics(els.audioPlayer.currentTime));
+els.audioPlayer.addEventListener('seeked', () => syncLyrics(els.audioPlayer.currentTime, true));
 els.audioPlayer.addEventListener('play', () => {
   const active = els.songList.querySelector(`[data-song-id="${CSS.escape(String(state.playingId))}"]`)?.closest('.song-item');
   active?.classList.add('is-playing');
