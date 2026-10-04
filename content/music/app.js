@@ -7,6 +7,7 @@ const els = {
   playlistCover: document.querySelector('#playlistCover'),
   playlistName: document.querySelector('#playlistName'),
   trackCount: document.querySelector('#trackCount'),
+  playableCount: document.querySelector('#playableCount'),
   updateTime: document.querySelector('#updateTime'),
   playerShell: document.querySelector('#playerShell'),
   playerPlaceholder: document.querySelector('#playerPlaceholder'),
@@ -159,6 +160,7 @@ function updatePlaylist(payload, isFallback) {
   const playlist = payload.playlist || {};
   els.playlistName.textContent = playlist.name || 'ChrisDing1105喜欢的音乐';
   els.trackCount.textContent = Number(playlist.trackCount || payload.songs?.length || 0).toLocaleString('zh-CN');
+  els.playableCount.textContent = Number(playlist.playableCount || payload.songs?.length || 0).toLocaleString('zh-CN');
   els.updateTime.textContent = formatDate(playlist.updateTime);
   els.sourceStatus.classList.toggle('is-fallback', isFallback);
   const sourceText = isFallback
