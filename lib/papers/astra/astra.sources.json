@@ -1,0 +1,219 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "ASTRA: Automated Synthesis of agentic Trajectories and Reinforcement Arenas",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper"]
+  },
+  "artifacts": {
+    "article": "content/_posts/061-astra.md",
+    "deck": "lib/decks/astra-visual-guide.html",
+    "embed_src": "/lib/decks/astra-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "ASTRA: Automated Synthesis of agentic Trajectories and Reinforcement Arenas",
+      "url": "https://arxiv.org/abs/2601.21558",
+      "revision": "v2 (2026-01-30); v1 first posted 2026-01-29",
+      "used_for": ["problem", "related-work", "data", "method", "training", "evaluation", "results", "limitations", "visuals"]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv record for 2601.21558",
+      "url": "https://export.arxiv.org/api/query?id_list=2601.21558",
+      "revision": "checked 2026-10-05",
+      "used_for": ["v1-date", "version", "license"]
+    },
+    {
+      "id": "official-code",
+      "kind": "code",
+      "title": "ASTRA official repository",
+      "url": "https://github.com/LianjiaTech/astra",
+      "revision": "bdf6a46a130118e039aadcaeb46724d278383589",
+      "used_for": ["pipeline-code", "trajectory-judge", "environment-validator", "release-inventory", "official-figures", "license"]
+    },
+    {
+      "id": "sft-release",
+      "kind": "dataset",
+      "title": "ASTRA-SFT-1k",
+      "url": "https://huggingface.co/datasets/Emperorizzis/ASTRA-SFT-1k",
+      "revision": "public 1,000-row release checked 2026-10-05",
+      "used_for": ["public-release-size", "sample-schema"]
+    },
+    {
+      "id": "rl-release",
+      "kind": "dataset",
+      "title": "ASTRA-RL-1k",
+      "url": "https://huggingface.co/datasets/Emperorizzis/ASTRA-RL-1k",
+      "revision": "dbc70e26ab81a48c1443024413ee66efce5daf1f",
+      "used_for": ["public-release-size", "baggage-case", "tool-schema", "tool-implementation", "target-answers"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 32,
+    "rendered_page_ranges": [{"start": 1, "end": 32}],
+    "source_visuals_expected": 17,
+    "visual_inventory_complete": true,
+    "inventory_note": "The complete 32-page v2 PDF, including appendices, was reviewed as extracted text and rendered pages. The inventory contains Figures 1-13 and Tables 1-4. The arXiv PDF is under the non-exclusive distribution license, so its pixels are not reused. Figures 2 and 3 are represented by matching image assets in the official Apache-2.0 repository; Table 2 is redrawn; other layouts are omitted or restated in original HTML structures."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. ASTRA 想解决的训练瓶颈是什么？"},
+    {"role": "related-work", "locator": "Q2. 它与已有 tool-agent 训练和 environment synthesis 工作差在哪里？"},
+    {"role": "method", "locator": "Q3. 54,885 条 SFT trajectories 是怎样造出来并筛选的？"},
+    {"role": "experiments", "locator": "Q4. 6,596 个 RL environments 怎样生成、验证和给 reward？"},
+    {"role": "future-work", "locator": "Q5. 训练和外部评测具体怎样做，结果说明了什么？"},
+    {"role": "summary", "locator": "Q6. 这篇论文最值得复用什么，证据边界又在哪里？"}
+  ],
+  "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code", "sft-release", "rl-release"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 2.1.1-2.1.4 and 2.2.1; Appendix A.1"},
+        {"source_id": "official-code", "locator": "trajectory_synthesis/data and environment_synthesis pipeline at revision bdf6a46"},
+        {"source_id": "sft-release", "locator": "public train split"},
+        {"source_id": "rl-release", "locator": "public train split"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "作者从 open MCP registries、RapidAPI、内部 tool specifications 和公开数据集收集文档"},
+        {"artifact": "article", "quote": "作者没有加入人工标注，也就没有 annotator agreement 可报告"},
+        {"artifact": "deck", "quote": "1,585 servers · 19,036 tool documents · 41 domains"}
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 2.1.3, 2.1.5 and 2.2.2-2.2.4"},
+        {"source_id": "official-code", "locator": "trajectory_synthesis/src/4_reward and env_synthesis/src at revision bdf6a46"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "整个 decomposition 与四项 quality check 都由 LLM 完成，作者没有加入人工标注"},
+        {"artifact": "article", "quote": "评分分成七个维度，最后取算术平均"},
+        {"artifact": "deck", "quote": "七项分数做算术平均；公开实现遇到 judge 异常时会写入 1.0"}
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "rl-release"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 3.1 and 3.2.2; Equations 29-31"},
+        {"source_id": "rl-release", "locator": "train row 0 fields tool_schema, tool_dict, sub_qa_dict"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "训练时，policy 看到 user query、当前可选的 tool schemas，以及每次执行后返回的 tool output"},
+        {"artifact": "article", "quote": "目标 answers 用来计算 reward，并不作为作答提示交给 policy"},
+        {"artifact": "deck", "quote": "reward 只看命中了多少 sub-task，以及为此发了多少次 tool call"}
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.2.2, Equations 29-31; Section 3.3.2"}],
+      "evidence": [
+        {"artifact": "article", "quote": "recall r = n_hat / n　　precision p = n_hat / (c + ε)　　reward = 2pr / (p + r)"},
+        {"artifact": "article", "quote": "三组柱分别是 base、SFT 与 RL；数字是各 benchmark overall"},
+        {"artifact": "deck", "quote": "recall r = n̂ / n　　precision p = n̂ / (c + ε)　　reward = 2pr / (p + r)"}
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "official-code", "rl-release"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 2.2.3 and Equations 29-31"},
+        {"source_id": "official-code", "locator": "env_synthesis/src/step_04_env_synthesis.py lines 288-295 at revision bdf6a46"},
+        {"source_id": "rl-release", "locator": "train row 0 at revision dbc70e26"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "这个检查能建立 executable self-consistency"},
+        {"artifact": "article", "quote": "其中两个都叫 <code>payment_processor</code>；转成按名称索引的 <code>tool_dict</code> 后只剩 8 个 unique names"},
+        {"artifact": "deck", "quote": "ASTRA-RL-1k · train row 0"}
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Tables 1-3; Sections 3.2-3.3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "14B 从 base 到最终 RL，BFCL-MT 为 **44.50→58.13**"},
+        {"artifact": "article", "quote": "BFCL Missing Function 在 14B 上从 39.50 降到 25.50"},
+        {"artifact": "deck", "quote": "14B：BFCL 44.50→58.13，τ² 44.55→57.70，ACE 51.67→68.96"}
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Related Work, Sections 5.1-5.2"}],
+      "evidence": [
+        {"artifact": "article", "quote": "ASTRA 把大规模 SFT cold start 与 QA-derived executable environments 接成了一套公开 pipeline"},
+        {"artifact": "article", "quote": "这是 ASTRA 的最近邻；其组合点是 QA-derived environment、F1 trajectory reward"},
+        {"artifact": "deck", "quote": "ASTRA 位于“轨迹合成”和“可执行环境扩展”两条路线的交叉点"}
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "official-code", "sft-release", "rl-release"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 4 and 6; Appendix A"},
+        {"source_id": "official-code", "locator": "public repository inventory and validation code at revision bdf6a46"},
+        {"source_id": "sft-release", "locator": "public dataset row count"},
+        {"source_id": "rl-release", "locator": "train row 0 and public dataset row count"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "code-executable 不等于现实正确"},
+        {"artifact": "article", "quote": "后续实现还需要修复 fail-open judge 与 baggage sample mismatch"},
+        {"artifact": "deck", "quote": "answer-in-stdout 只能证明自洽，不能证明 mock tool 的外部真实性"}
+      ]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 1, Figure 1","status":"omitted","rationale":"The BFCL overview duplicates exact values already shown in Table 1 and the stage-wise result graphic.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 3, Figure 2","status":"reused","rationale":"The matching SFT pipeline asset is distributed in the official Apache-2.0 repository and directly explains the five synthesis stages.","placements":[{"artifact":"article","locator":"对应论文 Figure 2"},{"artifact":"deck","locator":"对应论文 Figure 2"}],"permission_status":"verified-allowed","permission_basis":"Official GitHub repository is Apache-2.0 and distributes the matching asset at assets/sft-pipeline.png.","credit":"官方仓库 assets/sft-pipeline.png（Apache-2.0），对应论文 Figure 2","asset_paths":["/lib/papers/astra/official-sft-pipeline.webp"]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 7, Figure 3","status":"reused","rationale":"The matching environment synthesis asset is distributed in the official Apache-2.0 repository and shows the QA verification stages.","placements":[{"artifact":"article","locator":"对应论文 Figure 3"},{"artifact":"deck","locator":"对应论文 Figure 3"}],"permission_status":"verified-allowed","permission_basis":"Official GitHub repository is Apache-2.0 and distributes the matching asset at assets/env.png.","credit":"官方仓库 assets/env.png（Apache-2.0），对应论文 Figure 3","asset_paths":["/lib/papers/astra/official-rl-pipeline.webp"]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 10, Figure 4","status":"omitted","rationale":"The RL rollout loop is explained in prose and the original two-pipeline diagram without copying the source layout.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 11, Figure 5","status":"omitted","rationale":"Adaptive Batch Filling is explained as a concrete group-variance and buffer sequence in prose and deck cards.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p. 15, Figure 6","status":"omitted","rationale":"The direction of the irrelevant-tool ablation is retained, while exact endpoints are not estimated from the source plot.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p. 16, Figure 7","status":"omitted","rationale":"Reward ablation behavior is summarized in prose without reproducing the source chart.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p. 17, Figure 8","status":"omitted","rationale":"Dialogue-turn behavior is summarized with the F1 reward discussion; the plot is secondary to the reward mechanism.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"Appendix A.1.1, Figure 9","status":"omitted","rationale":"Message-count distribution is secondary; totals and the mean are retained in prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-10","kind":"figure","label":"Figure 10","source_id":"paper","source_locator":"Appendix A.1.1, Figure 10","status":"omitted","rationale":"SFT tool-call distribution is summarized with exact aggregate statistics.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-11","kind":"figure","label":"Figure 11","source_id":"paper","source_locator":"Appendix A.1.2, Figure 11","status":"omitted","rationale":"Domain distribution is secondary to the construction and judging mechanism.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-12","kind":"figure","label":"Figure 12","source_id":"paper","source_locator":"Appendix A.1.2, Figure 12","status":"omitted","rationale":"Scenario-type percentages are retained in prose without copying the source chart.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"figure-13","kind":"figure","label":"Figure 13","source_id":"paper","source_locator":"Appendix A.1.2, Figure 13","status":"omitted","rationale":"RL tool-call distribution is secondary; the published mean is represented in prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 13, Table 1","status":"redrawn","rationale":"The comparable-model table is condensed to the paper's own headline comparison and protocol table.","placements":[{"artifact":"deck","locator":"three agentic protocols, one reasoning check"}],"permission_status":"not-applicable","permission_basis":"Numerical claims are restated in a new HTML table.","credit":"根据原论文 Table 1 与 Section 3.3 整理","asset_paths":[]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 14, Table 2","status":"redrawn","rationale":"Stage-wise overall results for 14B and 32B are redrawn as an original chart.","placements":[{"artifact":"article","locator":"根据论文 Table 2 重绘"},{"artifact":"deck","locator":"根据论文 Table 2 重绘"}],"permission_status":"not-applicable","permission_basis":"Original SVG chart using published numbers; no source pixels reused.","credit":"根据原论文 Table 2 重绘","asset_paths":["/lib/papers/astra/results-redrawn.svg"]},
+    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 14, Table 3","status":"redrawn","rationale":"AIME values are restated in prose and a compact deck card to show preserved reasoning performance.","placements":[{"artifact":"article","locator":"14B 在两种 decoding 下的平均分别为"},{"artifact":"deck","locator":"AIME 基本保留"}],"permission_status":"not-applicable","permission_basis":"Values are restated in original layouts.","credit":"根据原论文 Table 3 整理","asset_paths":[]},
+    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p. 18, Table 4","status":"omitted","rationale":"Average steps and token usage are supporting behavior analysis and are not needed for the article's causal route.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]}
+  ],
+  "figures": [
+    {"path":"/lib/papers/astra/official-sft-pipeline.webp","origin":"paper-original","source_visual_id":"figure-2","source_id":"official-code","source_locator":"assets/sft-pipeline.png at revision bdf6a46; matches paper Figure 2","credit":"官方仓库 assets/sft-pipeline.png（Apache-2.0），对应论文 Figure 2","license_status":"verified-allowed","license_basis":"Official repository is licensed Apache-2.0 and distributes this asset.","used_in":["article","deck"]},
+    {"path":"/lib/papers/astra/official-rl-pipeline.webp","origin":"paper-original","source_visual_id":"figure-3","source_id":"official-code","source_locator":"assets/env.png at revision bdf6a46; matches paper Figure 3","credit":"官方仓库 assets/env.png（Apache-2.0），对应论文 Figure 3","license_status":"verified-allowed","license_basis":"Official repository is licensed Apache-2.0 and distributes this asset.","used_in":["article","deck"]},
+    {"path":"/lib/papers/astra/results-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-2","source_id":"paper","source_locator":"Table 2","credit":"根据原论文 Table 2 重绘","license_status":"not-applicable","license_basis":"Original SVG composition using published values.","used_in":["article","deck"]},
+    {"path":"/lib/papers/astra/two-pipeline-redrawn.svg","origin":"generated","source_id":"paper","source_locator":"Sections 2-3 and Figures 2-4","credit":"根据论文两条 synthesis pipelines 重绘","license_status":"not-applicable","license_basis":"Original explanatory SVG composition.","used_in":["article","deck"]},
+    {"path":"/lib/papers/astra/baggage-case-redrawn.svg","origin":"generated","source_id":"rl-release","source_locator":"ASTRA-RL-1k train row 0 at revision dbc70e26","credit":"根据公开 ASTRA-RL-1k train row 0 重绘","license_status":"not-applicable","license_basis":"Original explanatory SVG composition using inspected public data.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"],
+    "browser_qa_note": "Freshly rebuilt output was checked at 1600x1000, 1512x982, and 390x844. The article has exactly six semantic H2 sections, desktop and mobile TOCs, centered figures, internally scrolling tables and code, and no page-level horizontal overflow. The embedded deck advanced by button and keyboard, entered browser fullscreen, and exited with Escape while keeping the article usable. The standalone deck passed direct hash navigation, Home/End, overview open and Escape close, fullscreen entry and Escape exit, the dense judge slide, evaluation table slide, final slide, and its stable return-to-article link after direct hash navigation. Focus mode on the article also exited by Escape. Browser console checks reported no errors or warnings."
+  }
+}

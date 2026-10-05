@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="860" viewBox="0 0 1500 860" role="img" aria-labelledby="title desc">
+  <title id="title">Public ASTRA-RL baggage example and verification boundary</title>
+  <desc id="desc">The user sees tool schemas and a baggage request. Hidden Python mock tools and sub question answers define the environment. The released row contains a duplicate payment tool schema and a payment implementation that does not reproduce the expected transaction string.</desc>
+  <rect width="1500" height="860" fill="#fbfaf7"/>
+  <text x="52" y="62" font-family="Georgia, Songti SC, serif" font-size="36" font-weight="700" fill="#182027">一个公开样本，能看见什么，reward 又在检查什么</text>
+  <g font-family="Arial, PingFang SC, sans-serif">
+    <g transform="translate(52 104)">
+      <rect width="410" height="650" fill="#eef4f8" stroke="#39779f" stroke-width="2"/>
+      <text x="25" y="42" font-size="20" font-weight="700" fill="#39779f">POLICY 可见</text>
+      <text x="25" y="82" font-size="18" fill="#202a31">Amit Kumar 的目标</text>
+      <text x="25" y="112" font-size="16" fill="#4d5961">Bengaluru City ↔ Chennai Central</text>
+      <text x="25" y="140" font-size="16" fill="#4d5961">Sep 20 / Sep 23 · 1 bag → 3 bags</text>
+      <text x="25" y="168" font-size="16" fill="#4d5961">先报额外费用，再用 wallet 支付</text>
+      <line x1="25" y1="196" x2="385" y2="196" stroke="#b8cbd7"/>
+      <text x="25" y="233" font-size="18" font-weight="700" fill="#202a31">9 个 tool schema</text>
+      <text x="25" y="267" font-size="16" fill="#4d5961">4 个目标 tool</text>
+      <text x="43" y="300" font-size="16" fill="#4d5961">reservation_finder</text>
+      <text x="43" y="330" font-size="16" fill="#4d5961">baggage_allowance_retriever</text>
+      <text x="43" y="360" font-size="16" fill="#4d5961">baggage_fee_calculator</text>
+      <text x="43" y="390" font-size="16" fill="#4d5961">payment_processor</text>
+      <text x="25" y="438" font-size="16" fill="#4d5961">另有 4 个明显无关 tool，</text>
+      <text x="25" y="466" font-size="16" fill="#4d5961">以及第二个同名 payment_processor。</text>
+      <rect x="25" y="514" width="360" height="94" fill="#dfeaf1"/>
+      <text x="43" y="548" font-size="16" font-weight="700" fill="#275f82">Policy 看不到</text>
+      <text x="43" y="578" font-size="15" fill="#4d5961">Python mock 实现与 sub_qa_dict</text>
+    </g>
+
+    <g transform="translate(510 104)">
+      <rect width="938" height="650" fill="#fff" stroke="#cbd2d6" stroke-width="2"/>
+      <text x="26" y="42" font-size="20" font-weight="700" fill="#2f6f58">HIDDEN EXECUTION</text>
+      <g transform="translate(26 82)">
+        <rect width="195" height="91" fill="#edf5f1" stroke="#9dbdae"/><text x="97" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#25332d">1 · find reservation</text><text x="97" y="62" text-anchor="middle" font-size="15" fill="#4d5b54">RES987654</text>
+        <path d="M207 45h35" stroke="#397a63" stroke-width="3"/><path d="m242 45-10-7v14z" fill="#397a63"/>
+        <rect x="254" width="195" height="91" fill="#edf5f1" stroke="#9dbdae"/><text x="351" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#25332d">2 · read allowance</text><text x="351" y="62" text-anchor="middle" font-size="15" fill="#4d5b54">1 bag</text>
+        <path d="M461 45h35" stroke="#397a63" stroke-width="3"/><path d="m496 45-10-7v14z" fill="#397a63"/>
+        <rect x="508" width="195" height="91" fill="#edf5f1" stroke="#9dbdae"/><text x="605" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#25332d">3 · calculate fee</text><text x="605" y="62" text-anchor="middle" font-size="15" fill="#4d5b54">₹600</text>
+        <path d="M715 45h35" stroke="#b24743" stroke-width="3"/><path d="m750 45-10-7v14z" fill="#b24743"/>
+        <rect x="762" width="124" height="91" fill="#faeeee" stroke="#b24743"/><text x="824" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#7e3431">4 · pay</text><text x="824" y="62" text-anchor="middle" font-size="15" fill="#7e3431">mismatch</text>
+      </g>
+      <text x="26" y="224" font-size="18" font-weight="700" fill="#202a31">sub_qa_dict 期待的四个字符串</text>
+      <rect x="26" y="246" width="886" height="154" fill="#f3f4f2"/>
+      <text x="44" y="278" font-family="Menlo, Consolas, monospace" font-size="15" fill="#34414a">Reservation ID: RES987654</text>
+      <text x="44" y="309" font-family="Menlo, Consolas, monospace" font-size="15" fill="#34414a">Current baggage allowance: 1 bag</text>
+      <text x="44" y="340" font-family="Menlo, Consolas, monospace" font-size="15" fill="#34414a">Extra charge: ₹600</text>
+      <text x="44" y="371" font-family="Menlo, Consolas, monospace" font-size="15" fill="#34414a">Payment successful. Transaction ID: TXN123456789</text>
+
+      <text x="26" y="449" font-size="18" font-weight="700" fill="#202a31">公开 1k row 的可执行性审计</text>
+      <rect x="26" y="474" width="886" height="128" fill="#faeeee" stroke="#d8aaa8"/>
+      <text x="44" y="508" font-size="16" fill="#5b3533">tool_schema 出现两个同名 payment_processor；tool_dict 只有一个同名 key。</text>
+      <text x="44" y="541" font-size="16" fill="#5b3533">公开实现返回 “Charge processed successfully ...”，而且通常生成随机 transaction ID。</text>
+      <text x="44" y="574" font-size="16" font-weight="700" fill="#8a3734">因此前三个 sub-goal 可命中，第四个期待字符串无法由这份公开实现稳定复现。</text>
+    </g>
+
+    <rect x="52" y="786" width="1396" height="42" fill="#efe9df"/>
+    <text x="750" y="813" text-anchor="middle" font-size="16" fill="#5c5b56">来源：ASTRA-RL-1k train row 0，revision dbc70e26；FAIL 是对公开字段和实现的直接核查，不代表论文内部 6,596 条环境全部如此。</text>
+  </g>
+</svg>

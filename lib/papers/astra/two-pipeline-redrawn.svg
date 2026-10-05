@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
+  <title id="title">ASTRA two-stage training pipeline</title>
+  <desc id="desc">The SFT branch synthesizes trajectories from MCP tool graphs. The RL branch synthesizes executable mock environments from question decompositions.</desc>
+  <rect width="1400" height="720" fill="#fbfaf7"/>
+  <text x="54" y="68" font-family="Georgia, Songti SC, serif" font-size="38" font-weight="700" fill="#192127">同一个模型，先学会“怎么调用”，再通过 rollout 学会“何时调用”</text>
+  <g font-family="Arial, PingFang SC, sans-serif">
+    <text x="54" y="119" font-size="18" fill="#69737a">作者把训练拆成两条数据生产线。两条线的输入、judge 和用途不同。</text>
+
+    <g transform="translate(54 165)">
+      <rect width="615" height="430" fill="#edf4f8" stroke="#39789f" stroke-width="2"/>
+      <text x="28" y="44" font-size="21" font-weight="700" fill="#39789f">SFT · static tool topology</text>
+      <text x="28" y="79" font-size="18" fill="#39464f">真实 MCP 文档定义有哪些 tool，以及哪些调用可以衔接。</text>
+      <g transform="translate(28 119)">
+        <rect width="142" height="74" fill="#fff" stroke="#a6bfce"/><text x="71" y="32" text-anchor="middle" font-size="18" fill="#1c2931">MCP docs</text><text x="71" y="55" text-anchor="middle" font-size="14" fill="#6a747b">1,585 servers</text>
+        <path d="M153 37h40" stroke="#39789f" stroke-width="3"/><path d="m193 37-10-7v14z" fill="#39789f"/>
+        <rect x="205" width="142" height="74" fill="#fff" stroke="#a6bfce"/><text x="276" y="32" text-anchor="middle" font-size="18" fill="#1c2931">tool graph</text><text x="276" y="55" text-anchor="middle" font-size="14" fill="#6a747b">random walks</text>
+        <path d="M358 37h40" stroke="#39789f" stroke-width="3"/><path d="m398 37-10-7v14z" fill="#39789f"/>
+        <rect x="410" width="148" height="74" fill="#fff" stroke="#a6bfce"/><text x="484" y="32" text-anchor="middle" font-size="18" fill="#1c2931">rollout</text><text x="484" y="55" text-anchor="middle" font-size="14" fill="#6a747b">real + mock tools</text>
+      </g>
+      <line x1="28" y1="228" x2="587" y2="228" stroke="#c8d7df"/>
+      <text x="28" y="267" font-size="16" font-weight="700" fill="#26343d">筛选信号</text>
+      <text x="28" y="299" font-size="16" fill="#47545c">7 个 trajectory-level 分数，大部分由 LLM judge 给出</text>
+      <text x="28" y="332" font-size="16" fill="#47545c">tool status + conciseness + context understanding + planning + final answer</text>
+      <rect x="28" y="361" width="559" height="42" fill="#dbe9f1"/>
+      <text x="308" y="389" text-anchor="middle" font-size="18" font-weight="700" fill="#275f82">输出：54,885 条 SFT trajectory</text>
+    </g>
+
+    <g transform="translate(731 165)">
+      <rect width="615" height="430" fill="#eef5f1" stroke="#397a63" stroke-width="2"/>
+      <text x="28" y="44" font-size="21" font-weight="700" fill="#397a63">RL · semantic dependency topology</text>
+      <text x="28" y="79" font-size="18" fill="#39464f">复杂问题先拆成 sub-QA，再为非叶子步骤生成 Python tool。</text>
+      <g transform="translate(28 119)">
+        <rect width="142" height="74" fill="#fff" stroke="#a4c1b5"/><text x="71" y="32" text-anchor="middle" font-size="18" fill="#1c2931">QA graph</text><text x="71" y="55" text-anchor="middle" font-size="14" fill="#6a747b">1-20 hops</text>
+        <path d="M153 37h40" stroke="#397a63" stroke-width="3"/><path d="m193 37-10-7v14z" fill="#397a63"/>
+        <rect x="205" width="142" height="74" fill="#fff" stroke="#a4c1b5"/><text x="276" y="32" text-anchor="middle" font-size="18" fill="#1c2931">Python tool</text><text x="276" y="55" text-anchor="middle" font-size="14" fill="#6a747b">sandbox check</text>
+        <path d="M358 37h40" stroke="#397a63" stroke-width="3"/><path d="m398 37-10-7v14z" fill="#397a63"/>
+        <rect x="410" width="148" height="74" fill="#fff" stroke="#a4c1b5"/><text x="484" y="32" text-anchor="middle" font-size="18" fill="#1c2931">online RL</text><text x="484" y="55" text-anchor="middle" font-size="14" fill="#6a747b">up to 32 turns</text>
+      </g>
+      <line x1="28" y1="228" x2="587" y2="228" stroke="#c8d9d1"/>
+      <text x="28" y="267" font-size="16" font-weight="700" fill="#26343d">训练信号</text>
+      <text x="28" y="299" font-size="16" fill="#47545c">sub-task 命中数 n̂、所需 sub-task 数 n、tool calls 数 c</text>
+      <text x="28" y="332" font-size="16" fill="#47545c">F1 reward 同时奖励 coverage，并惩罚多余调用</text>
+      <rect x="28" y="361" width="559" height="42" fill="#dcece4"/>
+      <text x="308" y="389" text-anchor="middle" font-size="18" font-weight="700" fill="#2d674f">输出：6,596 个 isolated environment</text>
+    </g>
+
+    <path d="M493 628h414" stroke="#20282e" stroke-width="3"/><path d="m907 628-12-8v16z" fill="#20282e"/>
+    <text x="700" y="663" text-anchor="middle" font-size="17" fill="#4d5961">Qwen3 base → SFT checkpoint → online GRPO</text>
+  </g>
+  <text x="54" y="697" font-family="Arial, PingFang SC, sans-serif" font-size="14" fill="#7a8288">根据论文 Sections 2-3 与 Figures 2-4 重绘；不表示两个数据集共享同一套 judge。</text>
+</svg>
