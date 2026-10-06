@@ -1,94 +1,94 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Finetuning with Sampling visual guide</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Finetuning with Sampling 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"></head>
 <body>
 <div class="viewport"><main class="stage" aria-label="Finetuning with Sampling 论文图解">
   <section class="slide active">
-    <div class="meta"><span>01 · Problem</span><span>arXiv:2610.02140</span></div>
-    <h1>离 base model 太远的 expert traces，会让 SFT 更难学</h1>
-    <p class="lead">作者保留标准 SFT loss，先用 base model 重写 expert trajectory，使训练数据更接近学生模型自己的表达分布。</p>
-    <div class="content"><div class="grid g3"><div class="card red"><h3>Off-policy expert</h3><p>答案正确，但 token sequence 可能处在 base model 很低概率的区域。</p></div><div class="card blue"><h3>Projection sampling</h3><p>保留 expert information，以 base likelihood 为方向反复重写 suffix。</p></div><div class="card green"><h3>Ordinary SFT</h3><p>最后仍使用标准 cross-entropy，不修改 optimizer objective。</p></div></div></div>
-    <div class="foot"><span>Paper Sections 1 and 4</span><span>1 / 12</span></div>
+    <div class="meta"><span>01 · 问题</span><span>arXiv:2610.02140</span></div>
+    <h1>专家答案离基础模型的生成习惯太远，会让 SFT 更难学</h1>
+    <p class="lead">作者保留标准的监督微调（SFT）损失，先用基础模型重写专家解题轨迹，使训练数据更接近学生模型自己的表达分布。</p>
+    <div class="content"><div class="grid g3"><div class="card red"><h3>分布外的专家答案</h3><p>答案正确，但 token（模型处理的文本单位）序列可能处在基础模型概率很低的区域。</p></div><div class="card blue"><h3>投影式采样</h3><p>保留专家答案的信息，并沿着基础模型平均概率更高的方向反复重写后缀。</p></div><div class="card green"><h3>普通 SFT</h3><p>最后仍使用标准交叉熵，不修改优化目标。</p></div></div></div>
+    <div class="foot"><span>论文第 1、4 节</span><span>1 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>02 · Target distribution</span><span>information projection</span></div>
-    <h2>理想目标：在所有正确答案中，保留 base model 原来的相对概率</h2>
-    <div class="content"><div class="formula">p_C(x) = p_base(x) · 1[x ∈ C] / Z</div><div class="grid g2"><div class="card"><h3>C 是什么</h3><p>与 expert trajectory 信息等价的集合。数学和 chemistry 可近似为 final answer 正确；medical 使用 semantic equivalence。</p></div><div class="card"><h3>为什么难采样</h3><p>直接 rejection sampling 等于不断让 base model 自己尝试。hard tasks 上可能几乎采不到正确 trajectory。</p></div></div></div>
-    <div class="foot"><span>Paper Section 4.1, Definition 1 and Proposition 1</span><span>2 / 12</span></div>
+    <div class="meta"><span>02 · 目标分布</span><span>信息投影</span></div>
+    <h2>理想目标：在所有正确答案中，保留基础模型原来的相对概率</h2>
+    <div class="content"><div class="formula">p_C(x) = p_base(x) · 1[x ∈ C] / Z</div><div class="grid g2"><div class="card"><h3>C 是什么</h3><p>与专家轨迹信息等价的回答集合。数学和化学任务近似按最终答案是否正确判断；医疗任务使用语义等价判断。</p></div><div class="card"><h3>为什么难采样</h3><p>直接拒绝采样等于不断让基础模型自己尝试。困难任务上可能几乎生成不出正确轨迹。</p></div></div></div>
+    <div class="foot"><span>论文第 4.1 节、定义 1、命题 1</span><span>2 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>03 · Ideal algorithm</span><span>blockwise MH</span></div>
-    <h2>论文推导的算法是 Metropolis-Hastings</h2>
-    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Start</strong><p>从正确 expert trajectory τ 开始。</p></div><div class="step"><b>2</b><strong>Cut</strong><p>随机选择 token position m。</p></div><div class="step"><b>3</b><strong>Propose</strong><p>把 prefix 与 expert solution 放进 prompt，重写 suffix。</p></div><div class="step"><b>4</b><strong>Accept</strong><p>理论上按 target density 与双向 proposal ratio 随机接受。</p></div><div class="step"><b>5</b><strong>Repeat</strong><p>逐 block、逐 MCMC step 移向 target distribution。</p></div></div></div>
-    <div class="foot"><span>Paper Algorithm 1 and Sections 4.2-4.3</span><span>3 / 12</span></div>
+    <div class="meta"><span>03 · 理想算法</span><span>分块 MH 采样</span></div>
+    <h2>论文推导使用 Metropolis-Hastings（MH）采样</h2>
+    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>开始</strong><p>从正确的专家轨迹 τ 开始。</p></div><div class="step"><b>2</b><strong>切分</strong><p>随机选择 token 位置 m。</p></div><div class="step"><b>3</b><strong>生成候选</strong><p>把当前前缀与专家解答放进提示词，重写后缀。</p></div><div class="step"><b>4</b><strong>决定接受</strong><p>理论上根据目标概率和正反向提议概率，随机接受或拒绝。</p></div><div class="step"><b>5</b><strong>重复</strong><p>逐文本块、逐次马尔可夫链蒙特卡洛（MCMC）更新，移向目标分布。</p></div></div></div>
+    <div class="foot"><span>论文算法 1、第 4.2-4.3 节</span><span>3 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>04 · Released implementation</span><span>greedy approximation</span></div>
-    <h2>公开代码没有执行 MH acceptance</h2>
+    <div class="meta"><span>04 · 公开实现</span><span>只接受概率上升的近似</span></div>
+    <h2>公开代码没有执行完整的 MH 接受规则</h2>
     <div class="content"><pre class="code">target_log_prob_prop = get_logprobs_vLLM(...)
 
 if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
     gen = prop
-    target_log_prob_cur = target_log_prob_prop</pre><div class="callout red"><p>代码比较的是 sequence average log probability。它没有计算 κ(x|x′)/κ(x′|x)，也没有随机 acceptance，因此论文的 stationary-distribution 证明不能直接用于这段实现。</p></div></div>
-    <div class="foot"><span>Official repo revision 6d3e9f0, boost_sci.py lines 188-220; boost_math.py lines 189-227</span><span>4 / 12</span></div>
+    target_log_prob_cur = target_log_prob_prop</pre><div class="callout red"><p>代码比较整段回答在基础模型下的平均对数概率。它没有计算正反向提议概率之比，也不会随机接受概率下降的候选，因此论文关于稳定分布的证明不能直接用于这段实现。</p></div></div>
+    <div class="foot"><span>官方仓库版本 6d3e9f0：boost_sci.py 第 188-220 行；boost_math.py 第 189-227 行</span><span>4 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>05 · Real case</span><span>Appendix A chemistry</span></div>
-    <h2>真实 case：把同一条配平方程解法改写成 base model 更常写的形式</h2>
-    <div class="content"><div class="grid g2"><div class="card"><h3>Question</h3><p>Balance CO₂ + H₂O → C₃H₆O₃ + O₂, keeping reactant and product order.</p></div><div class="card"><h3>Information to preserve</h3><p>最终系数与守恒关系必须正确。proposal prompt 同时提供原题、expert solution 和当前 partial response。</p></div></div><div class="flow" style="--n:4"><div class="step"><b>A</b><strong>Prefix</strong><p>从当前 response 随机截断。</p></div><div class="step"><b>B</b><strong>Regenerate</strong><p>base model 继续写完整 reasoning。</p></div><div class="step"><b>C</b><strong>Compare</strong><p>只保留平均 log probability 更高的 candidate。</p></div><div class="step"><b>D</b><strong>Grade</strong><p>生成结束后记录 balanced-equation correctness。</p></div></div></div>
-    <div class="foot"><span>Paper Appendix A; official boost_sci.py lines 315-368</span><span>5 / 12</span></div>
+    <div class="meta"><span>05 · 真实案例</span><span>附录 A 的化学题</span></div>
+    <h2>把同一条配平方程解法改写成基础模型更常写的形式</h2>
+    <div class="content"><div class="grid g2"><div class="card"><h3>题目</h3><p>配平 CO₂ + H₂O → C₃H₆O₃ + O₂，并保持反应物和生成物的顺序。</p></div><div class="card"><h3>必须保留的信息</h3><p>最终系数与守恒关系必须正确。生成候选的提示词同时提供原题、专家解答和当前的未完成回答。</p></div></div><div class="flow" style="--n:4"><div class="step"><b>A</b><strong>截取前缀</strong><p>在当前回答中随机选择截断位置。</p></div><div class="step"><b>B</b><strong>重新生成</strong><p>基础模型继续写出完整推理。</p></div><div class="step"><b>C</b><strong>比较概率</strong><p>只保留平均对数概率更高的候选。</p></div><div class="step"><b>D</b><strong>检查答案</strong><p>生成结束后记录方程是否配平。</p></div></div></div>
+    <div class="foot"><span>论文附录 A；官方 boost_sci.py 第 315-368 行</span><span>5 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>06 · Data boundary</span><span>correctness is not guaranteed</span></div>
-    <h2>生成脚本会记录错误，但仍把所有 rows 写入文件</h2>
-    <div class="content"><div class="grid g2"><div class="card red"><h3>Code behavior</h3><p>每条 boosted response 都带 <code>is_correct</code>，随后无条件调用 <code>append_jsonl(out_path, rec)</code>。</p></div><div class="card orange"><h3>README behavior</h3><p>README 建议合并 JSONL 并重命名 prompt / response 作为 SFT 数据，没有说明过滤 <code>is_correct=0</code>。</p></div></div><div class="grid g4"><div class="metric"><strong>94.33%</strong><span>Qwen chemistry</span></div><div class="metric"><strong>93.94%</strong><span>Olmo chemistry</span></div><div class="metric"><strong>95.33%</strong><span>math</span></div><div class="metric"><strong>95.86%</strong><span>medical</span></div></div></div>
-    <div class="foot"><span>Paper Appendix C.1; official repo boost_*.py and README</span><span>6 / 12</span></div>
+    <div class="meta"><span>06 · 数据边界</span><span>无法保证全部正确</span></div>
+    <h2>生成脚本会标记错误，但仍把所有数据行写入文件</h2>
+    <div class="content"><div class="grid g2"><div class="card red"><h3>代码行为</h3><p>每条改写后的回答都带 <code>is_correct</code>，随后无条件调用 <code>append_jsonl(out_path, rec)</code>。</p></div><div class="card orange"><h3>仓库说明</h3><p>README 建议合并逐行 JSON 文件（JSONL），并重命名提示词和回答字段作为 SFT 数据，但没有说明是否过滤 <code>is_correct=0</code>。</p></div></div><div class="grid g4"><div class="metric"><strong>94.33%</strong><span>Qwen 化学</span></div><div class="metric"><strong>93.94%</strong><span>Olmo 化学</span></div><div class="metric"><strong>95.33%</strong><span>数学</span></div><div class="metric"><strong>95.86%</strong><span>医疗</span></div></div></div>
+    <div class="foot"><span>论文附录 C.1；官方仓库 boost_*.py 与 README</span><span>6 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>07 · Main results</span><span>Qwen models</span></div>
-    <h2>Sampling SFT 在 chemistry 与 math 上胜出</h2>
-    <div class="content"><table class="table"><thead><tr><th>Setting</th><th>Strong on-policy baseline</th><th>Sampling SFT</th><th>Result</th></tr></thead><tbody><tr><td>Qwen2.5-7B chemistry</td><td>OPSD 61.8</td><td class="ours">66.0</td><td class="good">+4.2 points</td></tr><tr><td>Qwen2.5-3B math average</td><td>GRPO 45.7 / UFT 45.2</td><td class="ours">53.4</td><td class="good">+7.7 vs GRPO</td></tr><tr><td>Sampling SFT + RL</td><td>GRPO 45.7</td><td class="ours">56.7</td><td class="good">best math average</td></tr></tbody></table></div>
-    <div class="foot"><span>Paper Table 1. Values are percentage accuracy, shown as points.</span><span>7 / 12</span></div>
+    <div class="meta"><span>07 · 主要结果</span><span>Qwen 模型</span></div>
+    <h2>Sampling SFT 在化学与数学任务上胜出</h2>
+    <div class="content"><table class="table"><thead><tr><th>实验</th><th>较强的同策略基线</th><th>Sampling SFT</th><th>结果</th></tr></thead><tbody><tr><td>Qwen2.5-7B 化学</td><td>同策略自蒸馏 OPSD 61.8</td><td class="ours">66.0</td><td class="good">+4.2 个百分点</td></tr><tr><td>Qwen2.5-3B 数学平均分</td><td>GRPO 45.7 / UFT 45.2</td><td class="ours">53.4</td><td class="good">比 GRPO 高 7.7</td></tr><tr><td>Sampling SFT + 强化学习</td><td>GRPO 45.7</td><td class="ours">56.7</td><td class="good">数学平均分最高</td></tr></tbody></table><div class="callout"><p>GRPO 按同一道题的多次回答做相对奖励；UFT 把监督微调和强化学习统一起来。两者都利用当前模型生成的回答进行训练。</p></div></div>
+    <div class="foot"><span>论文表 1；数值为百分比准确率，差值单位为百分点。</span><span>7 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>08 · Negative results</span><span>not universal</span></div>
-    <h2>medical 与 Olmo chemistry 没有超过 OPSD</h2>
-    <div class="content"><div class="grid g2"><div class="card orange"><h3>Qwen medical</h3><p>Sampling SFT 45.8，OPSD 46.6。Sampling 的 prior-capability average 为 51.6，高于 OPSD 的 50.1。</p></div><div class="card orange"><h3>Olmo chemistry</h3><p>Sampling SFT 58.3，OPSD 59.7。Sampling 的 prior-capability average 为 61.7，为表中最高。</p></div></div><div class="callout"><p>论文的强项更像 accuracy-retention trade-off，而不是每个 new-task accuracy 都排名第一。</p></div></div>
-    <div class="foot"><span>Paper Tables 1-2</span><span>8 / 12</span></div>
+    <div class="meta"><span>08 · 负结果</span><span>并非所有任务都胜出</span></div>
+    <h2>医疗任务与 Olmo 化学任务没有超过同策略自蒸馏基线 OPSD</h2>
+    <div class="content"><div class="grid g2"><div class="card orange"><h3>Qwen 医疗</h3><p>Sampling SFT 45.8，OPSD 46.6。Sampling 的旧能力平均分为 51.6，高于 OPSD 的 50.1。</p></div><div class="card orange"><h3>Olmo 化学</h3><p>Sampling SFT 58.3，OPSD 59.7。Sampling 的旧能力平均分为 61.7，是表中最高值。</p></div></div><div class="callout"><p>论文的强项是兼顾新任务准确率与旧能力保留，并非每个新任务的准确率都排名第一。</p></div></div>
+    <div class="foot"><span>论文表 1-2</span><span>8 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>09 · Retention</span><span>why sampling may help</span></div>
-    <h2>数据离 base model 越近，SFT 更新通常越温和</h2>
-    <div class="content"><div class="grid g3"><div class="card"><h3>Vanilla SFT</h3><p>Qwen chemistry prior average 从 base 59.7 降到 52.0。</p></div><div class="card green"><h3>Sampling SFT</h3><p>prior average 58.6，接近 base，并高于 OPSD 的 56.8。</p></div><div class="card"><h3>Cross-model check</h3><p>用 Olmo-boosted data 训练 Qwen，chemistry 只有 57.33，低于 vanilla SFT 61.8。</p></div></div></div>
-    <div class="foot"><span>Paper Table 1 and Appendix B</span><span>9 / 12</span></div>
+    <div class="meta"><span>09 · 旧能力保留</span><span>为什么改写可能有效</span></div>
+    <h2>数据越接近基础模型，SFT 更新通常越温和</h2>
+    <div class="content"><div class="grid g3"><div class="card"><h3>普通 SFT</h3><p>Qwen 化学实验中的旧能力平均分从基础模型的 59.7 降到 52.0。</p></div><div class="card green"><h3>Sampling SFT</h3><p>旧能力平均分为 58.6，接近基础模型，并高于 OPSD 的 56.8。</p></div><div class="card"><h3>跨模型检查</h3><p>用 Olmo 改写的数据训练 Qwen，化学准确率只有 57.33，低于普通 SFT 的 61.8。</p></div></div></div>
+    <div class="foot"><span>论文表 1、附录 B</span><span>9 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>10 · Experimental limits</span><span>what the tables omit</span></div>
-    <h2>结果只有单次 point estimate</h2>
-    <div class="content"><div class="grid g2"><div class="card red"><h3>No uncertainty</h3><ul><li>没有多 seed</li><li>没有 confidence interval</li><li>超参数从多个范围选择，但未说明 validation selection 的完整细节</li></ul></div><div class="card red"><h3>Incomplete release</h3><ul><li>没有 boosted datasets</li><li>没有 training checkpoints</li><li>没有 medical generation pipeline</li><li>仓库未声明 license</li></ul></div></div></div>
-    <div class="foot"><span>Paper Section 5 and Appendix C; official repository revision 6d3e9f0</span><span>10 / 12</span></div>
+    <div class="meta"><span>10 · 实验限制</span><span>表格没有报告什么</span></div>
+    <h2>每项结果都只来自一次实验</h2>
+    <div class="content"><div class="grid g2"><div class="card red"><h3>没有不确定性分析</h3><ul><li>没有多随机种子结果</li><li>没有置信区间</li><li>超参数从多个范围选择，但未说明验证集选择的完整细节</li></ul></div><div class="card red"><h3>公开材料不完整</h3><ul><li>没有改写后的数据集</li><li>没有训练模型存档</li><li>没有医疗任务的数据生成流程</li><li>仓库未声明许可证</li></ul></div></div></div>
+    <div class="foot"><span>论文第 5 节与附录 C；官方仓库版本 6d3e9f0</span><span>10 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>11 · Related work</span><span>where it sits</span></div>
-    <h2>它把“适配 learner”放在数据生成阶段</h2>
-    <div class="content"><table class="table"><thead><tr><th>Route</th><th>How expert information enters</th><th>What changes</th></tr></thead><tbody><tr><td>Vanilla SFT</td><td>直接拟合 expert trajectories</td><td>standard objective, original data</td></tr><tr><td>Importance-weighted / KL SFT</td><td>expert data 保持不变</td><td>training objective</td></tr><tr><td>GRPO / UFT</td><td>expert trace 帮助生成 successful rollouts</td><td>on-policy RL process</td></tr><tr><td>OPSD</td><td>privileged teacher distribution</td><td>self-distillation</td></tr><tr><td class="ours">Sampling SFT</td><td>expert solution 条件化 proposal</td><td class="ours">data distribution before ordinary SFT</td></tr></tbody></table></div>
-    <div class="foot"><span>Paper Related Work and Section 5 baselines</span><span>11 / 12</span></div>
+    <div class="meta"><span>11 · 相关工作</span><span>方法的位置</span></div>
+    <h2>它在数据生成阶段让样本靠近待训练模型</h2>
+    <div class="content"><table class="table"><thead><tr><th>路线</th><th>专家信息怎样进入</th><th>改变什么</th></tr></thead><tbody><tr><td>普通 SFT</td><td>直接拟合专家轨迹</td><td>标准训练目标、原始数据</td></tr><tr><td>重要性加权 / KL 散度约束 SFT</td><td>专家数据保持不变</td><td>损失函数，或对新旧模型的分布差异加限制</td></tr><tr><td>GRPO / UFT（同策略训练）</td><td>专家轨迹帮助生成成功回答</td><td>根据当前模型自己的回答与奖励更新模型</td></tr><tr><td>OPSD（同策略自蒸馏）</td><td>带额外上下文的教师分布</td><td>自蒸馏</td></tr><tr><td class="ours">Sampling SFT</td><td>专家解答约束候选改写</td><td class="ours">普通 SFT 前的数据分布</td></tr></tbody></table></div>
+    <div class="foot"><span>论文相关工作与第 5 节基线</span><span>11 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>12 · Takeaway</span><span>interest 8.0 / 10</span></div>
-    <h2>data shaping 有潜力，theory-to-code gap 仍未补齐</h2>
-    <div class="content"><div class="grid g2"><div class="card blue"><h3>值得继续研究</h3><p>把 expensive expert traces 变成 student-native trajectories，可能兼顾新能力学习与旧能力保留。</p></div><div class="card orange"><h3>下一项实验</h3><p>比较 exact MH、greedy likelihood ascent 与简单 best-of-N rewrite；固定 compute，过滤错误 rows，并报告多 seed。</p></div></div></div>
+    <div class="meta"><span>12 · 结论</span><span>兴趣度 8.0 / 10</span></div>
+    <h2>先改造训练数据很有潜力，但理论与代码仍未对齐</h2>
+    <div class="content"><div class="grid g2"><div class="card blue"><h3>值得继续研究</h3><p>把昂贵的专家轨迹改写成学生模型更容易生成的轨迹，可能兼顾新能力学习与旧能力保留。</p></div><div class="card orange"><h3>下一项实验</h3><p>比较严格 MH、只接受基础模型平均概率上升的贪心搜索与简单的多次改写取最优；固定计算预算，过滤错误数据行，并报告多随机种子结果。</p></div></div></div>
     <div class="foot"><span>博客作者兴趣度只表示本人对主题的兴趣，不是论文质量评级。</span><span>12 / 12</span></div>
   </section>
 </main></div>

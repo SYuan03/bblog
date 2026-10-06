@@ -2,9 +2,9 @@
 title: "[2026-08-26] V-Rubrics: Visual Faithfulness via Rubric-Based Reinforcement Learning"
 permalink: "/posts/论文解读/v-rubrics.html"
 date: "2026-10-06T10:00:00+08:00"
-updated: "2026-10-06T10:00:00+08:00"
+updated: "2026-10-06T14:41:16+08:00"
 cover: "/lib/papers/v-rubrics/cover.svg"
-description: "V-Rubrics 怎样把视觉问答拆成 VF、RC、IF criteria，再做 component-wise prefix credit；包含真实 AI2D 样本、judge 输入、reward 重算、结果与公开实现差异。"
+description: "V-Rubrics 怎样把视觉回答拆成视觉忠实度、推理一致性和指令遵循三类评分项，再把训练权重分配到相关回答前缀；包含真实 AI2D 样本、判分输入、奖励重算与公开实现差异。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -33,170 +33,170 @@ tags:
 </div>
 
 <section class="deck-wrap" aria-label="V-Rubrics 交互图解">
-  <div class="deck-head"><strong>12 页交互图解 · 数据构建、真实 rubric case、prefix credit 与实验边界</strong><a href="/lib/decks/v-rubrics-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>12 页交互图解 · 数据构建、真实评分案例、前缀归因与实验边界</strong><a href="/lib/decks/v-rubrics-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/v-rubrics-visual-guide.html" title="V-Rubrics 论文图解，共 12 页" allow="fullscreen" loading="eager"></iframe></div>
     <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可点左下角返回文章</span></p>
   </div>
 </section>
 
-<p class="lead">V-Rubrics 认为视觉推理的 reward 太粗。一个模型可以看错图、走错推理，最后碰巧选中正确答案；answer-only reward 仍然给 1。作者把 reference response 拆成多条可独立判断的 rubric items，再将每项 credit 放到对应 response prefix，希望训练信号能指出“哪一条视觉事实或推理成立”。</p>
+<p class="lead">V-Rubrics 认为视觉推理的奖励太粗。模型即使看错图、推理出错，也可能碰巧选中正确答案；只检查最终答案的奖励（answer-only reward）仍然会给 1。作者把参考回答拆成多条可独立判断的评分项（rubric items），再把每项训练权重放到与它相关的回答前缀，希望模型知道“究竟是哪一条视觉事实或推理成立”。</p>
 
-<div class="interest"><b>博客作者兴趣度 7.5 / 10</b><span>评分只表示博客作者本人兴趣程度；主要价值在细粒度 reward 与公开实现，不代表所有视觉任务都稳定受益</span></div>
+<div class="interest"><b>博客作者兴趣度 7.5 / 10</b><span>评分只表示博客作者本人兴趣程度；主要价值在细粒度奖励与公开实现，不代表所有视觉任务都稳定受益</span></div>
 
 <div class="metrics" aria-label="论文关键数字">
-  <div class="metric"><strong>50,248</strong><span>RL training examples</span></div>
-  <div class="metric"><strong>352,938</strong><span>VF / RC / IF rubric items</span></div>
-  <div class="metric"><strong>+1.79</strong><span>knowledge overall vs answer GRPO</span></div>
-  <div class="metric"><strong>+0.51</strong><span>visual overall vs answer GRPO</span></div>
+  <div class="metric"><strong>50,248</strong><span>强化学习训练样本</span></div>
+  <div class="metric"><strong>352,938</strong><span>视觉事实、推理与指令遵循三类评分项</span></div>
+  <div class="metric"><strong>+1.79</strong><span>知识类平均分相对只看答案的 GRPO</span></div>
+  <div class="metric"><strong>+0.51</strong><span>视觉推理平均分相对只看答案的 GRPO</span></div>
 </div>
 
 <aside class="keypoints">
   <h3>先记住四个结论</h3>
   <ul>
-    <li><strong>V-Rubrics 的贡献是 credit assignment，不是一个新的 evaluation benchmark。</strong>50K 数据用于 GRPO training，最终成绩来自 10 个已有的视觉与知识 benchmark families。</li>
-    <li><strong>rubric judge 不看 raw image。</strong>它只读取 model response 和一条 self-contained textual criterion。</li>
-    <li><strong>相对 answer-only GRPO 的净增量不大。</strong>两组 overall average 分别提高 1.79 与 0.51 points，而且若干单项下降。</li>
-    <li><strong>公开代码很有价值，但不能只运行默认配置就声称复现论文 ablation。</strong>release launcher 的 reward budget、learning rate 与 batch defaults 需要单独核对。</li>
+    <li><strong>V-Rubrics 的贡献是训练权重归因，不是一个新的评测基准。</strong>50K 数据用于 GRPO 训练；GRPO 指按同一道题的多次回答做相对比较，再更新模型。最终成绩来自 10 组已有的视觉与知识评测。</li>
+    <li><strong>评分项判分模型不看原图。</strong>它只读取模型回答和一条本身包含判断所需信息的文字标准。</li>
+    <li><strong>相对只看最终答案的 GRPO，额外提升不大。</strong>知识类和视觉推理类平均分分别提高 1.79 与 0.51 个百分点，而且若干单项下降。</li>
+    <li><strong>公开代码很有价值，但不能只运行默认配置就声称复现论文消融实验。</strong>启动脚本的奖励权重、学习率与批大小默认值需要单独核对。</li>
   </ul>
 </aside>
 
 <aside class="part0">
-<span class="kicker">PART 0 · READING PRIMER</span>
+<span class="kicker">PART 0 · 阅读准备</span>
 
-### VF、RC、IF 和 prefix credit 是什么？
+### 视觉忠实度、推理一致性、指令遵循与前缀归因是什么？
 
-一条视觉回答常包含几种不同内容。**Visual Faithfulness (VF)** 检查文字是否与图里可见的对象、数量、关系或数值一致；**Reasoning Consistency (RC)** 检查模型从这些视觉事实推出的结论是否成立；**Instruction Following (IF)** 检查输出格式或任务要求。
+一条视觉回答常包含几种不同内容。**Visual Faithfulness (VF，视觉忠实度)** 检查文字是否与图里可见的对象、数量、关系或数值一致；**Reasoning Consistency (RC，推理一致性)** 检查模型从这些视觉事实推出的结论是否成立；**Instruction Following (IF，指令遵循)** 检查输出格式或任务要求。GRPO 是一种按同一道题多次回答的相对得分更新模型的强化学习方法。
 
-**Prefix credit** 指的是一条 rubric 不必把 reward 广播到整个回答。judge 如果能返回支持该判断的原句，系统会找到这句话结束处的 token position，并让该项 advantage 只作用到这一位置之前。论文采用的是 prefix，而不是精确 span：支持句之后的 token 不吃这项 credit，支持句之前的所有 token 都会收到。</aside>
+**Prefix credit（前缀归因）** 指一条评分项不必把奖励施加到整段回答。判分模型如果能返回支持该判断的原句，系统会找到这句话结束处的 token（模型处理的文本单位），并让该项 advantage（在组内标准化后的训练权重）只作用到这一位置之前。论文使用的是整段前缀，而不是只覆盖精确文本片段：支持句之后的 token 不接收这项权重，支持句及其之前的 token 都会收到。</aside>
 
-## Q1. 为什么 final-answer reward 无法训练视觉忠实度？
+## Q1. 为什么只看最终答案的奖励无法训练视觉忠实度？
 
 **一条答案可以包含多个局部判断，最终正确与这些判断全部正确不是一回事。**
 
-图表题里，模型可能读错一个柱子的高度，却通过其他线索猜对选项；几何题里，模型可能识别出形状，却使用不成立的关系完成推导。answer-only GRPO 把这些情况都压成一个标量。对于同一 prompt 的 rollouts，模型只知道谁答对，不知道哪条视觉陈述值得保留。
+图表题里，模型可能读错一个柱子的高度，却通过其他线索猜对选项；几何题里，模型可能识别出形状，却使用不成立的关系完成推导。只看最终答案的 GRPO 把这些情况都压成一个数值。对于同一问题的多次生成结果，模型只知道哪次答对，不知道哪条视觉陈述值得保留。
 
-V-Rubrics 先把参考答案拆成 atomic propositions，再让 judge 分别输出 yes/no。正权重 rubric 给 partial credit；负权重 `PITFALL` 描述应避免的错误，一旦确认违反，会取消 answer credit 与正 rubric credit。
+V-Rubrics 先把参考答案拆成“每条只表达一个事实或推理”的判断项，再让判分模型分别输出是或否。正权重评分项提供部分得分；`PITFALL` 是描述“回答中不能出现什么错误”的负权重条目，一旦判分模型认定回答触发了它，最终答案得分与正评分项得分都会被取消。
 
 <figure class="figure wide">
-  <img src="/lib/papers/v-rubrics/cover.svg" alt="V-Rubrics 从视觉问答数据到 rubric-guided GRPO 的流程">
-  <figcaption>根据论文 Figures 1-3 与 Sections 3.2-3.5 重绘。最后一栏标出 judge 的输入边界：训练 judge 不读取 raw image。</figcaption>
+  <img src="/lib/papers/v-rubrics/cover.svg" alt="V-Rubrics 从视觉问答数据、逐项判分到组内相对训练的流程">
+  <figcaption>根据论文图 1-3 与第 3.2-3.5 节重绘。最后一栏标出判分模型的输入边界：训练时的判分模型不读取原图。</figcaption>
 </figure>
 
-## Q2. 它与已有 VLM RL 和 rubric reward 工作差在哪里？
+## Q2. 它与已有视觉模型强化学习和评分项奖励有什么区别？
 
-**论文把三件已有思路接在一起：自动生成 rubric、逐项判断 response、把每项 advantage 放到可对齐的 prefix。**
+**论文把三件已有思路接在一起：自动生成评分项、逐项判断回答，再把每项 advantage 放到能够对齐的回答前缀。**
 
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>训练信号</th><th>主要缺口</th><th>V-Rubrics 的位置</th></tr></thead>
   <tbody>
-    <tr><td>Answer-only visual RL</td><td>final answer correctness</td><td>无法区分视觉事实、推理和格式错误</td><td>保留 answer reward，同时增加 item-level criteria。</td></tr>
-    <tr><td>Holistic LLM judge</td><td>整条 response 的单一分数</td><td>具体错误仍被折叠</td><td>每条 rubric 独立 yes/no，正权重再归一化。</td></tr>
-    <tr><td>Rubric-based reward</td><td>criteria 或评分表</td><td>常在 sequence level 聚合</td><td>对每项 rubric 单独做 group-relative standardization。</td></tr>
-    <tr><td>Process / token credit</td><td>step 或 token-level signal</td><td>需要可靠地把证据与 response 对齐</td><td>用支持句的 endpoint 生成 prefix mask；对齐失败时退回 sequence-wide。</td></tr>
+    <tr><td>只看答案的视觉强化学习</td><td>最终答案是否正确</td><td>无法区分视觉事实、推理和格式错误</td><td>保留答案奖励，同时增加逐项评分标准。</td></tr>
+    <tr><td>大语言模型（LLM）整段判分</td><td>整条回答的单一分数</td><td>具体错误仍被折叠</td><td>每条评分项独立判断是或否，再归一化正权重。</td></tr>
+    <tr><td>基于评分项的奖励</td><td>多条判断标准或评分表</td><td>常把各项分数汇总到整段回答</td><td>每条评分项分别在同一道题的多次回答中做标准化。</td></tr>
+    <tr><td>过程归因 / token 归因</td><td>每一步或每个 token 的信号</td><td>需要可靠地把证据与回答位置对齐</td><td>用支持句的结束位置生成前缀遮罩；对齐失败时退回整段回答。</td></tr>
   </tbody>
 </table>
 </div>
 
-相较 OMR、MMR1、MM-Eureka 等视觉 RL 系统，这篇论文的重点不在扩大 reasoning trace 数据，而在 reward 的结构。它的 claim 也应限制在这套 Qwen3-VL-8B training stack 上；表格中的 closed-source 与其他 open-source models 使用不同数据和训练预算，不能当成受控方法比较。
+相较 OMR、MMR1、MM-Eureka 等视觉强化学习系统，这篇论文的重点不在扩大推理轨迹数据，而在改变奖励结构。结论也应限制在这套 Qwen3-VL-8B 训练配置上；表格中的闭源模型和其他开源模型使用不同数据与训练预算，不能当成受控方法比较。
 
-## Q3. 50K 数据、judge 和 prefix advantage 是怎样连起来的？
+## Q3. 50K 数据、判分模型和前缀权重是怎样连起来的？
 
-**数据构建与训练 judging 是两个阶段，使用的模型也不同。**
+**数据构建与训练时判分是两个阶段，使用的模型也不同。**
 
-作者先在 OpenMMReasoner-SFT-874K 上微调 Qwen3-VL-8B-Instruct，得到固定的 `πSFT`。同一个 checkpoint 用来生成 rejection-sampling rollouts，也分别初始化可训练的 actor 和固定不更新的 KL reference model。
+作者先在 OpenMMReasoner-SFT-874K 上做监督微调（SFT），得到固定的 `πSFT` 模型。这个模型存档用来反复生成候选回答并按正确性筛选，也分别初始化可训练的策略模型和固定不更新的参考模型；后者用于计算 KL 距离，也就是衡量训练后的回答分布偏离起点有多远。
 
-随后，17 个视觉数据源经过 rule-based filters。每个候选问题由 `πSFT` 生成 8 次：
+随后，17 个视觉数据源经过基于规则的过滤。`πSFT` 对每个候选问题生成 8 次回答：
 
 <div class="table-scroll">
 <table>
-  <thead><tr><th>8 次 rollout 中正确数</th><th>Difficulty</th><th>是否进入 50K</th></tr></thead>
-  <tbody><tr><td>0</td><td>hard</td><td>保留</td></tr><tr><td>1-5</td><td>medium</td><td>保留</td></tr><tr><td>6-7</td><td>simple</td><td>保留</td></tr><tr><td>8</td><td>过于简单</td><td>丢弃</td></tr></tbody>
+  <thead><tr><th>8 次回答中的正确数</th><th>难度</th><th>是否进入 50K</th></tr></thead>
+  <tbody><tr><td>0</td><td>困难</td><td>保留</td></tr><tr><td>1-5</td><td>中等</td><td>保留</td></tr><tr><td>6-7</td><td>简单</td><td>保留</td></tr><tr><td>8</td><td>过于简单</td><td>丢弃</td></tr></tbody>
 </table>
 </div>
 
-最终得到 18,121 个 hard、25,306 个 medium、6,821 个 simple examples。Gemini-3-Pro 根据 image、instruction 与 reference response 为每条样本生成 JSON rubrics。总计 352,938 条，其中 VF 209,436、RC 101,369、IF 42,133。论文没有报告人工逐条 audit 或 annotator agreement。
+最终得到 18,121 个困难样本、25,306 个中等样本和 6,821 个简单样本。Gemini-3-Pro 根据图像、问题指令与参考回答，为每条样本生成 JSON 格式的评分项。总计 352,938 条，其中 VF 209,436、RC 101,369、IF 42,133。论文没有报告人工逐条审计或标注者一致性。
 
-### 真实 case：AI2D `original_id=2501`
+### 真实案例：AI2D `original_id=2501`
 
 <div class="case">
 <h4>公开数据中的 spring tide 问题</h4>
 <ol>
-  <li><strong>来源：</strong>AI2D，公开 row UID 为 `chart_02501_3c2e6864`；`rs_score=0/8`，因此归为 hard。</li>
-  <li><strong>问题：</strong>`What is represented in this image?` 四个选项中 option 3 是 `spring tide`。</li>
-  <li><strong>rubrics：</strong>识别 Sun/Earth/Moon（VF, 5）；识别三者共线（VF, 5）；识别 tidal bulges（VF, 4）；解释引力叠加（RC, 4）；选择 spring tide（IF, 5）；区分 neap tide 的 90° 关系（RC, 3）。</li>
-  <li><strong>可见边界：</strong>训练 policy 看 image 和 instruction。rubric judge 只看 model response 与其中一条 criterion，不看 image。</li>
-  <li><strong>PASS：</strong>每条 criterion 独立得到 yes/no。一个回答可以通过选项 rubric，同时在视觉与推理 rubrics 上失败。</li>
+  <li><strong>来源：</strong>AI2D，公开数据行的 UID（唯一编号）为 `chart_02501_3c2e6864`；`rs_score` 记录固定模型 8 次回答中的正确次数，`rs_score=0/8` 因此表示 8 次都答错，样本被归为困难。</li>
+  <li><strong>问题：</strong>`What is represented in this image?`，即“图中表示什么？”；四个选项中的第 3 项是 `spring tide（大潮）`。</li>
+  <li><strong>评分项：</strong>识别太阳、地球、月球（VF, 5）；识别三者共线（VF, 5）；识别潮汐隆起（VF, 4）；解释引力叠加（RC, 4）；选择大潮（IF, 5）；区分小潮需要 90° 夹角（RC, 3）。</li>
+  <li><strong>可见边界：</strong>待训练模型能看图像和问题指令。评分项判分模型只看模型回答与其中一条判断标准，不看原图。</li>
+  <li><strong>通过条件：</strong>每条判断标准独立得到“是”或“否”。一个回答可以通过选项评分项，同时在视觉与推理评分项上失败。</li>
 </ol>
 </div>
 
-若模型只回答 `spring tide`，并且 judge 只把 `Selection_of_Spring_Tide` 判为 1，则正 rubric weight 总和是 26，`Rrub=5/26≈0.1923`。论文公式取 `α=0.5`，同时 final-answer reward 为 1，因此 semantic reward 为：
+若模型只回答 `spring tide`，并且判分模型只把 `Selection_of_Spring_Tide` 这一项判为 1，则正评分项的权重总和是 26，`Rrub=5/26≈0.1923`。论文公式取 `α=0.5`，最终答案奖励为 1，因此语义奖励为：
 
 <div class="formula">R = 0.5 × 1 + 0.5 × 0.1923 ≈ 0.5962</div>
 
-这是根据公开 row 与公式重算的 explanatory trace，不是已发布的 reward log。实际 judge 是否会额外判定某条 criterion 成立，要看它对 response 的具体判断。
+这是根据公开数据行与公式重算的解释性过程，不是作者发布的真实奖励日志。判分模型是否会额外认定其他评分项成立，要看它对具体回答的判断。
 
-在 prefix mode 中，每条 rubric 的 yes/no 会在 rollout group 内单独标准化。judge 若返回一段 supporting sentence，代码先做 exact 和 case-insensitive match，再以 fuzzy cutoff 60 尝试对齐；仍找不到时，这一项回退为 sequence-wide credit。
+在前缀模式中，每条评分项的“是/否”结果会在同一道题的多次回答中单独标准化。判分模型若返回一段支持句，代码先做完全匹配和忽略大小写的匹配，再用阈值 60 的模糊匹配尝试定位；仍找不到时，这项权重退回整段回答。
 
-<div class="note red"><p><strong>这个 row 还有一个分类问题：</strong>数据把“选择 spring tide”标成 IF。这个 criterion 更接近 answer correctness，而不是典型的格式或指令约束，说明 VF/RC/IF 标签并不总能把三类能力分得很干净。</p></div>
+<div class="note red"><p><strong>这个数据行还有一个分类问题：</strong>数据把“选择大潮”标成 IF。这个判断更接近答案正确性，不是典型的格式或指令约束，说明 VF、RC、IF 标签并不总能把三类能力分得很干净。</p></div>
 
-## Q4. 实验结果到底有多大，哪些 benchmark 没有提升？
+## Q4. 实验结果到底有多大，哪些评测没有提升？
 
-**rubric GRPO 相对共同 SFT 起点提升明显；相对 answer-only GRPO 的额外收益是 1.79 与 0.51 points。**
+**使用评分项奖励的 GRPO 相对共同 SFT 起点提升明显；相对只看答案的 GRPO，额外收益是 1.79 与 0.51 个百分点。**
 
 <figure class="figure wide">
   <img src="/lib/papers/v-rubrics/results.svg" alt="V-Rubrics 相对 SFT 和 answer-only GRPO 的结果">
-  <figcaption>根据论文 Tables 1-3 重绘。Overall Avg. 是论文所列 metrics 的 unweighted average。</figcaption>
+  <figcaption>根据论文表 1-3 重绘。`Overall Avg.`（总体平均分）指论文所列指标的简单平均，每项权重相同。</figcaption>
 </figure>
 
 <div class="table-scroll">
 <table>
-  <thead><tr><th>Model stage</th><th>General + knowledge overall</th><th>Visual reasoning overall</th></tr></thead>
-  <tbody><tr><td>SFT</td><td>64.93</td><td>58.45</td></tr><tr><td>Answer-only GRPO</td><td>66.25</td><td>61.94</td></tr><tr><td>Rubric GRPO</td><td>68.04</td><td>62.45</td></tr></tbody>
+  <thead><tr><th>模型阶段</th><th>通用与知识类平均分</th><th>视觉推理类平均分</th></tr></thead>
+  <tbody><tr><td>SFT</td><td>64.93</td><td>58.45</td></tr><tr><td>只看答案的 GRPO</td><td>66.25</td><td>61.94</td></tr><tr><td>评分项 GRPO</td><td>68.04</td><td>62.45</td></tr></tbody>
 </table>
 </div>
 
-rubric model 并非每项都更高。它在 MMBench-Dev 比 answer-only 低 0.43 points，在 MathVerse V/O 低 2.79，在 CharXiv reasoning 低 0.40；MathVision、DynaMath、WeMath 与 LogicVista 则上升。这个分布与作者的解释一致：rubrics 在多步视觉事实和推理能被 criterion 覆盖时更有帮助，面对 exact symbolic correctness 或数据集特定规范时可能存在 rubric-metric mismatch。
+评分项模型并非每项都更高。它在 MMBench-Dev 上比只看答案的模型低 0.43 个百分点，在 MathVerse V/O 上低 2.79，在 CharXiv 推理项上低 0.40；MathVision、DynaMath、WeMath 与 LogicVista 则上升。作者认为，多步视觉事实和推理若能被评分项覆盖，方法更容易奏效；对于要求符号答案完全准确或带有数据集特定规范的任务，评分项和最终评测指标可能并不一致。
 
-### Table 3 能否证明 prefix localization 有效？
+### 表 3 能否证明前缀定位有效？
 
-论文的三档结果是 answer-only 66.25、sequence-level rubrics 67.74、component + prefix 68.04。最后 0.30 points 同时包含 component-wise standardization 与 prefix localization，论文自己也没有把两者拆开。
+论文的三档结果是：只看答案为 66.25；把评分项作用于整段回答为 67.74；逐项标准化并作用于前缀为 68.04。最后 0.30 个百分点同时包含“每项分别标准化”和“前缀定位”两处变化，论文自己也没有把两者拆开。
 
-公开仓库还带来另一层复现风险。revision `6515819` 的两个 canonical launcher 默认使用不同 reward budgets：
+公开仓库还带来另一层复现风险。版本 `6515819` 的两个官方启动脚本默认使用不同的奖励权重：
 
 <div class="table-scroll">
 <table>
-  <thead><tr><th>公开 mode</th><th>Answer</th><th>Format</th><th>Rubric</th><th>Credit assignment</th></tr></thead>
-  <tbody><tr><td>`rubric-sequence`</td><td>0.10</td><td>0.10</td><td>0.80</td><td>sequence-level</td></tr><tr><td>`rubric-prefix`</td><td>0.50</td><td>0.05</td><td>0.45</td><td>component + prefix</td></tr></tbody>
+  <thead><tr><th>公开模式</th><th>答案奖励</th><th>格式奖励</th><th>评分项奖励</th><th>权重作用范围</th></tr></thead>
+  <tbody><tr><td>`rubric-sequence`</td><td>0.10</td><td>0.10</td><td>0.80</td><td>整段回答</td></tr><tr><td>`rubric-prefix`</td><td>0.50</td><td>0.05</td><td>0.45</td><td>逐项标准化后作用于前缀</td></tr></tbody>
 </table>
 </div>
 
-论文 Appendix D.2 报告 semantic answer/rubric balance 为 0.5/0.5，并将 format reward 另列。公开 release 的 changelog 说明 prefix 总预算后来规范为 1.0。由这些材料无法确认 Table 3 的 sequence run 是否用了完全相同的 reward budget。因此，公开默认值不能直接用来证明 0.30 points 全来自 credit localization。
+论文附录 D.2 报告答案与评分项的语义奖励比例为 0.5/0.5，并将格式奖励另列。公开版本的变更记录说明，前缀模式的总奖励权重后来才统一为 1.0。由这些材料无法确认表 3 的整段回答模式是否使用了完全相同的奖励权重。因此，公开默认值不能直接证明 0.30 个百分点全部来自前缀定位。
 
 ## Q5. 如果继续做这条路线，哪些实验最有价值？
 
-**最优先的实验是固定 reward budget，只改变 signal decomposition 与 token mask。**
+**最优先的实验是固定各项奖励的总权重，只改变奖励如何拆分以及哪些 token 接收权重。**
 
-至少需要四组：answer-only、answer + scalar rubrics、component-wise sequence、component-wise prefix。四组保持 batch size、learning rate、rollout samples 和 answer/rubric/format 总预算一致。这样才能区分收益来自更多监督信息、每项独立标准化，还是 prefix localization。
+至少需要四组：只看答案；答案加汇总后的评分项；评分项分别标准化但作用于整段回答；评分项分别标准化并作用于前缀。四组保持批大小、学习率、每题生成次数，以及答案/评分项/格式奖励的总权重一致。这样才能区分收益来自更多监督信息、每项独立标准化，还是前缀定位。
 
-其次，应增加一组让 judge 看到 raw image 的对照。当前 text-only judge 的优点是便宜且 criteria 容易审计，缺点是 annotation 一旦写错，judge 无法从图像纠正。可以在人类抽样审核过的子集上比较 text-only 与 image-aware judge 的准确率和训练收益。
+其次，应增加一组让判分模型看到原图的对照。当前只看文字的判分模型更便宜，评分标准也容易审计；但自动标注一旦写错，它无法回到图像纠正。可以在人类抽样审核过的子集上，比较只看文字和同时看图的判分模型准确率及训练收益。
 
-最后，需要报告自动 rubrics 的质量：随机抽样覆盖每个 source、difficulty 与 criterion type，记录 factual correctness、atomicity、type label、遗漏项及人类一致性。50K 数据规模本身不能回答这些问题。
+最后，需要报告自动评分项的质量：随机抽样覆盖每个数据来源、难度与评分项类型，记录事实是否正确、一条评分项是否只表达一个判断、类型标签是否合适、有无遗漏，以及人类标注者是否一致。50K 数据规模本身不能回答这些问题。
 
 ## Q6. 最终应该怎样评价 V-Rubrics？
 
-**它给出了完整、可运行的细粒度 visual RL pipeline；目前的证据更支持“rubric reward 有增益”，还不足以单独证明 prefix localization 是主要原因。**
+**它给出了完整、可运行的细粒度视觉强化学习流程；目前的证据更支持“评分项奖励有增益”，还不足以单独证明前缀定位是主要原因。**
 
 <div class="limit-grid">
-  <div><b>论文已经支持</b><span>在共同 SFT 起点上，answer-only 与 rubric GRPO 都有提升；rubric model 在两组 overall average 上略高。</span></div>
-  <div><b>公开实现的价值</b><span>dataset、reward modules、VERL patch、evaluation runner 与 tests 均已公开，代码边界比多数 reward 论文清楚。</span></div>
-  <div><b>最强限制</b><span>rubrics 全部自动生成，judge 不看图，论文没有人工 annotation audit；若 rubric 错了，reward 会稳定地强化错误标准。</span></div>
-  <div><b>复现注意</b><span>paper Table 6 与 repository launcher defaults 在 learning rate、batch size 和 reward budgets 上存在差别，需要保留完整 overrides。</span></div>
+  <div><b>论文已经支持</b><span>从共同的 SFT 起点出发，只看答案和使用评分项的 GRPO 都有提升；评分项模型在两组总体平均分上略高。</span></div>
+  <div><b>公开实现的价值</b><span>数据集、奖励模块、开源强化学习训练框架 VERL 的修改补丁、评测程序与测试均已公开，代码边界比多数奖励论文清楚。</span></div>
+  <div><b>最强限制</b><span>评分项全部自动生成，判分模型不看图，论文也没有人工标注审计；若评分项写错，奖励会稳定地强化错误标准。</span></div>
+  <div><b>复现注意</b><span>论文表 6 与仓库启动脚本默认值在学习率、批大小和奖励权重上存在差别，复现时需要保存全部参数覆盖项。</span></div>
 </div>
 
-这篇适合关心 multimodal RL、LLM judge 与 fine-grained credit assignment 的读者。最可迁移的部分是“把一条结果拆成几条可独立判断的 proposition”；最不该跳过的部分是 rubric 自己由谁生成、judge 看得到什么，以及 ablation 有没有同时修改其他变量。
+这篇适合关心多模态强化学习、大语言模型判分与细粒度训练权重归因的读者。最可迁移的部分是“把一条回答拆成几条可独立判断的陈述”；最不该跳过的部分是评分项由谁生成、判分模型看得到什么，以及消融实验有没有同时修改其他变量。
 
-<p class="source-note">主要来源：论文 v1 全文与附录、V-Rubrics 官方仓库 revision 6515819、V-Rubrics 50K 公开数据 row `chart_02501_3c2e6864`。代码与数据检查日期：2026-10-06。</p>
+<p class="source-note">主要来源：论文 v1 全文与附录、V-Rubrics 官方仓库版本 6515819、V-Rubrics 50K 公开数据行 `chart_02501_3c2e6864`。代码与数据检查日期：2026-10-06。</p>
 
 </div>

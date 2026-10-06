@@ -3,172 +3,172 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>GAGAR visual guide</title>
+  <title>GAGAR 论文图解</title>
   <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
 </head>
 <body>
 <div class="viewport"><main class="stage" aria-label="GAGAR 论文图解">
   <section class="slide active">
-    <div class="meta"><span>01 · Problem</span><span>arXiv:2609.32577</span></div>
-    <h1>测试都通过了，RL 仍不知道哪个 patch 更值得学</h1>
-    <p class="lead">GAGAR 在同一道 coding task 的 passing rollouts 之间加入质量排序，再重新分配正 advantage。</p>
+    <div class="meta"><span>01 · 问题</span><span>arXiv:2609.32577</span></div>
+    <h1>测试都通过了，强化学习仍不知道哪份代码更值得学</h1>
+    <p class="lead">同一道编程任务会生成多次完整尝试（rollout）。GAGAR 先比较其中已通过测试的代码质量，再重新分配正训练权重（advantage）。</p>
     <div class="content">
       <div class="grid g3">
-        <div class="card red"><h3>Binary reward</h3><p>所有通过测试的 trajectory 得到同样 reward。一次精准修复和一次带有多余改动的修复没有区别。</p></div>
-        <div class="card blue"><h3>Agentic grading</h3><p>grader 联合查看 task、repository、trajectory、patch 与 test output，只给 passing candidates 排序。</p></div>
-        <div class="card green"><h3>Redistribution</h3><p>低质量通过样本让出一部分 advantage，高质量样本得到更多训练权重。</p></div>
+        <div class="card red"><h3>0/1 奖励</h3><p>所有通过测试的执行轨迹都得到相同奖励。一次精准修复和一次带有多余改动的修复没有区别。</p></div>
+        <div class="card blue"><h3>主动检查代码</h3><p>另一个能读取代码仓库的模型系统担任判分 Agent，同时查看任务、执行轨迹、代码改动与测试输出，只给成功候选排序。</p></div>
+        <div class="card green"><h3>重新分配</h3><p>低质量成功样本让出一部分 advantage，高质量样本得到更多训练权重。</p></div>
       </div>
     </div>
-    <div class="foot"><span>Paper Sections 1 and 3</span><span>1 / 12</span></div>
+    <div class="foot"><span>论文第 1、3 节</span><span>1 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>02 · Training object</span><span>mixed-outcome group</span></div>
-    <h2>训练单位是一组 16 条 rollout</h2>
-    <p class="lead">动态采样只保留同时包含成功与失败的 groups。基础 advantage 是组内二元 reward 减去平均 reward。</p>
+    <div class="meta"><span>02 · 训练单位</span><span>同时含成功与失败的尝试组</span></div>
+    <h2>训练单位是同一道任务的 16 次完整尝试</h2>
+    <p class="lead">动态采样只保留同时包含成功与失败的尝试组。基础 advantage 等于每条轨迹的 0/1 奖励减去组内平均奖励。</p>
     <div class="content">
       <div class="flow" style="--n:4">
-        <div class="step"><b>INPUT</b><strong>同一 task</strong><p>相同 repository 初始状态与任务要求。</p></div>
-        <div class="step"><b>ROLL OUT</b><strong>16 trajectories</strong><p>每条包含 reasoning、tool calls、observations 与最终 patch。</p></div>
-        <div class="step"><b>RUN TESTS</b><strong>R ∈ {0,1}</strong><p>基础 verifier 只判断可执行测试是否通过。</p></div>
-        <div class="step"><b>FILTER</b><strong>0 &lt; R̄ &lt; 1</strong><p>全过或全错的 group 不用于这次组内学习。</p></div>
+        <div class="step"><b>输入</b><strong>同一任务</strong><p>相同的仓库初始状态与任务要求。</p></div>
+        <div class="step"><b>执行</b><strong>16 条轨迹</strong><p>每条都包含推理、工具调用、观察结果与最终代码改动。</p></div>
+        <div class="step"><b>测试</b><strong>R ∈ {0,1}</strong><p>基础检查器只判断可执行测试是否通过。</p></div>
+        <div class="step"><b>筛选</b><strong>0 &lt; R̄ &lt; 1</strong><p>全过或全错的尝试组不用于这次组内学习。</p></div>
       </div>
       <div class="formula">Aᵢ = Rᵢ - R̄</div>
     </div>
-    <div class="foot"><span>Paper Section 3.1; code-only run uses 128 prompts and 16 rollouts per prompt.</span><span>2 / 12</span></div>
+    <div class="foot"><span>论文第 3.1 节；纯代码实验每批 128 道任务，每题 16 次尝试。</span><span>2 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>03 · Grader</span><span>shared workspace</span></div>
-    <h2>grader 会读轨迹、代码和测试证据</h2>
-    <p class="lead">它先读 rollout summary，再按需检查完整轨迹、代码位置、测试日志，并可运行 targeted checks。</p>
+    <div class="meta"><span>03 · 判分 Agent</span><span>共享工作区</span></div>
+    <h2>判分 Agent 会读轨迹、代码和测试证据</h2>
+    <p class="lead">它先读执行摘要，再按需检查完整轨迹、代码位置和测试日志，还可以运行有针对性的检查。</p>
     <div class="content">
       <div class="flow" style="--n:5">
-        <div class="step"><b>1</b><strong>Task</strong><p>requirements 与初始 repository。</p></div>
-        <div class="step"><b>2</b><strong>Trajectory</strong><p>Agent 怎样搜索、修改、测试与修正。</p></div>
-        <div class="step"><b>3</b><strong>Patch</strong><p>改了哪些文件与代码位置。</p></div>
-        <div class="step"><b>4</b><strong>Evidence</strong><p>test output 与 grader 自己运行的检查。</p></div>
-        <div class="step"><b>5</b><strong>Ranking</strong><p>先分 tier，再在 tier 内排序，允许 tie。</p></div>
+        <div class="step"><b>1</b><strong>任务</strong><p>任务要求与仓库初始状态。</p></div>
+        <div class="step"><b>2</b><strong>执行轨迹</strong><p>Agent 怎样搜索、修改、测试与修正。</p></div>
+        <div class="step"><b>3</b><strong>代码改动</strong><p>改了哪些文件与代码位置。</p></div>
+        <div class="step"><b>4</b><strong>证据</strong><p>测试输出与判分 Agent 自己运行的检查。</p></div>
+        <div class="step"><b>5</b><strong>排序</strong><p>先分档，再在同一档内排序，允许并列。</p></div>
       </div>
     </div>
-    <div class="foot"><span>Paper Section 3.2. Negative assessments must cite patch, trajectory, or execution evidence.</span><span>3 / 12</span></div>
+    <div class="foot"><span>论文第 3.2 节：负面判断必须引用代码、轨迹或执行证据。</span><span>3 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>04 · Rubric</span><span>five dimensions</span></div>
-    <h2>五个维度评价 patch 是否接近可合并质量</h2>
+    <div class="meta"><span>04 · 评分标准</span><span>五个维度</span></div>
+    <h2>五个维度评价代码是否接近可直接合并的质量</h2>
     <div class="content">
       <div class="grid g5">
-        <div class="card blue"><h3>Approach</h3><p>是否解决 root cause，策略是否合理。</p></div>
-        <div class="card blue"><h3>Precision</h3><p>修改位置是否正确，行为覆盖是否完整。</p></div>
-        <div class="card blue"><h3>Minimality</h3><p>是否只做必要改动，避免无关 refactor。</p></div>
-        <div class="card blue"><h3>Side effects</h3><p>是否破坏周边行为或 public interface。</p></div>
-        <div class="card blue"><h3>Consistency</h3><p>是否复用现有 abstraction 和代码约定。</p></div>
+        <div class="card blue"><h3>方案</h3><p>是否解决根本原因，策略是否合理。</p></div>
+        <div class="card blue"><h3>准确性</h3><p>修改位置是否正确，行为覆盖是否完整。</p></div>
+        <div class="card blue"><h3>改动量</h3><p>是否只做必要改动，避免无关重构。</p></div>
+        <div class="card blue"><h3>副作用</h3><p>是否破坏周边行为或公开接口。</p></div>
+        <div class="card blue"><h3>一致性</h3><p>是否复用现有抽象和代码约定。</p></div>
       </div>
       <div class="formula">Wᵢ = 0.30 s_app + 0.25 s_prec + 0.20 s_min + 0.15 s_side + 0.10 s_style</div>
     </div>
-    <div class="foot"><span>Paper Appendix A.1, Table 2 and Equation 5</span><span>4 / 12</span></div>
+    <div class="foot"><span>论文附录 A.1、表 2、公式 5</span><span>4 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>05 · Tier to weight</span><span>T1 / T2 / T3</span></div>
-    <h2>ranking 先变成 factor，再作用于 positive advantage</h2>
+    <div class="meta"><span>05 · 从档位到权重</span><span>T1 / T2 / T3</span></div>
+    <h2>质量排序先变成系数，再作用于正 advantage</h2>
     <div class="content">
       <div class="grid g3">
-        <div class="card green"><h3>T1</h3><p>各维度至少 4 分且没有 severe issue。第一名 factor 1.0，后续 tied group 为 0.9。</p></div>
-        <div class="card orange"><h3>T2</h3><p>中间层按 tied-group rank 从 0.85 线性下降到 0.4。</p></div>
-        <div class="card red"><h3>T3</h3><p>unrequested rewrite、test-specific workaround 等严重缺陷，factor 固定为 0.2。</p></div>
+        <div class="card green"><h3>T1</h3><p>各维度至少 4 分且没有严重问题。第一名系数为 1.0，后续并列组为 0.9。</p></div>
+        <div class="card orange"><h3>T2</h3><p>中间档按并列组排名，从 0.85 线性下降到 0.4。</p></div>
+        <div class="card red"><h3>T3</h3><p>包含未要求的大规模重写、只对测试生效的绕过方案等严重缺陷，系数固定为 0.2。</p></div>
       </div>
     </div>
-    <div class="foot"><span>Paper Appendix A.1, Equation 6</span><span>5 / 12</span></div>
+    <div class="foot"><span>论文附录 A.1、公式 6</span><span>5 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>06 · Constructed example</span><span>not a released case</span></div>
+    <div class="meta"><span>06 · 公式构造例</span><span>不是公开的真实案例</span></div>
     <h2>一个解释性例子：为什么必须重新分配，而不是直接打折</h2>
-    <p class="lead">论文没有发布真实 group。下面只演示 Equation 2，不代表观察到的训练样本。</p>
+    <p class="lead">论文没有发布真实尝试组。下面只演示公式 2，不代表观察到的训练样本。</p>
     <div class="content">
       <div class="grid g3">
-        <div class="card"><h3>Group</h3><p>4 条 rollout，2 pass + 2 fail，因此 R̄=0.5。两个 pass 的原始 advantage 都是 +0.5。</p></div>
-        <div class="card"><h3>Quality factors</h3><p>假设两个 passing patches 分别为 T1 与 T3，factor 为 1.0 与 0.2。</p></div>
-        <div class="card"><h3>After redistribution</h3><p>λ=1/(0.5×1.0+0.5×0.2)=1.667，两个 positive advantages 变为 0.833 与 0.167，总和仍为 1。</p></div>
+        <div class="card"><h3>尝试组</h3><p>4 次尝试中，2 次通过、2 次失败，因此 R̄=0.5。两个成功样本的原始 advantage 都是 +0.5。</p></div>
+        <div class="card"><h3>质量系数</h3><p>假设两个成功实现分别为 T1 与 T3，系数为 1.0 与 0.2。</p></div>
+        <div class="card"><h3>重新分配后</h3><p>λ=1/(0.5×1.0+0.5×0.2)=1.667，两个正 advantage 变为 0.833 与 0.167，总和仍为 1。</p></div>
       </div>
-      <div class="callout red"><p>这是按论文公式构造的教学例。grader prompt、真实候选 patches 与逐项评分没有公开。</p></div>
+      <div class="callout red"><p>这是按论文公式构造的教学例。判分提示词、真实候选代码与逐项评分没有公开。</p></div>
     </div>
-    <div class="foot"><span>Constructed from Paper Equations 2-4</span><span>6 / 12</span></div>
+    <div class="foot"><span>根据论文公式 2-4 构造</span><span>6 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>07 · Safeguard</span><span>λmax = 1.5</span></div>
-    <h2>论文的精确守恒公式与实际 bounded branch 有区别</h2>
+    <div class="meta"><span>07 · 上限保护</span><span>λmax = 1.5</span></div>
+    <h2>论文的精确守恒公式与带上限的实际分支有区别</h2>
     <div class="content">
       <div class="grid g2">
-        <div class="card green"><h3>Bound inactive</h3><p>positive-advantage sum 保持不变，failed advantages 不变，group mean 仍为 0。</p></div>
-        <div class="card red"><h3>Bound active</h3><p>λ 被截到 1.5，随后重新减去 group mean。排序保留，但 positive sum 与 failed advantages 不再严格保持。</p></div>
+        <div class="card green"><h3>上限未触发</h3><p>正 advantage 总量不变，失败样本的 advantage 不变，组内平均值仍为 0。</p></div>
+        <div class="card red"><h3>上限触发</h3><p>λ 被截到 1.5，随后重新减去组内平均值。排序保留，但正权重总量与失败样本的 advantage 不再严格保持。</p></div>
       </div>
       <div class="formula">λ_bnd = min(λ, 1.5)</div>
     </div>
-    <div class="foot"><span>Paper Appendix A.2, Equation 7</span><span>7 / 12</span></div>
+    <div class="foot"><span>论文附录 A.2、公式 7</span><span>7 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>08 · Main result</span><span>DeepSWE step 28</span></div>
-    <h2>共享 checkpoint 上，GAGAR 同时提高 pass rate 并缩短 trajectory</h2>
+    <div class="meta"><span>08 · 主要结果</span><span>DeepSWE 第 28 步</span></div>
+    <h2>同一模型存档上，GAGAR 同时提高通过率并缩短执行轨迹</h2>
     <div class="content">
       <div class="grid g3">
-        <div class="metric"><strong>62.2 vs 50.2</strong><span>DeepSWE v1.1 avg@3，GAGAR 对 binary baseline，差 12.0 points。论文写作 12.1，来自未四舍五入值。</span></div>
-        <div class="metric"><strong>111.6 vs 132.3</strong><span>mean main-agent turns，减少 15.6%。</span></div>
-        <div class="metric"><strong>172.9k vs 191.9k</strong><span>mean total token length，减少 9.9%。</span></div>
+        <div class="metric"><strong>62.2 vs 50.2</strong><span>DeepSWE v1.1 的三次采样平均通过率，GAGAR 对二元奖励基线，图中相差 12.0 个百分点。</span></div>
+        <div class="metric"><strong>111.6 vs 132.3</strong><span>主 Agent 平均交互轮数减少 15.6%。</span></div>
+        <div class="metric"><strong>172.9k vs 191.9k</strong><span>平均总 token 数减少 9.9%；token 是模型处理的文本单位。</span></div>
       </div>
     </div>
-    <div class="foot"><span>Paper Section 4.2, Figure 2. Each task uses three samples; headline is avg@3.</span><span>8 / 12</span></div>
+    <div class="foot"><span>论文第 4.2 节、图 2；每题生成 3 次，`avg@3` 是三次结果的平均值。</span><span>8 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>09 · Quality audit</span><span>30 tasks</span></div>
-    <h2>“代码质量更好”的证据来自一次小规模 LLM judge audit</h2>
+    <div class="meta"><span>09 · 质量审计</span><span>30 个任务</span></div>
+    <h2>“代码质量更好”的证据来自一次小规模大语言模型（LLM）判分审计</h2>
     <div class="content">
       <div class="grid g3">
-        <div class="metric"><strong>4.03 vs 3.70</strong><span>rubric-weighted quality score。</span></div>
-        <div class="metric"><strong>69.8%</strong><span>passing candidates 的平均 win rate。</span></div>
-        <div class="metric"><strong>65.0%</strong><span>group-first share，ties 被平分。</span></div>
+        <div class="metric"><strong>4.03 vs 3.70</strong><span>按五项评分表加权后的质量分。</span></div>
+        <div class="metric"><strong>69.8%</strong><span>成功候选的平均胜率。</span></div>
+        <div class="metric"><strong>65.0%</strong><span>在尝试组内排名第一的比例，并列时平分。</span></div>
       </div>
-      <div class="callout red"><p>固定随机抽取 30 个 DeepSWE tasks，由 Claude Opus 5 读取记录过的 trajectories、patches 与 test outcomes。论文没有报告人工复核或 judge agreement。</p></div>
+      <div class="callout red"><p>固定随机抽取 30 个 DeepSWE 任务，由 Claude Opus 5 读取保存的执行轨迹、代码改动与测试结果。论文没有报告人工复核或不同判分者之间的一致程度。</p></div>
     </div>
-    <div class="foot"><span>Paper Section 4.3, Figure 3</span><span>9 / 12</span></div>
+    <div class="foot"><span>论文第 4.3 节、图 3</span><span>9 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>10 · Ablation</span><span>redistribution matters</span></div>
-    <h2>只给低质量 pass 降权，会让正负训练信号失衡</h2>
+    <div class="meta"><span>10 · 消融实验</span><span>重新分配是否重要</span></div>
+    <h2>只给低质量成功样本降权，会让正负训练信号失衡</h2>
     <div class="content">
       <table class="table">
-        <thead><tr><th>step 28 / DeepSWE</th><th>Full GAGAR</th><th>Downweight only</th></tr></thead>
-        <tbody><tr><td>pass rate avg@3</td><td class="ours">62.2%</td><td>56.2%</td></tr><tr><td>mean turns</td><td class="ours">111.6</td><td>143.5</td></tr><tr><td>mean tokens</td><td class="ours">172.9k</td><td>236.0k</td></tr><tr><td>policy entropy at step 30</td><td class="ours">0.513</td><td class="bad">0.905</td></tr></tbody>
+        <thead><tr><th>DeepSWE 第 28 步</th><th>完整 GAGAR</th><th>只降权</th></tr></thead>
+        <tbody><tr><td>三次采样平均通过率</td><td class="ours">62.2%</td><td>56.2%</td></tr><tr><td>平均交互轮数</td><td class="ours">111.6</td><td>143.5</td></tr><tr><td>平均 token 数</td><td class="ours">172.9k</td><td>236.0k</td></tr><tr><td>第 30 步的策略熵（输出选择的分散程度）</td><td class="ours">0.513</td><td class="bad">0.905</td></tr></tbody>
       </table>
     </div>
-    <div class="foot"><span>Paper Section 4.4, Figure 4</span><span>10 / 12</span></div>
+    <div class="foot"><span>论文第 4.4 节、图 4</span><span>10 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>11 · Evidence boundary</span><span>what is missing</span></div>
+    <div class="meta"><span>11 · 证据边界</span><span>还缺什么</span></div>
     <h2>论文证明了训练曲线改善，没有完成可独立复核的因果链</h2>
     <div class="content">
       <div class="grid g2">
-        <div class="card green"><h3>Supported</h3><ul><li>同一 Flash SFT 起点下的 shared-step 对照</li><li>downweight-only ablation</li><li>turn、token 与 pass rate 的一致方向</li></ul></div>
-        <div class="card red"><h3>Not established</h3><ul><li>grader prompt、training tasks、code 与真实 grading records</li><li>多 seed、置信区间和 human code review</li><li>mixed-task final model 中 GAGAR 的独立因果贡献</li></ul></div>
+        <div class="card green"><h3>已经支持</h3><ul><li>从同一 Flash 监督微调（SFT）起点出发、比较相同训练步数</li><li>只降权、不重分配的消融实验</li><li>交互轮数、token 数与通过率的方向一致</li></ul></div>
+        <div class="card red"><h3>尚未证明</h3><ul><li>未公开判分提示词、训练任务、代码与真实评分记录</li><li>没有多随机种子、置信区间和人工代码审查</li><li>最终混合任务模型中 GAGAR 的独立因果贡献</li></ul></div>
       </div>
     </div>
-    <div class="foot"><span>Paper Sections 4-5 and Appendix A; public artifact search checked 2026-10-06.</span><span>11 / 12</span></div>
+    <div class="foot"><span>论文第 4-5 节与附录 A；公开材料检查日期：2026-10-06。</span><span>11 / 12</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>12 · Takeaway</span><span>interest 8.5 / 10</span></div>
-    <h2>值得借鉴的是 credit design，最需要补的是 grader evidence</h2>
+    <div class="meta"><span>12 · 结论</span><span>兴趣度 8.5 / 10</span></div>
+    <h2>值得借鉴的是训练权重设计，最需要补的是判分证据</h2>
     <div class="content">
       <div class="grid g2">
-        <div class="card blue"><h3>可复用</h3><p>把可执行测试保留为 correctness gate，再在 passing trajectories 内比较可维护性；同时守住正负 advantage 的量级。</p></div>
-        <div class="card orange"><h3>下一项实验</h3><p>公开匿名化的 task-group-patch-grade bundle，让人工 reviewer 与不同 grader 重复评分，并报告稳定性和开发者返工时间。</p></div>
+        <div class="card blue"><h3>可复用</h3><p>把可执行测试保留为正确性门槛，再在成功轨迹内比较可维护性；同时守住正负 advantage 的量级。</p></div>
+        <div class="card orange"><h3>下一项实验</h3><p>公开匿名化的任务、尝试组、代码改动和评分数据包，让人工审查者与不同判分 Agent 重复评分，并报告稳定性和开发者返工时间。</p></div>
       </div>
     </div>
     <div class="foot"><span>博客作者兴趣度只表示本人对主题的兴趣，不是论文质量评级。</span><span>12 / 12</span></div>
