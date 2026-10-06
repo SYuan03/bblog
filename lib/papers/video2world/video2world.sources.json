@@ -1,0 +1,217 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Video2World: Benchmarking Coding Agents for Interactive World Modeling from Embodied Videos",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper"]
+  },
+  "artifacts": {
+    "article": "content/_posts/065-video2world.md",
+    "deck": "lib/decks/video2world-visual-guide.html",
+    "embed_src": "/lib/decks/video2world-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Video2World: Benchmarking Coding Agents for Interactive World Modeling from Embodied Videos",
+      "url": "https://arxiv.org/abs/2610.04432",
+      "revision": "v1, first posted 2026-10-03; CC BY-SA 4.0",
+      "used_for": ["problem", "related-work", "construction", "annotation", "interface", "evaluation", "results", "limitations", "visuals"]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv record for 2610.04432",
+      "url": "https://export.arxiv.org/api/query?id_list=2610.04432",
+      "revision": "checked 2026-10-06",
+      "used_for": ["v1-date", "version", "license"]
+    },
+    {
+      "id": "official-code",
+      "kind": "code",
+      "title": "AetherLabsAI/Video2World",
+      "url": "https://github.com/AetherLabsAI/Video2World",
+      "revision": "44b1760c52cc14e519aa88b5a91c374e09b81653; Apache-2.0",
+      "used_for": ["package-schema", "runner", "scoring", "task-judge", "simulator-profiles"]
+    },
+    {
+      "id": "official-data",
+      "kind": "dataset",
+      "title": "AetherLabs-AI/Video2World",
+      "url": "https://huggingface.co/datasets/AetherLabs-AI/Video2World",
+      "revision": "public release checked 2026-10-06",
+      "used_for": ["task-release", "worked-example", "execution-records"]
+    },
+    {
+      "id": "project-page",
+      "kind": "project",
+      "title": "Video2World project page",
+      "url": "https://aetherlabsai.github.io/Video2World",
+      "revision": "checked 2026-10-06",
+      "used_for": ["artifact-links", "visuals"]
+    },
+    {
+      "id": "related-primary",
+      "kind": "paper-set",
+      "title": "Primary neighboring papers: Video2Policy, Agentic Real2Sim, BVB, SceneActBench, CaP-X, EmbodiedSWE",
+      "url": "https://arxiv.org/abs/2502.09886",
+      "revision": "official arXiv records 2502.09886, 2607.19190, 2609.15478, 2607.22393, 2603.22435, 2609.27308 checked 2026-10-06",
+      "used_for": ["related-work"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 79,
+    "rendered_page_ranges": [{"start": 1, "end": 79}],
+    "source_visuals_expected": 37,
+    "visual_inventory_complete": true,
+    "inventory_note": "The 79-page v1 PDF was read as extracted text and visually reviewed page-by-page in four contact sheets. The inventory contains Figures 1-5, Figures A1-A13, Tables 1-2 and Tables A1-A17. All 18 numbered figures are reused under the paper's CC BY-SA 4.0 license across the article and embedded deck. Table 2 is redrawn; Table 1 is reorganized with additional primary-source comparisons; secondary appendix tables are represented by exact prose or omitted with explicit reasons."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么要评测“从视频重建可交互世界”？"},
+    {"role": "related-work", "locator": "Q2. 它与相邻工作差在哪里？"},
+    {"role": "method", "locator": "Q3. 189 段视频怎样变成 222 个实例，Agent 能看到什么？"},
+    {"role": "experiments", "locator": "Q4. evaluator 怎样把一个 package 变成 PASS / FAIL？"},
+    {"role": "future-work", "locator": "Q5. 九个系统表现如何，这对下一步研究意味着什么？"},
+    {"role": "summary", "locator": "Q6. 这篇论文真正证明了什么，还有哪些问题没解决？"}
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 3"}],
+      "evidence": [{"artifact": "article", "quote": "coding agent 能否只看一段真实的人或机器人的操作视频，写出一个能在物理模拟器中重新执行该任务的完整 package"}]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-data"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.1; Appendices 8.1-8.2; Tables A2-A4; Figure A1"}, {"source_id": "official-data", "locator": "public benchmark release checked 2026-10-06"}],
+      "evidence": [{"artifact": "article", "quote": "作者从八类数据来源收集 189 段视频"}, {"artifact": "deck", "quote": "189 段视频经过 target configuration 展开成 222 个实例"}]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendices 8.3, 8.5 and 8.7; Figures A2, A4-A5"}, {"source_id": "official-code", "locator": "v2w/metrics/task.py at revision 44b1760c"}],
+      "evidence": [{"artifact": "article", "quote": "任务判定来自 benchmark 作者编写和复核的 task definition 与 evaluator 逻辑，具体门槛随 task family 改变"}, {"artifact": "deck", "quote": "人工复核的对象级评测规则定义任务是否完成，不要求逐像素复刻"}]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.2; Appendices 7 and 8.3"}, {"source_id": "official-code", "locator": "README.md and docs/benchmark.md at revision 44b1760c"}],
+      "evidence": [{"artifact": "article", "quote": "Agent 明确看不到什么？"}, {"artifact": "deck", "quote": "reference geometry、trajectory 和 judge 全部隐藏"}]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 3.3; Appendix 9.7; Equation 30"}, {"source_id": "official-code", "locator": "v2w/scoring.py:219-305 and v2w/config/score.json at revision 44b1760c"}],
+      "evidence": [{"artifact": "article", "quote": "V2WScore = Build × (F + G + D) / 3"}, {"artifact": "article", "quote": "80.6 只用于解释公式"}]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "official-code", "official-data"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix 8.4; Figure A3"}, {"source_id": "official-code", "locator": "v2w/metrics/task.py:652-675 at revision 44b1760c"}, {"source_id": "official-data", "locator": "published DROID upright-bottle worked-example package and execution record"}],
+      "evidence": [{"artifact": "article", "quote": "0.4 秒抓住瓶子，2.6 秒开始移动，12.8 秒松手，19.2 秒才完成终态判定"}, {"artifact": "deck", "quote": "success = geometry_ok and released and quiescent"}]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4; Table 2; Appendices 7.5, 10 and 11"}],
+      "evidence": [{"artifact": "article", "quote": "不能概括成“整个重建最准确”"}, {"artifact": "deck", "quote": "最强系统 build 约 93%，Task Success 却只有 25.5%"}]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "related-primary"],
+      "source_locators": [{"source_id": "paper", "locator": "Table 1; Section 5"}, {"source_id": "related-primary", "locator": "official arXiv abstracts for six neighboring works"}],
+      "evidence": [{"artifact": "article", "quote": "Video2World 把视频理解、场景重建、目标 embodiment"}, {"artifact": "deck", "quote": "Video2World 位于 policy、real-to-sim、3D reconstruction 与 simulator coding 的交叉处"}]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [{"source_id": "paper", "locator": "Sections 4.2 and 6; Appendices 8.5-8.7, 9.4-9.5, 10-13; Table A12"}, {"source_id": "official-code", "locator": "public repository and scorer at revision 44b1760c"}],
+      "evidence": [{"artifact": "article", "quote": "论文没有解释 222 与 215 的七个实例差额，也无法确定这里指哪张表"}, {"artifact": "deck", "quote": "OpenCode、Codex CLI、Claude Code 使用的 harness 不同"}]
+    }
+  ],
+  "source_visuals": [
+    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"Figure 1","status":"reused","rationale":"The task overview is the clearest visual statement of video-to-executable-world evaluation.","placements":[{"artifact":"article","locator":"原论文 Figure 1"},{"artifact":"deck","locator":"原论文 Figure 1"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure 1（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/figure-1.png"]},
+    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"Figure 2","status":"reused","rationale":"The pipeline explains the sandbox, package and hidden evaluation sequence.","placements":[{"artifact":"article","locator":"原论文 Figure 2"},{"artifact":"deck","locator":"原论文 Figure 2"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure 2（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/figure-2.png"]},
+    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"Figure 3","status":"reused","rationale":"Human preference and representative executions contextualize HAR.","placements":[{"artifact":"deck","locator":"Figure 3 · 12 名内部 rater"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure 3（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/human-study.png"]},
+    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"Figure 4","status":"reused","rationale":"It directly demonstrates that geometric fidelity is related to but does not guarantee task success.","placements":[{"artifact":"article","locator":"原论文 Figure 4"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure 4（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/geometry-function.svg"]},
+    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"Figure 5","status":"reused","rationale":"It records source-to-simulation effector agreement for successful HAR cases.","placements":[{"artifact":"deck","locator":"Figure 5 · 40 个成功 HAR instances"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure 5（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/effector-agreement.png"]},
+    {"id":"figure-a1","kind":"figure","label":"Figure A1","source_id":"paper","source_locator":"Appendix 8.2, Figure A1","status":"reused","rationale":"The complete family inventory makes the 222-instance denominator inspectable.","placements":[{"artifact":"article","locator":"原论文 Figure A1"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A1（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/task-family-counts.svg"]},
+    {"id":"figure-a2","kind":"figure","label":"Figure A2","source_id":"paper","source_locator":"Appendix 8.3, Figure A2","status":"reused","rationale":"It exposes how a video becomes an object-level evaluation specification.","placements":[{"artifact":"article","locator":"原论文 Figure A2"},{"artifact":"deck","locator":"原论文 Figure A2"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A2（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/annotation-example.png"]},
+    {"id":"figure-a3","kind":"figure","label":"Figure A3","source_id":"paper","source_locator":"Appendix 8.4, Figure A3","status":"reused","rationale":"This is the paper's complete worked evaluation example.","placements":[{"artifact":"article","locator":"原论文 Figure A3"},{"artifact":"deck","locator":"原论文 Figure A3"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A3（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/worked-evaluation-example.png"]},
+    {"id":"figure-a4","kind":"figure","label":"Figure A4","source_id":"paper","source_locator":"Appendix 8.5, Figure A4","status":"reused","rationale":"It documents HAR outcomes and the limited scope of recorded trial histories.","placements":[{"artifact":"article","locator":"原论文 Figure A4"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A4（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/har-source-disclosure.svg"]},
+    {"id":"figure-a5","kind":"figure","label":"Figure A5","source_id":"paper","source_locator":"Appendix 8.7, Figure A5","status":"reused","rationale":"It gives concrete counterexamples separating task completion from geometry.","placements":[{"artifact":"article","locator":"原论文 Figure A5"},{"artifact":"deck","locator":"原论文 Figure A5"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A5（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/construction-cases.png"]},
+    {"id":"figure-a6","kind":"figure","label":"Figure A6","source_id":"paper","source_locator":"Appendix 10, Figure A6","status":"reused","rationale":"The plot provides the exact direct-reuse and adaptation comparison under shifted layouts.","placements":[{"artifact":"article","locator":"原论文 Figure A6"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A6（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/rq2-paper.svg"]},
+    {"id":"figure-a7","kind":"figure","label":"Figure A7","source_id":"paper","source_locator":"Appendix 12, Figure A7","status":"reused","rationale":"It shows successful completion despite pose disagreement.","placements":[{"artifact":"deck","locator":"A7 · 堆叠成功"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A7（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-pose.png"]},
+    {"id":"figure-a8","kind":"figure","label":"Figure A8","source_id":"paper","source_locator":"Appendix 12, Figure A8","status":"reused","rationale":"It shows why endpoint proximity is insufficient.","placements":[{"artifact":"deck","locator":"A8 · 终点接近通过"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A8（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-receiver.png"]},
+    {"id":"figure-a9","kind":"figure","label":"Figure A9","source_id":"paper","source_locator":"Appendix 12, Figure A9","status":"reused","rationale":"Nine systems on one bowl task reveal geometry/function disagreement.","placements":[{"artifact":"deck","locator":"A9 · 同一 bowl-nesting 视频"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A9（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-nine-bowl.png"]},
+    {"id":"figure-a10","kind":"figure","label":"Figure A10","source_id":"paper","source_locator":"Appendix 12, Figure A10","status":"reused","rationale":"Nine systems on one lift task expose physical-validity failures.","placements":[{"artifact":"deck","locator":"A10 · can 被抬高"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A10（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-nine-lift.png"]},
+    {"id":"figure-a11","kind":"figure","label":"Figure A11","source_id":"paper","source_locator":"Appendix 12, Figure A11","status":"reused","rationale":"It separates task-condition misses from physical-validity rejection for the two nine-model cases.","placements":[{"artifact":"article","locator":"原论文 Figure A11"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A11（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-nine-models.svg"]},
+    {"id":"figure-a12","kind":"figure","label":"Figure A12","source_id":"paper","source_locator":"Appendix 12, Figure A12","status":"reused","rationale":"It explains functional success with temporal mismatch.","placements":[{"artifact":"deck","locator":"A12 · 候选在 7.2 s 完成"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A12（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-egocentric.png"]},
+    {"id":"figure-a13","kind":"figure","label":"Figure A13","source_id":"paper","source_locator":"Appendix 12, Figure A13","status":"reused","rationale":"It shows distinct outcomes across two target robots for one demonstration.","placements":[{"artifact":"article","locator":"原论文 Figure A13"},{"artifact":"deck","locator":"A13 · 同一 RoboDojo 视频"}],"permission_status":"verified-allowed","permission_basis":"Paper is licensed CC BY-SA 4.0.","credit":"原论文 Figure A13（CC BY-SA 4.0）","asset_paths":["/lib/papers/video2world/case-native-final.png"]},
+    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"Section 1, Table 1","status":"redrawn","rationale":"The paper's capability matrix is reorganized into a reader-oriented comparison and extended only with checked primary abstracts.","placements":[{"artifact":"article","locator":"Video2World 把视频理解、场景重建"},{"artifact":"deck","locator":"Video2World 位于 policy"}],"permission_status":"not-applicable","permission_basis":"Facts are restated in original HTML tables; no source pixels reused.","credit":"根据原论文 Table 1 与相邻工作官方摘要整理","asset_paths":[]},
+    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"Section 3.3, Table 2","status":"redrawn","rationale":"The complete values are reproduced in HTML and headline values are redrawn as an accessible SVG.","placements":[{"artifact":"article","locator":"根据论文 Table 2 重绘"},{"artifact":"deck","locator":"根据原论文 Table 2 重绘"}],"permission_status":"not-applicable","permission_basis":"Original SVG composition using published values.","credit":"根据原论文 Table 2 重绘","asset_paths":["/lib/papers/video2world/results.svg"]},
+    {"id":"table-a1","kind":"table","label":"Table A1","source_id":"paper","source_locator":"Appendix 7, Table A1","status":"omitted","rationale":"The full environment configuration inventory is summarized by named simulator versions and package requirements.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a2","kind":"table","label":"Table A2","source_id":"paper","source_locator":"Appendix 8.1, Table A2","status":"omitted","rationale":"Per-source counts are reproduced in the Q3 HTML table.","placements":[],"permission_status":"not-applicable","permission_basis":"Values restated without source layout.","credit":"","asset_paths":[]},
+    {"id":"table-a3","kind":"table","label":"Table A3","source_id":"paper","source_locator":"Appendix 8.2, Table A3","status":"omitted","rationale":"The 39-family inventory is provided in original Figure A1 and prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a4","kind":"table","label":"Table A4","source_id":"paper","source_locator":"Appendix 8.2, Table A4","status":"omitted","rationale":"Task composition details are summarized by source and target embodiment in Q3.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a5","kind":"table","label":"Table A5","source_id":"paper","source_locator":"Appendix 8.3, Table A5","status":"omitted","rationale":"Hidden annotation availability is explained as the public-versus-hidden boundary.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a6","kind":"table","label":"Table A6","source_id":"paper","source_locator":"Appendix 8.4, Table A6","status":"omitted","rationale":"Worked-example inputs, controls and execution counts are narrated with exact values beside Figure A3.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a7","kind":"table","label":"Table A7","source_id":"paper","source_locator":"Appendix 8.4, Table A7","status":"omitted","rationale":"Worked-example metric values and event times are reproduced in prose and the case slide.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a8","kind":"table","label":"Table A8","source_id":"paper","source_locator":"Appendix 8.4, Table A8","status":"omitted","rationale":"The upright-bottle judge thresholds are explained directly with inspected code.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a9","kind":"table","label":"Table A9","source_id":"paper","source_locator":"Appendix 8.5, Table A9","status":"omitted","rationale":"Reference-construction workflows are summarized in the HAR discussion.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a10","kind":"table","label":"Table A10","source_id":"paper","source_locator":"Appendix 8.5, Table A10","status":"omitted","rationale":"Privileged information available to HAR is enumerated in prose next to Figure A4.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a11","kind":"table","label":"Table A11","source_id":"paper","source_locator":"Appendix 9, Table A11","status":"omitted","rationale":"HAR outcome attribution is reproduced with exact instance counts in Q5.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a12","kind":"table","label":"Table A12","source_id":"paper","source_locator":"Appendix 9.5, Table A12","status":"omitted","rationale":"All three per-instance denominators and the missing cross-reference are discussed explicitly in Q6.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a13","kind":"table","label":"Table A13","source_id":"paper","source_locator":"Appendix 9.7, Table A13","status":"omitted","rationale":"V2WScore weights and thresholds are reproduced from the public scorer and score.json.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a14","kind":"table","label":"Table A14","source_id":"paper","source_locator":"Appendix 9, Table A14","status":"omitted","rationale":"Secondary robustness values are not needed to explain the primary score path.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a15","kind":"table","label":"Table A15","source_id":"paper","source_locator":"Appendix 10, Table A15","status":"omitted","rationale":"Cross-execution counts are reported exactly in prose and Figure A6 is retained.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a16","kind":"table","label":"Table A16","source_id":"paper","source_locator":"Appendix 10, Table A16","status":"omitted","rationale":"Per-model adaptation details are secondary to the paired aggregate and retained Figure A6.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]},
+    {"id":"table-a17","kind":"table","label":"Table A17","source_id":"paper","source_locator":"Appendix 11, Table A17","status":"omitted","rationale":"Per-episode cost and wall-clock values for the key systems are reproduced in prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source layout not reused.","credit":"","asset_paths":[]}
+  ],
+  "figures": [
+    {"path":"/lib/papers/video2world/cover.svg","origin":"generated","source_id":"paper","source_locator":"paper overview","credit":"原创任务示意封面","license_status":"not-applicable","license_basis":"Original explanatory composition.","used_in":["article"]},
+    {"path":"/lib/papers/video2world/protocol.svg","origin":"generated","source_id":"paper","source_locator":"Sections 3-5 and Appendices 7-9","credit":"根据论文与公开 benchmark 文档原创绘制","license_status":"not-applicable","license_basis":"Original explanatory composition.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/results.svg","origin":"author-redrawn","source_visual_id":"table-2","source_id":"paper","source_locator":"Table 2","credit":"根据原论文 Table 2 重绘","license_status":"not-applicable","license_basis":"Original SVG using published numbers.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/figure-1.png","origin":"paper-original","source_visual_id":"figure-1","source_id":"paper","source_locator":"Figure 1","credit":"原论文 Figure 1（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/figure-2.png","origin":"paper-original","source_visual_id":"figure-2","source_id":"paper","source_locator":"Figure 2","credit":"原论文 Figure 2（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/human-study.png","origin":"paper-original","source_visual_id":"figure-3","source_id":"paper","source_locator":"Figure 3","credit":"原论文 Figure 3（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/geometry-function.svg","origin":"paper-original","source_visual_id":"figure-4","source_id":"paper","source_locator":"Figure 4","credit":"原论文 Figure 4（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/video2world/effector-agreement.png","origin":"paper-original","source_visual_id":"figure-5","source_id":"paper","source_locator":"Figure 5","credit":"原论文 Figure 5（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/task-family-counts.svg","origin":"paper-original","source_visual_id":"figure-a1","source_id":"paper","source_locator":"Figure A1","credit":"原论文 Figure A1（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/video2world/annotation-example.png","origin":"paper-original","source_visual_id":"figure-a2","source_id":"paper","source_locator":"Figure A2","credit":"原论文 Figure A2（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/worked-evaluation-example.png","origin":"paper-original","source_visual_id":"figure-a3","source_id":"paper","source_locator":"Figure A3","credit":"原论文 Figure A3（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/har-source-disclosure.svg","origin":"paper-original","source_visual_id":"figure-a4","source_id":"paper","source_locator":"Figure A4","credit":"原论文 Figure A4（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/video2world/construction-cases.png","origin":"paper-original","source_visual_id":"figure-a5","source_id":"paper","source_locator":"Figure A5","credit":"原论文 Figure A5（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article","deck"]},
+    {"path":"/lib/papers/video2world/rq2-paper.svg","origin":"paper-original","source_visual_id":"figure-a6","source_id":"paper","source_locator":"Figure A6","credit":"原论文 Figure A6（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/video2world/case-pose.png","origin":"paper-original","source_visual_id":"figure-a7","source_id":"paper","source_locator":"Figure A7","credit":"原论文 Figure A7（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/case-receiver.png","origin":"paper-original","source_visual_id":"figure-a8","source_id":"paper","source_locator":"Figure A8","credit":"原论文 Figure A8（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/case-nine-bowl.png","origin":"paper-original","source_visual_id":"figure-a9","source_id":"paper","source_locator":"Figure A9","credit":"原论文 Figure A9（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/case-nine-lift.png","origin":"paper-original","source_visual_id":"figure-a10","source_id":"paper","source_locator":"Figure A10","credit":"原论文 Figure A10（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/case-nine-models.svg","origin":"paper-original","source_visual_id":"figure-a11","source_id":"paper","source_locator":"Figure A11","credit":"原论文 Figure A11（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article"]},
+    {"path":"/lib/papers/video2world/case-egocentric.png","origin":"paper-original","source_visual_id":"figure-a12","source_id":"paper","source_locator":"Figure A12","credit":"原论文 Figure A12（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["deck"]},
+    {"path":"/lib/papers/video2world/case-native-final.png","origin":"paper-original","source_visual_id":"figure-a13","source_id":"paper","source_locator":"Figure A13","credit":"原论文 Figure A13（CC BY-SA 4.0）","license_status":"verified-allowed","license_basis":"Paper is licensed CC BY-SA 4.0.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},
+    "viewports": [{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],
+    "tested_surfaces": {"article_body":true,"embedded_deck":true,"standalone_deck":true},
+    "language_review": {"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},
+    "interactions": {"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},
+    "inspected_slides": ["opening","densest","largest-table-or-code","final"]
+  }
+}
