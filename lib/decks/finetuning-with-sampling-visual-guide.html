@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Finetuning with Sampling visual guide</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"></head>
+<body>
+<div class="viewport"><main class="stage" aria-label="Finetuning with Sampling 论文图解">
+  <section class="slide active">
+    <div class="meta"><span>01 · Problem</span><span>arXiv:2610.02140</span></div>
+    <h1>离 base model 太远的 expert traces，会让 SFT 更难学</h1>
+    <p class="lead">作者保留标准 SFT loss，先用 base model 重写 expert trajectory，使训练数据更接近学生模型自己的表达分布。</p>
+    <div class="content"><div class="grid g3"><div class="card red"><h3>Off-policy expert</h3><p>答案正确，但 token sequence 可能处在 base model 很低概率的区域。</p></div><div class="card blue"><h3>Projection sampling</h3><p>保留 expert information，以 base likelihood 为方向反复重写 suffix。</p></div><div class="card green"><h3>Ordinary SFT</h3><p>最后仍使用标准 cross-entropy，不修改 optimizer objective。</p></div></div></div>
+    <div class="foot"><span>Paper Sections 1 and 4</span><span>1 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>02 · Target distribution</span><span>information projection</span></div>
+    <h2>理想目标：在所有正确答案中，保留 base model 原来的相对概率</h2>
+    <div class="content"><div class="formula">p_C(x) = p_base(x) · 1[x ∈ C] / Z</div><div class="grid g2"><div class="card"><h3>C 是什么</h3><p>与 expert trajectory 信息等价的集合。数学和 chemistry 可近似为 final answer 正确；medical 使用 semantic equivalence。</p></div><div class="card"><h3>为什么难采样</h3><p>直接 rejection sampling 等于不断让 base model 自己尝试。hard tasks 上可能几乎采不到正确 trajectory。</p></div></div></div>
+    <div class="foot"><span>Paper Section 4.1, Definition 1 and Proposition 1</span><span>2 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>03 · Ideal algorithm</span><span>blockwise MH</span></div>
+    <h2>论文推导的算法是 Metropolis-Hastings</h2>
+    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Start</strong><p>从正确 expert trajectory τ 开始。</p></div><div class="step"><b>2</b><strong>Cut</strong><p>随机选择 token position m。</p></div><div class="step"><b>3</b><strong>Propose</strong><p>把 prefix 与 expert solution 放进 prompt，重写 suffix。</p></div><div class="step"><b>4</b><strong>Accept</strong><p>理论上按 target density 与双向 proposal ratio 随机接受。</p></div><div class="step"><b>5</b><strong>Repeat</strong><p>逐 block、逐 MCMC step 移向 target distribution。</p></div></div></div>
+    <div class="foot"><span>Paper Algorithm 1 and Sections 4.2-4.3</span><span>3 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>04 · Released implementation</span><span>greedy approximation</span></div>
+    <h2>公开代码没有执行 MH acceptance</h2>
+    <div class="content"><pre class="code">target_log_prob_prop = get_logprobs_vLLM(...)
+
+if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
+    gen = prop
+    target_log_prob_cur = target_log_prob_prop</pre><div class="callout red"><p>代码比较的是 sequence average log probability。它没有计算 κ(x|x′)/κ(x′|x)，也没有随机 acceptance，因此论文的 stationary-distribution 证明不能直接用于这段实现。</p></div></div>
+    <div class="foot"><span>Official repo revision 6d3e9f0, boost_sci.py lines 188-220; boost_math.py lines 189-227</span><span>4 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>05 · Real case</span><span>Appendix A chemistry</span></div>
+    <h2>真实 case：把同一条配平方程解法改写成 base model 更常写的形式</h2>
+    <div class="content"><div class="grid g2"><div class="card"><h3>Question</h3><p>Balance CO₂ + H₂O → C₃H₆O₃ + O₂, keeping reactant and product order.</p></div><div class="card"><h3>Information to preserve</h3><p>最终系数与守恒关系必须正确。proposal prompt 同时提供原题、expert solution 和当前 partial response。</p></div></div><div class="flow" style="--n:4"><div class="step"><b>A</b><strong>Prefix</strong><p>从当前 response 随机截断。</p></div><div class="step"><b>B</b><strong>Regenerate</strong><p>base model 继续写完整 reasoning。</p></div><div class="step"><b>C</b><strong>Compare</strong><p>只保留平均 log probability 更高的 candidate。</p></div><div class="step"><b>D</b><strong>Grade</strong><p>生成结束后记录 balanced-equation correctness。</p></div></div></div>
+    <div class="foot"><span>Paper Appendix A; official boost_sci.py lines 315-368</span><span>5 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>06 · Data boundary</span><span>correctness is not guaranteed</span></div>
+    <h2>生成脚本会记录错误，但仍把所有 rows 写入文件</h2>
+    <div class="content"><div class="grid g2"><div class="card red"><h3>Code behavior</h3><p>每条 boosted response 都带 <code>is_correct</code>，随后无条件调用 <code>append_jsonl(out_path, rec)</code>。</p></div><div class="card orange"><h3>README behavior</h3><p>README 建议合并 JSONL 并重命名 prompt / response 作为 SFT 数据，没有说明过滤 <code>is_correct=0</code>。</p></div></div><div class="grid g4"><div class="metric"><strong>94.33%</strong><span>Qwen chemistry</span></div><div class="metric"><strong>93.94%</strong><span>Olmo chemistry</span></div><div class="metric"><strong>95.33%</strong><span>math</span></div><div class="metric"><strong>95.86%</strong><span>medical</span></div></div></div>
+    <div class="foot"><span>Paper Appendix C.1; official repo boost_*.py and README</span><span>6 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>07 · Main results</span><span>Qwen models</span></div>
+    <h2>Sampling SFT 在 chemistry 与 math 上胜出</h2>
+    <div class="content"><table class="table"><thead><tr><th>Setting</th><th>Strong on-policy baseline</th><th>Sampling SFT</th><th>Result</th></tr></thead><tbody><tr><td>Qwen2.5-7B chemistry</td><td>OPSD 61.8</td><td class="ours">66.0</td><td class="good">+4.2 points</td></tr><tr><td>Qwen2.5-3B math average</td><td>GRPO 45.7 / UFT 45.2</td><td class="ours">53.4</td><td class="good">+7.7 vs GRPO</td></tr><tr><td>Sampling SFT + RL</td><td>GRPO 45.7</td><td class="ours">56.7</td><td class="good">best math average</td></tr></tbody></table></div>
+    <div class="foot"><span>Paper Table 1. Values are percentage accuracy, shown as points.</span><span>7 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>08 · Negative results</span><span>not universal</span></div>
+    <h2>medical 与 Olmo chemistry 没有超过 OPSD</h2>
+    <div class="content"><div class="grid g2"><div class="card orange"><h3>Qwen medical</h3><p>Sampling SFT 45.8，OPSD 46.6。Sampling 的 prior-capability average 为 51.6，高于 OPSD 的 50.1。</p></div><div class="card orange"><h3>Olmo chemistry</h3><p>Sampling SFT 58.3，OPSD 59.7。Sampling 的 prior-capability average 为 61.7，为表中最高。</p></div></div><div class="callout"><p>论文的强项更像 accuracy-retention trade-off，而不是每个 new-task accuracy 都排名第一。</p></div></div>
+    <div class="foot"><span>Paper Tables 1-2</span><span>8 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>09 · Retention</span><span>why sampling may help</span></div>
+    <h2>数据离 base model 越近，SFT 更新通常越温和</h2>
+    <div class="content"><div class="grid g3"><div class="card"><h3>Vanilla SFT</h3><p>Qwen chemistry prior average 从 base 59.7 降到 52.0。</p></div><div class="card green"><h3>Sampling SFT</h3><p>prior average 58.6，接近 base，并高于 OPSD 的 56.8。</p></div><div class="card"><h3>Cross-model check</h3><p>用 Olmo-boosted data 训练 Qwen，chemistry 只有 57.33，低于 vanilla SFT 61.8。</p></div></div></div>
+    <div class="foot"><span>Paper Table 1 and Appendix B</span><span>9 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>10 · Experimental limits</span><span>what the tables omit</span></div>
+    <h2>结果只有单次 point estimate</h2>
+    <div class="content"><div class="grid g2"><div class="card red"><h3>No uncertainty</h3><ul><li>没有多 seed</li><li>没有 confidence interval</li><li>超参数从多个范围选择，但未说明 validation selection 的完整细节</li></ul></div><div class="card red"><h3>Incomplete release</h3><ul><li>没有 boosted datasets</li><li>没有 training checkpoints</li><li>没有 medical generation pipeline</li><li>仓库未声明 license</li></ul></div></div></div>
+    <div class="foot"><span>Paper Section 5 and Appendix C; official repository revision 6d3e9f0</span><span>10 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>11 · Related work</span><span>where it sits</span></div>
+    <h2>它把“适配 learner”放在数据生成阶段</h2>
+    <div class="content"><table class="table"><thead><tr><th>Route</th><th>How expert information enters</th><th>What changes</th></tr></thead><tbody><tr><td>Vanilla SFT</td><td>直接拟合 expert trajectories</td><td>standard objective, original data</td></tr><tr><td>Importance-weighted / KL SFT</td><td>expert data 保持不变</td><td>training objective</td></tr><tr><td>GRPO / UFT</td><td>expert trace 帮助生成 successful rollouts</td><td>on-policy RL process</td></tr><tr><td>OPSD</td><td>privileged teacher distribution</td><td>self-distillation</td></tr><tr><td class="ours">Sampling SFT</td><td>expert solution 条件化 proposal</td><td class="ours">data distribution before ordinary SFT</td></tr></tbody></table></div>
+    <div class="foot"><span>Paper Related Work and Section 5 baselines</span><span>11 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>12 · Takeaway</span><span>interest 8.0 / 10</span></div>
+    <h2>data shaping 有潜力，theory-to-code gap 仍未补齐</h2>
+    <div class="content"><div class="grid g2"><div class="card blue"><h3>值得继续研究</h3><p>把 expensive expert traces 变成 student-native trajectories，可能兼顾新能力学习与旧能力保留。</p></div><div class="card orange"><h3>下一项实验</h3><p>比较 exact MH、greedy likelihood ascent 与简单 best-of-N rewrite；固定 compute，过滤错误 rows，并报告多 seed。</p></div></div></div>
+    <div class="foot"><span>博客作者兴趣度只表示本人对主题的兴趣，不是论文质量评级。</span><span>12 / 12</span></div>
+  </section>
+</main></div>
+<div class="overview" aria-label="页面总览"></div>
+<nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/finetuning-with-sampling.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
+<script src="/lib/decks/paper-deck-v2.js"></script>
+</body></html>

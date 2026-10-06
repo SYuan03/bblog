@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V-Rubrics visual guide</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
+</head>
+<body>
+<div class="viewport"><main class="stage" aria-label="V-Rubrics 论文图解">
+  <section class="slide active">
+    <div class="meta"><span>01 · Problem</span><span>arXiv:2608.25580</span></div>
+    <h1>答案对了，不代表看图和推理过程也对了</h1>
+    <p class="lead">V-Rubrics 把一条 VQA response 拆成视觉事实、推理和指令遵循等独立 criteria，再把每项 credit 放到相应 prefix。</p>
+    <div class="content"><div class="grid g3"><div class="card red"><h3>Answer-only</h3><p>最终选项正确就是 1，无法识别碰巧答对、图中数字读错或推理跳步。</p></div><div class="card blue"><h3>Rubric items</h3><p>每条 criterion 只判断一个 proposition，并带正负权重。</p></div><div class="card green"><h3>Prefix credit</h3><p>judge 返回支持该 criterion 的 response sentence，训练信号只覆盖到对应 token endpoint。</p></div></div></div>
+    <div class="foot"><span>Paper Sections 1 and 3</span><span>1 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>02 · Data construction</span><span>50,248 examples</span></div>
+    <h2>17 个来源经过过滤、8 次 rollout 和自动 rubric annotation</h2>
+    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Source pool</strong><p>diagram、chart、document、math 与 general VQA。</p></div><div class="step"><b>2</b><strong>Rule filters</strong><p>verifiability、non-triviality、language quality、deduplication。</p></div><div class="step"><b>3</b><strong>8 rollouts</strong><p>固定 SFT policy 生成答案。</p></div><div class="step"><b>4</b><strong>Difficulty</strong><p>0/8 hard；1-5 medium；6-7 simple；8/8 丢弃。</p></div><div class="step"><b>5</b><strong>Annotate</strong><p>Gemini-3-Pro 生成 VF、RC、IF criteria。</p></div></div></div>
+    <div class="foot"><span>Paper Sections 3.2-3.4 and Appendix C</span><span>2 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>03 · Dataset</span><span>rubric inventory</span></div>
+    <h2>50K 样本对应 352,938 条 criterion</h2>
+    <div class="content"><div class="grid g4"><div class="metric"><strong>209,436</strong><span>Visual Faithfulness，59.3%</span></div><div class="metric"><strong>101,369</strong><span>Reasoning Consistency，28.7%</span></div><div class="metric"><strong>42,133</strong><span>Instruction Following，11.9%</span></div><div class="metric"><strong>未报告</strong><span>人工抽样审核或 annotator agreement。</span></div></div></div>
+    <div class="foot"><span>Paper Appendix C.2 and Table 4</span><span>3 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>04 · Real data row</span><span>AI2D original_id 2501</span></div>
+    <h2>真实 case：一张潮汐示意图被拆成六项检查</h2>
+    <p class="lead">问题是 “What is represented in this image?”，reference option (3) 为 spring tide。数据中的 rs_score 是 0/8，因此该样本属于 hard。</p>
+    <div class="content"><table class="table"><thead><tr><th>Criterion</th><th>Type</th><th>Weight</th><th>要求</th></tr></thead><tbody><tr><td>Identify_Objects</td><td>VF</td><td>5</td><td>识别 Sun、Earth、Moon。</td></tr><tr><td>Visual_Alignment</td><td>VF</td><td>5</td><td>指出三者在一条直线上。</td></tr><tr><td>Tidal_Bulge_Observation</td><td>VF</td><td>4</td><td>识别 ocean tidal bulges。</td></tr><tr><td>Reasoning_Alignment_Effect</td><td>RC</td><td>4</td><td>解释引力叠加造成最高高潮。</td></tr><tr><td>Selection_of_Spring_Tide</td><td>IF</td><td>5</td><td>选择 spring tide / option 3。</td></tr><tr><td>Distinguish_from_Neap_Tide</td><td>RC</td><td>3</td><td>说明 neap tide 需要 90° angle。</td></tr></tbody></table></div>
+    <div class="foot"><span>Official Hugging Face dataset row: uid chart_02501_3c2e6864</span><span>4 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>05 · Partial credit</span><span>same case</span></div>
+    <h2>只答 “spring tide” 会得到什么？</h2>
+    <div class="content"><div class="grid g2"><div class="card"><h3>Rubric score</h3><p>若 judge 只判定 Selection_of_Spring_Tide 满足，则正权重总和为 26，rubric score = 5 / 26 = 0.1923。</p></div><div class="card"><h3>Semantic blend in paper</h3><p>若 final answer reward 为 1 且 α=0.5，则 R = 0.5×1 + 0.5×0.1923 = 0.5962。训练时还会组内标准化。</p></div></div><div class="callout red"><p>这个分数是按公开 row 与论文公式重算。实际 judge 可能对某些 criterion 给出不同 yes/no，因此不是一条已观察到的训练 log。</p></div></div>
+    <div class="foot"><span>Paper Equations 3-7; public dataset row 2501</span><span>5 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>06 · Judge boundary</span><span>text-only rubric verification</span></div>
+    <h2>rubric judge 不看原图</h2>
+    <div class="content"><div class="flow" style="--n:4"><div class="step"><b>INPUT</b><strong>Model response</strong><p>模型生成的完整文字。</p></div><div class="step"><b>INPUT</b><strong>One criterion</strong><p>Gemini 预先写好的 self-contained 描述。</p></div><div class="step"><b>JUDGE</b><strong>Qwen3-VL-235B</strong><p>输出 yes / no；prefix mode 还返回支持句。</p></div><div class="step"><b>CREDIT</b><strong>Score + span</strong><p>给整条 sequence 或 prefix tokens 构造 advantage。</p></div></div><div class="callout"><p>如果 annotation 漏掉了图中事实，训练 judge 无法回到 raw image 补救；Visual Faithfulness 的上限受 rubric 质量约束。</p></div></div>
+    <div class="foot"><span>Paper Sections 3.5 and 4.1; repository sequence_rubric_reward.py</span><span>6 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>07 · Prefix mechanism</span><span>component-wise GRPO</span></div>
+    <h2>每个 criterion 单独标准化，再只影响相关 prefix</h2>
+    <div class="content"><div class="formula">Aₜ = α z(R_ans) + (1 - α) Σⱼ ρⱼ z(sⱼ) · 1[t ≤ tⱼ,end]</div><div class="grid g3"><div class="card"><h3>Component-wise</h3><p>answer 与每条 rubric 分别在 rollout group 内求 z-score。</p></div><div class="card"><h3>Prefix mask</h3><p>支持句结束位置为 tⱼ,end；更早 token 接收这项 credit。</p></div><div class="card"><h3>Fallback</h3><p>span 无法可靠对齐时，这项 credit 回退为 sequence-wide。</p></div></div></div>
+    <div class="foot"><span>Paper Equations 5-7; repository fuzzy cutoff is 60.</span><span>7 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>08 · Main result</span><span>Tables 1-2</span></div>
+    <h2>相对 answer-only GRPO，rubric 的平均增量有限但方向为正</h2>
+    <div class="content"><div class="grid g2"><div class="card blue"><h3>General + knowledge</h3><div class="barset"><div class="barrow"><span>SFT</span><div class="track"><i class="fill gray" style="--v:75%"></i></div><b>64.93</b></div><div class="barrow"><span>Answer GRPO</span><div class="track"><i class="fill gray" style="--v:83%"></i></div><b>66.25</b></div><div class="barrow"><span>Rubric GRPO</span><div class="track"><i class="fill" style="--v:94%"></i></div><b>68.04</b></div></div></div><div class="card blue"><h3>Visual reasoning</h3><div class="barset"><div class="barrow"><span>SFT</span><div class="track"><i class="fill gray" style="--v:68%"></i></div><b>58.45</b></div><div class="barrow"><span>Answer GRPO</span><div class="track"><i class="fill gray" style="--v:91%"></i></div><b>61.94</b></div><div class="barrow"><span>Rubric GRPO</span><div class="track"><i class="fill" style="--v:95%"></i></div><b>62.45</b></div></div></div></div></div>
+    <div class="foot"><span>Unweighted averages of displayed metrics. Rubric vs answer-only: +1.79 and +0.51 points.</span><span>8 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>09 · Negative results</span><span>not a uniform lift</span></div>
+    <h2>部分 benchmark 上，rubric model 反而低于 answer-only GRPO</h2>
+    <div class="content"><table class="table"><thead><tr><th>Metric</th><th>Answer GRPO</th><th>Rubric GRPO</th><th>Delta</th></tr></thead><tbody><tr><td>MMBench-Dev</td><td>86.94</td><td>86.51</td><td class="bad">-0.43</td></tr><tr><td>MathVerse V/O</td><td>52.16</td><td>49.37</td><td class="bad">-2.79</td></tr><tr><td>CharXiv reasoning</td><td>57.00</td><td>56.60</td><td class="bad">-0.40</td></tr><tr><td>MathVision test</td><td>56.71</td><td>58.88</td><td class="good">+2.17</td></tr><tr><td>LogicVista</td><td>60.63</td><td>62.42</td><td class="good">+1.79</td></tr></tbody></table></div>
+    <div class="foot"><span>Paper Tables 1-2. Deltas are reproduced calculations in percentage points.</span><span>9 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>10 · Ablation warning</span><span>paper vs released defaults</span></div>
+    <h2>两个公开 launcher 同时改变了 reward budget 与 credit assignment</h2>
+    <div class="content"><table class="table"><thead><tr><th>Released mode</th><th>Answer</th><th>Format</th><th>Rubric</th><th>Credit</th></tr></thead><tbody><tr><td>rubric-sequence</td><td>0.10</td><td>0.10</td><td>0.80</td><td>sequence-level</td></tr><tr><td>rubric-prefix</td><td>0.50</td><td>0.05</td><td>0.45</td><td>component + prefix</td></tr></tbody></table><div class="callout red"><p>论文 Table 3 报告 67.74→68.04，并说差异包含 component-wise standardization 与 localization。若用公开 canonical defaults 复现，还会同时改变 reward budget；当前材料不足以把 0.30 points 归给单一机制。</p></div></div>
+    <div class="foot"><span>Official repo revision 6515819, training/rl/README.md and paper_grpo.sh</span><span>10 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>11 · Reproducibility</span><span>known mismatches</span></div>
+    <h2>代码公开程度较高，但 paper run 仍需要记录 overrides</h2>
+    <div class="content"><div class="grid g2"><div class="card green"><h3>Released</h3><ul><li>50K dataset 与 rubric schema</li><li>answer、sequence rubric、prefix rubric reward code</li><li>VERL patch、evaluation runner、tests</li></ul></div><div class="card red"><h3>Needs clarification</h3><ul><li>paper learning rate 2e-6；launcher default 1e-6</li><li>paper answer baseline batch 480；launcher modes default 192</li><li>Gemini annotations 没有人工 audit</li><li>上游图片 licenses 不统一</li></ul></div></div></div>
+    <div class="foot"><span>Paper Table 6; official repository revision 6515819</span><span>11 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>12 · Takeaway</span><span>interest 7.5 / 10</span></div>
+    <h2>可复用的设计：把回答拆成可独立判断的 proposition</h2>
+    <div class="content"><div class="grid g2"><div class="card blue"><h3>What works</h3><p>final answer、visual facts、reasoning steps 与 instruction constraints 不再挤进一个标量；模型可以得到局部 credit。</p></div><div class="card orange"><h3>Next experiment</h3><p>固定同一 reward budget，只改变 sequence、component 和 prefix；同时让 judge 看到原图，并抽样做人类 annotation audit。</p></div></div></div>
+    <div class="foot"><span>博客作者兴趣度只表示本人对主题的兴趣，不是论文质量评级。</span><span>12 / 12</span></div>
+  </section>
+</main></div>
+<div class="overview" aria-label="页面总览"></div>
+<nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/v-rubrics.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
+<script src="/lib/decks/paper-deck-v2.js"></script>
+</body></html>

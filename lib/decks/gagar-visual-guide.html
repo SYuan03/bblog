@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GAGAR visual guide</title>
+  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
+</head>
+<body>
+<div class="viewport"><main class="stage" aria-label="GAGAR 论文图解">
+  <section class="slide active">
+    <div class="meta"><span>01 · Problem</span><span>arXiv:2609.32577</span></div>
+    <h1>测试都通过了，RL 仍不知道哪个 patch 更值得学</h1>
+    <p class="lead">GAGAR 在同一道 coding task 的 passing rollouts 之间加入质量排序，再重新分配正 advantage。</p>
+    <div class="content">
+      <div class="grid g3">
+        <div class="card red"><h3>Binary reward</h3><p>所有通过测试的 trajectory 得到同样 reward。一次精准修复和一次带有多余改动的修复没有区别。</p></div>
+        <div class="card blue"><h3>Agentic grading</h3><p>grader 联合查看 task、repository、trajectory、patch 与 test output，只给 passing candidates 排序。</p></div>
+        <div class="card green"><h3>Redistribution</h3><p>低质量通过样本让出一部分 advantage，高质量样本得到更多训练权重。</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Paper Sections 1 and 3</span><span>1 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>02 · Training object</span><span>mixed-outcome group</span></div>
+    <h2>训练单位是一组 16 条 rollout</h2>
+    <p class="lead">动态采样只保留同时包含成功与失败的 groups。基础 advantage 是组内二元 reward 减去平均 reward。</p>
+    <div class="content">
+      <div class="flow" style="--n:4">
+        <div class="step"><b>INPUT</b><strong>同一 task</strong><p>相同 repository 初始状态与任务要求。</p></div>
+        <div class="step"><b>ROLL OUT</b><strong>16 trajectories</strong><p>每条包含 reasoning、tool calls、observations 与最终 patch。</p></div>
+        <div class="step"><b>RUN TESTS</b><strong>R ∈ {0,1}</strong><p>基础 verifier 只判断可执行测试是否通过。</p></div>
+        <div class="step"><b>FILTER</b><strong>0 &lt; R̄ &lt; 1</strong><p>全过或全错的 group 不用于这次组内学习。</p></div>
+      </div>
+      <div class="formula">Aᵢ = Rᵢ - R̄</div>
+    </div>
+    <div class="foot"><span>Paper Section 3.1; code-only run uses 128 prompts and 16 rollouts per prompt.</span><span>2 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>03 · Grader</span><span>shared workspace</span></div>
+    <h2>grader 会读轨迹、代码和测试证据</h2>
+    <p class="lead">它先读 rollout summary，再按需检查完整轨迹、代码位置、测试日志，并可运行 targeted checks。</p>
+    <div class="content">
+      <div class="flow" style="--n:5">
+        <div class="step"><b>1</b><strong>Task</strong><p>requirements 与初始 repository。</p></div>
+        <div class="step"><b>2</b><strong>Trajectory</strong><p>Agent 怎样搜索、修改、测试与修正。</p></div>
+        <div class="step"><b>3</b><strong>Patch</strong><p>改了哪些文件与代码位置。</p></div>
+        <div class="step"><b>4</b><strong>Evidence</strong><p>test output 与 grader 自己运行的检查。</p></div>
+        <div class="step"><b>5</b><strong>Ranking</strong><p>先分 tier，再在 tier 内排序，允许 tie。</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Paper Section 3.2. Negative assessments must cite patch, trajectory, or execution evidence.</span><span>3 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>04 · Rubric</span><span>five dimensions</span></div>
+    <h2>五个维度评价 patch 是否接近可合并质量</h2>
+    <div class="content">
+      <div class="grid g5">
+        <div class="card blue"><h3>Approach</h3><p>是否解决 root cause，策略是否合理。</p></div>
+        <div class="card blue"><h3>Precision</h3><p>修改位置是否正确，行为覆盖是否完整。</p></div>
+        <div class="card blue"><h3>Minimality</h3><p>是否只做必要改动，避免无关 refactor。</p></div>
+        <div class="card blue"><h3>Side effects</h3><p>是否破坏周边行为或 public interface。</p></div>
+        <div class="card blue"><h3>Consistency</h3><p>是否复用现有 abstraction 和代码约定。</p></div>
+      </div>
+      <div class="formula">Wᵢ = 0.30 s_app + 0.25 s_prec + 0.20 s_min + 0.15 s_side + 0.10 s_style</div>
+    </div>
+    <div class="foot"><span>Paper Appendix A.1, Table 2 and Equation 5</span><span>4 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>05 · Tier to weight</span><span>T1 / T2 / T3</span></div>
+    <h2>ranking 先变成 factor，再作用于 positive advantage</h2>
+    <div class="content">
+      <div class="grid g3">
+        <div class="card green"><h3>T1</h3><p>各维度至少 4 分且没有 severe issue。第一名 factor 1.0，后续 tied group 为 0.9。</p></div>
+        <div class="card orange"><h3>T2</h3><p>中间层按 tied-group rank 从 0.85 线性下降到 0.4。</p></div>
+        <div class="card red"><h3>T3</h3><p>unrequested rewrite、test-specific workaround 等严重缺陷，factor 固定为 0.2。</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Paper Appendix A.1, Equation 6</span><span>5 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>06 · Constructed example</span><span>not a released case</span></div>
+    <h2>一个解释性例子：为什么必须重新分配，而不是直接打折</h2>
+    <p class="lead">论文没有发布真实 group。下面只演示 Equation 2，不代表观察到的训练样本。</p>
+    <div class="content">
+      <div class="grid g3">
+        <div class="card"><h3>Group</h3><p>4 条 rollout，2 pass + 2 fail，因此 R̄=0.5。两个 pass 的原始 advantage 都是 +0.5。</p></div>
+        <div class="card"><h3>Quality factors</h3><p>假设两个 passing patches 分别为 T1 与 T3，factor 为 1.0 与 0.2。</p></div>
+        <div class="card"><h3>After redistribution</h3><p>λ=1/(0.5×1.0+0.5×0.2)=1.667，两个 positive advantages 变为 0.833 与 0.167，总和仍为 1。</p></div>
+      </div>
+      <div class="callout red"><p>这是按论文公式构造的教学例。grader prompt、真实候选 patches 与逐项评分没有公开。</p></div>
+    </div>
+    <div class="foot"><span>Constructed from Paper Equations 2-4</span><span>6 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>07 · Safeguard</span><span>λmax = 1.5</span></div>
+    <h2>论文的精确守恒公式与实际 bounded branch 有区别</h2>
+    <div class="content">
+      <div class="grid g2">
+        <div class="card green"><h3>Bound inactive</h3><p>positive-advantage sum 保持不变，failed advantages 不变，group mean 仍为 0。</p></div>
+        <div class="card red"><h3>Bound active</h3><p>λ 被截到 1.5，随后重新减去 group mean。排序保留，但 positive sum 与 failed advantages 不再严格保持。</p></div>
+      </div>
+      <div class="formula">λ_bnd = min(λ, 1.5)</div>
+    </div>
+    <div class="foot"><span>Paper Appendix A.2, Equation 7</span><span>7 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>08 · Main result</span><span>DeepSWE step 28</span></div>
+    <h2>共享 checkpoint 上，GAGAR 同时提高 pass rate 并缩短 trajectory</h2>
+    <div class="content">
+      <div class="grid g3">
+        <div class="metric"><strong>62.2 vs 50.2</strong><span>DeepSWE v1.1 avg@3，GAGAR 对 binary baseline，差 12.0 points。论文写作 12.1，来自未四舍五入值。</span></div>
+        <div class="metric"><strong>111.6 vs 132.3</strong><span>mean main-agent turns，减少 15.6%。</span></div>
+        <div class="metric"><strong>172.9k vs 191.9k</strong><span>mean total token length，减少 9.9%。</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>Paper Section 4.2, Figure 2. Each task uses three samples; headline is avg@3.</span><span>8 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>09 · Quality audit</span><span>30 tasks</span></div>
+    <h2>“代码质量更好”的证据来自一次小规模 LLM judge audit</h2>
+    <div class="content">
+      <div class="grid g3">
+        <div class="metric"><strong>4.03 vs 3.70</strong><span>rubric-weighted quality score。</span></div>
+        <div class="metric"><strong>69.8%</strong><span>passing candidates 的平均 win rate。</span></div>
+        <div class="metric"><strong>65.0%</strong><span>group-first share，ties 被平分。</span></div>
+      </div>
+      <div class="callout red"><p>固定随机抽取 30 个 DeepSWE tasks，由 Claude Opus 5 读取记录过的 trajectories、patches 与 test outcomes。论文没有报告人工复核或 judge agreement。</p></div>
+    </div>
+    <div class="foot"><span>Paper Section 4.3, Figure 3</span><span>9 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>10 · Ablation</span><span>redistribution matters</span></div>
+    <h2>只给低质量 pass 降权，会让正负训练信号失衡</h2>
+    <div class="content">
+      <table class="table">
+        <thead><tr><th>step 28 / DeepSWE</th><th>Full GAGAR</th><th>Downweight only</th></tr></thead>
+        <tbody><tr><td>pass rate avg@3</td><td class="ours">62.2%</td><td>56.2%</td></tr><tr><td>mean turns</td><td class="ours">111.6</td><td>143.5</td></tr><tr><td>mean tokens</td><td class="ours">172.9k</td><td>236.0k</td></tr><tr><td>policy entropy at step 30</td><td class="ours">0.513</td><td class="bad">0.905</td></tr></tbody>
+      </table>
+    </div>
+    <div class="foot"><span>Paper Section 4.4, Figure 4</span><span>10 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>11 · Evidence boundary</span><span>what is missing</span></div>
+    <h2>论文证明了训练曲线改善，没有完成可独立复核的因果链</h2>
+    <div class="content">
+      <div class="grid g2">
+        <div class="card green"><h3>Supported</h3><ul><li>同一 Flash SFT 起点下的 shared-step 对照</li><li>downweight-only ablation</li><li>turn、token 与 pass rate 的一致方向</li></ul></div>
+        <div class="card red"><h3>Not established</h3><ul><li>grader prompt、training tasks、code 与真实 grading records</li><li>多 seed、置信区间和 human code review</li><li>mixed-task final model 中 GAGAR 的独立因果贡献</li></ul></div>
+      </div>
+    </div>
+    <div class="foot"><span>Paper Sections 4-5 and Appendix A; public artifact search checked 2026-10-06.</span><span>11 / 12</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>12 · Takeaway</span><span>interest 8.5 / 10</span></div>
+    <h2>值得借鉴的是 credit design，最需要补的是 grader evidence</h2>
+    <div class="content">
+      <div class="grid g2">
+        <div class="card blue"><h3>可复用</h3><p>把可执行测试保留为 correctness gate，再在 passing trajectories 内比较可维护性；同时守住正负 advantage 的量级。</p></div>
+        <div class="card orange"><h3>下一项实验</h3><p>公开匿名化的 task-group-patch-grade bundle，让人工 reviewer 与不同 grader 重复评分，并报告稳定性和开发者返工时间。</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>博客作者兴趣度只表示本人对主题的兴趣，不是论文质量评级。</span><span>12 / 12</span></div>
+  </section>
+</main></div>
+<div class="overview" aria-label="页面总览"></div>
+<nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/gagar.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
+<script src="/lib/decks/paper-deck-v2.js"></script>
+</body>
+</html>
