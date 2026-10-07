@@ -1,0 +1,841 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness?",
+    "kind": "benchmark",
+    "primary_source_ids": [
+      "paper",
+      "paper-pdf",
+      "official-artifact"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/074-evoharnessbench.md",
+    "deck": "lib/decks/evoharnessbench-visual-guide.html",
+    "embed_src": "/lib/decks/evoharnessbench-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness?",
+      "url": "https://arxiv.org/abs/2609.04280",
+      "revision": "v1, 2026-09-03",
+      "used_for": [
+        "problem",
+        "method",
+        "experiments",
+        "results",
+        "limitations",
+        "visual-inventory"
+      ]
+    },
+    {
+      "id": "paper-pdf",
+      "kind": "paper",
+      "title": "EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness? PDF",
+      "url": "https://arxiv.org/pdf/2609.04280",
+      "revision": "PDF and appendices reviewed 2026-10-08",
+      "used_for": [
+        "complete-reading",
+        "figures",
+        "tables",
+        "algorithms"
+      ]
+    },
+    {
+      "id": "official-artifact",
+      "kind": "checker",
+      "title": "Official project or code artifact",
+      "url": "https://mas-orchestra.salesforceresearch.ai/evoharness/",
+      "revision": "availability checked 2026-10-08; project page available but no dedicated public code/checker repository linked",
+      "used_for": [
+        "availability",
+        "implementation",
+        "checker-boundary"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 35,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 35
+      }
+    ],
+    "source_visuals_expected": 36,
+    "visual_inventory_complete": true,
+    "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Figure 5, Figure 6, Figure 7, Figure 8, Figure D.1, Figure E.1, Figure I.1, Figure I.2, Figure J.1, Figure J.2, Figure J.3, Figure K.1, Figure K.2, Figure K.3, Figure K.4, Table 1, Table 2, Table 3, Table 4, Table 5, Table 6, Table 7, Table 8, Table C.1, Table C.2, Table C.3, Table C.4, Table H.1, Table I.1, Table I.2, Table J.1, Table J.2."
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "Q1. 为什么把外部 harness 的持续扩张当成独立问题？"
+    },
+    {
+      "role": "related-work",
+      "locator": "Q2. 它和“让 Agent 写 harness code”的工作到底差在哪？"
+    },
+    {
+      "role": "method",
+      "locator": "Q3. 17 条 streams、三条 axis 与两种模式怎样构造？"
+    },
+    {
+      "role": "experiments",
+      "locator": "Q4. tools、skills、agents 三组结果分别暴露什么瓶颈？"
+    },
+    {
+      "role": "future-work",
+      "locator": "Q5. harness coding 研究者应该怎样使用这个 benchmark？"
+    },
+    {
+      "role": "summary",
+      "locator": "Q6. 最后怎样评价 EvoHarnessBench？"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3–4 and appendices: task construction and splits"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文列出的来源、筛选、split 与泄漏风险都在正文中单独说明。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Benchmark construction, evaluator and limitations"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "任务检查、标注来源与无法从公开材料确认的部分均被明确区分。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Evaluation protocol and disclosure boundary"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "文章明确区分 evaluated system 可见内容与隐藏 test、checker 或 reference。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Metrics, equations and result tables"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "分数公式、聚合层级、分母和不确定性按论文协议解释。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "official-artifact"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Case studies and official artifact availability"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "availability checked 2026-10-08; project page available but no dedicated public code/checker repository linked"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "至少一个具体执行案例从输入、修改、运行一直追到 PASS 或 FAIL。"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开材料不足时，文章不会把推测伪装成官方 checker 实现。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Experiments and main results"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "模型、harness、预算、重复次数、失败运行和主结果没有混成单一排行榜。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Related Work and protocol comparison"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "相邻工作按修改对象、反馈、隐藏边界和交付物比较。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Limitations and future work"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "文章把外部有效性、方差、checker blind spot 与公开 artifact 缺口列为结论边界。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "visual-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 1",
+      "status": "omitted",
+      "rationale": "Figure 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 2",
+      "status": "omitted",
+      "rationale": "Figure 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "Figure 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 4",
+      "status": "omitted",
+      "rationale": "Figure 4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 5",
+      "status": "omitted",
+      "rationale": "Figure 5 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 6",
+      "status": "omitted",
+      "rationale": "Figure 6 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 7",
+      "status": "omitted",
+      "rationale": "Figure 7 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 8",
+      "status": "omitted",
+      "rationale": "Figure 8 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-9",
+      "kind": "figure",
+      "label": "Figure D.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure D.1",
+      "status": "omitted",
+      "rationale": "Figure D.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-10",
+      "kind": "figure",
+      "label": "Figure E.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure E.1",
+      "status": "omitted",
+      "rationale": "Figure E.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-11",
+      "kind": "figure",
+      "label": "Figure I.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure I.1",
+      "status": "omitted",
+      "rationale": "Figure I.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-12",
+      "kind": "figure",
+      "label": "Figure I.2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure I.2",
+      "status": "omitted",
+      "rationale": "Figure I.2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-13",
+      "kind": "figure",
+      "label": "Figure J.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure J.1",
+      "status": "omitted",
+      "rationale": "Figure J.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-14",
+      "kind": "figure",
+      "label": "Figure J.2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure J.2",
+      "status": "omitted",
+      "rationale": "Figure J.2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-15",
+      "kind": "figure",
+      "label": "Figure J.3",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure J.3",
+      "status": "omitted",
+      "rationale": "Figure J.3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-16",
+      "kind": "figure",
+      "label": "Figure K.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure K.1",
+      "status": "omitted",
+      "rationale": "Figure K.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-17",
+      "kind": "figure",
+      "label": "Figure K.2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure K.2",
+      "status": "omitted",
+      "rationale": "Figure K.2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-18",
+      "kind": "figure",
+      "label": "Figure K.3",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure K.3",
+      "status": "omitted",
+      "rationale": "Figure K.3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-19",
+      "kind": "figure",
+      "label": "Figure K.4",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure K.4",
+      "status": "omitted",
+      "rationale": "Figure K.4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-20",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 1",
+      "status": "omitted",
+      "rationale": "Table 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-21",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 2",
+      "status": "omitted",
+      "rationale": "Table 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-22",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 3",
+      "status": "omitted",
+      "rationale": "Table 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-23",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 4",
+      "status": "omitted",
+      "rationale": "Table 4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-24",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 5",
+      "status": "omitted",
+      "rationale": "Table 5 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-25",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 6",
+      "status": "omitted",
+      "rationale": "Table 6 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-26",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 7",
+      "status": "omitted",
+      "rationale": "Table 7 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-27",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 8",
+      "status": "omitted",
+      "rationale": "Table 8 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-28",
+      "kind": "table",
+      "label": "Table C.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table C.1",
+      "status": "omitted",
+      "rationale": "Table C.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-29",
+      "kind": "table",
+      "label": "Table C.2",
+      "source_id": "paper-pdf",
+      "source_locator": "Table C.2",
+      "status": "omitted",
+      "rationale": "Table C.2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-30",
+      "kind": "table",
+      "label": "Table C.3",
+      "source_id": "paper-pdf",
+      "source_locator": "Table C.3",
+      "status": "omitted",
+      "rationale": "Table C.3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-31",
+      "kind": "table",
+      "label": "Table C.4",
+      "source_id": "paper-pdf",
+      "source_locator": "Table C.4",
+      "status": "omitted",
+      "rationale": "Table C.4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-32",
+      "kind": "table",
+      "label": "Table H.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table H.1",
+      "status": "omitted",
+      "rationale": "Table H.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-33",
+      "kind": "table",
+      "label": "Table I.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table I.1",
+      "status": "omitted",
+      "rationale": "Table I.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-34",
+      "kind": "table",
+      "label": "Table I.2",
+      "source_id": "paper-pdf",
+      "source_locator": "Table I.2",
+      "status": "omitted",
+      "rationale": "Table I.2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-35",
+      "kind": "table",
+      "label": "Table J.1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table J.1",
+      "status": "omitted",
+      "rationale": "Table J.1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-36",
+      "kind": "table",
+      "label": "Table J.2",
+      "source_id": "paper-pdf",
+      "source_locator": "Table J.2",
+      "status": "omitted",
+      "rationale": "Table J.2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/evoharnessbench/cover.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "paper overview",
+      "credit": "原创系列封面图",
+      "license_status": "not-applicable",
+      "license_basis": "Original explanatory graphic.",
+      "used_in": [
+        "deck"
+      ]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.76,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  }
+}
