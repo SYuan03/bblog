@@ -2,14 +2,14 @@
 title: "[2026-10-01] Finetuning with Sampling: SFT Learns Better Than You Think"
 permalink: "/posts/论文解读/finetuning-with-sampling.html"
 date: "2026-10-06T10:30:00+08:00"
-updated: "2026-10-06T14:41:16+08:00"
+updated: "2026-10-07T18:43:19+08:00"
 cover: "/lib/papers/finetuning-with-sampling/cover.svg"
 description: "Sampling SFT 如何把偏离基础模型分布的专家解题记录改写成更易学习的训练数据；逐步区分信息投影、理论采样规则、公开的贪心实现、真实案例与实验结果。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
 hide_post_cover: true
-deck_pages: 12
+deck_pages: 8
 categories:
   - "论文解读"
 tags:
@@ -32,22 +32,22 @@ tags:
 </div>
 
 <section class="deck-wrap" aria-label="Finetuning with Sampling 交互图解">
-  <div class="deck-head"><strong>12 页交互图解 · 信息投影、代码实现、真实样本与结果边界</strong><a href="/lib/decks/finetuning-with-sampling-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>8 页交互图解 · 信息投影、真实样本、理论保证、完整流程与结果边界</strong><a href="/lib/decks/finetuning-with-sampling-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
-    <div class="post-deck-embed-frame"><iframe src="/lib/decks/finetuning-with-sampling-visual-guide.html" title="Finetuning with Sampling 论文图解，共 12 页" allow="fullscreen" loading="eager"></iframe></div>
+    <div class="post-deck-embed-frame"><iframe src="/lib/decks/finetuning-with-sampling-visual-guide.html" title="Finetuning with Sampling 论文图解，共 8 页" allow="fullscreen" loading="eager"></iframe></div>
     <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可点左下角返回文章</span></p>
   </div>
 </section>
 
-<p class="lead">这篇论文没有修改监督微调（SFT）的训练目标，而是先处理数据：把一条正确但不符合基础模型惯常表达的专家解题记录，多次切成前缀和后缀并重写后半段，保留基础模型更容易生成的版本，再做普通 SFT。论文把理想目标写成信息投影（information projection），并用 Metropolis-Hastings（MH，一种按接受概率在候选之间移动的采样算法）推导；公开代码采用的则是“只接受平均概率提高”的贪心搜索。</p>
+<p class="lead">Qwen2.5-3B 直接拿专家答案做 SFT 后，MATH(3,4,5) 同分布测试准确率从 0.315 降到 0.243。论文把问题指向训练数据与基础模型生成分布的距离，并在训练前多次切开、重写专家答案的后缀，只保留基础模型更容易生成的版本。训练阶段仍是普通 SFT。理论部分用 Metropolis-Hastings（MH，一种按接受概率在候选之间移动的采样算法）推导，公开代码采用“只接受平均概率提高”的贪心近似。</p>
 
 <div class="interest"><b>博客作者兴趣度 8.0 / 10</b><span>评分只表示博客作者本人兴趣程度；先改造训练数据的想法很强，但理论算法与公开实现之间的距离需要认真对待</span></div>
 
 <div class="metrics" aria-label="论文关键数字">
-  <div class="metric"><strong>66.0%</strong><span>Qwen 化学任务上的 Sampling SFT 准确率</span></div>
-  <div class="metric"><strong>53.4%</strong><span>Qwen 数学任务平均准确率</span></div>
-  <div class="metric"><strong>10</strong><span>每个文本块做 10 轮候选改写与接受判断</span></div>
-  <div class="metric"><strong>93.94%-95.86%</strong><span>改写后数据的答案正确率</span></div>
+  <div class="metric"><strong>0.315 → 0.243</strong><span>Base → 普通 SFT 的 MATH(3,4,5) 测试准确率</span></div>
+  <div class="metric"><strong>0.534</strong><span>Sampling SFT 的数学新任务平均准确率</span></div>
+  <div class="metric"><strong>99.5%</strong><span>数学实验中的旧能力平均保持率：0.420 / 0.422</span></div>
+  <div class="metric"><strong>0.567</strong><span>Sampling SFT 再接 GRPO 后的数学新任务均分</span></div>
 </div>
 
 <aside class="keypoints">
@@ -126,6 +126,18 @@ if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
 
 这处差别影响理论边界：论文关于 MH **stationary distribution（经过足够多步后保持不变的目标分布）** 和逐步逼近 `p_C` 的结论，只适用于理想的转移规则，不能直接当作公开代码的保证。图 5 只能说明在作者的化学实验中，随着更新次数增加，估计的 KL 距离降低且准确率上升。
 
+### 三条理论保证分别说了什么？
+
+论文的 Proposition 1 证明 `p_C` 是所有满足答案约束的分布中，对 `p_base` 做 KL 投影得到的唯一解。Proposition 2 把这个难以直接采样的目标改写成可执行的 MH 转移：对 `p_C` 使用普通 proposal，与对 `p_base` 使用保证答案等价的 proposal，会得到相同的接受规则。Proposition 3 说明，在这些条件成立时，第 `k+1` 步数据分布到基础模型的 KL 距离不会大于第 `k` 步，即 `KL(π_{k+1} || p_base) ≤ KL(π_k || p_base)`。
+
+第三条保证说的是理想链每走一步都不会离基础模型更远，不代表每条样本的概率严格上升，也不适用于删去了完整接受概率的公开贪心代码。
+
+### Algorithm 1 的完整流程与成本
+
+Algorithm 1 先从专家轨迹开始，按块扩展当前答案。每生成一个新块，算法就在已有部分中随机选切分点，用原题、专家解答与保留的前缀生成同长度候选；随后按完整 MH 接受概率决定是否替换，并在当前块内重复 `N` 次。完成一块后固定当前结果，继续下一块，直到达到最长序列长度 `T`。论文实验使用 `T=1,856`、`N=10`、块大小 `B=32`。
+
+附录 Eq. 9 给出的理论生成量是 `T²N / (4B)`。代入上述参数得到 `1,856² × 10 / (4 × 32) = 269,120`，也就是每条轨迹约 26.9 万个生成 token。它是一次性数据改写的量级估算，不含完整的打分前向计算、失败重试、GPU 吞吐或美元成本。换一个基础模型后，目标分布也随之改变，数据原则上需要重新采样。
+
 ### 真实案例：附录 A 的化学方程式
 
 <div class="case">
@@ -146,11 +158,11 @@ if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
 
 ## Q4. 实验结果能支持多强的结论？
 
-**Sampling SFT 在 Qwen 化学与数学任务上表现较好，也保留了更多旧能力；医疗任务和 Olmo 结果说明它并未在所有任务上超过同策略基线。**
+**Sampling SFT 在 Qwen 数学新任务上得到 0.534，超过 GRPO 的 0.457 和 UFT 的 0.452；再接 GRPO 后达到 0.567。**
 
 <figure class="figure wide">
-  <img src="/lib/papers/finetuning-with-sampling/results.svg" alt="Sampling SFT 在化学、数学、医疗和 Olmo 模型上的结果">
-  <figcaption>根据论文表 1-2 重绘。所有数值都是单次作答准确率，差值单位为百分点；论文没有提供多随机种子结果或误差条。</figcaption>
+  <img src="/lib/papers/finetuning-with-sampling/results.svg" alt="普通 SFT、Sampling SFT、GRPO 和 UFT 在 Qwen2.5-3B 数学实验中的结果">
+  <figcaption>根据论文 Table 1 重绘。所有数值都是 single-shot accuracy；论文没有提供多随机种子结果或误差条。</figcaption>
 </figure>
 
 <div class="table-scroll">
@@ -158,14 +170,16 @@ if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
   <thead><tr><th>实验</th><th>Sampling SFT</th><th>最相关基线</th><th>怎么读</th></tr></thead>
   <tbody>
     <tr><td>Qwen2.5-7B 化学</td><td>66.0</td><td>SFT 61.8；OPSD 61.8</td><td>新任务准确率高 4.2 个百分点；旧能力平均分 58.6，接近基础模型的 59.7。</td></tr>
-    <tr><td>Qwen2.5-3B 数学平均分</td><td>53.4</td><td>GRPO 45.7；UFT 45.2</td><td>Sampling SFT 高 7.7 / 8.2 个百分点；再接强化学习可到 56.7。</td></tr>
+    <tr><td>Qwen2.5-3B 数学平均分</td><td>0.534</td><td>GRPO 0.457；UFT 0.452</td><td>Sampling SFT 高 0.077 / 0.082；再接 GRPO 可到 0.567。</td></tr>
     <tr><td>Qwen2.5-7B 医疗</td><td>45.8</td><td>OPSD 46.6</td><td>新任务准确率低 0.8；旧能力平均分 51.6，高于 OPSD 的 50.1。</td></tr>
     <tr><td>Olmo-3-7B 化学</td><td>58.3</td><td>OPSD 59.7</td><td>新任务准确率低 1.4；旧能力平均分 61.7，为表中最高。</td></tr>
   </tbody>
 </table>
 </div>
 
-一个支持作者机制解释的对照实验是跨模型数据错配：用 Olmo 改写的数据训练 Qwen，化学准确率只有 57.33%，低于普通 SFT 的 61.8%；把 Qwen 改写数据与原始数据各混一半，得到 62.14%，落在普通 SFT 与完整 Qwen Sampling SFT 之间。这说明改写数据的效果依赖目标基础模型，不只是把专家答案写得更流畅。
+在 MATH(3,4,5) 这个与训练题同分布的测试集上，Base 是 0.315，普通 SFT 降到 0.243，Sampling SFT 则达到 0.495。旧能力方面，基础模型在 Chemistry、MMLU、GPQA 三项上的平均分是 0.422，Sampling SFT 为 0.420，保持率为 `0.420 / 0.422 = 99.5%`。Sampling SFT 在这三项上的遗忘也都是表中所有微调方法里最少的。
+
+一个支持作者机制解释的对照实验是跨模型数据错配：用 Olmo 改写的数据训练 Qwen，化学准确率只有 57.33%，低于普通 SFT 的 61.8%；把 Qwen 改写数据与原始数据各混一半，得到 62.14%，落在普通 SFT 与完整 Qwen Sampling SFT 之间。这说明效果依赖数据与目标基础模型的匹配，单纯把专家答案写得更流畅解释不了这组差异。
 
 不过，全部结果都只来自一次实验。论文没有报告多个随机种子或置信区间，也没有把 Sampling SFT 与所有基线的总生成成本放在同一张表里。医疗任务的正确性还依赖 GPT-5-mini 判分，因此 0.8 个百分点的差异不宜过度解读。
 
@@ -177,7 +191,7 @@ if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
 
 数据方面，应明确 SFT 前是否过滤 `is_correct=0`，并同时报告过滤前后样本数、任务覆盖与最终准确率。若保留错误数据行，就需要解释它们为何仍属于正确集合 `C`；若过滤，则数据生成成本和筛选偏差都会改变。
 
-最后，应该发布改写后的数据集、每轮候选被接受或拒绝的记录、模型存档，并补充多随机种子实验。当前仓库只包含化学/数学数据生成和评测脚本，没有医疗任务的数据生成流程，也没有声明仓库许可证。
+最后，应该发布改写后的数据集、每轮候选被接受或拒绝的记录、模型存档，并补充多随机种子实验。当前仓库只包含化学/数学数据生成和评测脚本，没有医疗任务的数据生成流程，也没有声明仓库许可证。README 说明生成程序会输出接受轨迹字段 `trace_boosted`，仓库里仍没有作者实验对应的实际轨迹文件。
 
 ## Q6. 最终应该怎样评价这篇论文？
 
@@ -192,6 +206,6 @@ if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
 
 这篇论文适合研究后训练、蒸馏与数据筛选的读者。我的判断是：想法比当前实证更成熟。它给出了一个清楚的问题表述，也展示了几组有说服力的结果；下一步若能把理论目标、近似采样器与公开数据逐项对齐，研究价值会更扎实。
 
-<p class="source-note">主要来源：论文 v1 全文与附录、官方仓库版本 6d3e9f0bfaa98dcca534247dd35dc1b33dd8c428。代码检查日期：2026-10-06。仓库未发布改写后的数据集、训练模型存档或医疗任务的数据生成流程。</p>
+<p class="source-note">主要来源：论文 v1 全文与附录、官方仓库版本 aa7080885f114fdc5d141f19c09f53008a1c061e。代码检查日期：2026-10-07。仓库未发布改写后的数据集、训练模型存档、实际接受轨迹或医疗任务的数据生成流程。</p>
 
 </div>
