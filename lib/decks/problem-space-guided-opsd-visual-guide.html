@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PS-OPSD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="PS-OPSD 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h1>比 full solution 更好的 PI，会不会是 problem structure？</h1>
+  <p class="lead">PS-OPSD 用 state、goal、constraints 与 transitions 替代完整推理。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>64.32</h3><p>4B</p></div><div class="card green"><h3>65.40</h3><p>8B</p></div><div class="card orange"><h3>0.5%</h3><p>train PI invocation</p></div><div class="card "><h3>8/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1-5</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · STRUCTURE</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>四字段把 reference trace 改写成可行动约束</h2>
+
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>Initial</h3><p>已知状态</p></div><div class="card green"><h3>Goal</h3><p>成功条件</p></div><div class="card orange"><h3>Constraints</h3><p>规则边界</p></div><div class="card "><h3>Transitions</h3><p>operator + preconditions + result</p></div></div></div>
+  <div class="foot"><span>来源：Method section</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · PROTOCOL</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>Student rollout 不变，只替换 teacher context</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Question</strong><p>student only</p></div><div class="step"><b>2</b><strong>Rollout</strong><p>current policy</p></div><div class="step"><b>3</b><strong>Guidance</strong><p>teacher only</p></div><div class="step"><b>4</b><strong>Rescore</strong><p>same tokens</p></div><div class="step"><b>5</b><strong>Forward KL</strong><p>full vocabulary</p></div></div></div>
+  <div class="foot"><span>来源：Algorithm 1</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · EXTRACTOR</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>Guidance 由 35B-A3B model 从 verified solution 提取</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>保留</h3><p>problem dynamics 与 selected path</p></div><div class="card orange"><h3>删除</h3><p>instantiated final answer</p></div></div></div>
+  <div class="foot"><span>来源：data construction</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · ABLATION</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>长度、相关性与顺序分别有贡献</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>4B condition</th><th>Avg</th></tr></thead><tbody><tr><td>Wrong-task matched length</td><td>61.76</td></tr><tr><td>Corrupted order</td><td>62.19</td></tr><tr><td>Flattened fields</td><td>63.61</td></tr><tr><td>PS-OPSD</td><td>64.32</td></tr></tbody></table></div></div>
+  <div class="foot"><span>根据 ablation table 重绘</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>三个 scale 都高于 OPSD</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Scale</th><th>Base</th><th>OPSD</th><th>PS-OPSD</th></tr></thead><tbody><tr><td>1.7B</td><td>36.67</td><td>41.08</td><td>43.12</td></tr><tr><td>4B</td><td>61.76</td><td>61.70</td><td>64.32</td></tr><tr><td>8B</td><td>62.31</td><td>63.58</td><td>65.40</td></tr></tbody></table></div></div>
+  <div class="foot"><span>根据 main table 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · GAME MAP</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>把 game project 写成 implementation-neutral contract</h2>
+
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>Assets/State</h3><p>initial</p></div><div class="card green"><h3>Tests/Goals</h3><p>success</p></div><div class="card orange"><h3>Engine/API</h3><p>constraints</p></div><div class="card "><h3>Plan</h3><p>transitions</p></div></div></div>
+  <div class="foot"><span>本文 game context 映射</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · MISSING</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>关键 setting 与 code 未公开</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>Paper 有</h3><p>method、results、controls</p></div><div class="card red"><h3>Release 缺</h3><p>repo、manifest、exact hyperparameters</p></div></div></div>
+  <div class="foot"><span>2026-10-08 artifact check</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
+  <h2>适合定义 context，不足以定义 state compatibility</h2>
+
+  <div class="content"><div class="callout"><p>来自一条 reference path 的 transition 仍可能不适配 student 当前 build。</p></div></div>
+  <div class="foot"><span>兴趣程度 8/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/problem-space-guided-opsd.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

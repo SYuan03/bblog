@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPSD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="OPSD 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · BASELINE</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h1>同一个模型，为什么能同时当 teacher 和 student？</h1>
+  <p class="lead">OPSD 只改变训练期上下文：student 看 question，frozen self-teacher 多看 verified solution。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>43.4</h3><p>Qwen3-1.7B OPSD 平均分</p></div><div class="card green"><h3>1 rollout</h3><p>每题一个 student trajectory</p></div><div class="card orange"><h3>1,024 tokens</h3><p>主实验 completion 上限</p></div><div class="card "><h3>9/10</h3><p>个人兴趣程度</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Section 3；Table 1</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · CONTRACT</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>On-policy 监督必须落在 student 自己的 prefix 上</h2>
+
+  <div class="content"><div class="dual"><div class="card green"><h3>Student</h3><p>question → 采样 y；部署时也只有 question</p></div><div class="arrow">≠</div><div class="card blue"><h3>Self-teacher</h3><p>question + reference solution + 同一个 y&lt;t；只负责打分</p></div></div><div class="callout"><p>teacher 不替换 student trajectory，因此训练覆盖的是当前 policy 真正访问到的状态。</p></div></div>
+  <div class="foot"><span>来源：Section 3.1</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · UPDATE</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>一次 update 的五步数据流</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Rollout</strong><p>student 只看 question</p></div><div class="step"><b>2</b><strong>Rebuild</strong><p>加入 reference context</p></div><div class="step"><b>3</b><strong>Rescore</strong><p>teacher 评估相同 tokens</p></div><div class="step"><b>4</b><strong>KL</strong><p>full-vocabulary forward KL</p></div><div class="step"><b>5</b><strong>Update</strong><p>只更新 student LoRA</p></div></div></div>
+  <div class="foot"><span>来源：Algorithm 1；官方代码 audited commit</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · LOSS</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>代码里的 clipping 不是常见的 scalar KL clipping</h2>
+
+  <div class="content"><div class="code">component = q_i · (log q_i - log p_i)
+component = clamp(component, -c, c)
+loss = sum_vocab(component)</div><div class="callout red"><p>逐 vocabulary component 截断后再求和，可能破坏完整 KL 的非负性。复现必须写清。</p></div></div>
+  <div class="foot"><span>来源：官方代码 ae7d251…；README warning</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · SETTING</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>主实验用一个短 rollout 对比更重的 GRPO</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>配置</th><th>OPSD</th><th>GRPO</th></tr></thead><tbody><tr><td>rollouts / problem</td><td>1</td><td>8</td></tr><tr><td>max output</td><td>1,024</td><td>16,384</td></tr><tr><td>updates</td><td>100</td><td>500</td></tr><tr><td>trainable params</td><td>LoRA</td><td>LoRA</td></tr></tbody></table></div></div>
+  <div class="foot"><span>来源：Section 4；Appendix hyperparameters</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>小模型收益最大，8B 仍有增益</h2>
+
+  <div class="content"><div class="barset"><div class="scoreline"><span>Qwen3-1.7B Base</span><div class="track"><i class="fill gray" style="--v:37.1%"></i></div><b>37.1</b></div><div class="scoreline"><span>Qwen3-1.7B OPSD</span><div class="track"><i class="fill green" style="--v:43.4%"></i></div><b>43.4</b></div><div class="scoreline"><span>Qwen3-4B OPSD</span><div class="track"><i class="fill " style="--v:63.6%"></i></div><b>63.6</b></div><div class="scoreline"><span>Qwen3-8B OPSD</span><div class="track"><i class="fill " style="--v:64.8%"></i></div><b>64.8</b></div></div></div>
+  <div class="foot"><span>根据 Table 1 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · BOUNDARY</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>Teacher preference 不是 executable correctness</h2>
+
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>数学 reference</h3><p>常见题目只有一个标准终点，但推理路径仍可多样</p></div><div class="card orange"><h3>游戏代码</h3><p>scene tree、API 和控制流可以完全不同</p></div><div class="card green"><h3>必须补的证据</h3><p>compile、hidden tests、gameplay 与 visual verifier</p></div></div></div>
+  <div class="foot"><span>本文分析；论文未研究多实现程序</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · CODE</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>官方仓库可跑，但版本与 license 都要记录</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>可复用</h3><p>trainer、collator、launch 与 evaluation scripts</p></div><div class="card red"><h3>要声明</h3><p>commit、template、fixed/EMA teacher、loss estimator、clip</p></div></div></div>
+  <div class="foot"><span>代码审计：ae7d2519e94920c4eb6206c0c26de46d9c50abae</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2601.18734 · 2026-01-26</span></div>
+  <h2>把 OPSD 当骨架，不把 full solution 当结论</h2>
+
+  <div class="content"><div class="grid g2"><div class="card blue"><h3>第一阶段</h3><p>固定 student rollout 和 verifier，只扫 context family</p></div><div class="card green"><h3>论文贡献</h3><p>证明 context、routing 与 span credit 怎样影响正确替代实现</p></div></div></div>
+  <div class="foot"><span>兴趣程度 9/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/self-distilled-reasoner.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

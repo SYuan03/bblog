@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SMRC-SD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="SMRC-SD 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · CORE PROBLEM</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h1>Reference path 只在兼容 state 上有效</h1>
+  <p class="lead">Student 改变 subgoal 顺序后，full-path teacher 可能把 recovery action 当错。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>0.865</h3><p>ALFWorld</p></div><div class="card green"><h3>0.693</h3><p>WebShop success</p></div><div class="card orange"><h3>20.2%</h3><p>structured coverage</p></div><div class="card "><h3>10/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1-4</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · MISMATCH</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>同一个任务，不代表同一个 execution state</h2>
+
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>Location</h3><p>agent 在哪</p></div><div class="card green"><h3>Progress</h3><p>哪些 subgoal 已完成</p></div><div class="card orange"><h3>Admissibility</h3><p>reference next action 还合法吗</p></div></div></div>
+  <div class="foot"><span>来源：Method state definition</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · ROUTING</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>Match 才 distill；不 match 就 abstain</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Observe</strong><p>student real history</p></div><div class="step"><b>2</b><strong>Signature</strong><p>structured state</p></div><div class="step"><b>3</b><strong>Match</strong><p>reference prefixes</p></div><div class="step"><b>4</b><strong>Route</strong><p>latest compatible</p></div><div class="step"><b>5</b><strong>Distill</strong><p>matched turns only</p></div></div></div>
+  <div class="foot"><span>来源：Method overview</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · TWO SIGNALS</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>Dense loss 可以关闭，GRPO 不关闭</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>All turns</h3><p>GRPO outcome reward</p></div><div class="card blue"><h3>Matched turns</h3><p>privileged self-distillation</p></div></div></div>
+  <div class="foot"><span>来源：Objective section</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · REAL CASE</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>Lettuce 已入 fridge，下一步不该再开一次</h2>
+
+  <div class="content"><div class="grid g2"><div class="card red"><h3>History matcher</h3><p>文本相似 → 建议重复 open fridge</p></div><div class="card green"><h3>Structured matcher</h3><p>progress 已完成 → 路由 second-object phase</p></div></div></div>
+  <div class="foot"><span>来源：ALFWorld case study</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · ABLATION</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>路由比单纯 sparse distillation 更重要</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Condition</th><th>ALFWorld Avg@4</th></tr></thead><tbody><tr><td>FullPath-SD</td><td>0.746</td></tr><tr><td>Random same-count</td><td>0.723</td></tr><tr><td>Routing only</td><td>0.836</td></tr><tr><td>Routing + local context</td><td>0.865</td></tr><tr><td>Context on unmatched</td><td>0.695</td></tr></tbody></table></div></div>
+  <div class="foot"><span>根据 ablation table 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · MATCH AUDIT</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>Structured matching 提高 coverage，不明显牺牲 precision</h2>
+
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>20.2%</h3><p>structured coverage</p></div><div class="card orange"><h3>15.4%</h3><p>history coverage</p></div><div class="card green"><h3>781/781</h3><p>sampled replay success</p></div></div></div>
+  <div class="foot"><span>来源：matcher audit</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · GAME STATE</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>Code state 需要 AST、scene、fixture 与 runtime 一起描述</h2>
+
+  <div class="content"><div class="grid g4"><div class="card "><h3>Code/AST</h3><p>files/functions</p></div><div class="card "><h3>Scene</h3><p>nodes/signals</p></div><div class="card "><h3>Verifier</h3><p>fixture/obligation</p></div><div class="card "><h3>Runtime</h3><p>state/events</p></div></div></div>
+  <div class="foot"><span>本文 game code state design</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · CODE REALITY</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
+  <h2>Core code 在，paper data 不在</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>matcher、trainer、env、tests</p></div><div class="card red"><h3>缺失</h3><p>4 个 claimed included JSON files</p></div></div></div>
+  <div class="foot"><span>代码审计：f3e43bab78828d12ee7e2f717e041b70f43ad43f</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/state-matched-routing-contextualized-sd.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

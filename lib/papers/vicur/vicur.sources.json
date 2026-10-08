@@ -1,0 +1,506 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "ViCuR: Visual Cues as Recoverable Privilege for Multimodal On-Policy Distillation",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/083-vicur.md",
+    "deck": "lib/decks/vicur-visual-guide.html",
+    "embed_src": "/lib/decks/vicur-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "ViCuR: Visual Cues as Recoverable Privilege for Multimodal On-Policy Distillation",
+      "url": "https://arxiv.org/pdf/2606.05718v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "ViCuR official repository",
+      "url": "https://github.com/tiankanghui/ViCuR",
+      "revision": "a244a244fc24a202bd720f7aac069bb8bd105b06",
+      "used_for": [
+        "implementation",
+        "artifact completeness",
+        "reproduction"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 25,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 25
+      }
+    ],
+    "source_visuals_expected": 19,
+    "visual_inventory_complete": true
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "Q1. Answer-side privilege 为什么会制造 mismatch？"
+    },
+    {
+      "role": "related-work",
+      "locator": "Q2. 它与 Visual-SDPO 的 visual feedback 有何不同？"
+    },
+    {
+      "role": "method",
+      "locator": "Q3. SinkTrack module 实际做什么？"
+    },
+    {
+      "role": "experiments",
+      "locator": "Q4. setting 与结果到底怎样？"
+    },
+    {
+      "role": "future-work",
+      "locator": "Q5. 对 multimodal game query 应怎样分层？"
+    },
+    {
+      "role": "summary",
+      "locator": "Q6. 官方 repo 还缺哪些关键东西？"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 1-2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "teacher 如果直接看到 reference answer 或 rationale，它的 next-token preference 可能依赖 student 在 inference 时永远无法恢复的信息。"
+        }
+      ]
+    },
+    {
+      "id": "method-contract",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3; Figure 3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "大约每五个 decoder layers，专用 sink token 在 prefill 中对全部 visual tokens 做一次 cross-attention。"
+        }
+      ]
+    },
+    {
+      "id": "main-result",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1-4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "2B 与 8B 分别提升 1.19 和 1.24，但 ordinary OPSD 在这组实验里低于未训练 base。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Repository audit"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "仓库有 SinkTrack 的 Transformers/vLLM model files 与 distillation plumbing，但没有 cue-generation pipeline、prepared teacher_prompt data 或 trained recovery checkpoint。"
+        }
+      ]
+    },
+    {
+      "id": "code-audit",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "SinkTrack Transformers/vLLM files and generic training script"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "仓库有 SinkTrack 的 Transformers/vLLM model files 与 distillation plumbing"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "Figure 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "Figure 2",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "Figure 4",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "Figure 5",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "Figure 6",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "Figure 7",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "Figure 8",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "Figure 9",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "Figure 10",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "Figure 11",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "Table 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "Table 2",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "Table 3",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "Table 4",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "Table 5",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "Table 6",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "Table 7",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "Table 8",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 16.5,
+      "line_height": 1.75,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  }
+}

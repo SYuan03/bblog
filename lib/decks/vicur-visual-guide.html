@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ViCuR 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="ViCuR 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h1>Teacher privilege 能否来自 student 本来就有的视觉输入？</h1>
+  <p class="lead">ViCuR 用 visual cue 替代 answer/rationale privilege。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>+1.19</h3><p>2B vs OPSD</p></div><div class="card green"><h3>+1.24</h3><p>8B vs OPSD</p></div><div class="card orange"><h3>每 5 层</h3><p>SinkTrack</p></div><div class="card "><h3>7.5/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；main tables</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · TAXONOMY</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>三种视觉相关 context，来源完全不同</h2>
+
+  <div class="content"><div class="grid g3"><div class="card green"><h3>Input cue</h3><p>从原始 image/video 抽取</p></div><div class="card red"><h3>Answer privilege</h3><p>reference answer/rationale</p></div><div class="card orange"><h3>Execution feedback</h3><p>运行 student code 后产生</p></div></div></div>
+  <div class="foot"><span>来源：Sections 1-2；本文分类</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · RECOVERABILITY</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>S=f(X) 是目标，不是自动保证</h2>
+
+  <div class="content"><div class="formula">visual cue S = f(inference input X)</div><div class="callout red"><p>外部 cue generator 仍可能漏信息、歧义或偷偷带入 answer-side facts。</p></div></div>
+  <div class="foot"><span>来源：Method assumption</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · SINKTRACK</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>Sink token 在 prefill 中定期查询全体 visual tokens</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Visual tokens</strong><p>原图 representation</p></div><div class="step"><b>2</b><strong>Layer 5</strong><p>sink cross-attention</p></div><div class="step"><b>3</b><strong>Layer 10</strong><p>再次聚合</p></div><div class="step"><b>4</b><strong>Sink state</strong><p>压入 task evidence</p></div><div class="step"><b>5</b><strong>Decode</strong><p>无额外 per-token module</p></div></div></div>
+  <div class="foot"><span>来源：Figure 3；Section 3</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · CAPACITY</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>Recovery module 不是零成本</h2>
+
+  <div class="content"><div class="grid g2"><div class="card blue"><h3>2B backbone</h3><p>+100.7M parameters（4.52%）</p></div><div class="card orange"><h3>8B backbone</h3><p>+536.9M（5.77%）</p></div></div></div>
+  <div class="foot"><span>来源：model table</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>ViCuR 稳定小幅胜过 answer-based OPSD</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Setting</th><th>OPSD</th><th>+ViCuR</th></tr></thead><tbody><tr><td>2B</td><td>44.88</td><td>46.07</td></tr><tr><td>8B</td><td>58.15</td><td>59.39</td></tr><tr><td>8B stronger teacher</td><td>63.88</td><td>64.96</td></tr></tbody></table></div></div>
+  <div class="foot"><span>根据 main tables 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · GAME SPLIT</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>Query-side cue 与 current-build feedback 分开做</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>Recoverable</h3><p>asset、对象、视角、UI、目标 mechanic</p></div><div class="card orange"><h3>Execution-derived</h3><p>compile、runtime、render、hidden test</p></div></div></div>
+  <div class="foot"><span>本文实验设计建议</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · CODE</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>Module 可审计，supervision pipeline 不完整</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>SinkTrack + trainer integration</p></div><div class="card red"><h3>缺少</h3><p>cue generator、data、checkpoint</p></div></div></div>
+  <div class="foot"><span>代码审计：a244a244fc24a202bd720f7aac069bb8bd105b06</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
+  <h2>先用它定义边界，再决定是否加 recovery module</h2>
+
+  <div class="content"><div class="callout"><p>对于 game query-to-code，ViCuR 最重要的贡献是区分 input-recoverable evidence 与 execution feedback。</p></div></div>
+  <div class="foot"><span>兴趣程度 7.5/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/vicur.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

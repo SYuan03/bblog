@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visual-SDPO 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="Visual-SDPO 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · CLOSEST MATCH</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h1>执行 student 代码，再用 render 教回 code</h1>
+  <p class="lead">Visual-SDPO 把 screenshot、rubric 和 error 当 teacher-only context。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>78.6</h3><p>ChartMimic</p></div><div class="card green"><h3>82.6</h3><p>Design2Code</p></div><div class="card orange"><h3>29%</h3><p>GRPO render budget</p></div><div class="card "><h3>10/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1-3</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · FAILURE</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>Executable code 仍会生成明显错误的 artifact</h2>
+
+  <div class="content"><div class="grid g4"><div class="card red"><h3>Overlap</h3><p>元素重叠</p></div><div class="card orange"><h3>Clipping</h3><p>文字被裁</p></div><div class="card blue"><h3>Alignment</h3><p>布局错位</p></div><div class="card green"><h3>Contrast</h3><p>可读性不足</p></div></div></div>
+  <div class="foot"><span>来源：Introduction</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · LOOP</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>训练环闭合在 student 自己的 artifact 上</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Code</strong><p>student on-policy</p></div><div class="step"><b>2</b><strong>Execute</strong><p>renderer/browser</p></div><div class="step"><b>3</b><strong>Observe</strong><p>screenshot/error</p></div><div class="step"><b>4</b><strong>Teacher</strong><p>score same code</p></div><div class="step"><b>5</b><strong>Update</strong><p>KL + GRPO</p></div></div></div>
+  <div class="foot"><span>来源：Method overview</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · CREDIT</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>不是每个 code token 都该为 defect 负责</h2>
+
+  <div class="content"><div class="formula">w(token∈stmt) = 1 + (α−1) · max IoU(stmt regions, defects)</div><div class="callout"><p>visual region 先映射到 statement，再放大 implicated token 的 distillation weight。</p></div></div>
+  <div class="foot"><span>来源：Visual-Grounded Code Credit Weighting</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · INSTRUMENT</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>三类 renderer 使用不同 source map</h2>
+
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>Matplotlib</h3><p>artist hook + stack frame + bbox</p></div><div class="card green"><h3>HTML</h3><p>source metadata + browser rectangle</p></div><div class="card orange"><h3>Slides</h3><p>python-pptx shape construction hook</p></div></div></div>
+  <div class="foot"><span>来源：Method implementation</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>Visual feedback 稳定超过 reference-code OPSD</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Benchmark</th><th>OPSD</th><th>GRPO</th><th>Visual-SDPO</th></tr></thead><tbody><tr><td>ChartMimic</td><td>77.0</td><td>76.2</td><td>78.6</td></tr><tr><td>Design2Code</td><td>78.6</td><td>80.0</td><td>82.6</td></tr><tr><td>AeSlides</td><td>—</td><td>58.2</td><td>60.7</td></tr></tbody></table></div></div>
+  <div class="foot"><span>根据 Tables 1-3 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · FAILED EXECUTION</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>代码跑不起来，也还有学习信号</h2>
+
+  <div class="content"><div class="grid g2"><div class="card red"><h3>GRPO reward</h3><p>execution failure → 0</p></div><div class="card green"><h3>Teacher context</h3><p>traceback / browser error 仍可输入</p></div></div></div>
+  <div class="foot"><span>来源：Objective description</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · GAME TRANSLATION</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>把 region→statement 扩展成 event→code span</h2>
+
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>Compile</h3><p>diagnostic → syntax/type span</p></div><div class="card green"><h3>Gameplay</h3><p>event/test → signal/state code</p></div><div class="card orange"><h3>Visual</h3><p>frame diff → node/property</p></div></div></div>
+  <div class="foot"><span>本文实验设计建议</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · REPRODUCTION</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
+  <h2>最值得做，也最需要补齐公开性</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>论文给出</h3><p>principle、formula、benchmark gains</p></div><div class="card red"><h3>论文缺少</h3><p>code、α/β、optimizer、detector details</p></div></div></div>
+  <div class="foot"><span>兴趣程度 10/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/visual-sdpo.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

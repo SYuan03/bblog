@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPHSD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="OPHSD 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h1>能不能把 inference harness 变成一次性训练 scaffold？</h1>
+  <p class="lead">训练时运行 Plan–Solve / Draft–Verify，部署时只保留 direct model。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>69.50</h3><p>Math avg pass@8</p></div><div class="card green"><h3>53.33</h3><p>HMMT25</p></div><div class="card orange"><h3>3×10K</h3><p>training subsets</p></div><div class="card "><h3>9/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1-3</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · CONTRACT</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>Harness terminal 只给 teacher，student 仍直接作答</h2>
+
+  <div class="content"><div class="dual"><div class="card green"><h3>Direct student</h3><p>原 problem → on-policy response</p></div><div class="arrow">← KL</div><div class="card blue"><h3>Harness teacher</h3><p>执行 procedure → terminal context → score same response</p></div></div></div>
+  <div class="foot"><span>来源：Method overview</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · PLAN–SOLVE</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>Reference solution 先被压成 plan，再进入 teacher terminal</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Reference</strong><p>planner 训练期可见</p></div><div class="step"><b>2</b><strong>Plan</strong><p>抽象 strategy sketch</p></div><div class="step"><b>3</b><strong>Solve</strong><p>不再看 reference</p></div><div class="step"><b>4</b><strong>Teacher</strong><p>读 terminal</p></div><div class="step"><b>5</b><strong>Student</strong><p>吸收 procedure</p></div></div></div>
+  <div class="foot"><span>来源：Section 3.2</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · DRAFT–VERIFY</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>五个支持者和五个挑战者共同复核 draft</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Retrieve</strong><p>5 neighbors</p></div><div class="step"><b>2</b><strong>Draft</strong><p>初步 label</p></div><div class="step"><b>3</b><strong>Confirm</strong><p>5 supporting views</p></div><div class="step"><b>4</b><strong>Challenge</strong><p>5 opposing views</p></div><div class="step"><b>5</b><strong>Revise</strong><p>整合后 terminal</p></div></div></div>
+  <div class="foot"><span>来源：Section 3.1</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · SETTING</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>Qwen3-8B，三组 10K 数据</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>任务</th><th>Steps</th><th>Harness</th></tr></thead><tbody><tr><td>CAIL / LawBench</td><td>300</td><td>Draft–Verify</td></tr><tr><td>USPTO</td><td>300</td><td>Draft–Verify</td></tr><tr><td>DeepMath</td><td>150</td><td>Plan–Solve</td></tr></tbody></table></div></div>
+  <div class="foot"><span>来源：Section 4；Appendix</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>OPHSD 在三类任务上超过 OPSD</h2>
+
+  <div class="content"><div class="barset"><div class="scoreline"><span>LawBench OPSD</span><div class="track"><i class="fill gray" style="--v:64.25%"></i></div><b>64.25</b></div><div class="scoreline"><span>LawBench OPHSD</span><div class="track"><i class="fill green" style="--v:69.51%"></i></div><b>69.51</b></div><div class="scoreline"><span>Math OPSD</span><div class="track"><i class="fill gray" style="--v:66.68%"></i></div><b>66.68</b></div><div class="scoreline"><span>Math OPHSD</span><div class="track"><i class="fill green" style="--v:69.5%"></i></div><b>69.50</b></div></div></div>
+  <div class="foot"><span>根据 main tables 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · CASE</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>检索 harness 也会把证据带偏</h2>
+
+  <div class="content"><div class="grid g2"><div class="card red"><h3>Harness terminal</h3><p>近邻全偏向 intentional injury</p></div><div class="card green"><h3>Trained direct student</h3><p>保留 negligent homicide 的另一种解释</p></div></div></div>
+  <div class="foot"><span>来源：LawBench case study</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · GAME CODE</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>内化 procedure，不假装内化未来 execution result</h2>
+
+  <div class="content"><div class="grid g2"><div class="card blue"><h3>可内化</h3><p>plan→compile→run→inspect→repair 的步骤</p></div><div class="card orange"><h3>必须执行</h3><p>当前 build 的 error、render 与 gameplay state</p></div></div></div>
+  <div class="foot"><span>本文对 game query-to-code 的边界</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · CODE</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
+  <h2>Release 质量较好，reporting protocol 要分开</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>trainer、harness、data、4-run CSV</p></div><div class="card red"><h3>不可混用</h3><p>v1 best checkpoint vs repo fixed checkpoint</p></div></div></div>
+  <div class="foot"><span>代码审计：20eaa0c8b0674fbf81aa780a8cf4e0d7c550d4ea</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/training-with-harnesses.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

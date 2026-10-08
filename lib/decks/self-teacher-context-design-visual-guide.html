@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Context Design 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="Context Design 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h1>Self-teacher 应该看完整解答，还是可行动的抽象？</h1>
+  <p class="lead">固定 student 与 OPSD 训练，只改变 teacher-only context 的颗粒度。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>29,434</h3><p>aligned L1-L5 rows</p></div><div class="card green"><h3>+1.39</h3><p>4B best intermediate vs L1</p></div><div class="card green"><h3>+1.57</h3><p>8B best intermediate vs L1</p></div><div class="card "><h3>9.5/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1-3；官方 dataset</span><span>1 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · FIVE LEVELS</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>L1 到 L5 不是信息量单调减少那么简单</h2>
+
+  <div class="content"><div class="grid g5"><div class="card blue"><h3>L1</h3><p>完整 reference solution</p></div><div class="card "><h3>L2</h3><p>named strategy</p></div><div class="card "><h3>L3</h3><p>method-independent framing</p></div><div class="card "><h3>L4</h3><p>problem category</p></div><div class="card orange"><h3>L5</h3><p>final answer only</p></div></div></div>
+  <div class="foot"><span>来源：Section 3；Appendix prompt templates</span><span>2 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · VISIBILITY</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>Student 从未看到 L1-L5</h2>
+
+  <div class="content"><div class="dual"><div class="card green"><h3>Student</h3><p>problem → 当前 policy rollout</p></div><div class="arrow">→</div><div class="card blue"><h3>Frozen self-teacher</h3><p>problem + selected level + same student prefix</p></div></div><div class="formula">L = KL(π_teacher(·|x,z,y&lt;t) || π_student(·|x,y&lt;t))</div></div>
+  <div class="foot"><span>来源：Method overview</span><span>3 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · DATA</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>L2-L4 是串行 model compilation，不是人工标注</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>L1</strong><p>原 OpenThoughts solution</p></div><div class="step"><b>2</b><strong>L4</strong><p>Qwen3.5-397B 生成 category</p></div><div class="step"><b>3</b><strong>L3</strong><p>读取 L4 生成 framing</p></div><div class="step"><b>4</b><strong>L2</strong><p>读取 L4+L3 生成 strategy</p></div><div class="step"><b>5</b><strong>JSONL</strong><p>29,434 aligned rows</p></div></div></div>
+  <div class="foot"><span>来源：Appendix compiler；官方 scripts</span><span>4 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · SCHEMA</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>公开 row 能追到 sample 与五档 context</h2>
+
+  <div class="content"><div class="code">sample_id, source, problem,
+L1_full_solution, L2_strategy, L3_framing,
+L4_category, L5_answer_only</div><div class="callout"><p>L5 有七个 proof-target overrides，记录在 code 中。</p></div></div>
+  <div class="foot"><span>来源：data/privileged_contexts_l1_l5.jsonl</span><span>5 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · SETTING</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>论文主实验的训练合同</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>项</th><th>设置</th></tr></thead><tbody><tr><td>Backbone</td><td>Qwen3 1.7B / 4B / 8B</td></tr><tr><td>GPUs</td><td>8×H200</td></tr><tr><td>Updates</td><td>200；每 25 保存</td></tr><tr><td>Rollout</td><td>T=1.1；top-p .95；top-k 20</td></tr><tr><td>Completion</td><td>1,024</td></tr><tr><td>LoRA</td><td>64 / 128</td></tr><tr><td>LR</td><td>5e-6</td></tr></tbody></table></div></div>
+  <div class="foot"><span>来源：paper appendix；official launchers</span><span>6 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · LOSS CODE</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>beta=0 是 forward KL；clip 在 vocabulary component 上</h2>
+
+  <div class="content"><div class="code">component_i = q_i · (log q_i − log p_i)
+clipped_i = clamp(component_i, −c, c)
+loss = Σ_i clipped_i</div><div class="callout red"><p>这不等于对完成的 token-level KL 做 scalar clipping。</p></div></div>
+  <div class="foot"><span>代码审计：76ba7f2…；OPSD trainer fork</span><span>7 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · RESULT</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>更短 context 在 4B/8B 胜过 L1，但 1.7B 没有</h2>
+
+  <div class="content"><div class="grid g3"><div class="card orange"><h3>1.7B</h3><p>L1 最好</p></div><div class="card green"><h3>4B</h3><p>best intermediate +1.39</p></div><div class="card green"><h3>8B</h3><p>best intermediate +1.57</p></div></div></div>
+  <div class="foot"><span>根据 main result tables 重绘</span><span>8 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · SELECTION</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>Peak mean 可混合三个不同 checkpoint</h2>
+
+  <div class="content"><div class="flow" style="--n:4"><div class="step"><b>1</b><strong>AIME24</strong><p>取八个 checkpoint 中最高</p></div><div class="step"><b>2</b><strong>AIME25</strong><p>独立再取最高</p></div><div class="step"><b>3</b><strong>HMMT25</strong><p>独立再取最高</p></div><div class="step"><b>4</b><strong>Average</strong><p>把三个 peak 平均</p></div></div></div>
+  <div class="foot"><span>来源：metric definition；Appendix</span><span>9 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>10 · CONFOUNDERS</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>L1-vs-L3 同时改变了五件事</h2>
+
+  <div class="content"><div class="grid g5"><div class="card "><h3>Semantics</h3><p>抽象层级</p></div><div class="card "><h3>Length</h3><p>token 数</p></div><div class="card "><h3>Answer</h3><p>是否含 final</p></div><div class="card "><h3>Wording</h3><p>transition prompt</p></div><div class="card "><h3>Compiler</h3><p>生成误差</p></div></div></div>
+  <div class="foot"><span>本文实验设计审计</span><span>10 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>11 · GAME TRANSLATION</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>游戏实验要把 static reference 与 execution feedback 分开</h2>
+
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>Static</h3><p>code、strategy、API/scene plan</p></div><div class="card green"><h3>Current build</h3><p>compile、runtime、render、gameplay trace</p></div><div class="card orange"><h3>Controls</h3><p>length-match、wrong-task、answer-hidden</p></div></div></div>
+  <div class="foot"><span>本文给 game query-to-code 的实验映射</span><span>11 / 12</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>12 · ARTIFACTS</span><span>arXiv:2609.25623 · 2026-09-22</span></div>
+  <h2>数据和代码可审计，完整 run 仍无法复原</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>已公开</h3><p>29,434 rows、compiler、trainer、manifests、CSV</p></div><div class="card red"><h3>未公开</h3><p>checkpoints、logs、generations、judge annotations</p></div></div></div>
+  <div class="foot"><span>代码审计：76ba7f2346fb7f2c965e4160989fbc701db6f1e6</span><span>12 / 12</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/self-teacher-context-design.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPCD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="OPCD 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h1>怎样把 agent 历史变成无需携带的模型能力？</h1>
+  <p class="lead">OPCD 让 student 无 context rollout，再由 context-conditioned teacher 重评同一轨迹。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>79.7</h3><p>Math OPCD</p></div><div class="card green"><h3>53.9</h3><p>Sokoban filtered experience</p></div><div class="card orange"><h3>50 updates</h3><p>主训练长度</p></div><div class="card "><h3>8.5/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1-3</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · EXPERIENCE</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>一段历史不等于一条可用经验</h2>
+
+  <div class="content"><div class="grid g3"><div class="card red"><h3>Raw trace</h3><p>失败、重复与环境噪声全部保留</p></div><div class="card blue"><h3>Consolidated</h3><p>模型总结可迁移的规则</p></div><div class="card green"><h3>Filtered</h3><p>只保留对当前任务有帮助的经验</p></div></div></div>
+  <div class="foot"><span>来源：Section 3；experience ablation</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · PROTOCOL</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>response token 只生成一次，prompt 重建两次</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Rollout</strong><p>student 无 experience</p></div><div class="step"><b>2</b><strong>Save</strong><p>固定 response tokens</p></div><div class="step"><b>3</b><strong>Rebuild</strong><p>teacher prompt 加 experience</p></div><div class="step"><b>4</b><strong>Rescore</strong><p>同 tokens 再算 log-prob</p></div><div class="step"><b>5</b><strong>Reverse KL</strong><p>student || teacher</p></div></div></div>
+  <div class="foot"><span>来源：Algorithm 1；官方 opcd code</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · LOSS</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>Top-256 是近似，不是完整词表 KL</h2>
+
+  <div class="content"><div class="formula">Σ p_student · (log p_student − log p_teacher)</div><div class="callout red"><p>代码可只保留 student 概率最高 256 个 vocabulary entries；除非 retained mass 接近 1，否则不等于 full KL。</p></div></div>
+  <div class="foot"><span>来源：官方代码 6f53ef4…</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · NEGATIVE RESULT</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>Raw trace 让数学 validation 变差</h2>
+
+  <div class="content"><div class="barset"><div class="scoreline"><span>Base</span><div class="track"><i class="fill gray" style="--v:75.1%"></i></div><b>75.1</b></div><div class="scoreline"><span>Raw traces</span><div class="track"><i class="fill orange" style="--v:70.5%"></i></div><b>70.5</b></div><div class="scoreline"><span>Summarized context</span><div class="track"><i class="fill " style="--v:77.4%"></i></div><b>77.4</b></div><div class="scoreline"><span>OPCD</span><div class="track"><i class="fill green" style="--v:79.7%"></i></div><b>79.7</b></div></div></div>
+  <div class="foot"><span>根据 ablation table 重绘</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · TEXT GAME</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>固定 teacher 比持续自更新稳定得多</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>Fixed split</h3><p>Sokoban 53.9</p></div><div class="card red"><h3>Continual self-distill</h3><p>Sokoban 18.8</p></div></div></div>
+  <div class="foot"><span>来源：text-game experiments</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · GAME CODE</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>把 build log、filtered trace 与 lesson 分开测</h2>
+
+  <div class="content"><div class="grid g3"><div class="card orange"><h3>完整日志</h3><p>保留真实试错，但 token 极长</p></div><div class="card blue"><h3>筛选轨迹</h3><p>删除已证伪分支</p></div><div class="card green"><h3>跨任务 lesson</h3><p>便于检索，可能丢掉关键状态</p></div></div></div>
+  <div class="foot"><span>本文实验设计建议</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · CODE</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>LMOps 实现完整，复现成本也高</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>veRL fork、环境、experience pipeline</p></div><div class="card red"><h3>注意</h3><p>text-game 经验需 online stage 生成</p></div></div></div>
+  <div class="foot"><span>代码审计：6f53ef41c951de0962bbf27fe3f5819eabc8ce0e</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
+  <h2>经验先提炼，再谈 distillation</h2>
+
+  <div class="content"><div class="callout"><p>成功轨迹是否有用，取决于它怎样被压缩、过滤并对齐到 student 当前状态；“更多历史”不是单调增益。</p></div></div>
+  <div class="foot"><span>兴趣程度 8.5/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/on-policy-context-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

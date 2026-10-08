@@ -1,0 +1,604 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "When Privileged Guidance Misaligns: State-Matched Routing and Contextualized Self-Distillation for Multi-Turn Agents",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/086-state-matched-routing-contextualized-sd.md",
+    "deck": "lib/decks/state-matched-routing-contextualized-sd-visual-guide.html",
+    "embed_src": "/lib/decks/state-matched-routing-contextualized-sd-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "When Privileged Guidance Misaligns: State-Matched Routing and Contextualized Self-Distillation for Multi-Turn Agents",
+      "url": "https://arxiv.org/pdf/2608.05219v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "SMRC-SD official repository",
+      "url": "https://github.com/liujunzhuo/SMRC-SD",
+      "revision": "f3e43bab78828d12ee7e2f717e041b70f43ad43f",
+      "used_for": [
+        "implementation",
+        "artifact completeness",
+        "reproduction"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 17,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 17
+      }
+    ],
+    "source_visuals_expected": 26,
+    "visual_inventory_complete": true
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "Q1. Full-path guidance 为什么会在中途变成错答案？"
+    },
+    {
+      "role": "related-work",
+      "locator": "Q2. Routing、contextualization 与 reward 如何分工？"
+    },
+    {
+      "role": "method",
+      "locator": "Q3. ALFWorld 与 WebShop 怎样定义 state match？"
+    },
+    {
+      "role": "experiments",
+      "locator": "Q4. setting、ablation 与 replay audit 说明什么？"
+    },
+    {
+      "role": "future-work",
+      "locator": "Q5. 游戏代码的 state signature 应包含什么？"
+    },
+    {
+      "role": "summary",
+      "locator": "Q6. 官方 repo 的复现缺口是什么？"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 1-2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "reference 只证明某个 action 在它自己的 state 上有效；student 一旦按不同顺序完成 subgoal，继续照搬下一步就会误导。"
+        }
+      ]
+    },
+    {
+      "id": "method-contract",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3-4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "ALFWorld adapter 把位置、inventory 与 subgoal 进度压成 deterministic execution-state signature；WebShop adapter 则记录 goal progress，并检查 required option 是否可用。"
+        }
+      ]
+    },
+    {
+      "id": "main-result",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1-4; matcher audit"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "same-count random control 只有 0.723，说明收益不是简单减少 distillation turns。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Repository README and audited Git tree"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "matcher、routing、context builder、trainer、environment、launcher、probe 与 unit tests 都在；README 所称 included 的四个 data files 却不存在。"
+        }
+      ]
+    },
+    {
+      "id": "code-audit",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "state matcher, routing/context builder, trainer and launcher files"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "matcher、routing、context builder、trainer、environment、launcher、probe 与 unit tests 都在"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "Figure 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "Figure 2",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "Figure 4",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "Table 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "Table 2",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "Table 3",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "Table 4",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "Table 5",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "Table 6",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "Table 7",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "Table 8",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "Table 9",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "Table 10",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "Table 11",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-12",
+      "kind": "table",
+      "label": "Table 12",
+      "source_id": "paper",
+      "source_locator": "Table 12",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-13",
+      "kind": "table",
+      "label": "Table 13",
+      "source_id": "paper",
+      "source_locator": "Table 13",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-14",
+      "kind": "table",
+      "label": "Table 14",
+      "source_id": "paper",
+      "source_locator": "Table 14",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-15",
+      "kind": "table",
+      "label": "Table 15",
+      "source_id": "paper",
+      "source_locator": "Table 15",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-16",
+      "kind": "table",
+      "label": "Table 16",
+      "source_id": "paper",
+      "source_locator": "Table 16",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-17",
+      "kind": "table",
+      "label": "Table 17",
+      "source_id": "paper",
+      "source_locator": "Table 17",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-18",
+      "kind": "table",
+      "label": "Table 18",
+      "source_id": "paper",
+      "source_locator": "Table 18",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-19",
+      "kind": "table",
+      "label": "Table 19",
+      "source_id": "paper",
+      "source_locator": "Table 19",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-20",
+      "kind": "table",
+      "label": "Table 20",
+      "source_id": "paper",
+      "source_locator": "Table 20",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-21",
+      "kind": "table",
+      "label": "Table 21",
+      "source_id": "paper",
+      "source_locator": "Table 21",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-22",
+      "kind": "table",
+      "label": "Table 22",
+      "source_id": "paper",
+      "source_locator": "Table 22",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 16.5,
+      "line_height": 1.75,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  }
+}

@@ -1,0 +1,408 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "Latent On-Policy Self-Distillation",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/088-latent-on-policy-self-distillation.md",
+    "deck": "lib/decks/latent-on-policy-self-distillation-visual-guide.html",
+    "embed_src": "/lib/decks/latent-on-policy-self-distillation-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Latent On-Policy Self-Distillation",
+      "url": "https://arxiv.org/pdf/2608.13040v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "LOPD official repository",
+      "url": "https://github.com/bingreeky/LOPD",
+      "revision": "50c3d7f53f8b062153f23f3f9b56e949c888e071",
+      "used_for": [
+        "implementation",
+        "artifact completeness",
+        "reproduction"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 20,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 20
+      }
+    ],
+    "source_visuals_expected": 12,
+    "visual_inventory_complete": true
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "Q1. 为什么要让 privileged context 自己学？"
+    },
+    {
+      "role": "related-work",
+      "locator": "Q2. LOPD 相对 OPSD 改了哪一层？"
+    },
+    {
+      "role": "method",
+      "locator": "Q3. Composer、margin 与 cold start 怎样工作？"
+    },
+    {
+      "role": "experiments",
+      "locator": "Q4. 数据、结果与 baseline fairness 怎样看？"
+    },
+    {
+      "role": "future-work",
+      "locator": "Q5. 游戏数据什么时候值得上 latent context？"
+    },
+    {
+      "role": "summary",
+      "locator": "Q6. 公开代码的关键风险是什么？"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 1-2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "手写 answer、hint、skill 或 trajectory 都预设了“什么信息重要”；LOPD 把这个选择交给 retriever 与 composer。"
+        }
+      ]
+    },
+    {
+      "id": "method-contract",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Method section; Algorithm 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每个 task-experience pair 经 frozen backbone + trainable encoder LoRA，再由八层共享参数 QFormer cross-attention 压缩。"
+        }
+      ]
+    },
+    {
+      "id": "main-result",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1-5 and ablations"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "joint training without margin 得 0.551 EnvScaler reward，加 m=0.05 后到 0.637。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Repository audit"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "core rollout、teacher、trainer、QFormer composer 与 memory bank code 已公开，但 paper compressor checkpoint、scenarios、bank、embeddings 与 logs 没有。"
+        }
+      ]
+    },
+    {
+      "id": "code-audit",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "core rollout/teacher/trainer, QFormer composer, memory bank and configs"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "core rollout、teacher、trainer、QFormer composer 与 memory bank code 已公开"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "Figure 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "Figure 2",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "Figure 4",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "Figure 5",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "Figure 6",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "Table 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "Table 2",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "Table 3",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "Table 4",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "Table 5",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "algorithm-1",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper",
+      "source_locator": "Algorithm 1",
+      "status": "omitted",
+      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 16.5,
+      "line_height": 1.75,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  }
+}

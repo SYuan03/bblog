@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LOPD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="LOPD 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h1>Privileged context 能不能不再由人手写？</h1>
+  <p class="lead">LOPD 检索成功 experiences，并把它们压成 continuous latent tokens。</p>
+  <div class="content"><div class="grid g4"><div class="card blue"><h3>3×32</h3><p>default latent tokens</p></div><div class="card green"><h3>48.78</h3><p>4B LiveCodeBench</p></div><div class="card orange"><h3><30%</h3><p>rollout budget</p></div><div class="card "><h3>7/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；main tables</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · PIPELINE</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>Experience 先检索，再编码与压缩</h2>
+
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Retrieve</strong><p>3 successes</p></div><div class="step"><b>2</b><strong>Encode</strong><p>frozen backbone + LoRA</p></div><div class="step"><b>3</b><strong>Compress</strong><p>8-layer QFormer</p></div><div class="step"><b>4</b><strong>Teacher</strong><p>latent-conditioned</p></div><div class="step"><b>5</b><strong>Student</strong><p>on-policy KL</p></div></div></div>
+  <div class="foot"><span>来源：Method overview</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · REPRESENTATION</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>每条 experience 默认 32 latent tokens</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>优点</h3><p>比长 trajectory 短，end-to-end learnable</p></div><div class="card red"><h3>代价</h3><p>不可读，难检查 leakage 与语义</p></div></div></div>
+  <div class="foot"><span>来源：architecture settings</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · MARGIN</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>防止 composer 把 teacher 变弱来“作弊”</h2>
+
+  <div class="content"><div class="formula">teacher advantage × (2·reward − 1) ≥ margin</div><div class="callout"><p>dual variable 保持 teaching privilege；L2 anchor 限制 latent drift。</p></div></div>
+  <div class="foot"><span>来源：Privileged-margin objective</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · SETTING</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>Tool-use 与 code generation 两条线</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Domain</th><th>Training data</th><th>Evaluation</th></tr></thead><tbody><tr><td>Tool use</td><td>2,349 EnvScaler tasks</td><td>EnvScaler / BFCL / ACEBench</td></tr><tr><td>Code</td><td>≈7K verified TACO</td><td>LiveCodeBench / HumanEval+ / MBPP+</td></tr></tbody></table></div></div>
+  <div class="foot"><span>来源：Experiment section</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>Margin 决定 joint training 是否退化</h2>
+
+  <div class="content"><div class="barset"><div class="scoreline"><span>Frozen composer</span><div class="track"><i class="fill gray" style="--v:57.3%"></i></div><b>0.573</b></div><div class="scoreline"><span>Joint no margin</span><div class="track"><i class="fill orange" style="--v:55.1%"></i></div><b>0.551</b></div><div class="scoreline"><span>LOPD m=.05</span><div class="track"><i class="fill green" style="--v:63.7%"></i></div><b>0.637</b></div></div></div>
+  <div class="foot"><span>EnvScaler reward ×100 显示；根据 ablation 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · RETRIEVAL</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>更多 experience 不单调更好</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>3 items</h3><p>最早达到 0.637</p></div><div class="card orange"><h3>>3 items</h3><p>没有稳定继续增益</p></div></div></div>
+  <div class="foot"><span>来源：retrieval ablation</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · LEAKAGE</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>默认 allow_self_retrieval=true 必须改</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>Safe report</h3><p>same-task disabled</p></div><div class="card red"><h3>Oracle only</h3><p>same-task allowed，单独报告</p></div></div></div>
+  <div class="foot"><span>代码审计：configs and memory bank</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
+  <h2>适合第二阶段，不适合最早一轮实验</h2>
+
+  <div class="content"><div class="grid g2"><div class="card blue"><h3>先做</h3><p>readable contexts + verifier + routing</p></div><div class="card green"><h3>再做</h3><p>latent compression with leakage controls</p></div></div></div>
+  <div class="foot"><span>兴趣程度 7/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/latent-on-policy-self-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

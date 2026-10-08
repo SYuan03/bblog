@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privileged, but Biased 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="Privileged, but Biased 论文图解"><section class="slide active">
+  <div class="meta"><span>01 · NEGATIVE RESULT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h1>Teacher 在教 correctness，还是 reference-path similarity？</h1>
+  <p class="lead">在 harder tasks 上，dense PI-conditioned self-distillation 单独使用时常常降分。</p>
+  <div class="content"><div class="grid g4"><div class="card red"><h3>0.31</h3><p>off-path correct KL</p></div><div class="card green"><h3>0.08</h3><p>on-path correct KL</p></div><div class="card orange"><h3>−4.28</h3><p>math think change</p></div><div class="card "><h3>9.5/10</h3><p>个人兴趣</p></div></div></div>
+  <div class="foot"><span>来源：Abstract；main diagnostics</span><span>1 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>02 · PI BIAS</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>Alternative correct 解没有得到应有的 teacher advantage</h2>
+
+  <div class="content"><div class="flow" style="--n:4"><div class="step"><b>1</b><strong>Reference</strong><p>最大 log-prob advantage</p></div><div class="step"><b>2</b><strong>Alternative correct</strong><p>显著更低</p></div><div class="step"><b>3</b><strong>Unrelated correct</strong><p>与 alternative 接近</p></div><div class="step"><b>4</b><strong>Incorrect</strong><p>最低但差距弱</p></div></div></div>
+  <div class="foot"><span>来源：PI Bias Score</span><span>2 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>03 · SCOPE</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>论文否定的是 lone objective</h2>
+
+  <div class="content"><div class="grid g2"><div class="card red"><h3>已测试</h3><p>无 reward 的 PI-conditioned dense loss</p></div><div class="card green"><h3>未测试</h3><p>verifier reward + routing + local credit</p></div></div></div>
+  <div class="foot"><span>来源：Experiment design</span><span>3 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>04 · SETTING</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>QA、数学、代码、BFCL 都做压力测试</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Axis</th><th>Setting</th></tr></thead><tbody><tr><td>Backbone</td><td>Qwen3-8B；additional 32B</td></tr><tr><td>Rollouts</td><td>8</td></tr><tr><td>Epochs</td><td>3</td></tr><tr><td>Response</td><td>16,384</td></tr><tr><td>Hardware</td><td>8×B200</td></tr></tbody></table></div></div>
+  <div class="foot"><span>来源：Appendix hyperparameters</span><span>4 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>05 · TOKEN DIAGNOSIS</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>大量 divergence 落在低信息 token</h2>
+
+  <div class="content"><div class="grid g3"><div class="card orange"><h3>Punctuation</h3><p>标点</p></div><div class="card orange"><h3>Stopwords</h3><p>功能词</p></div><div class="card orange"><h3>Style markers</h3><p>语气与格式</p></div></div></div>
+  <div class="foot"><span>来源：token-category analysis</span><span>5 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>06 · RESULT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>Loss 稳定下降，accuracy 仍然下降</h2>
+
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Task / mode</th><th>Change</th></tr></thead><tbody><tr><td>General QA think</td><td>−1.96</td></tr><tr><td>Math think</td><td>−4.28</td></tr><tr><td>Math instruct</td><td>−0.44</td></tr><tr><td>Coding think</td><td>−0.30</td></tr><tr><td>Agentic think</td><td>−3.51</td></tr></tbody></table></div></div>
+  <div class="foot"><span>根据 main result table 重绘</span><span>6 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>07 · GAME DIAGNOSTIC</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>必须做 correct × reference distance 的 2×2</h2>
+
+  <div class="content"><div class="grid g2"><div class="card green"><h3>Correct</h3><p>near / divergent 两组都应低 penalty</p></div><div class="card red"><h3>Incorrect</h3><p>near 也不能因为像 reference 获益</p></div></div></div>
+  <div class="foot"><span>本文为 game code 设计的必要实验</span><span>7 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>08 · ARTIFACT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>“Supplementary 有 code”与公开 source 不一致</h2>
+
+  <div class="content"><div class="grid g2"><div class="card orange"><h3>公开 tar</h3><p>TeX、bib、style、figures</p></div><div class="card red"><h3>未找到</h3><p>code archive 或 official repo</p></div></div></div>
+  <div class="foot"><span>2026-10-08 public artifact check</span><span>8 / 9</span></div>
+</section>
+<section class="slide">
+  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
+  <h2>不要只问“有没有提升”，要问“压掉了哪些正确解”</h2>
+
+  <div class="content"><div class="callout"><p>对 multi-solution game code，这篇是 mandatory diagnostic，而不是 implementation base。</p></div></div>
+  <div class="foot"><span>兴趣程度 9.5/10</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/privileged-but-biased.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
