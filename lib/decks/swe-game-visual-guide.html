@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SWE-Game 论文图解</title>
+  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
+  <style>
+    .mini{color:var(--muted);font-size:16px;line-height:1.45}.tag{display:inline-block;margin:0 7px 7px 0;padding:7px 10px;border:1px solid var(--line);background:#fff;color:var(--text);font:600 15px/1.1 monospace}.stack{display:grid;gap:12px}.row{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:start;padding:14px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row strong{font-size:20px}.row p{margin:0;color:var(--text);font-size:18px;line-height:1.45}.io{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.io .arrow{text-align:center;color:var(--blue);font-size:42px}.lane{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.node{min-height:152px;padding:18px;border:1px solid var(--line);background:#fff}.node b{display:block;color:var(--blue);font-size:16px}.node strong{display:block;margin:9px 0;font-size:20px}.node p{margin:0;color:var(--text);font-size:16px;line-height:1.4}.splitline{display:grid;grid-template-columns:1fr 1fr;gap:26px}.score{display:grid;grid-template-columns:250px 1fr 84px;gap:15px;align-items:center;margin:14px 0;font-size:18px}.score .track{height:30px}.badge{padding:20px;border:2px solid var(--blue);background:#fff;text-align:center}.badge strong{display:block;color:var(--blue);font:600 44px/1 Georgia,serif}.badge span{display:block;margin-top:10px;color:var(--text);font-size:17px}.unknown{border-color:var(--orange);background:#fffaf4}.tight .card p,.tight .card li{font-size:18px;line-height:1.42}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}
+  </style>
+</head>
+<body>
+<div class="viewport"><main class="stage" aria-label="SWE-Game 论文图解">
+
+<section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2609.33678 · 2026-09-27</span></div>
+  <h1>AI 能做出我们想要的游戏吗？</h1>
+  <p class="lead">SWE-Game 不满足于“项目能启动”。它让评测器亲自按键、观察引擎状态，并确认胜负真的是玩家动作造成的。</p>
+  <div class="content"><div class="grid g4">
+    <div class="metric"><strong>41</strong><span>可执行 Godot 参考游戏</span></div>
+    <div class="metric"><strong>247</strong><span>五种开发任务</span></div>
+    <div class="metric"><strong>50.38</strong><span>最佳 Brief-to-Game</span></div>
+    <div class="metric"><strong>92.59%</strong><span>runtime judge balanced accuracy</span></div>
+  </div></div>
+  <div class="foot"><span>来源：Abstract；Table 3；Table 5</span><span>1 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>02 · FAILURE</span><span>为什么画面与胜利界面都不够</span></div>
+  <h2>一个“看起来完成”的游戏，可能没有玩法因果</h2>
+  <div class="content"><div class="grid g3">
+    <div class="card orange"><h3>只看画面</h3><p>尖刺、cell、beacon 都可以画出来，但碰撞不一定改变 health 或 progress。</p></div>
+    <div class="card red"><h3>只看终局</h3><p>候选可能自动进入 victory。没有输入对照，就无法证明玩家完成了路线。</p></div>
+    <div class="card blue"><h3>运行时证据</h3><p>driver 执行动作，probe 读取接触、对象生命周期与状态变化，再判定行为。</p></div>
+  </div><div class="callout"><p>同长度 no-input control 也到达 goal 时，certified route 直接记 0。</p></div></div>
+  <div class="foot"><span>来源：Section 1；Section 3.4 Functional evaluation</span><span>2 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>03 · CORPUS</span><span>41 references → 247 tasks</span></div>
+  <h2>同一批游戏，派生五种开发合同</h2>
+  <div class="content"><div class="flow" style="--n:5">
+    <div class="step"><b>41 tasks</b><strong>Brief</strong><p>短目标 + assets + video。Agent 先写 GDD，再从头开发。</p></div>
+    <div class="step"><b>41 tasks</b><strong>GDD</strong><p>给 reviewed GDD 和可观察 feature obligations。</p></div>
+    <div class="step"><b>41 tasks</b><strong>Skeleton</strong><p>给 implementation-neutral scaffold，不是删掉 reference code。</p></div>
+    <div class="step"><b>83 cases</b><strong>Repair</strong><p>注入故障、症状报告与需保留的行为。</p></div>
+    <div class="step"><b>41 tasks</b><strong>Porting</strong><p>给 Godot 源码，原生迁移到 Unity。</p></div>
+  </div><div class="grid g4" style="margin-top:22px"><div class="badge"><strong>24 / 17</strong><span>2D / 3D</span></div><div class="badge"><strong>13</strong><span>玩法类别</span></div><div class="badge"><strong>168,335</strong><span>GDScript 行数</span></div><div class="badge"><strong>138</strong><span>参考录像</span></div></div></div>
+  <div class="foot"><span>来源：Section 3.1–3.2；Appendix A–B。41×4+83=247。</span><span>3 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>04 · VISIBILITY</span><span>谁看得到什么</span></div>
+  <h2>公开接口允许替代实现，隐藏 checker 保留判分权</h2>
+  <div class="content"><div class="splitline">
+    <div class="card green"><h3>Agent 可见</h3><ul><li>按模式提供 brief、GDD、scaffold、faulty project 或 Godot source</li><li>assets 与 mode-dependent reference video</li><li><code>contract.json</code> / Unity interface</li><li>semantic groups、actions、numeric slots</li><li>必须交付的项目、GDD、demo 或 build 说明</li></ul></div>
+    <div class="card red"><h3>Evaluator 独占</h3><ul><li>task-specific checks 与 expected outcomes</li><li>certified reference-input routes</li><li>semantic start 参数与 probe assertions</li><li>reference/faulty/repaired 三版本 scenario verdict</li><li>visual rubric host-side curves 与 deficiency caps</li></ul></div>
+  </div><div class="callout"><p>公开材料说明“能观察哪些角色和状态”，不会把 reference implementation 或 hidden predicate 交给 Agent。</p></div></div>
+  <div class="foot"><span>来源：Section 3.2–3.4；Appendix B–C；Appendix H</span><span>4 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>05 · TWO HARNESSES</span><span>模型端与评测端必须分开</span></div>
+  <h2>论文公开了 evaluation harness，却没有公开六套 Agent framework</h2>
+  <div class="content"><div class="io">
+    <div class="card orange"><h3>Model-side agent harness</h3><p>读任务、改代码、运行引擎、看素材与调用工具。六个模型各用自己的 framework 和 tools。</p><div style="margin-top:16px"><span class="tag">名字未知</span><span class="tag">tool schema 未披露</span><span class="tag">统一预算未披露</span></div></div>
+    <div class="arrow">≠</div>
+    <div class="card blue"><h3>Evaluation harness</h3><p>校验 manifest，向工作副本注入 drivers/probes，重放输入，跑 no-input control，录制画面并聚合分数。</p><div style="margin-top:16px"><span class="tag">Godot 4.5.1</span><span class="tag">Unity 6000.3.23f1</span><span class="tag">sandbox</span></div></div>
+  </div><div class="callout red"><p>因此 Table 3 是“模型 + 各自 framework”的系统比较，不能解释成严格受控的纯模型能力排名。</p></div></div>
+  <div class="foot"><span>来源：Section 4.1；Appendix E。论文明确承认 framework 混杂。</span><span>5 / 14</span></div>
+</section>
+
+<section class="slide compact">
+  <div class="meta"><span>06 · MODELS</span><span>六个配置都跑 247 题</span></div>
+  <h2>资源差异大到足以影响排名解释</h2>
+  <div class="content"><div class="table-wrap"><table class="table">
+    <thead><tr><th>模型</th><th>Brief</th><th>GDD</th><th>Skeleton</th><th>Repair</th><th>Porting</th></tr></thead>
+    <tbody><tr><td>Qwen3.8 Flash</td><td>27.00</td><td>37.35</td><td>39.19</td><td>26.13</td><td>51.23</td></tr><tr><td>Grok4.6</td><td>39.01</td><td>48.55</td><td>40.76</td><td>52.44</td><td>59.04</td></tr><tr><td>GPT-5.6 Luna</td><td>34.18</td><td>52.67</td><td>43.10</td><td>58.05</td><td>59.85</td></tr><tr class="ours"><td>Opus5</td><td>50.38</td><td>59.68</td><td>54.06</td><td>83.46</td><td>72.40</td></tr><tr><td>GLM5.3 Flash</td><td>31.05</td><td>40.18</td><td>34.38</td><td>27.55</td><td>44.33</td></tr><tr><td>Minimax M3</td><td>30.47</td><td>42.58</td><td>35.69</td><td>27.36</td><td>49.62</td></tr></tbody>
+  </table></div><div class="grid g2" style="margin-top:20px"><div class="badge"><strong>8.49M</strong><span>Opus5 Brief 平均 input tokens</span></div><div class="badge unknown"><strong>2.56M</strong><span>GPT-5.6 Luna Brief 平均 input tokens</span></div></div></div>
+  <div class="foot"><span>根据 Table 3 与 Figure 4 数据重绘。Opus5 / GPT 同项 tool calls 为 111.37 / 57.15。</span><span>6 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>07 · INTERFACE</span><span>不同代码结构怎样接受同一测试</span></div>
+  <h2>Candidate 提交语义绑定，checker 不猜内部节点名</h2>
+  <div class="content"><div class="lane">
+    <div class="node"><b>01</b><strong>Scenes</strong><p><code>levels</code> 与 <code>endings</code> 给出可启动地址。</p></div>
+    <div class="node"><b>02</b><strong>Entities</strong><p><code>gb_player</code>、hazard、enemy、goal 等角色。</p></div>
+    <div class="node"><b>03</b><strong>Actions</strong><p>left/right/up/down、jump、action、pause、reset。</p></div>
+    <div class="node"><b>04</b><strong>State</strong><p>progress、health、timer、score 与 device IDs。</p></div>
+    <div class="node"><b>05</b><strong>Inject</strong><p>评测器在工作副本装入 driver 与 probe。</p></div>
+    <div class="node"><b>06</b><strong>Observe</strong><p>位置、接触、对象状态、scene 与 outcome。</p></div>
+  </div><div class="code" style="margin-top:22px">candidate: gb_levels.json + semantic groups + live numeric bindings
+evaluator: hidden routes + scenario parameters + expected outcomes</div></div>
+  <div class="foot"><span>来源：Section 3.3；Appendix C Table 7</span><span>7 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>08 · REAL TASK</span><span>Beacon Relay</span></div>
+  <h2>一份真实 GDD 把“送信标”写成可测试状态变化</h2>
+  <div class="content"><div class="grid g3">
+    <div class="card blue"><h3>Pickup</h3><p>接触 pedestal cell 后，13 / 12 / 11 秒 fuse 启动，cell 从 green 变 amber 再变 red。</p></div>
+    <div class="card orange"><h3>Stomp</h3><p>携带 cell 从上方踩中 hostile，返还 2.5 秒并刷新 air jump；侧面接触损失 shield。</p></div>
+    <div class="card green"><h3>Deposit</h3><p>携带 cell 与 beacon 重叠，relay progress 增加、一个 segment 点亮、fuse 停止。</p></div>
+  </div><div class="splitline" style="margin-top:22px"><div class="callout"><p>三关共 11 个 cells，三类 hostile、七类 device，每关一个 heart、三格 shield。</p></div><div class="callout"><p>完整普通输入路线约 6–9 分钟，固定 60 Hz，不使用 procedural randomness。</p></div></div></div>
+  <div class="foot"><span>来源：Appendix B.2 Beacon Relay task GDD excerpt</span><span>8 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>09 · VERDICT PATH</span><span>从输入到 PASS / FAIL</span></div>
+  <h2>Certified route 测行为，no-input control 测因果</h2>
+  <div class="content"><div class="flow" style="--n:5">
+    <div class="step"><b>1</b><strong>Fresh launch</strong><p>冷启动候选，校验 interface 与场景。</p></div>
+    <div class="step"><b>2</b><strong>Replay</strong><p>按 reference route 的动作时序输入。</p></div>
+    <div class="step"><b>3</b><strong>Probe</strong><p>读取 contact、lifecycle 与 live state。</p></div>
+    <div class="step"><b>4</b><strong>Assert</strong><p>检查 milestone、goal 与 requirement。</p></div>
+    <div class="step"><b>5</b><strong>Control</strong><p>同长度无输入也成功，则 route 记 0。</p></div>
+  </div><div class="grid g2" style="margin-top:22px"><div class="card green"><h3>PASS 逻辑</h3><p>玩家动作触发 pickup / deposit，probe 观察到对应对象与 progress 变化，对照不发生。</p></div><div class="card red"><h3>解释性 FAIL</h3><p>候选按时间自动增加 progress。它能显示 victory，但 no-input control 也过关，因此不给 route credit。</p></div></div></div>
+  <div class="foot"><span>FAIL 由公开协议推导，不是发布的模型 log；task-specific checker code 未公开。</span><span>9 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>10 · SELF-DEMO</span><span>Agent 可以证明自己的独特实现</span></div>
+  <h2><code>demos.json</code> 补足固定 reference route 覆盖不到的功能</h2>
+  <div class="content"><div class="grid g4">
+    <div class="card"><h3>独立片段</h3><p>每个 demo 有 id、description 与 inline ops。</p></div>
+    <div class="card"><h3>统一起点</h3><p>每段从第一关 cold launch，不能注入 state 或选 hidden scene。</p></div>
+    <div class="card"><h3>匹配对照</h3><p>每段都跑相同长度 no-input control。</p></div>
+    <div class="card"><h3>不重复计分</h3><p>多个 demo 证明同一 feature，也不会重复增加 coverage。</p></div>
+  </div><div class="callout"><p>Whole-game completion 不是 feature-demo 协议的前提；没被任何 demo 实际触发的 requirement 仍算 uncovered。</p></div></div>
+  <div class="foot"><span>来源：Section 3.4；Appendix H.2 independent demonstrations</span><span>10 / 14</span></div>
+</section>
+
+<section class="slide compact">
+  <div class="meta"><span>11 · SCORING</span><span>三个聚合路径</span></div>
+  <h2>总分先按任务内组件计算，再对 41 或 83 题取平均</h2>
+  <div class="content"><div class="grid g3">
+    <div class="card blue"><h3>Construction</h3><div class="formula">S = 0.85O + 0.15V</div><p>O 合并 mechanics、content、playability，再按模式加入 design 或 scaffold。</p></div>
+    <div class="card orange"><h3>Bug Repair</h3><div class="formula">100 · r · t · p · g</div><p>restoration、retained routes、preservation、validity 在每个 case 内相乘。</p></div>
+    <div class="card green"><h3>Porting</h3><div class="formula">35 / 25 / 15 / 15 / 10</div><p>mechanics、playability、structure、visual、stability 的百分比权重。</p></div>
+  </div><div class="callout"><p>Repair 先乘后平均。只修好目标 bug，却破坏保留行为或构建有效性，会被乘法显著惩罚。</p></div></div>
+  <div class="foot"><span>根据 Equation 1–3 与 Appendix D Table 9 重绘</span><span>11 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>12 · RESULT</span><span>会交付项目，不等于会实现指定玩法</span></div>
+  <h2>三类 construction 的最佳总分仍低于 60</h2>
+  <div class="content"><div class="barset">
+    <div class="score"><span>Brief-to-Game · Opus5</span><div class="track"><i class="fill" style="--v:50.38%"></i></div><b>50.38</b></div>
+    <div class="score"><span>GDD-to-Game · Opus5</span><div class="track"><i class="fill" style="--v:59.68%"></i></div><b>59.68</b></div>
+    <div class="score"><span>Skeleton · Opus5</span><div class="track"><i class="fill" style="--v:54.06%"></i></div><b>54.06</b></div>
+    <div class="score"><span>Repair · Opus5</span><div class="track"><i class="fill green" style="--v:83.46%"></i></div><b>83.46</b></div>
+    <div class="score"><span>Porting · Opus5</span><div class="track"><i class="fill green" style="--v:72.4%"></i></div><b>72.40</b></div>
+  </div><div class="callout"><p>Skeleton 的 Opus5 Scaffold 是 94.62，Content 只有 36.93，Mechanics 36.22。接口接上了，内容与玩法仍不完整。</p></div></div>
+  <div class="foot"><span>根据 Table 3 重绘。分数 0–100。</span><span>12 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>13 · JUDGE VALIDITY</span><span>评测器本身也接受检验</span></div>
+  <h2>可执行检查比视频 VLM 更会发现功能缺陷</h2>
+  <div class="content"><div class="splitline">
+    <div class="card blue"><h3>1,200 条功能 assertions</h3><div class="grid g2"><div class="badge"><strong>92.59%</strong><span>Executable balanced accuracy</span></div><div class="badge unknown"><strong>≈78.41%</strong><span>Video VLM balanced accuracy</span></div></div><p style="margin-top:16px">Executable：411/452 正确接受，705/748 正确抓缺陷。</p></div>
+    <div class="card green"><h3>200 段视觉 clips</h3><div class="grid g2"><div class="badge"><strong>0.829</strong><span>Spearman ρ</span></div><div class="badge"><strong>0.103</strong><span>MAE on [0,1]</span></div></div><p style="margin-top:16px">重复判断的 within-clip SD 为 0.034。</p></div>
+  </div><div class="callout red"><p>论文未披露人工 annotator 数量与 agreement，也未命名 visual judge 使用的 VLM。</p></div></div>
+  <div class="foot"><span>根据 Table 5 重绘；balanced accuracy = 两类正确率的算术平均。</span><span>13 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>14 · VERDICT</span><span>怎样读这篇论文</span></div>
+  <h2>它把“想要的游戏”变成动作、状态与视觉三类证据</h2>
+  <div class="content"><div class="grid g2">
+    <div class="card green"><h3>证据支持</h3><ul><li>runtime checks 适合验 mechanics，VLM 适合验 presentation</li><li>no-input control 能排除自动成功与伪因果</li><li>需求遗漏和 gameplay logic error 是主要失败来源</li><li>公开 semantic contract 允许候选采用不同内部结构</li></ul></div>
+    <div class="card red"><h3>仍不能确定</h3><ul><li>六个 Agent framework 与工具、预算的受控差异</li><li>主榜重复运行与方差</li><li>人工标注协议和 visual judge 身份</li><li>task-specific checker 对外部复现者是否可用</li></ul></div>
+  </div><div class="callout"><p>截至 2026-10-08，论文未链接正式 benchmark/checker repository。最可信的结论是评测设计方向，而不是把 Table 3 当成纯模型排行榜。</p></div></div>
+  <div class="foot"><span>SWE-Game: Can Coding Agents Build the Games We Want?</span><span>14 / 14</span></div>
+</section>
+
+</main></div>
+<div class="overview" aria-label="页面总览"></div>
+<nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/swe-game.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
+<script src="/lib/decks/paper-deck-v2.js"></script>
+</body>
+</html>
