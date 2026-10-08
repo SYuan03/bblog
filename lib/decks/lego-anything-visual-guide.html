@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LEGO-Anything 论文图解</title>
+  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
+  <style>
+    .split{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center}.split.equal{grid-template-columns:1fr 1fr}.tight h2{font-size:42px;margin-top:20px}.tight .lead{font-size:21px}.tight .card{padding:17px 19px}.tight .card p,.tight .card li{font-size:17px}.tight .table{font-size:15px}.tight .table th,.tight .table td{padding:8px 10px}.scene{position:relative;height:450px;border:1px solid var(--line);background:#fff;overflow:hidden}.room-floor{position:absolute;left:80px;right:60px;bottom:48px;height:205px;border:2px solid #aeb8bc;transform:skewY(-8deg);background:#eef1ef}.obj{position:absolute;border:3px solid var(--blue);background:rgba(46,112,152,.13)}.obj.a{left:170px;bottom:145px;width:180px;height:100px}.obj.b{right:145px;bottom:112px;width:125px;height:155px;border-color:var(--orange);background:rgba(186,103,55,.13)}.obj.c{left:390px;bottom:90px;width:150px;height:72px;border-color:var(--green);background:rgba(49,126,106,.13)}.camera{position:absolute;left:42px;top:42px;color:var(--red);font:700 18px monospace}.ray{position:absolute;left:90px;top:84px;width:520px;border-top:2px dashed var(--red);transform:rotate(13deg);transform-origin:left}.codepane{padding:24px;background:#1d252b;color:#e9eef0;font:18px/1.55 monospace}.loop{display:grid;grid-template-columns:repeat(5,1fr);gap:34px;align-items:center}.loop .step{min-height:180px}.pill{display:inline-block;padding:5px 9px;border:1px solid var(--line);background:#fff;color:var(--text);font:700 15px monospace}.boundary{display:grid;grid-template-columns:1fr 120px 1fr;gap:18px;align-items:stretch}.wall{display:flex;align-items:center;justify-content:center;background:#25323a;color:#fff;font:700 18px/1.4 monospace;writing-mode:vertical-rl;letter-spacing:.08em}.metric-flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}.metric-flow .card{min-height:230px}.dots{display:grid;grid-template-columns:1fr 1fr;gap:22px}.cloud{position:relative;height:250px;border:1px solid var(--line);background:#fff}.pt{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--blue)}.pt.ref{background:var(--orange)}.legend{display:flex;gap:18px;color:var(--muted);font-size:15px}.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:50%}.matrix{display:grid;grid-template-columns:160px repeat(6,1fr);border:1px solid var(--line);background:#fff}.matrix div{padding:10px 7px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font:15px/1.2 monospace;text-align:center}.matrix .hd{background:#e9edef;font-weight:700}.matrix .low{background:#f4ded9;color:#8b3834}.matrix .mid{background:#f5ead8}.matrix .high{background:#dcece7;color:#236957}.tx{display:grid;grid-template-columns:repeat(4,1fr);gap:30px}.tx .step{min-height:230px}.world{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:center}.readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.readouts .card{min-height:160px}.note{font-size:15px;color:var(--muted);line-height:1.45}.barrow{grid-template-columns:220px 1fr 90px}.mini{font-size:16px;color:var(--muted);line-height:1.5}
+  </style>
+</head>
+<body>
+<div class="viewport"><main class="stage" aria-label="LEGO-Anything 论文图解">
+  <section class="slide active">
+    <div class="meta"><span>01 · QUESTION</span><span>arXiv:2609.36380v1 · 2026-09-28</span></div>
+    <h1>给一张图，coding agent 能否写出一个可执行的 3D 世界？</h1>
+    <div class="content split"><div><p class="lead"><strong>LEGO-Anything 把单图 3D reconstruction 写成 Image-to-Code：Agent 在 Blender 中写代码、执行、渲染、检查并继续修改。</strong></p><div class="grid g3"><div class="metric"><strong>208</strong><span>RGB inputs</span></div><div class="metric"><strong>104</strong><span>simulator scenes</span></div><div class="metric"><strong>53.4%</strong><span>最佳室内 Overall</span></div></div></div><div class="scene"><div class="camera">RGB → CODE</div><div class="ray"></div><div class="room-floor"></div><div class="obj a"></div><div class="obj b"></div><div class="obj c"></div></div></div>
+    <div class="foot"><span>根据论文 Figure 1 与 Table 2 重绘</span><span>1 / 18</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="meta"><span>02 · PART 0</span><span>what is a scene program?</span></div>
+    <h2>程序保存对象、相机、材质和生成过程；执行它才得到场景</h2>
+    <div class="content grid g3"><div class="card"><h3>Rendered image</h3><p>保留最终 pixels。改相机或查询遮挡对象时，信息已经不在图里。</p></div><div class="card"><h3>Fixed 3D output</h3><p>保留 mesh 或 point map。对象身份、生成逻辑和编辑接口可能缺失。</p></div><div class="card blue"><h3>Scene program</h3><p>显式创建 camera、geometry、materials、lights 与 hierarchy；可再次执行、编辑和查询。</p></div></div>
+    <div class="foot"><span>论文 Introduction、Section 3</span><span>2 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>03 · LOOP</span><span>program → scene → observation</span></div>
+    <h2>Agent 交替修改程序与检查执行结果，最终 artifact 只是轨迹最后一点</h2>
+    <div class="content"><div class="loop"><div class="step"><b>1</b><strong>Interpret</strong><p>理解参考图与相机。</p></div><div class="step"><b>2</b><strong>Plan</strong><p>拆分房间和对象。</p></div><div class="step"><b>3</b><strong>Code</strong><p>写 Blender Python。</p></div><div class="step"><b>4</b><strong>Execute</strong><p>生成场景与预览。</p></div><div class="step"><b>5</b><strong>Revise</strong><p>比较后继续修改。</p></div></div><div class="formula" style="margin-top:28px">τ = {(Pₜ, Sₜ, oₜ)}ₜ₌₁…T　　final submission = P<sub>T</sub></div></div>
+    <div class="foot"><span>论文 Equation 1、Figure 2、Section 3</span><span>3 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>04 · BOUNDARY</span><span>neighboring tasks</span></div>
+    <h2>任务的独特组合：单图输入、完整场景、可执行程序、隐藏 3D 真值</h2>
+    <div class="content"><table class="table"><thead><tr><th>方向</th><th>典型输出</th><th>本文额外要求</th></tr></thead><tbody><tr><td>Object-level image-to-3D</td><td>单对象 mesh / asset</td><td>恢复房间、相机、多对象布局与外观</td></tr><tr><td>Single-image reconstruction</td><td>固定 3D representation</td><td>交付可执行、可编辑 Blender program</td></tr><tr><td>VIGA / SEIG</td><td>visual / Blender program</td><td>以完整场景和隐藏 simulator GT 做定量评测</td></tr><tr><td>3DCodeBench / P3D-Bench</td><td>文本或参数到对象代码</td><td>从视觉证据反推全场景</td></tr><tr><td>WorldCoder-Bench</td><td>文本到交互 3D world</td><td>对参考图的 geometry 与 appearance 忠实度</td></tr></tbody></table></div>
+    <div class="foot"><span>论文 Table 1、Sections 2 与 Appendix A</span><span>4 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>05 · DATA</span><span>simulator-grounded construction</span></div>
+    <h2>专业资产先进入 simulator scene，再经过物理检查与人工复核</h2>
+    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Fab assets</strong><p>只选允许 AI 使用的资产。</p></div><div class="step"><b>2</b><strong>LychSim</strong><p>装配 geometry、layout、lights 与 materials。</p></div><div class="step"><b>3</b><strong>Checks</strong><p>collision、stability 与 capture quality。</p></div><div class="step"><b>4</b><strong>Human review</strong><p>接受、返工或继续标注。</p></div><div class="step"><b>5</b><strong>Frozen cases</strong><p>RGB 公开；3D annotations 隐藏。</p></div></div><div class="grid g4" style="margin-top:24px"><div class="metric"><strong>443</strong><span>registered assets</span></div><div class="metric"><strong>8</strong><span>environments</span></div><div class="metric"><strong>17</strong><span>themes</span></div><div class="metric"><strong>3</strong><span>matched difficulty tiers</span></div></div></div>
+    <div class="foot"><span>根据论文 Figure 3、Table 2 与 Appendix D 重绘</span><span>5 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>06 · VISIBILITY</span><span>actor versus verifier</span></div>
+    <h2>Agent 获得相机公共信息；真正用于评分的几何与对象 mask 保持隐藏</h2>
+    <div class="content boundary"><div class="card green"><h3>Agent-visible</h3><ul><li>single RGB image</li><li>dimensions 与 horizontal FOV</li><li>category taxonomy、output schema</li><li>Blender MCP、文件和代码工具</li><li>自己的 scene 与 render</li></ul></div><div class="wall">VERIFIER BOUNDARY</div><div class="card red"><h3>Verifier-only</h3><ul><li>reference geometry 与 depth</li><li>instance masks</li><li>object correspondences</li><li>scene transforms</li><li>metric feedback 与 benchmark scores</li></ul></div></div>
+    <div class="foot"><span>Section 4.1、Appendix D.1、F.1 与 I</span><span>6 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>07 · ARTIFACT</span><span>deliverability first</span></div>
+    <h2>一次提交必须留下三个可用产物；进程正常退出本身不算通过</h2>
+    <div class="content grid g3"><div class="card blue"><h3><code>scene.blend</code></h3><p>可重新打开、非空，至少有一个 mesh 和 active camera。</p></div><div class="card blue"><h3><code>scene.glb</code></h3><p>格式正确、非空，作为可移植 geometry export。</p></div><div class="card blue"><h3><code>final.png</code></h3><p>可解码且非退化；只检查交付，不直接用它算 Appearance。</p></div><div class="callout red" style="grid-column:1/-1"><p>artifact invalid 或 unresolved headline-evaluation failure：V=R=A=S=0，并继续留在 attempted-case 分母里。超时留下合法产物时仍可评分。</p></div></div>
+    <div class="foot"><span>Section 4.2、Appendix E.1 与 E.4</span><span>7 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>08 · GEOMETRY</span><span>visible-surface reconstruction</span></div>
+    <h2>候选表面直接在参考相机坐标中比较，没有 alignment 或 rescaling</h2>
+    <div class="content split"><div class="dots"><div><div class="cloud"><span class="pt ref" style="left:16%;top:28%"></span><span class="pt ref" style="left:28%;top:42%"></span><span class="pt ref" style="left:45%;top:24%"></span><span class="pt ref" style="left:59%;top:47%"></span><span class="pt ref" style="left:72%;top:31%"></span><span class="pt ref" style="left:38%;top:65%"></span><span class="pt ref" style="left:67%;top:70%"></span></div><p class="mini">隐藏 depth 反投影出的 reference-visible points</p></div><div><div class="cloud"><span class="pt" style="left:18%;top:31%"></span><span class="pt" style="left:31%;top:47%"></span><span class="pt" style="left:44%;top:29%"></span><span class="pt" style="left:61%;top:51%"></span><span class="pt" style="left:80%;top:22%"></span><span class="pt" style="left:42%;top:69%"></span></div><p class="mini">候选 scene 从 active camera 栅格化出的 visible points</p></div></div><div><div class="formula">τ(g) = 0.05 · z(g)<br>Fₒ = 2PR / (P + R)<br>Rᵢ = meanₒ Fₒ</div><div class="callout" style="margin-top:20px"><p>private instance mask 决定每个对象的 scored scope。错误相机、尺度、遮挡和多余表面都会直接进入 precision / recall。</p></div></div></div>
+    <div class="foot"><span>Equation 2、Appendix E.2 与 Figure 18</span><span>8 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>09 · APPEARANCE</span><span>fresh evaluator rerender</span></div>
+    <h2>评测器重渲染 Blender scene，再把几何与外观合成 Overall</h2>
+    <div class="content metric-flow"><div class="card"><h3>Appearance A</h3><p>保留候选 camera、geometry、materials、lights 与 color settings；固定 engine、resolution 与 full frame。</p><p style="margin-top:14px"><span class="pill">RGB max error ≤ 30</span></p></div><div class="card"><h3>Validity V</h3><p>三个 artifacts 有效，且 headline evaluator 成功完成。</p><p style="margin-top:14px"><span class="pill">V ∈ {0,1}</span></p></div><div class="card blue"><h3>Overall S</h3><p>所有 attempted cases 等权平均；失败不会从分母消失。</p><div class="formula" style="margin-top:16px;padding:14px;font-size:19px">S = mean[V(R+A)/2]</div></div></div>
+    <div class="foot"><span>Equations 3-4、Appendix E.3-E.4</span><span>9 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>10 · MAIN RESULT</span><span>mean ± std over three runs</span></div>
+    <h2>Validity 接近饱和，几何与外观才真正拉开模型差距</h2>
+    <div class="content"><table class="table"><thead><tr><th>Model + Codex</th><th>Indoor V</th><th>Indoor R</th><th>Indoor A</th><th>Indoor S</th><th>Outdoor V</th><th>Outdoor R</th><th>Outdoor A</th><th>Outdoor S</th></tr></thead><tbody><tr><td class="ours">GPT-6-astra</td><td>100.0</td><td>52.4</td><td>54.4</td><td class="ours">53.4</td><td>98.0</td><td>34.0</td><td>45.5</td><td class="ours">39.6</td></tr><tr><td>GPT-6-sol</td><td>99.4</td><td>22.2</td><td>42.5</td><td>32.3</td><td>99.7</td><td>19.8</td><td>28.7</td><td>24.2</td></tr><tr><td>GPT-6-luna</td><td>99.7</td><td>15.8</td><td>30.5</td><td>23.2</td><td>99.7</td><td>13.2</td><td>21.4</td><td>17.3</td></tr><tr><td>GPT-5.6-sol</td><td>97.8</td><td>9.8</td><td>19.8</td><td>14.8</td><td>98.7</td><td>12.8</td><td>17.7</td><td>15.3</td></tr><tr><td>GPT-5.6-terra</td><td>99.7</td><td>9.5</td><td>21.3</td><td>15.4</td><td>98.0</td><td>8.1</td><td>15.0</td><td>11.5</td></tr><tr><td>GPT-5.6-luna</td><td>99.1</td><td>10.2</td><td>18.0</td><td>14.1</td><td>97.0</td><td>7.8</td><td>16.6</td><td>12.1</td></tr></tbody></table><p class="note" style="margin-top:14px">数值为百分比；标准差见原论文 Table 3。所有模型室外 Reconstruction 都低于室内。</p></div>
+    <div class="foot"><span>根据原论文 Table 3 重绘</span><span>10 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>11 · SCALING</span><span>complexity and reasoning effort</span></div>
+    <h2>更多对象降低 fidelity；更多 reasoning 主要帮助 GPT-6 系列</h2>
+    <div class="content split equal"><div><h3>三个 complexity tiers 的平均 Overall</h3><div class="barset"><div class="barrow"><span>Easy</span><div class="track"><span class="fill green" style="--v:82%"></span></div><b>24.6</b></div><div class="barrow"><span>Medium</span><div class="track"><span class="fill" style="--v:71%"></span></div><b>21.3</b></div><div class="barrow"><span>Hard</span><div class="track"><span class="fill orange" style="--v:68%"></span></div><b>20.5</b></div></div><p class="mini">六个 GPT 配置合并；Validity 仍约为 99.5%。</p></div><div><h3>Office 42 cases：Low → XHigh</h3><div class="barset"><div class="barrow"><span>GPT-6-astra</span><div class="track"><span class="fill green" style="--v:100%"></span></div><b>32.3→61.8</b></div><div class="barrow"><span>GPT-6-sol</span><div class="track"><span class="fill" style="--v:64%"></span></div><b>21.3→39.7</b></div><div class="barrow"><span>GPT-6-luna</span><div class="track"><span class="fill orange" style="--v:34%"></span></div><b>14.4→21.2</b></div></div><p class="mini">GPT-5.6 模型没有稳定的单调提升。</p></div></div>
+    <div class="foot"><span>Table 4、Figure 4、Appendix F.4</span><span>11 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>12 · TRAJECTORY</span><span>best checkpoint ≠ final checkpoint</span></div>
+    <h2>后期编辑会破坏已经正确的相机、几何和材质</h2>
+    <div class="content split"><div><div class="grid g2"><div class="metric"><strong>29.6%</strong><span>GPT-5.6-sol 的 updates 降低 Q</span></div><div class="metric"><strong>−3.2 pp</strong><span>final 比 best intermediate 更低</span></div></div><div class="callout red" style="margin-top:22px"><p>House bedroom：GPT-6-astra 从 step 2 的 Q=33.90% 跌到 step 4 的 4.35%；GPT-5.6-terra 从 36.93% 跌到 2.10%。</p></div></div><div class="codepane">step 01  build room shell<br>step 02  <span style="color:#72c9a7">BEST Q = 33.90%</span><br>step 03  revise camera / materials<br>step 04  <span style="color:#ef8e82">FINAL Q = 4.35%</span><br><br># final submission keeps<br># the endpoint, not the best state</div></div>
+    <div class="foot"><span>Figure 5、Appendix B.2、Figures 11-12</span><span>12 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>13 · SELF-EVALUATION</span><span>6 builders × 6 judges</span></div>
+    <h2>模型能看出颜色和光照差异，却很难从 render 判断隐藏几何是否改善</h2>
+    <div class="content"><div class="grid g4"><div class="metric"><strong>45.8%</strong><span>self judge · Reconstruction</span></div><div class="metric"><strong>45.4%</strong><span>cross judge · Reconstruction</span></div><div class="metric"><strong>62.2%</strong><span>self judge · Appearance</span></div><div class="metric"><strong>63.9%</strong><span>cross judge · Appearance</span></div></div><div class="callout" style="margin-top:28px"><p>360 checkpoint pairs × 6 judges = 2,160 次主要判断。self-judging 对 Reconstruction 没有稳定优势，几何方向的一致率接近或低于 50%。</p></div></div>
+    <div class="foot"><span>Figure 6、Appendix F.3、Table 8</span><span>13 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>14 · LEGO-PLUGIN</span><span>three targeted interventions</span></div>
+    <h2>初始化、证据检查和版本回退分别处理三类轨迹失败</h2>
+    <div class="content grid g3"><div class="card blue"><h3>Enhanced Initialization</h3><p>VGGT 估计 gravity-aligned frame、room shell 和 camera；提供 projected extent 与 relative depth，不声称恢复 metric scale。</p></div><div class="card orange"><h3>Grounded Refinement</h3><p>SAM 3 regions 与 Depth Anything V2 depth 提供对象范围、深度顺序和 luminance 等可测 residual。</p></div><div class="card green"><h3>Version Control</h3><p>每次修改声明可编辑对象与验收条件；失败时删除新增实体并恢复 scene snapshot。</p></div><div class="callout" style="grid-column:1/-1"><p>Agent 仍负责规划，Blender MCP 仍是通用 scene editor；plugin 只提供受限测量、验证与 transaction 操作。</p></div></div>
+    <div class="foot"><span>Figure 7、Appendix G.1-G.5</span><span>14 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>15 · TRANSACTION</span><span>candidate edit → commit or rollback</span></div>
+    <h2>一次修改先声明边界，再执行 Blender edit，最后决定提交还是恢复</h2>
+    <div class="content"><div class="tx"><div class="step"><b>DECLARE</b><strong>编辑契约</strong><p>editable / protected entities、allowed change、hard requirements。</p></div><div class="step"><b>SNAPSHOT</b><strong>保存状态</strong><p>transforms、meshes、materials、hierarchy、camera 与 render settings。</p></div><div class="step"><b>VALIDATE</b><strong>检查证据</strong><p>未声明改动、hard failure 或 missing evidence 都会阻止接受。</p></div><div class="step"><b>DECIDE</b><strong>Commit / rollback</strong><p>最多 8 个 transactions、2 次 rollbacks、每个候选 2 轮 correction。</p></div></div><p class="note" style="margin-top:20px">场景变化会使旧 validation report 失效；transaction 未解决或 render 未检查时，runtime hook 阻止 Agent 结束。</p></div>
+    <div class="foot"><span>Appendix G.4-G.6</span><span>15 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>16 · PLUGIN RESULT</span><span>42-case Office subset</span></div>
+    <h2>弱模型提升最大；最强 Astra 只增加 2.1%</h2>
+    <div class="content split equal"><div class="barset"><div class="barrow"><span>GPT-5.6-luna</span><div class="track"><span class="fill green" style="--v:100%"></span></div><b>+62.7%</b></div><div class="barrow"><span>GPT-5.6-terra</span><div class="track"><span class="fill green" style="--v:89%"></span></div><b>+55.8%</b></div><div class="barrow"><span>GPT-5.6-sol</span><div class="track"><span class="fill green" style="--v:88%"></span></div><b>+55.3%</b></div><div class="barrow"><span>GPT-6-luna</span><div class="track"><span class="fill" style="--v:44%"></span></div><b>+27.5%</b></div><div class="barrow"><span>GPT-6-sol</span><div class="track"><span class="fill" style="--v:19%"></span></div><b>+12.1%</b></div><div class="barrow"><span>GPT-6-astra</span><div class="track"><span class="fill orange" style="--v:3.4%"></span></div><b>+2.1%</b></div></div><div><div class="card"><h3>Reception</h3><p><strong>14.7 → 32.5</strong><br>相对于最佳三次 base run，plugin 后的布局与对象更接近参考。</p></div><div class="card" style="margin-top:18px"><h3>Copy room</h3><p><strong>10.9 → 27.8</strong><br>两个案例是 qualitative examples，不是总体均值。</p></div></div></div>
+    <div class="foot"><span>Figures 8-9；相对增益；相同 prompt、预算、reasoning effort 与 evaluator</span><span>16 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>17 · LEGO-WORLD</span><span>frozen scene → three readouts</span></div>
+    <h2>同一类 scene representation 可以导出检测、分割和深度，精度仍落后专用模型</h2>
+    <div class="content world"><div class="codepane">scene.blend<br>  ├─ object geometry<br>  ├─ semantic labels<br>  ├─ active camera<br>  └─ camera-space depth<br><br>freeze scene<br>then query →</div><div class="readouts"><div class="card blue"><h3>COCO boxes</h3><p><strong>30.14 AP</strong><br>DINO: 59.88</p></div><div class="card orange"><h3>LVIS masks</h3><p><strong>14.75 AP</strong><br>SAM 3: 53.96</p></div><div class="card green"><h3>ETH3D depth</h3><p><strong>0.1554 AbsRel</strong><br>DA3: 0.0783</p></div></div></div>
+    <div class="foot"><span>Table 5、Appendix H；三个独立 100-image tracks，并非同一批图片</span><span>17 / 18</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>18 · VERDICT</span><span>interest 9.3 / 10</span></div>
+    <h2>可执行 scene program 已经能稳定交付；忠实的三维恢复仍是主要缺口</h2>
+    <div class="content grid g2"><div class="card green"><h3>论文建立了什么</h3><ul><li>single image → Blender program 的完整任务</li><li>Validity、visible-surface geometry、Appearance 三层评测</li><li>对非单调编辑与失败自评的轨迹诊断</li><li>冻结场景支持多个 deterministic readouts</li></ul></div><div class="card orange"><h3>证据边界</h3><ul><li>benchmark 仍以 simulator renders 为主</li><li>系统比较没有统一 inference budget 与 information access</li><li>plugin 只在 42 个 Office cases 上验证</li><li>研究代码与 evaluator 尚未公开，无法独立复现</li></ul></div><div class="callout" style="grid-column:1/-1"><p><strong>最准确的结论：</strong>当前 Agent 擅长交付一个可运行的 Blender 世界，但还不能稳定恢复图片背后的几何、相机和外观。</p></div></div>
+    <div class="foot"><span>论文全文与附录；博客作者兴趣度只表示本人兴趣</span><span>18 / 18</span></div>
+  </section>
+</main></div>
+<div class="overview" aria-label="页面总览"></div>
+<nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/lego-anything.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
+<script src="/lib/decks/paper-deck-v2.js"></script>
+</body></html>
