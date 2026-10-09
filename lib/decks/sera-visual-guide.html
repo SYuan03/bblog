@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SERA 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+.tight .card{padding:18px 20px}.tight .card p,.tight .card li{font-size:17px}.tight .card h3{font-size:21px}.small{font-size:16px!important}.formula small{display:block;margin-top:8px;color:var(--text);font:17px/1.4 Arial,"PingFang SC",sans-serif}.tree{display:grid;grid-template-columns:1fr 120px 1fr 120px 1fr;gap:14px;align-items:center}.node{min-height:176px;padding:22px;border:2px solid var(--line);background:#fff}.node b{display:block;margin-bottom:12px;color:var(--blue);font-size:17px}.node strong{display:block;margin-bottom:12px;font-size:23px}.node p{margin:0;color:var(--text);font-size:18px;line-height:1.48}.connector{text-align:center;color:var(--blue);font-size:34px}.branchgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.branch{padding:18px 8px;border:1px solid var(--line);background:#fff;text-align:center}.branch b{display:block;font-size:24px}.branch span{display:block;margin-top:9px;color:var(--text);font:15px monospace}.branch.ok{border-top:5px solid var(--green)}.branch.fail{border-top:5px solid var(--red)}.timeline{display:grid;grid-template-columns:repeat(20,1fr);gap:5px}.tick{height:86px;padding-top:15px;background:#d8e4ea;color:var(--blue);font:700 17px/1 monospace;text-align:center}.tick.d{background:#f1ddcd;color:var(--orange)}.tick.r{background:#d4e7df;color:var(--green)}.mask{display:flex;gap:6px;flex-wrap:wrap}.tok{padding:9px 11px;background:#dfe5e7;color:#69747b;font:16px monospace}.tok.on{background:#2e7098;color:#fff}.tok.rub{background:#317e6a;color:#fff}.tok.del{background:#ba6737;color:#fff}.scoreline{display:grid;grid-template-columns:250px 1fr 86px;gap:16px;align-items:center;margin:12px 0;font-size:18px}.split{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}.check{padding:18px 20px;border-left:5px solid var(--green);background:#fff}.check.fail{border-color:var(--red)}.check strong{display:block;margin-bottom:8px;font-size:20px}.check p{margin:0;color:var(--text);font-size:17px;line-height:1.45}.path{font:17px/1.52 "SFMono-Regular",Consolas,monospace;color:var(--text)}
+</style></head><body><div class="viewport"><main class="stage" aria-label="SERA 论文图解">
+
+<section class="slide active">
+  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2610.04902v1 · 2026-10-04</span></div>
+  <h1>Agent 能不能先定义“做成什么样”，再学会按这个标准工作？</h1>
+  <p class="lead">SERA 让同一个 Qwen3-4B 策略模型拆任务、执行子任务、生成验收标准（rubric），再用成败可验证的反事实分支训练这份标准。</p>
+  <div class="content"><div class="grid g4"><div class="metric"><strong>74.31%</strong><span>TextCraft 成功率</span></div><div class="metric"><strong>65.07%</strong><span>TextWorld 成功率</span></div><div class="metric"><strong>4.1×</strong><span>外部 judge 调用减少</span></div><div class="metric"><strong>16 GPUs</strong><span>论文默认 2 × 8 H200</span></div></div></div>
+  <div class="foot"><span>来源：Abstract；Tables 1, 2, 5</span><span>1 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>02 · ONE RECURSIVE CASE</span><span>Figure 2；Dataset/training/textworld_train.jsonl</span></div>
+  <h2>一次委派：先写验收标准，子 Agent 才开始做菜</h2>
+  <p class="lead">根任务要求完成多道菜。所有 Agent 共享物品和厨房状态，但各自保留位置、历史和步数预算。</p>
+  <div class="content"><div class="tree"><div class="node"><b>根节点 · 深度 0</b><strong>准备并吃掉两道菜</strong><p>把 dish_1 与 dish_2 拆成独立目标，最后由自己执行 prepare / eat 收尾。</p></div><div class="connector">rubric<br>→</div><div class="node"><b>子节点 · 深度 1</b><strong>处理 dish_1</strong><p>找 red apple、olive oil、water、orange bell pepper；切、烤并放到共享台面。</p></div><div class="connector">结果<br>→</div><div class="node"><b>父节点恢复执行</b><strong>读回结果与新状态</strong><p>如果另一支也完成，根 Agent 准备两道菜并分别吃掉；检查器再看最终世界状态。</p></div></div></div>
+  <div class="foot"><span>论文 Figure 2 是说明性轨迹；食材来自公开训练样例，本文重新组织</span><span>2 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>03 · WHY</span><span>Sections 1, 3.1</span></div>
+  <h2>根任务有答案，Agent 自己发明的子任务通常没有</h2>
+  <div class="content"><div class="grid g3"><div class="card blue"><h3>执行</h3><p>子 Agent 是否完成目标？二元 judge 的信息很粗，而且树上每个节点都要额外判断。</p></div><div class="card orange"><h3>拆解</h3><p>“子任务是否成功”无法回答“当初是否该拆、该拆出多少工作”。</p></div><div class="card green"><h3>评价</h3><p>同一组模型参数既要完成工作，又要判断返回结果是否足够好。</p></div></div><div class="callout" style="margin-top:24px"><p>RAO 把程序检查器或 LLM judge 的二元结果直接发给每个节点；SERA 把外部标签集中用于训练 rubric，普通执行则改用 policy 自己的连续分数。</p></div></div>
+  <div class="foot"><span>来源：Sections 1, 2；Table 6</span><span>3 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>04 · EXECUTION REWARD</span><span>Section 3.2；Runtime/rubric/prompts.py</span></div>
+  <h2>rubric 必须在子任务轨迹出现前冻结</h2>
+  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1 · 观察</b><strong>父任务与轨迹前缀</strong><p>读取父轨迹、当前状态、子任务目标、工具和预算。</p></div><div class="step"><b>2 · 提交</b><strong>写 4–8 项 rubric</strong><p>每项含权重、零分/满分条件，另有成败门槛。</p></div><div class="step"><b>3 · 执行</b><strong>子 Agent 跑完整轨迹</strong><p>rubric 不再改写，子 Agent 仍可继续递归委派。</p></div><div class="step"><b>4 · 评分</b><strong>同一 policy 评分</strong><p>输入冻结 rubric、完整轨迹与最终状态。</p></div><div class="step"><b>5 · 更新</b><strong>只训练执行 token</strong><p>根节点用环境结果；非根节点用 rubric 分数。</p></div></div></div>
+  <div class="foot"><span>代码核验：prompts.py:157–260；rubric_subagent_reward/processor.py</span><span>4 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>05 · COUNTERFACTUALS</span><span>Section 3.4；counterfactual.py</span></div>
+  <h2>同一委派点复制 8 份，才能检验 rubric 排得对不对</h2>
+  <p class="lead">8 条分支的起点、子任务目标和 rubric 完全相同，差别只来自后续采样。TextCraft 用程序标签，TextWorld 用 Kimi 做二元判断。</p>
+  <div class="content"><div class="branchgrid"><div class="branch ok"><b>✓</b><span>s=.92</span></div><div class="branch fail"><b>×</b><span>s=.21</span></div><div class="branch ok"><b>✓</b><span>s=.81</span></div><div class="branch fail"><b>×</b><span>s=.36</span></div><div class="branch ok"><b>✓</b><span>s=.74</span></div><div class="branch fail"><b>×</b><span>s=.12</span></div><div class="branch fail"><b>×</b><span>s=.42</span></div><div class="branch ok"><b>✓</b><span>s=.88</span></div></div><div class="grid g2" style="margin-top:24px"><div class="card blue"><h3>第 0 条分支</h3><p>承担真实递归执行，并把最终状态提交给父节点。</p></div><div class="card"><h3>第 1–7 条分支</h3><p>只提供反事实训练数据；全成功或全失败的组会被跳过。</p></div></div></div>
+  <div class="foot"><span>来源：Section 3.4；代码 counterfactual.py:84–214</span><span>5 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>06 · RUBRIC OBJECTIVE</span><span>Equation 3；rubric_generation_ranking/stage.py</span></div>
+  <h2>只训练“写 rubric”这次动作，评分输出不进入优化器</h2>
+  <div class="content"><div class="formula">L<sub>rank</sub> = mean<sub>i∈success,j∈failure</sub> max(0, 0.2 − s<sub>i</sub> + s<sub>j</sub>)<small>成功分支应比失败分支至少高 0.2；rubric reward = −L<sub>rank</sub></small></div><div class="grid g3" style="margin-top:26px"><div class="card green"><h3>接收梯度</h3><p>生成 rubric 的那段输出 token。</p></div><div class="card red"><h3>不接收梯度</h3><p>8 次评分调用、子任务执行和真实成败标签。</p></div><div class="card orange"><h3>LOO 基线</h3><p>在一个 batch 的有效调用组之间计算 advantage。</p></div></div></div>
+  <div class="foot"><span>来源：Equation 3, 6；实现 stage.py:29–63, 163–255</span><span>6 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>07 · DELEGATION REWARD</span><span>Section 3.3；leaf_credit.py</span></div>
+  <h2>一次委派覆盖多少叶节点，就分到多少结构奖励</h2>
+  <div class="content"><div class="formula">r<sub>leaf</sub>(e) = root_success × |leaves under e| / |all leaves|</div><div class="split" style="margin-top:24px"><div class="node"><b>根任务成功</b><strong>某次委派覆盖 2 / 3 叶节点</strong><p>发起这次委派的动作得到 2/3；只训练对应语句的 token。</p></div><div class="node"><b>根任务失败</b><strong>所有委派奖励都是 0</strong><p>完整 SERA 不再按子任务成败过滤。叶节点默认等权，拆得更碎不等于贡献更大。</p></div></div></div>
+  <div class="foot"><span>来源：Equation 2；实现 leaf_credit.py:99–135，reward_first_launch/stage.py</span><span>7 / 14</span></div>
+</section>
+
+<section class="slide">
+  <div class="meta"><span>08 · UPDATE ROUTING</span><span>Sections 3.5–3.6；stage_kernel.py</span></div>
+  <h2>16 : 2 : 2 是优化步骤调度，不是三种奖励的权重</h2>
+  <div class="content"><div class="timeline"><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick">E</div><div class="tick d">D</div><div class="tick d">D</div><div class="tick r">R</div><div class="tick r">R</div></div><div class="grid g3 tight" style="margin-top:22px"><div class="card blue"><h3>Execution</h3><div class="mask"><span class="tok on">solve</span><span class="tok">rubric</span><span class="tok on">delegate</span><span class="tok on">return</span></div></div><div class="card orange"><h3>Delegation</h3><div class="mask"><span class="tok">solve</span><span class="tok">rubric</span><span class="tok del">delegate</span><span class="tok">return</span></div></div><div class="card green"><h3>Rubric generation</h3><div class="mask"><span class="tok">solve</span><span class="tok rub">rubric</span><span class="tok">score</span><span class="tok">return</span></div></div></div></div>
+  <div class="foot"><span>同一个全参数 policy；CISPO + 各阶段独立 LOO 基线 + 深度加权</span><span>8 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>09 · TEXTCRAFT CASE</span><span>Dataset/training/textcraft_synth_train.jsonl；env.py</span></div>
+  <h2>真实题：Craft 3x a1_i5</h2>
+  <div class="content"><div class="split"><div><div class="card blue"><h3>Agent 看见</h3><p>目标、当前库存和 5 个工具：<code>get_info</code>、<code>view_inventory</code>、<code>craft</code>、<code>launch_subagent</code>、<code>finish</code>。它需要自行查询五层配方依赖。</p></div><div class="card" style="margin-top:16px"><h3>公开题目记录</h3><p>该样例的标准轨迹有 22 次 <code>craft</code>。这条轨迹存在题目元数据里，但不会进入模型提示。</p></div></div><div><div class="check"><strong>PASS</strong><p>Agent 显式调用 <code>finish()</code>；最终库存里的 <code>a1_i5</code> 比初始库存至少多 3 个。</p></div><div class="check fail" style="margin-top:18px"><strong>FAIL</strong><p>少做任一中间物、用错原料、超过预算，或没有调用 <code>finish()</code>。已有目标物不能冒充本次新产物。</p></div></div></div></div>
+  <div class="foot"><span>代码核验：TextCraft env.py:710–768；样例 ID textcraft_synth.train.0</span><span>9 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>10 · TEXTWORLD CASE</span><span>TextWorld-Sync V9；composite_scorer.py</span></div>
+  <h2>共享世界里的两道菜：完成一半仍是 0</h2>
+  <div class="content"><div class="split"><div class="card blue"><h3>题目与运行接口</h3><p>dish_1 要烤切 red apple 与 orange bell pepper，并收集 olive oil、water；dish_2 要处理 carrot、purple potato，并收集 salt、flour。Agent 能看到任务描述、当前位置、可见物体、合法动作和剩余共享步数。</p><p style="margin-top:10px">各 Agent 的位置和历史彼此独立；库存、物品、门、工具冷却状态、菜品进度和全局动作预算共享。环境动作加锁并原子提交。</p></div><div><div class="check"><strong>PASS</strong><p>每种食材都已收集，处理方式与配方完全匹配；两道菜都已完成并吃掉。</p></div><div class="check fail" style="margin-top:18px"><strong>FAIL</strong><p>只完成 dish_1、忘记吃掉、删除食材，或做了不可逆的错误处理。任何一种都会让根任务失败。</p></div></div></div></div>
+  <div class="foot"><span>来源：公开训练样例；checker composite_scorer.py:14–45</span><span>10 / 14</span></div>
+</section>
+
+<section class="slide compact">
+  <div class="meta"><span>11 · EVALUATION HARNESS</span><span>Table 5；Evaluation READMEs and code</span></div>
+  <h2>最终榜单不用 LLM judge：跑完递归轨迹后直接检查根状态</h2>
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>协议</th><th>TextCraft-Synth</th><th>TextWorld-Sync</th></tr></thead><tbody><tr><td>模型</td><td colspan="2">Qwen3-4B-Instruct-2507 全参数训练；分别取第 250 / 400 次更新</td></tr><tr><td>题集</td><td>固定验证池中的 632 题</td><td>独立测试集中的 1,400 题</td></tr><tr><td>轨迹</td><td colspan="2">temperature 0；每题一条轨迹；根/子 Agent 各 20 步；最大深度 3</td></tr><tr><td>上下文</td><td>10,240；单次输出 512</td><td>13,312；单次输出 3,072</td></tr><tr><td>运行接口</td><td>CodeAct + IPython 函数</td><td>text action / inventory / delegate / finish</td></tr><tr><td>根任务判定</td><td>目标物净增达标且调用 finish</td><td>食材与处理正确；每道菜都完成并吃掉</td></tr><tr><td>聚合</td><td>147/213/136/136，按题数加权</td><td>每档 350 题，等价四档宏平均</td></tr></tbody></table></div></div>
+  <div class="foot"><span>主表对 3 次运行报告均值 ± 标准差；评测错误按失败计入</span><span>11 / 14</span></div>
+</section>
+
+<section class="slide compact">
+  <div class="meta"><span>12 · RESULTS</span><span>Tables 1 and 3</span></div>
+  <h2>只写 rubric 不够，经过真实成败校准的排序才带来主要增益</h2>
+  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>执行奖励</th><th>rubric 怎样训练</th><th>TextCraft</th><th>TextWorld</th></tr></thead><tbody><tr><td>RAO</td><td>程序 / judge 给二元成败</td><td>不训练</td><td>68.93</td><td>51.93</td></tr><tr><td>SERA w/o D &amp; RT</td><td>policy 按 rubric 给分</td><td>不训练</td><td>72.26</td><td>51.10</td></tr><tr><td>SERA w/o D</td><td>policy 按 rubric 给分</td><td>按真实成败训练排序</td><td class="good">74.84</td><td>60.26</td></tr><tr><td>SERA</td><td>policy 按 rubric 给分</td><td>排序训练 + 叶节点奖励</td><td>74.31</td><td class="ours">65.07</td></tr></tbody></table></div><div class="callout red" style="margin-top:22px"><p>Rank + score-dispersion 在 TextCraft 只有 65.77，比 verified ranking 的 74.84 低 9.07 分。把分数拉开，无法保证成功轨迹排在失败轨迹前面。</p></div></div>
+  <div class="foot"><span>数值均为成功率；报告 3 次运行均值；TextCraft 按 632 道题加权</span><span>12 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>13 · COST &amp; REUSE</span><span>Tables 2, 4, 7</span></div>
+  <h2>少调用外部 judge，不代表总训练更便宜</h2>
+  <div class="content"><div class="grid g3"><div class="card green"><h3>Judge 调用</h3><p>TextWorld：147.80K → 35.79K；输入 token 633.80M → 125.32M。</p></div><div class="card orange"><h3>实际用时</h3><p>同为 2 × 8 H200：RAO 13h08m；SERA 24h14m。</p></div><div class="card blue"><h3>测试时 N=2</h3><p>65.07 → 67.50；policy 自选与 Kimi 的 67.29 基本持平。</p></div></div><div class="callout" style="margin-top:24px"><p>推理时，每次委派都克隆两棵完整候选子树；先完成子任务，再按冻结 rubric 自底向上选择，最后提交获胜分支的共享环境状态。</p></div></div>
+  <div class="foot"><span>TextCraft SERA 24h06m，比 RAO 29h36m 快；成本结论依 benchmark 与硬件</span><span>13 / 14</span></div>
+</section>
+
+<section class="slide tight">
+  <div class="meta"><span>14 · HOW TO LEARN IT</span><span>Repository revision 0443b19</span></div>
+  <h2>算法核很小，论文级系统并不“小”</h2>
+  <div class="content"><div class="split"><div class="card green"><h3>建议先读这五处</h3><p class="path">Runtime/rubric/prompts.py<br>Training/runtime/rubric_generation_ranking/stage.py<br>Training/runtime/three_stage_train/counterfactual.py<br>Training/runtime/two_stage_rao_leaf/leaf_credit.py<br>Training/sera_training/stage_kernel.py</p></div><div class="stack"><div class="check"><strong>最小可学版本</strong><p>单进程可复制环境 + delegate 工具 + 冻结 rubric + 复制 4/8 条分支 + 程序检查器 + 离线记录。</p></div><div class="check fail"><strong>论文完整版</strong><p>递归树、共享状态、精确 token 掩码、三套 LOO、CISPO、Ray/AReaL/FSDP/SGLang、16 张 H200。</p></div><div class="check fail"><strong>证据边界</strong><p>只测一个 4B 模型和两个合成文字环境；TextCraft 的开发/评测题不独立；根仓库没有项目级 LICENSE。</p></div></div></div></div>
+  <div class="foot"><span>代码和两个 checkpoint 已公开；HF checkpoint 仓库有 Apache-2.0，代码复用需另行确认</span><span>14 / 14</span></div>
+</section>
+
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/self-evaluating-recursive-agents.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>

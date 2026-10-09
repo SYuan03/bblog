@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Self-Evaluating Recursive Agents</title>
+  <desc id="desc">A recursive agent tree whose parent writes a rubric before delegating, then learns from verified counterfactual outcomes.</desc>
+  <rect width="1600" height="900" fill="#f8f5ee"/>
+  <path d="M92 86H1508" stroke="#ccd3d5" stroke-width="2"/>
+  <text x="92" y="62" fill="#68747c" font-family="Arial, PingFang SC, sans-serif" font-size="22" letter-spacing="4">PAPER DEEP DIVE · 2026-10-04</text>
+  <text x="92" y="178" fill="#171c21" font-family="Georgia, Songti SC, serif" font-size="78" font-weight="600">Self-Evaluating</text>
+  <text x="92" y="270" fill="#171c21" font-family="Georgia, Songti SC, serif" font-size="78" font-weight="600">Recursive Agents</text>
+  <text x="96" y="327" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="29">先写验收标准，再派子 Agent；用真实成败训练这套标准</text>
+
+  <g transform="translate(92 400)">
+    <rect x="0" y="0" width="314" height="162" fill="#fff" stroke="#2e7098" stroke-width="3"/>
+    <text x="24" y="38" fill="#2e7098" font-family="Arial, sans-serif" font-size="18" font-weight="700">ROOT · πθ</text>
+    <text x="24" y="78" fill="#171c21" font-family="Arial, PingFang SC, sans-serif" font-size="24" font-weight="700">拆任务并提前写 rubric</text>
+    <text x="24" y="116" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="20">criteria + weights</text>
+    <text x="24" y="145" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="20">随后冻结，不看未来轨迹</text>
+
+    <path d="M314 81H430" stroke="#2e7098" stroke-width="4"/>
+    <path d="M416 69L430 81L416 93" fill="none" stroke="#2e7098" stroke-width="4"/>
+
+    <rect x="430" y="0" width="302" height="162" fill="#fff" stroke="#317e6a" stroke-width="3"/>
+    <text x="454" y="38" fill="#317e6a" font-family="Arial, sans-serif" font-size="18" font-weight="700">CHILD · πθ</text>
+    <text x="454" y="78" fill="#171c21" font-family="Arial, PingFang SC, sans-serif" font-size="24" font-weight="700">执行 delegated subtask</text>
+    <text x="454" y="116" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="20">trajectory + final state</text>
+    <text x="454" y="145" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="20">同一 policy 可继续递归</text>
+
+    <path d="M732 81H848" stroke="#317e6a" stroke-width="4"/>
+    <path d="M834 69L848 81L834 93" fill="none" stroke="#317e6a" stroke-width="4"/>
+
+    <rect x="848" y="0" width="304" height="162" fill="#fff" stroke="#ba6737" stroke-width="3"/>
+    <text x="872" y="38" fill="#ba6737" font-family="Arial, sans-serif" font-size="18" font-weight="700">SCORE · πθ</text>
+    <text x="872" y="78" fill="#171c21" font-family="Arial, PingFang SC, sans-serif" font-size="24" font-weight="700">按冻结 rubric 打 0–1 分</text>
+    <text x="872" y="116" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="20">普通 execution 的局部奖励</text>
+    <text x="872" y="145" fill="#3e4851" font-family="Arial, PingFang SC, sans-serif" font-size="20">scorer 本身不收梯度</text>
+
+    <g transform="translate(0 236)">
+      <rect x="0" y="0" width="1152" height="164" fill="#171c21"/>
+      <text x="24" y="38" fill="#d8e0e4" font-family="Arial, sans-serif" font-size="17" letter-spacing="2">FORK-8 RUBRIC TRAINING</text>
+      <circle cx="92" cy="98" r="28" fill="#317e6a"/><text x="82" y="106" fill="#fff" font-family="Arial" font-size="22">✓</text>
+      <circle cx="174" cy="98" r="28" fill="#a64b47"/><text x="166" y="106" fill="#fff" font-family="Arial" font-size="22">×</text>
+      <circle cx="256" cy="98" r="28" fill="#317e6a"/><text x="246" y="106" fill="#fff" font-family="Arial" font-size="22">✓</text>
+      <circle cx="338" cy="98" r="28" fill="#a64b47"/><text x="330" y="106" fill="#fff" font-family="Arial" font-size="22">×</text>
+      <text x="406" y="88" fill="#fff" font-family="SFMono-Regular, monospace" font-size="25">max(0, 0.2 − s✓ + s×)</text>
+      <text x="406" y="124" fill="#b9c4ca" font-family="Arial, PingFang SC, sans-serif" font-size="20">成功分支必须比失败分支至少高 0.2</text>
+      <text x="904" y="88" fill="#7fc2ad" font-family="Georgia, serif" font-size="36" font-weight="700">16 : 2 : 2</text>
+      <text x="904" y="124" fill="#b9c4ca" font-family="Arial, PingFang SC, sans-serif" font-size="18">execution · delegation · rubric</text>
+    </g>
+  </g>
+  <text x="1280" y="838" fill="#2e7098" font-family="Georgia, serif" font-size="34" font-weight="700">SERA</text>
+  <text x="92" y="838" fill="#68747c" font-family="Arial, PingFang SC, sans-serif" font-size="20">Qwen3-4B · TextCraft-Synth · TextWorld-Sync · 2 × 8 H200</text>
+</svg>
