@@ -91,7 +91,7 @@
     },
     {
       "role": "future-work",
-      "locator": "Q5. 怎样把预算、安全和防泄漏真正变成基础设施？"
+      "locator": "Q5. 怎样把预算、安全和防泄漏交给基础设施执行？"
     },
     {
       "role": "summary",
@@ -108,37 +108,74 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 3–4 and appendices: task construction and splits"
+          "locator": "Table 1 and Appendix A: five benchmark-study tasks and splits"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文列出的来源、筛选、split 与泄漏风险都在正文中单独说明。"
+          "quote": "执行 GAIA、MATH、Terminal-Bench 等任务"
+        },
+        {
+          "artifact": "article",
+          "quote": "主实验有 5 个 target tasks、8 种 optimizer 配置、每个配置 3 次，共 120 个实验。"
         }
       ]
     },
     {
       "id": "annotation-and-check-construction",
-      "claim_type": "author-claim",
+      "claim_type": "inspected-implementation",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Benchmark construction, evaluator and limitations"
+          "locator": "Table 1 and Section 5: source-benchmark scorers"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Commit d1400011917ff66b7c122e7a787d547372f43e97: evaluator and benchmark interfaces"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "任务检查、标注来源与无法从公开材料确认的部分均被明确区分。"
+          "quote": "VeRO-Bench 继承各任务自己的 scorer；例如 Terminal-Bench 的 verifier 只看最终环境是否满足任务，不会因为 Agent 没崩溃就给 PASS。"
         }
       ]
     },
     {
       "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "official-artifact"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 1 and Section 3.2: Filesystem, Evaluator, and partition boundaries"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Commit d1400011917ff66b7c122e7a787d547372f43e97: capability-scoped interfaces"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Filesystem 接口限制它能读写哪些路径。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Evaluator 在隔离环境中运行 target agent，并按实际样本数扣预算。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -146,32 +183,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Evaluation protocol and disclosure boundary"
+          "locator": "Algorithm 1, Table 2, and Appendix A: budget accounting and best-validation selection"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章明确区分 evaluated system 可见内容与隐藏 test、checker 或 reference。"
-        }
-      ]
-    },
-    {
-      "id": "evaluation-formulas",
-      "claim_type": "reproduced-calculation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Metrics, equations and result tables"
-        }
-      ],
-      "evidence": [
+          "quote": "基础预算 B=8 表示可消费的 evaluator sample 数，而不是八次任意大小的完整评测。"
+        },
         {
           "artifact": "article",
-          "quote": "分数公式、聚合层级、分母和不确定性按论文协议解释。"
+          "quote": "原 benchmark verifier 决定 PASS/FAIL。"
         }
       ]
     },
@@ -185,21 +207,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Case studies and official artifact availability"
+          "locator": "Table 4: TerminalBench-2 case study"
         },
         {
           "source_id": "official-artifact",
-          "locator": "d1400011917ff66b7c122e7a787d547372f43e97"
+          "locator": "Commit d1400011917ff66b7c122e7a787d547372f43e97: benchmark adapter and evaluation records"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "至少一个具体执行案例从输入、修改、运行一直追到 PASS 或 FAIL。"
+          "quote": "11 个 AttributeError 全部消失，但最终只通过 30/89。"
         },
         {
           "artifact": "article",
-          "quote": "公开材料不足时，文章不会把推测伪装成官方 checker 实现。"
+          "quote": "Filesystem 版本新增 6 个 PASS，同时让原先 6 个 PASS 退化；总分相同掩盖了两批任务的交换。"
         }
       ]
     },
@@ -212,13 +234,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Experiments and main results"
+          "locator": "Table 2 and Figures 2–4: main benchmark-suite results"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "模型、harness、预算、重复次数、失败运行和主结果没有混成单一排行榜。"
+          "quote": "默认 VeRO-Agent 的平均 best score 为 0.61，GEPA 与 Resources-only 约 0.54；收益集中在工具使用任务，GPQA 和 MATH 几乎没有变化。"
         }
       ]
     },
@@ -231,13 +253,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Related Work and protocol comparison"
+          "locator": "Related Work and system positioning"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "相邻工作按修改对象、反馈、隐藏边界和交付物比较。"
+          "quote": "VeRO 更像研究操作系统；Meta-Harness 是运行在其上的具体优化策略，HarnessOpt-Bench 则进一步把任务和 disclosure protocol 标准化。"
         }
       ]
     },
@@ -245,18 +267,27 @@
       "id": "limitations",
       "claim_type": "interpretation",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations and future work"
+          "locator": "Limitations and security study"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Commit d1400011917ff66b7c122e7a787d547372f43e97: current budget and capability interfaces"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章把外部有效性、方差、checker blind spot 与公开 artifact 缺口列为结论边界。"
+          "quote": "当前 B 主要按 evaluator calls 计，不包含 optimizer API cost；不同方法可能用完全不同的思考预算。"
+        },
+        {
+          "artifact": "article",
+          "quote": "benchmark 仍会受 API 漂移、固定模型版本与 reward hacking 影响；论文也没有 human optimizer baseline。"
         }
       ]
     }
@@ -753,20 +784,7 @@
       "asset_paths": []
     }
   ],
-  "figures": [
-    {
-      "path": "/lib/papers/vero/cover.svg",
-      "origin": "generated",
-      "source_id": "paper",
-      "source_locator": "paper overview",
-      "credit": "原创系列封面图",
-      "license_status": "not-applicable",
-      "license_basis": "Original explanatory graphic.",
-      "used_in": [
-        "deck"
-      ]
-    }
-  ],
+  "figures": [],
   "qa": {
     "reading_layout": {
       "deck_first": true,

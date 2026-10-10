@@ -83,7 +83,7 @@
     },
     {
       "role": "method",
-      "locator": "Q3. Weakness Mining、Proposal 与 Validation 怎样闭环？"
+      "locator": "Q3. Weakness Mining、Proposal 与 Validation 怎样接成一轮？"
     },
     {
       "role": "experiments",
@@ -108,13 +108,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Abstract and Introduction"
+          "locator": "Introduction and Figure 2: self-improvement loop"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章把核心贡献限定为对 executable harness 的创建、修复或优化。"
+          "quote": "Self-Harness 让当前模型读自己的失败轨迹、概括反复出现的机制，再提交最小修改；如果修改让任一 split 提升且两个 split 都不退，才进入下一轮。"
         }
       ]
     },
@@ -122,18 +122,27 @@
       "id": "method",
       "claim_type": "author-claim",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Method sections and algorithm"
+          "locator": "Method: Weakness Mining, Proposal, and Validation; acceptance equation"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Commit 2720dbb3f52283684f4b85a1065d642df1779dd8: candidate evaluation and promotion"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "方法链按失败证据、候选修改、真实执行与筛选顺序展开。"
+          "quote": "一轮分三步：从轨迹提取 weakness signature，并行提出互异的最小 edit，再用 held-in / held-out 双重门验证。"
+        },
+        {
+          "artifact": "article",
+          "quote": "accept(e) ⇔ held-in(e) ≥ baseline ∧ held-out(e) ≥ baseline ∧ 至少一边严格提升"
         }
       ]
     },
@@ -146,13 +155,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Experiments and main tables"
+          "locator": "Table 1 and Figures 4–20: nine configurations and retained edits"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "主结果保留 benchmark、模型、分母与提升幅度。"
+          "quote": "MiniMax M2.5、Qwen3.5-35B-A3B、GLM-5 在 Terminal-Bench 2.0、SWE-bench Verified、AppWorld 的九种组合都在两个 gate split 上提高。"
+        },
+        {
+          "artifact": "article",
+          "quote": "最大绝对变化是 GLM-5 在 AppWorld 从 44.4% 到 85.0%。"
         }
       ]
     },
@@ -165,13 +178,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations and appendices"
+          "locator": "Validation procedure and Table 1: both splits participate in promotion"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "局部奖励、重复次数、迁移与公开 artifact 边界被明确保留。"
+          "quote": "名为 held-out 的 split 每轮都会参与 candidate promotion。它实际是搜索期 validation / regression set，不是最终只看一次的 blind test。"
+        },
+        {
+          "artifact": "article",
+          "quote": "结论应读成“对未用于 weakness mining 的回归集也提升”，而不是完全独立的最终泛化证明。"
         }
       ]
     }
@@ -514,20 +531,7 @@
       "asset_paths": []
     }
   ],
-  "figures": [
-    {
-      "path": "/lib/papers/self-harness/cover.svg",
-      "origin": "generated",
-      "source_id": "paper",
-      "source_locator": "paper overview",
-      "credit": "原创系列封面图",
-      "license_status": "not-applicable",
-      "license_basis": "Original explanatory graphic.",
-      "used_in": [
-        "deck"
-      ]
-    }
-  ],
+  "figures": [],
   "qa": {
     "reading_layout": {
       "deck_first": true,

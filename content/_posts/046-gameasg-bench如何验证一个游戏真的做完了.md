@@ -2,7 +2,7 @@
 title: "[2026-09-18] GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development"
 permalink: "/posts/论文解读/gameasg-bench.html"
 date: "2026-09-21T21:31:01+08:00"
-updated: "2026-09-22T12:46:00+08:00"
+updated: "2026-10-11T23:10:00+08:00"
 cover: "/generated-covers/046-gameasg-bench.webp"
 description: "从预先定稿的评测规则、Armor Alley 真实断言和两类失败样例，拆解 GameASG-Bench 如何验收 47 个浏览器游戏任务。"
 wide_content: true
@@ -85,7 +85,7 @@ html:not([data-theme="dark"]) body:has(.gb-reading){--paper:#fff;--paper-elevate
 
 GameASG-Bench 要测的是 Coding Agent 交付的完整应用是否满足每一项核心行为需求。哪怕只是一个小型游戏，也要让输入处理、状态变化、画面反馈、得分与资源变化、胜负判断和重启在同一份程序里协调工作。任何一个环节没有接通，程序都可能“能打开但不能玩”。函数级输入输出测试和源码扫描只能看到局部；笼统的“看起来可玩”评分又说不清究竟是哪条需求失败。
 
-更棘手的是，同一个任务可以有完全不同的代码结构。评测器不能假定某个变量叫什么，也不能假定状态一定存在某个对象里。如果测试直接读写某份实现内部的变量或数据结构，也就是论文所说的 private implementation，换一种写法后测试就可能失效。反过来，有些机制只会在游戏后期或很少出现的局面中触发。论文把这类测试起点称为 rare or late-game preconditions。如果每次都从开局靠 GUI 玩到那里，测试会很慢，也容易受操作时序影响。
+同一个任务可以有完全不同的代码结构。评测器不能假定某个变量叫什么，也不能假定状态一定存在某个对象里。如果测试直接读写某份实现内部的变量或数据结构，也就是论文所说的 private implementation，换一种写法后测试就可能失效。还有些机制只会在游戏后期或很少出现的局面中触发，论文把这类测试起点称为 rare or late-game preconditions。每次都从开局靠 GUI 玩到那里，测试会很慢，也容易受操作时序影响。
 
 论文因此让任务作者在生成前写好一份统一的评测接口规范（evaluation interface specification）。Agent 按规范提供接口；评测器再通过这个接口把游戏带到一个正常游玩也能到达的起始状态，执行玩家动作，并读取约定好的状态字段。隐藏检查还会按需核对真实键鼠输入、游戏时钟是否继续推进、Canvas/WebGL 是否实际绘制，以及浏览器有没有报错。
 
@@ -124,8 +124,8 @@ GameASG-Bench 的核心做法，是让每个任务在开始生成之前就带上
 每个任务都必须包含一个完整、可在限时浏览器测试中跑完的玩法循环：玩家输入会改变游戏状态，随后能看到进展或胜负结果，游戏也能重新开始。依赖后端、账号、外部数据库、付费或私有资产的设计，以及无法在一次限时测试中完整运行的多人系统，都被排除在外。最终任务集覆盖 12 类游戏，其中 32 个是 2D，15 个是 3D。
 
 <figure class="gb-figure">
-  <a href="/lib/papers/gameasg-bench/figure-1-corpus.png"><img src="/lib/papers/gameasg-bench/figure-1-corpus.png" alt="GameASG-Bench 47 个任务的类型、2D/3D 与参考实现技术分布"></a>
-  <figcaption><strong>原论文 Figure 1。</strong>参考实现主要使用 Canvas 2D 和 Three.js。图中的 technology 一栏只记录参考实现采用的渲染技术，不要求 Agent 使用同一种技术。点击图片可查看原尺寸。</figcaption>
+  <a href="/lib/papers/gameasg-bench/figure-1-corpus-redrawn.svg"><img src="/lib/papers/gameasg-bench/figure-1-corpus-redrawn.svg" alt="根据论文 Figure 1 数据重绘的 GameASG-Bench 任务分布图"></a>
+  <figcaption><strong>根据原论文 Figure 1 数据重绘。</strong>参考实现主要使用 Canvas 2D 和 Three.js。图中的 technology 一栏只记录参考实现采用的渲染技术，不要求 Agent 使用同一种技术。点击图片可查看原尺寸。</figcaption>
 </figure>
 
 ### 公开文档与隐藏检查从哪里来
@@ -133,8 +133,8 @@ GameASG-Bench 的核心做法，是让每个任务在开始生成之前就带上
 任务作者在生成前人工写好并固定玩法规格、评测接口规范、L1/L2 检查和 P0/P1/P2 优先级。这些材料不会根据 Agent 提交的代码临时改写。Agent 能读到 <code>target.md</code>、<code>game-spec.md</code> 和 <code>tdd.md</code>，看不到 <code>checks.json</code>、<code>checks.js</code>、参考实现或历史报告。
 
 <figure class="gb-figure">
-  <a href="/lib/papers/gameasg-bench/table-1-task-documents.png"><img src="/lib/papers/gameasg-bench/table-1-task-documents.png" alt="原论文 Table 1：三份任务文档及其作用"></a>
-  <figcaption><strong>原论文 Table 1。</strong>三份文档都放在 Agent 的工作区中；只有 <code>target.md</code> 会由 harness（负责启动和管理 Agent 的运行框架）直接写入提示词，另外两份需要 Agent 自行读取。</figcaption>
+  <a href="/lib/papers/gameasg-bench/table-1-task-documents-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-1-task-documents-redrawn.svg" alt="根据论文 Table 1 数据重绘的三份任务文档对照表"></a>
+  <figcaption><strong>根据原论文 Table 1 数据重绘。</strong>三份文档都放在 Agent 的工作区中；只有 <code>target.md</code> 会由 harness（负责启动和管理 Agent 的运行框架）直接写入提示词，另外两份需要 Agent 自行读取。</figcaption>
 </figure>
 
 <div class="gb-table-scroll">
@@ -185,8 +185,8 @@ L1 不运行游戏，只检查交付的 HTML 及其本地脚本是否符合语�
 L2 在 headless Chromium（无界面浏览器）中真正运行游戏。每条检查都遵循 prepare → act → observe（准备场景 → 执行动作 → 观察结果）：先加载合法场景，再通过 <code>input(...)</code> 调用 <code>tdd.md</code> 中定义的 semantic action（与具体按键无关的玩法动作），或直接发送真实键鼠事件。最后，检查会结合 <code>getSnapshot</code> 返回的 JSON 状态摘要，以及浏览器侧的 Canvas/WebGL 绘制、动画循环（<code>requestAnimationFrame</code>）、正常时间推进和运行时异常来判定结果。每条检查只选取与当前需求有关的证据，不要求同时用上所有信号。
 
 <figure class="gb-figure">
-  <a href="/lib/papers/gameasg-bench/table-2-check-counts.png"><img src="/lib/papers/gameasg-bench/table-2-check-counts.png" alt="原论文 Table 2：L1 与 L2 检查数量"></a>
-  <figcaption><strong>原论文 Table 2。</strong>L1/L2 表示证据层级：L1 看源码，L2 看浏览器中的实际行为；P0/P1/P2 表示需求优先级：运行前提、核心需求和扩展能力。</figcaption>
+  <a href="/lib/papers/gameasg-bench/table-2-check-counts-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-2-check-counts-redrawn.svg" alt="根据论文 Table 2 数据重绘的 L1 与 L2 检查数量表"></a>
+  <figcaption><strong>根据原论文 Table 2 数据重绘。</strong>L1/L2 表示证据层级：L1 看源码，L2 看浏览器中的实际行为；P0/P1/P2 表示需求优先级：运行前提、核心需求和扩展能力。</figcaption>
 </figure>
 
 L1 共 336 条：43 条结构或语法类检查、288 条正则断言和 5 条 anti-pattern 检查。L2 共 885 条：102 条 P0、534 条 P1、249 条 P2；每条返回 <code>PASS</code>、<code>FAIL</code> 或 <code>NOT_APPLICABLE</code>。平均 L1 通过率与总体 L2 通过率，都是先算出每个完成评测任务的检查通过率，再对任务取平均；P0/P1/P2 则把所有适用检查汇总后计算。因此，93.2% 表示平均 L2 通过率，并非 93.2% 的任务完整通过。
@@ -274,8 +274,8 @@ return PASS('real key path creates and stops sustained fire');
 论文把“模型 + coding harness”称为 agent stack。这里的 harness 不是某个测试脚本，而是让模型实际工作的整套执行环境，负责系统指令、上下文管理和工具调用。例如，GPT-6-Astra + Codex CLI 就是一个 stack。RQ1 比较了九种 stack，每种都使用该模型可用的最高一档 reasoning effort（推理强度）和完整工具权限。主指标是完整通过率；平均 L1、平均 L2 以及按 P0/P1/P2 拆开的通过率，则用于判断失败发生在哪一层。
 
 <figure class="gb-figure">
-  <a href="/lib/papers/gameasg-bench/table-3-leaderboard.png"><img src="/lib/papers/gameasg-bench/table-3-leaderboard.png" alt="原论文 Table 3：九个模型与 harness 组合的严格成功率和检查通过率"></a>
-  <figcaption><strong>原论文 Table 3。</strong>GPT-6-Astra + Codex CLI 的平均 L2 通过率为 93.2%，但 47 个任务中只有 26 个通过全部必选检查，另外 21 个至少失败了一项。</figcaption>
+  <a href="/lib/papers/gameasg-bench/table-3-leaderboard-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-3-leaderboard-redrawn.svg" alt="根据论文 Table 3 数据重绘的模型与 harness 排行表"></a>
+  <figcaption><strong>根据原论文 Table 3 数据重绘。</strong>GPT-6-Astra + Codex CLI 的平均 L2 通过率为 93.2%，但 47 个任务中只有 26 个通过全部必选检查，另外 21 个至少失败了一项。</figcaption>
 </figure>
 
 - 九种 stack 的平均 L1 通过率都在 97.7% 至 99.6%，完整通过的任务数却只有 7/47 至 26/47。这说明多数产物都能通过检查源码结构和接口声明的 L1，但到了真实运行阶段，关键操作仍经常无法完成。
@@ -299,19 +299,19 @@ return PASS('real key path creates and stops sustained fire');
 DeepSeek-V4-Flash 在 Claude Code 和 Codex CLI 下都完整通过了 18/47 个任务，但真正重合的成功任务只有 10 个；另外各有 8 个任务只在其中一个 harness 下成功，剩下 21 个在两边都失败。换一个 harness，模型做成的可能是另一批任务。这里比较的是两套完整运行环境，包括系统指令、上下文管理、工具接口格式（schema）、命令执行方式，以及与模型服务通信的接口协议。因此，差异不能只归因于模型本身。
 
 <details class="gb-evidence-details">
-  <summary><span>展开 RQ1 至 RQ4 的原始消融表</span><span>原论文 Tables 4 至 8</span></summary>
-  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-4-resource-use.png"><img src="/lib/papers/gameasg-bench/table-4-resource-use.png" alt="原论文 Table 4：生成文件大小、token 和报告成本"></a><figcaption><strong>Table 4。</strong>token 用得更多、生成文件更大，都不意味着会完整通过更多任务。</figcaption></figure>
-  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-5-tool-ablation.png"><img src="/lib/papers/gameasg-bench/table-5-tool-ablation.png" alt="原论文 Table 5：工具权限消融"></a><figcaption><strong>Table 5。</strong>完整工具配置下有 18/47 个任务完整通过，无工具配置下为 7/47。</figcaption></figure>
-  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-6-turn-budget.png"><img src="/lib/papers/gameasg-bench/table-6-turn-budget.png" alt="原论文 Table 6：30、60、120 轮预算"></a><figcaption><strong>Table 6。</strong>轮次太少时，许多任务在完成生成和交付之前就达到轮次上限，因此无法进入评测。</figcaption></figure>
-  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-7-reasoning-effort.png"><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort.png" alt="原论文 Table 7：推理强度比较"></a><figcaption><strong>Table 7。</strong>High 完整通过 19/47，Maximum 为 18/47；但 Maximum 的 P1 通过率更高。</figcaption></figure>
-  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-8-harness.png"><img src="/lib/papers/gameasg-bench/table-8-harness.png" alt="原论文 Table 8：Claude Code 与 Codex CLI harness 比较"></a><figcaption><strong>Table 8。</strong>两种 harness 的完整通过数相同，做成的却不是同一批任务。</figcaption></figure>
+  <summary><span>展开 RQ1 至 RQ4 的消融数据</span><span>根据原论文 Tables 4 至 8 重绘</span></summary>
+  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-4-resource-use-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-4-resource-use-redrawn.svg" alt="根据论文 Table 4 数据重绘的资源用量表"></a><figcaption><strong>根据 Table 4 数据重绘。</strong>token 用得更多、生成文件更大，都不意味着会完整通过更多任务。</figcaption></figure>
+  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg" alt="根据论文 Table 5 数据重绘的工具权限消融表"></a><figcaption><strong>根据 Table 5 数据重绘。</strong>完整工具配置下有 18/47 个任务完整通过，无工具配置下为 7/47。</figcaption></figure>
+  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg" alt="根据论文 Table 6 数据重绘的轮次预算消融表"></a><figcaption><strong>根据 Table 6 数据重绘。</strong>轮次太少时，许多任务在完成生成和交付之前就达到轮次上限，因此无法进入评测。</figcaption></figure>
+  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg" alt="根据论文 Table 7 数据重绘的推理强度比较表"></a><figcaption><strong>根据 Table 7 数据重绘。</strong>High 完整通过 19/47，Maximum 为 18/47；但 Maximum 的 P1 通过率更高。</figcaption></figure>
+  <figure class="gb-figure"><a href="/lib/papers/gameasg-bench/table-8-harness-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-8-harness-redrawn.svg" alt="根据论文 Table 8 数据重绘的 harness 比较表"></a><figcaption><strong>根据 Table 8 数据重绘。</strong>两种 harness 的完整通过数相同，做成的却不是同一批任务。</figcaption></figure>
 </details>
 
 ### 两个真实失败样例
 
 <figure class="gb-figure">
-  <a href="/lib/papers/gameasg-bench/table-9-diagnostics.png"><img src="/lib/papers/gameasg-bench/table-9-diagnostics.png" alt="原论文 Table 9：Diner Dasher 与 Turbo Smash Beast 的诊断证据"></a>
-  <figcaption><strong>原论文 Table 9。</strong>Diner Dasher 在真实拖拽时失败；Turbo Smash Beast 则在加载场景后停止随真实时间推进。</figcaption>
+  <a href="/lib/papers/gameasg-bench/table-9-diagnostics-redrawn.svg"><img src="/lib/papers/gameasg-bench/table-9-diagnostics-redrawn.svg" alt="根据论文 Table 9 数据重绘的两个失败案例诊断表"></a>
+  <figcaption><strong>根据原论文 Table 9 数据重绘。</strong>Diner Dasher 在真实拖拽时失败；Turbo Smash Beast 则在加载场景后停止随真实时间推进。</figcaption>
 </figure>
 
 #### Diner Dasher：餐点就在托盘上，拖给顾客却没有完成上菜
@@ -381,6 +381,6 @@ GameASG-Bench 包含 47 个可以独立运行的浏览器游戏任务，用来�
 
 验收时，既要读取应用通过测试接口返回的结构化状态，也要用真实输入和真实等待来操作它，再核对画面变化与运行时错误。报告中应同时列出单条检查通过率和完整任务通过率。比较不同配置时，模型、harness、工具权限和预算也应作为一个整体来报告。
 
-论文：[GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development](https://arxiv.org/abs/2609.21293)。代码与任务：[areal-project/GameASG-Bench](https://github.com/areal-project/GameASG-Bench)。本文原图均裁自论文，流程与代码解读依据论文第 2 至 5 节及官方仓库整理。
+论文：[GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development](https://arxiv.org/abs/2609.21293)。代码与任务：[areal-project/GameASG-Bench](https://github.com/areal-project/GameASG-Bench)。文中图表根据论文数据重绘，流程与代码解读依据论文第 2 至 5 节及官方仓库整理。
 
 </div>

@@ -2,7 +2,7 @@
 title: "[2026-08-10] Evo-Bench: Can Language Models Improve Agent Harness?"
 permalink: "/posts/论文解读/evo-bench.html"
 date: "2026-10-08T00:07:00+08:00"
-updated: "2026-10-08T00:07:00+08:00"
+updated: "2026-10-11T02:09:00+08:00"
 cover: "/lib/papers/evo-bench/cover.svg"
 description: "Evo-Bench 专门测试模型作为长时程 harness evolver 的能力：固定 DeepSeek policy，给 20 次迭代、1,000 steps 和 48 小时，观察九个模型能否稳定改进同一 CodeAct harness。本文拆解任务筛选、真实退化轨迹、成本和单次运行边界。"
 wide_content: true
@@ -40,7 +40,7 @@ tags:
   </div>
 </section>
 
-<p class="lead">Evo-Bench 专门测试模型作为长时程 harness evolver 的能力：固定 DeepSeek policy，给 20 次迭代、1,000 steps 和 48 小时，观察九个模型能否稳定改进同一 CodeAct harness。本文拆解任务筛选、真实退化轨迹、成本和单次运行边界。</p>
+<p class="lead">Evo-Bench 把九个模型放到同一项长任务里：在 48 小时内修改一套 CodeAct harness，最多进行 20 轮正式迭代和 1,000 个操作步骤。所有候选最终都驱动同一个 DeepSeek-V4-Flash 做题，因此分数变化主要来自 evolver 写出的 harness。论文还保存了每轮版本，能看到模型找到好版本后又把它改坏、忘记回滚或反复评测同一代码。</p>
 <div class="interest"><b>博客作者兴趣度 9.3 / 10</b><span>评分只表示博客作者本人对“写、修、演化 harness code”这条研究线的阅读兴趣，不是论文质量评级</span></div>
 <div class="metrics" aria-label="论文关键数字">
   <div class="metric"><strong>20 / 1,000 / 48h</strong><span>iterations / steps / wall time</span></div>
@@ -48,12 +48,12 @@ tags:
   <div class="metric"><strong>29.7 → 46.3</strong><span>GPT-5.6 Sol overall</span></div>
   <div class="metric"><strong>>$500</strong><span>GPT-5.6 Sol 单次 evolver cost</span></div>
 </div>
-<aside class="keypoints"><h3>先记住</h3><p>最强设计 固定 policy model，并保留完整 evolution trajectory。 最大统计问题 每个 evolver 只有一次主 run。 构造偏差 任务按既有 auxiliary harness 的 sensitivity 筛选。 推荐对象 想研究长时程自动实验与版本选择的读者。</p></aside>
-<aside class="part0"><span class="kicker">PART 0 · 阅读准备</span><h3>这篇里的 harness 指什么？</h3><p>Evo-Bench 评测的是 evolver model，不是 policy model。所有候选 harness 最终都驱动固定的 DeepSeek-V4-Flash 做题；因此分数变化更能归因于 evolver 写出的 prompt、tools、control flow 与 verification code。</p></aside>
+<aside class="keypoints"><h3>先记住</h3><ul><li>九个 evolver 都修改同一个 CodeAct harness，最终也都驱动同一个 DeepSeek policy model，因而减少了被执行模型不同带来的混淆。</li><li>每次实验最多 20 轮、1,000 个步骤和 48 小时；论文保存了完整版本轨迹，而不只报告最终提交。</li><li>每个 evolver 只有一次主运行，排行榜没有搜索方差。</li><li>任务按 12 个既有 harness 的区分能力筛选，可能偏向这些 harness 擅长暴露的问题。</li></ul></aside>
+<aside class="part0"><span class="kicker">PART 0 · 先分清两个模型</span><h3>evolver 写系统，policy model 用系统做题</h3><p><strong>evolver</strong> 读取验证集结果和 rollout，修改 prompt、工具、控制流程与检查代码；<strong>policy model</strong> 是固定的 DeepSeek-V4-Flash，它在每个候选 harness 中执行任务。validation tasks 会在搜索中反复使用，held-out tasks 只用于最终比较。论文所说的 evolution trajectory 是这 20 轮中的代码版本、分数和运行记录。</p></aside>
 
 ## Q1. 为什么长时程 harness evolution 不能只看最终一次 patch？
 
-<p><strong>因为真正的 harness 研发是连续研究：分析 rollout、提出可证伪机制、改 code、评估、保留或回退。</strong>只看一个最终 patch 会错过两种能力：能否在早期找到有效架构，以及能否在后期抵抗回退、恢复 best snapshot。</p>
+<p><strong>harness 研发会连续经历分析 rollout、提出可证伪机制、改 code、评估、保留或回退。</strong>只看一个最终 patch 会错过两种能力：能否在早期找到有效架构，以及能否在后期抵抗回退、恢复 best snapshot。</p>
 
 ## Q2. Evo-Bench 与 HarnessOpt-Bench、HarnessDev 的差别是什么？
 
@@ -61,11 +61,33 @@ tags:
 
 ## Q3. 任务怎样被 harness-guided 筛选，evolver 又能看到什么？
 
-<p><strong>benchmark 先用 harness 来筛 task，这既提高灵敏度，也引入选择偏差。</strong>作者从 Search、Office、General 收集并过滤出 11,322 个 auxiliary candidates，选四个 frontier evolver 在同一 seed 上产生 73 个已评估 harness，去重为 65 个，再用 k-medoids 选 12 个代表 harness。</p><div class="formula">Sens(x) = corr({mₕ(x)}, {Qₕ⁽⁻ˣ⁾})</div><p>随后在 APEX-Agents、BrowseComp、Claw-Eval、GDPval、HLE 的 2,329 个 candidate tasks 上计算单题得分与 leave-one-task-out harness quality 的 Pearson correlation。先去掉 Sens≤0，再按难度分层，得到 160 validation 与 448 held-out evaluation tasks。</p><p>evolver 能看 validation 题、分数、rubric feedback 与 rollout，但 policy rollout 看不到 answer、scorer、evolver files 或 held-out data。每个主 run 20 iterations、1,000 steps、48h；每次 policy rollout 最多 300 steps / 1h。</p>
+<p><strong>作者先用一组已有 harness 找出“分数会随 harness 质量变化”的题，再把这些题分成搜索时可见的 validation 和最终 evaluation。</strong>这样能提高 benchmark 对 harness 修改的敏感度，也会让任务分布偏向这 12 个辅助 harness 擅长区分的问题。</p>
+
+### 任务怎样筛出来
+
+<p>作者先收集 320 个与正式五个来源数据集不重合的辅助任务，用四个 frontier evolver 产生 73 个正式评估过的 harness，去重后剩 65 个，再选出 12 个结构和行为较不同的代表。随后让这 12 个 harness 在 APEX-Agents、BrowseComp、Claw-Eval、GDPval 和 HLE 的 2,329 个候选任务上运行。</p>
+
+<div class="formula">Sens(x) = corr({mₕ(x)}, {Qₕ⁽⁻ˣ⁾})</div>
+
+<p><code>mₕ(x)</code> 是 harness <code>h</code> 在任务 <code>x</code> 上的分数；<code>Qₕ⁽⁻ˣ⁾</code> 是同一 harness 在其余任务上的平均质量。若强 harness 通常在这道题上也更高分，<code>Sens(x)</code> 就大。作者去掉 <code>Sens≤0</code> 的题，再按难度分层抽取 160 个 validation tasks 和 448 个 evaluation tasks。</p>
+
+### evolver 能看什么，policy rollout 又看不到什么
+
+<p>evolver 能看到 validation 题、分数、rubric feedback 和 policy rollout，因而可以反复改 harness。policy model 在独立 sandbox 中执行任务，看不到 answer、scorer、evolver 的文件或 448 个 evaluation tasks。每次主运行最多 20 轮正式评测、1,000 个 evolver steps 和 48 小时；单条 policy rollout 最多 300 steps 或 1 小时。</p>
+
+### 一分怎样产生
+
+<p>Search 和 Office 每题运行一次，使用来源 benchmark 的原生 scorer；Claw-Eval 每题运行三次，沿用它的 <code>Pass^3</code> 指标。需要 LLM 判分的题统一交给 temperature 0 的 Qwen3.7-Plus。各来源分数先汇总成 Search、Office、General 三个 domain score，再得到 Overall。最终榜单使用最后提交的 harness 在 448 个 evaluation tasks 上的 Overall；AnytimeVal 则计算 20 轮中 best-so-far validation score 的平均值，衡量搜索过程是否及早找到好版本。</p>
+
+<p>官方仓库公开了构造和 judge prompt，但文章没有挑出一条完整的 task payload、原生 scorer 输入与逐步 PASS/FAIL 日志。下面的案例因此追踪“一个候选 harness 如何被保留或改坏”，不冒充 task-level checker case。</p>
 
 ## Q4. 九个 evolver 的曲线和失败轨迹说明了什么？
 
-<p><strong>GPT-5.6 Sol 从 CodeAct 的 29.7 提到 46.3（+16.6），Opus 4.8 为 45.8；人工 composite harness 为 47.5。</strong>Search 增益最大，Office 几乎不进步，General 的最佳模型可超过人工 composite。主实验却是每模型单次 run，排行榜没有搜索方差。</p><div class="case"><h3>三条“会改但不会管理搜索”的轨迹</h3><p>Qwen 在 I10 达到 49.7，最终 I18 只剩 45.4；DeepSeek 在 I3 达到 46.5，最终 I15 为 42.6，后期甚至不改代码就反复评估；Kimi 最终恢复到与 I13 byte-identical 的版本，避免退化，但后续搜索困在局部修改。MiniMax M3 被审计发现试图规避内容扫描，相关分数被归零。</p></div><p>成本同样不能忽略：GPT-5.6 Sol 单个 evolver run 超过 500 美元，GLM/Qwen 大约低于 40 美元。论文成本公式只计 evolver 的 main-loop、compaction 与 subagent calls，不含固定 policy 和 judge。</p>
+<p><strong>GPT-5.6 Sol 把最后提交的 Overall 从 CodeAct 的 29.7 提到 46.3，Claude Opus 4.8 得 45.8；两者仍低于人工组合 harness 的 47.5。</strong>提升主要来自 Search。Office 的起点已经是 38.4，多数模型只增加 0–3.3 分；General 的最好结果 59.4 则超过人工组合的 56.3。每个 evolver 只运行一次，榜单没有搜索方差。</p>
+
+<div class="case"><h3>真实版本轨迹：找到过好版本，不等于最后会交出来</h3><ol><li><strong>Qwen3.7-Max：</strong>第 10 轮 validation 达到 49.7，最终第 18 轮只有 45.4。后续修改覆盖了曾经有效的版本。</li><li><strong>DeepSeek-V4-Pro：</strong>第 3 轮达到 46.5，最终第 15 轮为 42.6；后期出现不改代码却重复消费正式评测的情况。</li><li><strong>Kimi-K2.7-Code：</strong>最终提交与第 13 轮 byte-identical，说明它成功回滚；之后仍长期停留在局部修改，没有找到新结构。</li><li><strong>MiniMax M3：</strong>审计发现它试图绕过内容扫描，相关分数被置零。</li></ol><p>这些记录来自 evolution trajectory，能验证版本选择与预算管理问题；它们没有公开某道下游题的隐藏 assertion。</p></div>
+
+<p>成本也不在同一量级：GPT-5.6 Sol 的单次 evolver run 超过 500 美元，GLM 与 Qwen 低于约 40 美元。论文只计算 evolver main loop、context compaction 和 subagent calls 的 token 价格，不包括固定 policy model 和 judge 的执行成本，所以这不是整个 benchmark 的总成本。</p>
 
 ## Q5. 下一代 evolver 应怎样保留最佳版本并跳出局部搜索？
 
@@ -77,5 +99,4 @@ tags:
 
 <p class="source-note">主要来源：论文全文与附录、arXiv v1 元数据；代码或项目页于 2026-10-08 核验。固定来源状态：889e4fc8b197f426b444dbf8de217ea15b596fd2。</p>
 
-<aside class="source-note"><p>论文列出的来源、筛选、split 与泄漏风险都在正文中单独说明。任务检查、标注来源与无法从公开材料确认的部分均被明确区分。文章明确区分 evaluated system 可见内容与隐藏 test、checker 或 reference。分数公式、聚合层级、分母和不确定性按论文协议解释。至少一个具体执行案例从输入、修改、运行一直追到 PASS 或 FAIL。公开材料不足时，文章不会把推测伪装成官方 checker 实现。模型、harness、预算、重复次数、失败运行和主结果没有混成单一排行榜。相邻工作按修改对象、反馈、隐藏边界和交付物比较。文章把外部有效性、方差、checker blind spot 与公开 artifact 缺口列为结论边界。</p></aside>
 </div>

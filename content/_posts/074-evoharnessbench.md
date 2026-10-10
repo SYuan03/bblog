@@ -2,9 +2,9 @@
 title: "[2026-09-03] EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness?"
 permalink: "/posts/论文解读/evoharnessbench.html"
 date: "2026-10-08T00:08:00+08:00"
-updated: "2026-10-08T00:08:00+08:00"
+updated: "2026-10-11T02:10:00+08:00"
 cover: "/lib/papers/evoharnessbench/cover.svg"
-description: "EvoHarnessBench 不是让 Agent 写 harness，而是把 tools、skills、specialist agents 分阶段扩张，测试部署退化、持久适应、forward transfer 与 forgetting。本文明确它与 harness coding 的边界，并拆解 17 条 streams、802 个任务与三条演化轴。"
+description: "EvoHarnessBench 让外部平台分阶段增加 tools、skills 与 specialist agents，测试部署退化、持久适应、forward transfer 与 forgetting。本文明确它与 harness coding 的边界，并拆解 17 条 streams、802 个任务与三条演化轴。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -38,7 +38,7 @@ tags:
   </div>
 </section>
 
-<p class="lead">EvoHarnessBench 不是让 Agent 写 harness，而是把 tools、skills、specialist agents 分阶段扩张，测试部署退化、持久适应、forward transfer 与 forgetting。本文明确它与 harness coding 的边界，并拆解 17 条 streams、802 个任务与三条演化轴。</p>
+<p class="lead">EvoHarnessBench 研究的是另一种变化：Agent 不改外部 harness，平台却会分阶段加入新工具、新 skill 或 specialist agent。每道旧题在后续阶段保持不变，唯一变化是可选能力越来越多。benchmark 由 17 条演化序列、802 个不重复任务组成，用来观察新能力加入后旧题是否退化，以及系统能否利用刚出现的能力解决新题。</p>
 <div class="interest"><b>博客作者兴趣度 7.8 / 10</b><span>评分只表示博客作者本人对“写、修、演化 harness code”这条研究线的阅读兴趣，不是论文质量评级</span></div>
 <div class="metrics" aria-label="论文关键数字">
   <div class="metric"><strong>17</strong><span>evolution streams</span></div>
@@ -46,8 +46,8 @@ tags:
   <div class="metric"><strong>520 / 42 / 62</strong><span>tools / skills / agents</span></div>
   <div class="metric"><strong>−34.7%</strong><span>最严重 agent-axis BWT</span></div>
 </div>
-<aside class="keypoints"><h3>先记住</h3><p>独特贡献 把 tools、skills、agents 三种扩张拆开，并同时报告 BWT/FWT。 边界 benchmark 本身不要求 Agent 编写 harness。 构造风险 skill association 是规则匹配，不是完整因果标注。 推荐对象 已经读完前几篇、想补长期部署视角的读者。</p></aside>
-<aside class="part0"><span class="kicker">PART 0 · 阅读准备</span><h3>这篇里的 harness 指什么？</h3><p>这篇与前八篇的方向相反：外部平台在增加 tools、skills 或 specialist agents，被测系统要适应变化。code-based Meta-Harness 只是若干 adaptation baseline 之一；benchmark 本身不要求每个 Agent 都写 harness code。</p></aside>
+<aside class="keypoints"><h3>先记住</h3><ul><li>这篇不让 Agent 编写 harness。外部平台分阶段增加 tools、skills 或 specialist agents，被测系统要适应越来越大的选择空间。</li><li>benchmark 同时报告新阶段学得怎样，以及旧任务在后续阶段是否退化，分别对应 FWT 和 BWT。</li><li>802 个不重复任务来自 EOG 与 ALE；按三条演化轴展开后共有 1,510 个评测样例。</li><li>skills 与任务的对应关系来自规则和关键词匹配，只能视为近似标注，不能直接当作“完成该题必需的唯一技能”。</li></ul></aside>
+<aside class="part0"><span class="kicker">PART 0 · 两种变化不要混在一起</span><h3>外部 harness 在长大，Agent 可能保留自己的适应状态</h3><p><strong>outer harness evolution</strong> 指平台逐阶段加入 tools、skills 或 specialist agents；这些能力一旦加入就不会删除。<strong>persistent adaptive state</strong> 是被测系统跨阶段保留的 memory、prompt 或代码。BWT（Backward Transfer）看旧任务后来变好还是变差，FWT（Forward Transfer）看适应新阶段前后，新任务提升多少。benchmark 本身不要求 Agent 编写 harness。</p></aside>
 
 ## Q1. 为什么把外部 harness 的持续扩张当成独立问题？
 
@@ -59,11 +59,31 @@ tags:
 
 ## Q3. 17 条 streams、三条 axis 与两种模式怎样构造？
 
-<p><strong>数据包含 17 条 stream、每条 3–6 stages、802 个 unique tasks；按 axis 展开后是 1,510 个 examples。</strong>能力宇宙含 520 tools、42 latent skills、62 specialist agents。每项能力按任务频率从 core 到 long tail 分批释放，任务在全部必需能力首次可用时引入，并至少需要本 stage 的一个新能力。</p><p>tools 直接继承源 benchmark 的 oracle annotations；skills 从 procedural rules 挖掘，再按 verifier keyword 关联，作者明确承认这些匹配不是必要、充分或唯一的技能解释；agents 则按 tool owner 分组，lead agent 无直接工具。</p><div class="formula">BWT = weighted(final old-task accuracy − introduction accuracy)<br>FWT = weighted(post-adaptation new-task accuracy − pre-adaptation accuracy)</div><p>另报 final cumulative ACC、tokens、tool calls 和 latency。BWT 看遗忘，FWT 看新阶段适应，两者不能用一个总分替代。</p>
+<p><strong>作者没有重新生成题目，而是把 EOG 和 ALE 的静态任务按所需能力重新排成 17 条演化序列。</strong>每条序列有 3–6 个 stage，共包含 802 个不重复任务；同一任务按 tools、skills、agents 三条轴展开后，共得到 1,510 个评测样例。</p>
+
+### 三条轴的标注来源不同
+
+<div class="table-scroll"><table><thead><tr><th>演化轴</th><th>任务需要哪些能力</th><th>评测时 Agent 得到什么</th></tr></thead><tbody><tr><td>tools</td><td>直接继承 EOG/ALE 的 oracle tool labels</td><td>截至当前 stage 的完整累计工具目录，不是只给该题需要的工具</td></tr><tr><td>skills</td><td>从原 system prompt 中规则抽取 procedure，再用 verifier 检查的实体或标识符做关键词匹配</td><td>累计 skill pool；原 prompt 中相应 procedure 被移除，需要系统自己检索</td></tr><tr><td>agents</td><td>按 tool 操作的实体把工具分给 database、file、email 等 specialist agents</td><td>没有直接工具的 lead agent 加累计 specialist roster</td></tr></tbody></table></div>
+
+<p>每项能力按它在任务中的出现频率分批释放，常用能力先出现，长尾能力后出现。任务在“它需要的全部能力第一次同时可用”时加入，并且至少需要本 stage 新出现的一项能力。skills 的关键词匹配只是 relatedness proxy：作者明确说明它不保证该 skill 必需、充分或唯一。</p>
+
+### 一道题在各 stage 怎样得到分数
+
+<p>每个 stage 的 evaluation split 都由来源 benchmark 的原 verifier 判定最终状态，成功记为 Pass；支持部分分的来源还返回 Score。deployment 模式在每个 stage 新建系统，只改变可见 harness；self-evolving adaptation 模式先允许系统用累计 adaptation split 更新 memory、prompt 或代码，再在 evaluation split 上测。任务一旦加入，后续 stage 的题目和 verifier 都不变。</p>
+
+<div class="formula">BWT = weighted(final old-task accuracy − introduction accuracy)<br>FWT = weighted(post-adaptation new-task accuracy − pre-adaptation accuracy)</div>
+
+<p>BWT 比较旧题在最终 stage 与首次出现时的准确率，负数表示遗忘；FWT 比较新一批任务适应前后的准确率，正数表示利用 adaptation split 后有所提升。论文另外报告最终累计 ACC、token、tool call 和 latency。一个系统可以 BWT 较好却 FWT 为负，因此不能用单一平均分代替两者。</p>
+
+<div class="case"><h3>论文给出的多实体任务结构，不是公开的 task-level checker case</h3><p>论文用“先在数据库找到用户，再起草并发送邮件”解释 agent 轴：这道题需要 database specialist 和 email specialist，lead agent 自己没有工具，必须把两个子步骤交给正确的 specialist 并传递用户信息。最终 verifier 只检查数据库、文件或邮件等外部状态。</p><p>论文没有公开一个带 task ID 的完整 prompt、初始数据库、动作日志和 verifier assertion，项目页在核查时也没有链接 checker 仓库。因此本文不能写出这道题的精确 PASS 门槛或一个真实 FAIL trajectory；上例只说明论文公开的构造规则。</p></div>
 
 ## Q4. tools、skills、agents 三组结果分别暴露什么瓶颈？
 
-<p><strong>三条 axis 的困难不同：tools 是检索噪声，skills 是会不会真的调用，agents 是 recall 与 coordination。</strong>tools 的累计目录有时提分，却显著加成本；EOG 上 MemToolAgent 38.6%、ReasoningBank 36.9%、Meta-Harness 35.2%，deployment 为 30.2%。ALE 多数方法接近或低于 baseline。</p><p>skills 扩张本身影响小；GEPA 在 EOG 从 18.9% 到 24.1%，但 GPT-5 默认系统几乎不调用 offered skills。agents 上 Meta-Harness 在 EOG 从 8.8% 到 18.5%，ALE 多数方法不改善。selection precision 已约 90%，瓶颈主要是 required-agent recall 和选中后的 coordination。</p><div class="case"><h3>为什么 retention 与 adaptation 必须分开？</h3><p>跨 axis 最坏 forgetting 分别是 tools −5.3%、skills −4.0%、agents −34.7%；最佳相对 adaptation gain 又分别达到 +27.8%、+27.5%、+110.2%。一个方法完全可能更少忘旧题，却在新阶段出现负 FWT。</p></div>
+<p><strong>三条演化轴暴露的是三种问题：工具目录带来检索噪声，skill pool 可能根本不被调用，specialist roster 则要求同时选对人并协调结果。</strong>tools 轴的累计目录有时提高成功率，也显著增加 token 和 tool call。EOG 上 MemToolAgent 为 38.6%、ReasoningBank 为 36.9%、Meta-Harness 为 35.2%，fresh deployment 为 30.2%；ALE 上多数 adaptation 方法接近或低于不保留状态的 baseline。</p>
+
+<p>skills 轴的外部扩张本身影响较小。GEPA 在 EOG 从 18.9% 提到 24.1%，但默认 GPT-5 Agent 几乎不调用提供的 skills，因此“skill 已经在池里”不能当作模型会用。agents 轴上，Meta-Harness 在 EOG 从 8.8% 提到 18.5%，ALE 多数方法没有改善。论文分析显示 specialist selection precision 已约 90%，主要瓶颈是漏掉必需 specialist，以及选中以后不能协调多个 specialist 的输出。</p>
+
+<div class="case"><h3>为什么旧题保持和新题适应必须分开报告</h3><p>三条轴最差的 BWT 分别是 tools −5.3%、skills −4.0%、agents −34.7%；最好的相对 adaptation gain 分别达到 +27.8%、+27.5%、+110.2%。这些极值来自不同方法和设置，不能拼成同一个“最好系统”。它们说明一种常见情况：系统可以少忘旧题，却在适应新 stage 后把新题做得更差；也可以快速学会新能力，同时严重破坏旧的 routing 习惯。</p></div>
 
 ## Q5. harness coding 研究者应该怎样使用这个 benchmark？
 
@@ -75,5 +95,4 @@ tags:
 
 <p class="source-note">主要来源：论文全文与附录、arXiv v1 元数据；代码或项目页于 2026-10-08 核验。固定来源状态：availability checked 2026-10-08; project page available but no dedicated public code/checker repository linked。</p>
 
-<aside class="source-note"><p>论文列出的来源、筛选、split 与泄漏风险都在正文中单独说明。任务检查、标注来源与无法从公开材料确认的部分均被明确区分。文章明确区分 evaluated system 可见内容与隐藏 test、checker 或 reference。分数公式、聚合层级、分母和不确定性按论文协议解释。至少一个具体执行案例从输入、修改、运行一直追到 PASS 或 FAIL。公开材料不足时，文章不会把推测伪装成官方 checker 实现。模型、harness、预算、重复次数、失败运行和主结果没有混成单一排行榜。相邻工作按修改对象、反馈、隐藏边界和交付物比较。文章把外部有效性、方差、checker blind spot 与公开 artifact 缺口列为结论边界。</p></aside>
 </div>

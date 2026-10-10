@@ -1,0 +1,371 @@
+{
+  "schema_version": 2,
+  "paper": {
+    "title": "GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development",
+    "kind": "benchmark",
+    "primary_source_ids": ["paper"]
+  },
+  "artifacts": {
+    "article": "content/_posts/046-gameasg-bench如何验证一个游戏真的做完了.md",
+    "deck": "lib/decks/gameasg-bench-visual-guide.html",
+    "embed_src": "/lib/decks/gameasg-bench-visual-guide.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development",
+      "url": "https://arxiv.org/abs/2609.21293",
+      "revision": "v1, first posted 2026-09-18; 17-page PDF reviewed",
+      "used_for": ["problem", "related-work", "task-provenance", "construction", "evaluation", "results", "cases", "limitations", "visuals"]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv record for 2609.21293",
+      "url": "https://export.arxiv.org/api/query?id_list=2609.21293",
+      "revision": "checked 2026-10-11",
+      "used_for": ["v1-date", "version", "license"]
+    },
+    {
+      "id": "official-code",
+      "kind": "checker",
+      "title": "GameASG-Bench official repository, tasks, and checkers",
+      "url": "https://github.com/areal-project/GameASG-Bench",
+      "revision": "6427cb6517ce11ff350ec45fcae17b67c5aec245",
+      "used_for": ["task-files", "visible-specifications", "hidden-checkers", "runner", "Armor-Alley-case", "Diner-Dasher-case", "license"]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 17,
+    "rendered_page_ranges": [{"start": 1, "end": 17}],
+    "source_visuals_expected": 10,
+    "visual_inventory_complete": true,
+    "inventory_note": "The complete 17-page PDF, including appendices, was reviewed as extracted text and rendered pages. It contains Figure 1 and Tables 1-9. The arXiv record uses the non-exclusive distribution license, so the article and deck use original SVG redraws of the published data instead of paper pixels."
+  },
+  "note_sections": [
+    {"role": "problem", "locator": "Q1: 这篇论文试图解决什么问题？"},
+    {"role": "related-work", "locator": "Q2: 有哪些相关研究？"},
+    {"role": "method", "locator": "Q3: 论文如何解决这个问题？"},
+    {"role": "experiments", "locator": "Q4: 论文做了哪些实验？"},
+    {"role": "future-work", "locator": "Q5: 有什么可以进一步探索的点？"},
+    {"role": "summary", "locator": "Q6: 总结一下论文的主要内容"}
+  ],
+  "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 2.1 and 3.1; Figure 1; Appendix B"},
+        {"source_id": "official-code", "locator": "task/* at revision 6427cb6517ce11ff350ec45fcae17b67c5aec245"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "每个任务都必须包含一个完整、可在限时浏览器测试中跑完的玩法循环"},
+        {"artifact": "article", "quote": "最终任务集覆盖 12 类游戏，其中 32 个是 2D，15 个是 3D"},
+        {"artifact": "deck", "quote": "完整可玩循环，能在有限时长的浏览器测试中运行并观察结果"}
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 2.1-2.3 and 3.2-3.3; Appendix B"},
+        {"source_id": "official-code", "locator": "task/*/{game-spec.md,tdd.md} and tests/*/{checks.json,checks.js} at revision 6427cb6517ce11ff350ec45fcae17b67c5aec245"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "任务作者在生成前人工写好并固定玩法规格、评测接口规范、L1/L2 检查和 P0/P1/P2 优先级"},
+        {"artifact": "article", "quote": "论文没有报告 mutation testing（人为注入缺陷后看测试能否发现）或 negative control（已知应当失败的错误样例）"},
+        {"artifact": "deck", "quote": "人类写规格、检查与优先级，Agent 写游戏"}
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 2.2, 3.1-3.3; Table 1"},
+        {"source_id": "official-code", "locator": "README.md, target.md, task/*, tests/* at revision 6427cb6517ce11ff350ec45fcae17b67c5aec245"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "这些材料不会根据 Agent 提交的代码临时改写"},
+        {"artifact": "deck", "quote": "Agent 看得到公开规范，看不到隐藏检查"}
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 2.4, Equation 1; Table 2; Section 4.1"},
+        {"source_id": "official-code", "locator": "evaluation runner and result aggregation at revision 6427cb6517ce11ff350ec45fcae17b67c5aec245"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "一个任务只有在交付有效、评测完成，并且全部 L1 和所有适用的 L2 P0/P1 都通过时才记为 1；否则记为 0"},
+        {"artifact": "article", "quote": "93.2% 表示平均 L2 通过率，并非 93.2% 的任务完整通过"},
+        {"artifact": "deck", "quote": "全部必需检查通过，任务才记为成功"}
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 2.3 and 4.6; Table 9; Appendix A.1"},
+        {"source_id": "official-code", "locator": "task/armor-alley/{game-spec.md,tdd.md}, tests/armor-alley/{checks.json,checks.js}, and tests/diner-dasher/checks.js at revision 6427cb6517ce11ff350ec45fcae17b67c5aec245"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "加载合法场景后，测试会直接在浏览器中按下 Space，并在 650 ms 后读取状态快照"},
+        {"artifact": "article", "quote": "拖拽后，已完成的订单项数、当日收入、已服务顾客数三者中至少有一个必须增加"},
+        {"artifact": "deck", "quote": "松开 300 ms 后先取一次，再等 550 ms 取第二次，确认弹丸不再持续增加"}
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.1; Tables 3-8"}],
+      "evidence": [
+        {"artifact": "article", "quote": "每种“任务 × 配置”组合只运行一次，且都从空白工作区开始"},
+        {"artifact": "article", "quote": "GPT-6-Astra + Codex CLI 的平均 L2 通过率为 93.2%，但 47 个任务中只有 26 个通过全部必选检查"},
+        {"artifact": "deck", "quote": "平均 L2 通过率达 93.2%，严格成功却只有 26/47"}
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 5.3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "公开的评测接口规范和隐藏检查都在生成前定稿，之后再用同一套断言评测同一任务的不同实现"},
+        {"artifact": "deck", "quote": "和现有工作的关键区别：评测规则在生成前写好"}
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": ["paper", "official-code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Sections 4.1-4.6, 5.1-5.2, 6; Appendix A.1"},
+        {"source_id": "official-code", "locator": "tests/armor-alley/checks.js and result runner at revision 6427cb6517ce11ff350ec45fcae17b67c5aec245"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "每种配置只运行一次，因此论文无法估计同一配置重跑时的波动"},
+        {"artifact": "article", "quote": "某个提交即使完整实现了公开要求，只要使用了其他开火键，仍会被这条隐藏检查判为失败"},
+        {"artifact": "deck", "quote": "当前评测程序还允许 P1 返回"}
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 1",
+      "status": "redrawn",
+      "rationale": "The complete task-category, dimensionality, and reference-technology counts are reorganized into an original SVG rather than reusing paper pixels.",
+      "placements": [
+        {"artifact": "article", "locator": "最终任务集覆盖 12 类游戏，其中 32 个是 2D，15 个是 3D"},
+        {"artifact": "deck", "locator": "12 类游戏，32 个 2D，15 个 3D"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG composition using published counts; no source pixels reused.",
+      "credit": "根据原论文 Figure 1 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/figure-1-corpus-redrawn.svg"]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 3, Table 1",
+      "status": "redrawn",
+      "rationale": "The three task documents and their visibility roles are restated in a new SVG table.",
+      "placements": [
+        {"artifact": "article", "locator": "三份文档都放在 Agent 的工作区中"},
+        {"artifact": "deck", "locator": "三份文档 Agent 都能读取"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published labels and facts.",
+      "credit": "根据原论文 Table 1 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-1-task-documents-redrawn.svg"]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 5, Table 2",
+      "status": "redrawn",
+      "rationale": "All published L1 and L2 check counts are retained in a new SVG layout.",
+      "placements": [
+        {"artifact": "article", "locator": "L1 共 336 条"},
+        {"artifact": "deck", "locator": "336 个源码检查，885 个浏览器行为检查"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published counts.",
+      "credit": "根据原论文 Table 2 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-2-check-counts-redrawn.svg"]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 6, Table 3",
+      "status": "redrawn",
+      "rationale": "The nine agent-stack rows and all reported pass-rate columns are reproduced as data in a new SVG table.",
+      "placements": [
+        {"artifact": "article", "locator": "GPT-6-Astra + Codex CLI 的平均 L2 通过率为 93.2%"},
+        {"artifact": "deck", "locator": "平均 L2 通过率达 93.2%，严格成功却只有 26/47"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published numerical values.",
+      "credit": "根据原论文 Table 3 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-3-leaderboard-redrawn.svg"]
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 4",
+      "status": "redrawn",
+      "rationale": "Artifact-size, token, cost, and success values are reorganized into an original SVG table.",
+      "placements": [
+        {"artifact": "article", "locator": "token 用得更多、生成文件更大，都不意味着会完整通过更多任务"},
+        {"artifact": "deck", "locator": "文件更大、token 用得更多，并没有稳定对应更多成功任务"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published numerical values.",
+      "credit": "根据原论文 Table 4 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-4-resource-use-redrawn.svg"]
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 5",
+      "status": "redrawn",
+      "rationale": "The tool-access ablation values are retained in a new SVG layout.",
+      "placements": [
+        {"artifact": "article", "locator": "完整工具配置下有 18/47 个任务完整通过"},
+        {"artifact": "deck", "locator": "完整工具 18/47，受限工具 6 至 9/47"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published numerical values.",
+      "credit": "根据原论文 Table 5 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg"]
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 6",
+      "status": "redrawn",
+      "rationale": "The 30, 60, and 120-turn budget rows are retained in a new SVG layout.",
+      "placements": [
+        {"artifact": "article", "locator": "轮次太少时，许多任务在完成生成和交付之前就达到轮次上限"},
+        {"artifact": "deck", "locator": "轮数上限为 30/60/120 时，分别只有 10/32/47 个任务完成评测"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published numerical values.",
+      "credit": "根据原论文 Table 6 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg"]
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 7",
+      "status": "redrawn",
+      "rationale": "The reasoning-effort comparison is recreated as a new SVG table with every reported value.",
+      "placements": [
+        {"artifact": "article", "locator": "High 完整通过 19/47，Maximum 为 18/47"},
+        {"artifact": "deck", "locator": "High：19/47；Max：18/47"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published numerical values.",
+      "credit": "根据原论文 Table 7 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg"]
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 8",
+      "status": "redrawn",
+      "rationale": "The harness comparison and overlap counts are retained in an original SVG table.",
+      "placements": [
+        {"artifact": "article", "locator": "两种 harness 的完整通过数相同，做成的却不是同一批任务"},
+        {"artifact": "deck", "locator": "两种 harness（Agent 执行框架）各成功 18/47，但只有 10 题重合"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published numerical values.",
+      "credit": "根据原论文 Table 8 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-8-harness-redrawn.svg"]
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 9",
+      "status": "redrawn",
+      "rationale": "The two diagnostic cases are restated in an original SVG table and then expanded with checker evidence in prose.",
+      "placements": [
+        {"artifact": "article", "locator": "Diner Dasher 在真实拖拽时失败"},
+        {"artifact": "deck", "locator": "两类具体失败：真实拖拽无效，场景加载后游戏停住"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original SVG table using published case facts.",
+      "credit": "根据原论文 Table 9 数据重绘",
+      "asset_paths": ["/lib/papers/gameasg-bench/table-9-diagnostics-redrawn.svg"]
+    }
+  ],
+  "figures": [
+    {"path":"/lib/papers/gameasg-bench/figure-1-corpus-redrawn.svg","origin":"author-redrawn","source_visual_id":"figure-1","source_id":"paper","source_locator":"Figure 1","credit":"根据原论文 Figure 1 数据重绘","license_status":"not-applicable","license_basis":"Original SVG composition; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-1-task-documents-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-1","source_id":"paper","source_locator":"Table 1","credit":"根据原论文 Table 1 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-2-check-counts-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-2","source_id":"paper","source_locator":"Table 2","credit":"根据原论文 Table 2 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-3-leaderboard-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-3","source_id":"paper","source_locator":"Table 3","credit":"根据原论文 Table 3 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-4-resource-use-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-4","source_id":"paper","source_locator":"Table 4","credit":"根据原论文 Table 4 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-5","source_id":"paper","source_locator":"Table 5","credit":"根据原论文 Table 5 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-6","source_id":"paper","source_locator":"Table 6","credit":"根据原论文 Table 6 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-7","source_id":"paper","source_locator":"Table 7","credit":"根据原论文 Table 7 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-8-harness-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-8","source_id":"paper","source_locator":"Table 8","credit":"根据原论文 Table 8 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]},
+    {"path":"/lib/papers/gameasg-bench/table-9-diagnostics-redrawn.svg","origin":"author-redrawn","source_visual_id":"table-9","source_id":"paper","source_locator":"Table 9","credit":"根据原论文 Table 9 数据重绘","license_status":"not-applicable","license_basis":"Original SVG table; no source pixels reused.","used_in":["article","deck"]}
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {"width": 1600, "height": 1000, "passed": true},
+      {"width": 1512, "height": 982, "passed": true},
+      {"width": 390, "height": 844, "passed": true}
+    ],
+    "tested_surfaces": {"article_body": true, "embedded_deck": true, "standalone_deck": true},
+    "language_review": {"technical_terms_contextualized": true, "actors_disambiguated": true, "read_aloud_complete": true, "facts_rechecked_after_rewrite": true},
+    "interactions": {"buttons": true, "keyboard": true, "hash_navigation": true, "fullscreen": true, "escape": true, "standalone_return_to_article": true, "immersive_mode_exit": true, "usable_state_after_exit": true},
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"],
+    "browser_qa_note": "Fresh local build checked at 1600x1000, 1512x982, and 390x844, with an additional 844x390 landscape deck check. The article has exactly six semantic H2 sections, a visible desktop rail and working mobile TOC, centered figures, internally scrolling tables/code, and no page-level horizontal overflow. All ten redrawn SVGs loaded. The 26-slide deck passed a programmatic all-slide clipping scan and visual checks of the opening, Table 3, Tables 5-6, diagnostic case, and final slides. Embedded and standalone controls, Arrow navigation, direct hash navigation, overview Escape, fullscreen entry and Escape exit, article focus-mode Escape and visible exit, and return-to-article after #26 all passed."
+  }
+}

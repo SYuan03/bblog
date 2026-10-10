@@ -91,7 +91,7 @@
     },
     {
       "role": "future-work",
-      "locator": "Q5. 如果真要让 Agent 写 harness，最值得补哪几块？"
+      "locator": "Q5. 如果真要让 Agent 写 harness，还缺哪些工程约束？"
     },
     {
       "role": "summary",
@@ -108,32 +108,37 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 3–4 and appendices: task construction and splits"
+          "locator": "Section 3.3 and Table 2: five Creation benchmarks and instance counts"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文列出的来源、筛选、split 与泄漏风险都在正文中单独说明。"
+          "quote": "Creation 覆盖 SWE-bench Pro 731 题、Terminal-Bench 2.1 的 89 题、MLE-bench 75 题、EQ-Bench3 46 题和 BrowseComp 1,266 题，共 2,207 个不重复实例。"
         }
       ]
     },
     {
       "id": "annotation-and-check-construction",
-      "claim_type": "author-claim",
+      "claim_type": "unknown",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Benchmark construction, evaluator and limitations"
+          "locator": "Sections 3.3–3.5: downstream native evaluators"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Availability check: no public HarnessDev task package or checker repository"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "任务检查、标注来源与无法从公开材料确认的部分均被明确区分。"
+          "quote": "论文和项目页没有公开完整任务包、运行记录或 checker。"
         }
       ]
     },
@@ -146,13 +151,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Evaluation protocol and disclosure boundary"
+          "locator": "Section 3.2 and Table 1: Creation/Evolution development signals"
+        },
+        {
+          "source_id": "paper",
+          "locator": "Section 4.3 and Table 6: feedback pair and held-out-630"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章明确区分 evaluated system 可见内容与隐藏 test、checker 或 reference。"
+          "quote": "creator 另外能看到 task-family 说明、权限限制、短教程和 1–3 个开发案例，但看不到人工 reference harness 和隐藏评测任务。"
+        },
+        {
+          "artifact": "article",
+          "quote": "这些分数从不回传给 creator。"
         }
       ]
     },
@@ -165,19 +178,19 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Metrics, equations and result tables"
+          "locator": "Sections 3.4–3.5 and Tables 3–4: avg@3 and cross-domain aggregation"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "分数公式、聚合层级、分母和不确定性按论文协议解释。"
+          "quote": "跨领域总分是五个原生指标的非加权平均，因此不能把它理解成 2,207 道题的统一通过率。"
         }
       ]
     },
     {
       "id": "checker-code-and-cases",
-      "claim_type": "inspected-implementation",
+      "claim_type": "unknown",
       "source_ids": [
         "paper",
         "official-artifact"
@@ -185,21 +198,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Case studies and official artifact availability"
+          "locator": "Section 4.2 and Figure 6: executor-transfer analysis"
         },
         {
           "source_id": "official-artifact",
-          "locator": "availability checked 2026-10-08; project page exposes the paper but no public HarnessDev code or checker repository"
+          "locator": "Availability check: project page exposes no task-level checker code"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "至少一个具体执行案例从输入、修改、运行一直追到 PASS 或 FAIL。"
+          "quote": "harness 把原 executor 常用的 120-step 行为写进停止与审阅逻辑；换模型后，SWE-bench Pro 降到 33.0。"
         },
         {
           "artifact": "article",
-          "quote": "公开材料不足时，文章不会把推测伪装成官方 checker 实现。"
+          "quote": "公开材料没有给出某一道任务的完整 prompt、隐藏测试和逐步 FAIL assertion，因此这是跨任务运行记录，不是可独立重放的单题 checker case。"
         }
       ]
     },
@@ -212,13 +225,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Experiments and main results"
+          "locator": "Tables 3–6 and Figures 4–8: Creation, transfer, and Evolution results"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "模型、harness、预算、重复次数、失败运行和主结果没有混成单一排行榜。"
+          "quote": "Self-Eval 下 Opus 4.8 的五领域平均分为 67.8，论文汇总的人工工程 reference 为 86.2。"
+        },
+        {
+          "artifact": "article",
+          "quote": "换成固定 Gemini executor 后，只有 Opus 仍然提升，GPT-5.5 从 42.22 降到 31.90。"
         }
       ]
     },
@@ -231,13 +248,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Related Work and protocol comparison"
+          "locator": "Section 2: Background and related harness-development work"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "相邻工作按修改对象、反馈、隐藏边界和交付物比较。"
+          "quote": "它比 prompt optimization 更宽，比从零造任意 agent 更受约束，又比只修一个既有 harness 更接近完整开发。"
         }
       ]
     },
@@ -245,18 +262,27 @@
       "id": "limitations",
       "claim_type": "interpretation",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations and future work"
+          "locator": "Section 4.2: human-engineered references and executor transfer"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Availability check: no public code/checker repository"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章把外部有效性、方差、checker blind spot 与公开 artifact 缺口列为结论边界。"
+          "quote": "这个 reference 来自各项目已经公布的结果，并非在同一 executor、同一运行条件下重跑，因此只能提供量级参照。"
+        },
+        {
+          "artifact": "article",
+          "quote": "本文能核对论文协议和数字，无法独立重跑隐藏评测或检查每个 task-specific assertion。"
         }
       ]
     }
@@ -529,20 +555,7 @@
       "asset_paths": []
     }
   ],
-  "figures": [
-    {
-      "path": "/lib/papers/harnessdev/cover.svg",
-      "origin": "generated",
-      "source_id": "paper",
-      "source_locator": "paper overview",
-      "credit": "原创系列封面图",
-      "license_status": "not-applicable",
-      "license_basis": "Original explanatory graphic.",
-      "used_in": [
-        "deck"
-      ]
-    }
-  ],
+  "figures": [],
   "qa": {
     "reading_layout": {
       "deck_first": true,

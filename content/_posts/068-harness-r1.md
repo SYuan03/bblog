@@ -2,7 +2,7 @@
 title: "[2026-08-03] Harness-R1: Learning to Edit Executable Runtime Harnesses from Agent Failure Trajectories"
 permalink: "/posts/论文解读/harness-r1.html"
 date: "2026-10-08T00:02:00+08:00"
-updated: "2026-10-08T00:02:00+08:00"
+updated: "2026-10-11T02:04:00+08:00"
 cover: "/lib/papers/harness-r1/cover.svg"
 description: "Harness-R1 把 harness 修补训练成一个 9B 模型的专门能力：从 failure packet 生成 lifecycle-wide patch，再用冻结 target agent 的真实重跑收益做 GRPO。本文区分训练目标、四个 hooks、迁移结果与同批奖励的局限。"
 wide_content: true
@@ -39,7 +39,7 @@ tags:
   </div>
 </section>
 
-<p class="lead">Harness-R1 把 harness 修补训练成一个 9B 模型的专门能力：从 failure packet 生成 lifecycle-wide patch，再用冻结 target agent 的真实重跑收益做 GRPO。本文区分训练目标、四个 hooks、迁移结果与同批奖励的局限。</p>
+<p class="lead">Harness-R1 训练一个 9B 模型专门修 Agent 运行程序。它读取一次失败的完整材料，修改初始化、动作前后处理等四个 hook，再让冻结的 target agent 重新执行原任务。补丁只有在真实重跑后提高成功率才得到正奖励，因此训练信号来自代码的实际后果，而不是另一个模型对补丁文字的评价。</p>
 <div class="interest"><b>博客作者兴趣度 9.1 / 10</b><span>评分只表示博客作者本人对“写、修、演化 harness code”这条研究线的阅读兴趣，不是论文质量评级</span></div>
 <div class="metrics" aria-label="论文关键数字">
   <div class="metric"><strong>9B</strong><span>专门的 harness engineer</span></div>
@@ -47,8 +47,8 @@ tags:
   <div class="metric"><strong>877</strong><span>SFT 冷启动样本</span></div>
   <div class="metric"><strong>+8.9 ± 1.5 pp</strong><span>稀疏失败 held-out 增益</span></div>
 </div>
-<aside class="keypoints"><h3>先记住</h3><p>最可复用 invalid / no-op patch 归零，以及冻结 target 的真实 rerun 奖励。 最大限制 same-batch transductive reward。 可靠结果 稀疏失败 held-out 增益给出 ±1.5 pp。 推荐对象 研究 harness repair post-training 与 model–harness co-evolution 的读者。</p></aside>
-<aside class="part0"><span class="kicker">PART 0 · 阅读准备</span><h3>这篇里的 harness 指什么？</h3><p>Harness-R1 同时包含两个模型：target agent 负责做 WebShop、ALFWorld、DBBench；harness engineer 读取失败包并写 patch。训练时只更新 engineer，target agent 始终冻结。</p></aside>
+<aside class="keypoints"><h3>先记住</h3><ul><li>训练对象是一个 9B harness engineer；负责执行 WebShop、ALFWorld 和 DBBench 的 target agent 始终冻结。</li><li>engineer 写出的 patch 必须能安装并完成重跑。无效 patch、没有改动的 patch 和中途失败的重跑都得到 0 奖励。</li><li>主要训练奖励来自产生 failure packet 的同一批任务，因此容易学到只对当前 batch 有效的修补。</li><li>较可信的泛化结果来自 1,270 个稀疏失败任务：平均提升 8.9±1.5 个百分点。</li></ul></aside>
+<aside class="part0"><span class="kicker">PART 0 · 先分清训练对象</span><h3>被训练的不是做题模型</h3><p><strong>target agent</strong> 负责做 WebShop、ALFWorld 和 DBBench，整个训练期间参数冻结；<strong>harness engineer</strong> 读取 failure packet，也就是失败轨迹、环境反馈和当前 harness 代码，再输出 patch。论文所说的 <strong>rerun</strong> 是安装补丁后完整重跑同一批任务。GRPO 只更新 engineer。</p></aside>
 
 ## Q1. 为什么要专门训练一个 harness engineer？
 
@@ -60,11 +60,17 @@ tags:
 
 ## Q3. failure packet 如何变成可执行 patch 和在线奖励？
 
-<p><strong>每个 failure packet 包含失败轨迹、环境反馈和当前 harness；engineer 输出四处 hook 的补丁。</strong>它们分别是 <code>on_init</code>、<code>make_pre_hint</code>、<code>on_before_action</code>、<code>on_post_step</code>，覆盖初始化、决策前提示、动作前守卫和动作后反馈。</p><ol class="steps"><li><b>SFT</b><span>877 个冷启动例：WebShop 381、ALFWorld 248、DBBench 248。</span></li><li><b>SAMPLE</b><span>每个 packet 采样 8 个 patch。</span></li><li><b>VALIDATE</b><span>必须可解析、可安装、能完成完整 rerun；no-op 与不完整 patch 奖励为 0。</span></li><li><b>REWARD</b><span>比较同一完整 batch 修补前后的 realized success，再做 GRPO。</span></li></ol><p>这个奖励路径很实在，却也是最关键的边界：patch 直接针对产生 failure packet 的同一 batch 优化，是 transductive objective；训练目标没有单独惩罚 held-out regression 或推理成本。</p>
+<p><strong>每个 failure packet 包含失败轨迹、环境反馈和当前 harness；engineer 输出四处 hook 的补丁。</strong>它们分别是 <code>on_init</code>、<code>make_pre_hint</code>、<code>on_before_action</code>、<code>on_post_step</code>，覆盖初始化、决策前提示、动作前守卫和动作后反馈。</p><ol class="steps"><li><b>SFT</b><span>877 个冷启动例：WebShop 381、ALFWorld 248、DBBench 248。</span></li><li><b>SAMPLE</b><span>每个 packet 采样 8 个 patch。</span></li><li><b>VALIDATE</b><span>必须可解析、可安装、能完成完整 rerun；no-op 与不完整 patch 奖励为 0。</span></li><li><b>REWARD</b><span>比较同一完整 batch 修补前后的 realized success，再做 GRPO。</span></li></ol><p>这个奖励直接针对产生 failure packet 的同一 batch 优化，属于 transductive objective。训练目标没有单独惩罚 held-out regression 或推理成本。</p>
 
 ## Q4. 三个环境与迁移实验支持多强的结论？
 
-<p><strong>在三个训练环境上，vanilla Qwen3.5-9B 从 44.3% 提到 53.6%，增加 9.3 个百分点；target 先 SFT 后再修 harness，则从 59.2% 到 64.2%。</strong>在 20 个 unseen targets 上平均 +7.06 pp，21×3 个 model-environment 配对中 56/63 改善。只给稀疏失败的 1,270 个 held-out tasks，提升为 +8.9±1.5 pp，而两个 frontier editor 的平均改动为负。</p><div class="case"><h3>patch 具体改了什么？</h3><p>WebShop patch 在颜色未选择时阻止 <code>Buy Now</code>；ALFWorld 组合 stage state、hint 与 placement guard；DBBench 保留 verifier 需要的 <code>4 Hours</code> 大小写。相反，一个 Gemini patch 把 ALFWorld 从 41.6% 降到 35.4%，说明“能写合理代码”不等于行为会改善。</p></div><p>ablation 显示 pre-action 与 post-feedback 最重要，但贡献随环境变化，不能相加成一条普遍排序。</p>
+<p><strong>在三个训练环境上，vanilla Qwen3.5-9B 从 44.3% 提到 53.6%，增加 9.3 个百分点；target 先 SFT 后再修 harness，则从 59.2% 到 64.2%。</strong>在 20 个未见 target 上平均提升 7.06 个百分点，21×3 个 model–environment 配对中有 56 个改善。只给稀疏失败证据的 1,270 个 held-out tasks 上，提升为 8.9±1.5 个百分点，而 Qwen3.5-397B 与 DeepSeek-V4-Pro 两个一次性 editor 的平均改动为负。</p>
+
+<div class="case"><h3>真实 WebShop case：先选 black brown，再允许 Buy Now</h3><ol><li><strong>初始任务：</strong>购买一件价格低于 40 美元、颜色为 black brown 的 synthetic hairpiece。</li><li><strong>原始轨迹：</strong>target agent 找到合适商品，却没有选择颜色就执行 <code>Buy Now</code>；环境只给 0.667 的部分奖励。</li><li><strong>补丁：</strong>harness engineer 在 <code>on_before_action</code> 安装 guard。只要价格超预算，或任务要求的 option 尚未选择，它就拦截规范化后的 <code>Buy Now</code>。</li><li><strong>重跑：</strong>target agent 再次尝试提前购买，guard 返回提示；Agent 随后选择 black brown，再购买。</li><li><strong>结果：</strong>同一道题从 0.667 变成 1.0；同一十题 batch 的完整成功数从 2/10 增至 5/10，原先已成功的两题没有退化。</li></ol></div>
+
+<p>另外两个公开案例说明补丁不必都长成同一种形式。ALFWorld patch 同时维护 stage state、给下一步 hint，并阻止把物体放到错误位置，batch 从 1/10 提到 6/10，但也让一条原本成功的任务退化；DBBench patch 先查看 schema 和当前行，把 <code>3 Hours</code> 改成大小写一致的 <code>4 Hours</code>，batch 从 4/10 提到 6/10。相反，一个 Gemini patch 把 ALFWorld 从 41.6% 降到 35.4%，说明补丁看起来合理、能安装，都不等于实际行为会改善。</p>
+
+<p>生命周期位置消融中，移除 pre-action guard 的平均分下降 3.9 个百分点，移除 post-feedback state update 下降 3.3 个百分点；不同环境的下降幅度并不一致，不能把它们相加成固定的组件排名。</p>
 
 ## Q5. 下一步怎样避免同批过拟合与回归？
 
@@ -72,9 +78,8 @@ tags:
 
 ## Q6. 最后怎样评价 Harness-R1？
 
-<p><strong>Harness-R1 的贡献不是“RL 又赢一次”，而是把 executable patch 的真实后果接回训练环。</strong>证据表明专门化 engineer 比通用一次性 editor 更稳定；但同批奖励仍可能鼓励局部修补，尚不能证明它学会了普遍的软件维护能力。</p><div class="limit-grid"><div><b>最可复用</b><span>invalid / no-op patch 归零，以及冻结 target 的真实 rerun 奖励。</span></div><div><b>最大限制</b><span>same-batch transductive reward。</span></div><div><b>可靠结果</b><span>稀疏失败 held-out 增益给出 ±1.5 pp。</span></div><div><b>推荐对象</b><span>研究 harness repair post-training 与 model–harness co-evolution 的读者。</span></div></div>
+<p><strong>Harness-R1 把 executable patch 的实际后果变成 harness engineer 的训练信号。</strong>证据表明专门化 engineer 比通用一次性 editor 更稳定；但同批奖励仍可能鼓励局部修补，尚不能证明它学会了普遍的软件维护能力。</p><div class="limit-grid"><div><b>可复用设计</b><span>invalid / no-op patch 归零，以及冻结 target 的真实 rerun 奖励。</span></div><div><b>主要限制</b><span>same-batch transductive reward。</span></div><div><b>可靠结果</b><span>稀疏失败 held-out 增益给出 ±1.5 pp。</span></div><div><b>推荐对象</b><span>研究 harness repair post-training 与 model–harness co-evolution 的读者。</span></div></div>
 
 <p class="source-note">主要来源：论文全文与附录、arXiv v1 元数据；代码或项目页于 2026-10-08 核验。固定来源状态：94f2e087f573e1b82fc9568bb634d4ae9a887e28。</p>
 
-<aside class="source-note"><p>文章把核心贡献限定为对 executable harness 的创建、修复或优化。方法链按失败证据、候选修改、真实执行与筛选顺序展开。主结果保留 benchmark、模型、分母与提升幅度。局部奖励、重复次数、迁移与公开 artifact 边界被明确保留。</p></aside>
 </div>

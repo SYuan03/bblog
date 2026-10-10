@@ -2,7 +2,7 @@
 title: "[2026-09-18] RecreationWorld: Scalable and Verifiable Environments for Hybrid Computer-Use Agents"
 permalink: "/posts/论文解读/recreationworld.html"
 date: "2026-10-02T22:30:00+08:00"
-updated: "2026-10-02T22:30:00+08:00"
+updated: "2026-10-11T23:20:00+08:00"
 cover: "/generated-covers/060-recreationworld.webp"
 description: "RecreationWorld 怎样用 250 个五平台复刻任务，检验 Agent 能否在 GUI 探索、写代码、运行和验证之间自主往返；逐项拆清任务来源、隐藏测试、Logbert 真实 case、评分公式、模型结果与证据边界。"
 wide_content: true
@@ -50,7 +50,7 @@ html:not([data-theme="dark"]) body:has(.rw-reading){--paper:#fff;--paper-elevate
   </div>
 </section>
 
-<p class="lead">RecreationWorld 把“照着一个正在运行的软件，重做一个行为相同的版本”变成训练环境和 benchmark。Agent 既要操作 reference GUI，找出菜单、状态变化和计算结果，又要写代码、构建并启动自己的版本，再回到 GUI 检查哪里不像。它真正测试的是 <strong>GUI 探索与软件实现能否在同一条长轨迹里反复配合</strong>。</p>
+<p class="lead">RecreationWorld 把“照着一个正在运行的软件，重做一个行为相同的版本”变成训练环境和 benchmark。Agent 既要操作 reference GUI，找出菜单、状态变化和计算结果，又要写代码、构建并启动自己的版本，再回到 GUI 检查哪里不像。评测关心的是 <strong>GUI 探索与软件实现能否在同一条长轨迹里反复配合</strong>。</p>
 
 <div class="interest"><b>博客作者兴趣度 9.4 / 10</b><span>评分只表示博客作者本人兴趣程度；它同时覆盖 hybrid CUA、coding harness、可执行评测与训练数据扩展</span></div>
 
@@ -67,7 +67,7 @@ html:not([data-theme="dark"]) body:has(.rw-reading){--paper:#fff;--paper-elevate
     <li><strong>这不是 screenshot-to-code。</strong>Agent 可以反复操作 reference、修改实现、运行 candidate，再根据画面和行为继续修。</li>
     <li><strong>隐藏测试来自 reference 的真实运行结果。</strong>作者先生成 action 与 expected outcome，在干净 reference 上回放，再让人工复核，最后冻结测试。</li>
     <li><strong>58.06 是断言级平均，不是任务完成率。</strong>最强模型只有 2.8% 的任务通过全部 programmatic assertions。</li>
-    <li><strong>训练迁移结果有吸引力，但不闭环。</strong>论文报告最高 +17.9 个百分点；没有公开所选 trajectories、checkpoint、完整超参数或多次随机种子。</li>
+    <li><strong>训练结果还缺少关键对照和复现材料。</strong>论文报告最高 +17.9 个百分点；没有公开所选 trajectories、checkpoint、完整超参数或多次随机种子。</li>
   </ul>
 </aside>
 
@@ -76,9 +76,9 @@ html:not([data-theme="dark"]) body:has(.rw-reading){--paper:#fff;--paper-elevate
 
 ### Hybrid computer-use agent 到底“hybrid”在哪里？
 
-GUI-only agent 会看屏幕、点击、输入；terminal/coding agent 会读写文件、运行命令、构建软件。这里的 **hybrid CUA** 不是先点完再写代码，而是自主循环：先在 reference 里试一个功能，写一部分 candidate，启动后发现不对，再回 reference 验证一个细节，然后继续改。
+GUI-only agent 会看屏幕、点击、输入；terminal/coding agent 会读写文件、运行命令、构建软件。这里的 **hybrid CUA** 会在同一条轨迹中交替使用两类操作：先在 reference 里试一个功能，写一部分 candidate，启动后发现不对，再回 reference 验证一个细节，然后继续改。
 
-论文记录的 rollout 中，顶层 tool call 中位数是 **282.5**；每 100 次调用平均出现 **9.08 次 GUI 与 code-edit 之间的切换**。这两个数说明被测对象不是一次生成的页面，而是一条需要保存上下文、执行和纠错的长轨迹。
+论文记录的 rollout 中，顶层 tool call 中位数是 **282.5**；每 100 次调用平均出现 **9.08 次 GUI 与 code-edit 之间的切换**。一次评测通常要持续保存上下文、执行代码、查看结果并纠错，而不是生成一版页面就结束。
 </aside>
 
 ## Q1. 为什么要用“复刻软件”研究 hybrid CUA？
@@ -100,7 +100,7 @@ GUI-only agent 会看屏幕、点击、输入；terminal/coding agent 会读写�
 
 ## Q2. 它和相邻工作到底差在哪里？
 
-**它的边界不是“又一个 GUI benchmark”，而是把 task environment、GUI+code harness、reference-grounded judge 与 trajectory generation 放在同一个五平台框架里。**
+**这项工作同时提供五个平台的 task environment、GUI+code harness、reference-grounded judge 和 trajectory generation。**
 
 <div class="table-scroll">
 <table>
@@ -111,7 +111,7 @@ GUI-only agent 会看屏幕、点击、输入；terminal/coding agent 会读写�
     <tr><td>Design2Code / Interaction2Code / WebGen-Bench</td><td>截图、说明或网页交互</td><td>前端或网站实现</td><td>最接近 visual coding，但通常集中于 Web，reference exploration 的深度和平台范围更窄。</td></tr>
     <tr><td>APPFORGE / RealDevWorld / GameCraft-Bench</td><td>移动应用、桌面软件或游戏目标</td><td>可执行 artifact，功能与视觉评测</td><td>也强调完整软件与可执行 judge；RecreationWorld 进一步统一五个平台，并研究 GUI↔code 的轨迹和训练迁移。</td></tr>
     <tr><td>Gym-Anything / CUA-Gym / GUI-GENESIS</td><td>自动构造的环境、任务与 reward</td><td>规模化训练环境或可验证轨迹</td><td>同属 scalable environment 路线；本文用运行中的 reference 同时产生规格、测试依据和训练经验。</td></tr>
-    <tr><td>WeaveBench / PhoneHarness / StateAct</td><td>GUI 与 terminal、API 或 program state</td><td>混合工具工作流</td><td>直接研究 hybrid action；本文把重点放在 explore→implement→verify 的软件复刻闭环。</td></tr>
+    <tr><td>WeaveBench / PhoneHarness / StateAct</td><td>GUI 与 terminal、API 或 program state</td><td>混合工具工作流</td><td>直接研究 hybrid action；本文把重点放在 explore→implement→verify 的完整软件复刻流程。</td></tr>
   </tbody>
 </table>
 </div>
@@ -126,7 +126,7 @@ RecreationBench 每个平台 50 个 task。三个桌面平台的 release invento
 
 <figure class="figure wide">
   <img src="/lib/papers/recreationworld/task-contract-redrawn.svg" alt="RecreationBench task contract 与可见隐藏边界">
-  <figcaption>根据论文 Sections 2.1、4.1、4.2、4.5 与 Appendix C.6 重绘。最重要的不是“给一张截图”，而是给运行中的 reference 和完整开发环境；tests 与 ground truth 不给 Agent。</figcaption>
+  <figcaption>根据论文 Sections 2.1、4.1、4.2、4.5 与 Appendix C.6 重绘。Agent 拿到运行中的 reference 和完整开发环境；tests 与 ground truth 不给 Agent。</figcaption>
 </figure>
 
 ### Benchmark 构造和提交评测是两条流程
@@ -183,7 +183,7 @@ RecreationBench 每个平台 50 个 task。三个桌面平台的 release invento
 
 <div class="formula">Overall = (five-platform macro-average Prog + five-platform macro-average VLM) / 2</div>
 
-官方 MIT 仓库中的 `RunResult` 还专门区分“确实评为 0”和“根本没有完成评分”：`task_score = None` 表示 not graded，不应偷偷当作 0；`EvalCounts.rate` 优先用 `passed / total`，避免历史文件里的缓存比例与原始计数不一致。这是一个看似小、实际很关键的结果协议。
+官方 MIT 仓库中的 `RunResult` 还专门区分“确实评为 0”和“根本没有完成评分”：`task_score = None` 表示 not graded，不应偷偷当作 0；`EvalCounts.rate` 优先用 `passed / total`，避免历史文件里的缓存比例与原始计数不一致。这一实现避免把“没有完成评分”混进真实 0 分，聚合时也优先信任原始计数。
 
 <div class="code-scroll"><pre><code>&#35; Adapted from src/recreation_bench/result.py in the official MIT repository
 @property
@@ -237,7 +237,7 @@ def prog_pass_rate(self):
 
 ## Q6. 这篇论文应该怎样评价？
 
-**这是目前把 Claude Code / Codex 式 coding harness 与 GUI 操作结合得最完整的 benchmark-and-environment 工作之一；最大的价值是任务和 judge 的可执行闭环，最大的缺口是校准与训练复现。**
+**如果你关注 Claude Code / Codex 式 harness，这篇很值得优先读：任务与 judge 都能执行，并且横跨五个平台。它的主要证据缺口是 VLM judge 的校准报告、重复运行和训练复现材料。**
 
 <div class="limit-grid">
   <div><b>有限 tests ≠ 行为等价</b><span>隐藏 suite 只覆盖有限状态和路径。拿满分也只能说明通过了这些 assertions，不能证明 candidate 在所有输入下等同于 reference。</span></div>
@@ -248,10 +248,6 @@ def prog_pass_rate(self):
   <div><b>harness 比较改变多个变量</b><span>persistent runtime 的结果很实用，但它比较的是 complete configuration；不能单独声称某个 SDK 设计导致了 54.1% 成本下降。</span></div>
 </div>
 
-如果沿这条线继续研究，最值得补的不是更多装饰性任务，而是三件可证伪的事：第一，给 VLM assertions 做人工校准并公开 disagreement；第二，让同一模型、同一 task 重复运行，报告 task-level uncertainty；第三，在相同数据量与 teacher 下比较 recreation trajectory、普通 coding trajectory 和 GUI-only trajectory，真正隔离 hybrid supervision 的作用。
-
-<aside class="note blue">
-<p><strong>一句话结论：</strong>RecreationWorld 的关键贡献不是“让 Agent 仿一个界面”，而是把 <strong>reference exploration → implementation → candidate execution → hidden replay</strong> 接成同一条可训练、可评测的链。它已经把 task、harness、fixture、Prog/VLM judge 和五平台聚合讲得相当完整；但读 58.06 时一定要同时看到 2.8% 的严格完成率，也要把训练迁移当作强烈的初步证据，而不是最终因果证明。</p>
-</aside>
+沿这条线继续研究，建议先补三项可证伪实验。第一，给 VLM assertions 做人工校准并公开 disagreement；第二，让同一模型、同一 task 重复运行，报告 task-level uncertainty；第三，在相同数据量与 teacher 下比较 recreation trajectory、普通 coding trajectory 和 GUI-only trajectory，单独估计 hybrid supervision 带来的变化。
 
 </div>

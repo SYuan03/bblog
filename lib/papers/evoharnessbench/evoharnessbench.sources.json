@@ -108,13 +108,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 3–4 and appendices: task construction and splits"
+          "locator": "Sections 3.1–3.3 and Figure 2: stream construction from EOG and ALE"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文列出的来源、筛选、split 与泄漏风险都在正文中单独说明。"
+          "quote": "作者没有重新生成题目，而是把 EOG 和 ALE 的静态任务按所需能力重新排成 17 条演化序列。"
+        },
+        {
+          "artifact": "article",
+          "quote": "每条序列有 3–6 个 stage，共包含 802 个不重复任务；同一任务按 tools、skills、agents 三条轴展开后，共得到 1,510 个评测样例。"
         }
       ]
     },
@@ -122,18 +126,27 @@
       "id": "annotation-and-check-construction",
       "claim_type": "author-claim",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Benchmark construction, evaluator and limitations"
+          "locator": "Section 3.3: tool, skill, and agent annotations"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Availability check: project page has no dedicated public checker repository"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "任务检查、标注来源与无法从公开材料确认的部分均被明确区分。"
+          "quote": "tools 直接继承 EOG/ALE 的 oracle tool labels"
+        },
+        {
+          "artifact": "article",
+          "quote": "skills 的关键词匹配只是 relatedness proxy：作者明确说明它不保证该 skill 必需、充分或唯一。"
         }
       ]
     },
@@ -146,38 +159,42 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Evaluation protocol and disclosure boundary"
+          "locator": "Sections 3.2–3.4: cumulative harness and hidden capability annotations"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章明确区分 evaluated system 可见内容与隐藏 test、checker 或 reference。"
+          "quote": "截至当前 stage 的完整累计工具目录，不是只给该题需要的工具"
+        },
+        {
+          "artifact": "deck",
+          "quote": "required-capability annotations"
         }
       ]
     },
     {
       "id": "evaluation-formulas",
-      "claim_type": "reproduced-calculation",
+      "claim_type": "author-claim",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Metrics, equations and result tables"
+          "locator": "Section 3.4: ACC, BWT, and FWT"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "分数公式、聚合层级、分母和不确定性按论文协议解释。"
+          "quote": "BWT 比较旧题在最终 stage 与首次出现时的准确率，负数表示遗忘；FWT 比较新一批任务适应前后的准确率，正数表示利用 adaptation split 后有所提升。"
         }
       ]
     },
     {
       "id": "checker-code-and-cases",
-      "claim_type": "inspected-implementation",
+      "claim_type": "unknown",
       "source_ids": [
         "paper",
         "official-artifact"
@@ -185,21 +202,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Case studies and official artifact availability"
+          "locator": "Section 3.4 and agent-axis explanatory example"
         },
         {
           "source_id": "official-artifact",
-          "locator": "availability checked 2026-10-08; project page available but no dedicated public code/checker repository linked"
+          "locator": "Availability check: no task-level checker repository linked"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "至少一个具体执行案例从输入、修改、运行一直追到 PASS 或 FAIL。"
+          "quote": "最终 verifier 只检查数据库、文件或邮件等外部状态。"
         },
         {
           "artifact": "article",
-          "quote": "公开材料不足时，文章不会把推测伪装成官方 checker 实现。"
+          "quote": "论文没有公开一个带 task ID 的完整 prompt、初始数据库、动作日志和 verifier assertion，项目页在核查时也没有链接 checker 仓库。"
         }
       ]
     },
@@ -212,13 +229,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Experiments and main results"
+          "locator": "Tables 2, 4, and 6; Figures 4–5: results for evolving tools, skills, and agents"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "模型、harness、预算、重复次数、失败运行和主结果没有混成单一排行榜。"
+          "quote": "EOG 上 MemToolAgent 为 38.6%、ReasoningBank 为 36.9%、Meta-Harness 为 35.2%，fresh deployment 为 30.2%；ALE 上多数 adaptation 方法接近或低于不保留状态的 baseline。"
+        },
+        {
+          "artifact": "article",
+          "quote": "三条轴最差的 BWT 分别是 tools −5.3%、skills −4.0%、agents −34.7%；最好的相对 adaptation gain 分别达到 +27.8%、+27.5%、+110.2%。"
         }
       ]
     },
@@ -231,13 +252,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Related Work and protocol comparison"
+          "locator": "Section 2 and Table 1: related benchmark comparison"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "相邻工作按修改对象、反馈、隐藏边界和交付物比较。"
+          "quote": "它主要测“适应外部 harness 演化”，不是直接测“能否写 harness code”。"
         }
       ]
     },
@@ -245,18 +266,27 @@
       "id": "limitations",
       "claim_type": "interpretation",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations and future work"
+          "locator": "Section 3.3 and limitations: proxy skill annotations and external validity"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Availability check: no public checker repository"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章把外部有效性、方差、checker blind spot 与公开 artifact 缺口列为结论边界。"
+          "quote": "skills 的 rule-based annotation 也只是一种 proxy；若把低 skill overlap 直接解释成模型缺能力，会混入 annotation incompleteness。"
+        },
+        {
+          "artifact": "article",
+          "quote": "这些极值来自不同方法和设置，不能拼成同一个“最好系统”。"
         }
       ]
     }
@@ -767,20 +797,7 @@
       "asset_paths": []
     }
   ],
-  "figures": [
-    {
-      "path": "/lib/papers/evoharnessbench/cover.svg",
-      "origin": "generated",
-      "source_id": "paper",
-      "source_locator": "paper overview",
-      "credit": "原创系列封面图",
-      "license_status": "not-applicable",
-      "license_basis": "Original explanatory graphic.",
-      "used_in": [
-        "deck"
-      ]
-    }
-  ],
+  "figures": [],
   "qa": {
     "reading_layout": {
       "deck_first": true,

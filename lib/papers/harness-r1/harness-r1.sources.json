@@ -108,13 +108,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Abstract and Introduction"
+          "locator": "Sections 1 and 3; Figure 2: failure-to-edit-to-rerun loop"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "文章把核心贡献限定为对 executable harness 的创建、修复或优化。"
+          "quote": "论文把“读失败—改 runtime—重跑验证”从一次性 prompt 技巧变成可训练策略。"
         }
       ]
     },
@@ -122,18 +122,27 @@
       "id": "method",
       "claim_type": "author-claim",
       "source_ids": [
-        "paper"
+        "paper",
+        "official-artifact"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Method sections and algorithm"
+          "locator": "Section 3.2 and Appendix B: outcome-grounded post-training and lifecycle hooks"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "Commit 94f2e087f573e1b82fc9568bb634d4ae9a887e28: training and rerun implementation"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "方法链按失败证据、候选修改、真实执行与筛选顺序展开。"
+          "quote": "每个 failure packet 包含失败轨迹、环境反馈和当前 harness；engineer 输出四处 hook 的补丁。"
+        },
+        {
+          "artifact": "article",
+          "quote": "比较同一完整 batch 修补前后的 realized success，再做 GRPO。"
         }
       ]
     },
@@ -146,13 +155,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Experiments and main tables"
+          "locator": "Table 1 and Figure 4: main and held-out results"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "主结果保留 benchmark、模型、分母与提升幅度。"
+          "quote": "在三个训练环境上，vanilla Qwen3.5-9B 从 44.3% 提到 53.6%，增加 9.3 个百分点；target 先 SFT 后再修 harness，则从 59.2% 到 64.2%。"
+        },
+        {
+          "artifact": "article",
+          "quote": "同一道题从 0.667 变成 1.0；同一十题 batch 的完整成功数从 2/10 增至 5/10，原先已成功的两题没有退化。"
         }
       ]
     },
@@ -165,13 +178,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations and appendices"
+          "locator": "Sections 3.2, 4.4, and 5: transductive reward and generalization limits"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "局部奖励、重复次数、迁移与公开 artifact 边界被明确保留。"
+          "quote": "这个奖励直接针对产生 failure packet 的同一 batch 优化，属于 transductive objective。训练目标没有单独惩罚 held-out regression 或推理成本。"
+        },
+        {
+          "artifact": "article",
+          "quote": "同批奖励仍可能鼓励局部修补，尚不能证明它学会了普遍的软件维护能力。"
         }
       ]
     }
@@ -262,20 +279,7 @@
       "asset_paths": []
     }
   ],
-  "figures": [
-    {
-      "path": "/lib/papers/harness-r1/cover.svg",
-      "origin": "generated",
-      "source_id": "paper",
-      "source_locator": "paper overview",
-      "credit": "原创系列封面图",
-      "license_status": "not-applicable",
-      "license_basis": "Original explanatory graphic.",
-      "used_in": [
-        "deck"
-      ]
-    }
-  ],
+  "figures": [],
   "qa": {
     "reading_layout": {
       "deck_first": true,

@@ -2,7 +2,7 @@
 title: "[2026-04-28] Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses"
 permalink: "/posts/论文解读/agentic-harness-engineering.html"
 date: "2026-09-28T21:30:00+08:00"
-updated: "2026-09-28T21:30:00+08:00"
+updated: "2026-10-11T02:00:00+08:00"
 cover: "/generated-covers/049-agentic-harness-engineering.webp"
 description: "从三层 observability、change manifest 和真实失败轨迹出发，拆解 AHE 如何自动修改 prompt、tool、middleware 与 memory，以及它在 Terminal-Bench 2 上真正证明了什么。"
 wide_content: true
@@ -58,7 +58,7 @@ html:not([data-theme="dark"]) body:has(.ahe-reading){--paper:#fff;--paper-elevat
   </div>
 </section>
 
-<p class="lead">这篇论文把 coding agent 的 harness 当成一个可以自动维护的软件系统：模型本身保持不变，Evolve Agent 根据真实任务轨迹修改 prompt、tool、middleware 和 memory，再用下一轮任务的 pass/fail 变化检验修改是否有效。它最有价值的地方不是 77.0% 这个单点成绩，而是把“为什么改、改了什么、预期修谁、实际修到谁”串成了一条可以审计的链。</p>
+<p class="lead">这篇论文把 coding agent 的 harness 当成一个可以自动维护的软件系统：模型本身保持不变，Evolve Agent 根据真实任务轨迹修改 prompt、tool、middleware 和 memory，再用下一轮任务的 pass/fail 变化检验修改是否有效。每次修改还会记录原因、改动内容、预计修复的任务和实际发生的 task flip，因此 77.0% 背后的搜索过程也能追查。</p>
 
 <div class="interest"><b>作者兴趣度 10 / 10</b><span>和 Claude Code、Codex 一类完整 harness 的研究方向高度相关</span></div>
 
@@ -100,7 +100,7 @@ AHE 把难点分成三类。第一，修改面异构：一句 prompt、一个 to
   <figcaption>论文 Figure 1，作者官方仓库版本。深色线是每轮 pass@1，浅色阶梯线是 best-so-far。四个峰值分别对应 contract-first workflow、publish-state guard、cross-step risk monitor 和 post-success hard block。官方仓库 MIT License。</figcaption>
 </figure>
 
-论文的核心判断是：如果 optimizer 能看到清楚的修改面、压缩过且可回钻的执行证据，并且每次修改都带可检验的预测，那么完整 harness 可以进入自动优化闭环。这里的“自动”不是无限制地让 Agent 改自己；verifier、model config、tracer、runs 目录都只读，Agent 只能修改 workspace 中的 harness 文件。
+论文的判断是：optimizer 需要看清可修改文件、压缩后仍能回查的执行证据，以及每次修改对应的可检验预测。具备这三项条件后，系统才能反复修改 harness，并用下一轮结果结算。verifier、model config、tracer、runs 目录始终只读，Agent 只能修改 workspace 中的 harness 文件。
 
 ## Q2. 它和 prompt evolution、agent workflow search 有什么区别？
 
@@ -121,7 +121,7 @@ AHE 把难点分成三类。第一，修改面异构：一句 prompt、一个 to
 
 论文也直接比较了三种自演化设置。ACE、TF-GRPO 和 AHE 都从同一个 bash-only NexAU₀ 出发，base model 都是 GPT-5.4 high。ACE 得到 68.9%，TF-GRPO 为 72.3%，AHE 为 77.0%。作者的解释是 layer mismatch：前两者能改自然语言经验，AHE 还能把规律落实到 tool 和 middleware。这个解释得到组件消融支持，但实验没有把所有相关方法在多次独立 evolution run 下重做，因此还不能把差距完全归因于“修改面更完整”。
 
-## Q3. AHE 的闭环具体怎样运行？
+## Q3. AHE 的每轮修改和结算怎样运行？
 
 ### 3.1 三层 observability 各自产生什么 artifact？
 
@@ -266,7 +266,7 @@ SWE-bench Verified 使用完整 500 题、七个 repository，AHE harness 不做
 
 ## Q6. 这篇论文的证据边界和最终判断是什么？
 
-**AHE 已经证明完整 harness 可以进入自动优化闭环，但还没有证明这个闭环稳定、低成本、可跨场景长期自治。** 下面几个边界会直接影响复现和研究设计：
+**AHE 证明模型可以按固定流程修改完整 harness，并用下一轮任务结果结算；现有实验还不足以说明这个过程稳定、低成本或能跨场景长期运行。** 下面几个边界会直接影响复现和研究设计：
 
 - 主结果来自一条十轮 campaign，没有多 seed 的均值和方差。每轮又只有每题两次 rollout，单 task flip 的噪声仍然大。
 - 三个角色都使用 GPT-5.4，且 Evolve Agent 是 xhigh reasoning。论文保持 base model 不变，隔离了 harness edit 的作用；它没有证明较弱 optimizer 也能完成同样的诊断。
@@ -275,6 +275,6 @@ SWE-bench Verified 使用完整 500 题、七个 repository，AHE harness 不做
 - operating point 在 GPT-5.4 high 上调过。medium、high、xhigh 的增益不是单调的，xhigh 可能因为更慢而越过 task timeout。
 - self-modification 的安全边界仍是研究原型：workspace 限权、Git rollback 和 verifier 只读能防一批明显捷径，但不能替代完整的 misuse prevention 与长期 cleanup governance。
 
-我的结论是：**如果要研究 Claude Code、Codex 这一类完整 harness，这篇值得优先精读和复现。** 它既给了可以直接实现的工程对象，也公开了很具体的失败轨迹；更重要的是，论文没有把 self-evolution 包装成一路单调上升，反而把 component interference 和 regression blindness 摆到了台面上。作者兴趣度因此是 10/10。
+我的结论是：**如果要研究 Claude Code、Codex 这一类完整 harness，这篇值得优先精读和复现。** 它给出了可以直接实现的工程对象，也公开了具体失败轨迹。实验曲线并非一路上升，component interference 和 regression blindness 都有可核对的负面结果。作者兴趣度因此是 10/10。
 
 </div>

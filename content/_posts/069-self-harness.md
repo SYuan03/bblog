@@ -2,7 +2,7 @@
 title: "[2026-06-08] Self-Harness: Harnesses That Improve Themselves"
 permalink: "/posts/论文解读/self-harness.html"
 date: "2026-10-08T00:03:00+08:00"
-updated: "2026-10-08T00:03:00+08:00"
+updated: "2026-10-11T02:05:00+08:00"
 cover: "/lib/papers/self-harness/cover.svg"
 description: "Self-Harness 让同一个固定模型既执行任务，也从失败中提出并验证自己的 harness 修改。本文拆解 weakness mining、最小编辑、双 split promotion gate、九组结果，以及 held-out 被反复用于筛选的关键边界。"
 wide_content: true
@@ -38,7 +38,7 @@ tags:
   </div>
 </section>
 
-<p class="lead">Self-Harness 让同一个固定模型既执行任务，也从失败中提出并验证自己的 harness 修改。本文拆解 weakness mining、最小编辑、双 split promotion gate、九组结果，以及 held-out 被反复用于筛选的关键边界。</p>
+<p class="lead">Self-Harness 不训练新模型，也不请更强模型当编辑器。同一个冻结模型先做任务，再阅读自己的失败轨迹，提出一处尽量小的 harness 修改。系统把候选同时放到两个数据分区上重跑；只要有一边退化，就恢复旧版本。这个设计很直接，但论文称为 held-out 的分区每轮都参与版本选择，需要按验证集来理解。</p>
 <div class="interest"><b>博客作者兴趣度 9.2 / 10</b><span>评分只表示博客作者本人对“写、修、演化 harness code”这条研究线的阅读兴趣，不是论文质量评级</span></div>
 <div class="metrics" aria-label="论文关键数字">
   <div class="metric"><strong>3 × 3</strong><span>模型 × benchmark 组合</span></div>
@@ -46,8 +46,8 @@ tags:
   <div class="metric"><strong>44.4 → 85.0</strong><span>GLM-5 AppWorld</span></div>
   <div class="metric"><strong>≤2</strong><span>每个 candidate 常见尝试次数</span></div>
 </div>
-<aside class="keypoints"><h3>先记住</h3><p>最强结果 九个组合都没有在两个 gate split 上回退。 最大疑点 held-out 被每轮重复查询。 工程价值 failure mechanism → minimal edit → rollback gate。 推荐对象 想实现低成本自修 harness 循环的工程与研究人员。</p></aside>
-<aside class="part0"><span class="kicker">PART 0 · 阅读准备</span><h3>这篇里的 harness 指什么？</h3><p>“Self” 指同一个固定 base model 同时充当被改进的 Agent 和 proposer。它不更新模型参数，也不借助更强外部模型；变化全部留在 prompt、工具、验证和控制逻辑等 harness 表面。</p></aside>
+<aside class="keypoints"><h3>先记住</h3><ul><li>同一个冻结模型既做任务，也读取自己的失败轨迹并提出 harness 修改；论文不更新模型权重。</li><li>系统先归纳重复失败，再提出尽量小的修改；候选只有在两个数据分区都不退化时才会保留。</li><li>九个“模型 × benchmark”组合都提升，但论文称为 held-out 的分区每轮都参与筛选，实际更接近 validation set。</li><li>这套流程适合作为低成本自修框架，不能据此声称修改已经通过一次性的盲测。</li></ul></aside>
+<aside class="part0"><span class="kicker">PART 0 · 三个容易混淆的词</span><h3>failure signature、candidate edit 和 promotion gate</h3><p><strong>failure signature</strong> 是对一类重复失败的归纳，包含 verifier 给出的原因、Agent 当时的行为状态和抽象失败机制；<strong>candidate edit</strong> 是针对该机制提出的小修改；<strong>promotion gate</strong> 是版本保留规则。这里的 “Self” 表示同一个 base model 既做任务又提修改，模型参数始终不变。</p></aside>
 
 ## Q1. 为什么让模型改自己的 harness，而不是交给更强 editor？
 
@@ -57,13 +57,17 @@ tags:
 
 <p><strong>它优化完整 harness，但搜索策略比开放式代码演化更保守。</strong>普通 prompt search 只改文本；Harness-R1 训练另一个 9B engineer；HarnessFix 显式构造 HTIR 并映射到修复算子。Self-Harness 不训练新模型，也不用更强 proposer，依靠 failure clustering 与 regression gate 控制风险。</p>
 
-## Q3. Weakness Mining、Proposal 与 Validation 怎样闭环？
+## Q3. Weakness Mining、Proposal 与 Validation 怎样接成一轮？
 
 <p><strong>一轮分三步：从轨迹提取 weakness signature，并行提出互异的最小 edit，再用 held-in / held-out 双重门验证。</strong>signature 由 verifier cause、行为因果状态和抽象 mechanism 组成，只有精确匹配的失败才聚为一类。多个单独通过且兼容的 edit 可以合并。</p><div class="formula">accept(e) ⇔ held-in(e) ≥ baseline ∧ held-out(e) ≥ baseline ∧ 至少一边严格提升</div><p>这个 gate 很直观，但名为 held-out 的 split 每轮都会参与 candidate promotion。它实际是搜索期 validation / regression set，不是最终只看一次的 blind test。</p>
 
 ## Q4. 九组实验里哪些改动真的留下来了？
 
-<p><strong>MiniMax M2.5、Qwen3.5-35B-A3B、GLM-5 在 Terminal-Bench 2.0、SWE-bench Verified、AppWorld 的九种组合全部同时提高 held-in 与 held-out。</strong>最大绝对跃升是 GLM-5 AppWorld 44.4% → 85.0%。</p><div class="case"><h3>保留下来的机制</h3><p>Terminal-Bench 的 edit 提前创建必需 artifact、限制无尽 tool loop、先检查 dependency；SWE-bench 加入 diff/test verifier subagent；AppWorld 补 pagination 与“只能在真实 action effect 后完成”的 contract。它们都不是泛泛的“多思考”，而是对具体 runtime failure 的控制。</p></div><p>但每个 candidate 通常只有两次 attempt，随机 agent score 容易让 promotion gate 接受偶然提升。九组结果也都在三个高度工程化 benchmark 内，尚未证明跨域机制迁移。</p>
+<p><strong>MiniMax M2.5、Qwen3.5-35B-A3B、GLM-5 在 Terminal-Bench 2.0、SWE-bench Verified、AppWorld 的九种组合都在两个 gate split 上提高。</strong>最大绝对变化是 GLM-5 在 AppWorld 从 44.4% 到 85.0%。不过，这两个 split 都参与过每轮候选选择，不能当成独立 test。</p>
+
+<div class="case"><h3>真实 SWE-bench trace：代码改对了，却没跑目标测试</h3><ol><li><strong>任务：</strong>Astropy 的 FITS card 浮点格式问题。</li><li><strong>初始 harness：</strong>Agent 完成了源码修改，却在执行验证前结束；没有证据表明补丁通过了目标测试。</li><li><strong>failure signature：</strong>“source change 存在，但缺少 executable verification”。</li><li><strong>候选修改：</strong>在提交前检查当前 diff，补齐缺失依赖，并要求运行与改动相关的 targeted test。</li><li><strong>promotion：</strong>候选在两个 gate split 上都不低于旧版本，且至少一边严格提高，因而保留。</li><li><strong>结果：</strong>修改后的轨迹完成目标测试，并带着所需源码改动结束。</li></ol><p>论文图 12 发布了修改前后的运行记录，但没有在正文中给出这道题的完整 task ID、测试名称和逐项 checker 输出；本文只复述图中可以确认的步骤。</p></div>
+
+<p>其他保留修改也很具体。Terminal-Bench harness 会提前创建题目要求的 artifact，检测无尽 tool loop，并在执行前检查 dependency；AppWorld harness 补了 pagination，并要求只有真实外部状态发生变化后才能调用完成。每个候选通常只跑两次 attempt，随机波动仍可能让 gate 接受偶然提升。九组实验也都来自三个工程化 benchmark，尚未证明这些机制会跨域迁移。</p>
 
 ## Q5. 怎样修正 held-out gate 带来的评估偏乐观？
 
@@ -75,5 +79,4 @@ tags:
 
 <p class="source-note">主要来源：论文全文与附录、arXiv v1 元数据；代码或项目页于 2026-10-08 核验。固定来源状态：2720dbb3f52283684f4b85a1065d642df1779dd8。</p>
 
-<aside class="source-note"><p>文章把核心贡献限定为对 executable harness 的创建、修复或优化。方法链按失败证据、候选修改、真实执行与筛选顺序展开。主结果保留 benchmark、模型、分母与提升幅度。局部奖励、重复次数、迁移与公开 artifact 边界被明确保留。</p></aside>
 </div>
