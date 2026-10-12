@@ -1,11 +1,9 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Training with Harnesses: On-Policy Harness Self-Distillation for Complex Reasoning",
     "kind": "research",
-    "primary_source_ids": [
-      "paper"
-    ]
+    "primary_source_ids": ["paper"]
   },
   "artifacts": {
     "article": "content/_posts/081-training-with-harnesses.md",
@@ -19,12 +17,7 @@
       "title": "Training with Harnesses: On-Policy Harness Self-Distillation for Complex Reasoning",
       "url": "https://arxiv.org/pdf/2605.08741v1",
       "revision": "v1",
-      "used_for": [
-        "problem",
-        "method",
-        "results",
-        "limitations"
-      ]
+      "used_for": ["problem", "related work", "method", "results", "cases", "limitations"]
     },
     {
       "id": "code",
@@ -32,11 +25,7 @@
       "title": "OPHSD official repository",
       "url": "https://github.com/zzy1127/OPHSD-On-Policy-Harness-Self-Distillation",
       "revision": "20eaa0c8b0674fbf81aa780a8cf4e0d7c550d4ea",
-      "used_for": [
-        "implementation",
-        "artifact completeness",
-        "reproduction"
-      ]
+      "used_for": ["teacher/student batch construction", "harness implementation", "released data", "fixed-checkpoint results", "reproduction gaps"]
     }
   ],
   "paper_reading": {
@@ -45,135 +34,205 @@
     "extracted_text_reviewed": true,
     "rendered_pages_reviewed": true,
     "page_count": 18,
-    "rendered_page_ranges": [
-      {
-        "start": 1,
-        "end": 18
-      }
-    ],
-    "source_visuals_expected": 11,
+    "rendered_page_ranges": [{"start": 1, "end": 18}],
+    "source_visuals_expected": 13,
     "visual_inventory_complete": true
   },
   "note_sections": [
+    {"role": "problem", "locator": "Q1. 为什么要把 harness 的收益写回模型？"},
+    {"role": "related-work", "locator": "Q2. 它与 SFT、GRPO、OPSD 和 harness engineering 差在哪？"},
+    {"role": "method", "locator": "Q3. 一步 OPHSD 训练具体怎样运行？"},
+    {"role": "experiments", "locator": "Q4. 实验究竟证明了什么？"},
+    {"role": "future-work", "locator": "Q5. 对 game query-to-code 有什么真正可用的启发？"},
+    {"role": "summary", "locator": "Q6. 这篇论文最值得保留什么，又缺什么？"}
+  ],
+  "terminology": [
     {
-      "role": "problem",
-      "locator": "Q1. 为什么要把 harness 蒸馏回模型？"
+      "term": "harness",
+      "kind": "operation",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 2.2 and Section 3.2"},
+        {"source_id": "code", "locator": "ophsd_train/harnesses"}
+      ],
+      "article_quote": "Harness 是模型外部的一段控制程序。它决定何时检索、调用模型几次、把哪些中间结果放进下一次 prompt。"
     },
     {
-      "role": "related-work",
-      "locator": "Q2. 它与普通 OPSD 的差别在哪里？"
+      "term": "on-policy rollout",
+      "kind": "state",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.1, Eq. 1"},
+        {"source_id": "code", "locator": "ophsd_trainer.py:1082-1092"}
+      ],
+      "article_quote": "On-policy rollout 是当前 student 只看原题后采样出的完整回答；模型参数更新后，下一批回答也会跟着变。"
     },
     {
-      "role": "method",
-      "locator": "Q3. 两个 harness 具体怎样运转？"
+      "term": "frozen teacher",
+      "kind": "actor",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.1-3.2"},
+        {"source_id": "code", "locator": "ophsd_trainer.yaml actor_rollout_ref.ref"}
+      ],
+      "article_quote": "Frozen teacher 是训练开始时从同一 checkpoint 复制出的 Qwen3-8B，参数随后冻结。"
     },
     {
-      "role": "experiments",
-      "locator": "Q4. setting、结果与真实失败 case 是什么？"
+      "term": "terminal context",
+      "kind": "prompt-context",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.2-3.3"},
+        {"source_id": "code", "locator": "batch_builder.py::_get_teacher_messages_from_harness"}
+      ],
+      "article_quote": "Terminal context 是 harness 走到最后一步时组装出的 teacher prompt。"
     },
     {
-      "role": "future-work",
-      "locator": "Q5. 游戏 coding harness 哪些东西能内化？"
+      "term": "confirmer / challenger",
+      "kind": "retrieved-example",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.3 and Appendix A.1"},
+        {"source_id": "code", "locator": "lawbench/draft_verify.py::predict"}
+      ],
+      "article_quote": "Confirmer / challenger 也不是 agent：confirmer 是真实标签与 draft 标签相同的历史样例，challenger 是标签不同的历史样例。"
     },
     {
-      "role": "summary",
-      "locator": "Q6. 代码 release 足够复现吗？"
+      "term": "KL direction",
+      "kind": "loss",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.2, Eq. 3; Appendix A.2"},
+        {"source_id": "code", "locator": "losses.py::compute_reverse_kl_loss; config/ophsd_trainer.yaml:114-115"}
+      ],
+      "article_quote": "论文 Eq. 3 和 Appendix A.2 都把 teacher 分布写在 KL 左侧"
+    },
+    {
+      "term": "pass@8",
+      "kind": "metric",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 4.3, Table 5"},
+        {"source_id": "code", "locator": "ophsd_trainer.py:922-934"}
+      ],
+      "article_quote": "每题采样 8 次，至少一次答案等价即 pass；再对题目求平均"
     }
   ],
   "coverage": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Section 1"
-        }
-      ],
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Abstract and Section 1"}],
       "evidence": [
-        {
-          "artifact": "article",
-          "quote": "inference harness 能提高正确率，却增加 latency、token cost、工程复杂度和新的 control-flow failure。"
-        }
+        {"artifact": "article", "quote": "OPHSD 因此提出一个更窄的问题：训练时保留 harness，把它组装出的上下文只交给 teacher；student 始终练习从原题直接作答。"},
+        {"artifact": "deck", "quote": "Harness 不再生成训练答案，而是改变 teacher 看问题的方式"}
+      ]
+    },
+    {
+      "id": "related-work-boundary",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 2 and Table 1"}],
+      "evidence": [
+        {"artifact": "article", "quote": "区别不在“有没有 teacher”，而在 teacher 依据什么信息评估 student 自己生成的 token。"},
+        {"artifact": "deck", "quote": "OPHSD 改的是 privileged context 的生产方式"}
       ]
     },
     {
       "id": "method-contract",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "code"],
       "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Sections 2-3"
-        }
+        {"source_id": "paper", "locator": "Section 3.2, Eq. 3, Figure 1"},
+        {"source_id": "code", "locator": "ophsd_trainer.py:1082-1257; batch_builder.py; losses.py"}
       ],
       "evidence": [
-        {
-          "artifact": "article",
-          "quote": "teacher 的优势来自执行过的 procedure，而不是单纯多一段 reference text。"
-        }
+        {"artifact": "article", "quote": "一次更新同时包含一份 direct rollout、一轮完整 harness 执行和两次逐 token 概率计算。"},
+        {"artifact": "deck", "quote": "一份 rollout，两种观察条件"}
       ]
     },
     {
-      "id": "main-result",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
+      "id": "harness-instantiations",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "code"],
       "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Tables 1-3 and case study"
-        }
+        {"source_id": "paper", "locator": "Section 3.3 and Appendix A.1"},
+        {"source_id": "code", "locator": "lawbench/draft_verify.py; math/plan_solve.py"}
       ],
       "evidence": [
-        {
-          "artifact": "article",
-          "quote": "LawBench 的一个 case 中，检索到的样例全部指向 intentional injury，掩盖了 negligent homicide。"
-        }
+        {"artifact": "article", "quote": "5 个 confirmer 的真实标签与 draft 相同，5 个 challenger 的真实标签与 draft 不同。"},
+        {"artifact": "deck", "quote": "5 个 confirmer / challenger 是数据行，不是 agent"}
+      ]
+    },
+    {
+      "id": "experimental-setting",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.1 and Appendix A.2-A.3"}],
+      "evidence": [
+        {"artifact": "article", "quote": "单次最多生成 8,192 tokens，使用 8 张 H100。"},
+        {"artifact": "deck", "quote": "三组 10K 训练数据，三种不同指标"}
+      ]
+    },
+    {
+      "id": "results-and-reporting",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Tables 2 and 5; Appendix A.3"},
+        {"source_id": "code", "locator": "results/fixed_checkpoint_summary.csv"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "仓库后来又补充 fixed-checkpoint 结果：文本任务统一读取 step 300，数学任务统一读取 step 150，每项配置做 4 次独立运行并给出标准差。"},
+        {"artifact": "deck", "quote": "这些值不能与仓库后来发布的固定终点均值混成一张表。"}
+      ]
+    },
+    {
+      "id": "internalization-evidence",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Section 4.4, Figure 4"}],
+      "evidence": [
+        {"artifact": "article", "quote": "OPHSD 训练后不挂 harness 的模型解出 132 道，即 84.62%。"},
+        {"artifact": "deck", "quote": "基础模型解不出、harness 能解的 156 道题"}
+      ]
+    },
+    {
+      "id": "case-evidence",
+      "claim_type": "author-claim",
+      "source_ids": ["paper"],
+      "source_locators": [{"source_id": "paper", "locator": "Appendix B.1-B.2"}],
+      "evidence": [
+        {"artifact": "article", "quote": "重新挂上 Draft-Verify 后，5 个 draft 近邻都含 intentional injury；challenger 又来自侵入住宅、强奸、盗窃等不相关类别。"},
+        {"artifact": "article", "quote": "得到 39，8 次全部错误。"}
+      ]
+    },
+    {
+      "id": "code-paper-discrepancy",
+      "claim_type": "inspected-implementation",
+      "source_ids": ["paper", "code"],
+      "source_locators": [
+        {"source_id": "paper", "locator": "Section 3.2 Eq. 3; Section 3.3; Appendix A.2"},
+        {"source_id": "code", "locator": "prepare_deepmath_data.py; ophsd_trainer.py:1100-1117; plan_solve.py; losses.py; config/ophsd_trainer.yaml:114-115"}
+      ],
+      "evidence": [
+        {"artifact": "article", "quote": "结果是 planner 看不到 reference solution，而 solver prompt 会收到 reference answer，作为核对结果的答案提示（verification hint）。"},
+        {"artifact": "article", "quote": "公开仓库的默认 reverse_kl 则在 losses.py 里计算"},
+        {"artifact": "deck", "quote": "公开训练代码没有把 solution 传给 planner"}
       ]
     },
     {
       "id": "limitations",
       "claim_type": "interpretation",
-      "source_ids": [
-        "paper"
-      ],
+      "source_ids": ["paper", "code"],
       "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix and repository"
-        }
+        {"source_id": "paper", "locator": "Limitations and Appendix C-D"},
+        {"source_id": "code", "locator": "repository file inventory at commit 20eaa0c"}
       ],
       "evidence": [
-        {
-          "artifact": "article",
-          "quote": "官方仓库公开 trainer、两套 harness、reward、data conversion、3×10K 训练子集与 fixed-checkpoint 四次运行 CSV。"
-        }
-      ]
-    },
-    {
-      "id": "code-audit",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "code"
-      ],
-      "source_locators": [
-        {
-          "source_id": "code",
-          "locator": "trainer, harnesses, rewards, datasets and fixed-checkpoint CSVs"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "官方仓库公开 trainer、两套 harness、reward、data conversion、3×10K 训练子集与 fixed-checkpoint 四次运行 CSV。"
-        }
+        {"artifact": "article", "quote": "论文没有分别去掉额外调用、仅 teacher 可见的 reference answer、plan 或检索内容，无法确认各部分各自贡献了多少。"},
+        {"artifact": "deck", "quote": "方法骨架值得读，当前公开代码不能直接当作论文协议"}
       ]
     }
   ],
@@ -183,23 +242,29 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 4, Figure 1",
+      "status": "redrawn",
+      "rationale": "拆成训练总图与 Draft-Verify 细图，补足原图未展开的 same-token KL 与检索对象类型。",
+      "placements": [
+        {"artifact": "article", "locator": "根据论文 Figure 1、Eq. 3 和官方代码"},
+        {"artifact": "deck", "locator": "一次更新：直接回答、完整 harness，再用 KL 比较两份 token 概率"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "data-and-structure redraw; original artwork not copied",
+      "credit": "根据论文 Figure 1 与官方代码重绘",
+      "asset_paths": [
+        "/lib/papers/training-with-harnesses/training-loop-redrawn.svg",
+        "/lib/papers/training-with-harnesses/draft-verify-redrawn.svg"
+      ]
     },
     {
       "id": "figure-2",
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2",
+      "source_locator": "p. 6, Figure 2",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "论文与 release 均未提供逐 checkpoint 的原始曲线数据；正文改用 Table 2 的精确 endpoint，并明确 best-checkpoint 口径。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -211,9 +276,9 @@
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3",
+      "source_locator": "p. 7, Figure 3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "数学逐 step 曲线点与 fluctuation range 未发布；正文分别列出论文 best checkpoint 和仓库 fixed checkpoint，避免从图片反推数据。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -225,23 +290,26 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 8, Figure 4",
+      "status": "redrawn",
+      "rationale": "按四组样本量、训练后通过率与可解释边界重新排版，并补出对应计数。",
+      "placements": [
+        {"artifact": "article", "locator": "根据论文 Figure 4 重绘"},
+        {"artifact": "deck", "locator": "基础模型解不出、harness 能解的 156 道题"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "data redraw",
+      "credit": "根据论文 Figure 4 重绘",
+      "asset_paths": ["/lib/papers/training-with-harnesses/internalization-redrawn.svg"]
     },
     {
       "id": "figure-5",
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5",
+      "source_locator": "p. 8, Figure 5",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "输出长度曲线没有公开精确时序值；文章只保留作者报告的趋势及其与性能坍塌的解释，不绘制近似曲线。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -253,13 +321,16 @@
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 9, Figure 6",
+      "status": "redrawn",
+      "rationale": "保留 hard bucket 的准确样本量与增益，并在正文说明 easy bucket 的负增益，避免只展示正向结果。",
+      "placements": [
+        {"artifact": "article", "locator": "论文根据训练前 Qwen3-8B 的逐题表现，把样本分成难、中、易（Hard、Medium、Easy）三组"},
+        {"artifact": "deck", "locator": "Math / LawBench / USPTO 的难题组增益"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "numeric summary redraw",
+      "credit": "根据论文 Figure 6 数值重写",
       "asset_paths": []
     },
     {
@@ -267,13 +338,16 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 3, Table 1",
+      "status": "redrawn",
+      "rationale": "把 privileged-context 列表扩展成训练轨迹、监督信号与部署 artifact 的统一比较。",
+      "placements": [
+        {"artifact": "article", "locator": "它与 SFT、GRPO、OPSD 和 harness engineering 差在哪"},
+        {"artifact": "deck", "locator": "OPHSD 改的是 privileged context 的生产方式"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "table structure and facts redrawn",
+      "credit": "根据论文 Table 1 扩展重绘",
       "asset_paths": []
     },
     {
@@ -281,13 +355,16 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 6, Table 2",
+      "status": "redrawn",
+      "rationale": "保留全部 text baseline 与 OPHSD+Harness 数值，并与数学表严格分栏。",
+      "placements": [
+        {"artifact": "article", "locator": "在论文 v1 口径下，OPHSD 达到 LawBench 69.51、USPTO 90.81"},
+        {"artifact": "deck", "locator": "OPHSD 领先 OPSD；重新挂 harness 没有继续加分"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "numeric table redraw",
+      "credit": "根据论文 Table 2 重绘",
       "asset_paths": []
     },
     {
@@ -295,13 +372,13 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 6, Table 3",
+      "status": "redrawn",
+      "rationale": "将 base 与 harness 的三项即时收益放进正文动机段，避免只给一个平均数。",
+      "placements": [{"artifact": "article", "locator": "未训练 Qwen3-8B"}],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "numeric table redraw",
+      "credit": "根据论文 Tables 2-3 重绘",
       "asset_paths": []
     },
     {
@@ -309,13 +386,16 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 7, Table 4",
+      "status": "redrawn",
+      "rationale": "完整保留两项任务、三种方法和 early/mid/late 六组 cite-rate，旁边解释 GPT-4o judge 的判定边界。",
+      "placements": [
+        {"artifact": "article", "locator": "不挂 harness 时的 cite-rate"},
+        {"artifact": "deck", "locator": "引用相似案例的比例"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "numeric table redraw",
+      "credit": "根据论文 Table 4 重绘",
       "asset_paths": []
     },
     {
@@ -323,17 +403,103 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "p. 7, Table 5",
+      "status": "redrawn",
+      "rationale": "保留四个数学 baseline 与 OPHSD+Harness 的平均值，并与仓库 fixed-step 协议分开展示。",
+      "placements": [
+        {"artifact": "article", "locator": "论文取最佳 step，仓库固定最后 step"},
+        {"artifact": "deck", "locator": "PAPER V1 RESULTS"}
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "numeric table redraw",
+      "credit": "根据论文 Table 5 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "appendix-lawbench-case",
+      "kind": "appendix-visual",
+      "label": "Appendix B.1 LawBench case panels",
+      "source_id": "paper",
+      "source_locator": "pp. 14-16, Appendix B.1",
+      "status": "redrawn",
+      "rationale": "把题目、检索近邻、Mode A/B verdict 与 set-F1 合成一条可独立阅读的 case flow。",
+      "placements": [
+        {"artifact": "article", "locator": "根据 Appendix B.1 的 LawBench-3-3 idx 44 重绘"},
+        {"artifact": "deck", "locator": "检索样例偏向“故意伤害罪”，正确标签被挤掉"}
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "case facts redrawn",
+      "credit": "根据论文 Appendix B.1 重绘",
+      "asset_paths": ["/lib/papers/training-with-harnesses/lawbench-case-redrawn.svg"]
+    },
+    {
+      "id": "appendix-math-case",
+      "kind": "appendix-visual",
+      "label": "Appendix B.2 OlympiadBench case panels",
+      "source_id": "paper",
+      "source_locator": "pp. 16-17, Appendix B.2",
+      "status": "redrawn",
+      "rationale": "用四步 case block 保留题目、ordered-pair 陷阱、OPHSD 7/8 与 OPSD 0/8。",
+      "placements": [{"artifact": "article", "locator": "OlympiadBench idx 649：为什么答案会是 40 而不是 39"}],
+      "permission_status": "not-applicable",
+      "permission_basis": "case facts redrawn",
+      "credit": "根据论文 Appendix B.2 重绘",
       "asset_paths": []
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/training-with-harnesses/training-loop-redrawn.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1 and Eq. 3",
+      "credit": "根据论文 Figure 1、Eq. 3 与官方代码重绘",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/training-with-harnesses/draft-verify-redrawn.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1 top-right; Section 3.3",
+      "credit": "根据论文 Figure 1、Section 3.3 与官方代码重绘",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/training-with-harnesses/lawbench-case-redrawn.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "appendix-lawbench-case",
+      "source_id": "paper",
+      "source_locator": "Appendix B.1",
+      "credit": "根据论文 Appendix B.1 重绘",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/training-with-harnesses/plan-solve-release-path.svg",
+      "origin": "generated",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/training-with-harnesses/results-protocol-redrawn.svg",
+      "origin": "generated",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/training-with-harnesses/internalization-redrawn.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "Figure 4",
+      "credit": "根据论文 Figure 4 重绘",
+      "used_in": ["article", "deck"]
+    },
+    {
+      "path": "/lib/papers/training-with-harnesses/distillability-boundary.svg",
+      "origin": "generated",
+      "used_in": ["article", "deck"]
+    }
+  ],
   "qa": {
     "reading_layout": {
       "deck_first": true,
@@ -343,25 +509,14 @@
       "body_font_px": 16.5,
       "line_height": 1.75,
       "figures_centered": true,
+      "article_visuals_interleaved": true,
       "internal_scroll_for_tables_and_code": true,
       "page_horizontal_overflow": false
     },
     "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
+      {"width": 1600, "height": 1000, "passed": true},
+      {"width": 1512, "height": 982, "passed": true},
+      {"width": 390, "height": 844, "passed": true}
     ],
     "tested_surfaces": {
       "article_body": true,
@@ -384,11 +539,6 @@
       "immersive_mode_exit": true,
       "usable_state_after_exit": true
     },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
+    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"]
   }
 }
