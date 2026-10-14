@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "HarnessDev: Can LLMs Create and Evolve Their Own Agent Harness?",
     "kind": "benchmark",
@@ -70,32 +70,47 @@
     ],
     "source_visuals_expected": 19,
     "visual_inventory_complete": true,
-    "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Figure 5, Figure 6, Figure 7, Figure 8, Figure 9, Figure 10, Table 1, Table 2, Table 3, Table 4, Table 5, Table 6, Table 7, Table 8, Table 9."
+    "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Figure 5, Figure 6, Figure 7, Figure 8, Figure 9, Figure 10, Table 1, Table 2, Table 3, Table 4, Table 5, Table 6, Table 7, Table 8, Table 9.",
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "primary_text": "/Users/chris/Documents/Chris-Lab/projs/bblog/tmp/pdfs/harness-code-series/harnessdev.txt",
+      "text_lines_reviewed": "1–2471, including all appendices; same logical main-agent review across compaction",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 41
+        }
+      ],
+      "rendered_review_location": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/harnessdev-main-reread/contact-01-04.jpg through final contact sheet",
+      "pdf_sha256": "1231454f0ae5ccffdb3d031dc8f42eae0cbbaeb61dcd25dddb1855074697dfc0",
+      "changes": "Executor-versus-creator budgets; complete/incomplete charged evaluation pairs; actual gpt2.c cases and late edits; 100/89 feedback versus held-out 630; repeated-run noise and lack of general guarantee. Deck expanded to 12 slides."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. HarnessDev 为什么把“可运行基础设施”当成新的评测对象？"
+      "locator": "1. Motivation：从“会做题”到“会写做题的系统”"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它和 HarnessOpt、Meta-Agent Challenge、Self-Harness 的边界在哪里？"
+      "locator": "2. Related Work：创建、修复与演化不是同一道题"
     },
     {
       "role": "method",
-      "locator": "Q3. Creation 与 Evolution 到底怎样运行，什么信息被隐藏？"
+      "locator": "3. Benchmark / Protocol：两阶段协议：开发者看见什么，一次提交如何给分"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 2,207 个实例和真实执行记录说明了什么？"
+      "locator": "4. Experiments：局部进步与通用改进相差多远"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 如果真要让 Agent 写 harness，还缺哪些工程约束？"
+      "locator": "5. Discussion：哪些实验能分清真实改进与偶然高分"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价 HarnessDev？"
+      "locator": "6. Conclusion：怎样使用这篇论文"
     }
   ],
   "coverage": [
@@ -114,7 +129,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Creation 覆盖 SWE-bench Pro 731 题、Terminal-Bench 2.1 的 89 题、MLE-bench 75 题、EQ-Bench3 46 题和 BrowseComp 1,266 题，共 2,207 个不重复实例。"
+          "quote": "总计 <code>731+89+75+46+1266=2207</code>，覆盖四个领域"
+        },
+        {
+          "artifact": "article",
+          "quote": "作者沿用五个公开 benchmark 的任务和原生评分规则"
         }
       ]
     },
@@ -138,7 +157,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文和项目页没有公开完整任务包、运行记录或 checker。"
+          "quote": "开发案例怎样筛选、是否由多人独立复核，也没有单独报告"
+        },
+        {
+          "artifact": "article",
+          "quote": "附录 C/E 展示了接口与系统提示词，但没有公开全部任务专用提示、完整检查文件或逐题原始记录"
         }
       ]
     },
@@ -161,11 +184,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "creator 另外能看到 task-family 说明、权限限制、短教程和 1–3 个开发案例，但看不到人工 reference harness 和隐藏评测任务。"
+          "quote": "creator 能编辑的是自己的 harness；隐藏测试、标准答案和评分程序不在可编辑范围内"
         },
         {
           "artifact": "article",
-          "quote": "这些分数从不回传给 creator。"
+          "quote": "创建阶段的隐藏题与成绩不回传给 creator。"
         }
       ]
     },
@@ -184,7 +207,15 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "跨领域总分是五个原生指标的非加权平均，因此不能把它理解成 2,207 道题的统一通过率。"
+          "quote": "Table 3 的 Avg. 不包括 MLE-bench"
+        },
+        {
+          "artifact": "article",
+          "quote": "<code>(69.3+64.8+84.6+52.4)/4=67.775</code>"
+        },
+        {
+          "artifact": "article",
+          "quote": "每个“creator × benchmark”独立创建三份程序"
         }
       ]
     },
@@ -198,7 +229,7 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 4.2 and Figure 6: executor-transfer analysis"
+          "locator": "Appendices F/G/I: file-output, Ansible and Terminal development traces; task checker details not published"
         },
         {
           "source_id": "official-artifact",
@@ -208,11 +239,15 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "harness 把原 executor 常用的 120-step 行为写进停止与审阅逻辑；换模型后，SWE-bench Pro 降到 33.0。"
+          "quote": "创建、编译 <code>/app/gpt2.c</code>，等待官方 verifier 完成后得到 <code>1.0</code>"
         },
         {
           "artifact": "article",
-          "quote": "公开材料没有给出某一道任务的完整 prompt、隐藏测试和逐步 FAIL assertion，因此这是跨任务运行记录，不是可独立重放的单题 checker case。"
+          "quote": "执行了 94 步和 81 次 Bash 调用，但 verifier 给 <code>0.0</code>"
+        },
+        {
+          "artifact": "article",
+          "quote": "完整任务 prompt（任务提示词）和逐项隐藏 assertion（必须满足的检查条件）没有发布"
         }
       ]
     },
@@ -231,11 +266,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Self-Eval 下 Opus 4.8 的五领域平均分为 67.8，论文汇总的人工工程 reference 为 86.2。"
+          "quote": "三份程序的平均，不是某一份 harness 的两次成绩"
         },
         {
           "artifact": "article",
-          "quote": "换成固定 Gemini executor 后，只有 Opus 仍然提升，GPT-5.5 从 42.22 降到 31.90。"
+          "quote": "反馈与保留集变化方向一致的只有 <strong>34/64=53.1%</strong>"
         }
       ]
     },
@@ -254,7 +289,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "它比 prompt optimization 更宽，比从零造任意 agent 更受约束，又比只修一个既有 harness 更接近完整开发。"
+          "quote": "是否从一个现成 Agent 开始，以及是否测试整条修改历史"
         }
       ]
     },
@@ -278,11 +313,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "这个 reference 来自各项目已经公布的结果，并非在同一 executor、同一运行条件下重跑，因此只能提供量级参照。"
+          "quote": "软件、终端和搜索带星号，是没有在本实验重跑的外部结果；MLE 与写作有本实验运行值"
         },
         {
           "artifact": "article",
-          "quote": "本文能核对论文协议和数字，无法独立重跑隐藏评测或检查每个 task-specific assertion。"
+          "quote": "Evolution 每个配置只有一条轨迹，隐藏检查文件与完整案例尚未公开"
         }
       ]
     }
@@ -294,13 +329,20 @@
       "label": "Figure 1",
       "source_id": "paper-pdf",
       "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "Figure 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Creation and Evolution are redrawn separately with immutable execution and final held-out feedback boundary.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文 Figure 1、Figure 3 与 §§3.2–3.4 整理的机制图"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Figure 1 与 §§3.2–3.4 重绘",
+      "asset_paths": [
+        "/lib/papers/harnessdev/body-method.svg"
+      ]
     },
     {
       "id": "visual-2",
@@ -309,7 +351,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 2",
       "status": "omitted",
-      "rationale": "Figure 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "弱 seed 只保留输入/日志接口和被动工具，不带解题循环的架构原图未复制；正文明确未修改 seed 不执行任务，并列出 creator 必须实现的控制部分。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -323,7 +365,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 3",
       "status": "omitted",
-      "rationale": "Figure 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "六个控制模块到评分产物的完整图未复制；方法段说明由 creator 补齐执行、工具、上下文、状态、循环控制和验证，产物格式随领域而变。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -337,7 +379,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 4",
       "status": "omitted",
-      "rationale": "Figure 4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "Self-Eval 相对人工系统归一化的完整柱图未复画；正文提醒人工 reference 来自不同 harness/model 组合，不是共同 executor 的成对对照或“超过人类”。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -351,7 +393,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 5",
       "status": "omitted",
-      "rationale": "Figure 5 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "各领域架构组件完成和实际触发证据矩阵未复画；正文保留 state/memory 的 dead-code 问题，不从声明实现推断运行时已使用。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -364,13 +406,20 @@
       "label": "Figure 6",
       "source_id": "paper-pdf",
       "source_locator": "Figure 6",
-      "status": "omitted",
-      "rationale": "Figure 6 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Opus SWE avg@3 transfer values are shown as three independently created programs; collapsed-replica exclusion is posthoc sensitivity.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Table 3、Table 4 与 Figure 6 的跨 executor 结果整理"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Tables 3–4 与 Figure 6 重绘",
+      "asset_paths": [
+        "/lib/papers/harnessdev/body-case.svg"
+      ]
     },
     {
       "id": "visual-7",
@@ -379,7 +428,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 7",
       "status": "omitted",
-      "rationale": "Figure 7 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "九条演化轨迹在 SWE-Pro/Terminal 反馈集上的全部曲线未复画；正文分开开发成绩、官方成对版本和 creator 声明最终版本。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -393,7 +442,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 8",
       "status": "omitted",
-      "rationale": "Figure 8 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "100 题反馈和冻结后 630 题评测的逐 lineage 曲线未复画；正文用代表变化区分可见开发提升与未见泛化，不称两者相同。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -407,7 +456,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 9",
       "status": "omitted",
-      "rationale": "Figure 9 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "Self-Eval 的执行 token 与得分散点未复画；正文保留不同 creator 程序和人工 reference 非成对控制的范围，不给同总成本排序。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -421,7 +470,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Figure 10",
       "status": "omitted",
-      "rationale": "Figure 10 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "各冻结版本的 executor token 时间序列未复画；正文区分 executor 资源与 creator 开发开销，不把单边 token 曲线当完整研究成本。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -435,7 +484,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Table 1",
       "status": "omitted",
-      "rationale": "Table 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "Creation/Evolution 设置表未原样复制；方法段列明从弱 seed 创建与从自身 H0 演化、开发可见案例和最终冻结产物的区别。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -449,7 +498,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Table 2",
       "status": "omitted",
-      "rationale": "Table 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "四领域五 benchmark 的 2,207 独立实例覆盖表未复制；正文保留各任务分母，说明 Evolution 反馈题已经属于主套件、不重复计数。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -462,13 +511,24 @@
       "label": "Table 3",
       "source_id": "paper-pdf",
       "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "Table 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Selected Self-Eval values and four-metric Avg calculation are reorganized, not all five benchmark metrics pooled as success.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 3 的 Avg. 不包括 MLE-bench"
+        },
+        {
+          "artifact": "article",
+          "locator": "69.3→33.0 都是三份独立创建程序的 avg@3"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Table 3 整理",
+      "asset_paths": [
+        "/lib/papers/harnessdev/body-case.svg"
+      ]
     },
     {
       "id": "visual-14",
@@ -476,13 +536,20 @@
       "label": "Table 4",
       "source_id": "paper-pdf",
       "source_locator": "Table 4",
-      "status": "omitted",
-      "rationale": "Table 4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Fixed-executor values are presented next to unchanged three-program set with official vs posthoc exclusion distinction.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 4 特别标注：第三份程序完全退化"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Table 4 整理",
+      "asset_paths": [
+        "/lib/papers/harnessdev/body-case.svg"
+      ]
     },
     {
       "id": "visual-15",
@@ -491,7 +558,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Table 5",
       "status": "omitted",
-      "rationale": "Table 5 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "三个独立 RQ1 Code 产物的文件和 net LOC 表未整表复制；正文说明修改规模、运行证据和得分不同，代码更长不能证明系统更好。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -504,12 +571,17 @@
       "label": "Table 6",
       "source_id": "paper-pdf",
       "source_locator": "Table 6",
-      "status": "omitted",
-      "rationale": "Table 6 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Selected feedback/held-out changes retain their independent denominators and no claim of guaranteed generalization.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "自用模型的五条轨迹在 630 题上提高 1.43–4.44 个百分点"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Table 6 整理",
       "asset_paths": []
     },
     {
@@ -519,7 +591,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Table 7",
       "status": "omitted",
-      "rationale": "Table 7 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "九条 RQ2 lineage 的相邻官方切换数和最终 diff 表未复制；正文保留版本冻结与选定提交，以及单条轨迹 edit focus 不能代表模型一般行为。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -533,7 +605,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Table 8",
       "status": "omitted",
-      "rationale": "Table 8 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "creator 模型、开发环境和采样参数表未整表复制；正文明确自评/固定 executor 设置和 provider default 未必固定为同一温度。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -547,7 +619,7 @@
       "source_id": "paper-pdf",
       "source_locator": "Table 9",
       "status": "omitted",
-      "rationale": "Table 9 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
+      "rationale": "人工 reference 的 harness–executor 组合表未整表复制；正文强调各领域外部 reference 配置不相同，不能把它们当同一共同 executor baseline。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "No source image reused.",
@@ -555,18 +627,62 @@
       "asset_paths": []
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/harnessdev/body-method.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Figure 1; Sections 3.2–3.4",
+      "credit": "根据论文 Figure 1 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original editable SVG; original pixels and layout not traced.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "visual-1"
+    },
+    {
+      "path": "/lib/papers/harnessdev/body-results.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "Sections, figures or public case referenced in on-page caption",
+      "credit": "本文根据原论文与已核对案例整理的解释图",
+      "license_status": "not-applicable",
+      "license_basis": "Original editable SVG layout; no source pixels reused.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/harnessdev/body-case.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Tables 3–4; Figure 6",
+      "credit": "根据论文 Tables 3–4 与 Figure 6 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original editable SVG; original pixels and layout not traced.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "visual-6"
+    }
+  ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
       "surface": "neutral-light",
       "body_font": "sans-serif",
       "body_font_px": 17,
-      "line_height": 1.76,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
       "figures_centered": true,
+      "article_visuals_interleaved": true,
       "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
     },
     "viewports": [
       {
@@ -594,7 +710,11 @@
       "technical_terms_contextualized": true,
       "actors_disambiguated": true,
       "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 12 slides read. Traced creator/executor/evaluator with snapshots; real gpt2.c judge and lack of hidden assertions. Checked five-benchmark four-domain 2,207 tasks, 100 SWE + 89 Terminal feedback and 630 held-out tasks, missing one task, four-task mean 67.775 to 67.8, component editability, checkpoint selection, Opus T3 collapse, exclusion sensitivity, 34/64 positive direction versus selected 2/9 winners and repeat noise."
     },
     "interactions": {
       "buttons": true,
@@ -604,13 +724,268 @@
       "escape": true,
       "standalone_return_to_article": true,
       "immersive_mode_exit": true,
-      "usable_state_after_exit": true
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
     },
     "inspected_slides": [
       "opening",
       "densest",
       "largest-table-or-code",
       "final"
-    ]
-  }
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "bf7643da5542dc414a22c30c428c082cabbc8b76849b11763a7829a0dcb7a868",
+      "built_article": "41f22ed6c130d8273be004eb0bee1ddf703c36226d139615a4493559bfe8e7e2",
+      "deck": "dc32e3312d0cf1fa2c2edb29bd1624884b49fc456f1eb1dfd60fbb3d33903db7",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-066/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-066/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-066.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "creator",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1: creator/executor roles"
+        }
+      ],
+      "article_quote": "负责修改 Agent 程序的模型叫 <strong>creator</strong>"
+    },
+    {
+      "term": "executor",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1: frozen harness execution"
+        }
+      ],
+      "article_quote": "程序冻结后，在里面调用工具、完成下游任务的模型叫 <strong>executor</strong>"
+    },
+    {
+      "term": "harness",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2: control-layer modules"
+        }
+      ],
+      "article_quote": "包在 executor 外面的工具接口、模型调用循环、上下文管理和结束逻辑，合起来就是 <strong>harness</strong>。"
+    },
+    {
+      "term": "avg@3",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.4 and Tables 3–4"
+        }
+      ],
+      "article_quote": "每个“creator × benchmark”独立创建三份程序，报告三份成绩的平均，记作 <code>avg@3</code>。"
+    },
+    {
+      "term": "probe",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.4: diagnostic probes"
+        }
+      ],
+      "article_quote": "两次正式提交之间最多用两个固定小检查，每次只跑两套题的前五题，论文称为 <strong>probe</strong>。"
+    }
+  ],
+  "editorial_revision": {
+    "date": "2026-10-14",
+    "scope": "Substantive clarification of roles, cases, evaluation conditions, controlled comparisons, limits and article/deck consistency.",
+    "primary_checks": "Complete 41-page primary PDF text and render; protocol, all tables/figures, Appendices F/G/I; no freshly verified complete public checker release.",
+    "full_paper_reading_record": "Complete extracted text and all rendered pages reviewed by main agent in the current logical review; separate from inherited reading history.",
+    "rendering": "Pending fresh rebuilt article/embed/standalone QA after current corrections."
+  },
+  "qa_history": [
+    {
+      "scope": "Previous artifact version; invalidated by 2026-10-13 content and visual changes",
+      "record": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.76,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ]
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "reason": "Previous QA predates current main-agent corrections, new slides/case and shared deck changes; archived, not certification of current bytes.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "article_visuals_interleaved": true
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "browser_qa_note": "Complete article/embed/standalone browser run on the 2026-10-13 21:44:41–42 +0800 build covered 10 slides on both deck surfaces at 1600×1000, 1512×982 and 390×844 (60 slide checks), all 3 figure dialogs at all widths, buttons/keyboard/hash/overview/fullscreen/Escape/focus-mode exits and stable return-to-article. The final 22:30:59 +0800 build (Tide CSS v22, article CSS v7, Tide JS v18) was separately rechecked for all three article layouts, every loaded/centered/contained figure, internal code/table/formula scrolling, neutral wrapper colors/typography, bounded section/figure/tail screenshots, focus exits and one figure-dialog exit per width; final-affected-report.json records that affected run, not a new complete slide run. Full prior run record: harnessdev-qa-final.json. Dense mobile slides and thumbnails are scaled previews; clear-width figure view requires scrolling and sometimes additional zoom. Mobile viewport was exercised with mouse/pointer, not native-device touch. Very tall fullPage screenshots were not used alone as reading evidence."
+      }
+    }
+  ]
 }

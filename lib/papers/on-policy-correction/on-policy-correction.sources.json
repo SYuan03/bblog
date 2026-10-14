@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails",
     "kind": "research",
@@ -73,27 +73,27 @@
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么强模型的成功轨迹会把弱模型教坏？"
+      "locator": "1. Motivation：为弱模型调好的执行程序，为什么会被完整模仿打乱？"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它和联合优化、Harness-Zero、普通 on-policy imitation 有什么区别？"
+      "locator": "2. Related Work：与联合优化、Harness-Zero 和普通局部纠错的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. Harness 怎样演化，correction 数据又是怎样造出来的？"
+      "locator": "3. Method：执行程序演化与修正数据的构造"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 实验结果到底证明了什么？"
+      "locator": "4. Experiments：主结果、失败分类和第二模型验证"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 对 Claude Code、Codex 这类完整 harness 有什么启发？"
+      "locator": "5. Discussion：模型升级后应重新检查执行程序兼容性"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价这篇论文？"
+      "locator": "6. Conclusion：负结果的价值与局部修正尚未证明的部分"
     }
   ],
   "coverage": [
@@ -112,11 +112,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Qwen3-Coder 在 evolved harness 下原本达到 78.0%，完整模仿 Gemini 后降到 63.1%"
+          "quote": "Qwen3-Coder 在调整后的程序下原本达到 78.0%，完整模仿 Gemini 后降到 63.1%"
         },
         {
           "artifact": "deck",
-          "quote": "single-turn on-policy correction 保住 planning fit，并达到 79.7%"
+          "quote": "只替换定位到的一个错误回复及工具调用，其余记录保留。微调后仍用原 h*，平均成功率达到 79.7%。"
         }
       ]
     },
@@ -140,11 +140,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "作者沿用 Yang et al. (2026) 的七类 enterprise tasks"
+          "quote": "作者沿用 Yang et al. (2026) 的七类企业任务"
         },
         {
           "artifact": "article",
-          "quote": "在涉及 MCP tool 的任务中，Agent 必须通过工具访问数据，不能直接修改 task database"
+          "quote": "在涉及 MCP 工具的任务中，Agent 必须通过工具访问数据，不能直接修改任务数据库"
         }
       ]
     },
@@ -163,11 +163,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "三 seed、每 task $20、单 rollout 600 秒"
+          "quote": "三个随机种子，每类任务预算 $20，单次执行最多 600 秒；按验证分选 <code>h*</code>，同分取较早版本。"
         },
         {
           "artifact": "deck",
-          "quote": "validation 变好才保留 edit"
+          "quote": "每类任务单独演化；验证分变好才保留修改"
         }
       ]
     },
@@ -186,11 +186,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "最终训练集约 500 rows：约 400 条 single-turn correction，加上约 50 条 Qwen 自己的 passing rollout"
+          "quote": "最终训练集约 500 条：约 400 条局部修正，加约 50 条 Qwen 成功记录"
         },
         {
           "artifact": "article",
-          "quote": "每个 turn 采样 `N=3` 个候选"
+          "quote": "每个位置采样三个候选，再由质量评分者选一个。"
         }
       ]
     },
@@ -209,11 +209,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Training 和 validation split 用于 harness 与 model optimization，test split 保持 held out"
+          "quote": "训练和验证划分用于优化程序与模型，测试划分不参与选择。主表报告三次运行的测试成功率均值与 SEM（均值的标准误）。"
         },
         {
           "artifact": "article",
-          "quote": "主表报告 test success 的三次运行均值与 SEM"
+          "quote": "训练和验证划分用于优化程序与模型，测试划分不参与选择。主表报告三次运行的测试成功率均值与 SEM（均值的标准误）。"
         }
       ]
     },
@@ -232,7 +232,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "同一 view 发出 29 次、prompt 约重读 20 次，78 steps 内始终没有调用 finish"
+          "quote": "同一视图请求发出 29 次、提示约重读 20 次，78 步内仍没有调用结束工具"
         },
         {
           "artifact": "article",
@@ -278,11 +278,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "domain-computation recipe 的使用率从 30.8% 升到 76.1%"
+          "quote": "这些比例描述失败组成，不能读成全部任务的失败概率。"
         },
         {
           "artifact": "article",
-          "quote": "planning failures 从 1.1% 跳到 14.6%"
+          "quote": "规划失败占比从 1.1% 跳到 14.6%"
         }
       ]
     },
@@ -301,7 +301,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "部署产物仍是 corrected Qwen 加上原来的 `h*`"
+          "quote": "部署仍是修正后的 Qwen 加上原来的 `h*`"
         }
       ]
     },
@@ -329,7 +329,34 @@
         },
         {
           "artifact": "article",
-          "quote": "论文没有人工 agreement、judge model、prompt 或 confusion matrix"
+          "quote": "失败类型由模型分类器判定；论文未报告人工一致率、评分模型、提示或混淆矩阵"
+        }
+      ]
+    },
+    {
+      "id": "correction-continuation-validity",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3; Appendix B; no re-execution rate or released corrected logs"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "按附录描述，作者替换错误回复，其他学生内容保持不变。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文没有公开重新执行比例，因此不能把这 400 条都称作“已验证的修正成功轨迹”。"
+        },
+        {
+          "artifact": "deck",
+          "quote": "质量评分不是环境重跑验收。更改工具调用可能改变后续环境状态；论文未披露修正记录的重新执行比例，不能把约 400 条称为“验证通过的成功轨迹”。"
         }
       ]
     }
@@ -376,6 +403,10 @@
         {
           "artifact": "deck",
           "locator": "根据论文 Table 1 重绘"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据原论文 Table 1 重绘；失败分类来自 Table 3"
         }
       ],
       "permission_status": "not-applicable",
@@ -383,7 +414,8 @@
       "credit": "根据原论文 Table 1 数据重绘",
       "asset_paths": [
         "/lib/papers/on-policy-correction/results.svg",
-        "/lib/papers/on-policy-correction/task-deltas.svg"
+        "/lib/papers/on-policy-correction/task-deltas.svg",
+        "/lib/papers/on-policy-correction/reading-results.svg"
       ]
     },
     {
@@ -453,7 +485,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1270,
+      "height": 720
     },
     {
       "path": "/lib/papers/on-policy-correction/results.svg",
@@ -467,7 +501,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
     },
     {
       "path": "/lib/papers/on-policy-correction/task-deltas.svg",
@@ -481,7 +517,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
     },
     {
       "path": "/lib/papers/on-policy-correction/failure-analysis.svg",
@@ -495,7 +533,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 720
     },
     {
       "path": "/lib/papers/on-policy-correction/cases.svg",
@@ -508,10 +548,219 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
+    },
+    {
+      "path": "/lib/papers/on-policy-correction/reading-method.svg",
+      "origin": "generated",
+      "credit": "根据原论文 Appendix B 绘制的正文方法图",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1177,
+      "placement": "method",
+      "source_id": "paper",
+      "source_locator": "Appendix B, on-policy correction data construction"
+    },
+    {
+      "path": "/lib/papers/on-policy-correction/reading-case.svg",
+      "origin": "generated",
+      "credit": "根据原论文 Appendix D 重绘",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1251,
+      "placement": "case",
+      "source_id": "paper",
+      "source_locator": "Appendix D, Payroll audit and WebArena cases"
+    },
+    {
+      "path": "/lib/papers/on-policy-correction/reading-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据原论文 Table 1 重绘；失败分类来自 Table 3",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1191,
+      "placement": "results",
+      "source_id": "paper",
+      "source_locator": "Table 1; Table 3",
+      "source_visual_id": "table-1"
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Read complete current note and all18 slides; primary Appendix A/B reconfirmed localized-turn and budget wording before final deck fixes. Qwen h*78.0/full imitation63.1/correction79.7 and h0 imitation29.2->35.5 distinguish interaction. Approx400+50 not fully500, corrections not verified replay; payroll29 repeated views/78steps/no submit and351 vsapproved346 are actual author cases. Failure-category versus overall denominators and Gemini Attendance/Budget regressions retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "9760bc8af19611bbf97fe01f1a276c163d7874c1b30eae6817f1f44cf099e3df",
+      "built_article": "5b56d2046d81ee10b99170c1208d648e7fd452e8b5065ac854771931463403af",
+      "deck": "7debf1918fb3e5217bea84629e9a2cba56d79fedee7e28f57b41649c746aa38b",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-057/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T08-25-17-814Z-057/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-057.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "h*",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1"
+        }
+      ],
+      "article_quote": "每类任务最后选出的版本是 `h*`。这套 `h*` 包含针对 Qwen 原有行为调过的提示、工具和执行规则，不只是一段提示词"
+    },
+    {
+      "term": "hooks",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1"
+        }
+      ],
+      "article_quote": "hooks（调用前后的处理逻辑）和上下文管理"
+    },
+    {
+      "term": "full-trajectory imitation",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2"
+        }
+      ],
+      "article_quote": "Full-trajectory imitation（完整轨迹模仿）训练专家自己的执行步骤"
+    },
+    {
+      "term": "on-policy correction",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3; Appendix B"
+        }
+      ],
+      "article_quote": "on-policy correction（在学生当前执行记录上修正）从学生失败开始，只把定位的一个错误回复换成专家版本，其余学生记录保留"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -567,5 +816,35 @@
       "largest-table-or-code",
       "final"
     ]
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization; synchronized four corresponding HTML decks and checked/revised explanatory SVGs",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review",
+    "deck_sync": {
+      "status": "content-revised-awaiting-main-agent-browser-qa",
+      "date": "2026-10-13",
+      "unchanged_page_count": 18,
+      "source_boundary": "Selective primary-text method/protocol recheck; no new full-paper/rendered-page read or network release check claimed.",
+      "critical_changes": [
+        "single-turn replacement retains surrounding student content",
+        "quality selection is not evidence of environment re-execution",
+        "approximately 400 + 50 versus approximately 500 remains disclosed discrepancy"
+      ]
+    }
+  },
+  "current_review": {
+    "date": "2026-10-14",
+    "primary_read": "all 574 text lines and all 10 rendered pages reviewed by main agent",
+    "fixes": [
+      "localized turn not earliest error",
+      "Table3 among-failure denominator",
+      "§3.4 failure aggregation gap",
+      "Gemini two regressions",
+      "rank selection and total cost",
+      "on-policy and locality not isolated"
+    ],
+    "browser": "pending"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Harness-R1: Learning to Edit Executable Runtime Harnesses from Agent Failure Trajectories",
     "kind": "research",
@@ -7,7 +7,10 @@
       "paper",
       "paper-pdf",
       "official-artifact"
-    ]
+    ],
+    "arxiv_id": "2608.02276",
+    "version": "v1",
+    "earliest_arxiv_date": "2026-08-03"
   },
   "artifacts": {
     "article": "content/_posts/068-harness-r1.md",
@@ -19,8 +22,8 @@
       "id": "paper",
       "kind": "paper",
       "title": "Harness-R1: Learning to Edit Executable Runtime Harnesses from Agent Failure Trajectories",
-      "url": "https://arxiv.org/abs/2608.02276",
-      "revision": "v1, 2026-08-03",
+      "url": "https://arxiv.org/abs/2608.02276v1",
+      "revision": "arXiv 2608.02276v1; earliest v1 public date 2026-08-03",
       "used_for": [
         "problem",
         "method",
@@ -34,8 +37,8 @@
       "id": "paper-pdf",
       "kind": "paper",
       "title": "Harness-R1: Learning to Edit Executable Runtime Harnesses from Agent Failure Trajectories PDF",
-      "url": "https://arxiv.org/pdf/2608.02276",
-      "revision": "PDF and appendices reviewed 2026-10-08",
+      "url": "https://arxiv.org/pdf/2608.02276v1",
+      "revision": "arXiv 2608.02276v1; earliest v1 public date 2026-08-03",
       "used_for": [
         "complete-reading",
         "figures",
@@ -68,37 +71,691 @@
         "end": 22
       }
     ],
-    "source_visuals_expected": 6,
+    "source_visuals_expected": 15,
     "visual_inventory_complete": true,
-    "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Table 1, Algorithm 1."
+    "review_round": "2026-10-13 collection revision",
+    "status": "main-agent-full-text-and-all-rendered-pages-reviewed",
+    "inventory_note": "Numbered inventory checked against complete extracted text and all rendered pages, including appendices.",
+    "local_sources": {
+      "pdf": "/tmp/paper-collection-068-079.OK3giP/2608.02276v1.pdf",
+      "text": "/tmp/paper-collection-068-079.OK3giP/2608.02276v1.txt",
+      "rendered_pages": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2608.02276/pages"
+    },
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "text_lines_reviewed": "1–1246",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2608.02276/paper.txt",
+      "pdf_sha256": "606cdee79be0bf17313e811f920f364f3be1e729e50ce13f18f70b013e3552f3",
+      "changes": "Failure packet/interface are not full source; cached baseline versus online candidate reward; hook contract; actor in DB case; GRPO and task/SFT/record counts; pooled versus macro averages; held-out regressions."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么要专门训练一个 harness engineer？"
+      "locator": "1. Motivation：怎样从失败中学会修补运行程序"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与 Self-Harness、HarnessFix 和直接微调 target 有什么不同？"
+      "locator": "2. Related Work：搜索补丁、诊断补丁与训练工程师"
     },
     {
       "role": "method",
-      "locator": "Q3. failure packet 如何变成可执行 patch 和在线奖励？"
+      "locator": "3. Method：一包失败记录怎样变成一次训练更新"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 三个环境与迁移实验支持多强的结论？"
+      "locator": "4. Experiments：购物案例、评分分母与未见任务迁移"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 下一步怎样避免同批过拟合与回归？"
+      "locator": "5. Discussion：补丁能否保住未见任务和运行成本"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价 Harness-R1？"
+      "locator": "6. Conclusion：学到的是外部干预，不是任务模型的新权重"
     }
   ],
   "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1; §3; Figure 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文训练模型完成“读失败记录、改运行代码、重跑验证”这件事。"
+        }
+      ]
+    },
+    {
+      "id": "method",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Algorithm 1; Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "工程师只读失败题，但补丁必须在原来整批题上重跑，包括原本成功的题。"
+        },
+        {
+          "artifact": "article",
+          "quote": "WebShop 使用连续的商品匹配分，ALFWorld 与 DBBench 使用二元成功分。"
+        }
+      ]
+    },
+    {
+      "id": "results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1; Figure 4; Appendix F"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "在三个训练环境上，vanilla Qwen3.5-9B 从 44.3% 提到 53.6%，增加 9.3 个百分点；target 先 SFT 后再修 harness，则从 59.2% 到 64.2%。"
+        }
+      ]
+    },
+    {
+      "id": "real-case-calculation",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix H.1; Table H.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "连续奖励的批均值实际由 0.682 到 0.768，因此该补丁的训练奖励是 <code>0.768−0.682=0.086</code>，不是完整成功率差 <code>5/10−2/10=0.3</code>。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; §4.4; §5; Appendix G"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "训练目标没有单独要求另一批题也提高，也没有惩罚额外推理成本。"
+        },
+        {
+          "artifact": "article",
+          "quote": "同批奖励仍可能鼓励局部修补，尚不能证明它学会了普遍的软件维护能力。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "visual-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 1",
+      "status": "redrawn",
+      "rationale": "原系统与专门工程师的结果比较，按当前文章的模型角色重画而不复用原版柱图。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主结果分母：500 / 500 / 300，再等权平均"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 2",
+      "status": "redrawn",
+      "rationale": "流程从失败包到冻结 Agent 重跑，保留训练与执行角色边界。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "失败记录 → 补丁 → 同一批任务重跑 → 更新"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 2 与 Algorithm 1 重绘。工程师只写补丁；冻结的任务模型在完整批次重跑，环境奖励差用于更新工程师。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 2 重绘",
+      "asset_paths": [
+        "/lib/papers/harness-r1/body-method.svg"
+      ]
+    },
+    {
+      "id": "visual-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "跨任务模型增益分布原图未复画；正文给出平均 7.06 个百分点和 56/63 个配对改善，结果图标记换模型时重新写补丁而非迁移固定补丁。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 4",
+      "status": "redrawn",
+      "rationale": "未见任务、跨模型与固定补丁消融的条件在结果图和正文分别保留。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主结果分母：500 / 500 / 300，再等权平均"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 4 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-5",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 1",
+      "status": "redrawn",
+      "rationale": "三环境先分别计算成功率再等权平均，并标明两次 Reflection 的不同预算。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主结果分母：500 / 500 / 300，再等权平均"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Table 1、Figure 4 与 Appendix E 重绘。主结果是三个环境的成功率等权平均；更换任务模型时重新生成补丁，不是把同一个固定补丁直接迁移。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 1 重绘",
+      "asset_paths": [
+        "/lib/papers/harness-r1/body-results.svg"
+      ]
+    },
+    {
+      "id": "visual-6",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Algorithm 1",
+      "status": "redrawn",
+      "rationale": "八个候选、有效性检查与批次奖励差，改为明确的顺序图。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "失败记录 → 补丁 → 同一批任务重跑 → 更新"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Algorithm 1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-a-1",
+      "kind": "figure",
+      "label": "Figure A.1",
+      "source_id": "paper",
+      "source_locator": "Appendix A.1; p. 13",
+      "status": "omitted",
+      "rationale": "工程师 system/input prompt 的完整字段；正文解释 failure packet 来源，未复画整页模板以免遮蔽训练流程。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-a-2",
+      "kind": "figure",
+      "label": "Figure A.2",
+      "source_id": "paper",
+      "source_locator": "Appendix A.2; p. 14",
+      "status": "omitted",
+      "rationale": "各 benchmark 的工程师输入字段模板；正文保留可见运行证据与没有 gold-answer 的边界，完整长模板不重复展示。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-a-3",
+      "kind": "figure",
+      "label": "Figure A.3",
+      "source_id": "paper",
+      "source_locator": "Appendix A.3; p. 15",
+      "status": "omitted",
+      "rationale": "工程师输出模板先预填 think 开头，再给剩余分析和一个可执行补丁。正文保留补丁进入四个 hook 的实际作用，完整长格式模板不重复展示。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-c-1",
+      "kind": "table",
+      "label": "Table C.1",
+      "source_id": "paper",
+      "source_locator": "Appendix C; p. 17",
+      "status": "redrawn",
+      "rationale": "四个 hook 的调用时机在正文表格和方法图中解释，不把 feedback hook 误写为结束 hook。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "失败记录 → 补丁 → 同一批任务重跑 → 更新"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table C.1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-d-1",
+      "kind": "table",
+      "label": "Table D.1",
+      "source_id": "paper",
+      "source_locator": "Appendix D; p. 18",
+      "status": "omitted",
+      "rationale": "监督训练、RL 与测试任务划分表；正文保留示范补丁数量和最终分母，但完整各训练 split 的交叉表不重复展示。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-e-1",
+      "kind": "table",
+      "label": "Table E.1",
+      "source_id": "paper",
+      "source_locator": "Appendix E; p. 19",
+      "status": "omitted",
+      "rationale": "完整逐模型、逐环境迁移矩阵未复画；正文保留平均 7.06 个百分点和 56/63 改善，避免把不同 target 的结果当作单一系统得分。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-f-1",
+      "kind": "table",
+      "label": "Table F.1",
+      "source_id": "paper",
+      "source_locator": "Appendix F; p. 20",
+      "status": "redrawn",
+      "rationale": "未见任务的 1,270 题与 8.9±1.5 个百分点单列，区别于同批训练奖励。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主结果分母：500 / 500 / 300，再等权平均"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table F.1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-g-1",
+      "kind": "table",
+      "label": "Table G.1",
+      "source_id": "paper",
+      "source_locator": "Appendix G; p. 20",
+      "status": "omitted",
+      "rationale": "完整四 hook 消融矩阵未复画；正文保留动作前和反馈后删除条件及分数下降，未把各下降相加。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-h-1",
+      "kind": "table",
+      "label": "Table H.1",
+      "source_id": "paper",
+      "source_locator": "Appendix H; p. 22",
+      "status": "redrawn",
+      "rationale": "实际 batch 008 的单题奖励与十题批次成功数、连续奖励差分别显示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "真实 WebShop 案例：漏选颜色，购买得了部分分"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Appendix H.1 与 Table H.1 重绘。单题 0.667→1.0；十题连续奖励均值 0.682→0.768，所以训练奖励为 0.086，不能换成成功率差 0.3。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table H.1 重绘",
+      "asset_paths": [
+        "/lib/papers/harness-r1/body-case.svg"
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/harness-r1/body-method.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 2 与 Algorithm 1 重绘。工程师只写补丁；冻结的任务模型在完整批次重跑，环境奖励差用于更新工程师。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "method",
+      "source_visual_id": "visual-2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 2",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/harness-r1/body-case.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Appendix H.1 与 Table H.1 重绘。单题 0.667→1.0；十题连续奖励均值 0.682→0.768，所以训练奖励为 0.086，不能换成成功率差 0.3。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "source_visual_id": "table-h-1",
+      "source_id": "paper",
+      "source_locator": "Appendix H; p. 22",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/harness-r1/body-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Table 1、Figure 4 与 Appendix E 重绘。主结果是三个环境的成功率等权平均；更换任务模型时重新生成补丁，不是把同一个固定补丁直接迁移。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "results",
+      "source_visual_id": "visual-5",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 1",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    }
+  ],
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 10 slides read. Traced trained engineer 9B versus frozen target, cached feedback, eight patches, continuous score delta and GRPO ratios. Recomputed WebShop black/brown under $40: single score .667 to 1 and ten-task .682 to .768 differs from success 2 to 5. Checked ALF fixes/breaks and held-out net 43, three seed weighted gains, regenerated patches on model transfer and WebShop SFT regression. Rechecked primary Appendix D.1: SFT and RL tasks explicitly disjoint."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "8893722fe403cf2da9c0dcdf3749ebfc70abe46c468353a18c16a4d4ef784c42",
+      "built_article": "0a9b7f9d006f2c8b88e23b4c36958ab0201af3864d9532622acd12ca9bfb4eed",
+      "deck": "22165b71b022786b6da385c9ac96fe8fa658d5806a52189e41e2749f425d7c37",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-068/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-068/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-068.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_reading_record": {
+    "record_preserved_from_schema_version": 2,
+    "paper_reading": {
+      "main_agent_complete_read": true,
+      "appendices_included": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 22,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 22
+        }
+      ],
+      "source_visuals_expected": 6,
+      "visual_inventory_complete": true,
+      "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Table 1, Algorithm 1."
+    },
+    "source_revisions": [
+      {
+        "id": "paper",
+        "url": "https://arxiv.org/abs/2608.02276",
+        "revision": "v1, 2026-08-03"
+      },
+      {
+        "id": "paper-pdf",
+        "url": "https://arxiv.org/pdf/2608.02276",
+        "revision": "PDF and appendices reviewed 2026-10-08"
+      }
+    ],
+    "not_valid_for": "本轮全文与全页渲染复读；旧的 true 仅留作历史记录，不用来认证当前修订。"
+  },
+  "legacy_qa_record": {
+    "record_preserved_from_schema_version": 2,
+    "qa": {
+      "reading_layout": {
+        "deck_first": true,
+        "toc_h2_only": true,
+        "surface": "neutral-light",
+        "body_font": "sans-serif",
+        "body_font_px": 17,
+        "line_height": 1.76,
+        "figures_centered": true,
+        "internal_scroll_for_tables_and_code": true,
+        "page_horizontal_overflow": false
+      },
+      "viewports": [
+        {
+          "width": 1600,
+          "height": 1000,
+          "passed": true
+        },
+        {
+          "width": 1512,
+          "height": 982,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        }
+      ],
+      "tested_surfaces": {
+        "article_body": true,
+        "embedded_deck": true,
+        "standalone_deck": true
+      },
+      "language_review": {
+        "technical_terms_contextualized": true,
+        "actors_disambiguated": true,
+        "read_aloud_complete": true,
+        "facts_rechecked_after_rewrite": true
+      },
+      "interactions": {
+        "buttons": true,
+        "keyboard": true,
+        "hash_navigation": true,
+        "fullscreen": true,
+        "escape": true,
+        "standalone_return_to_article": true,
+        "immersive_mode_exit": true,
+        "usable_state_after_exit": true
+      },
+      "inspected_slides": [
+        "opening",
+        "densest",
+        "largest-table-or-code",
+        "final"
+      ]
+    },
+    "not_valid_for": "当前文章、deck、配图与正在更新的全站主题；旧通过不能替代重建后浏览器验收。"
+  },
+  "legacy_coverage_record": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
@@ -193,148 +850,250 @@
       ]
     }
   ],
-  "source_visuals": [
+  "terminology": [
     {
-      "id": "visual-1",
-      "kind": "figure",
-      "label": "Figure 1",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "Figure 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "target agent",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Figure 2"
+        }
+      ],
+      "article_quote": "负责购物、家务操作和数据库任务的系统称为 <strong>target agent</strong>；训练工程师及测试补丁时，它的模型参数冻结。"
     },
     {
-      "id": "visual-2",
-      "kind": "figure",
-      "label": "Figure 2",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 2",
-      "status": "omitted",
-      "rationale": "Figure 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "harness engineer",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Figure 2"
+        }
+      ],
+      "article_quote": "另一个 9B 模型称为 <strong>harness engineer</strong>，只负责修改 target agent 外面的运行代码。"
     },
     {
-      "id": "visual-3",
-      "kind": "figure",
-      "label": "Figure 3",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 3",
-      "status": "omitted",
-      "rationale": "Figure 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "failure packet",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Appendix A.1–A.2"
+        }
+      ],
+      "article_quote": "这包证据称为 <strong>failure packet</strong>；提示词另外说明 hook 接口、可读取字段与限制。它没有人工逐步标注的正确解，也不是工程师自己玩出的新轨迹"
     },
     {
-      "id": "visual-4",
-      "kind": "figure",
-      "label": "Figure 4",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 4",
-      "status": "omitted",
-      "rationale": "Figure 4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "hooks",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C; Table C.1"
+        }
+      ],
+      "article_quote": "这些由运行程序预留的调用位置称为 <strong>hooks</strong>。工程师一次性输出补丁后就退出，不参加后续购物或 SQL 操作；宿主程序解释补丁的返回值。"
     },
     {
-      "id": "visual-5",
-      "kind": "table",
-      "label": "Table 1",
-      "source_id": "paper-pdf",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "Table 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "guard",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix H.1"
+        }
+      ],
+      "article_quote": "动作发出前检查条件、必要时拦截的这段代码称为 <strong>guard</strong>，例如必须选好颜色后才允许购买。"
     },
     {
-      "id": "visual-6",
-      "kind": "algorithm",
-      "label": "Algorithm 1",
-      "source_id": "paper-pdf",
-      "source_locator": "Algorithm 1",
-      "status": "omitted",
-      "rationale": "Algorithm 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "transductive objective",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Algorithm 1"
+        }
+      ],
+      "article_quote": "这个奖励直接针对产生 failure packet 的同一 batch 优化，论文称为 <strong>transductive objective</strong>：模型可以利用这一批已发生的失败，训练目标没有单独要求另一批题也提高，也没有惩罚额外推理成本。"
     }
   ],
-  "figures": [],
-  "qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 17,
-      "line_height": 1.76,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
+  "revision_record": {
+    "round": "2026-10-13",
+    "editor": "revise_harness_search_benchmarks",
+    "state": "local-revision-pending-main-paper-read-and-final-browser-review",
+    "primary_read_required_by": "paper-deep-dive-blog SKILL.md",
+    "completed": [
+      "Causal method/evaluation walkthrough revised",
+      "Real-case sources and missing-artifact boundaries retained",
+      "Metric denominators, sampling and selection conditions corrected",
+      "Terminology first-use ledger recorded",
+      "Three source-credited body visuals rebuilt",
+      "All numbered source visuals carried forward with placements or explicit omissions",
+      "Deck screenshot body visuals replaced with article-native SVG layouts; old WebP retained."
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  }
+    "pending": [
+      "Main agent full paper and appendix text reread",
+      "Main agent every rendered paper page reread",
+      "Verify complete visual inventory against rendered pages",
+      "Freshly rebuilt full article plus embedded/standalone deck QA at three viewports and all exit paths"
+    ],
+    "code_audit_status": "Fixed-revision findings preserved; no full training or benchmark rerun claimed."
+  },
+  "qa_history": [
+    {
+      "archived_on": "2026-10-14",
+      "reason": "Current primary reread led to article/deck corrections; old QA covers earlier bytes.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "article_visuals_interleaved": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "mobile_body_font_px": 16.5,
+          "body_color": "rgb(36, 41, 47)",
+          "body_surface": "rgb(255, 255, 255)",
+          "actual_desktop_column_px": 780
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true,
+          "overview_thumbnail_selection": true,
+          "home_end": true,
+          "focus_restoration": true,
+          "figure_enlargement": true,
+          "figure_zoom": true,
+          "figure_internal_xy_scroll": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "status": "browser-and-visual-qa-complete; primary-paper-reread-is-separate",
+        "partial_subagent_review": {
+          "role": "targeted-editorial-and-evidence-revision",
+          "full_primary_read_certified": false,
+          "source_structure_checked": true,
+          "six_h2_in_source": true,
+          "body_images_after_embed": 3,
+          "body_images_sized": true,
+          "source_visual_mapping_updated": true,
+          "deck_capture_diagnostic": {
+            "report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/deck-revision-068-079/capture-report.json",
+            "viewport": {
+              "width": 1728,
+              "height": 900
+            },
+            "all_slide_bounds_checked": true,
+            "html_deck_only": true,
+            "not_full_article_or_interaction_qa": true
+          },
+          "article_native_visuals": {
+            "count": 3,
+            "format": "SVG",
+            "canvas_width": 1050,
+            "main_label_font_px": 25,
+            "legacy_webp_preserved": true,
+            "prototype_actual_column_review": "All 36 assigned body diagrams reviewed at actual 780px desktop column; mobile details reviewed in 780px XY-scroll dialog.",
+            "all_three_at_actual_desktop_column_reviewed": true
+          }
+        },
+        "review_round": "2026-10-13 unified readable article + native SVG + figure dialog build",
+        "review_scope": "本项只认证正文与两种 deck 的实际浏览器、视觉和交互检查；不代替 paper_reading 的主代理阅读全文记录。",
+        "evidence": {
+          "base_url": "http://localhost:4181",
+          "detail_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-detail-group-1-report.json",
+          "typography_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-body-typography-report.json",
+          "article_summary_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-article-summary-report.json",
+          "fresh_language_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-fresh-build-language-report.json",
+          "mobile_figure_center_bottom_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-mobile-center-bottom-report.json",
+          "actual_visual_review": {
+            "desktop_opening_summary_footer_and_deck_endpoints": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/harness-r1-desktop-opening-final-review.png",
+            "mobile_opening_summary_and_deck_roles": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/harness-r1-mobile-article-deck-review.png",
+            "mobile_enlarged_body_figure_detail": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/harness-r1-mobile-details-contact.png",
+            "desktop_body_figures": [
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/harness-r1-1512-body-1.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/harness-r1-1512-body-2.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/harness-r1-1512-body-3.png"
+            ],
+            "slide_roles": {
+              "opening": 1,
+              "densest": 8,
+              "largest_table_or_code": 8,
+              "final": 10
+            },
+            "reviewed_by": "assigned subagent; all listed contact sheets inspected visually after native-column review"
+          }
+        },
+        "readability_conditions": {
+          "article_body": "普通正文实际测量：桌面 17px，手机 16.5px，行高比例 1.78；lead 不用于正文字号认证。",
+          "desktop_figures": "1050px SVG 在 780px 正文列显示；主标签 25px 实际约 18.57px，已按此列宽逐图看过。",
+          "mobile_inline_figures": "手机 inline 图是概览，不认证密集文字可直接读；点击放大后保持 780px 图宽，主标签约 18.57px，可在页内左右与上下滚动。",
+          "enlarged_figure_controls": "整图、清晰、放大、缩小、关闭、Escape 与焦点返回均实测；居中/底部内容可滚动到达。",
+          "embedded_deck": "嵌入 deck 是概览；复杂图表细读使用桌面大屏、fullscreen 或正文放大图。",
+          "phone_portrait_deck": "手机竖屏嵌入与独立 deck 的密集表/代码仅作概览，不把边界检查通过称为密集文字细读通过。"
+        }
+      }
+    }
+  ]
 }

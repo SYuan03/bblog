@@ -1,66 +1,12 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privileged, but Biased 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="Privileged, but Biased 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · NEGATIVE RESULT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h1>Teacher 在教 correctness，还是 reference-path similarity？</h1>
-  <p class="lead">在 harder tasks 上，dense PI-conditioned self-distillation 单独使用时常常降分。</p>
-  <div class="content"><div class="grid g4"><div class="card red"><h3>0.31</h3><p>off-path correct KL</p></div><div class="card green"><h3>0.08</h3><p>on-path correct KL</p></div><div class="card orange"><h3>−4.28</h3><p>math think change</p></div><div class="card "><h3>9.5/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；main diagnostics</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · PI BIAS</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>Alternative correct 解没有得到应有的 teacher advantage</h2>
-
-  <div class="content"><div class="flow" style="--n:4"><div class="step"><b>1</b><strong>Reference</strong><p>最大 log-prob advantage</p></div><div class="step"><b>2</b><strong>Alternative correct</strong><p>显著更低</p></div><div class="step"><b>3</b><strong>Unrelated correct</strong><p>与 alternative 接近</p></div><div class="step"><b>4</b><strong>Incorrect</strong><p>最低但差距弱</p></div></div></div>
-  <div class="foot"><span>来源：PI Bias Score</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · SCOPE</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>论文否定的是 lone objective</h2>
-
-  <div class="content"><div class="grid g2"><div class="card red"><h3>已测试</h3><p>无 reward 的 PI-conditioned dense loss</p></div><div class="card green"><h3>未测试</h3><p>verifier reward + routing + local credit</p></div></div></div>
-  <div class="foot"><span>来源：Experiment design</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · SETTING</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>QA、数学、代码、BFCL 都做压力测试</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Axis</th><th>Setting</th></tr></thead><tbody><tr><td>Backbone</td><td>Qwen3-8B；additional 32B</td></tr><tr><td>Rollouts</td><td>8</td></tr><tr><td>Epochs</td><td>3</td></tr><tr><td>Response</td><td>16,384</td></tr><tr><td>Hardware</td><td>8×B200</td></tr></tbody></table></div></div>
-  <div class="foot"><span>来源：Appendix hyperparameters</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · TOKEN DIAGNOSIS</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>大量 divergence 落在低信息 token</h2>
-
-  <div class="content"><div class="grid g3"><div class="card orange"><h3>Punctuation</h3><p>标点</p></div><div class="card orange"><h3>Stopwords</h3><p>功能词</p></div><div class="card orange"><h3>Style markers</h3><p>语气与格式</p></div></div></div>
-  <div class="foot"><span>来源：token-category analysis</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · RESULT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>Loss 稳定下降，accuracy 仍然下降</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Task / mode</th><th>Change</th></tr></thead><tbody><tr><td>General QA think</td><td>−1.96</td></tr><tr><td>Math think</td><td>−4.28</td></tr><tr><td>Math instruct</td><td>−0.44</td></tr><tr><td>Coding think</td><td>−0.30</td></tr><tr><td>Agentic think</td><td>−3.51</td></tr></tbody></table></div></div>
-  <div class="foot"><span>根据 main result table 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · GAME DIAGNOSTIC</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>必须做 correct × reference distance 的 2×2</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>Correct</h3><p>near / divergent 两组都应低 penalty</p></div><div class="card red"><h3>Incorrect</h3><p>near 也不能因为像 reference 获益</p></div></div></div>
-  <div class="foot"><span>本文为 game code 设计的必要实验</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · ARTIFACT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>“Supplementary 有 code”与公开 source 不一致</h2>
-
-  <div class="content"><div class="grid g2"><div class="card orange"><h3>公开 tar</h3><p>TeX、bib、style、figures</p></div><div class="card red"><h3>未找到</h3><p>code archive 或 official repo</p></div></div></div>
-  <div class="foot"><span>2026-10-08 public artifact check</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2608.04794 · 2026-08-05</span></div>
-  <h2>不要只问“有没有提升”，要问“压掉了哪些正确解”</h2>
-
-  <div class="content"><div class="callout"><p>对 multi-solution game code，这篇是 mandatory diagnostic，而不是 implementation base。</p></div></div>
-  <div class="foot"><span>兴趣程度 9.5/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/privileged-but-biased.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privileged, but Biased 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.compact .table{font-size:19px}.compact .table td,.compact .table th{padding:10px 14px}.diagram{width:100%;max-height:425px;object-fit:contain}.small p{font-size:20px}.code{font-size:19px}</style></head><body><div class="viewport"><main class="stage" aria-label="Privileged, but Biased 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 研究问题</span><span>arXiv:2608.04794v1 · 2026-08-05</span></div><h1>看过正确解，能否教会另一种正确解？</h1><p class="lead">仅靠逐位置模仿，可能学到参考解偏好，而不是任务正确性。</p><div class="content"><div class="grid g2"><div class="card"><h3>论文检查什么</h3><p>学生看问题，教师多看正确解，重评学生的回答。训练只更新学生，不加入最终成败奖励。</p></div><div class="card"><h3>结果不能说成“全部失败”</h3><p>长推理任务多数没有稳定提升；代码 instruct 平均 +0.94 点，工具 instruct +4.68 点。</p></div></div><div class="callout"><p>个人兴趣 9.5/10。研究提供失效诊断，没有提出已验证的修复算法。</p></div></div><div class="foot"><span>来源：§1、4–5；Table 1</span><span>1 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 训练与诊断</span><span>教师侧不反传，不等于教师始终固定</span></div><h2>主实验教师以 EMA 0.001 缓慢跟随学生</h2><div class="content"><img class="diagram" src="/lib/papers/privileged-but-biased/training-and-diagnosis.svg" alt="完整训练与四目标诊断流程" width="980" height="450"></div><div class="foot"><span>根据 §3–4、Appendix E 重绘</span><span>2 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 真实题目</span><span>Figure 6，不是游戏类比</span></div><h2>完整解、短提示、通用技巧卡给了不同信息</h2><div class="content"><img class="diagram" src="/lib/papers/privileged-but-biased/lcm-real-case.svg" alt="最小公倍数真实案例，25种k" width="980" height="460"></div><div class="foot"><span>Figure 6、Appendix C–D；完整计数由本文计算</span><span>3 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 概率诊断</span><span>PI Bias Score，不是准确率</span></div><h2>原参考解的增益远高于另一正确解</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>数学：固定学生前文后接上的目标</th><th>教师 − 学生平均 log 概率</th></tr></thead><tbody><tr><td>教师看过的正确解</td><td><strong>0.5229</strong></td></tr><tr><td>同题另一正确解</td><td>0.0202</td></tr><tr><td>同题错误解</td><td>0.0086</td></tr><tr><td>别题正确解</td><td>0.0059</td></tr></tbody></table></div><div class="callout"><p>两分支都强制读取目标前文，评分整段目标。后三组的严格排序不跨领域成立。</p></div></div><div class="foot"><span>Figure 3；完整条件采用 Appendix E，不是 Eq. 2 的简写</span><span>4 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 主要结果</span><span>先分清模式、配方和分母</span></div><h2>必须同时看见正面结果和负面结果</h2><div class="content"><img class="diagram" src="/lib/papers/privileged-but-biased/positive-and-negative.svg" alt="主实验8个变化和固定初始教师对照" width="1000" height="455"></div><div class="foot"><span>根据 Table 1–2 重绘；领域内各 benchmark 等权平均</span><span>5 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>06 · token 分析</span><span>损失占比，不是参数梯度占比</span></div><h2>损失下降，不代表更会区分成功与失败</h2><div class="content"><div class="grid g3"><div class="card"><h3>成功 / 失败重叠</h3><p>平均损失约 3.5×10⁻⁴，KL 约 0.03；不能靠低损失判定回答正确。</p></div><div class="card"><h3>55.38% 损失</h3><p>某代表性训练步的停用词、犹豫词、标点和空白占比；Figure 5 再除以类别 token 数。</p></div><div class="card"><h3>0.31 / 0.08</h3><p>正确回答中，两组 KL 分布延伸范围。分组按接回参考解的概率四分位，不是人工路径标注。</p></div></div></div><div class="foot"><span>§6.2–6.5；Figure 4–5</span><span>6 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 消融</span><span>Qwen3-8B think</span></div><h2>短提示、技巧卡和短回答训练没有稳定修复</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>改变什么</th><th>结果</th><th>边界</th></tr></thead><tbody><tr><td>完整解 → 短提示 / 技巧卡</td><td>数学 58.25 / 59.92，原模型 63.38</td><td>信息由模型生成，不能推及所有高质量提示</td></tr><tr><td>训练回答长度：短 / 中 / 长</td><td>数学 62.28 / 62.60 / 61.80</td><td>改变训练样本；不是缩短同一模型推理</td></tr><tr><td>原模型较易 / 中等 / 较难训练题</td><td>问答变化 −3.60 / −1.43 / −1.58</td><td>易难按该训练集上的 8 次采样成功率定义</td></tr><tr><td>32B 问答规模对照</td><td>think −0.61；instruct −1.38</td><td>仍只一个模型家族</td></tr></tbody></table></div></div><div class="foot"><span>Table 3–5</span><span>7 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>08 · 与相关工作的边界</span><span>观察性分析，不是所有方法的否定</span></div><h2>它没有测试“奖励 + 蒸馏”能否修复</h2><div class="content"><div class="grid g2"><div class="card"><h3>已有证据</h3><p>看过单份正确解会提高对应文本概率。仅蒸馏在这组复杂任务中不稳定；正面 instruct 例外保留。</p></div><div class="card"><h3>仍然开放</h3><p>RLSD、Skill-SD 等保留成败奖励。本文没有运行这些组合，不能替它们作负面结论。</p></div></div><div class="callout"><p>§8 自称观察性研究。概率分组和损失类别不等于每个环节都已被独立因果实验验证。</p></div></div><div class="foot"><span>§2、8；Related Work 与 Limitations</span><span>8 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 复现与启示</span><span>保留真实未知</span></div><h2>检查教师在鼓励什么，而非只看训练损失</h2><div class="content"><div class="grid g2"><div class="card"><h3>可直接借用的诊断</h3><p>同题两份不同正确解，比较概率增益；再换参考解，检查偏好是否跟着切换。代码任务另检查写法相近但功能错误的程序。</p></div><div class="card"><h3>当前复现限制</h3><p>作者称代码在补充材料，2026-10-08 所检查的公开源文件包未找到实验代码。四条验证采样不是四次训练种子。</p></div></div><div class="callout"><p>本文数学代码仅核对 25 种 k，不冒充作者训练代码或完整复现。</p></div></div><div class="foot"><span>个人兴趣 9.5/10，仅代表博客作者兴趣</span><span>9 / 9</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/privileged-but-biased.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

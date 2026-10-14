@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "The Meta-Agent Challenge: Are Current Agents Capable of Autonomous Agent Development?",
     "kind": "benchmark",
@@ -7,7 +7,10 @@
       "paper",
       "paper-pdf",
       "official-artifact"
-    ]
+    ],
+    "arxiv_id": "2606.04455",
+    "version": "v1",
+    "earliest_arxiv_date": "2026-06-03"
   },
   "artifacts": {
     "article": "content/_posts/072-meta-agent-challenge.md",
@@ -19,8 +22,8 @@
       "id": "paper",
       "kind": "paper",
       "title": "The Meta-Agent Challenge: Are Current Agents Capable of Autonomous Agent Development?",
-      "url": "https://arxiv.org/abs/2606.04455",
-      "revision": "v1, 2026-06-03",
+      "url": "https://arxiv.org/abs/2606.04455v1",
+      "revision": "arXiv 2606.04455v1; earliest v1 public date 2026-06-03",
       "used_for": [
         "problem",
         "method",
@@ -34,8 +37,8 @@
       "id": "paper-pdf",
       "kind": "paper",
       "title": "The Meta-Agent Challenge: Are Current Agents Capable of Autonomous Agent Development? PDF",
-      "url": "https://arxiv.org/pdf/2606.04455",
-      "revision": "PDF and appendices reviewed 2026-10-08",
+      "url": "https://arxiv.org/pdf/2606.04455v1",
+      "revision": "arXiv 2606.04455v1; earliest v1 public date 2026-06-03",
       "used_for": [
         "complete-reading",
         "figures",
@@ -70,35 +73,638 @@
     ],
     "source_visuals_expected": 8,
     "visual_inventory_complete": true,
-    "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Figure 5, Table 1, Table 2, Table 3."
+    "review_round": "2026-10-13 collection revision",
+    "status": "main-agent-full-text-and-all-rendered-pages-reviewed",
+    "inventory_note": "Current numbered inventory checked against complete extracted text and all rendered pages, including appendices.",
+    "local_sources": {
+      "pdf": "/tmp/paper-collection-068-079.OK3giP/2606.04455v1.pdf",
+      "text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2606.04455/paper.txt",
+      "rendered_pages": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2606.04455/main-reread"
+    },
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "text_lines_reviewed": "1-1396",
+      "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2606.04455/paper.txt",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "rendered_review_location": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2606.04455/main-reread",
+      "pdf_sha256": "6ee1e3dc7d404244b4a6c9481ca3102184e25bb379ec435a8daece7d7d4c6bf0",
+      "changes": "Complete v1 text and all 20 rendered pages reviewed by main. Corrected AIME/Science encrypted-test secret roles and current Science answer-free inputs; preserved historical dev-label leak; clarified fixed downstream models, incomplete uniform quota disclosure, three-run SD and failed runs, exact AIME denominator, and correlational behavior analysis."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么要把自主 Agent 开发单独拿出来测？"
+      "locator": "1. Motivation：从会答题到会开发答题系统"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它比 HarnessDev 更宽还是更窄？"
+      "locator": "2. Related Work：与直接解题和自动 harness 开发的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. 双容器、预算与隐藏 test 如何工作？"
+      "locator": "3. Benchmark / Protocol：任务来源、双容器与一轮开发评测"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 五领域结果和外泄案例说明了什么？"
+      "locator": "4. Experiments：模型表现、开发方差与审计证据"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 一个更可信的 meta-agent benchmark 还缺什么？"
+      "locator": "5. Discussion：怎样把自主开发评测做得更可信"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价 Meta-Agent Challenge？"
+      "locator": "6. Conclusion：结论与适用范围"
     }
   ],
   "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.5; Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "任务和标准答案继承上游数据，MAC 作者编写容器、提交接口、额度管理与完整性审计，不是重新人工标注五个领域。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3–3.5; Appendix B.3; Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "各领域具体检查答案或产物的代码仍来自上游 benchmark。"
+        },
+        {
+          "artifact": "article",
+          "quote": "审计器与一名人工标注者在这 8 个“违规或合法”判断上一致。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 2; §3.2–3.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "评测容器在开发期已经执行候选 <code>agent.py</code> 并检查开发集答案。"
+        },
+        {
+          "artifact": "article",
+          "quote": "AIME 与 Science 的测试题和答案文件预先加密保存，启动时不加载测试答案。开发结束后，平台注入 verifier 与 secret，服务用它解开测试输入和答案，才执行最终评测。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Tables 1/2; official AIME evaluation_api.py 557–694"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "正式 AIME 测试分母是全部 60 题，不是实际回答的题数"
+        },
+        {
+          "artifact": "article",
+          "quote": "分数是 <strong>1/60≈0.0167</strong>，不会成为 1/1。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "official-artifact"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "official AIME data idx=0 and aime-meta-agent/eval_utils/evaluation_api.py 557–694; Appendix B.3.1"
+        },
+        {
+          "source_id": "official-artifact",
+          "locator": "official AIME data idx=0 and aime-meta-agent/eval_utils/evaluation_api.py 557–694; Appendix B.3.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "程序提交 <code>{\"idx\": 0, \"pred\": \"116\"}</code> 后，<code>evaluate_predictions</code> 从服务端补入答案，调用 <code>math_equal_process</code>，相等则该题为 True。"
+        },
+        {
+          "artifact": "article",
+          "quote": "该次运行的对象错误地包含 <code>answer</code> 字段"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1/2; §4–5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "39 个配置中只有 5 个超过对应的人工基线，其中 4 个使用闭源高性能模型；单次高分同时伴随很大的搜索方差。"
+        },
+        {
+          "artifact": "article",
+          "quote": "三分之一配置的三次运行标准差超过 0.1"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; §3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "五个领域分别给分，不存在一份程序同时解决所有领域的要求。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5; Appendix B.3.1; Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "8/8 只能说明这些样例没有分歧，样本太少，也没有多人标注，不能当成成熟的自动安全审计。"
+        },
+        {
+          "artifact": "article",
+          "quote": "复现实验仍需固定上游数据、Harbor 和领域 grader"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "visual-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 1",
+      "status": "omitted",
+      "rationale": "对比直接解题与在限时内开发 agent.py 的评测对象。正文在动机和相关工作中解释这一区别，未复制首页的完整概念插画。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 2",
+      "status": "redrawn",
+      "rationale": "按论文与固定评测代码重画双容器分工：开发时已执行候选，最终凭证还解开 AIME、Science 的加密测试题与答案；不把这一实现外推到全部领域。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "从 agent.py 的开发反馈，到最终隐藏测试"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 2 与固定评测代码重绘。开发期候选已在评测容器运行；最终凭证还用于解开 AIME、Science 的加密题目与答案，不推断其他领域实现相同。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 2 重绘",
+      "asset_paths": [
+        "/lib/papers/meta-agent-challenge/body-method.svg"
+      ]
+    },
+    {
+      "id": "visual-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "开发行为与成绩的相关性图未复制；正文保留调用间隔、总时间和评测调用数的 Pearson r，并明确观察相关性不是延迟调用的因果收益。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 4",
+      "status": "omitted",
+      "rationale": "按任务绘制开发成本与成绩的 Pareto 前沿，反映 model/benchmark 平均值。本文未复画完整成本前沿，不能由所列分数推断统一成本最优者。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 5",
+      "status": "redrawn",
+      "rationale": "Science 通过异常栈泄露 591 个开发答案的真实攻击在独立 deck 案例说明。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "历史安全案例：异常输出带出 591 个开发答案"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 5 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-6",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 1",
+      "status": "redrawn",
+      "rationale": "推理领域三次开发统计与超过人工基线的配置数在结果图汇总。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主结果先看量级，再看分母"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Tables 1、2 重绘。5/39 个配置超过相应人工程序，其中 4 个用闭源模型；每个配置独立开发三次。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 1 重绘",
+      "asset_paths": [
+        "/lib/papers/meta-agent-challenge/body-results.svg"
+      ]
+    },
+    {
+      "id": "visual-7",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 2",
+      "status": "redrawn",
+      "rationale": "软件与终端领域的三次开发比较与大方差一起解释，不以最好一次替代均值。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主结果先看量级，再看分母"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 2 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-8",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 3",
+      "status": "omitted",
+      "rationale": "列出 Claude Code、Codex、Gemini CLI 的 npm 包和版本。正文保留三个实际 CLI 版本，未重排完整包名配置表。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/meta-agent-challenge/body-method.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 2 重绘。评测容器开发期就执行候选；开发结束后，验证脚本与测试访问凭证才进入开发容器。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "method",
+      "source_visual_id": "visual-2",
+      "source_id": "paper-pdf",
+      "source_locator": "Figure 2",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/meta-agent-challenge/body-case.svg",
+      "origin": "generated",
+      "credit": "本文根据官方 AIME 题目与 evaluation_api.py 整理的计算图。116 是题目推导，不是新模型日志；只答对一题、其余漏答时仍为 1/60。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "source_ids": [
+        "paper"
+      ],
+      "evidence_boundary": "Official AIME input and evaluator; article-authored arithmetic, not a model trace.",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/meta-agent-challenge/body-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Tables 1、2 重绘。5/39 个配置超过相应人工程序，其中 4 个用闭源模型；每个配置独立开发三次。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "results",
+      "source_visual_id": "visual-6",
+      "source_id": "paper-pdf",
+      "source_locator": "Table 1",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    }
+  ],
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 10 slides read. Traced dual development/execution containers, encrypted evaluation inputs for selected domains only and developer access to non-test evidence. AIME real answer116 derives correctly but missing function input still receives full reward60. ScienceWorld exception answer-index42/B591 is development not test evidence. Recomputed Sonnet .565/.585/0 mean .383 and SD .332; retained violations, 39 configurations not runs, 33% SD>.1 and limited human/safety evidence."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "b431bb33941f28d6703919977619be0fc52ce8de5b1cab20e16563ac717de1f5",
+      "built_article": "9fbee104ab1ab24df85272577fc27c1b67aa47e9b796fee3da493c2beac3fd7b",
+      "deck": "232a01d79ad4c54dc65aec487abcf848da7d793792633ea8add0f41d98e187d2",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-072/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-072/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-072.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_reading_record": {
+    "record_preserved_from_schema_version": 2,
+    "paper_reading": {
+      "main_agent_complete_read": true,
+      "appendices_included": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 20,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "source_visuals_expected": 8,
+      "visual_inventory_complete": true,
+      "inventory_note": "Complete numbered visual inventory after extracted-text and rendered-page review: Figure 1, Figure 2, Figure 3, Figure 4, Figure 5, Table 1, Table 2, Table 3."
+    },
+    "source_revisions": [
+      {
+        "id": "paper",
+        "url": "https://arxiv.org/abs/2606.04455",
+        "revision": "v1, 2026-06-03"
+      },
+      {
+        "id": "paper-pdf",
+        "url": "https://arxiv.org/pdf/2606.04455",
+        "revision": "PDF and appendices reviewed 2026-10-08"
+      }
+    ],
+    "not_valid_for": "本轮全文与全页渲染复读；旧的 true 仅留作历史记录，不用来认证当前修订。"
+  },
+  "legacy_qa_record": {
+    "record_preserved_from_schema_version": 2,
+    "qa": {
+      "reading_layout": {
+        "deck_first": true,
+        "toc_h2_only": true,
+        "surface": "neutral-light",
+        "body_font": "sans-serif",
+        "body_font_px": 17,
+        "line_height": 1.76,
+        "figures_centered": true,
+        "internal_scroll_for_tables_and_code": true,
+        "page_horizontal_overflow": false
+      },
+      "viewports": [
+        {
+          "width": 1600,
+          "height": 1000,
+          "passed": true
+        },
+        {
+          "width": 1512,
+          "height": 982,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        }
+      ],
+      "tested_surfaces": {
+        "article_body": true,
+        "embedded_deck": true,
+        "standalone_deck": true
+      },
+      "language_review": {
+        "technical_terms_contextualized": true,
+        "actors_disambiguated": true,
+        "read_aloud_complete": true,
+        "facts_rechecked_after_rewrite": true
+      },
+      "interactions": {
+        "buttons": true,
+        "keyboard": true,
+        "hash_navigation": true,
+        "fullscreen": true,
+        "escape": true,
+        "standalone_return_to_article": true,
+        "immersive_mode_exit": true,
+        "usable_state_after_exit": true
+      },
+      "inspected_slides": [
+        "opening",
+        "densest",
+        "largest-table-or-code",
+        "final"
+      ]
+    },
+    "not_valid_for": "当前文章、deck、配图与正在更新的全站主题；旧通过不能替代重建后浏览器验收。"
+  },
+  "legacy_coverage_record": [
     {
       "id": "task-provenance",
       "claim_type": "author-claim",
@@ -278,176 +884,236 @@
       ]
     }
   ],
-  "source_visuals": [
+  "terminology": [
     {
-      "id": "visual-1",
-      "kind": "figure",
-      "label": "Figure 1",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "Figure 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "meta-agent",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Figure 2"
+        }
+      ],
+      "article_quote": "负责查看资料、写代码和调用开发评测接口的模型，论文称为 <strong>meta-agent</strong>。"
     },
     {
-      "id": "visual-2",
-      "kind": "figure",
-      "label": "Figure 2",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 2",
-      "status": "omitted",
-      "rationale": "Figure 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "harness",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 2"
+        }
+      ],
+      "article_quote": "<strong>harness</strong> 是这份程序组织模型、工具和执行顺序的代码。"
     },
     {
-      "id": "visual-3",
-      "kind": "figure",
-      "label": "Figure 3",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 3",
-      "status": "omitted",
-      "rationale": "Figure 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "verifier",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2–3.3; Figure 2"
+        }
+      ],
+      "article_quote": "最终检查答案或软件状态的程序称为 <strong>verifier</strong>"
     },
     {
-      "id": "visual-4",
-      "kind": "figure",
-      "label": "Figure 4",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 4",
-      "status": "omitted",
-      "rationale": "Figure 4 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "secret",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2–3.3"
+        }
+      ],
+      "article_quote": "平台在开发结束后提供的 <strong>secret</strong> 既授权测试调用，也用于解开 AIME、Science 公布代码中的加密测试文件。它本身不是题目答案。"
     },
     {
-      "id": "visual-5",
-      "kind": "figure",
-      "label": "Figure 5",
-      "source_id": "paper-pdf",
-      "source_locator": "Figure 5",
-      "status": "omitted",
-      "rationale": "Figure 5 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "visual-6",
-      "kind": "table",
-      "label": "Table 1",
-      "source_id": "paper-pdf",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "Table 1 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "visual-7",
-      "kind": "table",
-      "label": "Table 2",
-      "source_id": "paper-pdf",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "Table 2 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "visual-8",
-      "kind": "table",
-      "label": "Table 3",
-      "source_id": "paper-pdf",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "Table 3 已逐页核对；正文与图解使用原创 CSS 结构和文字复述关键信息，省略原版以避免未核实的图像复用许可。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "term": "traceback",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix B.3.1; Figure 5"
+        }
+      ],
+      "article_quote": "评测 API 又把完整 <strong>traceback（异常调用栈）</strong> 回传给开发者，于是题目连同答案一起泄露。"
     }
   ],
-  "figures": [],
-  "qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 17,
-      "line_height": 1.76,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
+  "revision_record": {
+    "round": "2026-10-13",
+    "editor": "revise_harness_search_benchmarks",
+    "state": "local-revision-pending-main-paper-read-and-final-browser-review",
+    "primary_read_required_by": "paper-deep-dive-blog SKILL.md",
+    "completed": [
+      "Causal method/evaluation walkthrough revised",
+      "Real-case sources and missing-artifact boundaries retained",
+      "Metric denominators, sampling and selection conditions corrected",
+      "Terminology first-use ledger recorded",
+      "Three source-credited body visuals rebuilt",
+      "All numbered source visuals carried forward with placements or explicit omissions",
+      "Deck screenshot body visuals replaced with article-native SVG layouts; old WebP retained."
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  }
+    "pending": [
+      "Main agent full paper and appendix text reread",
+      "Main agent every rendered paper page reread",
+      "Verify complete visual inventory against rendered pages",
+      "Freshly rebuilt full article plus embedded/standalone deck QA at three viewports and all exit paths"
+    ],
+    "code_audit_status": "Fixed-revision findings preserved; no full training or benchmark rerun claimed."
+  },
+  "qa_history": [
+    {
+      "archived_on": "2026-10-14",
+      "reason": "Primary reread and content corrections invalidate prior built-byte QA.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "article_visuals_interleaved": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "mobile_body_font_px": 16.5,
+          "body_color": "rgb(36, 41, 47)",
+          "body_surface": "rgb(255, 255, 255)",
+          "actual_desktop_column_px": 780
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true,
+          "overview_thumbnail_selection": true,
+          "home_end": true,
+          "focus_restoration": true,
+          "figure_enlargement": true,
+          "figure_zoom": true,
+          "figure_internal_xy_scroll": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "status": "browser-and-visual-qa-complete; primary-paper-reread-is-separate",
+        "partial_subagent_review": {
+          "role": "targeted-editorial-and-evidence-revision",
+          "full_primary_read_certified": false,
+          "source_structure_checked": true,
+          "six_h2_in_source": true,
+          "body_images_after_embed": 3,
+          "body_images_sized": true,
+          "source_visual_mapping_updated": true,
+          "deck_capture_diagnostic": {
+            "report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/deck-revision-068-079/capture-report.json",
+            "viewport": {
+              "width": 1728,
+              "height": 900
+            },
+            "all_slide_bounds_checked": true,
+            "html_deck_only": true,
+            "not_full_article_or_interaction_qa": true
+          },
+          "article_native_visuals": {
+            "count": 3,
+            "format": "SVG",
+            "canvas_width": 1050,
+            "main_label_font_px": 25,
+            "legacy_webp_preserved": true,
+            "prototype_actual_column_review": "All 36 assigned body diagrams reviewed at actual 780px desktop column; mobile details reviewed in 780px XY-scroll dialog.",
+            "all_three_at_actual_desktop_column_reviewed": true
+          }
+        },
+        "review_round": "2026-10-13 unified readable article + native SVG + figure dialog build",
+        "review_scope": "本项只认证正文与两种 deck 的实际浏览器、视觉和交互检查；不代替 paper_reading 的主代理阅读全文记录。",
+        "evidence": {
+          "base_url": "http://localhost:4181",
+          "detail_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-detail-group-2-report.json",
+          "typography_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-body-typography-report.json",
+          "article_summary_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-article-summary-report.json",
+          "fresh_language_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-fresh-build-language-report.json",
+          "mobile_figure_center_bottom_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-mobile-center-bottom-report.json",
+          "actual_visual_review": {
+            "desktop_opening_summary_footer_and_deck_endpoints": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/meta-agent-challenge-desktop-opening-final-review.png",
+            "mobile_opening_summary_and_deck_roles": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/meta-agent-challenge-mobile-article-deck-review.png",
+            "mobile_enlarged_body_figure_detail": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/meta-agent-challenge-mobile-details-contact.png",
+            "desktop_body_figures": [
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/meta-agent-challenge-1512-body-1.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/meta-agent-challenge-1512-body-2.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/meta-agent-challenge-1512-body-3.png"
+            ],
+            "slide_roles": {
+              "opening": 1,
+              "densest": 6,
+              "largest_table_or_code": 4,
+              "final": 10
+            },
+            "reviewed_by": "assigned subagent; all listed contact sheets inspected visually after native-column review"
+          }
+        },
+        "readability_conditions": {
+          "article_body": "普通正文实际测量：桌面 17px，手机 16.5px，行高比例 1.78；lead 不用于正文字号认证。",
+          "desktop_figures": "1050px SVG 在 780px 正文列显示；主标签 25px 实际约 18.57px，已按此列宽逐图看过。",
+          "mobile_inline_figures": "手机 inline 图是概览，不认证密集文字可直接读；点击放大后保持 780px 图宽，主标签约 18.57px，可在页内左右与上下滚动。",
+          "enlarged_figure_controls": "整图、清晰、放大、缩小、关闭、Escape 与焦点返回均实测；居中/底部内容可滚动到达。",
+          "embedded_deck": "嵌入 deck 是概览；复杂图表细读使用桌面大屏、fullscreen 或正文放大图。",
+          "phone_portrait_deck": "手机竖屏嵌入与独立 deck 的密集表/代码仅作概览，不把边界检查通过称为密集文字细读通过。"
+        }
+      }
+    }
+  ]
 }

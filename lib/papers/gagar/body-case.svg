@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="900" viewBox="0 0 1000 900" role="img" aria-labelledby="title desc">
+<title id="title">GAGAR 四次尝试的权重计算：无上限与上限实现</title><desc id="desc">解释性例子中四次尝试两成功，无上限正总量为一，有上限重新居中正总量变成零点九五。数值按公式复算，不是训练日志。</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:33px;font-weight:750}.head{font-size:28px;font-weight:700}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:26px;fill:#35424b}</style>
+<rect width="1000" height="900" fill="#fff"/>
+<text x="40" y="53" class="title">质量系数与 λ 上限，具体改了哪几个权重</text>
+<text x="40" y="96" class="body">本文将例子缩成四次尝试，二次成功；不是公开训练日志。</text>
+<text x="40" y="139" class="code">R=[1,1,0,0]，A=[0.5,0.5,−0.5,−0.5]</text>
+<rect x="40" y="173" width="920" height="229" fill="#f1f5f8" stroke="#c4d3dd"/>
+<text x="64" y="217" class="head" fill="#245f87">正文无上限公式</text>
+<text x="64" y="261" class="code">成功质量系数 f=[1.0,0.2]</text>
+<text x="64" y="305" class="code">λ=1/(0.5+0.1)=1.667</text>
+<text x="64" y="349" class="code">A′=[0.833,0.167,−0.5,−0.5]</text>
+<text x="64" y="387" class="body">正权重总量仍是 1；失败权重不变。</text>
+<rect x="40" y="432" width="920" height="236" fill="#fbf3f2" stroke="#d8bfbb"/>
+<text x="64" y="476" class="head" fill="#85413b">附录实现：λ 上限为 1.5</text>
+<text x="64" y="520" class="code">乘上限：[0.75,0.15,−0.5,−0.5]</text>
+<text x="64" y="564" class="body">这组均值为 −0.025，再从每项减去组均值。</text>
+<text x="64" y="608" class="code">A′=[0.775,0.175,−0.475,−0.475]</text>
+<text x="64" y="650" class="body">总和仍为 0，但正总量已降到 0.95。</text>
+<text x="40" y="718" class="head">这个例子能说明什么</text>
+<text x="40" y="760" class="body">论文“只降权”消融没有测直接调奖励后重新居中的对照。</text>
+<text x="40" y="801" class="body">不能据此否定所有奖励调整；正总量精确保留只属于无上限公式。</text>
+<text x="40" y="860" class="small">根据 §§3.1–3.4、Equations 2–4 与 Appendix A.2 构造并复算。</text>
+<text x="40" y="891" class="small">冻结判分模型只比较成功实现；真实训练判分记录未公开。</text>
+</svg>

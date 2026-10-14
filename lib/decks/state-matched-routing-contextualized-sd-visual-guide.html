@@ -1,66 +1,16 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SMRC-SD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="SMRC-SD 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · CORE PROBLEM</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h1>Reference path 只在兼容 state 上有效</h1>
-  <p class="lead">Student 改变 subgoal 顺序后，full-path teacher 可能把 recovery action 当错。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>0.865</h3><p>ALFWorld</p></div><div class="card green"><h3>0.693</h3><p>WebShop success</p></div><div class="card orange"><h3>20.2%</h3><p>structured coverage</p></div><div class="card "><h3>10/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；Tables 1-4</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · MISMATCH</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>同一个任务，不代表同一个 execution state</h2>
-
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>Location</h3><p>agent 在哪</p></div><div class="card green"><h3>Progress</h3><p>哪些 subgoal 已完成</p></div><div class="card orange"><h3>Admissibility</h3><p>reference next action 还合法吗</p></div></div></div>
-  <div class="foot"><span>来源：Method state definition</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · ROUTING</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>Match 才 distill；不 match 就 abstain</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Observe</strong><p>student real history</p></div><div class="step"><b>2</b><strong>Signature</strong><p>structured state</p></div><div class="step"><b>3</b><strong>Match</strong><p>reference prefixes</p></div><div class="step"><b>4</b><strong>Route</strong><p>latest compatible</p></div><div class="step"><b>5</b><strong>Distill</strong><p>matched turns only</p></div></div></div>
-  <div class="foot"><span>来源：Method overview</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · TWO SIGNALS</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>Dense loss 可以关闭，GRPO 不关闭</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>All turns</h3><p>GRPO outcome reward</p></div><div class="card blue"><h3>Matched turns</h3><p>privileged self-distillation</p></div></div></div>
-  <div class="foot"><span>来源：Objective section</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · REAL CASE</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>Lettuce 已入 fridge，下一步不该再开一次</h2>
-
-  <div class="content"><div class="grid g2"><div class="card red"><h3>History matcher</h3><p>文本相似 → 建议重复 open fridge</p></div><div class="card green"><h3>Structured matcher</h3><p>progress 已完成 → 路由 second-object phase</p></div></div></div>
-  <div class="foot"><span>来源：ALFWorld case study</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · ABLATION</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>路由比单纯 sparse distillation 更重要</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Condition</th><th>ALFWorld Avg@4</th></tr></thead><tbody><tr><td>FullPath-SD</td><td>0.746</td></tr><tr><td>Random same-count</td><td>0.723</td></tr><tr><td>Routing only</td><td>0.836</td></tr><tr><td>Routing + local context</td><td>0.865</td></tr><tr><td>Context on unmatched</td><td>0.695</td></tr></tbody></table></div></div>
-  <div class="foot"><span>根据 ablation table 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · MATCH AUDIT</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>Structured matching 提高 coverage，不明显牺牲 precision</h2>
-
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>20.2%</h3><p>structured coverage</p></div><div class="card orange"><h3>15.4%</h3><p>history coverage</p></div><div class="card green"><h3>781/781</h3><p>sampled replay success</p></div></div></div>
-  <div class="foot"><span>来源：matcher audit</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · GAME STATE</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>Code state 需要 AST、scene、fixture 与 runtime 一起描述</h2>
-
-  <div class="content"><div class="grid g4"><div class="card "><h3>Code/AST</h3><p>files/functions</p></div><div class="card "><h3>Scene</h3><p>nodes/signals</p></div><div class="card "><h3>Verifier</h3><p>fixture/obligation</p></div><div class="card "><h3>Runtime</h3><p>state/events</p></div></div></div>
-  <div class="foot"><span>本文 game code state design</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · CODE REALITY</span><span>arXiv:2608.05219 · 2026-08-05</span></div>
-  <h2>Core code 在，paper data 不在</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>matcher、trainer、env、tests</p></div><div class="card red"><h3>缺失</h3><p>4 个 claimed included JSON files</p></div></div></div>
-  <div class="foot"><span>代码审计：f3e43bab78828d12ee7e2f717e041b70f43ad43f</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/state-matched-routing-contextualized-sd.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SMRC-SD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.diagram{display:block;width:100%;max-height:590px;object-fit:contain}.compact .table{font-size:20px}.compact .table td,.compact .table th{padding:12px}.small p{font-size:20px}.code{font-size:20px}</style></head><body><div class="viewport"><main class="stage" aria-label="SMRC-SD 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 研究问题</span><span>arXiv:2608.05219v1 · 2026-08-05</span></div><h1>成功路径，也可能不适合现在这一步</h1><p class="lead">先检查学生实际到达的状态，再决定能否用参考记录训练。</p><div class="content"><div class="grid g2"><div class="card"><h3>具体错位</h3><p>生菜已放进冰箱，学生该找第二棵；动作历史相似，却不该再重复开冰箱。</p></div><div class="card"><h3>方法不是重放标准答案</h3><p>只在兼容回合使用蒸馏。教师仍重评学生同一回答，完整任务奖励始终保留。</p></div></div><div class="callout"><p>Qwen3 ALFWorld：FullPath-SD 74.6% → SMRC-SD 86.5%；个人兴趣 10/10。</p></div></div><div class="foot"><span>§1、4；Table 2、13</span><span>1 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 与已有方法的边界</span><span>共享当前参数 ≠ 固定初始教师</span></div><h2>改的是参考适用性，而不是新的 KL 估计</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>成功参考怎样进入训练</th></tr></thead><tbody><tr><td>SFT／行为模仿</td><td>训练参考动作与参考前文</td></tr><tr><td>GRPO</td><td>学生完整执行的成败奖励，不增加参考概率监督</td></tr><tr><td>FullPath-SD</td><td>每回合教师都看同题完整成功路径，重评学生输出</td></tr><tr><td>SMRC-SD</td><td>只在匹配回合蒸馏；提示为完整路径 + 实际状态 + 候选</td></tr></tbody></table></div><div class="callout"><p>同步教师侧停止梯度，不生成新动作。测试仍使用环境工具；不是有工具 → 无工具蒸馏。</p></div></div><div class="foot"><span>§2–4、Appendix A</span><span>2 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 一次训练</span><span>确定性规则，无隐藏模拟器状态</span></div><h2>筛掉参考损失，不筛掉任务奖励</h2><div class="content"><img class="diagram" src="/lib/papers/state-matched-routing-contextualized-sd/state-and-loss.svg" alt="实际状态匹配与完整损失流程" width="1000" height="470"></div><div class="foot"><span>根据 Figure 2、Eq. 15、Appendix A 重绘</span><span>3 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 真实案例</span><span>Table 12–13，非未公开日志的补写</span></div><h2>已完成的步骤不再重复，缺前提则跳过蒸馏</h2><div class="content"><img class="diagram" src="/lib/papers/state-matched-routing-contextualized-sd/real-state-cases.svg" alt="生菜、位置拒绝与商品尺码案例" width="1000" height="490"></div><div class="foot"><span>匹配位置选最新兼容步骤；选项顺序可交换，可有多个候选</span><span>4 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 损失与协议</span><span>所有原回答 token 是分母</span></div><h2>推理文字也训练，未匹配回合仍计入分母</h2><div class="content"><div class="code">δ = log p_student − log p_teacher
+ρ = exp(min(log p_student − log p_rollout_old, 10))
+d = exp(min(−δ, 20)) − 1 + δ
+L_SD = Σ(w_match × eligible_token × ρ × d) / 所有原回答token数
+L_total = L_GRPO + 0.01 × L_SD</div><div class="grid g2"><div class="card"><h3>参考数据</h3><p>ALFWorld 3,553 条专家成功路径；WebShop 清单 6,910，训练 6,410，前 500 留出。</p></div><div class="card"><h3>固定 checkpoint</h3><p>128 题 × 4 次完整执行；Qwen3 ALFWorld 250 更新，其他 150。v1 没按验证分数选择。</p></div></div></div><div class="foot"><span>Appendix A、C–D、H；每更新 16 题 × 8 次，4×H800，种子 0</span><span>5 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 主结果与分母</span><span>Average@4 不等于至少一次成功</span></div><h2>Qwen2.5 WebShop 的成功率仅提高 0.2 点</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>模型／环境</th><th>指标</th><th>FullPath-SD → SMRC-SD</th></tr></thead><tbody><tr><td>Qwen3 · ALFWorld</td><td>Average@4 / Pass@4</td><td>0.746 → 0.865 / 0.836 → 0.914</td></tr><tr><td>Qwen3 · WebShop</td><td>Acc / Score</td><td>0.574 → 0.693 / 0.694 → 0.825</td></tr><tr><td>Qwen2.5 · ALFWorld</td><td>Average@4 / Pass@4</td><td>0.766 → 0.883 / 0.852 → 0.938</td></tr><tr><td>Qwen2.5 · WebShop</td><td>Acc / Score</td><td>0.734 → 0.736 / 0.842 → 0.863</td></tr></tbody></table></div><div class="callout"><p>Average@4：512 次执行平均；Pass@4：128 题至少一次成功。Score 含部分得分。</p></div></div><div class="foot"><span>Table 2；Qwen2.5 部分外部基线带 †，FullPath 与 SMRC 是本地对齐运行</span><span>6 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 决定性消融</span><span>不能只看完整方法的提升</span></div><h2>筛回合与三字段提示共同起作用</h2><div class="content"><img class="diagram" src="/lib/papers/state-matched-routing-contextualized-sd/routing-controls.svg" alt="路由上下文拆分消融，单加候选或摘要没有提升" width="1000" height="455"></div><div class="foot"><span>根据 Table 3–5、14 重绘；same-count 不是 token／梯度总量匹配</span><span>7 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>08 · 真实审核与干预</span><span>覆盖、重放、评分偏好是三类证据</span></div><h2>781/781 支持规则，不证明任意状态都可用</h2><div class="content"><div class="grid g3"><div class="card"><h3>相同存档回合</h3><p>35,712 回合：历史覆盖 15.4%，状态覆盖 20.2%。保留 98.8% 历史匹配；不是正确动作召回率。</p></div><div class="card"><h3>候选 + 参考剩余动作</h3><p>恢复学生实际前文后完整执行：历史 792/800，状态 781/781。两组独立分层抽样，不是成对状态。</p></div><div class="card"><h3>固定状态概率干预</h3><p>1,200 状态、79 游戏；只换教师提示，不再生成或训练。提示更偏好候选，但不同动作未必错误。</p></div></div></div><div class="foot"><span>Table 1、7–8、15–17；失配回合不是错误标签，局部动作可执行也不保证整题成功</span><span>8 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 复现与下一步</span><span>代码可读不等于实验包完整</span></div><h2>领域规则和缺失参考数据仍是边界</h2><div class="content"><div class="grid g2"><div class="card"><h3>已能核查</h3><p>固定 commit f3e43bab 的匹配器、上下文和掩码。CPU 提示提供器平均 0.833 ms，新增约 20.96 token；不是总 GPU 训练成本。</p></div><div class="card"><h3>不能承诺直接复现</h3><p>README 列的两份 ALFWorld 参考、WebShop 路径和 val128 清单，在该 commit 数据目录中缺失。</p></div></div><div class="callout"><p>下一步应测试多条不同成功参考、错误匹配和拒绝有效状态；不能拿文件名相似替代可执行前提。</p></div></div><div class="foot"><span>完整 commit 与缺失文件见正文；个人兴趣 10/10，仅代表博客作者兴趣</span><span>9 / 9</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/state-matched-routing-contextualized-sd.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

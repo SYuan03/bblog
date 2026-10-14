@@ -1,35 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" role="img" aria-labelledby="title desc">
   <title id="title">Draft-Verify harness</title>
-  <desc id="desc">A current item retrieves five similar labeled examples, produces a draft, then retrieves five examples with the same label and five examples with different labels. These examples, not agents, form the verification prompt.</desc>
+  <desc id="desc">A current item retrieves up to five similar labeled examples, produces a draft, then retrieves up to five examples sharing at least one draft label and up to five examples sharing no draft label. These examples, not agents, form the verification prompt.</desc>
   <defs><marker id="a" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#4c626e"/></marker><style>.t{font-family:Inter,"PingFang SC",Arial,sans-serif;fill:#19242b}.title{font-size:52px;font-weight:760}.sub{font-size:24px;fill:#52616a}.h{font-size:27px;font-weight:720}.b{font-size:20px}.s{font-size:17px;fill:#5c6a72}.box{stroke-width:3}.ln{fill:none;stroke:#4c626e;stroke-width:4;marker-end:url(#a)}</style></defs>
   <rect width="1600" height="940" fill="#fbfaf6"/>
   <text class="t title" x="70" y="82">Draft-Verify：两次模型调用，三次检索</text>
   <text class="t sub" x="70" y="124">confirmer / challenger 指的是检索到的已标注样例，不是十个 agent。</text>
 
   <rect class="box" x="70" y="186" width="252" height="142" rx="10" fill="#edf2f3" stroke="#71838d"/>
-  <text class="t h" x="196" y="235" text-anchor="middle">当前样例</text><text class="t b" x="196" y="274" text-anchor="middle">案件事实 / reaction</text><text class="t s" x="196" y="307" text-anchor="middle">先计算 embedding</text>
+  <text class="t h" x="196" y="235" text-anchor="middle">当前样例</text><text class="t b" x="196" y="274" text-anchor="middle">案件事实 / 化学反应</text><text class="t s" x="196" y="307" text-anchor="middle">先计算问题的向量表示</text>
   <rect class="box" x="405" y="186" width="318" height="142" rx="10" fill="#e8f1f7" stroke="#2f6f98"/>
-  <text class="t h" x="564" y="235" text-anchor="middle">检索 5 个近邻</text><text class="t b" x="564" y="274" text-anchor="middle">按 cosine similarity 排序</text><text class="t s" x="564" y="307" text-anchor="middle">来自此前已加入的标注样例</text>
+  <text class="t h" x="564" y="235" text-anchor="middle">检索 5 个近邻</text><text class="t b" x="564" y="274" text-anchor="middle">按向量方向相似度排序</text><text class="t s" x="564" y="307" text-anchor="middle">来自此前已加入的标注样例</text>
   <rect class="box" x="806" y="186" width="318" height="142" rx="10" fill="#fff0e6" stroke="#b86538"/>
-  <text class="t h" x="965" y="235" text-anchor="middle">Draft call</text><text class="t b" x="965" y="274" text-anchor="middle">题目 + 5 个近邻</text><text class="t s" x="965" y="307" text-anchor="middle">得到初步标签 yd</text>
+  <text class="t h" x="965" y="235" text-anchor="middle">生成初步标签（draft）</text><text class="t b" x="965" y="274" text-anchor="middle">题目 + 5 个近邻</text><text class="t s" x="965" y="307" text-anchor="middle">得到初步标签 yd</text>
   <path class="ln" d="M322 257H393"/><path class="ln" d="M723 257H794"/>
 
-  <rect class="box" x="1212" y="166" width="318" height="182" rx="10" fill="#eaf5f0" stroke="#2f7d6b"/>
+  <rect class="box" x="1212" y="166" width="318" height="212" rx="10" fill="#eaf5f0" stroke="#2f7d6b"/>
   <text class="t h" x="1371" y="215" text-anchor="middle">按 draft 标签再检索</text>
-  <text class="t b" x="1371" y="258" text-anchor="middle">5 个 confirmer</text><text class="t s" x="1371" y="288" text-anchor="middle">标签与 yd 有交集</text>
-  <text class="t b" x="1371" y="323" text-anchor="middle">5 个 challenger</text><text class="t s" x="1371" y="350" text-anchor="middle">标签与 yd 无交集</text>
+  <text class="t b" x="1371" y="258" text-anchor="middle">至多 5 个 confirmer</text><text class="t s" x="1371" y="288" text-anchor="middle">标签与 yd 有交集</text>
+  <text class="t b" x="1371" y="323" text-anchor="middle">至多 5 个 challenger</text><text class="t s" x="1371" y="350" text-anchor="middle">标签与 yd 无交集</text>
   <path class="ln" d="M1124 257H1200"/>
 
   <rect class="box" x="346" y="466" width="908" height="236" rx="12" fill="#f4f1e8" stroke="#8b744e"/>
   <text class="t h" x="800" y="514" text-anchor="middle">Verify prompt，也就是分类任务的 terminal context C</text>
   <rect x="390" y="548" width="210" height="104" rx="8" fill="#fff" stroke="#a9b3b9" stroke-width="2"/><text class="t b" x="495" y="588" text-anchor="middle">原题</text><text class="t s" x="495" y="620" text-anchor="middle">question</text>
   <rect x="634" y="548" width="210" height="104" rx="8" fill="#fff" stroke="#b86538" stroke-width="2"/><text class="t b" x="739" y="588" text-anchor="middle">初步标签</text><text class="t s" x="739" y="620" text-anchor="middle">draft yd</text>
-  <rect x="878" y="548" width="332" height="104" rx="8" fill="#fff" stroke="#2f7d6b" stroke-width="2"/><text class="t b" x="1044" y="588" text-anchor="middle">10 个检索样例</text><text class="t s" x="1044" y="620" text-anchor="middle">5 same-label + 5 different-label</text>
-  <path class="ln" d="M1371 348C1371 418 1148 420 1100 454"/>
+  <rect x="878" y="548" width="332" height="104" rx="8" fill="#fff" stroke="#2f7d6b" stroke-width="2"/><text class="t b" x="1044" y="588" text-anchor="middle">最多 10 个检索样例</text><text class="t s" x="1044" y="620" text-anchor="middle">两组各至多 5 个</text>
+  <path class="ln" d="M1371 378C1371 418 1148 420 1100 454"/>
 
   <rect class="box" x="346" y="778" width="908" height="104" rx="10" fill="#e8f1f7" stroke="#2f6f98"/>
   <text class="t h" x="800" y="822" text-anchor="middle">冻结 teacher 读取这份 verify prompt</text>
-  <text class="t b" x="800" y="858" text-anchor="middle">它逐 token 评估 direct student rollout；verify call 的最终文本不会直接当训练 target</text>
+  <text class="t b" x="800" y="858" text-anchor="middle">逐 token 评估 student 自己的回答；复核调用生成的答案不作为模仿目标</text>
   <path class="ln" d="M800 702V765"/>
-  <text class="t s" x="70" y="914">训练时：当前 batch 预测完成后才把真实标签加入 memory bank；前 10 条采用 cold-start direct call。</text>
+  <text class="t s" x="70" y="914">训练时：当前 batch 预测完成后才加入真实标签；memory bank 少于 10 条时只直接调用模型，不运行两阶段流程。</text>
 </svg>

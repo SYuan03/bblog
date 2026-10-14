@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1500" viewBox="0 0 600 1500" role="img" aria-labelledby="title desc">
+<title id="title">Astropy：括号不该改变依赖矩阵</title>
+<desc id="desc">上游 PR #12907 的真实测试与一行修复。两项修复测试、13 项保留测试。标准 swebench 4.1.0 会将跳过测试移出分母；论文专用复测代码未公开。</desc>
+<rect width="600" height="1500" fill="#fff"/>
+<style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;fill:#24272c}.title{font-size:32px;font-weight:750}.label{font-size:28px;font-weight:700}.main{font-size:27px}.small{font-size:24px;fill:#58616b}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:28px}.box{fill:#f7f8f9;stroke:#d7dce2;stroke-width:2}</style>
+<text x="24" y="56" class="title">Astropy：括号不该</text><text x="24" y="100" class="title">改变输入与输出的依赖</text>
+<text x="24" y="144" class="small">Stuart Mumford · 上游 PR #12907</text><text x="24" y="180" class="small">公开任务，不是本文的模型执行日志</text>
+<rect x="24" y="204" width="552" height="176" class="box"/>
+<text x="43" y="246" class="label">模型收到什么，交付什么</text>
+<text x="43" y="287" class="main">issue、基线代码和工具输出。</text>
+<text x="43" y="326" class="main">提交代码补丁；输入不含</text>
+<text x="43" y="365" class="main">参考修复与 PR 新增的测试。</text>
+<rect x="24" y="408" width="552" height="324" class="box"/>
+<text x="43" y="450" class="label">真实测试：rot &amp; (sh1 &amp; sh2)</text>
+<text x="43" y="489" class="small">行＝输出，列＝输入；1＝有依赖</text>
+<text x="57" y="537" class="main" font-weight="700">期望</text><text x="339" y="537" class="main" font-weight="700">修复前</text>
+<text x="57" y="580" class="mono">1 1 0 0</text><text x="339" y="580" class="mono">1 1 0 0</text>
+<text x="57" y="618" class="mono">1 1 0 0</text><text x="339" y="618" class="mono">1 1 0 0</text>
+<text x="57" y="656" class="mono">0 0 1 0</text><text x="339" y="656" class="mono" style="fill:#934737">0 0 1 1</text>
+<text x="57" y="694" class="mono">0 0 0 1</text><text x="339" y="694" class="mono" style="fill:#934737">0 0 1 1</text>
+<rect x="24" y="760" width="552" height="167" class="box"/>
+<text x="43" y="804" class="label">参考修复：保留右侧原矩阵</text>
+<text x="43" y="846" class="main">旧代码把右侧整块写成常量 1。</text>
+<text x="43" y="887" class="main">PR 改为写入已算好的 right。</text>
+<rect x="24" y="955" width="552" height="222" class="box"/>
+<text x="43" y="999" class="label">正常完整运行时如何判分</text>
+<text x="43" y="1041" class="main">2/2 修复测试＋13/13 保留测试：</text>
+<text x="43" y="1080" class="main">全部通过，整次尝试得 1。</text>
+<text x="43" y="1119" class="main">另一种嵌套仍错，只通过 1/2：</text>
+<text x="43" y="1158" class="main">只是部分修复，整次尝试得 0。</text>
+<rect x="24" y="1205" width="552" height="199" fill="#fff" stroke="#b8a697" stroke-width="2"/>
+<text x="43" y="1249" class="label">标准包的边界，单独核对</text>
+<text x="43" y="1290" class="main">4.1.0 把 SKIPPED 移出分母；</text>
+<text x="43" y="1329" class="main">XFAIL 也算成功。不能据此说</text>
+<text x="43" y="1368" class="main">15 项一定实际运行并全部通过。</text>
+<text x="24" y="1450" class="small">论文专用复测未公开，处理规则未知。</text>
+</svg>

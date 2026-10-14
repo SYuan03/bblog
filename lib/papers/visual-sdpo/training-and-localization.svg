@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580" viewBox="0 0 1000 580" role="img" aria-labelledby="title desc">
+<title id="title">Visual-SDPO 一次训练的两条信息路径</title><desc id="desc">学生生成代码后执行。教师看画面重评同一代码；缺陷检测另将区域关联到语句。局部权重与两边概率计算损失，训练只沿学生分支更新共享当前参数。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9" fill="none" stroke="#245e99" stroke-width="1.5"/></marker></defs>
+<rect width="1000" height="580" fill="#fff"/><g font-family="Arial, PingFang SC, sans-serif" fill="#24292f">
+<text x="30" y="41" font-size="27" font-weight="700">画面反馈与源码定位，共同参与一次训练</text>
+<rect x="30" y="75" width="282" height="132" rx="5" fill="#f5f7f9" stroke="#245e99"/>
+<text x="49" y="107" font-size="24" font-weight="700">1 · student 生成代码 y</text><text x="49" y="143" font-size="21">只看原始要求与参考图</text><text x="49" y="178" font-size="21">保留自身代码概率 pS</text>
+<path d="M314 143 H353" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="365" y="75" width="264" height="132" rx="5" fill="#f5f7f9" stroke="#dce2e8"/>
+<text x="383" y="107" font-size="24" font-weight="700">2 · 执行代码 y</text><text x="383" y="143" font-size="21">渲染器输出画面</text><text x="383" y="178" font-size="21">运行失败则输出报错</text>
+<path d="M630 143 H673" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="686" y="75" width="284" height="132" rx="5" fill="#f5f7f9" stroke="#317e6a"/>
+<text x="704" y="107" font-size="24" font-weight="700">3 · teacher 重评 y</text><text x="704" y="143" font-size="21">多看画面或结构化诊断</text><text x="704" y="178" font-size="21">概率 pT 本次停止梯度</text>
+<path d="M497 207 V249" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="225" y="263" width="550" height="110" rx="5" fill="#fff" stroke="#dce2e8"/>
+<text x="248" y="296" font-size="24" font-weight="700">4 · 定位程序建立区域 → 语句关系</text><text x="248" y="333" font-size="21">检测缺陷矩形；读取元素创建时记录的源码行</text><text x="248" y="359" font-size="19" fill="#536171">Matplotlib artist、HTML 元素、python-pptx shape</text>
+<path d="M500 374 V403" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M171 208 V430 H208" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M828 208 V430 H790" fill="none" stroke="#317e6a" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="225" y="416" width="550" height="97" rx="5" fill="#f5f7f9" stroke="#245e99"/>
+<text x="248" y="450" font-size="24" font-weight="700">5 · 带语句权重的概率蒸馏＋GRPO</text><text x="248" y="486" font-size="21">只沿 student 更新；下一轮两分支使用新参数</text>
+<text x="30" y="552" font-size="18" fill="#536171">依据 §2.1–2.5 重绘。teacher 不重写 y；部署输入不包括这些执行后截图。</text>
+</g></svg>

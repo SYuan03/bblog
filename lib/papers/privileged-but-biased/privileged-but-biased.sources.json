@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Privileged, but Biased: How PI-Conditioned Teachers Break Self-Distillation",
     "kind": "research",
@@ -40,32 +40,39 @@
       }
     ],
     "source_visuals_expected": 13,
-    "visual_inventory_complete": true
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. PI-conditioned teacher 为什么会偏？"
+      "locator": "1. Motivation：标准解为何未必是合适的训练目标"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 这篇反驳了哪些结论，又没有反驳什么？"
+      "locator": "2. Related Work：它与已有自蒸馏方法的关系"
     },
     {
       "role": "method",
-      "locator": "Q3. PI Bias Score 与训练设置怎么做？"
+      "locator": "3. Method：训练与诊断如何进行"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 负面结果具体有多严重？"
+      "locator": "4. Experiments：哪些下降，哪些没有"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 游戏论文必须增加什么实验？"
+      "locator": "5. Discussion：这项诊断可以怎样用于后续研究"
     },
     {
       "role": "summary",
-      "locator": "Q6. 证据和 artifact 有什么限制？"
+      "locator": "6. Conclusion：应当保留的结论与未解决的问题"
     }
   ],
   "coverage": [
@@ -78,13 +85,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 1-2"
+          "locator": "§1, §6.1; Figure 3"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "teacher 已经看过一条 reference solution，因此它的 next-token distribution 会把“沿着这条路写”当成高概率，而不是把所有正确替代路径都同等提高。"
+          "quote": "“能预测一条正确解”与“能判断其他解是否正确”是两种能力。"
+        },
+        {
+          "artifact": "article",
+          "quote": "看过一条正确解，确实大幅提高了教师对 那条解 的预测概率；另一条正确解得到的提高很小。"
         }
       ]
     },
@@ -97,13 +108,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "PI Bias Score section"
+          "locator": "§3–4; Table 7; Appendix E"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "诊断不只看 accuracy，还把 token 按 reference path、exploration、stopword、punctuation 和 style marker 分类。"
+          "quote": "先让学生回答，再让看过正确解的教师评价同一回答；诊断时额外比较四种候选解。"
+        },
+        {
+          "artifact": "article",
+          "quote": "θT ← 0.999 θT + 0.001 θS"
         }
       ]
     },
@@ -116,13 +131,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figures 2-6 and Tables 1-4"
+          "locator": "Tables 1–2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "正确 rollout 中，off-reference exploratory token 的 KL 约 0.31，on-reference token 只有 0.08。"
+          "quote": "代码 instruct 的平均提升主要来自 MBPP+： 43.2→55.8 ，增加 12.6 点"
+        },
+        {
+          "artifact": "article",
+          "quote": "工具 instruct 的五项均上升。"
+        },
+        {
+          "artifact": "article",
+          "quote": "固定初始教师的 Table 2 对照中，think 数学平均 63.38→59.10 ，下降 4.28 点"
         }
       ]
     },
@@ -135,13 +158,140 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations"
+          "locator": "§8; Table 1; Appendix artifact check"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文没有测试 reward 与 self-distillation 联合，主诊断又集中在一个 model family。"
+          "quote": "§8 仍将研究界定为 observational（观察性分析），没有通过逐项干预证明每一环都是后续变化的独立原因。"
+        },
+        {
+          "artifact": "article",
+          "quote": "四条验证回答不是多种子训练复现"
+        }
+      ]
+    },
+    {
+      "id": "pi-bias-definition",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.1 Eq. 2; Figure 3; Appendix E"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "两分支都强制读取目标解已写出的前文"
+        },
+        {
+          "artifact": "article",
+          "quote": "这个分数衡量概率偏好，不衡量准确率，也不是条件互信息的数值估计。"
+        },
+        {
+          "artifact": "article",
+          "quote": "原参考解 0.5229 ，另一正确解 0.0202"
+        }
+      ]
+    },
+    {
+      "id": "real-case-and-annotation-provenance",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 6; Appendix A.2, C, D.3–D.4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "正确解选自模型自己答对的尝试，未宣称全部由人工撰写。"
+        },
+        {
+          "artifact": "article",
+          "quote": "2 的指数可为 0 到 24，共 25 种 。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Python 3.12 示例，不是作者公开的训练或评测代码。"
+        }
+      ]
+    },
+    {
+      "id": "on-path-vs-action-correctness",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.4; Figure 4e"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "最高四分之一叫 on-path，最低四分之一叫 off-path。"
+        },
+        {
+          "artifact": "article",
+          "quote": "这不是人工标注的“正确路径/错误路径”，也不是逐字相似度。"
+        }
+      ]
+    },
+    {
+      "id": "loss-mass-vs-gradient",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.3; Figures 4d and 5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "55.38% 的损失总量"
+        },
+        {
+          "artifact": "article",
+          "quote": "作者没有测出“55.38% 的参数梯度”。"
+        }
+      ]
+    },
+    {
+      "id": "reward-scope-and-source-gap",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4, §8; arXiv-source package check 2026-10-08"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "没有测试它与可验证成败奖励联合训练是否有效。"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开 arXiv 源文件包只有论文与图片，未找到对应实验代码或官方仓库"
         }
       ]
     }
@@ -152,9 +302,9 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1",
+      "source_locator": "Figure 1; §4.1",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "SciKnowEvalBiology/Physics复现曲线未绘；正文保留原regime正面趋势，不能概括为所有任务自蒸馏失败。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -166,9 +316,9 @@
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2",
+      "source_locator": "Figure 2; §5",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "四领域loss/validation/entropy/length曲线未复制，分数正负SVG不冒称源曲线复用，BFCL曲线使用2×accuracy。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -180,23 +330,30 @@
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 3; §6.1; Appendix E",
+      "status": "redrawn",
+      "rationale": "数学四目标PIBias按原数字重排deck表，补目标前文teacherforcing，机制SVG再讲训练/四目标诊断不同。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "原参考解的增益远高于另一正确解"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-3 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/training-and-diagnosis.svg"
+      ]
     },
     {
       "id": "figure-4",
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4",
+      "source_locator": "Figure 4; §6.2–6.4",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "loss/KL重叠、tokenloss占比、on/offpath尾部图未绘，正文保留数值和分母，不把尾部作均值或loss作梯度。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -208,9 +365,9 @@
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5",
+      "source_locator": "Figure 5; §6.3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "按类别token数归一平均loss图未绘，文字说明它排除数量多带来的假解释，未声称保留各类别完整柱图。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -222,55 +379,81 @@
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 6; Appendix C–D",
+      "status": "redrawn",
+      "rationale": "重绘真实lcm题及whole/hint/skill材料，右侧25计数由文章补算，不伪称完整模型结果或官方checker。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "题目和三种教师输入来自 Figure 6、Appendix C–D"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-6 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/lcm-real-case.svg"
+      ]
     },
     {
       "id": "table-1",
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 1; §5",
+      "status": "redrawn",
+      "rationale": "重排think/instruct八领域变化并画正负证据，保留四条评测样本非训练seeds和领域等权分母。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Table 1–2 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/positive-and-negative.svg"
+      ]
     },
     {
       "id": "table-2",
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 2; OPSD recipe control",
+      "status": "redrawn",
+      "rationale": "固定初始teacher一条采样另一KL单列，数学-4.28不当作只改EMA的消融。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "固定初始教师的对照另列"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/positive-and-negative.svg"
+      ]
     },
     {
       "id": "table-3",
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 3; §7",
+      "status": "redrawn",
+      "rationale": "三种PI数学均值进入deck消融表，58.25/59.92仍低于63.38且提示是模型生成。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "完整解 → 短提示 / 技巧卡"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -278,13 +461,18 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 4; §7",
+      "status": "redrawn",
+      "rationale": "short/medium/long训练样本均值重排deck，改变训练数据不等于缩短同模型测试回答。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "训练回答长度：短 / 中 / 长"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -292,13 +480,18 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 5; §7",
+      "status": "redrawn",
+      "rationale": "按base八次成功率定义难度和32B对照重排，easy只指选中训练集，规模仍限Qwen家族。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "原模型较易 / 中等 / 较难训练题"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -306,9 +499,9 @@
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6",
+      "source_locator": "Table 6; Appendix A.1",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "全训练/ID/transfer题表未绘，正文报四领域数据量和分母，未假设统一judge或人工正确解。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -320,18 +513,193 @@
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 7; Appendix B",
+      "status": "redrawn",
+      "rationale": "主训练EMA安排在机制SVG重建，top100、JSD系数.5与截断.001不同，全超参由正文说明。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 §3–4、Appendix E 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-7 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/training-and-diagnosis.svg"
+      ]
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/privileged-but-biased/training-and-diagnosis.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "§3–4; Figure 3; Appendix B and E",
+      "credit": "根据 §3–4、Appendix E 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/lcm-real-case.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "Figure 6; Appendix C–D; article arithmetic",
+      "credit": "题目和三种教师输入来自 Figure 6、Appendix C–D",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/positive-and-negative.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Tables 1–2, distinct recipes",
+      "credit": "根据 Table 1–2 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Main8rollouts EMAteacher .001,JSDclipped /no rewardoptimization but correct-answerfilter/eval remains. Diagnostic4targets teacherforced withtargetprefix,tokenmean logdifference not accuracy. lcm factors2^24*3^12 implyk=2^a3^12,a0..24 =>25. Oldref .5229 alternativecorrect .0202 not categorical failure;instructcode+.94 andtools+4.68 preserved;fixedteacher4.28math drop separate recipe;observational notcausal andno jointrewardtest."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "bd3d82966b975a9b6d5fa0e58273a608ba7456df67c6d29636fb555dc4e6b5f7",
+      "built_article": "aed2927f945f293b9df2d2f16db3d0c4146116afe48a3302da517a02c852c571",
+      "deck": "4e92cc8f5267386e0d6e3454cc61b983dcccdd1e8424a60ace8ca34d0411f36a",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-084/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-084/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-084.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_qa": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -387,5 +755,133 @@
       "largest-table-or-code",
       "final"
     ]
-  }
+  },
+  "terminology": [
+    {
+      "term": "PI Bias Score",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.1, Eq. 2; Figure 3; Appendix E target-prefix teacher-forcing definition"
+        }
+      ],
+      "article_quote": "作者固定学生回答的前文，分别接上四种目标：教师看到的正确解、同题另一条正确解、同题错误解、另一道题的正确解。"
+    },
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4"
+        }
+      ],
+      "article_quote": "直接回答问题、接受参数更新的分支叫 student（学生分支） 。"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4"
+        }
+      ],
+      "article_quote": "训练时，另一个分支额外看到正确解，并给学生已经写出的回答逐位置打概率；这叫 teacher（教师分支） 。"
+    },
+    {
+      "term": "privileged information（PI）",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4; Appendix A.2 and D"
+        }
+      ],
+      "article_quote": "额外正确解就是 privileged information（PI，训练期特权信息） ，测试时学生看不到它。"
+    },
+    {
+      "term": "rollout",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4; Eq. 1"
+        }
+      ],
+      "article_quote": "模型一次生成的完整回答叫 rollout"
+    },
+    {
+      "term": "Jensen–Shannon divergence（JSD）",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3; Eq. 1; Table 7"
+        }
+      ],
+      "article_quote": "作者用两个概率分布之间的 Jensen–Shannon divergence（JSD，一种衡量分布差异的数值）形成逐位置损失。"
+    },
+    {
+      "term": "EMA",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4; Table 7"
+        }
+      ],
+      "article_quote": "教师参数随后缓慢跟随学生： θT ← 0.999 θT + 0.001 θS 。这个移动平均叫 EMA"
+    },
+    {
+      "term": "teacher forcing",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix E"
+        }
+      ],
+      "article_quote": "两分支都强制读取目标解已写出的前文 ，再计算目标每个 token 的概率，最后取平均；这种给定目标文本的评分过程叫 teacher forcing。"
+    },
+    {
+      "term": "on-path / off-path",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.4; Figure 4e"
+        }
+      ],
+      "article_quote": "作者还按学生对参考解的预测概率排序：最高四分之一叫 on-path，最低四分之一叫 off-path。"
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "What Should a Self-Teacher See? Privileged Context Design for On-Policy Self-Distillation",
     "kind": "research",
@@ -51,33 +51,40 @@
         "end": 33
       }
     ],
-    "source_visuals_expected": 33,
-    "visual_inventory_complete": true
+    "source_visuals_expected": 34,
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed the current complete primary-paper text and rendered-page reading. This child updated evidence mappings and inspected relevant primary captions/sections, not a new substitute complete read."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么“给 teacher 看完整答案”可能反而不好？"
+      "locator": "1. Motivation：教师应该多看哪种解题材料"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与 OPSD、OPCD、PS-OPSD 的差别是什么？"
+      "locator": "2. Related Work：与已有自蒸馏方法的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. 29,434 行数据从哪里来，训练代码怎样使用？"
+      "locator": "3. Method：五类教师提示与一次训练更新"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 主要结果、真实比较单位与 checkpoint 选择是什么？"
+      "locator": "4. Experiments：评测口径、种子波动与错误案例"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 怎样把 L1-L5 改造成游戏 query-to-code 实验？"
+      "locator": "5. Discussion：控制实验与下一步验证"
     },
     {
       "role": "summary",
-      "locator": "Q6. 官方代码真的开放了什么，缺了什么？"
+      "locator": "6. Conclusion：结论与公开代码的复现边界"
     }
   ],
   "coverage": [
@@ -90,13 +97,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 1-2"
+          "locator": "§3–4; Tables 1–3"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "完整 solution 同时携带 final answer、某一种 reasoning path 和大量表面细节，student 未必能把这些信息转成自己可执行的下一步。"
+          "quote": "完整解答没有一直赢，只给方法、思考方向或题型有时更好，但结果取决于模型规模、任务和选用哪个训练检查点。"
         }
       ]
     },
@@ -109,13 +116,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 3; Appendix data construction"
+          "locator": "§3.2–3.3; Appendix A.1 and B.1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "公开 JSONL 有 29,434 行，base row 来自 OPSD 的 OpenThoughts math 数据。"
+          "quote": "先离线生成每题的五种资料，再让 student 作答，冻结 teacher 重评这份回答，最后只更新 student 的 LoRA。"
         }
       ]
     },
@@ -128,13 +135,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 4-5; Tables 1-6"
+          "locator": "Table 1; Table 3; Table 14"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "4B 的 best intermediate context 比 L1 的 in-domain peak mean 高 1.39，8B 高 1.57；1.7B 则仍由 L1 最好。"
+          "quote": "4B 的 L3 相对 L1 提高 1.39 个百分点，8B 的 L2 提高 1.57；1.7B 的 L1 仍领先。"
+        },
+        {
+          "artifact": "article",
+          "quote": "尤其 8B 的 L4 在固定终点只有一个种子提高。"
         }
       ]
     },
@@ -147,13 +158,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Limitations and repository README"
+          "locator": "Tables 7–8, 11–14, 20–22; Appendix D.1–D.2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "仓库公开了对齐数据、compiler prompts/code、trainer fork、launch manifests 与 compact CSV，但没有 checkpoints、full logs、cluster launcher、per-item generations 或 judge annotations。"
+          "quote": "简单缩短并不能复制最好的结果；该组与 L3 既不等长，也不具有相同答案可见性"
+        },
+        {
+          "artifact": "article",
+          "quote": "数学训练并未普遍提高中文知识问答。"
         }
       ]
     },
@@ -166,13 +181,120 @@
       "source_locators": [
         {
           "source_id": "code",
-          "locator": "data compiler, trainer, manifests and CSVs at audited commit"
+          "locator": "opsd_trainer.py:455–487; README.md @76ba7f2346fb7f2c965e4160989fbc701db6f1e6"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "仓库公开了对齐数据、compiler prompts/code、trainer fork、launch manifests 与 compact CSV"
+          "quote": "jsd.clamp(max=token_clip) 只设上限，不设负方向的下限。"
+        },
+        {
+          "artifact": "article",
+          "quote": "README 明确没有公开模型检查点、完整训练日志、逐题生成、审查注释和集群启动脚本。"
+        }
+      ]
+    },
+    {
+      "id": "real-case-and-data-provenance",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix B.1 worked example"
+        },
+        {
+          "source_id": "code",
+          "locator": "data/privileged_contexts_l1_l5.jsonl, sample_id=1 @76ba7f2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "data/privileged_contexts_l1_l5.jsonl 的 sample_id=1 来自 olympiads ，与附录 B.1 的例题一致"
+        },
+        {
+          "artifact": "article",
+          "quote": "原始 L1 有一处措辞写成 “same base”，但展示的计算实际上是统一 指数 ，不是统一底数。"
+        }
+      ]
+    },
+    {
+      "id": "teacher-update-and-loss-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.1"
+        },
+        {
+          "source_id": "code",
+          "locator": "opsd_trainer.py:455–487, teacher adapter disabling @76ba7f2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "teacher 始终关闭 LoRA，因此保持初始基础模型。"
+        },
+        {
+          "artifact": "article",
+          "quote": "先截掉大的正贡献后，总和可能为负；不能把它当作始终非负的精确 KL。"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-and-seed-aggregation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1, 3, 14–17"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "三个最高分可能出自三个不同模型检查点。"
+        },
+        {
+          "artifact": "article",
+          "quote": "作者只对 L1、L3、L4 补了 seeds 42、43、44，没有为五种提示都做三种子复现。"
+        }
+      ]
+    },
+    {
+      "id": "paper-code-version-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "arXiv 2609.25623v2"
+        },
+        {
+          "source_id": "code",
+          "locator": "README.md repository-PDF version notice @76ba7f2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本解读的数值和图表以 arXiv v2 为准，代码行为另按上述固定版本说明，不把仓库 PDF 中的新内容混进 v2 结论。"
         }
       ]
     }
@@ -183,23 +305,30 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "§3.2–3.3; Figure 1",
+      "status": "redrawn",
+      "rationale": "保留离线L4→L3→L2与在线冻结教师两条链；强调生成资料的模型不是在线teacher，峰值另由结果图呈现。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "按论文 §3、附录 A.1/B.1 与公开代码重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/training-and-context.svg"
+      ]
     },
     {
       "id": "figure-2",
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2",
+      "source_locator": "Appendix D.1; Figure 2",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "完整初始化KL柱图与boxed答案窗口未绘；正文仅保留未截断全词表诊断不等于实际训练目标的限定。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -211,9 +340,9 @@
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3",
+      "source_locator": "§4.4; Figure 3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "按L1难度分桶的逐生成变化未重绘；文中规模差异不等于呈现各难度桶的所有点。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -225,9 +354,9 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4",
+      "source_locator": "Appendix B.3; Figure 4",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "log长度分布与泄漏柱图未复制；正文采用明确1,200题审查计数，避免把模型审查说成人工标注。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -239,9 +368,9 @@
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5",
+      "source_locator": "Appendix C.4; Figure 5",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "不同条件优化不同教师目标，日志曲线高度不可作能力排名，未保留移动平均曲线。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -253,9 +382,9 @@
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6",
+      "source_locator": "Appendix C.4; Figure 6",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "八检查点全部曲线未绘；结果SVG只展peak/common/@200三种聚合，不声称完整展示时间曲线。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -267,9 +396,9 @@
       "kind": "figure",
       "label": "Figure 7",
       "source_id": "paper",
-      "source_locator": "Figure 7",
+      "source_locator": "Appendix D.1; Figure 7",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "回答四分位KL图未展示；Q4不是答案段，不将它改写成最终答案区域的监督强度。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -281,9 +410,9 @@
       "kind": "figure",
       "label": "Figure 8",
       "source_id": "paper",
-      "source_locator": "Figure 8",
+      "source_locator": "Appendix D.2; Figure 8",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "ZebraLogic rescue/regression计数图未展示；真实线索误读例用于讲判据，不能取代总体能力覆盖图。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -295,9 +424,9 @@
       "kind": "figure",
       "label": "Figure 9",
       "source_id": "paper",
-      "source_locator": "Figure 9",
+      "source_locator": "Appendix D.2; Figure 9",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "多语言Avg@12/Pass@12二维坐标未绘，正文只定义两种分母与无通用赢家。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -309,9 +438,9 @@
       "kind": "figure",
       "label": "Figure 10",
       "source_id": "paper",
-      "source_locator": "Figure 10",
+      "source_locator": "Appendix D.2; Figure 10",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "模型评审的pooled行为增量图未展示，正文保留更多检查不等于正确以及不能推出每规模行为一致。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -323,13 +452,18 @@
       "kind": "figure",
       "label": "Figure 11",
       "source_id": "paper",
-      "source_locator": "Figure 11",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix E.3; Figure 11",
+      "status": "redrawn",
+      "rationale": "提示外壳与mixtures图改成Q5控制表，保留同外壳仍有平均优势但混合不赢固定peak的限定。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "统一提示外壳，Table 20"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 figure-11 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -337,23 +471,30 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 1; §4.2",
+      "status": "redrawn",
+      "rationale": "三个规模peakmean重排，保留seed42与不同测试可选不同checkpoint，4B三种聚合再在SVG并列。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "上表是 Table 1 的逐测试集最高分均值"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg"
+      ]
     },
     {
       "id": "table-2",
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2",
+      "source_locator": "Table 2; §4.3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "逐规模四项迁移冠军及全差值未逐行展示，仅保留每规模三种提示分别赢得四测试的概括。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -365,13 +506,18 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 3; Appendix C.3",
+      "status": "redrawn",
+      "rationale": "选择固定200步配对差值重排，sampleSD与严格为正n/3一起展示，不能把平均提高改成每种子提高。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "固定第 200 步的比较"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -379,13 +525,18 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix A.1; Table 4",
+      "status": "redrawn",
+      "rationale": "跨规模batch/clamp和共享LoRA、采样、学习率配置重排，区别生成topk与全词表损失。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "有效 batch，单位为题"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -393,9 +544,9 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5",
+      "source_locator": "Appendix B.2; Table 5",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "全intro labels和Begin/End分隔符未复制，正文明确原提示外壳有区别，另讲统一外壳控制。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -407,9 +558,9 @@
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6",
+      "source_locator": "Appendix B.3; Table 6",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "median/P10/P90全表未绘，正文仅引用hint均值与完整teacherprompt均值，两个成本缩短比例不混合。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -421,9 +572,9 @@
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7",
+      "source_locator": "Appendix B.3; Table 7",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "直接/等价泄漏与边界合格率全矩阵未绘；正文给逐级1,200题计数与模型审查过程，不声称证明完全无泄漏。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -435,9 +586,9 @@
       "kind": "table",
       "label": "Table 8",
       "source_id": "paper",
-      "source_locator": "Table 8",
+      "source_locator": "Appendix B.3; Table 8",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "两审查prompt一致率与kappa全表未展示；不以模型一致性替代人工标注质量或置信保证。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -449,9 +600,9 @@
       "kind": "table",
       "label": "Table 9",
       "source_id": "paper",
-      "source_locator": "Table 9",
+      "source_locator": "Appendix C.1; Table 9",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "固定200全迁移矩阵未逐格绘，正文说明四套评分分母及无通用赢家，避免混入IDpeak。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -463,9 +614,9 @@
       "kind": "table",
       "label": "Table 10",
       "source_id": "paper",
-      "source_locator": "Table 10",
+      "source_locator": "Appendix C.1; Table 10",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "Puzzle/Cell/Hard/XL矩阵未绘，正文突出exactgrid和真实线索错例，不把cell分当整题成功。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -477,9 +628,9 @@
       "kind": "table",
       "label": "Table 11",
       "source_id": "paper",
-      "source_locator": "Table 11",
+      "source_locator": "Appendix C.1; Table 11",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "C-Evalmacro/micro/hard矩阵未绘；正文保留52学科负结果和提取失败计错，未隐去迁移下降。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -491,13 +642,18 @@
       "kind": "table",
       "label": "Table 12",
       "source_id": "paper",
-      "source_locator": "Table 12",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix C.2; Table 12",
+      "status": "redrawn",
+      "rationale": "compilerreplication进入Q5控制表，既換模型又换解码，具体赢家变化且L1共享不新增训练。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "换摘要模型，Table 12"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-12 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -505,13 +661,18 @@
       "kind": "table",
       "label": "Table 13",
       "source_id": "paper",
-      "source_locator": "Table 13",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix C.2; Table 13",
+      "status": "redrawn",
+      "rationale": "前10%加答案控制重排，保留63.89和与L3不等长/不等答案可见性，避免纯长度因果结论。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "参考解答前 10%＋答案，Table 13"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-13 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -519,23 +680,30 @@
       "kind": "table",
       "label": "Table 14",
       "source_id": "paper",
-      "source_locator": "Table 14",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix C.2; Table 14",
+      "status": "redrawn",
+      "rationale": "4Bpeak/common/@200重绘，长生成上限进入Q5；未复制所有early/latetruncation行。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "按 Table 1、Table 14 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-14 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg"
+      ]
     },
     {
       "id": "table-15",
       "kind": "table",
       "label": "Table 15",
       "source_id": "paper",
-      "source_locator": "Table 15",
+      "source_locator": "Appendix C.3; Table 15",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "三种子绝对分未绘，改用Table3配对差值与n/3，保留复现仅覆盖L1/L3/L4。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -547,9 +715,9 @@
       "kind": "table",
       "label": "Table 16",
       "source_id": "paper",
-      "source_locator": "Table 16",
+      "source_locator": "Appendix C.4; Table 16",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "选峰步全矩阵未绘，正文只给L4共用125步例，不伪称所有峰值来自一个模型。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -561,9 +729,9 @@
       "kind": "table",
       "label": "Table 17",
       "source_id": "paper",
-      "source_locator": "Table 17",
+      "source_locator": "Appendix C.4; Table 17",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "peak-to200缺口全表未复制，common与endpoint真实数字用于解释，未呈现所有稳定性数据。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -575,9 +743,9 @@
       "kind": "table",
       "label": "Table 18",
       "source_id": "paper",
-      "source_locator": "Table 18",
+      "source_locator": "Appendix D.2; Table 18",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "newsolve与medium/easy逐生成变化表未绘；覆盖和每次回答可靠性分开定义。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -589,9 +757,9 @@
       "kind": "table",
       "label": "Table 19",
       "source_id": "paper",
-      "source_locator": "Table 19",
+      "source_locator": "Appendix D.2; Table 19",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "行为30题分层子样本与准确率360回答的分母不同，未绘全部行为率，正文只保留非单一机制限定。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -603,13 +771,18 @@
       "kind": "table",
       "label": "Table 20",
       "source_id": "paper",
-      "source_locator": "Table 20",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix E.1–E.2; Table 20",
+      "status": "redrawn",
+      "rationale": "共用外壳L1–L4峰值进入Q5控制表；mixtures没有超过固定peak，未复制全部迁移列。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "统一提示外壳，Table 20"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-20 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -617,13 +790,18 @@
       "kind": "table",
       "label": "Table 21",
       "source_id": "paper",
-      "source_locator": "Table 21",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix E.2; Table 21",
+      "status": "redrawn",
+      "rationale": "自适应选择结果进入Q5并解释额外调用与特征router；无策略赢最佳固定peak，不能宣传动态选择已最优。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "混合提示与按题选择，Tables 20–22"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-21 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -631,18 +809,312 @@
       "kind": "table",
       "label": "Table 22",
       "source_id": "paper",
-      "source_locator": "Table 22",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Appendix E.3; Table 22",
+      "status": "redrawn",
+      "rationale": "levelconditionedmixtures进入Q5控制行，终点改善与peak不赢分开；不把各列独立选level的envelope当部署模型。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "混合提示与按题选择，Tables 20–22"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
+      "credit": "根据原论文 table-22 重绘事实，未复制原版排版",
       "asset_paths": []
+    },
+    {
+      "id": "appendix-b1-worked-example",
+      "kind": "appendix-visual",
+      "label": "Appendix B.1 boxed worked example",
+      "source_id": "paper",
+      "source_locator": "Appendix B.1 boxed five-context example; JSONL sample_id=1 @76ba7f2",
+      "status": "redrawn",
+      "rationale": "未编号五资料例题是重要附录visual；重绘统一指数的计算与可见信息，保留samebase文字瑕疵，非模型输出日志。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Facts independently diagrammed, not source image reuse.",
+      "credit": "根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/exponent-real-case.svg"
+      ]
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/self-teacher-context-design/training-and-context.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1; §3.2–3.3; Appendix A.1/B.1",
+      "credit": "按论文 §3、附录 A.1/B.1 与公开代码重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/exponent-real-case.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "appendix-b1-worked-example",
+      "source_id": "paper",
+      "source_locator": "Appendix B.1; public JSONL sample_id=1 @76ba7f2",
+      "credit": "根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table 1; Table 14, 4B seed42 1024token rows",
+      "credit": "按 Table 1、Table 14 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "OfflineL4->3->2generated397Bnotteacher,five29,434alignedrows;sample1powers gcd1003 bases8,9,5 =>D;cachedhint frozenbase studentLoRA currentrollout vocabcomponentcap maxonly pooledloss. Avg12 andtestbestoracle separatecommon/endpoint;8BL4endpoint1/3seed positive,stylecontrolled notlengthsemanticsfullyisolated;Zebradistance3vs2 case real butlogsabsent,C-Evalnegatives andmodelanswerleakchecks retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "1b8bcc6b654607931abe04fd139e8459d147b3ae8e38750297c78010664dae9d",
+      "built_article": "76c39e549665ea651498a4bf91464d7e7f025f814e1ee4c4bffdb72620b97699",
+      "deck": "33c93047ec15e1d8e8317a2cbe5e7798a3c961063321edb47babcce23bbba331",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-080/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T05-37-01-161Z-080/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-080.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 1(b)"
+        }
+      ],
+      "article_quote": "student 只看题目，先写自己的回答；teacher 额外看参考资料，判断 student 接下来该怎样写。"
+    },
+    {
+      "term": "teacher",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 1(b)"
+        }
+      ],
+      "article_quote": "student 只看题目，先写自己的回答；teacher 额外看参考资料，判断 student 接下来该怎样写。"
+    },
+    {
+      "term": "On-Policy Self-Distillation（OPSD）",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Appendix A.1"
+        }
+      ],
+      "article_quote": "本文的 On-Policy Self-Distillation（OPSD） 指：student 每轮用当前参数生成回答，再由同一基础模型的冻结版本指导这份回答。"
+    },
+    {
+      "term": "privileged context",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Eq. 3"
+        }
+      ],
+      "article_quote": "只给 teacher 的额外参考资料叫 privileged context 。"
+    },
+    {
+      "term": "prefix",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Eq. 3–4"
+        }
+      ],
+      "article_quote": "token 是模型处理的文本单位，可能是字、词片段或符号；已写出的前文叫 prefix。"
+    },
+    {
+      "term": "compiler",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Appendix B.1; Figure 1(a)"
+        }
+      ],
+      "article_quote": "作者把生成资料的程序称为 compiler，这里它是一个模型提示流程，不是编译游戏代码的编译器。"
+    },
+    {
+      "term": "Avg@12",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2; Table 1; Appendix A.2"
+        }
+      ],
+      "article_quote": "Avg@12＝正确回答总数÷(题数×12) ，不是十二次中只要有一次正确就算通过的 Pass@12。"
+    }
+  ],
+  "legacy_qa": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,

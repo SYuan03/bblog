@@ -84,7 +84,8 @@
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     try { localStorage.setItem('tide-theme', next); } catch { /* Theme switching still works without storage. */ }
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#101721' : '#f8f4ed');
+    const paperPage = body.classList.contains('page-paper-reading');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? (paperPage ? '#151a21' : '#101721') : (paperPage ? '#ffffff' : '#f8f4ed'));
     updateThemeToggleLabel();
   });
 
@@ -469,7 +470,8 @@
   });
   codeBlocks.forEach((block) => {
     if (block.querySelector('.copy-code')) return;
-    const source = block.querySelector('.code pre, pre code, pre');
+    // querySelector follows DOM order, not the preference order of a selector list.
+    const source = block.querySelector('.code pre') || block.querySelector('pre code') || block.querySelector('pre');
     if (!source) return;
     const button = document.createElement('button');
     button.type = 'button';
@@ -485,8 +487,19 @@
 
   const focusToggles = [...document.querySelectorAll('[data-focus-toggle]')];
   const focusExit = document.querySelector('[data-focus-exit]');
-  const primaryFocusToggle = focusToggles.find((button) => button !== focusExit);
+  let focusModeTrigger = null;
+  let focusModeRevision = 0;
+  const restoreFocusModeTrigger = () => {
+    const isVisible = (button) => button !== focusExit
+      && button.getClientRects().length > 0
+      && getComputedStyle(button).visibility !== 'hidden';
+    const target = focusModeTrigger && isVisible(focusModeTrigger)
+      ? focusModeTrigger
+      : focusToggles.find(isVisible);
+    target?.focus({ preventScroll: true });
+  };
   const setFocusMode = (active) => {
+    focusModeRevision += 1;
     body.classList.toggle('focus-mode', active);
     focusToggles.forEach((button) => {
       button.setAttribute('aria-pressed', String(active));
@@ -499,16 +512,26 @@
   focusToggles.forEach((button) => {
     button.addEventListener('click', () => {
       const active = !body.classList.contains('focus-mode');
+      if (active) focusModeTrigger = button;
       setFocusMode(active);
-      (active ? focusExit : primaryFocusToggle)?.focus({ preventScroll: true });
+      if (active) focusExit?.focus({ preventScroll: true });
+      else restoreFocusModeTrigger();
     });
   });
   addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape' || !body.classList.contains('focus-mode')) return;
+    if (event.key !== 'Escape' || !body.classList.contains('focus-mode') || document.querySelector('dialog[open]')) return;
     if (document.fullscreenElement || document.querySelector('dialog[open]')) return;
     event.preventDefault();
     setFocusMode(false);
-    primaryFocusToggle?.focus({ preventScroll: true });
+    restoreFocusModeTrigger();
+  });
+  addEventListener('message', (event) => {
+    if (event.origin !== location.origin || event.data?.type !== 'paper-deck-escape') return;
+    const trustedFrame = [...document.querySelectorAll('.post-deck-embed iframe')]
+      .some((frame) => frame.contentWindow === event.source);
+    if (!trustedFrame || !body.classList.contains('focus-mode') || document.fullscreenElement || document.querySelector('dialog[open]')) return;
+    setFocusMode(false);
+    restoreFocusModeTrigger();
   });
 
   document.querySelector('[data-share]')?.addEventListener('click', async (event) => {
@@ -720,6 +743,148 @@
     photoDialogTrigger?.focus({ preventScroll: true });
     photoDialogTrigger = null;
   });
+
+  // Keep paper diagrams readable without sending mobile readers to a bare SVG tab.
+  if (body.classList.contains('page-paper-reading') && typeof HTMLDialogElement !== 'undefined' && HTMLDialogElement.prototype.showModal) {
+    const paperFigures = [...document.querySelectorAll('.prose :is(.figure, [class$="-figure"])')]
+      .filter((figure) => figure.querySelector('img'));
+    if (paperFigures.length) {
+      const figureDialog = document.createElement('dialog');
+      figureDialog.className = 'paper-figure-dialog';
+      figureDialog.setAttribute('aria-label', '图片放大查看');
+      figureDialog.innerHTML = '<div class="paper-figure-toolbar"><span class="paper-figure-title">图片详情</span><div class="paper-figure-actions"><button type="button" data-figure-zoom="out" aria-label="缩小图片">−</button><button type="button" data-figure-zoom="in" aria-label="放大图片">＋</button><button type="button" data-figure-fit>整图</button><button type="button" data-figure-clear>清晰</button><button type="button" data-figure-close>关闭</button></div></div><div class="paper-figure-viewport" role="region" tabindex="0" aria-label="图片区域，可左右和上下滚动"><div class="paper-figure-canvas"><img alt=""></div></div><p class="paper-figure-caption"></p>';
+      body.append(figureDialog);
+      const imageViewport = figureDialog.querySelector('.paper-figure-viewport');
+      const enlargedImage = figureDialog.querySelector('img');
+      const caption = figureDialog.querySelector('.paper-figure-caption');
+      const closeFigure = figureDialog.querySelector('[data-figure-close]');
+      let figureTrigger;
+      let figureFocusModeRevision = 0;
+      let imageWidth = 0;
+      let naturalWidth = 0;
+      let naturalHeight = 0;
+      let dragStart;
+      const setFigureScrollLock = (locked) => {
+        root.classList.toggle('paper-figure-open', locked);
+        body.classList.toggle('paper-figure-open', locked);
+      };
+
+      const fitWidth = () => {
+        const width = naturalWidth || 780;
+        const height = naturalHeight || width;
+        const availableWidth = Math.max(48, imageViewport.clientWidth - 24);
+        const availableHeight = Math.max(48, imageViewport.clientHeight - 24);
+        return Math.min(width, availableWidth, availableHeight * width / height);
+      };
+      const clearWidth = () => Math.max(fitWidth(), Math.min(naturalWidth || 780, 780));
+      const setImageWidth = (width, preserveCenter = false) => {
+        const oldWidth = imageWidth || width;
+        const centerX = imageViewport.scrollLeft + imageViewport.clientWidth / 2;
+        const centerY = imageViewport.scrollTop + imageViewport.clientHeight / 2;
+        imageWidth = Math.round(Math.max(48, Math.min(width, Math.max(naturalWidth * 2, 2400))));
+        enlargedImage.style.width = `${imageWidth}px`;
+        if (preserveCenter) {
+          const ratio = imageWidth / oldWidth;
+          imageViewport.scrollLeft = centerX * ratio - imageViewport.clientWidth / 2;
+          imageViewport.scrollTop = centerY * ratio - imageViewport.clientHeight / 2;
+        }
+      };
+      const openFigure = (sourceImage, figure, trigger) => {
+        const source = sameOriginHref(sourceImage.currentSrc || sourceImage.src || sourceImage.dataset.src);
+        if (!source) return;
+        figureTrigger = trigger;
+        figureFocusModeRevision = focusModeRevision;
+        naturalWidth = sourceImage.naturalWidth || Number(sourceImage.getAttribute('width')) || 780;
+        naturalHeight = sourceImage.naturalHeight || Number(sourceImage.getAttribute('height')) || naturalWidth;
+        enlargedImage.alt = sourceImage.alt;
+        caption.textContent = `${figure.querySelector('figcaption')?.textContent.trim() || sourceImage.alt} · 可左右、上下滚动；桌面端也可拖动图片。`;
+        enlargedImage.onload = () => {
+          naturalWidth = enlargedImage.naturalWidth || naturalWidth;
+          naturalHeight = enlargedImage.naturalHeight || naturalHeight;
+          setImageWidth(clearWidth());
+        };
+        enlargedImage.src = source;
+        figureDialog.showModal();
+        setFigureScrollLock(true);
+        setImageWidth(clearWidth());
+        imageViewport.scrollTo(0, 0);
+        closeFigure.focus({ preventScroll: true });
+      };
+
+      paperFigures.forEach((figure) => {
+        const sourceImage = figure.querySelector('img');
+        const source = sameOriginHref(sourceImage.currentSrc || sourceImage.src || sourceImage.dataset.src);
+        if (!source) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'paper-figure-expand';
+        button.textContent = '放大查看';
+        button.setAttribute('aria-haspopup', 'dialog');
+        button.setAttribute('aria-label', `放大查看：${sourceImage.alt || '正文图片'}`);
+        figure.insertBefore(button, figure.querySelector('figcaption'));
+        button.addEventListener('click', () => openFigure(sourceImage, figure, button));
+        const link = sourceImage.closest('a');
+        if (link && sameOriginHref(link.href) === source) {
+          link.setAttribute('aria-haspopup', 'dialog');
+          link.setAttribute('aria-label', `放大查看：${sourceImage.alt || '正文图片'}`);
+          link.addEventListener('click', (event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            openFigure(sourceImage, figure, link);
+          });
+        }
+      });
+      figureDialog.querySelectorAll('[data-figure-zoom]').forEach((button) => button.addEventListener('click', () => {
+        setImageWidth(imageWidth * (button.dataset.figureZoom === 'in' ? 1.25 : .8), true);
+      }));
+      figureDialog.querySelector('[data-figure-fit]').addEventListener('click', () => { setImageWidth(fitWidth()); imageViewport.scrollTo(0, 0); });
+      figureDialog.querySelector('[data-figure-clear]').addEventListener('click', () => { setImageWidth(clearWidth()); imageViewport.scrollTo(0, 0); });
+      const closeFigureDialog = () => { setFigureScrollLock(false); figureDialog.close(); };
+      closeFigure.addEventListener('click', closeFigureDialog);
+      figureDialog.addEventListener('keydown', (event) => {
+        if (event.key !== 'Tab' || !figureDialog.open) return;
+        const controls = [...figureDialog.querySelectorAll('button:not([disabled]), [tabindex="0"]')]
+          .filter((control) => control.getClientRects().length > 0);
+        if (!controls.length) return;
+        const current = controls.indexOf(document.activeElement);
+        const next = (current + (event.shiftKey ? -1 : 1) + controls.length) % controls.length;
+        event.preventDefault();
+        controls[next].focus({ preventScroll: true });
+      });
+      figureDialog.addEventListener('cancel', () => { setFigureScrollLock(false); });
+      figureDialog.addEventListener('click', (event) => { if (event.target === figureDialog) closeFigureDialog(); });
+      figureDialog.addEventListener('close', () => {
+        if (figureDialog.open) return;
+        setFigureScrollLock(false);
+        enlargedImage.onload = null;
+        enlargedImage.removeAttribute('src');
+        // A second Escape can exit focus mode before the native close event fires.
+        if (figureFocusModeRevision !== focusModeRevision && !body.classList.contains('focus-mode')) {
+          restoreFocusModeTrigger();
+        } else {
+          figureTrigger?.focus({ preventScroll: true });
+        }
+        figureTrigger = null;
+        dragStart = null;
+        imageViewport.classList.remove('is-dragging');
+      });
+      imageViewport.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'mouse' || event.button !== 0) return;
+        dragStart = { x: event.clientX, y: event.clientY, left: imageViewport.scrollLeft, top: imageViewport.scrollTop };
+        imageViewport.setPointerCapture(event.pointerId);
+        imageViewport.classList.add('is-dragging');
+        event.preventDefault();
+      });
+      imageViewport.addEventListener('pointermove', (event) => {
+        if (!dragStart) return;
+        imageViewport.scrollLeft = dragStart.left + dragStart.x - event.clientX;
+        imageViewport.scrollTop = dragStart.top + dragStart.y - event.clientY;
+      });
+      const endImageDrag = () => { dragStart = null; imageViewport.classList.remove('is-dragging'); };
+      imageViewport.addEventListener('pointerup', endImageDrag);
+      imageViewport.addEventListener('pointercancel', endImageDrag);
+    }
+  }
 
   const dialog = document.querySelector('[data-search-dialog]');
   const searchInput = document.querySelector('[data-search-input]');

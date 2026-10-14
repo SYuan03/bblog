@@ -1,66 +1,17 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Experience Distillation 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="Experience Distillation 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h1>不再跑 environment，怎样把长 trial history 写进参数？</h1>
-  <p class="lead">从 archived history 分叉，只生成 next decision，不生成 future observation。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>51.4%</h3><p>software pass@1</p></div><div class="card green"><h3>64.8%</h3><p>retained ICL gain</p></div><div class="card orange"><h3>9.6×</h3><p>fewer trials vs PPO</p></div><div class="card "><h3>8/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；Tables 1-4</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · BRANCH</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>One-step model-free target 停在 action 边界</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>History</strong><p>recorded observations</p></div><div class="step"><b>2</b><strong>Prefix</strong><p>选择 branch point</p></div><div class="step"><b>3</b><strong>Teacher</strong><p>生成 next decision</p></div><div class="step"><b>4</b><strong>Stop</strong><p>不生成 observation</p></div><div class="step"><b>5</b><strong>Train</strong><p>只对新 tokens loss</p></div></div></div>
-  <div class="foot"><span>来源：Method section</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · DIFFERENCE</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>它不是 OPSD</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>Targets</th></tr></thead><tbody><tr><td>OPSD</td><td>student tokens，teacher rescore</td></tr><tr><td>Experience Distillation</td><td>teacher-sampled next decision</td></tr><tr><td>SFT</td><td>recorded action</td></tr></tbody></table></div></div>
-  <div class="foot"><span>来源：Method comparison</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · DATA SCALE</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>Software history 平均 82.4K tokens</h2>
-
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>749</h3><p>tasks</p></div><div class="card "><h3>60.5</h3><p>turns/history</p></div><div class="card orange"><h3>82.4K</h3><p>tokens/history</p></div><div class="card green"><h3>61.7M</h3><p>tokens total</p></div></div></div>
-  <div class="foot"><span>来源：data appendix</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · REAL CASE</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>MapStore2 第六次 trial 才合并两个正确修复</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>UI</h3><p>显式 value:null reset</p></div><div class="card blue"><h3>Pipeline</h3><p>保留 falsy geometry update</p></div></div></div>
-  <div class="foot"><span>来源：MapStore2 case study</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · RESULT</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>远强于 SFT，但仍低于保留完整 history 的 ICL</h2>
-
-  <div class="content"><div class="barset"><div class="scoreline"><span>Zero-shot</span><div class="track"><i class="fill gray" style="--v:5.3%"></i></div><b>5.3</b></div><div class="scoreline"><span>SFT</span><div class="track"><i class="fill orange" style="--v:8%"></i></div><b>8.0</b></div><div class="scoreline"><span>Experience Distill</span><div class="track"><i class="fill green" style="--v:51.4%"></i></div><b>51.4</b></div><div class="scoreline"><span>Task-specific ICL</span><div class="track"><i class="fill " style="--v:76.4%"></i></div><b>76.4</b></div></div></div>
-  <div class="foot"><span>根据 software result table 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · PACKING</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>Branch packing 显著降低 sequence 与 step 数</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>Examples</h3><p>4,096 → 128 sequences</p></div><div class="card blue"><h3>Training</h3><p>768 → 64 steps</p></div></div></div>
-  <div class="foot"><span>来源：efficiency appendix</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · GAME USE</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>昂贵 simulation 的 archived repair decision</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>适合</h3><p>预训练 compile-run-debug decision</p></div><div class="card orange"><h3>仍需要</h3><p>后续 on-policy execution calibration</p></div></div></div>
-  <div class="foot"><span>本文 game experiment suggestion</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2607.21051 · 2026-07-23</span></div>
-  <h2>效率思路强，artifact release 弱</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>论文给出</h3><p>method、large study、cases</p></div><div class="card red"><h3>未公开</h3><p>model、tasks、verifier、code、histories</p></div></div></div>
-  <div class="foot"><span>兴趣程度 8/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/sample-efficient-learning-from-agent-experience.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Experience Distillation 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.diagram{display:block;width:100%;max-height:590px;object-fit:contain}.compact .table{font-size:21px}.compact .table th,.compact .table td{padding:12px}.content{gap:18px}.code{font-size:24px}</style></head><body><div class="viewport"><main class="stage" aria-label="Experience Distillation 图解">
+<section class="slide active"><div class="meta"><span>01 · 研究问题</span><span>arXiv:2607.21051v1 · 2026-07-23</span></div><h1>从试错历史学习，训练时不再重新执行</h1><p class="lead">读完后来的经验，再回到历史前文新写下一步；一到动作就停止。</p><div class="content"><div class="grid g2"><div class="card"><h3>问题</h3><p>直接模仿旧动作会学到失败假设；重新运行经验教师又要昂贵环境样本。</p></div><div class="card"><h3>算法</h3><p>教师和学生同一初始模型。教师看整题经验，新决策作为学生训练目标，但不执行、不编造返回。</p></div></div><div class="callout"><p>软件训练内 pass@1：未训练 5.3%，旧记录 SFT 8.0%，EPD 51.4%，带历史 ICL 76.4%。</p></div></div><div class="foot"><span>§1–3、Table 1；个人兴趣 8/10，仅代表博客作者兴趣</span><span>1 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 最近对照</span><span>先区分目标由谁采样</span></div><h2>训练教师新决策，不是重评学生当前路径</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>训练目标</th><th>新增环境</th></tr></thead><tbody><tr><td>旧记录 SFT</td><td>真实旧前文 → 原来的旧动作</td><td>无</td></tr><tr><td>经验 ICL</td><td>不训练；每次做任务带历史</td><td>新尝试执行</td></tr><tr><td>OPSD / OPCD</td><td>学生当前路径，教师额外资料重评</td><td>学生通常执行</td></tr><tr><td>model-based rollout</td><td>教师动作 → 模型预测返回 → 下一动作</td><td>模拟替代执行</td></tr><tr><td>EPD</td><td>真实旧前文 → 教师新的一次决策</td><td>蒸馏无新增</td></tr></tbody></table></div><div class="callout"><p>默认 next-token prediction：仅保留教师采样 token，等价教师采样的 forward KL（差教师熵常数）。</p></div></div><div class="foot"><span>§2–3、5；新决策未经执行，旧前文不是当前学生的 on-policy 状态</span><span>2 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 收集经验</span><span>独立过程 ≠ 过程内独立 trials</span></div><h2>同题反复尝试，保留多次尝试后成功的历史</h2><div class="content"><div class="flow" style="--n:4"><div class="step"><b>01 · 软件题</b><strong>749 道精选任务</strong><p>查仓库、改文件、跑测试和提交；任务包与验收器未公开。</p></div><div class="step"><b>02 · 多个过程</b><strong>每题 8–12 个</strong><p>各过程最多 10 次试错；过程内保留历史和工作区修改。</p></div><div class="step"><b>03 · 筛选</b><strong>需超过一次才成功</strong><p>多条满足时随机选一条；任务偏向反复修订，不是自然题分布。</p></div><div class="step"><b>04 · 记录</b><strong>每题 82.4K token</strong><p>平均 60.5 turns；总计 61.7M token，不是一份 context。</p></div></div><div class="callout"><p>游戏试错每次重置世界，保留经验。主六题共 47 trials / 3,672 turns / 502K token；模型名称未披露。</p></div></div><div class="foot"><span>§4.1、A.7、Tables 10–11；软件 / 游戏用不同初始 checkpoint</span><span>3 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 一次分支</span><span>不运行新动作</span></div><h2>教师读整题经验，学生只看训练前文</h2><div class="content"><div class="flow" style="--n:4"><div class="step"><b>01 · 整理</b><strong>g(history)</strong><p>浓缩任务相关反馈；具体重写 / 总结提示没有公开。</p></div><div class="step"><b>02 · 分叉</b><strong>真实动作边界</strong><p>教师看到历史前文、整题经验和深入推理要求。</p></div><div class="step"><b>03 · 新决策</b><strong>完整分析 + 动作</strong><p>一到动作停止；不预测 observation，不做独立验证。</p></div><div class="step"><b>04 · 学生训练</b><strong>只监督新 token</strong><p>学生不看额外整题经验；旧动作和真实返回仅作前文。</p></div></div><div class="callout"><p>每个位置独立生成会反复处理相同长前文，因此论文继续引入 branch packing。</p></div></div><div class="foot"><span>Eq. 2、§3.3；不是未披露强教师轨迹，教师与学生同一初始模型</span><span>4 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 样本打包</span><span>新目标与旧 observation 不同来源</span></div><h2>o₁ 是 a₀ 的返回，不是 a′₀ 的返回</h2><div class="content"><img class="diagram" src="/lib/papers/sample-efficient-learning-from-agent-experience/branch-packing.svg" width="1080" height="650" alt="新教师决策、旧动作、真实旧返回的打包和loss掩码"></div><div class="foot"><span>Eq. 3–4；后续前文含更早教师决策，论文明确承认是实用近似</span><span>5 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 真实修复</span><span>MapStore2 · Appendix C.3</span></div><h2>按钮、清除状态与查询刷新必须配合</h2><div class="content"><img class="diagram" src="/lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg" width="1080" height="670" alt="过滤清除的六次试错及三段修复关系"></div><div class="foot"><span>Tables 15–16；epic 是 RxJS 处理事件的流水线，三段分析不是独立官方断言</span><span>6 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 目标质量与验收</span><span>历史成功不等于每条新目标成功</span></div><h2>新目标有正确发现，也会重提失败假设</h2><div class="content"><div class="grid g2"><div class="card"><h3>教师目标 1 / 4</h3><p>组件显式 value:null，query epic 允许 geometry 的 null 更新并刷新。包含被接受修复的知识。</p></div><div class="card"><h3>教师目标 2 / 3</h3><p>重提之前被否定的取消流程位置和面板临时状态修改，不能都算验证过的要求。</p></div></div><pre class="code">.filter(({update = {}}) =&gt;
+  !!update.value || update.type === 'geometry'
+)</pre><div class="callout"><p>在原始仓库、不带历史评测：EPD / ICL 各 10/10 次修复通过作者验收（accepted）。针对 epic 的局部测试检查 UPDATE_QUERY；完整本地浏览器套件未跑通。</p></div></div><div class="foot"><span>C.3.3–C.3.4；代码是论文补丁摘录，不是完整项目或公开验收器</span><span>7 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>08 · 分数与结果</span><span>训练内巩固和 OOD 分开</span></div><h2>51.4% 与 8.84% 回答不同问题</h2><div class="content"><img class="diagram" src="/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg" width="1080" height="650" alt="训练内结果、新题结果和预算边界"></div><div class="foot"><span>Table 1 / 4、Figure 1 / 3；游戏 43.8 为最高分归一化后的宏平均，不是通关率</span><span>8 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 最有用的消融</span><span>平均受益，不是每题受益</span></div><h2>打包提效率，去模拟返回减少部分错误</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>对照</th><th>结果</th><th>最重要的限制</th></tr></thead><tbody><tr><td>one-step / two-step</td><td>五题均分 49.8 / 40.1</td><td>Acorncourt 反向：34.9 / 53.6</td></tr><tr><td>独立样本 / branch packing</td><td>4,096 → 128 序列；768 → 64 steps；合计时间 &gt;10×</td><td>均分 43.1 → 43.8，Inhumane 41.5 → 36.6</td></tr><tr><td>教师采样 / 学生 reverse KL</td><td>两题 G：96.7 / 98.4 对 9.1 / .4</td><td>单题匹配计算实验；G 不是准确率，不代表 OPD 普遍失败</td></tr><tr><td>NTP / 全分布 KL</td><td>六题均分 43.1 / 43.4</td><td>没有清晰全分布优势，G 平均 84.2 / 82.0</td></tr></tbody></table></div></div><div class="foot"><span>Tables 2–3、5–6；长推理消融来自早期三步分支，不能混入默认 one-step</span><span>9 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>10 · 指标与预算</span><span>聚合顺序决定 G 的数值</span></div><h2>增益保留率和通过率，不是一个指标</h2><div class="content"><div class="formula">G = (S_method − S_zero) / (S_ICL − S_zero) × 100%<br>软件：(51.4−5.3)/(76.4−5.3)=64.8%</div><div class="grid g2"><div class="card"><h3>主表先平均再算</h3><p>游戏均分 43.8 → G=93.4%。Table 3 先每题算 G 再平均 → 90.1%；无矛盾。</p></div><div class="card"><h3>预算以完整执行计</h3><p>PPO 最高分与最终分均为 17.74，完整训练每题平均 504.9 次执行。游戏 GRPO：240 次时最高分 29.9；完整训练 448 次，最终分 26。</p></div></div><div class="callout"><p>9.6× / 57.2× 配对的是最好成绩与完整强化学习预算，不是匹配成绩下的最小计算成本。</p></div></div><div class="foot"><span>§4.1、Figure 1、B.1 / B.4；10 / 16 次是评测重复，不是独立训练种子</span><span>10 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>11 · 最应补的实验</span><span>不能只扩大教师生成</span></div><h2>核查新目标，以及打包前文的错位</h2><div class="content"><div class="grid g2"><div class="card"><h3>目标质量</h3><p>用历史证据筛掉已被否定假设；少量新增执行测筛选收益，执行预算另记，不能再声称完全无新增。</p></div><div class="card"><h3>前文不一致</h3><p>比较独立分支、打包、仅真实前文目标与学生执行校准。固定经验、总生成 token 和环境样本。</p></div></div><div class="callout"><p>持续学习每轮 4 trials，五轮 20 trials，均分 7.1 → 47.0；证明经验可经参数积累，但游戏子集与主表不同。</p></div></div><div class="foot"><span>§4.7、Figure 2；任务族拆分与独立新题是更重要的泛化检查</span><span>11 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>12 · 结论与边界</span><span>具体样本复用算法，缺完整复现实验包</span></div><h2>不新增环境，不等于新动作已验证</h2><div class="content"><div class="grid g2"><div class="card"><h3>值得保留</h3><p>停止在动作边界，不伪造环境返回；只训新决策，打包减少重复处理历史；独立新题也有收益。</p></div><div class="card"><h3>复现材料的缺口</h3><p>未公开模型、任务表、历史、预处理、完整优化设置、官方代码与验收器；部分本地套件没跑。</p></div></div><div class="callout"><p>8 个案例刻意选强对比：按各案例规定的功能条件判为有效（valid），ICL 为 79/80、EPD 为 72/79，不是总体率。没有新增环境执行，仍最多额外生成约 172M token。</p></div></div><div class="foot"><span>全文 53 页、8 Figures、24 Tables；本文按来源重绘事实，未重新运行模型或评测</span><span>12 / 12</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/sample-efficient-learning-from-agent-experience.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

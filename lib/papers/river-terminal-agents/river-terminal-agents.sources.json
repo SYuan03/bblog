@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Learning Generalizable Behaviors for Terminal Agents",
     "kind": "benchmark",
@@ -53,7 +53,7 @@
       "kind": "code",
       "title": "Terminal-River/terminal-river.github.io",
       "url": "https://github.com/Terminal-River/terminal-river.github.io",
-      "revision": "6da2749578df2779b8a7e134ccb8d063d84693aa, checked 2026-09-29",
+      "revision": "6da2749578df2779b8a7e134ccb8d063d84693aa; unchanged at 2026-10-14 check",
       "used_for": [
         "project-page-source",
         "case-files",
@@ -156,27 +156,27 @@
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么 terminal-agent RL 不能只靠扩大环境数量？"
+      "locator": "1. Motivation：错误的测试信号为什么会强化错误行为？"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与 Endless-Terminals、TMax 和“更强测试”路线的边界在哪里？"
+      "locator": "2. Related Work：与扩大环境、生成更强测试的路线相比"
     },
     {
       "role": "method",
-      "locator": "Q3. 14,399 个环境怎样变成 3.5K，judge 又怎样产生一条 reward？"
+      "locator": "3. Method：环境筛选、两条误判记录与训练更新"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 实验结果支持哪些结论？"
+      "locator": "4. Experiments：主结果、环境过滤消融与跨领域测试"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 对 Claude Code、Codex 这类完整 harness，哪些结论最值得复用？"
+      "locator": "5. Discussion：对完整 coding harness 训练的启发"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价这篇论文？"
+      "locator": "6. Conclusion：有说服力的证据与尚未公开的部分"
     }
   ],
   "coverage": [
@@ -195,7 +195,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Policy 会沿着 verifier 的实际判定边界学习，即使这条边界偏离了 instruction"
+          "quote": "模型会学习如何通过测试程序，即使测试条件偏离任务要求。"
         }
       ]
     },
@@ -244,7 +244,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "14,399 个环境没有经过人工逐条标注"
+          "quote": "14,399 个环境由 GPT-5.4 给八类判定"
         },
         {
           "artifact": "article",
@@ -272,11 +272,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Policy 能看见 instruction、command history、terminal observations，以及容器权限允许读取的文件"
+          "quote": "训练模型能看见任务说明、命令历史和终端输出，以及容器权限允许读取的文件"
         },
         {
           "artifact": "article",
-          "quote": "ground truth、reference implementation 和 hidden tests 应当只对 verifier 可见"
+          "quote": "参考答案、参考实现和隐藏测试应当只对验收程序可见"
         }
       ]
     },
@@ -295,11 +295,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "如果本 turn 的 command 和 observation 都与更早 turn 的 Jaccard similarity 大于 0.8"
+          "quote": "全部回复 token 的优势各扣 0.05"
         },
         {
           "artifact": "article",
-          "quote": "主表的 Average 是四个 benchmark 的不加权平均"
+          "quote": "主表 Average 是四项等权算术平均"
         }
       ]
     },
@@ -329,15 +329,15 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "未把缺失的 checker 代码补成“官方实现”"
+          "quote": "没有说明怎样在回复和 token 间分配"
         },
         {
           "artifact": "article",
-          "quote": "`task_003722` 要从 `broadcast.mp4` 中 OCR 新闻 ticker"
+          "quote": "按时间顺序写到 `reconstructed_ticker.txt`"
         },
         {
           "artifact": "article",
-          "quote": "`task_006064` 要求 Rust 程序保留 `a-z` 与空格"
+          "quote": "task_006064` 要求 Rust 程序保留 `a-z` 与空格"
         }
       ]
     },
@@ -356,11 +356,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "River-8B 在论文重测的 open-source RL-trained 8B agents 中，四项与平均分均最高"
+          "quote": "River-8B 在论文重测的开源、经强化学习训练的 8B Agent 中，四项与平均分均最高"
         },
         {
           "artifact": "article",
-          "quote": "四个 benchmark 共 589 tasks；每个 checkpoint 运行 3 seeds"
+          "quote": "四项评测共 589 道题；每个模型版本用 3 个随机种子评测，单题最多 64 次动作或 600 秒。"
         }
       ]
     },
@@ -401,7 +401,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "RIVER 把研究对象换成 reward integrity，并尝试解释 RL 到底改变了 trajectory 的哪一层"
+          "quote": "RIVER 研究验收分数是否可信，并尝试解释强化学习改变了执行记录中的哪些行为"
         }
       ]
     },
@@ -430,11 +430,34 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "官方训练 artifacts 未公开"
+          "quote": "仍没有训练代码、3.5K 清单、模型权重或完整逐任务日志"
         },
         {
           "artifact": "article",
-          "quote": "Behavior AUC、RSA 与 domain transfer 都符合 hypothesis"
+          "quote": "行为 AUC、RSA 表示结构分析与跨领域迁移符合作者假设，但未证明全部增益都来自这 12 种行为。"
+        }
+      ]
+    },
+    {
+      "id": "same-size-random-control",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.4 Table 8, p.31"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "TB-Pro 上随机组 23.7 高于过滤组 23.0"
+        },
+        {
+          "artifact": "article",
+          "quote": "这样至少控制了环境数量。"
         }
       ]
     }
@@ -470,10 +493,15 @@
         {
           "artifact": "deck",
           "locator": "根据论文 Figure 2、Algorithm 1、§3.2 与 Appendix A-C 重绘"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据原论文 Figure 2、Algorithm 1、§3.2 与 Appendix A-C 重绘"
         }
       ],
       "asset_paths": [
-        "/lib/papers/river-terminal-agents/pipeline.svg"
+        "/lib/papers/river-terminal-agents/pipeline.svg",
+        "/lib/papers/river-terminal-agents/reading-method.svg"
       ],
       "permission_status": "not-applicable",
       "permission_basis": "No original pixels reused.",
@@ -522,7 +550,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "SFT 与 RL 改变的层级不同"
+          "locator": "作者假设：SFT 补基础技能"
         }
       ],
       "asset_paths": [
@@ -643,10 +671,15 @@
         {
           "artifact": "deck",
           "locator": "根据论文 Table 1 重绘"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据原论文 Table 1 重绘"
         }
       ],
       "asset_paths": [
-        "/lib/papers/river-terminal-agents/results.svg"
+        "/lib/papers/river-terminal-agents/results.svg",
+        "/lib/papers/river-terminal-agents/reading-results.svg"
       ],
       "permission_status": "not-applicable",
       "permission_basis": "Numerical data redrawn without original styling.",
@@ -683,13 +716,22 @@
       "label": "Table 3",
       "source_id": "paper",
       "source_locator": "p. 19, Table 3",
-      "status": "omitted",
-      "rationale": "SFT optimizer hyperparameters are secondary implementation details and are summarized by the 78K trajectory description.",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Separate SFT, RL and evaluation budgets are retained in prose and a deck comparison without inferring an undisclosed cap allocation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "一轮训练实际用了多少交互？"
+        },
+        {
+          "artifact": "deck",
+          "locator": "训练最多 16 轮交互，评测最多 64 次动作"
+        }
+      ],
       "asset_paths": [],
       "permission_status": "not-applicable",
       "permission_basis": "arXiv non-exclusive distribution license",
-      "credit": ""
+      "credit": "根据 Appendix A 的 Table 3 整理"
     },
     {
       "id": "table-4",
@@ -697,13 +739,22 @@
       "label": "Table 4",
       "source_id": "paper",
       "source_locator": "p. 20, Table 4",
-      "status": "omitted",
-      "rationale": "Core GRPO settings, delta and rollout cap are reproduced in prose and code; the complete training hyperparameter table is omitted.",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Separate SFT, RL and evaluation budgets are retained in prose and a deck comparison without inferring an undisclosed cap allocation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "一轮训练实际用了多少交互？"
+        },
+        {
+          "artifact": "deck",
+          "locator": "训练最多 16 轮交互，评测最多 64 次动作"
+        }
+      ],
       "asset_paths": [],
       "permission_status": "not-applicable",
       "permission_basis": "arXiv non-exclusive distribution license",
-      "credit": ""
+      "credit": "根据 Appendix A 的 Table 4 整理"
     },
     {
       "id": "table-5",
@@ -725,13 +776,22 @@
       "label": "Table 6",
       "source_id": "paper",
       "source_locator": "p. 21, Table 6",
-      "status": "omitted",
-      "rationale": "The decisive 64-turn and 600-second budgets are preserved in prose; serving-engine details are secondary.",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Separate SFT, RL and evaluation budgets are retained in prose and a deck comparison without inferring an undisclosed cap allocation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "一轮训练实际用了多少交互？"
+        },
+        {
+          "artifact": "deck",
+          "locator": "训练最多 16 轮交互，评测最多 64 次动作"
+        }
+      ],
       "asset_paths": [],
       "permission_status": "not-applicable",
       "permission_basis": "arXiv non-exclusive distribution license",
-      "credit": ""
+      "credit": "根据 Appendix A 的 Table 6 整理"
     },
     {
       "id": "table-7",
@@ -753,13 +813,22 @@
       "label": "Table 8",
       "source_id": "paper",
       "source_locator": "p. 30, Table 8",
-      "status": "omitted",
-      "rationale": "The random-3.5K comparison is secondary to the main filtered-set evidence and is reported in the evidence notes rather than a separate visual.",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Same-size random 3.5K control is central to the filtering claim and shows TB-Pro counterexample.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "更直接检验过滤效果的是 Appendix Table 8"
+        },
+        {
+          "artifact": "deck",
+          "locator": "过滤组平均高 1.7 个百分点"
+        }
+      ],
       "asset_paths": [],
       "permission_status": "not-applicable",
       "permission_basis": "arXiv non-exclusive distribution license",
-      "credit": ""
+      "credit": "根据 Appendix C.4 Table 8 整理"
     },
     {
       "id": "table-9",
@@ -803,7 +872,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
     },
     {
       "path": "/lib/papers/river-terminal-agents/behavior.svg",
@@ -816,7 +887,9 @@
       "license_basis": "No original pixels reused.",
       "used_in": [
         "article"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
     },
     {
       "path": "/lib/papers/river-terminal-agents/audit.svg",
@@ -830,7 +903,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
     },
     {
       "path": "/lib/papers/river-terminal-agents/results.svg",
@@ -844,7 +919,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 760
     },
     {
       "path": "/lib/papers/river-terminal-agents/transfer.svg",
@@ -858,7 +935,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 720
     },
     {
       "path": "/lib/papers/river-terminal-agents/judge-cases.svg",
@@ -871,10 +950,220 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1400,
+      "height": 850
+    },
+    {
+      "path": "/lib/papers/river-terminal-agents/reading-method.svg",
+      "origin": "author-redrawn",
+      "credit": "根据原论文 Figure 2、Algorithm 1、§3.2 与 Appendix A-C 重绘",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1344,
+      "placement": "method",
+      "source_id": "paper",
+      "source_locator": "Figure 2, Algorithm 1, §3.2, Appendix A–C",
+      "source_visual_id": "figure-2"
+    },
+    {
+      "path": "/lib/papers/river-terminal-agents/reading-case.svg",
+      "origin": "generated",
+      "credit": "根据原论文 Appendix C.4 的真实 rollout 重绘",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1329,
+      "placement": "case",
+      "source_id": "paper",
+      "source_locator": "Appendix C.4, task_003722 and task_006064"
+    },
+    {
+      "path": "/lib/papers/river-terminal-agents/reading-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据原论文 Table 1 重绘",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1138,
+      "placement": "results",
+      "source_id": "paper",
+      "source_locator": "Table 1, §4.1",
+      "source_visual_id": "table-1"
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Read complete current note and all20 slides. Traced GPT-written14,399 static checker behaviors, pass2 filtering then original hidden-verifier RL. OCR .368 versus copied answer1.0 and Rust functional pass/string-check fail show reward exploit boundaries. Repetition -.05 advantage not reward; cap .15 allocation unknown; CLEAN40% conditional agreement not certification. Mean19.375 rounds19.4; random3.5K TBPro23.7 exceeds23.0 and verified-reward no improvement retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "a970a57608eb2b05dc99b741b8e21825371f10a88cee04cd2e529210eda35059",
+      "built_article": "a90e02b4af04ba2973fe766db4806178cf4cd54e223d04a11b94570c8c38d655",
+      "deck": "7f2106680aadbdec4d521b116e920fd09af43b35526adbefb6f93cfd7df3c1cd",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-056/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-056/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-056.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "verifier",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2"
+        }
+      ],
+      "article_quote": "Verifier 是任务结束后判 PASS／FAIL 的测试程序；rollout 是这次完整执行"
+    },
+    {
+      "term": "oracle pass@2",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Appendix C"
+        }
+      ],
+      "article_quote": "再搭配 Terminus-2 执行每题两次作难度筛选（oracle pass@2）。这两个阶段不直接给被训练模型每一步打分"
+    },
+    {
+      "term": "advantage",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Equation 1"
+        }
+      ],
+      "article_quote": "GRPO 用同题多条执行记录计算 advantage（相对组平均的优劣），不额外训练预测未来分数的模型"
+    },
+    {
+      "term": "repetition penalty",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Equation 1; Table 4"
+        }
+      ],
+      "article_quote": "全部回复 token 的优势各扣 0.05"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -930,5 +1219,25 @@
       "largest-table-or-code",
       "final"
     ]
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review"
+  },
+  "current_review": {
+    "date": "2026-10-14",
+    "primary_read": "Complete 36-page text and all 9 rendered contact sheets, including appendices",
+    "release": "Static webpage at fixed unchanged revision; upstream TMax public; RIVER training materials not found",
+    "corrections": [
+      "same-size control and TB-Pro counterexample",
+      "Eq1 token allocation distinguished from unspecified cap",
+      "train16 vs eval64",
+      "exact OCR filenames",
+      "author case summary not raw replay",
+      "skill annotation vs rule behavior proxy"
+    ],
+    "browser": "pending fresh build"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "SWE-Game: Can Coding Agents Build the Games We Want?",
     "kind": "benchmark",
@@ -7,7 +7,10 @@
       "paper",
       "paper-pdf",
       "official-evaluator-spec"
-    ]
+    ],
+    "arxiv_id": "2609.33678",
+    "version": "v3",
+    "earliest_arxiv_date": "2026-09-27"
   },
   "artifacts": {
     "article": "content/_posts/076-swe-game.md",
@@ -19,8 +22,8 @@
       "id": "paper",
       "kind": "paper",
       "title": "SWE-Game: Can Coding Agents Build the Games We Want?",
-      "url": "https://arxiv.org/abs/2609.33678",
-      "revision": "v1 submitted 2026-09-27; v3 revised 2026-10-07",
+      "url": "https://arxiv.org/abs/2609.33678v3",
+      "revision": "arXiv 2609.33678v3; earliest v1 public date 2026-09-27",
       "used_for": [
         "title-date",
         "abstract",
@@ -33,7 +36,7 @@
       "kind": "paper",
       "title": "SWE-Game PDF",
       "url": "https://arxiv.org/pdf/2609.33678v3",
-      "revision": "v3; SHA256 e973cae3a0aed5e12b027240ab13fce3a9c27ecb5f667ce7991714c8e6e5a31a; reviewed 2026-10-08",
+      "revision": "arXiv 2609.33678v3; earliest v1 public date 2026-09-27",
       "used_for": [
         "complete-reading",
         "appendices",
@@ -72,35 +75,794 @@
     ],
     "source_visuals_expected": 15,
     "visual_inventory_complete": true,
-    "inventory_note": "Complete numbered inventory after reviewing v3 extracted text and all 28 rendered pages: Figures 1-6 and Tables 1-9. No numbered algorithms."
+    "review_round": "2026-10-13 collection revision",
+    "status": "main-agent-full-text-and-all-rendered-pages-reviewed",
+    "inventory_note": "Current numbered inventory checked against complete extracted text and all rendered pages, including appendices.",
+    "local_sources": {
+      "pdf": "/tmp/paper-collection-068-079.OK3giP/2609.33678v3.pdf",
+      "text": "tmp/pdfs/collection-primary-068-076/2609.33678/paper.txt",
+      "rendered_pages": "tmp/pdfs/collection-primary-068-076/2609.33678/main-reread"
+    },
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "text_lines_reviewed": "1876",
+      "primary_text": "tmp/pdfs/collection-primary-068-076/2609.33678/paper.txt",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 28
+        }
+      ],
+      "rendered_review_location": "tmp/pdfs/collection-primary-068-076/2609.33678/main-reread",
+      "pdf_sha256": "e973cae3a0aed5e12b027240ab13fce3a9c27ecb5f667ce7991714c8e6e5a31a",
+      "changes": "Completed v3 full main+appendix text and all 28 rendered pages, including all original figures/tables and judge override prompts. Corrected 0–1 vs 0–100 scoring, candidate manifest vs author contract/schema, Brief freedom vs full GDD cell rules, complete six-configuration scores, mode weights, weighted case contributions, independent demos vs legacy full-clear wording, missing-evidence numeric override, token accounting, issue denominators and limits of no-input/fixed timing tests. Official per-task checker and traces unavailable; derived failures remain labelled."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么“能打开”远远不等于“做出了想要的游戏”？"
+      "locator": "1. Motivation：为什么必须验证动作真的引发玩法"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与已有游戏生成 benchmark 的边界在哪里？"
+      "locator": "2. Related Work：与游戏生成、代码补丁评测的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. 247 道题怎样构造，模型又实际拿到什么？"
+      "locator": "3. Benchmark / Protocol：参考游戏、题目构造与模型可见材料"
     },
     {
       "role": "experiments",
-      "locator": "Q4. evaluation harness 如何把一次试玩变成分数？"
+      "locator": "4. Experiments：从提交项目到状态检查与最终分数"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 这些结果对下一代游戏 Coding Agent 有什么启发？"
+      "locator": "5. Discussion：对游戏开发系统的改进方向"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价 SWE-Game？"
+      "locator": "6. Conclusion：结论与公开性限制"
     }
   ],
   "coverage": [
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Appendix A/B; Table 6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "24 个 2D、17 个 3D 参考游戏各产生四道非修复题，再加 83 个注入故障的修复题"
+        },
+        {
+          "artifact": "article",
+          "quote": "参考游戏由作者制作、人工试玩"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Appendix B.4; §4.5; Table 5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "设计文档经过复核，修复题则从可运行参考项目中注入行为故障。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文没有披露人工标注者数量、一致率，也没有命名视觉 judge 的具体模型。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2; §3.3–3.4; Appendix C/H"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "候选填入关卡路径、对象标识与数值绑定；它不是人工给每个候选写出的评分答案。"
+        },
+        {
+          "artifact": "article",
+          "quote": "提交者看不到具体检查与预期结果，也不能直接设置答案状态。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eqs. 1–3; Appendix D Table 8/9; Table 5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Construction（0–100）: <code>S = 100 × (0.85O + 0.15V)</code>"
+        },
+        {
+          "artifact": "article",
+          "quote": "必须先逐题相乘再平均；把四列均值相乘，通常不能复算主表 83.46。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper-pdf",
+        "official-evaluator-spec"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper-pdf",
+          "locator": "Appendix B.2 Beacon Relay; §3.4; Appendix C/H; availability 2026-10-08"
+        },
+        {
+          "source_id": "official-evaluator-spec",
+          "locator": "Appendix B.2 Beacon Relay; §3.4; Appendix C/H; availability 2026-10-08"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "隐藏路线的按键时长、起点参数和断言代码尚未公开。"
+        },
+        {
+          "artifact": "article",
+          "quote": "若候选只按时间自动增加 progress，即使最后显示胜利，这条行为仍不给分。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1–4.4; Table 3; Figure 4; Table 4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "六个配置是 Qwen3.8 Flash、Grok4.6、GPT-5.6 Luna、Opus5、GLM5.3 Flash 和 Minimax M3；每个都跑全部 247 道题。"
+        },
+        {
+          "artifact": "article",
+          "quote": "三类从头构建任务的最佳总分仍低于 60"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Table 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "SWE-Game 用同一批可执行参考游戏贯通“从头做、补全、修复、移植”，由评测侧检查不同实现的实际行为。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; §5; Appendix E/H"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 3 比较的是六套完整系统，无法单独归因于模型。"
+        },
+        {
+          "artifact": "article",
+          "quote": "截至 2026-10-08，论文未链接公开 benchmark、checker 或完整结果仓库。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 1, Figure 1: reference gameplay to playable games",
+      "status": "omitted",
+      "rationale": "首页从参考玩法到可玩项目的定性总览未复制；正文用五种任务合同和 Beacon Relay 的具体玩法解释目标，未声称重现所有原图产物。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 3, Figure 2: benchmark overview",
+      "status": "redrawn",
+      "rationale": "提交绑定、评测侧注入、输入重放、状态观察与无输入对照重画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "已认证输入路线测行为，无输入对照检查成功是否由玩家造成"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 2 与 §3.4、Appendix H 重绘。输入必须造成目标状态变化；若无输入也达标，该路线记零。具体题目的断言代码未公开。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 2 重绘",
+      "asset_paths": [
+        "/lib/papers/swe-game/body-method.svg"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 5, Figure 3: reference game statistics",
+      "status": "redrawn",
+      "rationale": "参考游戏总数与 24/17 的二维三维构成在五任务派生图中显示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "同一批游戏，派生五种开发任务"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 3 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 7, Figure 4: resources, scores and problem composition",
+      "status": "redrawn",
+      "rationale": "同模式的 token/tool-call 资源差异在模型表旁显示；失败类型结论保留正文。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "资源差异大到足以影响排名解释"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 4 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 23, Figure 5: Pixel Platformer case study",
+      "status": "omitted",
+      "rationale": "Pixel Platformer 的完整二维定性对照未复制。本稿以有公开 GDD 的三维 Beacon Relay 串联行为与判分边界，不据此代表全部二维失败。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 23, Figure 6: Beacon Relay case study",
+      "status": "redrawn",
+      "rationale": "公开 Beacon Relay GDD 的拾取、13/12/11 秒 fuse、踩敌加时与存入按行为画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "真实 Beacon Relay：拾取电池，踩敌人，存入信标"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 6 与 Appendix B.2 的真实 GDD 重绘。拾取启动 fuse，踩敌人加 2.5 秒，送达 beacon 才提高进度；不是自造隐藏路线。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 6 重绘",
+      "asset_paths": [
+        "/lib/papers/swe-game/body-case.svg"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 5, Table 1: benchmark protocol comparison",
+      "status": "redrawn",
+      "rationale": "邻近 benchmark 按材料、产物与证据一致比较，正文重新组织行列。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "公开接口允许替代实现，隐藏评测规则保留判分权"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 6, Table 2: task modes",
+      "status": "redrawn",
+      "rationale": "五种任务的可见材料、产物和评测侧重点重画为任务合同。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "同一批游戏，派生五种开发任务"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 2 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 8, Table 3: component and overall scores",
+      "status": "redrawn",
+      "rationale": "构建三模式、修复和移植分开显示，保留模型和各自 harness 的混淆。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "三类从头构建任务的最佳总分仍低于 60"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Table 3 重绘。三类从头构建任务的最佳总分仍低于 60；修复与移植另用各自计分规则，不能混成同一种成功率。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 3 重绘",
+      "asset_paths": [
+        "/lib/papers/swe-game/body-results.svg"
+      ]
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 9, Table 4: reference-video ablation",
+      "status": "omitted",
+      "rationale": "是否提供参考视频的消融完整表未重排；正文保留不同模式和效果条件，视频收益不能被主模型比较单独识别。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 9, Table 5: human validation",
+      "status": "redrawn",
+      "rationale": "452/748 真实标签分母与正确接受/抓缺陷计数，以及视觉一致率分别显示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "可执行检查比视频 VLM 更会发现功能缺陷"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 5 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 13, Table 6: 41 reference games",
+      "status": "omitted",
+      "rationale": "41 个参考游戏的逐项目录未复制；任务来源段保留 24 个二维、17 个三维及派生五类任务的方式，案例只展开 Beacon Relay。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 20, Table 7: instrumentation bindings",
+      "status": "redrawn",
+      "rationale": "gb_levels.json 和语义对象绑定的填报者/检查者边界重画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "gb_levels.json 是候选填写的场景绑定，不是隐藏判分文件"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 7 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 21, Table 8: mode-specific criteria",
+      "status": "redrawn",
+      "rationale": "construction、repair、porting 的评测条件与组件在正文表和计分图结合。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "构建按权重求和；修复每例先相乘，再平均"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 8 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 21, Table 9: component weights",
+      "status": "redrawn",
+      "rationale": "构建 .85O+.15V、逐修复题先乘与 Unity 移植五项权重分别展示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "构建按权重求和；修复每例先相乘，再平均"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 9 重绘",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/swe-game/body-case.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 6 与 Appendix B.2 的真实 GDD 重绘。拾取启动 fuse，踩敌人加 2.5 秒，送达 beacon 才提高进度；不是自造隐藏路线。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "source_visual_id": "figure-6",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 23, Figure 6: Beacon Relay case study",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/swe-game/body-method.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 2 与 §3.4、Appendix H 重绘。输入必须造成目标状态变化；若无输入也达标，该路线记零。具体题目的断言代码未公开。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "method",
+      "source_visual_id": "figure-2",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 3, Figure 2: benchmark overview",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/swe-game/body-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Table 3 重绘。三类从头构建任务的最佳总分仍低于 60；修复与移植另用各自计分规则，不能混成同一种成功率。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "results",
+      "source_visual_id": "table-3",
+      "source_id": "paper-pdf",
+      "source_locator": "p. 8, Table 3: component and overall scores",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    }
+  ],
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 14 slides read in untruncated segments. Traced41×4+83=247 tasks; author contract/schema versus candidate gb_levels.json; Brief freedom versus Beacon Relay full GDD cells/fuse13/12/11 and +2.5s. Driver/probe, certified route, independent demos and no-input control reconstructed without invented checker logs. Recomputed repair72→64.8 as explanatory example and balanced accuracy mean411/452 and705/748=92.59%. Preserved mode-specific weights, input/framework/budget confounds, weighted real-case contributions, numeric visual-evidence override, missing official checker, error denominators and video-component regressions."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "58086f130dc78f2c3d44a9a8605fc833c23d887ade493328e79d76647a795123",
+      "built_article": "3798e94b145ea754c790a1569d87444d9a303797acc219dbb093afb5bb471a82",
+      "deck": "5d3ef82378d845309cf78b590df0a2a74b6fd2eb383302af09858dcf519cfe43",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-076/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-076/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-076.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_reading_record": {
+    "record_preserved_from_schema_version": 2,
+    "paper_reading": {
+      "main_agent_complete_read": true,
+      "appendices_included": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 28,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 28
+        }
+      ],
+      "source_visuals_expected": 15,
+      "visual_inventory_complete": true,
+      "inventory_note": "Complete numbered inventory after reviewing v3 extracted text and all 28 rendered pages: Figures 1-6 and Tables 1-9. No numbered algorithms."
+    },
+    "source_revisions": [
+      {
+        "id": "paper",
+        "url": "https://arxiv.org/abs/2609.33678",
+        "revision": "v1 submitted 2026-09-27; v3 revised 2026-10-07"
+      },
+      {
+        "id": "paper-pdf",
+        "url": "https://arxiv.org/pdf/2609.33678v3",
+        "revision": "v3; SHA256 e973cae3a0aed5e12b027240ab13fce3a9c27ecb5f667ce7991714c8e6e5a31a; reviewed 2026-10-08"
+      }
+    ],
+    "not_valid_for": "本轮全文与全页渲染复读；旧的 true 仅留作历史记录，不用来认证当前修订。"
+  },
+  "legacy_qa_record": {
+    "record_preserved_from_schema_version": 2,
+    "qa": {
+      "reading_layout": {
+        "deck_first": true,
+        "toc_h2_only": true,
+        "surface": "neutral-light",
+        "body_font": "sans-serif",
+        "body_font_px": 17,
+        "line_height": 1.76,
+        "figures_centered": true,
+        "internal_scroll_for_tables_and_code": true,
+        "page_horizontal_overflow": false
+      },
+      "viewports": [
+        {
+          "width": 1600,
+          "height": 1000,
+          "passed": true
+        },
+        {
+          "width": 1512,
+          "height": 982,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        }
+      ],
+      "tested_surfaces": {
+        "article_body": true,
+        "embedded_deck": true,
+        "standalone_deck": true
+      },
+      "language_review": {
+        "technical_terms_contextualized": true,
+        "actors_disambiguated": true,
+        "read_aloud_complete": true,
+        "facts_rechecked_after_rewrite": true
+      },
+      "interactions": {
+        "buttons": true,
+        "keyboard": true,
+        "hash_navigation": true,
+        "fullscreen": true,
+        "escape": true,
+        "standalone_return_to_article": true,
+        "immersive_mode_exit": true,
+        "usable_state_after_exit": true
+      },
+      "inspected_slides": [
+        "opening",
+        "densest",
+        "largest-table-or-code",
+        "final"
+      ]
+    },
+    "not_valid_for": "当前文章、deck、配图与正在更新的全站主题；旧通过不能替代重建后浏览器验收。"
+  },
+  "legacy_coverage_record": [
     {
       "id": "task-provenance",
       "claim_type": "author-claim",
@@ -298,366 +1060,278 @@
       ]
     }
   ],
-  "source_visuals": [
+  "terminology": [
     {
-      "id": "figure-1",
-      "kind": "figure",
-      "label": "Figure 1",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 1, Figure 1: reference gameplay to playable games",
-      "status": "omitted",
-      "rationale": "Teaser contains many gameplay screenshots; the article starts with a cleaner original evidence diagram and does not need the montage.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-2",
-      "kind": "figure",
-      "label": "Figure 2",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 3, Figure 2: benchmark overview",
-      "status": "redrawn",
-      "rationale": "The benchmark task and evaluation flow is redrawn as editable HTML so actors and hidden boundaries remain legible.",
-      "placements": [
+      "term": "Agent harness",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "deck",
-          "locator": "同一批游戏，派生五种开发合同"
-        },
-        {
-          "artifact": "deck",
-          "locator": "公开接口允许替代实现，隐藏 checker 保留判分权"
+          "source_id": "paper",
+          "locator": "§4.1; Appendix E"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts redrawn, no source pixels reused.",
-      "credit": "根据原论文 Figure 2 重绘",
-      "asset_paths": []
+      "article_quote": "<strong>Agent harness</strong> 是模型读文件、改代码与调用工具的系统，六个模型各用一套，论文没披露具体客户端。"
     },
     {
-      "id": "figure-3",
-      "kind": "figure",
-      "label": "Figure 3",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 5, Figure 3: reference game statistics",
-      "status": "redrawn",
-      "rationale": "Key corpus totals are converted into compact editable metrics; the dense distribution plots are not copied.",
-      "placements": [
+      "term": "evaluation harness",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "deck",
-          "locator": "41 references → 247 tasks"
+          "source_id": "paper",
+          "locator": "§3.4; Figure 2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts redrawn, no source pixels reused.",
-      "credit": "根据原论文 Figure 3 与 Appendix A 重绘",
-      "asset_paths": []
+      "article_quote": "作者的 <strong>evaluation harness</strong> 负责验收"
     },
     {
-      "id": "figure-4",
-      "kind": "figure",
-      "label": "Figure 4",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 7, Figure 4: resources, scores and problem composition",
-      "status": "redrawn",
-      "rationale": "The article and deck redraw the resource contrast and report the failure-category percentages in prose.",
-      "placements": [
+      "term": "driver",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "deck",
-          "locator": "资源差异大到足以影响排名解释"
-        },
-        {
-          "artifact": "article",
-          "locator": "GPT-5.6 Luna 的已分类问题有 56.4% 是 requirement omission"
+          "source_id": "paper",
+          "locator": "§3.4; Appendix H"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts redrawn, no source pixels reused.",
-      "credit": "根据原论文 Figure 4 重绘",
-      "asset_paths": []
+      "article_quote": "<strong>driver</strong> 是执行预定输入的程序"
     },
     {
-      "id": "figure-5",
-      "kind": "figure",
-      "label": "Figure 5",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 23, Figure 5: Pixel Platformer case study",
-      "status": "omitted",
-      "rationale": "The source screenshot montage is visually reviewed but omitted; Beacon Relay provides the article's single detailed running case.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-6",
-      "kind": "figure",
-      "label": "Figure 6",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 23, Figure 6: Beacon Relay case study",
-      "status": "redrawn",
-      "rationale": "The paper screenshot montage is replaced by an editable mechanism-level walkthrough using the released GDD excerpt.",
-      "placements": [
+      "term": "probe",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "真实题目：Beacon Relay 在五种模式下长什么样？"
-        },
-        {
-          "artifact": "deck",
-          "locator": "一份真实 GDD 把“送信标”写成可测试状态变化"
+          "source_id": "paper",
+          "locator": "§3.4; Appendix C/H"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts and task text redrawn, no source pixels reused.",
-      "credit": "根据原论文 Figure 6 与 Appendix B.2 重绘",
-      "asset_paths": []
+      "article_quote": "<strong>probe</strong> 是读取引擎状态的探针。"
     },
     {
-      "id": "table-1",
-      "kind": "table",
-      "label": "Table 1",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 5, Table 1: benchmark protocol comparison",
-      "status": "redrawn",
-      "rationale": "The comparison is shortened to the nearest benchmarks and consistent axes requested by the evidence contract.",
-      "placements": [
+      "term": "GDD",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "GameCraft-Bench"
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Appendix B.2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 1 重绘",
-      "asset_paths": []
+      "article_quote": "<strong>GDD（Game Design Document）</strong> 是写明玩法、关卡与反馈的游戏设计文档"
     },
     {
-      "id": "table-2",
-      "kind": "table",
-      "label": "Table 2",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 6, Table 2: task modes",
-      "status": "redrawn",
-      "rationale": "Inputs, deliverables and evaluation components are redrawn in the article and deck.",
-      "placements": [
+      "term": "gb_levels.json",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "Brief-to-Game"
-        },
-        {
-          "artifact": "deck",
-          "locator": "同一批游戏，派生五种开发合同"
+          "source_id": "paper",
+          "locator": "§3.3; Appendix C; Table 7"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 2 重绘",
-      "asset_paths": []
+      "article_quote": "<code>gb_levels.json</code> 是作者公开的提交接口的一部分，候选填入关卡路径、对象标识与数值绑定；它不是人工给每个候选写出的评分答案。"
     },
     {
-      "id": "table-3",
-      "kind": "table",
-      "label": "Table 3",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 8, Table 3: component and overall scores",
-      "status": "redrawn",
-      "rationale": "The complete model totals and the leading component gaps are redrawn as editable tables and bars.",
-      "placements": [
+      "term": "certified route",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "Opus5"
-        },
-        {
-          "artifact": "deck",
-          "locator": "六个配置都跑 247 题"
-        },
-        {
-          "artifact": "deck",
-          "locator": "三类 construction 的最佳总分仍低于 60"
+          "source_id": "paper",
+          "locator": "§3.4; Appendix H"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 3 重绘",
-      "asset_paths": []
+      "article_quote": "作者先在参考游戏编写、验证输入序列，再在候选保留同样动作时序，必要时从相对语义对象的位置开始，检查途中目标与最终目标。这叫 <strong>certified route</strong>。"
     },
     {
-      "id": "table-4",
-      "kind": "table",
-      "label": "Table 4",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 9, Table 4: reference-video ablation",
-      "status": "redrawn",
-      "rationale": "The exact paired changes are stated in prose because the mixed directions matter more than the compact source table.",
-      "placements": [
+      "term": "no-input control",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "reference video 的 ablation 也说明视频主要帮助呈现。"
+          "source_id": "paper",
+          "locator": "§3.4; Appendix H"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data restated and compared in prose.",
-      "credit": "根据原论文 Table 4 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-5",
-      "kind": "table",
-      "label": "Table 5",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 9, Table 5: human validation",
-      "status": "redrawn",
-      "rationale": "Functional confusion counts and visual correlations are redrawn as two evidence panels.",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "可执行检查比视频 VLM 更会发现功能缺陷"
-        },
-        {
-          "artifact": "article",
-          "locator": "可执行检查正确接受 411/452 条真人判为正确的行为"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 5 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-6",
-      "kind": "table",
-      "label": "Table 6",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 13, Table 6: 41 reference games",
-      "status": "omitted",
-      "rationale": "All 41 rows were reviewed; the article reports aggregate coverage and uses Beacon Relay as the detailed case instead of reproducing the full catalogue.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source table reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-7",
-      "kind": "table",
-      "label": "Table 7",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 20, Table 7: instrumentation bindings",
-      "status": "redrawn",
-      "rationale": "Bindings are redrawn as a six-stage semantic-interface flow.",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "Candidate 提交语义绑定，checker 不猜内部节点名"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 7 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-8",
-      "kind": "table",
-      "label": "Table 8",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 21, Table 8: mode-specific criteria",
-      "status": "redrawn",
-      "rationale": "Mode-specific criteria are integrated with the task input and deliverable table to keep the causal path together.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "评测重点"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 8 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-9",
-      "kind": "table",
-      "label": "Table 9",
-      "source_id": "paper-pdf",
-      "source_locator": "p. 21, Table 9: component weights",
-      "status": "redrawn",
-      "rationale": "The three aggregation paths and exact porting weights are redrawn as formulas and cards.",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "总分先按任务内组件计算，再对 41 或 83 题取平均"
-        },
-        {
-          "artifact": "article",
-          "locator": "Construction: S = 0.85O + 0.15V"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Data redrawn as HTML.",
-      "credit": "根据原论文 Table 9 重绘",
-      "asset_paths": []
+      "article_quote": "评测器再启动相同场景、等待相同时长，但不输入玩家动作，称为 <strong>no-input control</strong>。"
     }
   ],
-  "figures": [],
-  "qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 17,
-      "line_height": 1.76,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
+  "revision_record": {
+    "round": "2026-10-13",
+    "editor": "revise_harness_search_benchmarks",
+    "state": "local-revision-pending-main-paper-read-and-final-browser-review",
+    "primary_read_required_by": "paper-deep-dive-blog SKILL.md",
+    "completed": [
+      "Causal method/evaluation walkthrough revised",
+      "Real-case sources and missing-artifact boundaries retained",
+      "Metric denominators, sampling and selection conditions corrected",
+      "Terminology first-use ledger recorded",
+      "Three source-credited body visuals rebuilt",
+      "All numbered source visuals carried forward with placements or explicit omissions",
+      "Deck screenshot body visuals replaced with article-native SVG layouts; old WebP retained."
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  }
+    "pending": [
+      "Main agent full paper and appendix text reread",
+      "Main agent every rendered paper page reread",
+      "Verify complete visual inventory against rendered pages",
+      "Freshly rebuilt full article plus embedded/standalone deck QA at three viewports and all exit paths"
+    ],
+    "code_audit_status": "Fixed-revision findings preserved; no full training or benchmark rerun claimed."
+  },
+  "qa_history": [
+    {
+      "archived_on": "2026-10-14",
+      "reason": "Primary reread and content corrections invalidate prior built-byte QA.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "article_visuals_interleaved": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "mobile_body_font_px": 16.5,
+          "body_color": "rgb(36, 41, 47)",
+          "body_surface": "rgb(255, 255, 255)",
+          "actual_desktop_column_px": 780
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true,
+          "overview_thumbnail_selection": true,
+          "home_end": true,
+          "focus_restoration": true,
+          "figure_enlargement": true,
+          "figure_zoom": true,
+          "figure_internal_xy_scroll": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "status": "browser-and-visual-qa-complete; primary-paper-reread-is-separate",
+        "partial_subagent_review": {
+          "role": "targeted-editorial-and-evidence-revision",
+          "full_primary_read_certified": false,
+          "source_structure_checked": true,
+          "six_h2_in_source": true,
+          "body_images_after_embed": 3,
+          "body_images_sized": true,
+          "source_visual_mapping_updated": true,
+          "deck_capture_diagnostic": {
+            "report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/deck-revision-068-079/capture-report.json",
+            "viewport": {
+              "width": 1728,
+              "height": 900
+            },
+            "all_slide_bounds_checked": true,
+            "html_deck_only": true,
+            "not_full_article_or_interaction_qa": true
+          },
+          "article_native_visuals": {
+            "count": 3,
+            "format": "SVG",
+            "canvas_width": 1050,
+            "main_label_font_px": 25,
+            "legacy_webp_preserved": true,
+            "prototype_actual_column_review": "All 36 assigned body diagrams reviewed at actual 780px desktop column; mobile details reviewed in 780px XY-scroll dialog.",
+            "all_three_at_actual_desktop_column_reviewed": true
+          }
+        },
+        "review_round": "2026-10-13 unified readable article + native SVG + figure dialog build",
+        "review_scope": "本项只认证正文与两种 deck 的实际浏览器、视觉和交互检查；不代替 paper_reading 的主代理阅读全文记录。",
+        "evidence": {
+          "base_url": "http://localhost:4181",
+          "detail_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-detail-group-3-report.json",
+          "typography_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-body-typography-report.json",
+          "article_summary_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-article-summary-report.json",
+          "fresh_language_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-fresh-build-language-report.json",
+          "mobile_figure_center_bottom_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-mobile-center-bottom-report.json",
+          "actual_visual_review": {
+            "desktop_opening_summary_footer_and_deck_endpoints": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/swe-game-desktop-opening-final-review.png",
+            "mobile_opening_summary_and_deck_roles": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/swe-game-mobile-article-deck-review.png",
+            "mobile_enlarged_body_figure_detail": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/swe-game-mobile-details-contact.png",
+            "desktop_body_figures": [
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/swe-game-1512-body-1.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/swe-game-1512-body-2.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/swe-game-1512-body-3.png"
+            ],
+            "slide_roles": {
+              "opening": 1,
+              "densest": 6,
+              "largest_table_or_code": 6,
+              "final": 14
+            },
+            "reviewed_by": "assigned subagent; all listed contact sheets inspected visually after native-column review"
+          }
+        },
+        "readability_conditions": {
+          "article_body": "普通正文实际测量：桌面 17px，手机 16.5px，行高比例 1.78；lead 不用于正文字号认证。",
+          "desktop_figures": "1050px SVG 在 780px 正文列显示；主标签 25px 实际约 18.57px，已按此列宽逐图看过。",
+          "mobile_inline_figures": "手机 inline 图是概览，不认证密集文字可直接读；点击放大后保持 780px 图宽，主标签约 18.57px，可在页内左右与上下滚动。",
+          "enlarged_figure_controls": "整图、清晰、放大、缩小、关闭、Escape 与焦点返回均实测；居中/底部内容可滚动到达。",
+          "embedded_deck": "嵌入 deck 是概览；复杂图表细读使用桌面大屏、fullscreen 或正文放大图。",
+          "phone_portrait_deck": "手机竖屏嵌入与独立 deck 的密集表/代码仅作概览，不把边界检查通过称为密集文字细读通过。"
+        }
+      }
+    }
+  ]
 }

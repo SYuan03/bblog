@@ -1,9 +1,11 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents",
     "kind": "research",
-    "primary_source_ids": ["paper"]
+    "primary_source_ids": [
+      "paper"
+    ]
   },
   "artifacts": {
     "article": "content/_posts/058-grow-the-harness-not-the-context.md",
@@ -17,15 +19,29 @@
       "title": "Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents",
       "url": "https://arxiv.org/abs/2609.26760",
       "revision": "v2 (2026-09-24)",
-      "used_for": ["problem", "method", "evaluation", "results", "case", "limitations", "visuals"]
+      "used_for": [
+        "problem",
+        "method",
+        "evaluation",
+        "results",
+        "case",
+        "limitations",
+        "visuals"
+      ]
     },
     {
       "id": "arxiv-record",
       "kind": "metadata",
       "title": "arXiv record for 2609.26760",
       "url": "https://arxiv.org/abs/2609.26760",
-      "revision": "checked 2026-09-29",
-      "used_for": ["title", "authors", "version", "license", "official-code availability"]
+      "revision": "checked 2026-10-14",
+      "used_for": [
+        "title",
+        "authors",
+        "version",
+        "license",
+        "official-code availability"
+      ]
     }
   ],
   "paper_reading": {
@@ -34,111 +50,364 @@
     "extracted_text_reviewed": true,
     "rendered_pages_reviewed": true,
     "page_count": 16,
-    "rendered_page_ranges": [{"start": 1, "end": 16}],
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 16
+      }
+    ],
     "source_visuals_expected": 12,
     "visual_inventory_complete": true,
-    "inventory_note": "All 16 PDF pages, including Appendices A-B, were reviewed through extracted text and rendered pages. The paper contains Figures 1-6, Algorithm 1, and Tables 1-5. Every figure and Algorithm 1 is reused under CC BY 4.0. Tables 1-5 are represented as redrawn HTML tables, formulas, or article prose with explicit locators."
+    "inventory_note": "All 16 PDF pages, including Appendices A-B, were reviewed through extracted text and rendered pages. The paper contains Figures 1-6, Algorithm 1, and Tables 1-5. Every figure and Algorithm 1 is reused under CC BY 4.0. Tables 1-5 are represented as redrawn HTML tables, formulas, or article prose with explicit locators.",
+    "current_review": {
+      "date": "2026-10-14",
+      "reviewer": "main-agent",
+      "text": "research/harness-zero-related-work/phase3_deep_dive/texts/2609.26760.txt",
+      "rendered_contacts": "tmp/pdfs/2609.26760/main-reread/contact-01-04.jpg through contact-13-16.jpg",
+      "complete_text_and_rendered_review": true,
+      "notes": "Full v2 paper and all 16 rendered pages reread; no new model run or official training replay."
+    }
   },
   "note_sections": [
-    {"role": "problem", "locator": "Q1. 为什么要让 harness 增长，而不是继续扩充 context？"},
-    {"role": "related-work", "locator": "Q2. 它和 workflow search、skill library、memory 以及其他 harness work 有什么区别？"},
-    {"role": "method", "locator": "Q3. 一条失败怎样变成可复用的 harness code？"},
-    {"role": "experiments", "locator": "Q4. Benchmark 怎样分、怎样判，结果到底有多强？"},
-    {"role": "future-work", "locator": "Q5. 对 Claude Code、Codex 这类完整 harness 有什么启发？"},
-    {"role": "summary", "locator": "Q6. 这篇论文最后该怎样评价？"}
+    {
+      "role": "problem",
+      "locator": "1. Motivation：重复控制为什么应跨任务保留在程序里？"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：与工作流搜索、技能库、记忆和其他执行程序优化的区别"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：从失败记录到局部修改，再到完整回归"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：两套基准的评分、主结果与成本"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：局部修复与回归测试应怎样迁移到 coding harness？"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：已有证据与复现限制"
+    }
   ],
   "coverage": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 3"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Abstract; Sections 1 and 3"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "论文只更新 harness program"},
-        {"artifact": "deck", "quote": "把重复控制写进 harness，别让模型在每个 task 里重新想一遍"}
+        {
+          "artifact": "article",
+          "quote": "模型权重和工具 API 保持固定，不靠往任务上下文不断追加经验来学习。"
+        },
+        {
+          "artifact": "deck",
+          "quote": "把搜索、重试和结束等重复判断写进代码，供下一道任务复用"
+        }
       ]
     },
     {
       "id": "method-and-checkpointing",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Sections 3.2-3.6; Algorithm 1"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.2-3.6; Algorithm 1"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "执行当前 harness，记录 function-level trace，把多条失败放进窗口，局部生成候选代码"},
-        {"artifact": "article", "quote": "若 gate success 下降，系统会回滚从上个 checkpoint 以来的整个 repair sequence"}
+        {
+          "artifact": "article",
+          "quote": "运行当前程序，记录函数级执行过程，把多条失败放进窗口，局部修改代码，重跑失败，再按间隔用单独留出的 gate 任务验收。"
+        },
+        {
+          "artifact": "article",
+          "quote": "失败则恢复上次 gate 的全部状态，撤销中间整段修复。"
+        }
       ]
     },
     {
       "id": "repair-31-case",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Figure 2, Repair 31 / BrowseComp-Plus Task 819"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 2, Repair 31 / BrowseComp-Plus Task 819"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "_evidence_for_prompt 把每篇文档截到 2,600 characters，包含答案的片段被切掉"},
-        {"artifact": "article", "quote": "Energetic; melodic; banging; clubby; bacon."}
+        {
+          "artifact": "article",
+          "quote": "_evidence_for_prompt</code> 把每篇文档截到 2,600 个字符，包含答案的片段被切掉"
+        },
+        {
+          "artifact": "article",
+          "quote": "Energetic; melodic; banging; clubby; bacon."
+        }
       ]
     },
     {
       "id": "task-splits-and-visibility",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.1; Appendix A.1-A.3"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1; Appendix A.1-A.3"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "两个 benchmark 都按 200 train / 50 gate / 50 final 划分，seed 为 42"},
-        {"artifact": "article", "quote": "所有方法只拿 accessibility-tree text，不用截图"}
+        {
+          "artifact": "article",
+          "quote": "两项任务基准都留 200 道训练题、50 道验证题和 50 道最终测试题，划分随机种子为 42。每个设置独立测试三轮，每轮每题只尝试一次；报告全部题目与尝试的平均成功率。"
+        },
+        {
+          "artifact": "article",
+          "quote": "shopping、reddit、map 三类站点，按意图模板、任务类型和网站分层抽样。所有方法只看无障碍树文本（accessibility-tree text，用文字表示页面元素），不看截图；任务结束后运行基准自带检查程序。"
+        }
       ]
     },
     {
       "id": "judges-and-evaluation-formula",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.1, Equations 8-9; Appendix A.2-A.4"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1, Equations 8-9; Appendix A.2-A.4"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "BrowseComp-Plus 是固定且人工核验 retrieval corpus 上的 deep-search benchmark"},
-        {"artifact": "article", "quote": "SR = successful task-run pairs / (3 × 50)"},
-        {"artifact": "article", "quote": "Total Online Cost 是一次 50-task run 的 deployed-agent LLM 费用"}
+        {
+          "artifact": "article",
+          "quote": "BrowseComp-Plus 是一套多步检索任务，使用固定、人工核验过的检索语料。Agent 看到问题和相同的搜索工具；Growing Harness、Tool-Calling、Self-Ask、IRCoT 共用任务划分、工具、模型与预算。最终答案由模型判断与参考答案是否语义等价。论文没有给出评分模型、评分提示或人工复核率。"
+        },
+        {
+          "artifact": "article",
+          "quote": "成功率 SR = 成功的任务尝试数 / (3 × 50)"
+        },
+        {
+          "artifact": "article",
+          "quote": "模型调用、token 和时间在这 150 次尝试上取平均。Total Online Cost（在线总费用）是完成一轮 50 题时执行 Agent 的模型费用，再对三轮取平均；不含评分与离线修改程序的费用。"
+        }
       ]
     },
     {
       "id": "model-results",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.2; Table 1; Figure 1"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.2; Table 1; Figure 1"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "五组设置中，Growing Harness 的平均成功率最高"},
-        {"artifact": "article", "quote": "减少 76.0% 至 91.8% 的 LLM calls 和 74.4% 至 98.6% 的 deployed-agent online cost"}
+        {
+          "artifact": "article",
+          "quote": "五组设置中，Growing Harness 的平均成功率最高"
+        },
+        {
+          "artifact": "article",
+          "quote": "减少 76.0% 至 91.8% 的模型调用和 74.4% 至 98.6% 的执行模型在线费用"
+        }
       ]
     },
     {
       "id": "ablation",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.4; Table 2; Figure 4"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.4; Table 2; Figure 4"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "Full 36%，去掉 Failure-Window 为 28%，去掉 Gate Validation 为 22%，去掉 Function-Level Guidance 为 18%"},
-        {"artifact": "article", "quote": "每个 variant 只优化一次、共 10 steps"}
+        {
+          "artifact": "article",
+          "quote": "BrowseComp-Plus + gpt-oss-20b 的单次消融结果是：完整方法 36%，去掉失败窗口 28%，去掉 gate 验收 22%，去掉函数级修改指引 18%。每种方案只优化一次，共 10 步，没有重复运行的误差条"
+        },
+        {
+          "artifact": "article",
+          "quote": "BrowseComp-Plus + gpt-oss-20b 的单次消融结果是：完整方法 36%，去掉失败窗口 28%，去掉 gate 验收 22%，去掉函数级修改指引 18%。每种方案只优化一次，共 10 步，没有重复运行的误差条"
+        }
       ]
     },
     {
       "id": "related-work-comparison",
       "claim_type": "interpretation",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 2"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "最清楚的比较轴是：训练后到底留下什么，以及部署时还要让 LLM 做多少控制"}
+        {
+          "artifact": "article",
+          "quote": "最清楚的比较轴是：训练后到底留下什么，以及部署时还要让 LLM 做多少控制"
+        }
       ]
     },
     {
       "id": "limitations",
       "claim_type": "unknown",
-      "source_ids": ["paper", "arxiv-record"],
+      "source_ids": [
+        "paper",
+        "arxiv-record"
+      ],
       "source_locators": [
-        {"source_id": "paper", "locator": "Sections 4-5; Appendices A-B; no code or artifact URL"},
-        {"source_id": "arxiv-record", "locator": "abs page links checked 2026-09-29"}
+        {
+          "source_id": "paper",
+          "locator": "Sections 4-5; Appendices A-B; no code or artifact URL"
+        },
+        {
+          "source_id": "arxiv-record",
+          "locator": "abs page links checked 2026-09-29"
+        }
       ],
       "evidence": [
-        {"artifact": "article", "quote": "没有给出官方代码、learned harness、trace、split、task-level logs 或 optimizer prompts"},
-        {"artifact": "article", "quote": "Total Online Cost 明确排除 evaluator 与 offline optimizer"}
+        {
+          "artifact": "article",
+          "quote": "没有给出官方代码、最终程序、执行记录、任务划分、逐题日志或修改模型的提示"
+        },
+        {
+          "artifact": "article",
+          "quote": "在线总费用明确排除评分与离线修改程序。论文报告部署费用下降"
+        }
+      ]
+    },
+    {
+      "id": "gate-interval-protocol-conflict",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Algorithm 1 lines 11-18; Sections 3.5-3.6; Appendix A.5 Table 5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "§3.6 先在 50 道 gate 任务上评估初始程序，之后**每累计修复 Q 条任务，再评估当前程序**"
+        },
+        {
+          "artifact": "article",
+          "quote": "WebArena 的 <code>K=4、Q=8</code> 最能说明问题：窗口最多四题，不可能一次修好八题。"
+        },
+        {
+          "artifact": "deck",
+          "quote": "Algorithm 1 把 Q 写成单窗口门槛，并立即 gate；按它执行，K=4 的窗口不可能修好 Q=8 题。正文与 Table 5 则把 Q 定义为累计 gate 间隔。"
+        }
+      ]
+    },
+    {
+      "id": "bundled-function-guidance-control",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.4; Table 2; Figure 4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者同时去掉函数级执行记录、由记录确定的修改范围，以及函数数量预算"
+        }
+      ]
+    },
+    {
+      "id": "ablation-populations",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2 and Figure 4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 2 的分母是 50 道最终测试题，Figure 4 则是另外 50 道 gate 题的训练曲线"
+        }
+      ]
+    },
+    {
+      "id": "cost-cache-estimation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1, Equation 9; Appendix A.4 Table 4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "不假设跨题缓存，也不是实测账单"
+        }
+      ]
+    },
+    {
+      "id": "ranking-uncertainty",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1; Section 4.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文没有报告逐项配对差值的置信区间或显著性检验"
+        }
       ]
     }
   ],
@@ -151,11 +420,18 @@
       "source_locator": "p. 2, Figure 1",
       "status": "reused",
       "rationale": "The success-cost frontier is central to the deployment-efficiency claim and is directly reused under CC BY 4.0.",
-      "placements": [{"artifact": "article", "locator": "原论文 Figure 1，CC BY 4.0"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 1，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Figure 1, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/figure-1-success-cost.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/figure-1-success-cost.png"
+      ]
     },
     {
       "id": "figure-2",
@@ -165,11 +441,18 @@
       "source_locator": "p. 3, Figure 2",
       "status": "reused",
       "rationale": "The overview contains the full learning loop and the paper's only concrete repair trace.",
-      "placements": [{"artifact": "article", "locator": "原论文 Figure 2，CC BY 4.0"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 2，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Figure 2, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/figure-2-overview.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/figure-2-overview.png"
+      ]
     },
     {
       "id": "figure-3",
@@ -179,11 +462,18 @@
       "source_locator": "p. 8, Figure 3",
       "status": "reused",
       "rationale": "The gate curves show how accepted and rolled-back repairs differ between the two benchmark-specific harnesses.",
-      "placements": [{"artifact": "article", "locator": "原论文 Figure 3，CC BY 4.0"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 3，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Figure 3, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/figure-3-convergence.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/figure-3-convergence.png"
+      ]
     },
     {
       "id": "figure-4",
@@ -193,11 +483,18 @@
       "source_locator": "p. 10, Figure 4",
       "status": "reused",
       "rationale": "The ablation trajectories reveal the regression that the held-out gate is designed to prevent.",
-      "placements": [{"artifact": "article", "locator": "原论文 Figure 4，CC BY 4.0"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 4，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Figure 4, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/figure-4-ablation.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/figure-4-ablation.png"
+      ]
     },
     {
       "id": "figure-5",
@@ -207,11 +504,18 @@
       "source_locator": "p. 15, Figure 5",
       "status": "reused",
       "rationale": "The task-level plots expose the distributions behind aggregate calls, context, cost, and token claims.",
-      "placements": [{"artifact": "article", "locator": "原论文 Figure 5，CC BY 4.0"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Figure 5, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/figure-5-efficiency.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/figure-5-efficiency.png"
+      ]
     },
     {
       "id": "figure-6",
@@ -221,11 +525,18 @@
       "source_locator": "p. 15, Figure 6",
       "status": "reused",
       "rationale": "The post-hoc diagrams show that identical scaffolds grow into different benchmark-specific control structures.",
-      "placements": [{"artifact": "article", "locator": "原论文 Figure 6，CC BY 4.0"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 6，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Figure 6, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/figure-6-structures.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/figure-6-structures.png"
+      ]
     },
     {
       "id": "algorithm-1",
@@ -234,12 +545,19 @@
       "source_id": "paper",
       "source_locator": "p. 5, Algorithm 1",
       "status": "reused",
-      "rationale": "The algorithm is the most precise source for window updates, retry limits, gate checks, and rollback semantics.",
-      "placements": [{"artifact": "article", "locator": "原论文 Algorithm 1，CC BY 4.0"}],
+      "rationale": "Reused to make the pseudocode/text conflict visible: Algorithm 1 treats Q as a per-window repair threshold, whereas Sections 3.5-3.6 and Table 5 use Q as a cumulative gate interval. WebArena K=4,Q=8 makes the threshold reading impossible.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Algorithm 1，CC BY 4.0"
+        }
+      ],
       "permission_status": "verified-allowed",
       "permission_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
       "credit": "Li et al., Algorithm 1, arXiv:2609.26760v2, CC BY 4.0",
-      "asset_paths": ["/lib/papers/growing-harness/algorithm-1.png"]
+      "asset_paths": [
+        "/lib/papers/growing-harness/algorithm-1.png"
+      ]
     },
     {
       "id": "table-1",
@@ -249,7 +567,12 @@
       "source_locator": "p. 8, Table 1",
       "status": "redrawn",
       "rationale": "The six Tool-Calling comparisons are redrawn as a compact HTML table while the full original table remains visible in the paper.",
-      "placements": [{"artifact": "article", "locator": "六组主结果"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "六组主结果"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "Numerical values are presented in a new HTML table without copying the source layout.",
       "credit": "根据原论文 Table 1 数据整理",
@@ -263,7 +586,12 @@
       "source_locator": "p. 9, Table 2",
       "status": "redrawn",
       "rationale": "All four ablation values and their single-run scope are represented in article prose and the deck.",
-      "placements": [{"artifact": "article", "locator": "Full 36%，去掉 Failure-Window 为 28%"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "BrowseComp-Plus + gpt-oss-20b 的单次消融结果是：完整方法 36%，去掉失败窗口 28%，去掉 gate 验收 22%，去掉函数级修改指引 18%。每种方案只优化一次，共 10 步，没有重复运行的误差条"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "Numerical values are restated without source table styling.",
       "credit": "根据原论文 Table 2 数据整理",
@@ -277,7 +605,12 @@
       "source_locator": "p. 13, Table 3",
       "status": "redrawn",
       "rationale": "The shared final-evaluation limits are incorporated into the evaluation-protocol subsection and deck.",
-      "placements": [{"artifact": "article", "locator": "每题最多 50 次 online LLM calls"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "最终评测（Table 3）每题最多 50 次模型调用"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "Configuration values are restated in prose.",
       "credit": "根据原论文 Table 3 配置整理",
@@ -289,12 +622,17 @@
       "label": "Table 4",
       "source_id": "paper",
       "source_locator": "p. 13, Table 4",
-      "status": "omitted",
-      "rationale": "Provider token prices are inputs to the reported cost metric but do not help the reading flow; the cost formula and exclusion boundary are retained.",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "Cost accounting and the gpt-oss-120b example prices are restated in independently written prose; the other model price rows are not needed for the worked explanation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 4 的单价单位是美元／百万 tokens"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "Represented through the cost formula and metric boundary.",
-      "credit": "",
+      "credit": "根据原论文 Table 4 单价说明费用计算",
       "asset_paths": []
     },
     {
@@ -305,7 +643,12 @@
       "source_locator": "p. 14, Table 5",
       "status": "redrawn",
       "rationale": "The complete benchmark-specific model and K, Q, Rmax, L settings are retained in prose and the training slide.",
-      "placements": [{"artifact": "article", "locator": "K=8, Q=1, Rmax=5, L=10"}],
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "K=8, Q=1, Rmax=5, L=10"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "Configuration values are restated in prose.",
       "credit": "根据原论文 Table 5 配置整理",
@@ -322,7 +665,12 @@
       "credit": "Li et al., Figure 1, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 1102,
+      "height": 611
     },
     {
       "path": "/lib/papers/growing-harness/figure-2-overview.png",
@@ -333,7 +681,12 @@
       "credit": "Li et al., Figure 2, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 1980,
+      "height": 1530
     },
     {
       "path": "/lib/papers/growing-harness/figure-3-convergence.png",
@@ -344,7 +697,12 @@
       "credit": "Li et al., Figure 3, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 623,
+      "height": 334
     },
     {
       "path": "/lib/papers/growing-harness/figure-4-ablation.png",
@@ -355,7 +713,12 @@
       "credit": "Li et al., Figure 4, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 1188,
+      "height": 603
     },
     {
       "path": "/lib/papers/growing-harness/figure-5-efficiency.png",
@@ -366,7 +729,12 @@
       "credit": "Li et al., Figure 5, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 1874,
+      "height": 1010
     },
     {
       "path": "/lib/papers/growing-harness/figure-6-structures.png",
@@ -377,7 +745,12 @@
       "credit": "Li et al., Figure 6, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 1171,
+      "height": 978
     },
     {
       "path": "/lib/papers/growing-harness/algorithm-1.png",
@@ -388,10 +761,189 @@
       "credit": "Li et al., Algorithm 1, arXiv:2609.26760v2, CC BY 4.0",
       "license_status": "verified-allowed",
       "license_basis": "The arXiv record identifies the paper license as Creative Commons Attribution 4.0.",
-      "used_in": ["article"]
+      "used_in": [
+        "article"
+      ],
+      "width": 1466,
+      "height": 1041
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Read complete current note and all18 slides. No model weight update: editable functions, L=10; failure-window reset and full-gate checkpoint distinguished. Cumulative Q versus Algorithm1 singlewindow conflict K4/Q8 noted. Repair31 task8192600->9000 must preserve five words, no actual rerun.150 attempts headline versus50-task cost excludes offline/judge. One of six task scores39.3<40.0 and function-budget confounding retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "86d35d820ca573eede99e116ad35880ca4ccce2f3ccce388fad156c890f76331",
+      "built_article": "8a601a0b4c03032172c3e38764652de7c9b55a66096fc96fa213ca25ee56dc66",
+      "deck": "7634e68b6d5a871742a57ac25f7f21ef7684309de2a8aad66d9dfc1af216f3d6",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-058/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T08-25-17-814Z-058/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-058.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "strategy-free scaffold",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1; Figure 2"
+        }
+      ],
+      "article_quote": "Strategy-free scaffold 是“没有预写解题策略的起始程序”：只开放入口、固定模型和工具，没有现成 ReAct（逐步推理—行动）循环或其他控制流程"
+    },
+    {
+      "term": "failure window",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3"
+        }
+      ],
+      "article_quote": "Failure window（失败窗口）是容量有限的失败任务清单，保存任务、最新执行记录和修复次数。Held-out gate（验证关卡）是一组不用于产生修改的任务，检查修改有没有破坏旧能力；checkpoint（检查点）保存当时的代码及训练进度，便于完整恢复。后文简称失败窗口、gate 和检查点。"
+    },
+    {
+      "term": "held-out gate",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.6; Table 5"
+        }
+      ],
+      "article_quote": "Failure window（失败窗口）是容量有限的失败任务清单，保存任务、最新执行记录和修复次数。Held-out gate（验证关卡）是一组不用于产生修改的任务，检查修改有没有破坏旧能力；checkpoint（检查点）保存当时的代码及训练进度，便于完整恢复。后文简称失败窗口、gate 和检查点。"
+    },
+    {
+      "term": "checkpoint",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.5-3.6"
+        }
+      ],
+      "article_quote": "Failure window（失败窗口）是容量有限的失败任务清单，保存任务、最新执行记录和修复次数。Held-out gate（验证关卡）是一组不用于产生修改的任务，检查修改有没有破坏旧能力；checkpoint（检查点）保存当时的代码及训练进度，便于完整恢复。后文简称失败窗口、gate 和检查点。"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -404,9 +956,21 @@
       "page_horizontal_overflow": false
     },
     "viewports": [
-      {"width": 1600, "height": 1000, "passed": true},
-      {"width": 1512, "height": 982, "passed": true},
-      {"width": 390, "height": 844, "passed": true}
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
     ],
     "tested_surfaces": {
       "article_body": true,
@@ -429,6 +993,29 @@
       "immersive_mode_exit": true,
       "usable_state_after_exit": true
     },
-    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"]
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization; synchronized four corresponding HTML decks and checked/revised explanatory SVGs",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review",
+    "deck_sync": {
+      "status": "content-revised-awaiting-main-agent-browser-qa",
+      "date": "2026-10-13",
+      "unchanged_page_count": 18,
+      "source_boundary": "Selective primary-text method/protocol recheck; no new full-paper/rendered-page read or network release check claimed.",
+      "critical_changes": [
+        "Sections 3.5-3.6 cumulative repair interval Q and full-state gate rollback",
+        "Algorithm 1 single-window threshold conflicts with K=4 Q=8 and remains visibly flagged",
+        "training 900/1800 s versus final-evaluation 1800 s",
+        "Repair 31 re-execution/gate evidence boundary"
+      ]
+    }
   }
 }

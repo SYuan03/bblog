@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1420" viewBox="0 0 600 1420" role="img" aria-labelledby="title desc">
+<title id="title">Draft-Verify 两次生成与三次检索</title><desc id="desc">从此前已标注样例中找五个近邻，当前模型生成 draft 标签，再分别检索与该标签集合有交集和无交集的至多五条样例。复核输入作为 teacher context，生成的最终答案不替换 direct rollout。当前批次真实标签随后加入样例表。</desc>
+<defs><style>text{font-family:"PingFang SC",Arial,sans-serif;fill:#24292f}.title{font-size:32px;font-weight:700}.h{font-size:29px;font-weight:700}.b{font-size:28px}.s{font-size:24px;fill:#536171}.box{fill:#f5f7f9;stroke:#d1dbe4;stroke-width:2}.arrow{stroke:#536171;stroke-width:3;marker-end:url(#a)}</style><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#536171"/></marker></defs>
+<rect width="600" height="1420" fill="#fff"/>
+<text class="title" x="28" y="50">Draft-Verify：检索后再复核</text>
+<text class="s" x="28" y="88">材料是已标注数据行，不是额外 Agent。</text>
+<rect class="box" x="28" y="120" width="544" height="174" rx="8"/>
+<text class="h" x="48" y="162">① 找到最多 5 条近邻</text>
+<text class="b" x="48" y="205">把案件事实编码成向量，</text>
+<text class="b" x="48" y="246">按向量方向的接近程度排序。</text>
+<text class="s" x="48" y="282">检索范围：此前已加入的标注样例。</text>
+<path class="arrow" d="M300 304V334"/>
+<rect class="box" x="28" y="346" width="544" height="132" rx="8"/>
+<text class="h" x="48" y="388">② 当前模型生成初步标签</text>
+<text class="b" x="48" y="431">输入：原题＋刚检索的近邻。</text>
+<text class="s" x="48" y="467">这一调用叫 draft，只提取答案标签。</text>
+<path class="arrow" d="M300 488V518"/>
+<rect x="28" y="530" width="544" height="288" rx="8" fill="#eef4fa" stroke="#a9c5df" stroke-width="2"/>
+<text class="h" x="48" y="572">③ 再检索两组，每组至多 5 条</text>
+<text class="b" x="48" y="616">Confirmer：真实标签与 draft</text>
+<text class="b" x="48" y="655">至少共享一个标签。</text>
+<path d="M48 680H552" stroke="#cad7e4"/>
+<text class="b" x="48" y="724">Challenger：真实标签与 draft</text>
+<text class="b" x="48" y="763">没有共同标签。</text>
+<text class="s" x="48" y="801">有／无交集，不是标签集合完全相等。</text>
+<path class="arrow" d="M300 828V858"/>
+<rect class="box" x="28" y="870" width="544" height="178" rx="8"/>
+<text class="h" x="48" y="912">④ 原题＋draft＋两组样例</text>
+<text class="b" x="48" y="955">组成复核输入，再调用模型一次。</text>
+<text class="b" x="48" y="995">Teacher 用这份输入评估 ŷ。</text>
+<text class="s" x="48" y="1034">复核生成的最终答案不是训练目标。</text>
+<text class="h" x="28" y="1103">总计：两次生成，三次检索。</text>
+<text class="b" x="28" y="1147">样例表不足 10 条时，直接调用一次。</text>
+<text class="b" x="28" y="1193">整批预测结束后，才加入本批真标签。</text>
+<text class="b" x="28" y="1248">注意：标签不同不等于有用的反例。</text>
+<text class="s" x="28" y="1290">筛选条件没有验证样例能否反驳 draft。</text>
+<text class="s" x="28" y="1367">根据 §3.3、Appendix A.1 与代码重绘</text>
+</svg>

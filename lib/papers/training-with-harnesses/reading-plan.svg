@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1130" viewBox="0 0 600 1130" role="img" aria-labelledby="title desc">
+<title id="title">论文与公开 Plan-Solve 路径的差异</title><desc id="desc">论文中规划调用读取完整标准解，求解输入为题目和计划。公开版本的数据虽然保存 solution，训练调用只转发 question 与 answer，规划看不到完整解，求解却看见答案提示。这不能证明内部实验也漏传完整解。</desc>
+<defs><style>text{font-family:"PingFang SC",Arial,sans-serif;fill:#24292f}.title{font-size:32px;font-weight:700}.h{font-size:29px;font-weight:700}.b{font-size:28px}.s{font-size:24px;fill:#536171}</style></defs>
+<rect width="600" height="1130" fill="#fff"/>
+<text class="title" x="28" y="50">Plan-Solve：两条协议路径</text>
+<rect x="28" y="96" width="544" height="326" rx="8" fill="#eef4fa" stroke="#a9c5df" stroke-width="2"/>
+<text class="h" x="48" y="140">论文 §3.3</text>
+<text class="b" x="48" y="191">原题＋完整标准解</text>
+<text class="b" x="48" y="236">→ 规划调用，提炼解题计划</text>
+<text class="b" x="48" y="283">→ 求解输入：原题＋计划</text>
+<text class="s" x="48" y="329">Teacher 读取这份求解输入。</text>
+<text class="s" x="48" y="369">评测 harness 本身时拿掉标准解，</text>
+<text class="s" x="48" y="405">由模型独立规划再求解。</text>
+<rect x="28" y="458" width="544" height="374" rx="8" fill="#f5f7f9" stroke="#d1dbe4" stroke-width="2"/>
+<text class="h" x="48" y="504">公开代码 · commit 20eaa0c</text>
+<text class="b" x="48" y="551">数据保存了完整 solution，</text>
+<text class="b" x="48" y="595">但训练时仅转发 question、answer。</text>
+<text class="b" x="48" y="646">→ 规划调用只读原题</text>
+<text class="b" x="48" y="693">→ 求解输入：原题＋计划</text>
+<text class="b" x="48" y="733">　 ＋标准答案提示</text>
+<text class="s" x="48" y="782">完整解没有传给规划调用，</text>
+<text class="s" x="48" y="815">标准答案却进入了求解输入。</text>
+<text class="h" x="28" y="893">复现前要确定采用哪套协议。</text>
+<text class="b" x="28" y="939">公开代码的差异不能反推</text>
+<text class="b" x="28" y="979">论文内部实验也按这条路径运行。</text>
+<text class="s" x="28" y="1085">根据 §3.3 与数据、训练、harness 代码重绘</text>
+</svg>

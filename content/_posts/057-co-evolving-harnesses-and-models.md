@@ -2,9 +2,9 @@
 title: "[2026-09-08] Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails"
 permalink: "/posts/论文解读/co-evolving-harnesses-and-models.html"
 date: "2026-09-29T17:02:00+08:00"
-updated: "2026-09-29T17:02:00+08:00"
+updated: "2026-10-12T16:00:00+08:00"
 cover: "/generated-covers/057-co-evolving-harnesses-and-models.webp"
-description: "Harness 为弱模型量身演化后，直接模仿强模型的完整轨迹会破坏二者的配合。本文沿着两条真实失败轨迹，拆解 on-policy correction 为什么只改学生自己的第一个错误 turn。"
+description: "先为弱模型调整提示、工具和运行时检查，再让它完整模仿强模型，成绩反而下降。本文沿着两条真实失败记录，解释为何改用学生自己的执行记录，只修错误发生的那一轮，并核对数据和实验限制。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -46,120 +46,125 @@ html:not([data-theme="dark"]) body:has(.opc-reading){--paper:#fff;--paper-elevat
 <div class="source-links">
   <a href="https://arxiv.org/abs/2609.09134">论文主页</a>
   <a href="https://arxiv.org/pdf/2609.09134">论文 PDF</a>
-  <a href="https://arxiv.org/abs/2607.08938">上游任务与 harness evolution 论文</a>
+  <a href="https://arxiv.org/abs/2607.08938">上游任务与执行程序演化论文</a>
 </div>
 
 <section class="deck-wrap" aria-label="On-Policy Correction 交互图解">
-  <div class="deck-head"><strong>18 页交互图解 · model-harness fit、两条真实 case、数据构造与实验边界</strong><a href="/lib/decks/on-policy-correction-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>18 页交互图解 · 模型与执行程序的配合、真实失败与修正数据</strong><a href="/lib/decks/on-policy-correction-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/on-policy-correction-visual-guide.html" title="Co-Evolving Harnesses and Models 论文图解，共 18 页" allow="fullscreen" loading="eager"></iframe></div>
     <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
   </div>
 </section>
 
-<p class="lead">这篇论文抓住了一个很容易被忽略的顺序问题：团队先围绕弱模型演化出一套好用的 harness，再用强模型的成功轨迹微调弱模型，结果可能更差。Qwen3-Coder 在 evolved harness 下原本达到 78.0%，完整模仿 Gemini 后降到 63.1%。作者改为保留 Qwen 自己的 rollout，只让 expert 重写其中第一个错误 turn，最终得到 79.7%。</p>
+<p class="lead">作者先围绕弱模型调整提示、工具和运行时检查，得到一套执行程序（harness），再用强模型的成功执行记录微调弱模型，成绩反而下降。Qwen3-Coder 在调整后的程序下原本达到 78.0%，完整模仿 Gemini 后降到 63.1%。作者改为保留 Qwen 自己的执行记录，只让专家模型重写错误发生的那一轮回复与工具调用，最终得到 79.7%。下面分别解释执行程序怎样改、训练记录怎样修，以及这些分数测什么。</p>
+
+<aside class="part0">
+<span class="kicker">阅读准备</span>
+
+### 初始与演化后的执行程序，学生与专家记录
+
+论文把初始 harness 记为 `h0`。作者让 Qwen3-Coder-30B-A3B 在七类企业任务上运行，再由 Gemini-3.1-Pro-Preview 当修改者，根据失败记录改系统提示、工具、hooks（调用前后的处理逻辑）和上下文管理。每类任务最后选出的版本是 `h*`。这套 `h*` 包含针对 Qwen 原有行为调过的提示、工具和执行规则，不只是一段提示词。Harness 是模型外的执行程序；rollout 是一次完整任务执行记录。
+
+<div class="roles">
+  <div class="role"><b>较弱模型／学生</b><span>Qwen3-Coder-30B-A3B，主实验里既负责生成程序演化所需的执行记录，也是后续 LoRA-SFT 的对象。</span></div>
+  <div class="role"><b>较强模型／专家</b><span>Gemini-3.1-Pro-Preview。它修改执行程序，也生成完整模仿记录或单次回复修正。</span></div>
+  <div class="role"><b>演化后的执行程序 h*</b><span>主要改系统提示，也可增删工具和调用处理；按验证分选择。</span></div>
+  <div class="role"><b>任务验收</b><span>给每次完整执行 0/1 成功分；本文未公开任务文件、验收代码或逐条修正数据。</span></div>
+</div>
+
+Full-trajectory imitation（完整轨迹模仿）训练专家自己的执行步骤；on-policy correction（在学生当前执行记录上修正）从学生失败开始，只把定位的一个错误回复换成专家版本，其余学生记录保留。SFT 是监督微调；LoRA 是只训练少量附加参数的微调方式。
+</aside>
 
 <div class="interest"><b>博客作者兴趣度 9.7 / 10</b><span>评分仅表示博客作者本人兴趣程度；它直接研究完整 harness 与模型权重更新之间的兼容性</span></div>
 
 <div class="metrics" aria-label="论文关键结果">
-  <div class="metric"><strong>29.2 → 78.0</strong><span>Qwen：base harness → evolved harness</span></div>
-  <div class="metric"><strong>78.0 → 63.1</strong><span>完整 expert trajectory imitation</span></div>
-  <div class="metric"><strong>78.0 → 79.7</strong><span>On-policy single-turn correction</span></div>
-  <div class="metric"><strong>1.1% → 14.6%</strong><span>Imitation 后 planning failures 占比</span></div>
+  <div class="metric"><strong>29.2 → 78.0</strong><span>Qwen：初始程序 → 演化后程序</span></div>
+  <div class="metric"><strong>78.0 → 63.1</strong><span>模仿专家完整执行记录</span></div>
+  <div class="metric"><strong>78.0 → 79.7</strong><span>只修学生实际执行中的一次回复</span></div>
+  <div class="metric"><strong>1.1% → 14.6%</strong><span>各条件的失败记录中，规划失败所占比例</span></div>
 </div>
 
 <aside class="keypoints">
   <h3>先记住四个结论</h3>
   <ul>
-    <li><strong>Harness evolution 和 model SFT 不能视为互不影响的两个旋钮。</strong>Harness 是围绕弱模型原有的 planning cadence 演化出来的，权重更新会改变这套配合。</li>
-    <li><strong>完整模仿的失败不是因为模型没学到 expert knowledge。</strong>Domain-computation recipe 的使用率从 30.8% 升到 76.1%，但 planning failures 从 1.1% 升到 14.6%。</li>
-    <li><strong>On-policy correction 只改学生自己访问到的错误状态。</strong>约 500 条训练数据中，约 400 条来自单 turn expert correction，另混入约 50 条学生自己的成功 rollout。</li>
-    <li><strong>79.7% 只是比 78.0% 高 1.7 个百分点。</strong>方法的价值主要是避免 14.9 点回退，并没有追平同一 harness 下 Gemini 的 93.6%。</li>
+    <li>程序围绕弱模型原有的检查与提交节奏演化，权重更新可能改变这套配合。完整模仿后七项任务都退步。</li>
+    <li>部门计算规则使用率从 30.8% 升到 76.1%；但各条件失败记录中的<strong>规划失败占比从 1.1% 升到 14.6%</strong>。这些占比不是全部执行的失败率。</li>
+    <li>局部修正保留学生自己访问过的状态。约 500 条训练数据中，约 400 条是单回复修正，另混入约 50 条学生成功记录；约数的差额未解释。</li>
+    <li>79.7% 比 78.0% 只高 1.7 个百分点。方法主要<strong>避免了完整模仿的 14.9 点回退</strong>，没有追平同一 harness 下 Gemini 的 93.6%。</li>
   </ul>
 </aside>
 
-<aside class="part0">
-<span class="kicker">PART 0 · READING PRIMER</span>
 
-### 先分清 `h0`、`h*`、student rollout 和 expert rollout
+<h2 id="为弱模型调好的执行程序，为什么会被完整模仿打乱？">1. Motivation：为弱模型调好的执行程序，为什么会被完整模仿打乱？</h2>
 
-论文把初始 harness 记为 `h0`。作者让 Qwen3-Coder-30B-A3B 在七类 enterprise tasks 上运行，再由 Gemini-3.1-Pro-Preview 充当 meta-agent，根据失败轨迹修改 system prompt、tools、hooks 和 context management。每个任务最后选出的版本是 `h*`。这套 `h*` 包含针对 Qwen 原有行为调过的 prompt、tool 和执行规则，远不止一段提示词。
+**作者的解释是，演化后的 harness 已适配弱模型的检查与提交节奏，完整模仿却同时改变知识和执行习惯。** 在文中的案例里，强模型少解释、少做中间检查，也较早提交答案。弱模型模仿了这种做法，却未必获得支撑这套执行顺序的能力。
 
-<div class="roles">
-  <div class="role"><b>WEAKER MODEL / STUDENT</b><span>Qwen3-Coder-30B-A3B，主实验里既负责生成 harness-evolution rollout，也是后续 LoRA-SFT 的对象。</span></div>
-  <div class="role"><b>STRONGER EXPERT</b><span>Gemini-3.1-Pro-Preview。它提出 harness edit，也生成 imitation trajectory 或单 turn correction。</span></div>
-  <div class="role"><b>EVOLVED HARNESS h*</b><span>主要改 system prompt，也可增删 tool 与 hook；用 validation score 选出。</span></div>
-  <div class="role"><b>TASK VERIFIER</b><span>给每条 rollout 二元 task success。论文没有公开本工作的 task files、checker code 或逐条 correction 数据。</span></div>
-</div>
-
-Full-trajectory imitation 使用 expert 自己访问到的 states 和整条 planning path。On-policy correction 从 student 的失败 rollout 开始，因此训练样本仍围绕 student 真正会遇到的 states，只把定位出的一个错误 response 换成 expert response。
-</aside>
-
-## Q1. 为什么强模型的成功轨迹会把弱模型教坏？
-
-**因为 evolved harness 已经适配了弱模型原有的 planning cadence，而完整 imitation 同时改了知识和规划风格。** 强模型能在更少的中间检查下直接执行，也更早提交答案。弱模型会模仿这种 terse（少解释、少检查）、answer-early（更早提交答案）的轨迹，但未必同时获得支撑这套节奏的执行能力。
-
-这和普通 SFT 的直觉正面冲突。Gemini 在 Qwen 的 `h*` 下能达到 93.6%，显著高于 Qwen 的 78.0%，看起来是一位合适的 teacher。但 `h*` 的 prompt、tool、hook 与执行顺序，是根据 Qwen 的失败记录逐步改出来的。完整 imitation 改变了 Qwen 的 planning distribution，也就是它通常会访问哪些 states、何时检查、何时提交。结果是脚手架还在，模型的动作节奏却变了。
+Gemini 在 Qwen 的 `h*` 下达到 93.6%，比 Qwen 的 78.0% 高 15.6 个百分点。但 `h*` 的提示、工具、调用处理与执行顺序，是根据 Qwen 的失败记录逐步改出来的。完整模仿改变了 Qwen 常走的步骤、检查时机与提交时机；外层规则没变，模型却未必按这些规则原先预期的节奏执行。
 
 <figure class="figure">
-  <img src="/lib/papers/on-policy-correction/figure-1-coevolution.png" alt="论文 Figure 1：harness-model co-evolution 与两种模型更新路径">
-  <figcaption>原论文 Figure 1，依据 arXiv 页面标明的 CC0 1.0 授权直接引用。红色路径用完整 expert rollout 更新 student，绿色路径在 student 自己的失败状态上只修一个 turn。</figcaption>
+  <a href="/lib/papers/on-policy-correction/figure-1-coevolution.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/figure-1-coevolution.png" alt="论文 Figure 1：harness-model co-evolution 与两种模型更新路径" width="1270" height="720"></a>
+  <figcaption>原论文 Figure 1，依据 arXiv 页面标明的 CC0 1.0 授权直接引用。红色路径用专家完整记录更新学生；绿色路径从学生失败记录中只修一次回复。</figcaption>
 </figure>
 
-论文用一个必要的 control 支持这个解释：同样的 expert-imitation recipe 放回未演化的 `h0` 后，Qwen 从 29.2% 升到 35.5%。Expert trajectory 在普通 harness 下有正收益；它与已经适配 Qwen 的 `h*` 组合时，才出现明显退化。
+论文用一个必要的对照支持这个解释：同样的完整专家模仿方案放回未演化的 `h0` 后，Qwen 从 29.2% 升到 35.5%。专家记录在普通执行程序下有正收益；它与已经适配 Qwen 的 `h*` 组合时，才出现明显退化。
 
-## Q2. 它和联合优化、Harness-Zero、普通 on-policy imitation 有什么区别？
+<h2 id="与联合优化、Harness-Zero-和普通局部纠错的区别">2. Related Work：与联合优化、Harness-Zero 和普通局部纠错的区别</h2>
 
-**这篇论文研究的是“先演化 harness、再更新模型”时，模型与 harness 能否继续配合。** 它不移除 evolved harness，也不证明 correction 能跨到另一个 action space。部署产物仍是 corrected Qwen 加上原来的 `h*`。
+**这篇论文研究的是“先演化 harness、再更新模型”时，模型与 harness 能否继续配合。** 它不移除演化后的执行程序，也不证明修正模型能换用另一套工具；部署仍是修正后的 Qwen 加上原来的 `h*`。
 
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>训练时改变什么</th><th>部署时保留什么</th><th>与本文的边界</th></tr></thead>
   <tbody>
-    <tr><td>Meta-Harness / Better Harnesses</td><td>搜索 prompt、tool、hook 与 control flow</td><td>固定模型 + evolved harness</td><td>提供上游 harness evolution；不更新模型权重。</td></tr>
-    <tr><td>Co-Harness / WHALE / HarnessForge</td><td>交替或联合优化 harness 与 weights</td><td>最终 model-harness pair</td><td>证明两者可协同；本文专门隔离 full imitation 引起的负迁移。</td></tr>
-    <tr><td>普通 on-policy expert correction</td><td>在 student 访问到的 state 上请 teacher 接管或续写</td><td>模型 + 固定 interface</td><td>本文把同一思想放进 model-specific evolved harness，目标是保住 pair fit。</td></tr>
-    <tr><td>Harness-Zero</td><td>把 source-harness 行为转成 target-harness 有效动作后训练模型</td><td>模型 + 更小的 target harness</td><td>Harness-Zero 要移除 specialized source harness；本文始终保留 `h*`。</td></tr>
-    <tr><td>Grow the Harness</td><td>把重复控制写进可执行代码</td><td>固定模型 + specialist harness</td><td>与本文部署立场接近，但它主要优化可复用代码，不做 model correction。</td></tr>
+    <tr><td>Meta-Harness / Better Harnesses</td><td>搜索提示、工具、调用处理与执行流程</td><td>固定模型 + 演化后程序</td><td>提供上游程序演化；不更新模型权重。</td></tr>
+    <tr><td>Co-Harness / WHALE / HarnessForge</td><td>交替或联合优化程序与权重</td><td>最终配合使用的模型与程序</td><td>证明两者可协同；本文专门隔离完整模仿引起的负迁移。</td></tr>
+    <tr><td>普通 on-policy expert correction</td><td>在学生实际遇到的状态上请教师接管或续写</td><td>模型 + 固定接口</td><td>本文把同一思想放进围绕特定模型调过的程序，目标是维持二者配合。</td></tr>
+    <tr><td>Harness-Zero</td><td>把原专用程序的行为改成目标接口可执行动作后训练模型</td><td>模型 + 更小的目标接口</td><td>Harness-Zero 要移除原专用程序；本文始终保留 <code>h*</code>。</td></tr>
+    <tr><td>Grow the Harness</td><td>把重复控制写进可执行代码</td><td>固定模型 + 专用程序</td><td>与本文部署立场接近，但它主要优化可复用代码，不修正模型。</td></tr>
   </tbody>
 </table>
 </div>
 
-论文给出的关键反例是：**teacher 更强、trajectory 全部成功、格式已经转换正确，student 仍然可能因为 planning shift 而退化。** 这比笼统地说“on-policy 比 off-policy 好”更有信息量。
+论文给出的关键反例是：**教师更强、记录全部成功且格式正确，学生仍可能因为执行计划改变而退化。** 这比笼统地说“on-policy 比 off-policy 好”更有信息量。
 
-## Q3. Harness 怎样演化，correction 数据又是怎样造出来的？
+<h2 id="执行程序演化与修正数据的构造">3. Method：执行程序演化与修正数据的构造</h2>
 
-### 3.1 七类任务和 harness evolution
+**先改外层执行程序，再比较两种微调数据：完整专家记录，或只修学生记录中定位到的一轮错误回复。**
 
-作者沿用 Yang et al. (2026) 的七类 enterprise tasks：payroll attendance audit、budget approval、stock alert、IoT anomaly detection、Playwright browser automation、website management 和 code refactoring。论文称这些任务有客观 verifier，但没有在本文重新列出每个 split 的任务数、逐任务 checker 或原始 task package。
+<h3 id="3-1-七类任务与执行程序演化">3.1 七类任务与执行程序演化</h3>
 
-作者对上游环境做了两处修改：在涉及 MCP tool 的任务中，Agent 必须通过工具访问数据，不能直接修改 task database；tool-call errors 也会交给 harness optimizer。论文因此提醒，本文绝对分数不能直接与 Yang et al. 的原结果比较。
+作者沿用 Yang et al. (2026) 的七类企业任务：考勤与工资审计、预算审批、库存警报、物联网异常检测、Playwright 浏览器自动化、网站管理和代码重构。论文称这些任务有客观验收程序，但未重新列出各划分任务数、逐题验收或原始任务包。
 
-每个任务单独演化 harness，过程如下：
+作者对上游环境做了两处修改：在涉及 MCP 工具的任务中，Agent 必须通过工具访问数据，不能直接修改任务数据库；工具调用错误也会交给程序修改模型。论文因此提醒，本文绝对分数不能直接与 Yang et al. 的原结果比较。
+
+每类任务单独演化执行程序，过程如下：
 
 <ol class="process">
-  <li><b>1 · ROLLOUT</b><span>Qwen 在当前 harness 下执行 task minibatch。</span></li>
-  <li><b>2 · FEEDBACK</b><span>Verifier verdict、trace 与 tool errors 交给 optimizer。</span></li>
-  <li><b>3 · EDIT</b><span>Gemini meta-agent 修改 prompt，也可增删 tool 或 hook。</span></li>
-  <li><b>4 · VALIDATE</b><span>只有 minibatch performance 提升的 edit 才进入 Pareto pool。</span></li>
-  <li><b>5 · SELECT</b><span>三 seed、每 task $20、单 rollout 600 秒；按 validation score 选 `h*`，同分取较早 iteration。</span></li>
+  <li><b>1 · ROLLOUT</b><span>Qwen 在当前程序下执行一小批任务。</span></li>
+  <li><b>2 · FEEDBACK</b><span>验收判定、执行记录与工具错误交给修改模型。</span></li>
+  <li><b>3 · EDIT</b><span>Gemini 修改系统提示，也可增删工具或调用处理。</span></li>
+  <li><b>4 · VALIDATE</b><span>只有小批任务表现改善的修改，才进入候选集合。</span></li>
+  <li><b>5 · SELECT</b><span>三个随机种子，每类任务预算 $20，单次执行最多 600 秒；按验证分选 <code>h*</code>，同分取较早版本。</span></li>
 </ol>
 
-Training 和 validation split 用于 harness 与 model optimization，test split 保持 held out。主表报告 test success 的三次运行均值与 SEM。
+训练和验证划分用于优化程序与模型，测试划分不参与选择。主表报告三次运行的测试成功率均值与 SEM（均值的标准误）。
 
-### 3.2 Full imitation 数据怎样构造？
+<h3 id="3-2-完整模仿的数据怎样构造？">3.2 完整模仿的数据怎样构造？</h3>
 
-作者先收集 Gemini 在 `h*` 下 reward=1.0 的完整成功轨迹，再加入 Qwen 自己的成功轨迹，转换成 Qwen 的 chat/tool-call 格式后做 LoRA-SFT。主实验对三次独立 LoRA seed（0、101、202）取平均。
+作者先收集 Gemini 在 `h*` 下得分为 1.0 的完整成功记录，再加入 Qwen 自己的成功轨迹，转换成 Qwen 的消息与工具调用格式后做 LoRA-SFT。主实验对三个独立 LoRA 随机种子（0、101、202）取平均。
 
-训练配置是 rank 16 或 64 取较好结果、2 epochs、learning rate `1e-4`、bf16、effective batch size 8。默认 sequence length 为 49,152 tokens；当超过 5% 训练样本被截断时，作者再训练一个 98,304-token 版本。Adapter 合并为约 57 到 61 GB 的 dense checkpoint，在两张 H200 上推理；论文称一次训练少于一小时。
+训练配置是 rank 16 或 64 取较好结果、训练 2 遍、学习率 `1e-4`、bf16、有效批量为 8。论文未说明 rank 按哪份数据的分数选择。默认序列长度为 49,152 tokens；当超过 5% 训练样本被截断时，作者再训练一个 98,304-token 版本。Adapter 合并为约 57 到 61 GB 的模型权重，在两张 H200 上推理；论文称一次训练少于一小时，不包括收集记录、专家生成和候选选择的全部成本。
 
-### 3.3 On-policy correction 数据怎样构造？
+<h3 id="3-3-学生失败记录上的局部修正怎样构造？">3.3 学生失败记录上的局部修正怎样构造？</h3>
 
-作者改从 Qwen 在 `h*` 下的失败 rollout 出发。自动化的 failure localization 先找到第一个错误 turn；Gemini 看到 task instruction、截至该 turn 的 trajectory 和失败 checkpoint，然后只输出“一句修正策略 + 修正后的 tool call”。每个 turn 采样 `N=3` 个候选，再由另一个 quality judge 留下一个。
+<figure class="figure reading-diagram"><a href="/lib/papers/on-policy-correction/reading-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/on-policy-correction/reading-method.svg" alt="根据原论文 Appendix B 绘制的正文方法图；正文纵向阅读图" width="600" height="1177"></a><figcaption>根据原论文 Appendix B 绘制的正文方法图。</figcaption></figure>
+
+作者改从 Qwen 在 `h*` 下的失败记录出发。自动定位程序找出一轮导致失败的回复与工具调用；**论文没有定义“最早错误”的搜索算法**。Gemini 看到任务说明、截至该轮的执行记录和失败检查点，只输出“一句修正策略 + 修正后的工具调用”。每个位置采样三个候选，再由质量评分者选一个。
 
 <div class="code-scroll"><pre><code># Article reconstruction from Appendix B, not official code.
 def make_training_example(student_rollout, failed_checkpoint):
-    turn = failure_localizer.first_wrong_turn(
+    turn = failure_localizer.locate_failing_turn(
         rollout=student_rollout,
         checkpoint=failed_checkpoint,
     )
@@ -175,99 +180,117 @@ def make_training_example(student_rollout, failed_checkpoint):
     return student_rollout.replace(turn, correction)
 </code></pre></div>
 
-最终训练集约 500 rows：约 400 条 single-turn correction，加上约 50 条 Qwen 自己的 passing rollout；后者优先挑能力边界附近的样本，也就是同一任务有时成功、有时失败的 capability-boundary examples。论文没有解释这些约数之间剩余的差额，也没有公开 localizer prompt、quality judge 身份、筛选 rubric 或 corrected trajectory 的重新执行率。
+最终训练集约 500 条：约 400 条局部修正，加约 50 条 Qwen 成功记录；成功样本优先选择同题有时成功、有时失败的情况。论文未解释这些约数剩余的差额，也未公开错误定位提示、质量评分者身份、筛选标准或修正记录的重新执行比例。
 
-### 3.4 两条 case 具体发生了什么？
+**修正后不是重新生成整条成功轨迹。** 按附录描述，作者替换错误回复，其他学生内容保持不变。工具调用改了，后面的环境状态本来可能也会改变；论文没有公开重新执行比例，因此不能把这 400 条都称作“已验证的修正成功轨迹”。质量评分者选出的合理回复，与真实环境重跑后成功，是两层不同证据。
 
+<h3 id="3-4-两条真实失败：验证循环与漏掉筛选">3.4 两条真实失败：验证循环与漏掉筛选</h3>
+
+<figure class="figure reading-diagram"><a href="/lib/papers/on-policy-correction/reading-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/on-policy-correction/reading-case.svg" alt="根据原论文 Appendix D 重绘；正文纵向阅读图" width="600" height="1251"></a><figcaption>根据原论文 Appendix D 重绘。</figcaption></figure>
+
+<details class="reading-evidence"><summary>完整案例重绘图（可打开原尺寸）</summary>
 <figure class="figure">
-  <img src="/lib/papers/on-policy-correction/cases.svg" alt="Payroll audit 与 WebArena 的两条 planning failure">
-  <figcaption>根据原论文 Appendix D 重绘。两条 case 都说明 student 获得了部分 domain knowledge，但完整 imitation 改变了它与 harness 配合的执行节奏。</figcaption>
+  <a href="/lib/papers/on-policy-correction/cases.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/cases.svg" alt="Payroll audit 与 WebArena 的两条 planning failure" width="1400" height="760"></a>
+  <figcaption>根据原论文 Appendix D 重绘。两条案例都说明学生学到部分领域知识，但完整模仿改变了它与 harness 配合的执行节奏。</figcaption>
 </figure>
+</details>
 
 <div class="case">
 <h4>Case 1：Payroll audit，算对了却没提交</h4>
 <ol>
-  <li>上游 task 要求完成 payroll aggregation。`h*` 明确写出 employee-level aggregation、department mean-of-means、ceiling-then-multiply payroll 和 rounding。</li>
-  <li>原始 Qwen 按“compute → verify once → finish”执行，同一 example 的三条 rollout 都在 14 到 20 steps 内得到 1.0。</li>
-  <li>SFT-imitation 后的 Qwen 仍写出了正确 department aggregates，说明 domain recipe 已学会。</li>
-  <li>它随后把一次 verify 变成循环：同一 view 发出 29 次、prompt 约重读 20 次，78 steps 内始终没有调用 finish，因此 task verifier 给 0。</li>
+  <li>任务要求汇总考勤并计算薪资。<code>h*</code> 写清员工级汇总、部门均值的计算，以及先向上取整再乘薪资和最终舍入规则。</li>
+  <li>原始 Qwen 按“计算 → 验证一次 → 提交”执行，同一例子的三次执行都在 14 到 20 步内得到 1.0。</li>
+  <li>完整模仿后的 Qwen 仍写出了正确部门汇总，说明计算规则已学会。</li>
+  <li>它随后把一次检查变成循环：同一视图请求发出 29 次、提示约重读 20 次，78 步内仍没有调用结束工具，因此任务验收给 0。</li>
 </ol>
 </div>
 
 <div class="case">
 <h4>Case 2：WebArena，351 不是 346</h4>
 <ol>
-  <li>问题询问 Magento Admin 中 Approved reviews 的总数，ground truth 是 346。</li>
-  <li>`h*` 给出明确过程：找到 status column，筛选 Approved，读取 filtered total，再通过 structured finish 返回。</li>
-  <li>原始 Gemma 会执行 filter-then-count，并返回 346。</li>
-  <li>SFT-imitation 后的 Gemma 进入 review grid 后直接读取未筛选的 “351 records found”，跳过筛选并提前提交 351。</li>
+  <li>问题询问 Magento Admin 中 Approved（已批准）评论的总数，参考答案是 346。</li>
+  <li><code>h*</code> 给出明确过程：找到状态列，筛选 Approved（已批准），读取筛选后的总数，再用结束工具返回。</li>
+  <li>原始 Gemma 先筛选再计数，返回 346。</li>
+  <li>SFT-imitation 后的 Gemma 进入评论表格后直接读取未筛选的 “351 records found”，跳过筛选并提前提交 351。</li>
 </ol>
 </div>
 
-这两条是作者挑选的解释性 rollout，不是随机 error sample。论文没有公开原始日志和 checker code，本文只能核对 Appendix D 的叙述，不能独立重放。
+这两条是作者选出的真实解释案例，不是随机抽取的错误样本。论文没有公开原始日志和验收代码，本文只能核对 Appendix D 的叙述，不能独立重放。
 
-## Q4. 实验结果到底证明了什么？
+<h2 id="主结果、失败分类和第二模型验证">4. Experiments：主结果、失败分类和第二模型验证</h2>
 
-### 4.1 主结果：harness 很强，完整 imitation 七项全退
+**主要增益来自 harness 演化；局部修正避免完整模仿的回退，只比未微调模型再高 1.7 个百分点。**
+
+<h3 id="4-1-主结果：harness-很强，完整模仿七项全退">4.1 主结果：harness 很强，完整模仿七项全退</h3>
+
+<figure class="figure reading-diagram"><a href="/lib/papers/on-policy-correction/reading-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/on-policy-correction/reading-results.svg" alt="根据原论文 Table 1 重绘；失败分类来自 Table 3；正文纵向阅读图" width="600" height="1191"></a><figcaption>根据原论文 Table 1 重绘；失败分类来自 Table 3。</figcaption></figure>
+
+<details class="reading-evidence"><summary>横向总览（可打开原尺寸）</summary>
+<figure class="figure">
+  <a href="/lib/papers/on-policy-correction/results.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/results.svg" alt="Qwen 与 Gemini 在不同 harness 和训练条件下的平均成功率" width="1400" height="760"></a>
+  <figcaption>根据原论文 Table 1 重绘。Avg 是七项任务成功率的算术平均；每个单元是三次运行的均值 ± 标准误。</figcaption>
+</figure>
+</details>
+
+Qwen 从 `h0` 的 29.2±0.61 升到 `h*` 的 78.0±0.97，说明执行程序演化是主要增益来源。Gemini 也能使用这套为 Qwen 演化的 harness，从 84.4±0.85 升到 93.6±0.46，证明 `h*` 不只是 Qwen 能触发的一组脆弱提示。
+
+Gemini 的平均分提高，不代表每项都不退步：Attendance 从 97.4 降到 97.0，Budget 从 97.2 降到 93.2，Refactor 保持 85.0。论文概括的“各任务都不低于原程序”与 Table 1 不符，应以这些逐项数字限定结论。
+
+问题出现在权重更新。Qwen 在 `h*` 下做完整模仿后降到 63.1±0.81，七项任务全部下降，范围是 −4.2 到 −29.9 个百分点。On-policy correction 则达到 79.7±0.67：五项上升，Attendance 与 Budget 分别 −0.4、−0.6，作者将其视为接近饱和条件下的噪声范围。
 
 <figure class="figure">
-  <img src="/lib/papers/on-policy-correction/results.svg" alt="Qwen 与 Gemini 在不同 harness 和训练条件下的平均成功率">
-  <figcaption>根据原论文 Table 1 重绘。Avg 是七项 task success 的算术平均；每个 cell 是三次运行的 mean ± SEM。</figcaption>
+  <a href="/lib/papers/on-policy-correction/task-deltas.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/task-deltas.svg" alt="完整模仿与 on-policy correction 在七项任务上的变化" width="1400" height="760"></a>
+  <figcaption>根据原论文 Table 1 重绘。图中是相对同一 Qwen + <code>h*</code> 基线的百分点变化；论文没有给出逐任务显著性检验。</figcaption>
 </figure>
 
-Qwen 从 `h0` 的 29.2±0.61 升到 `h*` 的 78.0±0.97，说明 harness evolution 是主要增益来源。Gemini 也能使用这套为 Qwen 演化的 harness，从 84.4±0.85 升到 93.6±0.46，证明 `h*` 不只是 Qwen 能触发的一组脆弱提示。
-
-问题出现在权重更新。Qwen 在 `h*` 下做 full imitation 后降到 63.1±0.81，七项任务全部下降，范围是 −4.2 到 −29.9 个百分点。On-policy correction 则达到 79.7±0.67：五项上升，Attendance 与 Budget 分别 −0.4、−0.6，作者将其视为接近饱和条件下的噪声范围。
+<h3 id="4-2-机制证据：计算规则学会了，执行节奏却变差">4.2 机制证据：计算规则学会了，执行节奏却变差</h3>
 
 <figure class="figure">
-  <img src="/lib/papers/on-policy-correction/task-deltas.svg" alt="完整模仿与 on-policy correction 在七项任务上的变化">
-  <figcaption>根据原论文 Table 1 重绘。图中是相对同一 Qwen + `h*` baseline 的百分点变化；论文没有给出逐任务显著性检验。</figcaption>
+  <a href="/lib/papers/on-policy-correction/failure-analysis.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/failure-analysis.svg" alt="完整模仿和局部修正的 planning 与 knowledge failure 占比" width="1400" height="720"></a>
+<figcaption>根据原论文 Table 3 重绘。模型分类器将得分为 0 的失败记录分成六类；图里只显示变化最大的知识与规划两类。</figcaption>
 </figure>
 
-### 4.2 机制证据：knowledge 上升，planning fit 下降
+完整模仿后，部门计算规则的使用率从 30.8% 升到 76.1%。Table 3 的分母则是**各条件下得 0 分的失败记录**：其中知识不足占比从 46.2% 降到 44.5%，规划失败占比从 1.1% 跳到 14.6%。局部修正组相应为 43.2% 与 1.8%。这些比例描述失败组成，不能读成全部任务的失败概率。
 
-<figure class="figure">
-  <img src="/lib/papers/on-policy-correction/failure-analysis.svg" alt="完整模仿和局部修正的 planning 与 knowledge failure 占比">
-<figcaption>根据原论文 Table 3 重绘。LLM-as-judge classifier 把 hard-failure rollouts，也就是得分为 0 的轨迹，分成六类；图里只显示变化最大的 knowledge 与 planning 两类。</figcaption>
-</figure>
+§3.4 还报告总体失败率 28.9%→26.8%，却没有给出匹配的样本数与聚合方式。它们不是 Table 1 七项平均成功率 78.0%→79.7% 的补数；本文保留这处记账缺口，不把两组统计直接相减或换算。
 
-Full imitation 后，domain-computation recipe 的使用率从 30.8% 升到 76.1%，implicit-knowledge failures 从 46.2% 降到 44.5%。但 planning failures 从 1.1% 跳到 14.6%。On-policy correction 把 planning failures 保持在 1.8%，同时把 knowledge failures 降到 43.2%，总体 failure rate 也从 28.9% 降到 26.8%。
+这组证据与“执行计划改变破坏模型与程序配合”一致，但仍属于行为归因。失败类型由模型分类器判定；论文未报告人工一致率、评分模型、提示或混淆矩阵，因此不能把 14.6% 当成无争议的人工诊断。
 
-这组证据与“planning-style drift 破坏 model-harness fit”一致，但仍属于行为归因。Failure category 由 LLM classifier 判定，论文没有人工 agreement、judge model、prompt 或 confusion matrix，因此不能把 14.6% 当成无争议的人工诊断。
+<h3 id="4-3-Gemma-复查排除了什么？">4.3 Gemma 复查排除了什么？</h3>
 
-### 4.3 Gemma replication 排除了什么？
+作者在 WebArena 任务上把弱模型换成 Gemma-4-26B-A4B。Harness evolution 让它从 46.7% 升到 55.6%；Gemini 使用同一 harness 时从 71.1% 升到 81.1%；Gemma 做完整模仿后降到 41.1%。这说明退化不只出现在 Qwen-Gemini 组合里，也难以只用表面输出风格不同来解释。
 
-作者在 WebArena task 上把 weak model 换成 Gemma-4-26B-A4B。Harness evolution 让它从 46.7% 升到 55.6%；Gemini 使用同一 harness 时从 71.1% 升到 81.1%；Gemma 做 full imitation 后降到 41.1%。这说明退化不只出现在 Qwen-Gemini 组合里，也难以只用表面输出 style 不同来解释。
+它没有排除更多因素：Gemma 只测了一类任务，仍用同一个专家和同一套 LoRA 方案，也没有比较 DAgger、RL、KL 约束或不同修正范围。
 
-它没有排除更多因素：Gemma 只测了一个 task，仍使用同一个 expert 和同一套 LoRA recipe，也没有比较 DAgger、RL、KL regularization 或不同 correction 粒度。
+<h2 id="模型升级后应重新检查执行程序兼容性">5. Discussion：模型升级后应重新检查执行程序兼容性</h2>
 
-## Q5. 对 Claude Code、Codex 这类完整 harness 有什么启发？
+**升级模型权重后，旧 harness 要重新做兼容性回归测试。** 为某个模型调过的工具规则、子 Agent 分工、重试处理或历史压缩，不保证适合更新后的检查和提交节奏。
 
-**最直接的结论是：升级模型权重后，旧 harness 需要重新做 compatibility regression。** 一个为 Claude Code 某个版本调出来的 tool policy、sub-agent 分工、retry hook 或 context compaction 规则，不一定能原样适配下一版模型。模型更强也不保证它会按旧 scaffold 预期的节奏走完任务。
+收集修正数据时，应先运行当前学生，找出真正导致后续失败的一步，再请专家修正。这样输入的仓库、工具输出和历史更接近学生实际会遇到的情况，而非照搬专家访问的状态。
 
-第二，收集训练数据时应优先保留 learner state distribution。对真实 coding agent，可以先运行当前模型，定位第一处导致后续失败的 decision，再让更强模型只修这一步。这样产生的数据更接近学生部署时会遇到的 repository state、tool output 和 context history。
+**采用了某条规则，不等于能顺利完成任务。** 本文完整模仿后的模型更常使用计算规则，却更易陷入循环或提前提交；应同时看任务成功率、循环次数、结束行为和未完成原因。
 
-第三，**“用了 harness 组件”不等于“与 harness 配合正确”。** 本文的 imitation model 更频繁使用 domain recipe，却更容易在规划上失败。监控系统至少要同时看 task success、tool/hook adoption、planning loops、finish behavior 和未完成原因。
+扩展到 Claude Code／Codex 时，至少比较完整模仿、单步修正与短窗口修正；跨模型版本测试旧 harness；让人工复核定位出的错误；最后在环境里执行修正调用并重新生成后续，确认修改不只在文本上合理。
 
-<div class="note blue"><p><strong>如果把这篇论文扩展到 Claude Code / Codex，我会补四个实验：</strong>用同一组 repo-level sealed tasks 比较 base、full imitation、single-turn correction 和 short-window correction；在模型版本升级前后交叉测试旧 harness；由人工复核 first-failure localization；最后把 corrected turn 重新放回真实环境执行，确认后续 trajectory 仍然成立。</p></div>
+本文的两个训练组同时改变了学生访问的状态、修正长度、成功与失败样本比例和数据量。还需要在同样的学生状态上，比较专家续写整条后续与单轮修正，并匹配数据量和 LoRA 配置，才能分清收益来自哪些因素。
 
-## Q6. 最后怎样评价这篇论文？
+<h2 id="负结果的价值与局部修正尚未证明的部分">6. Conclusion：负结果的价值与局部修正尚未证明的部分</h2>
 
-**它给出了一个很有价值的负结果：成功 expert trajectory 也可能是错误的训练单位。** 围绕 78.0→63.1 的异常，作者补了 baseline-harness control、第二模型家族、模型是否采用新增 harness 规则的统计、failure composition 和两条可读的 rollout case。证据链比单纯提出一种新 SFT recipe 完整得多。
+**它给出了一个很有价值的负结果：专家成功执行记录也可能是错误的训练单位。** 围绕 78.0→63.1 的异常，作者补了初始程序对照、第二模型家族、新增规则使用统计、失败分类和两个可读案例。证据比只提出一种新监督微调方案完整得多。
 
 需要保留的限制也很明确：
 
 <div class="limit-grid">
-  <div><b>数据和实现没有公开</b><span>论文与 arXiv 页面没有本工作官方代码链接；约 500 rows 的 correction set、failure localizer、quality judge 和 task-level logs 均不可下载。</span></div>
-  <div><b>Correction 的净增益很小</b><span>主结果是 78.0→79.7，只有 +1.7 points。它最强的证据是避免 63.1 的退化，不是大幅超过 evolved-harness baseline。</span></div>
-  <div><b>Failure taxonomy 依赖 LLM judge</b><span>论文没有报告人工标注协议、judge identity、prompt 或一致率；planning-fit 解释合理，但还不是因果定论。</span></div>
-  <div><b>只测试一个 expert</b><span>Qwen 和 Gemma 都由 Gemini-3.1-Pro-Preview 提供轨迹或 correction，无法判断 teacher style 是否影响结果。</span></div>
-  <div><b>任务来自同一上游 suite</b><span>七项任务覆盖多种工具交互，但仍是同一 enterprise benchmark family；真实大型 repo 和多人开发流程未验证。</span></div>
-  <div><b>没有完整 co-evolution 多轮结果</b><span>Figure 1 画出了下一轮循环，实验主要验证一次 harness evolution 后的一次 model update。</span></div>
+  <div><b>数据和实现没有公开</b><span>论文与 arXiv 页面没有本工作官方代码链接；约 500 条修正数据、错误定位器、质量评分者和逐题日志均不可下载。</span></div>
+  <div><b>局部修正的净增益很小</b><span>主结果是 78.0→79.7，只有 +1.7 个百分点。它最强的证据是避免 63.1 的退化，不是大幅超过演化后程序的未微调基线。</span></div>
+  <div><b>失败分类依赖模型评分</b><span>论文没有报告人工标注协议、评分者身份、提示或一致率；执行节奏适配解释合理，但还不是因果定论。</span></div>
+  <div><b>只测试一个专家模型</b><span>Qwen 和 Gemma 都由 Gemini-3.1-Pro-Preview 提供执行记录或修正，无法判断教师风格是否影响结果。</span></div>
+  <div><b>任务来自同一上游任务集合</b><span>七项任务覆盖多种工具交互，但仍是同一企业任务基准；真实大型代码库和多人开发流程未验证。</span></div>
+  <div><b>没有完整多轮共同演化结果</b><span>Figure 1 画出了下一轮循环，实验主要验证一次程序演化后的一次模型更新。</span></div>
 </div>
 
-我的判断是：**这篇论文应该和 Harness-Zero、Multi-Harness RL 一起读。** Harness-Zero 问怎样把行为带离 source harness，Multi-Harness RL 说明混合多个 harness 不会自动产生 portability，而本文指出即使继续使用同一个 evolved harness，粗暴的完整轨迹模仿也会破坏兼容性。三篇合起来，把“训练数据来自哪个 runtime、保留了谁的 state distribution、部署时还剩哪个 harness”这三个问题分开了。
+我的判断是：**这篇论文应该和 Harness-Zero、Multi-Harness RL 一起读。** Harness-Zero 问怎样把行为带离原专用程序，Multi-Harness RL 说明混合多个 harness 不会自动产生可换接口的能力，而本文指出即使继续使用同一个演化后程序，粗暴的完整轨迹模仿也会破坏兼容性。三篇合起来，把“数据在哪套执行程序里产生、来自学生还是专家实际遇到的状态、部署还保留哪套程序”三个问题分开了。
 
-<div class="note"><p><strong>来源与授权说明：</strong>论文为 arXiv:2609.09134v1，arXiv 页面标注 CC0 1.0。本文直接引用 Figure 1 并注明来源，其余图表均根据 Tables 1-3 与 Appendix D 数据重绘。论文 PDF、arXiv metadata 与公开代码链接于 2026-09-29 核查；未找到本工作的官方代码或数据发布。</p></div>
+<div class="note"><p>论文为 arXiv:2609.09134v1，arXiv 页面标注 CC0 1.0。本文直接引用 Figure 1 并注明来源，其余图表均根据 Tables 1-3 与 Appendix D 数据重绘。2026-10-14 重查 arXiv 条目与原文，仍无本工作官方代码或修正数据的发布链接；这不等于证明作者没有在其他位置发布未链接的材料。</p></div>
 
 </div>

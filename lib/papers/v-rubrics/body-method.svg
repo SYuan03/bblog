@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="960" viewBox="0 0 1000 960" role="img" aria-labelledby="title desc">
+<title id="title">V-Rubrics 数据构造与逐项训练奖励</title><desc id="desc">十七个视觉问答来源过滤后按八次回答正确数分难度。Gemini看图生成评分项，Qwen只看回答和文字标准判分，再把相关权重应用到回答前缀。</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:33px;font-weight:750}.head{font-size:28px;font-weight:700}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}</style>
+<rect width="1000" height="960" fill="#fff"/>
+<text x="40" y="53" class="title">一条视觉回答拆成多项检查，再计算训练权重</text>
+<rect x="40" y="90" width="920" height="173" fill="#f7f8f8" stroke="#ccd4d9"/>
+<text x="64" y="133" class="head">1 · 从 17 个视觉问答来源筛选图像、问题与答案</text>
+<text x="64" y="175" class="body">规则过滤后，固定的 SFT 模型对每题回答 8 次。</text>
+<text x="64" y="216" class="body">0/8 为困难，1–5 为中等，6–7 为简单；8/8 丢弃。</text>
+<text x="64" y="250" class="small">得到 50,248 个样本；难度标签不是人工逐题评估。</text>
+<rect x="40" y="289" width="920" height="174" fill="#f1f5f8" stroke="#c4d3dd"/>
+<text x="64" y="332" class="head" fill="#245f87">2 · Gemini-3-Pro 看图，生成文字评分项</text>
+<text x="64" y="374" class="body">VF：图中事实；RC：推理关系；IF：任务要求。</text>
+<text x="64" y="415" class="body">共 352,938 条评分项，给出检查内容、权重与类型。</text>
+<text x="64" y="449" class="small">评分项由模型自动生成；论文没有报告逐项人工审计。</text>
+<rect x="40" y="489" width="920" height="173" fill="#f2f6f4" stroke="#c6d8cf"/>
+<text x="64" y="532" class="head" fill="#356954">3 · 逐项判分：Qwen 只看回答 + 文字标准</text>
+<text x="64" y="574" class="body">判分调用不直接看到原图；每项单独判断是否满足。</text>
+<text x="64" y="615" class="body">综合答案是否正确与逐项满足程度，得到回答奖励。</text>
+<text x="64" y="649" class="small">因此奖励依赖生成的文字标准是否完整、准确。</text>
+<rect x="40" y="688" width="920" height="173" fill="#f7f8f8" stroke="#ccd4d9"/>
+<text x="64" y="731" class="head">4 · 前缀归因：权重应用到支持该项的回答前缀</text>
+<text x="64" y="773" class="body">从首 token 到支持句结束全部包括，不仅训练该句。</text>
+<text x="64" y="814" class="body">各项使用固定权重，缺少支持句时也不重新归一化。</text>
+<text x="64" y="848" class="small">再用组内相对训练（GRPO）更新作答模型。</text>
+<text x="40" y="915" class="small">根据 §3、Figure 1 与公开 rewards/prefix 实现重绘。</text>
+<text x="40" y="946" class="small">数据构造、评分和更新是不同操作；判分文本不作为模型作答提示。</text>
+</svg>

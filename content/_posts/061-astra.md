@@ -2,9 +2,9 @@
 title: "[2026-01-29] ASTRA: Automated Synthesis of agentic Trajectories and Reinforcement Arenas"
 permalink: "/posts/论文解读/astra.html"
 date: "2026-10-05T16:30:00+08:00"
-updated: "2026-10-05T16:30:00+08:00"
+updated: "2026-10-14T08:00:00+08:00"
 cover: "/generated-covers/061-astra.webp"
-description: "ASTRA 怎样从 MCP tool graph 合成 SFT trajectories，再把 QA decomposition 编译成可执行 RL environments；逐层拆清数据、judge、reward、真实样本、评测结果与公开实现的证据边界。"
+description: "ASTRA 先生成工具调用示范，再把多步问答写成可执行的模拟工具，用模型自己的执行结果继续训练。本文分开解释数据构造、环境检查、训练奖励、行李加购真实样本及公开代码与论文的差异。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -27,7 +27,7 @@ html:not([data-theme="dark"]) body:has(.astra-reading){--paper:#fff;--paper-elev
 .astra-reading .lead{margin:0 0 18px;font-size:1.08em;line-height:1.78}.astra-reading .interest{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:18px 0 22px;padding:15px 17px;border:1px solid color-mix(in srgb,var(--violet) 38%,var(--line-local));background:color-mix(in srgb,var(--violet) 5%,#fff)}.astra-reading .interest b{color:var(--violet);font:750 1.2rem/1 var(--mono)}.astra-reading .interest span{color:var(--soft);font-size:.84rem}.astra-reading .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:22px 0 25px;border-block:1px solid var(--line-local)}.astra-reading .metric{min-height:103px;padding:16px 12px;border-right:1px solid var(--line-local)}.astra-reading .metric:last-child{border-right:0}.astra-reading .metric strong{display:block;color:var(--blue);font:680 clamp(1.2rem,3vw,1.62rem)/1 var(--serif)}.astra-reading .metric span{display:block;margin-top:9px;color:var(--soft);font:600 .76rem/1.45 var(--sans)}
 .astra-reading .keypoints{margin:0 0 36px;padding:18px 22px;border-left:5px solid var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.astra-reading .keypoints h3{margin:0 0 8px;font-size:1rem}.astra-reading .keypoints ul{margin:0;padding-left:1.2rem}.astra-reading .keypoints li{margin:.42rem 0}.astra-reading .part0{margin:32px 0 42px;padding:20px 22px;border-top:4px solid var(--violet);background:var(--surface)}.astra-reading .part0 h3{margin:0 0 11px;font-size:1.3rem}.astra-reading .kicker{display:block;margin-bottom:6px;color:var(--violet);font:800 .7rem/1 var(--mono);letter-spacing:.1em}
 .astra-reading h2{margin-top:3.55rem}.astra-reading h3{margin-top:2.1rem}.astra-reading h4{margin-top:1.7rem}.astra-reading strong{font-weight:760}.astra-reading .table-scroll,.astra-reading .code-scroll{width:100%;margin:21px 0;overflow-x:auto;-webkit-overflow-scrolling:touch}.astra-reading .table-scroll table{display:table;width:100%;min-width:760px;margin:0;border-collapse:collapse;font:400 .85rem/1.52 var(--sans)}.astra-reading th,.astra-reading td{padding:9px 10px;border:1px solid var(--line-local);text-align:left;vertical-align:top}.astra-reading th{background:color-mix(in srgb,var(--blue) 7%,var(--surface))}.astra-reading td:first-child{font-weight:650}.astra-reading .code-scroll pre{min-width:720px;margin:0;padding:17px 18px;overflow:visible;border:1px solid var(--line-local);background:#1f272d;color:#e9edf1;font:400 .8rem/1.62 var(--mono);white-space:pre}.astra-reading code{font-size:.92em}
-.astra-reading .figure{width:100%;margin:27px 0}.astra-reading .figure img{display:block;width:auto;max-width:100%;max-height:820px;height:auto;margin-inline:auto;border:1px solid var(--line-local);background:#fff}.astra-reading .figure.wide img{max-width:min(1120px,calc(100vw - 42px));margin-left:50%;transform:translateX(-50%)}.astra-reading .figure figcaption{max-width:760px;margin:8px auto 0;color:var(--soft);font-size:.82rem;line-height:1.55;text-align:left}.astra-reading .figure.source img{border:0}.astra-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.astra-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.astra-reading .note.red{border-color:var(--red);background:color-mix(in srgb,var(--red) 6%,var(--surface))}.astra-reading .note p{margin:.34em 0}.astra-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .88rem/1.7 var(--mono);overflow-x:auto}.astra-reading .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--line-local);list-style:none}.astra-reading .steps li{min-height:144px;padding:13px;background:var(--surface)}.astra-reading .steps b{display:block;margin-bottom:7px;color:var(--blue);font:750 .72rem/1.3 var(--sans)}.astra-reading .steps span{display:block;color:var(--soft);font-size:.76rem;line-height:1.5}.astra-reading .case{margin:25px 0;padding:20px;border-block:1px solid var(--line-local);background:color-mix(in srgb,var(--green) 4%,#fff)}.astra-reading .case h4{margin:0 0 8px;font-size:1.12rem}.astra-reading .case ol{padding-left:1.2rem}.astra-reading .case li{margin:.58rem 0}.astra-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.astra-reading .limit-grid>div{padding:17px;background:#fff}.astra-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.astra-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
+.astra-reading .figure{width:100%;margin:27px 0}.astra-reading .figure img{display:block;width:auto;max-width:100%;max-height:820px;height:auto;margin-inline:auto;border:1px solid var(--line-local);background:#fff}.astra-reading .figure.wide img{width:100%;max-width:100%;margin-inline:auto;transform:none}.astra-reading .figure figcaption{max-width:760px;margin:8px auto 0;color:var(--soft);font-size:.82rem;line-height:1.55;text-align:left}.astra-reading .figure.source img{border:0}.astra-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.astra-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.astra-reading .note.red{border-color:var(--red);background:color-mix(in srgb,var(--red) 6%,var(--surface))}.astra-reading .note p{margin:.34em 0}.astra-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .88rem/1.7 var(--mono);overflow-x:auto}.astra-reading .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--line-local);list-style:none}.astra-reading .steps li{min-height:144px;padding:13px;background:var(--surface)}.astra-reading .steps b{display:block;margin-bottom:7px;color:var(--blue);font:750 .72rem/1.3 var(--sans)}.astra-reading .steps span{display:block;color:var(--soft);font-size:.76rem;line-height:1.5}.astra-reading .case{margin:25px 0;padding:20px;border-block:1px solid var(--line-local);background:color-mix(in srgb,var(--green) 4%,#fff)}.astra-reading .case h4{margin:0 0 8px;font-size:1.12rem}.astra-reading .case ol{padding-left:1.2rem}.astra-reading .case li{margin:.58rem 0}.astra-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.astra-reading .limit-grid>div{padding:17px;background:#fff}.astra-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.astra-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.article-shell-deck .article-header{width:100%;max-width:100%;min-width:0}.article-shell-deck .article-header h1{max-width:100%;font-size:clamp(1.75rem,7.5vw,2.25rem);overflow-wrap:anywhere;text-wrap:pretty}.article-shell-deck .article-deck,.article-shell-deck .article-deck>p,.astra-reading,.astra-reading .source-links{min-width:0}.article-shell-deck .article-deck>p,.astra-reading .source-links a{overflow-wrap:anywhere}.astra-reading .deck-wrap{max-width:100%;overflow:hidden}.astra-reading .metrics{grid-template-columns:1fr 1fr}.astra-reading .metric:nth-child(2){border-right:0}.astra-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.astra-reading .steps{grid-template-columns:1fr 1fr}.astra-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.astra-reading .figure.wide img{max-width:100%;margin-left:auto;transform:none}}
 @media(max-width:460px){.astra-reading .steps,.astra-reading .limit-grid{grid-template-columns:1fr}.astra-reading .part0,.astra-reading .case{padding:17px 15px}.astra-reading .deck-head,.astra-reading .interest{align-items:flex-start;flex-direction:column}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,1020px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
@@ -44,106 +44,107 @@ html:not([data-theme="dark"]) body:has(.astra-reading){--paper:#fff;--paper-elev
 </div>
 
 <section class="deck-wrap" aria-label="ASTRA 交互图解">
-  <div class="deck-head"><strong>18 页交互图解 · 两条数据生产线、真实 sample、reward、评测与局限</strong><a href="/lib/decks/astra-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>18 页交互图解 · 两条生成流程、真实样本、奖励、评测与局限</strong><a href="/lib/decks/astra-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/astra-visual-guide.html" title="ASTRA 论文图解，共 18 页" allow="fullscreen" loading="eager"></iframe></div>
     <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
   </div>
 </section>
 
-<p class="lead">ASTRA 是一套训练 tool agent 的数据与环境生产线。它先从 MCP tool documentation 合成多轮 SFT trajectories，让 base model 学会基本的选工具、填参数和接续 tool output；再把有依赖关系的 QA 拆解编译成 Python mock tools，让模型在可执行环境里做 online RL。论文把 <strong>cold start、长轨迹 rollout、可执行反馈和调用效率</strong> 放进了同一套训练方案。</p>
+<p class="lead">ASTRA 想训练能连续使用工具的模型。它先根据工具说明生成多轮示范，让模型学会选工具、填参数和理解返回结果；再把多步问答写成可运行的 Python 模拟工具，让模型自己做任务，按完成程度和调用次数获得奖励。<strong>示范数据与可执行环境来自两条不同的生成流程，最后接成两阶段训练。</strong></p>
 
-<div class="interest"><b>博客作者兴趣度 8.5 / 10</b><span>评分只表示博客作者本人兴趣程度；这篇与 tool agent 训练、environment synthesis 和长轨迹 RL 高度相关</span></div>
+<aside class="part0">
+<span class="kicker">PART 0 · 阅读准备</span>
+
+### 工具说明、完整执行记录与训练环境
+
+**MCP server** 在这里是一组可调用工具，工具用 JSON schema 规定名称和参数，用文字说明用途。比如一个旅行服务可能暴露 `find_reservation`、`get_baggage_allowance`、`calculate_fee` 与 `process_payment`。ASTRA 生成固定示范的一支读取这些说明，不需要先有人工写好的问答。
+
+一次任务中的提问、推理、工具调用、返回值和最终回答，合起来是一条 **trajectory**。用固定示范训练叫 **SFT**；让当前模型自己执行任务，再根据奖励更新叫 **online RL**。执行这条记录的过程叫 rollout，正在被训练的模型称为 policy。
+
+**Environment** 是工具调用真正执行的程序。这里没有连接真实航空、支付或医院系统，而是根据问答及其中的依赖关系生成 **mock tools**：模拟真实接口的 Python 函数。“可验证”指代码能运行且返回预设答案，不自动保证它在现实世界也正确。
+</aside>
+
+<div class="interest"><b>博客作者兴趣度 8.5 / 10</b><span>评分只表示博客作者本人兴趣程度；兴趣来自工具 Agent 训练、自动生成环境和长轨迹强化学习</span></div>
 
 <div class="metrics" aria-label="论文关键数字">
-  <div class="metric"><strong>54,885</strong><span>SFT conversation samples</span></div>
-  <div class="metric"><strong>6,596</strong><span>RL environments / samples</span></div>
-  <div class="metric"><strong>4.37</strong><span>RL sample 平均 reasoning hops</span></div>
-  <div class="metric"><strong>+17.29</strong><span>14B 在 ACEBench overall 的提升</span></div>
+  <div class="metric"><strong>54,885</strong><span>监督微调对话样本</span></div>
+  <div class="metric"><strong>6,596</strong><span>强化学习环境样本</span></div>
+  <div class="metric"><strong>4.37</strong><span>每个强化学习样本平均推理步骤</span></div>
+  <div class="metric"><strong>+17.29</strong><span>14B 的 ACEBench 总分，从基座到最终模型</span></div>
 </div>
 
 <aside class="keypoints">
   <h3>先记住四个结论</h3>
   <ul>
-    <li><strong>SFT 与 RL 数据不是同一条 pipeline。</strong>前者从 MCP tools 出发，后者从 QA decomposition 出发。</li>
-    <li><strong>论文里至少有四种不同的“检查”。</strong>task filter、SFT trajectory judge、RL environment validation、训练 reward 解决的是不同问题。</li>
-    <li><strong>最大的增益来自 RL。</strong>14B 与 32B 在三项 agentic benchmark 上都明显超过 base；SFT 提供 cold start，但并非每个子项都上升。</li>
-    <li><strong>code-executable 不等于现实正确。</strong>公开 environment checker 只验证目标 answer 是否出现在 stdout，公开 RL row 0 还存在同名 tool collision 和目标 payment output 无法复现的问题。</li>
+    <li>示范数据从工具文档出发，可执行环境从多步问答出发；<strong>两条流程分别生成，不应混成一条。</strong></li>
+    <li>任务筛选、示范评分、环境准入、训练奖励是<strong>四种不同检查</strong>，分别在构造与训练的不同阶段起作用。</li>
+    <li><strong>最终模型在三项工具使用评测都超过基座。</strong>BFCL 与 τ² 的增量主要来自 RL；ACEBench 的增量反而主要来自 SFT。总提升不能全部归到 RL。</li>
+    <li><strong>代码可执行，不等于现实正确。</strong>公开环境检查只验证目标答案是否出现在标准输出，公开数据第 0 行还存在同名工具覆盖、目标支付结果无法复现的问题。</li>
   </ul>
 </aside>
 
-<aside class="part0">
-<span class="kicker">PART 0 · READING PRIMER</span>
 
-### MCP、trajectory、environment 和 online RL 分别是什么？
+<h2 id="动机：工具调用示范与可训练环境缺一不可">1. Motivation：工具调用示范与可训练环境缺一不可</h2>
 
-**MCP server** 在这里可以先理解成一组有 JSON schema 和自然语言说明的 tools。比如一个旅行服务可能暴露 `find_reservation`、`get_baggage_allowance`、`calculate_fee` 与 `process_payment`。ASTRA 的 SFT 分支读取这些说明，不需要先有人工写好的问答。
+**模型先要会基本调用，才有机会从自己的长任务失败中学习。** ASTRA 同时解决示范覆盖与环境扩展，避免只拥有其中一边。
 
-**Trajectory** 是一次完整交互：user query、assistant reasoning、tool call、tool output、下一步调用和 final answer 都在里面。SFT 学的是这条已经生成好的记录；online RL 则让当前 policy 在环境中重新 rollout，根据整条执行结果更新参数。
+SFT 能让模型模仿固定示范，但不会针对它当下的错误给反馈。直接做 RL 又可能出现起步困难：模型连工具和参数都选不对，很少完成任务，奖励无法区分好坏。如果每次工具返回都由另一个 LLM 临时编写，同一动作还可能产生不同结果，奖励就不稳定。ASTRA 因此先教基本调用，再把第二阶段的环境固定成可执行代码。
 
-**Environment** 是 tool call 真正落地的地方。ASTRA 的 RL environment 并不是连接真实航空、支付或医院系统，而是针对一个 QA graph 生成的 Python mock tools。因此“可执行、可验证”准确地说是：代码能运行，已知输入能返回预设答案；它不自动保证模拟世界与现实世界一致。
-</aside>
+两阶段各自准备的材料是：
 
-## Q1. ASTRA 想解决的训练瓶颈是什么？
-
-**强 tool agent 既需要广覆盖的示范轨迹，也需要能反复 rollout、稳定给 reward 的多步环境；现有路线通常只解决其中一半。**
-
-只做 SFT，数据可以离线生成，训练也稳定，但模型看到的是固定答案，无法从自己当前 policy 的错误中学习。只做 RL，又会遇到 cold start：base model 连基本的 tool selection 和 argument filling 都不稳定，很难探索到足够多的成功轨迹。更麻烦的是，很多工作让另一个 LLM 临时扮演 tool 或 environment；这样扩展很快，却可能让同一个 action 在不同 rollout 中得到不同 state transition，reward 也不再是确定规则。
-
-ASTRA 因而把问题拆成两段：
-
-1. 用 tool graph 合成大量、跨领域的多轮 trajectory，先做 SFT；
-2. 用 QA dependency graph 生成样本级 Python environment，再做 multi-turn online RL。
+1. 按工具之间可能连续调用的关系组织数据，生成跨领域的多轮示范，先做 SFT；
+2. 按多步问答的依赖关系生成每条样本的 Python 环境，再做多轮 online RL。
 
 <figure class="figure wide">
-  <img src="/lib/papers/astra/two-pipeline-redrawn.svg" alt="ASTRA 的 SFT trajectory synthesis 与 RL environment synthesis 两条独立生产线">
-  <figcaption>根据论文 Sections 2-3 与 Figures 2-4 重绘。SFT branch 的起点是 MCP tool documents；RL branch 的起点是带 dependency 的 QA。两边最终在训练阶段汇合，不应把它们写成一条数据流水线。</figcaption>
+  <a href="/lib/papers/astra/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/astra/body-method.svg" width="1000" height="940" alt="ASTRA 从工具文档生成固定示范，从多步问答生成固定环境，最终训练调用工具的模型"></a>
+  <figcaption>根据论文 Sections 2-3 与 Figures 2-4 重绘。SFT 从 MCP 工具文档出发；RL 从带依赖关系的问答出发。两边分别提供示范与环境，最终在训练阶段汇合。</figcaption>
 </figure>
 
-这套设计的实际含义很直接：SFT 负责让模型“先会用工具”，RL 再训练“在一个任务中连续做对，并且少走弯路”。论文把前者称为在 static tool topology 上拓宽能力，把后者称为在 semantic topology 上加深能力。这个说法略抽象，落到数据上就是：一边组织哪些 tools 可能连续出现，另一边组织一个答案依赖哪些中间事实。
+SFT 使用事先生成的完整示范，RL 则让当前模型在固定工具上重新做任务，按结果更新。论文用 static tool topology 指工具之间可能连续调用的关系，用 semantic topology 指答案之间的依赖关系。两种图组织不同材料，并不代表 SFT 只学“怎么调用”、RL 只学“何时调用”；阶段效果仍要看后面的分项实验。
 
-## Q2. 它与已有 tool-agent 训练和 environment synthesis 工作差在哪里？
+<h2 id="相邻工作：生成轨迹与生成环境的交叉点">2. Related Work：生成轨迹与生成环境的交叉点</h2>
 
-**ASTRA 把大规模 SFT cold start 与 QA-derived executable environments 接成了一套公开 pipeline；tool graph、trajectory synthesis 和 GRPO 则分别有已有工作。**
+**它的组合点是两阶段训练，不是首次使用工具图或 GRPO。** GRPO 按同一道题的多次尝试的相对奖励更新模型。工具图组织可能连续调用的接口，问答依赖图组织完成任务所需的中间事实；它们服务于不同数据流程。
 
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>代表工作</th><th>主要解决什么</th><th>ASTRA 的位置</th></tr></thead>
   <tbody>
-    <tr><td>大规模 tool-use SFT</td><td>ToolLLM、ToolACE、Toucan</td><td>从 API / tool inventory 生成 query、call 与 response</td><td>同样从 tool documents 起步；额外聚合同一 server 内的 transition graph，并生成完整多轮 trajectory。</td></tr>
-    <tr><td>多轮 trajectory synthesis</td><td>MAGNET、ToolACE-MT、APIGen-MT</td><td>用 graph、blueprint 或 simulator 构造连续调用</td><td>最接近 ASTRA 的 SFT branch；区别是 ASTRA 还把合成 trajectory 用作第二阶段 RL 的 cold start。</td></tr>
-    <tr><td>数据闭环与 text-to-trajectory</td><td>LoopTool、GEM</td><td>围绕模型弱点迭代数据，或从文本恢复隐含流程</td><td>ASTRA 除了生成离线轨迹，还把 QA decomposition 编译成能执行的独立 tools。</td></tr>
-    <tr><td>Environment scaling</td><td>EnvScaler、AutoForge、AgentScaler、CuES、GenEnv</td><td>自动生成 executable environments、tasks、validators 或 curriculum</td><td>这是 ASTRA 的最近邻；其组合点是 QA-derived environment、F1 trajectory reward、irrelevant-tool mixing 与两阶段训练。</td></tr>
+    <tr><td>工具调用示范</td><td>ToolLLM、ToolACE、Toucan</td><td>从 API / MCP 工具清单生成请求、调用与返回值</td><td>同样从工具文档起步；额外组织同一服务内的调用关系，生成完整多轮记录。</td></tr>
+    <tr><td>多轮轨迹生成</td><td>MAGNET、ToolACE-MT、APIGen-MT</td><td>用图、任务蓝图或模拟器构造连续调用</td><td>最接近 SFT 流程；ASTRA 用这些固定示范初始化模型，再接第二阶段在线 RL。</td></tr>
+    <tr><td>按模型弱点更新数据</td><td>LoopTool、GEM</td><td>围绕模型错误生成新数据，或从文本恢复隐含流程</td><td>除了生成离线轨迹，还把多步问答依赖写成能执行的独立工具。</td></tr>
+    <tr><td>自动扩展环境</td><td>EnvScaler、AutoForge、AgentScaler、CuES、GenEnv</td><td>自动生成环境、任务、检查器或训练课程</td><td>这是 ASTRA 的最近邻；它组合问答生成环境、F1 奖励、无关工具混入与两阶段训练。</td></tr>
   </tbody>
 </table>
 </div>
 
-论文对 earlier multi-turn work 的一个重要批评是：有的方法虽然先生成多轮数据，训练时却把它拆成独立 single-step instances，模型仍没有真正学习“读完上一条 tool output 再决定下一步”。ASTRA 保留整段 assistant–tool 交互，并允许 online rollout 最长 32 turns。
+论文对较早的多轮工具训练的一个重要批评是：有的方法虽然先生成多轮数据，训练时却把它拆成独立单步样本，模型难以学习“读完上一条工具返回，再决定下一步”。ASTRA 保留整段模型与工具的交互，并允许在线执行最长 32 轮。
 
-不过，“fully automated”也要读得准确。它表示 pipeline 不需要逐条人工标注，不表示每一步都有外部事实 oracle。SFT 的质量主要由 LLM judges 决定；RL tools 由 LLM 根据目标 QA 生成，验证的也是与目标答案的自洽性。这一点决定了它更像一座可扩展的 synthetic training factory，而不是现实 API 的数字孪生。
+论文的 fully automated 指不需要逐条人工标注，不代表每步都有独立事实来源。SFT 主要由模型评分；RL 工具由模型根据目标问答生成，再检查是否返回那份问答的目标。这能规模化造训练材料，但不能当作现实 API 的完整复刻。
 
-## Q3. 54,885 条 SFT trajectories 是怎样造出来并筛选的？
+<h2 id="方法：先造示范，再造环境，最后用奖励训练">3. Method：先造示范，再造环境，最后用奖励训练</h2>
 
-**SFT branch 先把同一个 MCP server 内的 tools 连成 transition graph，再生成 task、执行完整交互，最后用七项 LLM score 过滤 trajectory。**
+**两条生成流程最后分别提供离线示范与在线训练环境。** 第一条流程只在同一 MCP server 内组织工具，不跨服务编排。
 
-作者从 open MCP registries、RapidAPI、内部 tool specifications 和公开数据集收集文档，统一成 OpenAI-style function calling schema。少于三个 tools、说明含糊或 schema 无法转换的 server 会被丢弃；最后保留 **1,585 个 MCP servers、19,036 份 tool documents、41 个 domains**。论文明确限制组合发生在同一 server 内，不做跨 server workflow。
+作者从开放 MCP 注册表、RapidAPI、内部工具说明和公开数据集收集文档，统一成 OpenAI 风格的函数调用格式。工具少于三个、说明含糊或格式无法转换的服务被丢弃；最后保留 **1,585 个 MCP 服务、19,036 份工具文档、41 个领域**。论文明确限制组合发生在同一 server 内，不做跨服务的调用流程。
 
 <figure class="figure wide source">
-  <img src="/lib/papers/astra/official-sft-pipeline.webp" alt="ASTRA 官方 SFT trajectory synthesis pipeline">
-  <figcaption>官方仓库 <code>assets/sft-pipeline.png</code>（Apache-2.0），对应论文 Figure 2。它把 tool collection、chain construction、task generation、multi-turn interaction 和 reward system 分成五段。</figcaption>
+  <a href="/lib/papers/astra/official-sft-pipeline.webp" target="_blank" rel="noopener"><img src="/lib/papers/astra/official-sft-pipeline.webp" width="2400" height="1766" alt="ASTRA 官方 SFT trajectory synthesis pipeline"></a>
+  <figcaption>官方仓库 <code>assets/sft-pipeline.png</code>（Apache-2.0），对应论文 Figure 2。图中依次是工具收集、调用链构造、任务生成、多轮执行与示范评分。</figcaption>
 </figure>
 
 <ul class="steps">
-  <li><b>1 · COLLECT</b><span>清洗 schema，按来源 service 分组，过滤不可用 documents。</span></li>
-  <li><b>2 · BUILD GRAPH</b><span>LLM 先提出 task 与 plausible chain；连续 tools 形成有向边，再做 length-bounded random walk。</span></li>
-  <li><b>3 · VERIFY</b><span>检查后续 tool 的 required arguments 能否来自 query 或前序 output，也检查 task-chain coherence。</span></li>
-  <li><b>4 · MAKE TASKS</b><span>合并 chain-conditioned 与 server-only 两类 task，再做 diversity、complexity、persona augmentation。</span></li>
-  <li><b>5 · ROLLOUT</b><span>Qwen-Agent 调 deployed MCP 或 stateful emulator，记录完整 trajectory 后评分。</span></li>
+  <li><b>1 · 收集工具</b><span>清洗参数格式，按来源服务分组，过滤不可用文档。</span></li>
+  <li><b>2 · 连调用图</b><span>LLM 提出任务和可能的调用链；连续工具形成有向边，再沿图随机行走，限制链长。</span></li>
+  <li><b>3 · 验参数依赖</b><span>后续必需参数应能来自请求或前面返回值，任务也应与调用链一致。</span></li>
+  <li><b>4 · 生成任务</b><span>分别按调用链或只按服务文档生成任务，再改写表达、复杂度和用户身份。</span></li>
+  <li><b>5 · 执行并筛选</b><span>Qwen-Agent 调真实 MCP 或保存状态的模拟器，记录完整过程后评分。</span></li>
 </ul>
 
-task 先过三项门槛：question quality、scenario realism、tool-use necessity。trajectory 生成时，真实部署的 MCP 会直接执行；只有文档、没有可用 backend 的 tools 则由 stateful LLM emulator 返回结果。为了让模型遇到失败后继续处理，emulated calls 以 **20% 概率**注入 timeout 或 unreachable 一类错误。
+任务先经过问题质量、场景真实性、是否确需工具三项筛选。生成示范时，已部署的 MCP 直接执行；只有文档、没有可用后端的工具，由另一个能保存前序交互状态的 LLM 模拟器返回结果。为了让模型遇到失败后继续处理，模拟调用以 **20% 概率**注入超时或服务不可达一类错误。
 
-### 七项 trajectory judge 到底在看什么？
+<h3 id="示范筛选：七项评分不能代替环境验证">3.1 示范筛选：七项评分不能代替环境验证</h3>
 
 评分分成七个维度，最后取算术平均：
 
@@ -151,18 +152,18 @@ task 先过三项门槛：question quality、scenario realism、tool-use necessi
 <table>
   <thead><tr><th>维度</th><th>看哪一段</th><th>判断内容</th></tr></thead>
   <tbody>
-    <tr><td>Query Understanding</td><td>最初 assistant response</td><td>是否正确理解 user query。</td></tr>
-    <tr><td>Query Planning</td><td>最初 assistant response</td><td>初始 plan 是否可行、完整。</td></tr>
-    <tr><td>Tool-call Understanding</td><td>每一步局部 context</td><td>是否正确读懂上一条 tool response。</td></tr>
-    <tr><td>Tool-call Planning</td><td>每一步局部 context</td><td>下一步 action 是否由当前证据支持。</td></tr>
+    <tr><td>Query Understanding</td><td>最初模型回答</td><td>是否正确理解用户请求。</td></tr>
+    <tr><td>Query Planning</td><td>最初模型回答</td><td>初始计划是否可行、完整。</td></tr>
+    <tr><td>Tool-call Understanding</td><td>当前步骤的交互上下文</td><td>是否正确读懂上一条工具返回。</td></tr>
+    <tr><td>Tool-call Planning</td><td>当前步骤的交互上下文</td><td>下一步行动是否由当前证据支持。</td></tr>
     <tr><td>Tool-call Success</td><td>执行记录</td><td>调用是否成功完成。</td></tr>
-    <tr><td>Tool Conciseness</td><td>整条 trajectory</td><td>是否有重复或不必要调用。</td></tr>
-    <tr><td>Final Answer</td><td>最终回答与 tool evidence</td><td>是否相关、完整，并忠实于执行结果。</td></tr>
+    <tr><td>Tool Conciseness</td><td>完整执行记录</td><td>是否有重复或不必要调用。</td></tr>
+    <tr><td>Final Answer</td><td>最终回答与工具结果</td><td>是否相关、完整，并忠实于执行结果。</td></tr>
   </tbody>
 </table>
 </div>
 
-这里有一个论文正文没强调、但公开实现值得注意的细节：judge request 抛异常，或返回对象没有 `score` 字段时，代码会写入 **1.0**。
+这里有一个论文正文没强调、但公开实现值得注意的细节：评分请求抛异常，或返回对象没有 `score` 字段时，代码会写入 **1.0**。
 
 <div class="code-scroll"><pre><code>if isinstance(result, Exception):
     scores.append(1.0)
@@ -170,28 +171,30 @@ else:
     scores.append(result.get("score", 1.0))
 </code></pre></div>
 
-这是一种 **fail-open** 策略：评审服务失败并不会保守地拒绝样本，反而给满分。论文没有报告实际有多少 trajectories 触发 fallback，因此不能断言它显著污染了训练集；但在复现或扩展时，应改成 fail-closed、重试后隔离，至少把 fallback rate 报出来。
+这叫 **fail-open**：评分服务出错时不拒绝样本，而给满分。论文没有报告触发次数，不能断言训练集显著污染；复现时应重试，仍失败则隔离，并统计比例。
 
-公开代码与论文公式还有一个小差异。论文 Equation 8 把成功调用记为 1、失败调用记为 0；`reward.py` 实际计算的是 `(1.0 × success + 0.5 × fail) / total_calls`，因此失败调用仍有 0.5 分。这个差异不会改变“七项求平均”的框架，却会改变 trajectory 的具体排序，复现实验时应该固定以论文还是代码为准。
+公开代码与论文公式还有一个小差异。论文 Equation 8 把成功调用记为 1、失败调用记为 0；`reward.py` 实际计算的是 `(1.0 × success + 0.5 × fail) / total_calls`，因此失败调用仍有 0.5 分。这个差异不会改变“七项求平均”的框架，却会改变示范轨迹的具体排序，复现实验时应该固定以论文还是代码为准。
 
-最终 SFT 数据包含 **54,885 个 conversations、580,983 条 messages**，每条平均 10.59 条 message 和 4.42 次 tool call，覆盖 6,765 个 unique tool functions。公开 Hugging Face release 是 **1,000 条样本**，不是论文中的完整 54,885 条。
+最终 SFT 数据包含 **54,885 段对话、580,983 条消息**，每条平均 10.59 条消息和 4.42 次工具调用，覆盖 6,765 个不同工具函数。公开 Hugging Face 数据是 **1,000 条样本**，不是论文中的完整 54,885 条。
 
-## Q4. 6,596 个 RL environments 怎样生成、验证和给 reward？
+<h3 id="第二条流程：从多步问答生成可执行环境">3.2 第二条流程：从多步问答生成可执行环境</h3>
 
-**RL branch 先把主问题拆成带 dependency 的 sub-QA graph，再把需要外部信息的 sub-question 编成 Python tool。checker 验证代码对目标输入能输出目标字符串；训练时按 sub-task coverage 与 tool-call 数量计算 F1 reward。**
+这条流程从主问题与答案出发，拆出需要哪些中间事实、前后依赖什么的问答。需要外部信息的子问题会被写成 Python 工具；检查器先验证目标输入是否返回目标答案。后面训练的 F1 奖励则检查整次任务完成了多少中间目标、用了多少调用，二者不是同一层检查。
 
 <figure class="figure wide source">
-  <img src="/lib/papers/astra/official-rl-pipeline.webp" alt="ASTRA 官方 QA-based RL environment synthesis pipeline">
-  <figcaption>官方仓库 <code>assets/env.png</code>（Apache-2.0），对应论文 Figure 3。QA decomposition、necessity check、verification、environment synthesis 与 tool merging 是构造步骤；它们不是训练时的 reward。</figcaption>
+  <a href="/lib/papers/astra/official-rl-pipeline.webp" target="_blank" rel="noopener"><img src="/lib/papers/astra/official-rl-pipeline.webp" width="2400" height="1092" alt="ASTRA 官方 QA-based RL environment synthesis pipeline"></a>
+  <figcaption>官方仓库 <code>assets/env.png</code>（Apache-2.0），对应论文 Figure 3。问答拆解、工具必要性检查、质量验证、环境生成与工具合并都属于构造阶段；后面训练奖励另行计算。</figcaption>
 </figure>
 
-主问题先被拆成若干 sub-questions，并显式标出哪些可以并行、哪些依赖前一步答案。LLM 随后做四类结构检查：dependency 是否合理、每个 sub-question 是否 atomic、执行顺序是否正确、合起来是否足以回答 main question。需要 tool 的节点依次生成 tool document、补充 parameters、生成 call statement 和 Python implementation；功能接近的节点最后可以合并到一个 tool 里。
+主问题先被拆成若干子问题，标出哪些可以并行、哪些依赖前一步答案。LLM 随后检查依赖是否合理、每题是否只要求一个事实、执行顺序是否正确，以及合起来是否足以回答主问题。需要工具的节点依次生成文档、参数、调用语句和 Python 实现。
 
-QA 可以由已有 main question 条件生成，也可以让 LLM 根据 domain-specific knowledge source `K` 和 hop budget `H` 从头生成。论文只把 `K` 说明为 text corpus 一类知识源，没有列出这些材料的上游出处、license、去重规则或 train/test leakage audit。公开仓库带有可运行的 `knowledge/en/*.jsonl` 与 `knowledge/zh/*.jsonl` 输入，其中也能找到下文行李 case 的来源场景，但仓库同样没有交代这些文本由谁编写或从哪里采集。整个 decomposition 与四项 quality check 都由 LLM 完成，作者没有加入人工标注，也就没有 annotator agreement 可报告。
+论文还做了局部合并校验：同功能、不同参数的节点可以共用一个工具。每向实现中加入一条记录，就在沙箱重放该工具已有的调用语句，检查所有对应答案仍然返回。**这项检查确实存在，但不等于最终所有工具名称、调用依赖和奖励目标都已统一验证**；后面的公开行李样本仍有具体不一致。
 
-训练时，policy 看到 user query、当前可选的 tool schemas，以及每次执行后返回的 tool output。`sub_qa_dict` 中的目标 answers 用来计算 reward，并不作为作答提示交给 policy；每个 sample 的 Python environment 彼此隔离，不共享 state。
+问答可以根据已有主问题生成，也可以让 LLM 依据领域材料 `K` 和允许的推理步骤数 `H` 从头生成。论文只把 `K` 说明为文本语料一类知识源，没有列出上游出处、许可、去重规则或训练/测试泄漏检查。公开仓库带有可运行的 `knowledge/en/*.jsonl` 与 `knowledge/zh/*.jsonl` 输入，其中也能找到下文行李 case 的来源场景，但仓库同样没有交代这些文本由谁编写或从哪里采集。问题拆解和四项质量检查全部由 LLM 完成，没有加入人工标注，也没有标注者一致性数据。
 
-### Environment validation 验证了什么？
+训练时，policy 看到用户请求、当前工具说明和每次执行结果。`sub_qa_dict` 中的目标答案用于算奖励，不作为作答提示交给 policy；每条样本的 Python 环境彼此隔离，不共享状态。
+
+<h3 id="环境准入：目标字符串出现在执行输出">3.3 环境准入：目标字符串出现在执行输出</h3>
 
 公开 `step_04_env_synthesis.py` 的关键通过条件如下：
 
@@ -201,90 +204,124 @@ if call_ans["status"] == "Success":
         is_success = True
 </code></pre></div>
 
-也就是说，生成的 Python code 在 sandbox 中执行成功，并且 stdout **包含**目标 answer，就算通过；失败则重新生成。这个检查能建立 executable self-consistency：已知 call 确实能得到合成 QA 指定的答案。它没有连接真实 database 或 API，也不检查其他输入上的行为，所以不能把它解释成 factual correctness 或完整的 tool semantics validation。
+也就是说，生成的 Python 代码在沙箱中执行成功，而且标准输出 stdout **包含**目标答案，就算通过；失败则重新生成。这个检查建立的是可执行的自洽性：生成代码在已知输入上返回合成问答指定的答案。它不连接真实数据库，也不验证其他输入，所以没有证明外部事实或整个接口行为正确。
 
-数据规模是 **6,596 个 samples、28,794 个 sub-questions**；91.3% 的 sub-questions 需要 tool，平均 4.37 个 reasoning hops。任务中 71.2% 为英文、28.8% 为中文；47.8% 是 Parallel Multi-Hop，34.8% 是 Multi-Hop。公开 release 同样只放出 **1,000 条**。
+数据规模是 **6,596 条样本、28,794 个子问题**；91.3% 的子问题需要工具，平均 4.37 个推理步骤。任务中 71.2% 为英文、28.8% 为中文；47.8% 是能并行处理部分中间目标的 Parallel Multi-Hop，34.8% 是顺序依赖中间答案的 Multi-Hop。公开数据同样只放出 **1,000 条**。
 
-### 训练 reward 与上面的 checker 不是一回事
+<h3 id="训练奖励：完成程度与调用效率一起算">3.4 训练奖励：完成程度与调用效率一起算</h3>
 
-设一条 job 有 `n` 个目标 sub-tasks，当前 rollout 命中 `n_hat` 个，tool 一共调用 `c` 次：
+设一个任务有 `n` 个目标子任务，当前执行命中 `n_hat` 个，工具一共调用 `c` 次：
 
 <div class="formula">recall r = n_hat / n　　precision p = n_hat / (c + ε)　　reward = 2pr / (p + r)</div>
 
-做全 4 项、正好调用 4 次，reward 接近 1；做全 4 项却调用 6 次，F1 约为 0.80；只做对 3 项、调用 4 次，约为 0.75。这里的 precision 不是分类 precision，而是“每次 tool call 解决了多少目标 sub-task”的效率分。
+做全 4 项、正好调用 4 次，reward 接近 1；做全 4 项却调用 6 次，F1 约为 0.80；只做对 3 项、调用 4 次，约为 0.75。这里的 recall 是完成目标的比例，precision 是“每次工具调用解决了多少目标子任务”的效率分，不是分类准确率。这些数字是条件代入，忽略 ε 的极小修正，不是任何公开样本的实测奖励。一次对话轮次可以发多个调用，不能把轮数当成公式里的 c。
 
-为防止模型只会在给出的正确 tools 中机械选择，作者还混入 high / medium / low similarity 三档 irrelevant tools，阈值分别是 `>0.85`、`0.4-0.85`、`<0.4`。消融曲线显示不加 distractors 最差，随机加 5-9 个优于不加，但低于分档采样；论文没有提供曲线终点的精确表格值，因此不应从图上臆测具体提升。
+作者还给工具列表混入高、中、低三档相似的无关选项。具体是用 Qwen3-Embedding-8B 编码工具文档，算余弦相似度，再按每个目标工具的最小/最大相似度归一化到 0-1；排除同领域候选后，按 `>0.85`、`0.4-0.85`、`<0.4` 分档，每档最多抽 K 个。论文没有写出 K 的具体数值。消融曲线显示不加无关工具最差，随机加 5-9 个优于不加，但低于分档采样；论文没有提供曲线终点的精确表格值，因此不应从图上臆测具体提升。
 
-### 一个公开的行李加购 sample：从 task 到 PASS / FAIL
+<h3 id="真实样本：四个行李加购目标如何变成奖励">3.5 真实样本：四个行李加购目标如何变成奖励</h3>
 
 <figure class="figure wide">
-  <img src="/lib/papers/astra/baggage-case-redrawn.svg" alt="ASTRA-RL-1k 行李加购样本、四个目标 sub-QA 与公开 tool mismatch">
+  <a href="/lib/papers/astra/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/astra/body-case.svg" width="1000" height="1040" alt="ASTRA-RL-1k 行李加购样本的可见工具、四个隐藏目标与支付返回不一致"></a>
   <figcaption>根据 Hugging Face <code>ASTRA-RL-1k</code> train row 0 重绘，revision <code>dbc70e26</code>。绿色路径是数据声明的目标；红色分支是我核对公开 <code>tool_schema</code> 与 <code>tool_dict</code> 后发现的不一致。</figcaption>
 </figure>
 
 <div class="case">
-<h4>按执行顺序看这个 released row</h4>
+<h4>公开环境与四个评分目标的核对</h4>
 <ol>
-  <li><strong>User request。</strong>Amit Kumar 要修改 Bengaluru City 与 Chennai Central 之间、9 月 20 日去程和 9 月 23 日返程的 reservation，把 baggage allowance 从 1 件加到 3 件；先告知费用，再用 wallet 支付。</li>
-  <li><strong>目标 sub-QA。</strong><code>reservation_finder</code> 应给出 <code>RES987654</code>；<code>baggage_allowance_retriever</code> 给出当前 1 bag；<code>baggage_fee_calculator</code> 算出额外 ₹600；<code>payment_processor</code> 应返回支付成功和 <code>TXN123456789</code>。</li>
-  <li><strong>理想 rollout。</strong>四个目标都命中、调用四次，<code>n_hat=4, n=4, c=4</code>，F1 reward 接近 1。重复查 reservation 或 fee 会增加 <code>c</code>，即使最终答案完整也会扣分。</li>
-  <li><strong>公开 artifact 的问题。</strong><code>tool_schema</code> 有 9 项，其中两个都叫 <code>payment_processor</code>；转成按名称索引的 <code>tool_dict</code> 后只剩 8 个 unique names。保留下来的 implementation 返回 <code>Charge processed successfully...</code>，transaction ID 通常随机生成，无法复现目标 <code>Payment successful. Transaction ID: TXN123456789</code>。</li>
-  <li><strong>可能的评测后果。</strong>前三个 sub-task 可以命中，但 payment target 按公开实现无法稳定命中。若其他判定逻辑不补偿，结果会落到 <code>3/4</code> 一类，而不是理想 PASS。</li>
+  <li>Hugging Face 的 <code>ASTRA-RL-1k</code> train row 0 由论文的数据生成流程产生，没有逐行人工标注。<strong>Policy 能看请求、工具说明和返回结果，不能看用于评分的目标答案。</strong> Amit Kumar 要修改 Bengaluru City 与 Chennai Central 之间、9 月 20 日去程和 9 月 23 日返程的预订，把行李额度从 1 件加到 3 件；先告知费用，再用钱包支付。请求没有指定年份。</li>
+  <li><code>sub_qa_dict</code> 保存四个目标字符串：<code>Reservation ID: RES987654</code>、<code>Current baggage allowance: 1 bag</code>、<code>Extra charge: ₹600</code>、<code>Payment successful. Transaction ID: TXN123456789</code>。它们由问答生成流程写入数据，不是运行真实航空或支付接口取得的事实。</li>
+  <li>理想情况下，四个目标都命中、调用四次，<code>n_hat=4, n=4, c=4</code>，F1 reward 接近 1。重复查预订或费用会增加 <code>c</code>，即使最终答案完整也会扣分。</li>
+  <li>公开 <code>tool_schema</code> 有 9 项，其中两个都叫 <code>payment_processor</code>；按名称索引的 <code>tool_dict</code> 只剩 8 个不同名称。保留下来的实现需要 <code>payment_instrument_id</code> 和 <code>charge_type</code>，返回 <code>Charge processed successfully...</code>，交易编号通常随机生成，与目标支付字符串不同。若按另一份同名 schema 只传 <code>reservation_id</code>、金额和货币，会因缺少两个必填参数而报错。</li>
 </ol>
 </div>
 
-这是公开 1k 子集中的一行缺陷，**不能据此推断内部全部 6,596 个 environments 都有问题**。它能说明的是：仅做 answer-in-stdout 的逐 tool validation，没有捕获 tool merging、同名覆盖或最终序列化后产生的跨组件不一致。更可靠的 release check 应该在最终 artifact 上逐行重放全部 target calls，并检查 tool name uniqueness、deterministic outputs 与 reward target 一致性。
+我对这四个已检查的模拟函数做了本地调用核对，前三项返回值包含目标，支付项不包含。这个核对有两处需要明说：预订函数只在代码写死的 <code>2024-09-20</code> / <code>2024-09-23</code> 上返回该预订，我按这个分支选了年份；支付调用中的钱包编号也是为测试函数填的输入，不是模型从公开执行日志中取得的结果。前三个目标命中，验证的是这些已知输入下的模拟分支。
 
-## Q5. 训练和外部评测具体怎样做，结果说明了什么？
+下面是公开预订实现的条件摘录（Python；省略返回值与其他参数检查），能直接看到年份从哪里来：
 
-**SFT 提供稳定的 cold start，RL 带来更大且更一致的三榜提升；但最终结果同时包含数据、environment、reward、distractor 与 batching 的作用，不能归因给单一组件。**
+<div class="code-scroll"><pre><code>if (passenger_name == "Amit Kumar" and
+    origin == "Bengaluru City" and
+    destination == "Chennai Central" and
+    travel_date == "2024-09-20" and
+    trip_type == "round_trip" and
+    return_date == "2024-09-23"):
+    # 该分支返回 Reservation ID: RES987654
+    ...
+</code></pre></div>
 
-SFT 从 Qwen3-14B 和 Qwen3-32B 开始，各训练 2 epochs；学习率分别为 `5e-6` 与 `2e-6`。RL 使用 GRPO，batch size 与 mini-batch size 都是 256，学习率 `2e-6`；最大 prompt 25,600 tokens，最大 response 49,152 tokens，user 与 assistant 都允许最多 32 turns。作者去掉 KL regularizer 与 entropy bonus，并使用 batch-level token loss averaging。
+**这里没有复现官方 RL 得分，也没有一条真实 policy 的完整执行日志。** 若奖励按上述字符串命中数计算、且四次调用仅命中前三项，代入公式才得到约 0.75；公开仓库缺少完整 RL 奖励实现，不能把这个条件计算写成样本实测分数。论文 Appendix A.2 的股票与轮胎示例也只展示推理文本，未给出实际工具调用、返回值与评分日志。
 
-长轨迹 RL 还有一个常见问题：同一 query 的一组 rollouts 如果 reward 完全相同，group-relative advantage 就是 0，这组样本不产生有效梯度。ASTRA 的 **Adaptive Batch Filling** 只接受 reward standard deviation 大于阈值的 groups，先把有效 samples 填满 batch，多出来的放入 buffer 留到下一步；它改变的是每次优化时“有没有可学的对比”，不是 environment judge。
+这是公开 1k 子集中的一行缺陷，**不能据此推断内部全部 6,596 个环境都有问题**。论文已有同功能工具插入数据后的局部重放，公开样本却仍出现工具重名和随机交易编号。最终数据还需在实际按名称注册的工具集合上重放全部目标调用，确认工具名唯一，返回值与奖励目标一致。
+
+<h3 id="一次-RL-更新：哪些数据固定，哪些参数改变">3.6 一次 RL 更新：哪些数据固定，哪些参数改变</h3>
+
+SFT 用已生成的完整示范做训练。进入 RL 后，每个样本的 Python 工具与目标答案固定；当前 policy 接收请求和工具 schema，生成多次完整调用记录。环境执行调用，奖励程序比较已解决的子目标与调用数。训练只更新 policy 参数，不在每步重新训练工具或问答生成器。
+
+SFT 从 Qwen3-14B 和 Qwen3-32B 开始，各遍历示范数据 2 次（2 epochs），每批 32 条，最大序列长度 20k tokens（token 是模型处理的文本单位），不把多条短记录拼接训练；学习率分别为 `5e-6` 与 `2e-6`。用余弦学习率调度，前 5% 步骤预热。长序列分摊到设备处理的 Context Parallelism，14B 设置 CP=2，32B 设置 CP=4。
+
+RL 使用 GRPO，batch size 与 mini-batch size 都是 256，学习率 `2e-6`；输入上限 25,600 tokens，回答上限 49,152 tokens，论文对 user 与 assistant 各写了最多 32 轮。作者去掉 KL 正则（限制回答分布偏离起点的项）与熵奖励（鼓励生成多样性的项），在整个 batch 的 token 上取平均损失。
+
+同一道题的一组执行记录如果奖励完全相同，GRPO 没有组内好坏对比，学习信号为零。**Adaptive Batch Filling** 是筛选并凑足这种有效训练组的操作：只保留奖励标准差高于阈值的组，多余记录缓存在下一步使用。它改变训练 batch 的组成，不改变环境如何判定目标。
+
+<h2 id="实验：奖励之外，模型在真实评测上学到了什么">4. Experiments：奖励之外，模型在真实评测上学到了什么</h2>
+
+**最终 RL 在三项工具使用评测上都提高，但部分离线训练子项会先退化。** 下面比较固定基座、SFT 后和最终 RL，避免把合成数据内部奖励当成外部能力。
 
 <div class="table-scroll">
 <table>
   <thead><tr><th>Benchmark</th><th>测什么</th><th>论文 protocol</th><th>需要注意</th></tr></thead>
   <tbody>
-    <tr><td>BFCL-v3 MT</td><td>多轮 function calling，含 missing function、missing parameter、long context</td><td>vLLM，temperature 0.6</td><td>论文未报告 repeated trials 或置信区间。</td></tr>
-    <tr><td>τ²-Bench</td><td>agent 与 user simulator 共同推进环境状态</td><td>排除 airline；GPT-5.1 user simulator；temperature 0；4 trials；报告 pass^1</td><td>airline 因先前报告指出 ground-truth grading 质量问题而排除。</td></tr>
-    <tr><td>ACEBench</td><td>multi-turn 与 multi-step tool use</td><td>agent split 50 题；GPT-4.1 user simulator；temperature 0.6；重复 4 次</td><td>样本仍小，小分差要谨慎。</td></tr>
-    <tr><td>AIME 2024/2025</td><td>检查非 agentic 数学推理是否退化</td><td>temperature 0.6、top-p 0.95；top-k 20 与 -1 各 32 generations</td><td>两种 decoding 的 pass-rate estimate 再平均。</td></tr>
+    <tr><td>BFCL-v3 MT</td><td>多轮函数调用，含正确工具缺失、参数缺失、长上下文</td><td>vLLM 推理服务，temperature 0.6</td><td>四个子项平均为总分；未报告重复试验或置信区间。</td></tr>
+    <tr><td>τ²-Bench</td><td>模型与模拟用户共同操作环境</td><td>排除 airline；GPT-5.1 模拟用户；temperature 0；4 次试验；报告 pass^1</td><td>pass^1 是单次尝试的成功概率估计，不是“重试四次只要成功一次”。airline 因先前报告指出标准评分质量问题而排除。</td></tr>
+    <tr><td>ACEBench</td><td>多轮与多步工具使用</td><td>Agent 分组 50 题；GPT-4.1 模拟用户；temperature 0.6；重复 4 次</td><td>报告平均准确率；50 个不同任务重复四次，仍不是 200 个独立任务。</td></tr>
+    <tr><td>AIME 2024/2025</td><td>检查无工具数学推理是否退化</td><td>temperature 0.6、top-p 0.95；top-k 20 与 -1 各生成 32 次</td><td>两种生成参数的通过率再平均。</td></tr>
   </tbody>
 </table>
 </div>
 
 <figure class="figure wide">
-  <img src="/lib/papers/astra/results-redrawn.svg" alt="ASTRA 14B 与 32B 从 base 到 SFT 再到 RL 的三项 agentic benchmark 变化">
-  <figcaption>根据论文 Table 2 重绘。三组柱分别是 base、SFT 与 RL；数字是各 benchmark overall，而不是混成一个总分。</figcaption>
+  <a href="/lib/papers/astra/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/astra/body-results.svg" width="1000" height="860" alt="ASTRA 14B 与 32B 从基座到监督微调再到强化学习的三项工具评测变化"></a>
+  <figcaption>根据论文 Table 2 重绘。三列分别是基座、SFT 与 RL；右列按显示值计算阶段增量。数字保留各评测自己的尺度，不混成一个统一总分。</figcaption>
 </figure>
 
-14B 从 base 到最终 RL，BFCL-MT 为 **44.50→58.13**，τ²-Bench 为 **44.55→57.70**，ACEBench 为 **51.67→68.96**。32B 分别是 **47.88→64.25**、**49.70→63.70**、**59.79→71.88**。三榜方向一致，而且 RL stage 的增量普遍大于 SFT stage。
+表中的 temperature、top-p、top-k 是回答采样参数；top-k=-1 表示不限制候选数。论文 Table 1 与 Table 2 的基座成绩不完全相同：14B 的 τ² 为 46.05 对 44.55，32B 的 BFCL 为 49.63 对 47.88，没有解释为何变化。下文只用 Table 2 的同组基座做阶段比较，不能把两张表的更高值混用。
 
-但 SFT 不是所有子项都变好。BFCL Missing Function 在 14B 上从 39.50 降到 25.50，在 32B 上从 52.50 降到 40.00；RL 后才分别升到 56.00 与 65.50。这说明离线示范能改善常规调用习惯，却可能让 policy 更倾向“总要找个 tool 用”；加入 irrelevant tools 和在线 reward 后，拒绝不存在功能的能力才恢复。
+14B 从 base 到最终 RL，BFCL-MT 为 **44.50→58.13**，τ²-Bench 为 **44.55→57.70**，ACEBench 为 **51.67→68.96**。32B 分别是 **47.88→64.25**、**49.70→63.70**、**59.79→71.88**。最终模型三榜方向一致，阶段贡献却不同：
 
-AIME 用于检查核心 reasoning 是否被 tool training 破坏。14B 在两种 decoding 下的平均分别为 73.45→73.40 与 72.60→72.60；32B 为 74.90→74.85 与 74.15→75.15。可以说没有观察到系统性退化，但它不是一般能力的全面评测。
+- 14B 的 BFCL：SFT +4.00，后续 RL +9.63；τ²：SFT +5.90，RL +7.25。
+- 14B 的 ACE：SFT 已从 51.67 升到 67.71（+16.04），后续 RL 只升到 68.96（+1.25）。**+17.29 是两阶段总增益，不能全算给 RL。**
+- 32B 同样是 BFCL 与 τ² 的 RL 增量更大，ACE 的 SFT +7.92 大于后续 RL +4.17。
 
-## Q6. 这篇论文最值得复用什么，证据边界又在哪里？
+但 SFT 不是所有子项都变好。BFCL Missing Function 在 14B 上从 39.50 降到 25.50，在 32B 上从 52.50 降到 40.00；RL 后才分别升到 56.00 与 65.50。这说明离线示范能改善常规调用习惯，却可能让 policy 更倾向“总要找个 tool 用”；加入无关工具和在线奖励后，拒绝不存在功能的能力才恢复。
 
-**最值得复用的是把训练系统分层：SFT data quality、environment self-consistency、trajectory reward 和 external evaluation 各自有独立 contract；最需要补的是 fail-closed validation、最终 artifact 重放与更完整的因果消融。**
+AIME 用于检查工具训练是否损害数学推理。14B 在两种生成参数下的平均分别为 73.45→73.40 与 72.60→72.60；32B 为 74.90→74.85 与 74.15→75.15。可以说没有观察到系统性退化，但它不是一般能力的全面评测。
+
+Table 4 还报告 BFCL-MT 的每次调用平均输出长度：32B 从 1,145.3 tokens 变成最终 RL 的 1,130.1 tokens，变化很小；不能据此声称大幅降低推理成本。表中“平均调用次数 × 每次平均长度”也不能直接当作“每题平均总长度”，三者的汇总对象不同。
+
+<h2 id="下一步：先修最终环境，再隔离训练组件的贡献">5. Discussion：先修最终环境，再隔离训练组件的贡献</h2>
+
+**应在最终注册的环境上验完整目标调用。** 论文已有局部函数合并重放；下一层应要求名称唯一、参数有效、输出与所有奖励目标一致。遇到评分模型异常，应重试或隔离样本，避免满分默认值混进示范。公开行李样本给出了具体的测试目标。
+
+然后用真实 API 或独立模拟器做未见任务迁移，检查 mock 工具学到的调用策略能否复用。固定轨迹预算与随机种子，分别拿掉初始示范、相似度分档的无关工具和 Adaptive Batch Filling，再比较 F1 与只算完成程度或只算调用效率的奖励。这才能区分更多数据、环境设计与训练算法的贡献；不是论文已经完成的全组件控制实验。
+
+<h2 id="总结：训练分层的价值与公开实现的边界">6. Conclusion：训练分层的价值与公开实现的边界</h2>
+
+**最值得保留的是四层检查分开：任务质量、示范质量、环境能否返回目标、外部评测是否真正提高。** 它们不能互相替代。公开代码的评分默认值与行李样本又说明，训练奖励必须依赖一致的最终工具与目标。
 
 <div class="limit-grid">
-  <div><b>LLM judge 会 fail-open</b><span>SFT scorer 异常或缺少 score 时默认 1.0。论文没有报告 fallback rate，公开实现也没有把异常样本隔离。</span></div>
-  <div><b>可执行不等于事实正确</b><span>RL checker 验证目标 answer 出现在 stdout，证明的是 self-consistency；没有真实系统或独立 oracle 证明 mock semantics。</span></div>
-  <div><b>公开 release 不是完整训练数据</b><span>论文报告 54,885 SFT 与 6,596 RL samples；Hugging Face 各公开 1,000 条，仓库的 <code>trajectory_synthesis/data</code> 则有 1,482 个 MCP server rows 和 941 个 task rows。</span></div>
-  <div><b>RL training 不能端到端复现</b><span>仓库公开了两条 synthesis pipelines、数据子集和模型，但没有提供论文使用的 RL training scripts 与完整内部数据。</span></div>
-  <div><b>主结果缺少多 seed</b><span>τ² 与 ACEBench 有重复 evaluation；训练本身没有 multiple seeds，也没有给主要分数的置信区间。</span></div>
-  <div><b>组件贡献没有完全隔离</b><span>irrelevant tools 与 reward 有曲线消融，但缺少 SFT data、environment source、batch filling 等组件的完整 factorial ablation。</span></div>
+  <div><b>LLM judge 会 fail-open</b><span>SFT 评分服务异常或缺少 score 时默认 1.0。论文没有报告异常比例，公开实现也没有隔离这些样本。</span></div>
+  <div><b>可执行不等于事实正确</b><span>环境检查只验证目标答案出现在标准输出，证明合成工具与目标自洽；没有真实系统或独立事实来源验证工具行为。</span></div>
+  <div><b>公开子集不是完整训练数据</b><span>论文报告 54,885 条 SFT 与 6,596 条 RL 样本；Hugging Face 各公开 1,000 条，仓库的 <code>trajectory_synthesis/data</code> 则有 1,482 行 MCP 服务记录与 941 行任务记录。</span></div>
+  <div><b>强化学习不能端到端复现</b><span>仓库公开了两条数据生成流程、数据子集和模型，但没有提供论文使用的强化学习训练脚本与完整内部数据。</span></div>
+  <div><b>主结果缺少多个训练随机种子</b><span>τ² 与 ACEBench 有重复评测；训练本身没有多个训练随机种子，也没有给主要分数的置信区间。Table 1 与 2 部分基座成绩不同，论文没有解释。</span></div>
+  <div><b>组件贡献没有完全隔离</b><span>无关工具与奖励有曲线消融，但缺少示范来源、环境来源和训练组筛选等组件的完整组合消融。</span></div>
 </div>
 
-论文的 F1 reward 设计尤其值得保留：它把“任务做了多少”和“用了多少次工具”放到同一个容易解释的 scalar 里；recall-only 会鼓励不断调用，precision-only 会鼓励过早停止，论文的训练曲线也显示两者后期崩溃，而 F1 保持稳定。与此同时，公开 baggage row 说明 **reward 再漂亮，也依赖 target 与 environment implementation 对齐**。数据工程中的 name collision 或随机输出会直接改变模型收到的学习信号。
+F1 奖励把完成目标和少用工具放在同一个可计算值里。论文曲线显示只追求目标覆盖或只追求调用效率的版本后期退化，组合更稳定；但好公式仍依赖最终工具与目标一致，名称覆盖或随机交易编号会直接改变学习信号。
 
-如果沿这条路线继续研究，我会优先补三项：第一，在最终 merged environment 上重放所有 golden calls，而不是只验证生成中间件；第二，用真实 API 或独立 simulator 做 held-out transfer，测 mock environment 学到的 policy 能否迁移；第三，在同样 rollout budget 下分别拿掉 SFT cold start、similarity-stratified distractors 与 Adaptive Batch Filling，报告多 seed 的稳定性。这样才能回答提升究竟来自更多合成数据，还是来自更好的训练 contract。
 
 <aside class="note blue">
-<p><strong>结论：</strong>ASTRA 把 <strong>MCP graph → SFT trajectory</strong> 与 <strong>QA graph → executable RL environment</strong> 接成两阶段 tool-agent 训练系统，并在 14B / 32B 上得到一致的三榜提升。它说明了长轨迹训练可以怎样分层；“rule-verifiable”的实际边界则是合成环境内部可执行、自洽，并不证明现实事实。后续实现还需要修复 fail-open judge 与 baggage sample mismatch。</p>
+<p><strong>结论：</strong>ASTRA 从工具文档生成示范，从多步问答生成可执行环境，接成两阶段训练，在 14B / 32B 上得到一致的三榜提升。长任务训练因此有了可扩展材料；论文所称 rule-verifiable（按规则验证）的边界是合成环境能执行、与指定目标自洽，不证明现实事实。后续实现需要修复评分异常默认满分，以及公开行李样本的工具与目标不一致。</p>
 </aside>
 
 </div>

@@ -1,9 +1,13 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks",
     "kind": "research",
-    "primary_source_ids": ["paper", "repo", "weavebench-judge"]
+    "primary_source_ids": [
+      "paper",
+      "repo",
+      "weavebench-judge"
+    ]
   },
   "artifacts": {
     "article": "content/_posts/050-longhorizon-harness把长任务变成可审计的状态推进.md",
@@ -17,7 +21,16 @@
       "title": "LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks",
       "url": "https://arxiv.org/abs/2608.01964",
       "revision": "v1, 2026-08-03",
-      "used_for": ["problem", "method", "experiments", "results", "limitations", "figures", "tables", "appendices"]
+      "used_for": [
+        "problem",
+        "method",
+        "experiments",
+        "results",
+        "limitations",
+        "figures",
+        "tables",
+        "appendices"
+      ]
     },
     {
       "id": "repo",
@@ -25,7 +38,15 @@
       "title": "AMAP-ML/LongHorizon-Harness",
       "url": "https://github.com/AMAP-ML/LongHorizon-Harness",
       "revision": "a1dd930614972b92361c1b9cd6aac441a6db5a65",
-      "used_for": ["manager", "executor", "auditor", "adapters", "completion-guard", "official-figures", "license"]
+      "used_for": [
+        "manager",
+        "executor",
+        "auditor",
+        "adapters",
+        "completion-guard",
+        "official-figures",
+        "license"
+      ]
     },
     {
       "id": "weavebench-judge",
@@ -33,7 +54,13 @@
       "title": "WeaveBench trajectory-aware judge vendored by LongHorizon-Harness",
       "url": "https://github.com/AMAP-ML/LongHorizon-Harness/tree/a1dd930614972b92361c1b9cd6aac441a6db5a65/eval/WeaveBench-harness/WeaveBench",
       "revision": "a1dd930614972b92361c1b9cd6aac441a6db5a65",
-      "used_for": ["judge-inputs", "judge-prompt", "score-formula", "artifact-staging", "aggregation"]
+      "used_for": [
+        "judge-inputs",
+        "judge-prompt",
+        "score-formula",
+        "artifact-staging",
+        "aggregation"
+      ]
     }
   ],
   "paper_reading": {
@@ -42,260 +69,868 @@
     "extracted_text_reviewed": true,
     "rendered_pages_reviewed": true,
     "page_count": 29,
-    "rendered_page_ranges": [{"start": 1, "end": 29}],
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 29
+      }
+    ],
     "source_visuals_expected": 31,
     "visual_inventory_complete": true,
-    "inventory_note": "The rendered v1 PDF contains Figures 1-20 and Tables 1-11. Figures 1-2 are reused from identical assets in the official MIT-licensed repository. Other retained facts are redrawn in HTML/CSS or summarized; the remaining paper visuals are explicitly omitted."
+    "inventory_note": "The rendered v1 PDF contains Figures 1-20 and Tables 1-11. Figures 1-2 are reused from identical assets in the official MIT-licensed repository. Other retained facts are redrawn in HTML/CSS or summarized; the remaining paper visuals are explicitly omitted.",
+    "current_review": {
+      "reviewer": "main-agent",
+      "date": "2026-10-14",
+      "version": "v1, 2026-08-03",
+      "text_path": "/Users/chris/Documents/Codex/2026-09-21/bvab/research/harness-zero-related-work/phase3_deep_dive/texts/2608.01964.txt",
+      "text_line_ranges": [{"start": 1, "end": 1633}],
+      "rendered_page_ranges": [{"start": 1, "end": 29}],
+      "rendered_review": "All contact sheets personally inspected; dense final Figures 19 and 20 additionally opened as individual pages 28 and 29.",
+      "code_revision": "a1dd930614972b92361c1b9cd6aac441a6db5a65",
+      "code_locators": ["src/lh_harness/manager.py:522-565,752-811,1522-1536", "src/lh_harness/auditor_agent.py:248-314", "src/lh_harness/adapters/claude_code.py:132-187", "src/lh_harness/adapters/claude_permissions.py:34-175", "src/lh_harness/adapters/codex.py:41-111", "src/lh_harness/adapters/cli_agent.py:44-119", "src/lh_harness/prompt_texts.py:1-242", "src/lh_harness/config.py:88-119"],
+      "findings": ["Corrected DOC_task_2 to GUI edits followed by XML audit, not an invented initial CLI step", "Corrected DOC_task_4: partial initial screenshots existed, but the full pre-repair evidence was unfinished", "Distinguished paper role restrictions from overlapping tool access and non-sandbox code policies", "Separated paper two-status audit protocol from repository Contract audit header", "Added trial-level denominators, Opus judge configuration, exact WEB_task_16 evidence and concrete negative results", "Restricted mystery-binary claim to the published image/compilation/size/independence checks", "Recorded Figure 20 timeout disagreement without silently merging defaults and observed trace"]
+    }
   },
   "note_sections": [
-    {"role": "problem", "locator": "Q1. 为什么长上下文还不能解决长任务？"},
-    {"role": "related-work", "locator": "Q2. 它和 Harness-Zero、AHE 以及普通多 Agent 有什么区别？"},
-    {"role": "method", "locator": "Q3. Manage-Execute-Audit 具体怎样运行？"},
-    {"role": "experiments", "locator": "Q4. 实验怎样评分，真实 case 到底说明什么？"},
-    {"role": "future-work", "locator": "Q5. 这篇论文对 harness 研究最有用的启发是什么？"},
-    {"role": "summary", "locator": "Q6. 最后该怎样评价这篇工作？"}
+    {
+      "role": "problem",
+      "locator": "1. Motivation：长聊天历史为什么仍会丢进度？"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：与模型蒸馏、执行程序演化和普通多 Agent 的区别"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：一轮执行：分派子任务、操作环境、核验结果"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：评分协议与真实失败案例"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：可复用的设计与需要补做的实验"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：已有证据与实验限制"
+    }
   ],
   "coverage": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1-2; Figures 1-2"}],
-      "evidence": [{"artifact": "article", "quote": "跨轮保存的是审计过的 requirement、artifact 和 fact，不是完整执行轨迹。"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Abstract; Sections 1-2; Figures 1-2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "跨轮保存核验过的需求、产物与事实，不是完整执行轨迹。"
+        }
+      ]
     },
     {
       "id": "related-work-comparison",
       "claim_type": "interpretation",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 1"}, {"source_id": "repo", "locator": "README.md at a1dd930"}],
-      "evidence": [{"artifact": "article", "quote": "LongHorizon-Harness 优化的是一次任务运行中的状态推进，不训练模型，也不自动修改底层 harness。"}]
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 1"
+        },
+        {
+          "source_id": "repo",
+          "locator": "README.md at a1dd930"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "LongHorizon-Harness 优化的是一次任务运行中的状态推进，不训练模型，也不自动修改底层 harness。"
+        }
+      ]
     },
     {
       "id": "task-state-and-contract",
       "claim_type": "inspected-implementation",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [{"source_id": "paper", "locator": "Sections 2.1-2.3; Equations 1-2"}, {"source_id": "repo", "locator": "src/types.py; src/prompt_texts.py; src/manager.py at a1dd930"}],
-      "evidence": [{"artifact": "article", "quote": "Contract 写的是这轮可检查的验收边界，不负责列出完整执行计划。"}]
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 2.1-2.3; Equations 1-2"
+        },
+        {
+          "source_id": "repo",
+          "locator": "src/types.py; src/prompt_texts.py; src/manager.py at a1dd930"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它限定本轮的检查范围，不是让 Manager 代替 Executor 写出每一步操作。"
+        }
+      ]
     },
     {
       "id": "completion-guard",
       "claim_type": "inspected-implementation",
-      "source_ids": ["repo"],
-      "source_locators": [{"source_id": "repo", "locator": "src/auditor_agent.py:276-314; src/manager.py:525-563, 1522-1534 at a1dd930"}],
-      "evidence": [{"artifact": "article", "quote": "它会生成 synthetic repair feedback，把“没有 complete/clean/aligned 证据”送回下一轮 Manager。"}]
+      "source_ids": [
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "src/auditor_agent.py:276-314; src/manager.py:525-563, 1522-1534 at a1dd930"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "不满足时，即使 Manager 输出 <code>Next: done</code>，主循环也会拒绝结束，并把缺失条件送回下一轮"
+        }
+      ]
     },
     {
       "id": "public-vs-hidden-inputs",
       "claim_type": "inspected-implementation",
-      "source_ids": ["paper", "repo", "weavebench-judge"],
-      "source_locators": [{"source_id": "paper", "locator": "Sections 2.2-2.4; Appendix A"}, {"source_id": "repo", "locator": "adapters/claude_code.py; adapters/codex.py at a1dd930"}, {"source_id": "weavebench-judge", "locator": "prompt_template.txt; judge_runner.py; stage_case.py"}],
+      "source_ids": [
+        "paper",
+        "repo",
+        "weavebench-judge"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 2.2-2.4; Appendix A"
+        },
+        {
+          "source_id": "repo",
+          "locator": "adapters/claude_code.py; adapters/codex.py at a1dd930"
+        },
+        {
+          "source_id": "weavebench-judge",
+          "locator": "prompt_template.txt; judge_runner.py; stage_case.py"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "Executor 收到原任务、task state、当前 contract，以及 contract 明确引用的 audit reports。它看不到以前的 raw trajectory。"},
-        {"artifact": "article", "quote": "Judge 没找到 artifact 时还必须查完整轨迹"}
+        {
+          "artifact": "article",
+          "quote": "Executor 收到原任务、任务进度、本轮验收要求，以及明确引用的历史核验报告。它看不到以前逐步生成的思考、命令与观察记录。"
+        },
+        {
+          "artifact": "article",
+          "quote": "例如八维均分为 0.90、产物正确性为 0.70，最终分只能是 0.70，不能靠其他高分抵消错误；这是根据公式构造的说明例，不是作者的逐题结果。"
+        }
       ]
     },
     {
       "id": "evaluation-formulas",
       "claim_type": "inspected-implementation",
-      "source_ids": ["paper", "weavebench-judge"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 3.1; Appendix A.1-A.3; Tables 1-3"}, {"source_id": "weavebench-judge", "locator": "prompt_template.txt; grading.py"}],
+      "source_ids": [
+        "paper",
+        "weavebench-judge"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1; Appendix A.1-A.3; Tables 1-3"
+        },
+        {
+          "source_id": "weavebench-judge",
+          "locator": "prompt_template.txt; grading.py"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "final_score = min(mean(8 dimension scores), deliverable_correctness)"},
-        {"artifact": "article", "quote": "PassRate 定义为 score ≥ 0.8 的任务比例，Overall 是 114 题平均分。"}
+        {
+          "artifact": "article",
+          "quote": "final_score = min(mean(8 dimension scores), deliverable_correctness)"
+        },
+        {
+          "artifact": "article",
+          "quote": "PassRate 定义为 <code>score ≥ 0.8</code> 的任务比例，Overall 是 114 题平均分。"
+        }
       ]
     },
     {
       "id": "checker-code-and-cases",
       "claim_type": "inspected-implementation",
-      "source_ids": ["paper", "weavebench-judge"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 3.4; Figures 7-10; Appendix C; Figures 19-20"}, {"source_id": "weavebench-judge", "locator": "AGENT_JUDGE.md; prompt_template.txt; judge_runner.py; stage_case.py"}],
+      "source_ids": [
+        "paper",
+        "weavebench-judge"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.4; Figures 7-10; Appendix C; Figures 19-20"
+        },
+        {
+          "source_id": "weavebench-judge",
+          "locator": "AGENT_JUDGE.md; prompt_template.txt; judge_runner.py; stage_case.py"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "Baseline 因缺证据得 0.59；LongHorizon 补齐 browser charts、JSON state 和 packet cross-validation，得 0.92。"},
-        {"artifact": "article", "quote": "Baseline 通过前两项，但 gcov 检查失败，reward 0；LongHorizon 把 .gcno 产物和覆盖率符号写成 acceptance criteria，三项全过，reward 1。"}
+        {
+          "artifact": "article",
+          "quote": "Baseline 因缺证据得 0.59；LongHorizon 补齐浏览器图表、JSON 状态和抓包交叉核验，得 0.92。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Baseline 通过前两项，但 gcov 检查失败，reward 0；LongHorizon 在六轮中分别检查源码来源、编译位置、覆盖率、PATH 和最终保存位置，三项全过，reward 1。"
+        }
       ]
     },
     {
       "id": "model-results",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 3.2; Tables 1-3; Figure 3"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Tables 1-3; Figure 3"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "WeaveBench PassRate"},
-        {"artifact": "article", "quote": "OSWorld Opus subset"}
+        {
+          "artifact": "article",
+          "quote": "WeaveBench PassRate"
+        },
+        {
+          "artifact": "article",
+          "quote": "OSWorld Opus subset"
+        }
       ]
     },
     {
       "id": "costs",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 3.3; Figures 4-5; Table 4"}],
-      "evidence": [{"artifact": "article", "quote": "Auditor 占 LongHorizon 总 token 的 19.4%（WeaveBench）、24.8%（OSWorld）和 38.1%（Terminal-Bench）"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3; Figures 4-5; Table 4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Auditor 占 LongHorizon 总 token 的 19.4%（WeaveBench）、24.8%（OSWorld）和 38.1%（Terminal-Bench）"
+        }
+      ]
     },
     {
       "id": "limitations",
       "claim_type": "interpretation",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [{"source_id": "paper", "locator": "Sections 3.1-3.3; Tables 2-5; Appendix B"}, {"source_id": "repo", "locator": "adapters/codex.py; eval/OSWorldv2-harness at a1dd930"}],
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.1-3.3; Tables 2-5; Appendix B"
+        },
+        {
+          "source_id": "repo",
+          "locator": "adapters/codex.py; eval/OSWorldv2-harness at a1dd930"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "没有组件消融。Task state、fresh context、Auditor、GUI/CLI routing 和额外 compute 没有被单独拆开。"},
-        {"artifact": "article", "quote": "baseline 为 single-action GUI，本文为 hybrid GUI+CLI"}
+        {
+          "artifact": "article",
+          "quote": "1. 没有组件消融。进度记录、新会话、Auditor、图形与命令行分派和额外算力没有被单独拆开。"
+        },
+        {
+          "artifact": "article",
+          "quote": "基线只允许单次图形操作；本文可同时用图形界面与命令行"
+        }
       ]
     }
   ],
   "source_visuals": [
     {
-      "id": "figure-1", "kind": "figure", "label": "Figure 1", "source_id": "paper", "source_locator": "p. 1, Figure 1",
-      "status": "reused", "rationale": "The overview combines headline results with the audited-state-transition mechanism and is the strongest visual orientation for the paper.",
-      "placements": [{"artifact": "article", "locator": "assets/harness_perf.png"}, {"artifact": "deck", "locator": "assets/harness_perf.png"}],
-      "permission_status": "verified-allowed", "permission_basis": "The identical assets/harness_perf.png is distributed by the official repository under MIT at revision a1dd930.", "credit": "论文 Figure 1；作者官方仓库 assets/harness_perf.png", "asset_paths": ["/lib/papers/longhorizon-harness/harness-performance.webp"]
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 1, Figure 1",
+      "status": "reused",
+      "rationale": "The overview combines headline results with the audited-state-transition mechanism and is the strongest visual orientation for the paper.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "assets/harness_perf.png"
+        },
+        {
+          "artifact": "deck",
+          "locator": "assets/harness_perf.png"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The identical assets/harness_perf.png is distributed by the official repository under MIT at revision a1dd930.",
+      "credit": "论文 Figure 1；作者官方仓库 assets/harness_perf.png",
+      "asset_paths": [
+        "/lib/papers/longhorizon-harness/harness-performance.webp"
+      ]
     },
     {
-      "id": "figure-2", "kind": "figure", "label": "Figure 2", "source_id": "paper", "source_locator": "p. 3, Figure 2",
-      "status": "reused", "rationale": "The official diagram is the clearest representation of Manager, Executor, Auditor, their permissions, and the repeated MEA flow.",
-      "placements": [{"artifact": "article", "locator": "assets/mea_main.png"}, {"artifact": "deck", "locator": "assets/mea_main.png"}],
-      "permission_status": "verified-allowed", "permission_basis": "The identical assets/mea_main.png is distributed by the official repository under MIT at revision a1dd930.", "credit": "论文 Figure 2；作者官方仓库 assets/mea_main.png", "asset_paths": ["/lib/papers/longhorizon-harness/manage-execute-audit.webp"]
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2",
+      "status": "reused",
+      "rationale": "The official diagram is the clearest representation of Manager, Executor, Auditor, their permissions, and the repeated MEA flow.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "assets/mea_main.png"
+        },
+        {
+          "artifact": "deck",
+          "locator": "assets/mea_main.png"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The identical assets/mea_main.png is distributed by the official repository under MIT at revision a1dd930.",
+      "credit": "论文 Figure 2；作者官方仓库 assets/mea_main.png",
+      "asset_paths": [
+        "/lib/papers/longhorizon-harness/manage-execute-audit.webp"
+      ]
     },
     {
-      "id": "figure-3", "kind": "figure", "label": "Figure 3", "source_id": "paper", "source_locator": "p. 8, Figure 3",
-      "status": "redrawn", "rationale": "The matched Terminal-Bench comparison is reproduced in the main results table and direct-label bars without copying the paper chart.",
-      "placements": [{"artifact": "article", "locator": "Terminal-Bench 2.1 success rate"}, {"artifact": "deck", "locator": "Terminal baseline"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 3 数据重绘", "asset_paths": []
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 3",
+      "status": "redrawn",
+      "rationale": "The matched Terminal-Bench comparison is reproduced in the main results table and direct-label bars without copying the paper chart.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Terminal-Bench 2.1 success rate"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Terminal baseline"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 3 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "figure-4", "kind": "figure", "label": "Figure 4", "source_id": "paper", "source_locator": "p. 9, Figure 4",
-      "status": "omitted", "rationale": "The mixed official cost-performance frontier is hard to compare causally because reasoning effort and tool mode differ; the note reports the directly relevant paired token and score values instead.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 9, Figure 4",
+      "status": "omitted",
+      "rationale": "The mixed official cost-performance frontier is hard to compare causally because reasoning effort and tool mode differ; the note reports the directly relevant paired token and score values instead.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-5", "kind": "figure", "label": "Figure 5", "source_id": "paper", "source_locator": "p. 9, Figure 5",
-      "status": "redrawn", "rationale": "Role-level token shares and total-cost changes are redrawn as compact bars so the reader can compare the three benchmarks directly.",
-      "placements": [{"artifact": "article", "locator": "Auditor 占 LongHorizon 总 token"}, {"artifact": "deck", "locator": "谁在花新增 token？"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 5 数据重绘", "asset_paths": []
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 9, Figure 5",
+      "status": "redrawn",
+      "rationale": "Role-level token shares and total-cost changes are redrawn as compact bars so the reader can compare the three benchmarks directly.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Auditor 占 LongHorizon 总 token"
+        },
+        {
+          "artifact": "deck",
+          "locator": "谁在花新增 token？"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 5 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "figure-6", "kind": "figure", "label": "Figure 6", "source_id": "paper", "source_locator": "p. 10, Figure 6",
-      "status": "omitted", "rationale": "The cross-domain chart contains many overlapping task groups; the note keeps its useful conclusion and the negative categories in prose while avoiding a crowded duplicate.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p. 10, Figure 6",
+      "status": "omitted",
+      "rationale": "The cross-domain chart contains many overlapping task groups; the note keeps its useful conclusion and the negative categories in prose while avoiding a crowded duplicate.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-7", "kind": "figure", "label": "Figure 7", "source_id": "paper", "source_locator": "p. 13, Figure 7",
-      "status": "redrawn", "rationale": "The WEB_task_16 trace is converted into a compact setup-to-verdict case that preserves the 400-step failure loop and 0.59-to-0.92 scores.",
-      "placements": [{"artifact": "article", "locator": "WEB_task_16：卡在 Wireshark 后怎样恢复？"}, {"artifact": "deck", "locator": "REAL CASE / WEB_TASK_16"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 7 的轨迹与分数重绘", "asset_paths": []
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p. 13, Figure 7",
+      "status": "redrawn",
+      "rationale": "The WEB_task_16 trace is converted into a compact setup-to-verdict case that preserves the 400-step failure loop and 0.59-to-0.92 scores.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "WEB_task_16：Wireshark 卡住后的恢复"
+        },
+        {
+          "artifact": "deck",
+          "locator": "真实案例 / WEB_TASK_16"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 7 的轨迹与分数重绘",
+      "asset_paths": [
+        "/lib/papers/longhorizon-harness/body-case.svg"
+      ]
     },
     {
-      "id": "figure-8", "kind": "figure", "label": "Figure 8", "source_id": "paper", "source_locator": "p. 13, Figure 8",
-      "status": "redrawn", "rationale": "The DOC_task_2 apparent-completion failure is narrated with the visible workflow constraint, semantic ODT check, and final scores.",
-      "placements": [{"artifact": "article", "locator": "DOC_task_2 · heading-style normalization"}, {"artifact": "deck", "locator": "DOC_TASK_2 + DOC_TASK_4"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 8 的轨迹与分数重绘", "asset_paths": []
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p. 13, Figure 8",
+      "status": "redrawn",
+      "rationale": "The DOC_task_2 apparent-completion failure is narrated with the visible workflow constraint, semantic ODT check, and final scores.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "DOC_task_2 · 统一标题样式"
+        },
+        {
+          "artifact": "deck",
+          "locator": "DOC_TASK_2 + DOC_TASK_4"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 8 的轨迹与分数重绘",
+      "asset_paths": []
     },
     {
-      "id": "figure-9", "kind": "figure", "label": "Figure 9", "source_id": "paper", "source_locator": "p. 14, Figure 9",
-      "status": "redrawn", "rationale": "The VLOOKUP before-and-after evidence ordering is retained as a worked case because it makes temporal acceptance constraints concrete.",
-      "placements": [{"artifact": "article", "locator": "DOC_task_4 · VLOOKUP repair"}, {"artifact": "deck", "locator": "DOC_TASK_2 + DOC_TASK_4"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 9 的轨迹与分数重绘", "asset_paths": []
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p. 14, Figure 9",
+      "status": "redrawn",
+      "rationale": "The VLOOKUP before-and-after evidence ordering is retained as a worked case because it makes temporal acceptance constraints concrete.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "DOC_task_4 · 修复 VLOOKUP 并保留前后截图"
+        },
+        {
+          "artifact": "deck",
+          "locator": "DOC_TASK_2 + DOC_TASK_4"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 9 的轨迹与分数重绘",
+      "asset_paths": []
     },
     {
-      "id": "figure-10", "kind": "figure", "label": "Figure 10", "source_id": "paper", "source_locator": "p. 14, Figure 10",
-      "status": "redrawn", "rationale": "The Lighthouse case is summarized in prose to show how verified optimization progress survives a failed evidence-collection step.",
-      "placements": [{"artifact": "article", "locator": "WEB_task_10 要做 Lighthouse performance optimization"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 10 的轨迹与分数概括", "asset_paths": []
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p. 14, Figure 10",
+      "status": "redrawn",
+      "rationale": "The Lighthouse case is summarized in prose to show how verified optimization progress survives a failed evidence-collection step.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "WEB_task_10 要做 Lighthouse 网页性能优化"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 10 的轨迹与分数概括",
+      "asset_paths": []
     },
     {
-      "id": "figure-11", "kind": "figure", "label": "Figure 11", "source_id": "paper", "source_locator": "p. 23, Figure 11",
-      "status": "omitted", "rationale": "The desktop note-rendering trace is supplementary and overlaps with the main recovery mechanism already taught through WEB_task_16.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "p. 23, Figure 11",
+      "status": "omitted",
+      "rationale": "The desktop note-rendering trace is supplementary and overlaps with the main recovery mechanism already taught through WEB_task_16.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-12", "kind": "figure", "label": "Figure 12", "source_id": "paper", "source_locator": "p. 24, Figure 12",
-      "status": "omitted", "rationale": "This appendix rendering of DOC_task_2 is not copied because the article already reconstructs its visible-input, semantic-style, and judge path from Figure 8.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "p. 24, Figure 12",
+      "status": "omitted",
+      "rationale": "This appendix rendering of DOC_task_2 is not copied because the article already reconstructs its visible-input, semantic-style, and judge path from Figure 8.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-13", "kind": "figure", "label": "Figure 13", "source_id": "paper", "source_locator": "p. 24, Figure 13",
-      "status": "omitted", "rationale": "The PGN game-analysis case is secondary to the three full worked cases selected for the article and adds no new evaluation layer.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "p. 24, Figure 13",
+      "status": "omitted",
+      "rationale": "The PGN game-analysis case is secondary to the three full worked cases selected for the article and adds no new evaluation layer.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-14", "kind": "figure", "label": "Figure 14", "source_id": "paper", "source_locator": "p. 25, Figure 14",
-      "status": "redrawn", "rationale": "The appendix evidence chain supplies the concrete browser-chart, JSON-state, and packet-evidence details used in the WEB_task_16 explanation.",
-      "placements": [{"artifact": "article", "locator": "browser charts、JSON state 和 packet cross-validation"}, {"artifact": "deck", "locator": "Figures 7 与 14"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 14 的 evidence chain 概括", "asset_paths": []
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "p. 25, Figure 14",
+      "status": "redrawn",
+      "rationale": "The appendix evidence chain supplies the concrete browser-chart, JSON-state, and packet-evidence details used in the WEB_task_16 explanation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "浏览器图表、JSON 状态和抓包交叉核验"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figures 7 与 14"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 14 的 evidence chain 概括",
+      "asset_paths": []
     },
     {
-      "id": "figure-15", "kind": "figure", "label": "Figure 15", "source_id": "paper", "source_locator": "p. 25, Figure 15",
-      "status": "omitted", "rationale": "The Airflow data-analysis trace is a supplementary example; its mislabeled-evidence lesson is already covered by the general audit contract.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "p. 25, Figure 15",
+      "status": "omitted",
+      "rationale": "The Airflow data-analysis trace is a supplementary example; its mislabeled-evidence lesson is already covered by the general audit contract.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-16", "kind": "figure", "label": "Figure 16", "source_id": "paper", "source_locator": "p. 26, Figure 16",
-      "status": "omitted", "rationale": "The RabbitMQ DevOps trace is omitted to keep the case section focused on distinct judge mechanisms rather than additional domains.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-16",
+      "kind": "figure",
+      "label": "Figure 16",
+      "source_id": "paper",
+      "source_locator": "p. 26, Figure 16",
+      "status": "omitted",
+      "rationale": "The RabbitMQ DevOps trace is omitted to keep the case section focused on distinct judge mechanisms rather than additional domains.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-17", "kind": "figure", "label": "Figure 17", "source_id": "paper", "source_locator": "p. 26, Figure 17",
-      "status": "omitted", "rationale": "The CAD trace is useful visual evidence but does not add a new state or scoring rule beyond the selected document and web cases.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-17",
+      "kind": "figure",
+      "label": "Figure 17",
+      "source_id": "paper",
+      "source_locator": "p. 26, Figure 17",
+      "status": "omitted",
+      "rationale": "The CAD trace is useful visual evidence but does not add a new state or scoring rule beyond the selected document and web cases.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-18", "kind": "figure", "label": "Figure 18", "source_id": "paper", "source_locator": "p. 27, Figure 18",
-      "status": "omitted", "rationale": "The GIMP quality-comparison trace is omitted because the article already covers the difference between apparent visual completion and evaluator-visible semantic evidence.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "figure-18",
+      "kind": "figure",
+      "label": "Figure 18",
+      "source_id": "paper",
+      "source_locator": "p. 27, Figure 18",
+      "status": "omitted",
+      "rationale": "The GIMP quality-comparison trace is omitted because the article already covers the difference between apparent visual completion and evaluator-visible semantic evidence.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "figure-19", "kind": "figure", "label": "Figure 19", "source_id": "paper", "source_locator": "p. 28, Figure 19",
-      "status": "redrawn", "rationale": "The SQLite case is reconstructed around its three official tests and the gcov failure so the external verifier is visible at a glance.",
-      "placements": [{"artifact": "article", "locator": "test_sqlite_compiled"}, {"artifact": "deck", "locator": "SQLite gcov build"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 19 的 verifier tests 与轨迹重绘", "asset_paths": []
+      "id": "figure-19",
+      "kind": "figure",
+      "label": "Figure 19",
+      "source_id": "paper",
+      "source_locator": "p. 28, Figure 19",
+      "status": "redrawn",
+      "rationale": "The SQLite case is reconstructed around its three official tests and the gcov failure so the external verifier is visible at a glance.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "test_sqlite_compiled"
+        },
+        {
+          "artifact": "deck",
+          "locator": "SQLite：编译并启用覆盖率"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 19 的 verifier tests 与轨迹重绘",
+      "asset_paths": []
     },
     {
-      "id": "figure-20", "kind": "figure", "label": "Figure 20", "source_id": "paper", "source_locator": "p. 29, Figure 20",
-      "status": "redrawn", "rationale": "The mystery-binary case is reconstructed around the three verifier tests, independent implementation constraints, and final reward.",
-      "placements": [{"artifact": "article", "locator": "test_image_similarity"}, {"artifact": "deck", "locator": "mystery binary"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Figure 20 的 verifier tests 与轨迹重绘", "asset_paths": []
+      "id": "figure-20",
+      "kind": "figure",
+      "label": "Figure 20",
+      "source_id": "paper",
+      "source_locator": "p. 29, Figure 20",
+      "status": "redrawn",
+      "rationale": "The mystery-binary case is reconstructed around the three verifier tests, independent implementation constraints, and final reward.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "test_image_similarity"
+        },
+        {
+          "artifact": "deck",
+          "locator": "mystery binary"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Figure 20 的 verifier tests 与轨迹重绘",
+      "asset_paths": []
     },
     {
-      "id": "table-1", "kind": "table", "label": "Table 1", "source_id": "paper", "source_locator": "p. 6, Table 1",
-      "status": "redrawn", "rationale": "The matched WeaveBench PassRate and Overall rows are the cleanest evidence for the framework and are reproduced in the main results table.",
-      "placements": [{"artifact": "article", "locator": "WeaveBench Overall"}, {"artifact": "deck", "locator": "Weave baseline"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 1 数据重绘", "asset_paths": []
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 6, Table 1",
+      "status": "redrawn",
+      "rationale": "The matched WeaveBench PassRate and Overall rows are the cleanest evidence for the framework and are reproduced in the main results table.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "WeaveBench Overall"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Weave baseline"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 1 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "table-2", "kind": "table", "label": "Table 2", "source_id": "paper", "source_locator": "p. 7, Table 2",
-      "status": "redrawn", "rationale": "The OSWorld Binary and Partial pair is reproduced together with the single-action versus hybrid comparability warning.",
-      "placements": [{"artifact": "article", "locator": "OSWorld Partial"}, {"artifact": "deck", "locator": "OSWorld baseline"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 2 数据重绘", "asset_paths": []
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 2",
+      "status": "redrawn",
+      "rationale": "The OSWorld Binary and Partial pair is reproduced together with the single-action versus hybrid comparability warning.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "OSWorld Partial"
+        },
+        {
+          "artifact": "deck",
+          "locator": "OSWorld baseline"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 2 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "table-3", "kind": "table", "label": "Table 3", "source_id": "paper", "source_locator": "p. 8, Table 3",
-      "status": "redrawn", "rationale": "The Opus 4.7 subset values are reproduced to expose the abstract-versus-table mismatch and the hybrid-tool confound.",
-      "placements": [{"artifact": "article", "locator": "OSWorld Opus subset"}, {"artifact": "deck", "locator": "Opus subset 的表格值是 20.6→35.3"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 3 数据重绘", "asset_paths": []
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 3",
+      "status": "redrawn",
+      "rationale": "The Opus 4.7 subset values are reproduced to expose the abstract-versus-table mismatch and the hybrid-tool confound.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "OSWorld Opus subset"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Opus subset 的表格值是 20.6→35.3"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 3 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "table-4", "kind": "table", "label": "Table 4", "source_id": "paper", "source_locator": "p. 11, Table 4",
-      "status": "redrawn", "rationale": "The Games-subset token contrast is summarized in prose because it demonstrates that the same harness can raise or lower total cost depending on executor capability.",
-      "placements": [{"artifact": "article", "locator": "Qwen 从 10.7M 增至 34.3M tokens，Opus 却从 16.5M 降至 11.1M"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 4 数据概括", "asset_paths": []
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Table 4",
+      "status": "redrawn",
+      "rationale": "The Games-subset token contrast is summarized in prose because it demonstrates that the same harness can raise or lower total cost depending on executor capability.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Qwen 从 10.7M 增至 34.3M tokens，Opus 却从 16.5M 降至 11.1M"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 4 数据概括",
+      "asset_paths": []
     },
     {
-      "id": "table-5", "kind": "table", "label": "Table 5", "source_id": "paper", "source_locator": "p. 19, Table 5",
-      "status": "omitted", "rationale": "The complete 34-task OSWorld subset table is too large for the note; aggregate Binary and Partial values plus the existence of regressions are retained.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 19, Table 5",
+      "status": "omitted",
+      "rationale": "The complete 34-task OSWorld subset table is too large for the note; aggregate Binary and Partial values plus the existence of regressions are retained.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "table-6", "kind": "table", "label": "Table 6", "source_id": "paper", "source_locator": "p. 20, Table 6",
-      "status": "omitted", "rationale": "The eight-domain WeaveBench breakdown is summarized through the all-domain result and selected case studies rather than duplicated as another dense table.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 20, Table 6",
+      "status": "omitted",
+      "rationale": "The eight-domain WeaveBench breakdown is summarized through the all-domain result and selected case studies rather than duplicated as another dense table.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "table-7", "kind": "table", "label": "Table 7", "source_id": "paper", "source_locator": "p. 20, Table 7",
-      "status": "omitted", "rationale": "The full 17-task Games table is omitted; the article retains the paired token totals and explains why task-level gains and regressions vary.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p. 20, Table 7",
+      "status": "omitted",
+      "rationale": "The full 17-task Games table is omitted; the article retains the paired token totals and explains why task-level gains and regressions vary.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "table-8", "kind": "table", "label": "Table 8", "source_id": "paper", "source_locator": "p. 21, Table 8",
-      "status": "omitted", "rationale": "OSWorld capability tags overlap, so the article reports the main Binary and Partial metrics and warns about the hybrid-tool confound instead of visually implying independent groups.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 8",
+      "status": "omitted",
+      "rationale": "OSWorld capability tags overlap, so the article reports the main Binary and Partial metrics and warns about the hybrid-tool confound instead of visually implying independent groups.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "table-9", "kind": "table", "label": "Table 9", "source_id": "paper", "source_locator": "p. 22, Table 9",
-      "status": "omitted", "rationale": "The category table is omitted from the reader-facing note; its negative categories are retained in the limitations on task-dependent cost and performance.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 22, Table 9",
+      "status": "omitted",
+      "rationale": "The category table is omitted from the reader-facing note; its negative categories are retained in the limitations on task-dependent cost and performance.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "table-10", "kind": "table", "label": "Table 10", "source_id": "paper", "source_locator": "p. 22, Table 10",
-      "status": "omitted", "rationale": "The three-row difficulty breakdown is secondary to the matched aggregate results and does not change the mechanism or evaluation explanation.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "p. 22, Table 10",
+      "status": "omitted",
+      "rationale": "The three-row difficulty breakdown is secondary to the matched aggregate results and does not change the mechanism or evaluation explanation.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     },
     {
-      "id": "table-11", "kind": "table", "label": "Table 11", "source_id": "paper", "source_locator": "p. 23, Table 11",
-      "status": "omitted", "rationale": "The overlapping Terminal-Bench tags are supplementary; the article keeps the concrete SQLite and mystery-binary verifier cases instead.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "p. 23, Table 11",
+      "status": "omitted",
+      "rationale": "The overlapping Terminal-Bench tags are supplementary; the article keeps the concrete SQLite and mystery-binary verifier cases instead.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
     }
   ],
   "figures": [
@@ -308,7 +943,12 @@
       "credit": "论文 Figure 1；作者官方仓库 assets/harness_perf.png（MIT）",
       "license_status": "verified-allowed",
       "license_basis": "Official AMAP-ML/LongHorizon-Harness repository is MIT-licensed at revision a1dd930.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 2200,
+      "height": 1800
     },
     {
       "path": "/lib/papers/longhorizon-harness/manage-execute-audit.webp",
@@ -319,10 +959,196 @@
       "credit": "论文 Figure 2；作者官方仓库 assets/mea_main.png（MIT）",
       "license_status": "verified-allowed",
       "license_basis": "Official AMAP-ML/LongHorizon-Harness repository is MIT-licensed at revision a1dd930.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 2400,
+      "height": 1600
+    },
+    {
+      "path": "/lib/papers/longhorizon-harness/body-case.svg",
+      "origin": "author-redrawn",
+      "credit": "根据论文 §3.4、Figures 7 / 14 整理的正文专用图",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "width": 1000,
+      "height": 980,
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "§3.4, Figures 7 and 14"
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all16slides reread. Followed Manager subtaskcontract→Executor toolcalls→readonly Auditor report→versionedprogress. min(eightcomponentmean,correctness) judge and267 attempts checked; token/toolpermissions notsandbox, OSWorld toolconfound and Opus regressions retained. Narrow wording cleanup applied and reread."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "2df213a3556864a19ab69eace410eb976925557911058031b6257407182a2388",
+      "built_article": "c51e1ff6834c9147f294d3c5d1482cb654caef0ce9b3006c110ef8f06ea93829",
+      "deck": "4ee9e2efd53f736f847020500a686fa16be89c7297fc6be801508c0360b47c0d",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-050/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T08-25-17-814Z-050/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-050.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "task state",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 2.1-2.3"
+        }
+      ],
+      "article_quote": "Task state 是任务进度记录，不是聊天摘要。** 它分别记录原任务要求（requirement）、生成的文件或其他产物（artifact）、从环境确认的事实（fact）"
+    },
+    {
+      "term": "task contract",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2.2"
+        }
+      ],
+      "article_quote": "Task contract 是本轮的验收要求。** 它写明这轮要改什么、哪些已有结果不能改变、完成后检查哪个文件或屏幕"
+    },
+    {
+      "term": "fresh context",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2.2"
+        }
+      ],
+      "article_quote": "Fresh context 则指启动一个不带旧聊天历史的新会话；项目文件仍保留，并不是每轮从空目录重做"
+    },
+    {
+      "term": "Auditor",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2.3"
+        }
+      ],
+      "article_quote": "LongHorizon-Harness 内部的 Auditor 负责检查本轮环境变化，它的报告会影响下一轮"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -335,9 +1161,21 @@
       "page_horizontal_overflow": false
     },
     "viewports": [
-      {"width": 1600, "height": 1000, "passed": true},
-      {"width": 1512, "height": 982, "passed": true},
-      {"width": 390, "height": 844, "passed": true}
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
     ],
     "tested_surfaces": {
       "article_body": true,
@@ -360,7 +1198,18 @@
       "immersive_mode_exit": true,
       "usable_state_after_exit": true
     },
-    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"],
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
     "browser_qa_note": "Fresh production-style build inspected at 1600x1000, 1512x982, and 390x844. Article, embedded deck, and standalone deck had zero page-level horizontal overflow. Verified 16 slides; buttons, Arrow/Home/End/F keys, direct hash navigation, deck fullscreen and Escape, standalone return link, mobile TOC, and blog focus-mode exit. Final clean browser session reported zero console errors and warnings."
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review"
   }
 }

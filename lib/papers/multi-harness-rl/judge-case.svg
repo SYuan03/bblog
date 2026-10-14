@@ -1,24 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="690" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
-  <title id="title">SWE-bench Verified case astropy__astropy-12907</title>
-  <desc id="desc">The agent receives a nested CompoundModel bug report and repository checkout. The hidden grader applies the candidate patch and checks two fail-to-pass tests and thirteen pass-to-pass tests.</desc>
-  <rect width="1200" height="690" fill="#fbfaf7"/>
-  <style>.h{font:700 28px Georgia,serif;fill:#20252b}.t{font:700 20px Arial,sans-serif;fill:#20252b}.s{font:16px Arial,sans-serif;fill:#66717b}.m{font:700 14px ui-monospace,monospace;fill:#285d9b}.box{fill:#fff;stroke:#cbd1d7;stroke-width:2}.vis{fill:#eef4fb;stroke:#285d9b}.hid{fill:#fff4ed;stroke:#ad5735}.ok{fill:#edf7f2;stroke:#2b7562}.arr{stroke:#285d9b;stroke-width:3;fill:none;marker-end:url(#a)}</style>
-  <text x="52" y="56" class="h">Real case: astropy__astropy-12907</text>
-  <text x="52" y="88" class="s">SWE-bench Verified dataset · base commit d16bfe05… · difficulty field from the official record</text>
-  <g transform="translate(52 128)">
-    <rect class="vis" width="280" height="184"/><text x="22" y="34" class="m">VISIBLE TO THE AGENT</text><text x="22" y="72" class="t">Issue + repository</text><text x="22" y="106" class="s">Nested CompoundModel makes</text><text x="22" y="131" class="s">separability_matrix mark two</text><text x="22" y="156" class="s">independent Linear1D models</text><text x="22" y="181" class="s">as coupled.</text>
-    <path class="arr" d="M280 92H350"/>
-    <rect class="box" x="365" width="280" height="184"/><text x="387" y="34" class="m">AGENT + HARNESS</text><text x="387" y="72" class="t">Inspect, edit, test</text><text x="387" y="106" class="s">Aider / OpenHands /</text><text x="387" y="131" class="s">Qwen Code / SWE-agent</text><text x="387" y="156" class="s">expose different prompts, tools</text><text x="387" y="181" class="s">and control flow.</text>
-    <path class="arr" d="M645 92H715"/>
-    <rect class="hid" x="730" width="365" height="184"/><text x="752" y="34" class="m" style="fill:#ad5735">SEALED ORACLE</text><text x="752" y="72" class="t">Hidden test patch</text><text x="752" y="108" class="s">FAIL_TO_PASS: 2 parameterized</text><text x="752" y="133" class="s">nested-model cases.</text><text x="752" y="160" class="s">PASS_TO_PASS: 13 existing tests</text><text x="752" y="185" class="s">guard against regressions.</text>
-  </g>
-  <g transform="translate(52 365)">
-    <rect class="box" width="320" height="190"/><text x="22" y="36" class="m">EVALUATION</text><text x="22" y="75" class="t">Apply candidate patch</text><text x="22" y="111" class="s">Run repository-specific command;</text><text x="22" y="137" class="s">parse the log into per-test states.</text><text x="22" y="166" class="s">Infra failure stays outside the score.</text>
-    <path class="arr" d="M320 95H390"/>
-    <rect class="ok" x="405" width="315" height="190"/><text x="427" y="36" class="m" style="fill:#2b7562">RESOLVED = 1</text><text x="427" y="77" class="t">All required tests pass</text><text x="427" y="113" class="s">2 / 2 FAIL_TO_PASS</text><text x="427" y="139" class="s">13 / 13 PASS_TO_PASS</text><text x="427" y="166" class="s">Patch applied and log parsed.</text>
-    <path class="arr" d="M720 95H790"/>
-    <rect class="hid" x="805" width="290" height="190"/><text x="827" y="36" class="m" style="fill:#ad5735">RESOLVED = 0</text><text x="827" y="77" class="t">Any required test fails</text><text x="827" y="113" class="s">A fix that passes one new case</text><text x="827" y="139" class="s">but couples another nested form</text><text x="827" y="166" class="s">still receives episode reward 0.</text>
-  </g>
-  <text x="52" y="620" class="s">The paper does not release per-harness trajectories for this instance; the case and checks come from the official SWE-bench Verified record.</text>
-  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#285d9b"/></marker></defs>
-</svg>
+<title id="title">Astropy：真实修复任务与标准判分边界</title><desc id="desc">上游 PR #12907 保留右子模型的依赖矩阵。正常运行时两项修复测试和13项保留测试全通过算完整修复。swebench 4.1.0 的 SKIPPED 不进分母，XFAIL 算成功；论文专用复测未公开。</desc>
+<rect width="1200" height="690" fill="#fff"/>
+<style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;fill:#24272c}.h{font-size:30px;font-weight:700}.t{font-size:22px;font-weight:700}.s{font-size:19px}.m{font-size:18px;fill:#58616b}.mono{font:24px ui-monospace,SFMono-Regular,Menlo,monospace}.box{fill:#f7f8f9;stroke:#d7dce2;stroke-width:2}.arr{stroke:#5b6470;stroke-width:2;fill:none;marker-end:url(#a)}</style>
+<text x="42" y="52" class="h">Astropy：括号不应把两个独立分支变成相互依赖</text>
+<text x="42" y="84" class="m">公开任务 astropy__astropy-12907 · Stuart Mumford 的 issue #12906 / PR #12907 · 不是本文的模型日志</text>
+<g transform="translate(42 115)"><rect width="344" height="274" class="box"/>
+<text x="20" y="36" class="t">模型输入与交付</text><text x="20" y="78" class="s">issue＋基线代码＋执行工具</text><text x="20" y="115" class="s">提交仓库修复补丁</text><text x="20" y="166" class="s">不提供参考修复与新增测试</text><text x="20" y="202" class="s">原有测试仍可能在仓库中可见</text><text x="20" y="246" class="m">base commit：d16bfe05…</text></g>
+<path d="M386 252h37" class="arr"/>
+<g transform="translate(441 115)"><rect width="350" height="274" class="box"/>
+<text x="20" y="36" class="t">真实测试与错误位置</text><text x="20" y="78" class="s">rot &amp; (sh1 &amp; sh2)</text>
+<text x="20" y="118" class="m">右下角期望</text><text x="194" y="118" class="m">修复前</text>
+<text x="20" y="154" class="mono">1 0</text><text x="194" y="154" class="mono">1 1</text><text x="20" y="188" class="mono">0 1</text><text x="194" y="188" class="mono">1 1</text>
+<text x="20" y="237" class="s">PR：常量 1 → 原矩阵 right</text></g>
+<path d="M791 252h33" class="arr"/>
+<g transform="translate(844 115)"><rect width="314" height="274" class="box"/>
+<text x="20" y="36" class="t">标准评测器</text><text x="20" y="78" class="s">应用候选修复＋测试补丁</text><text x="20" y="115" class="s">pytest -rA → 逐项状态</text>
+<text x="20" y="166" class="s">2 项 F2P：修好两种嵌套</text><text x="20" y="202" class="s">13 项 P2P：保留旧功能</text><text x="20" y="246" class="m">正常全部通过 → 得分 1</text></g>
+<rect x="42" y="417" width="528" height="177" class="box"/><text x="63" y="456" class="t">具体失败例：只修好一种嵌套</text><text x="63" y="496" class="s">F2P：1 成功＋1 失败 → 1/2；P2P 全通过。</text><text x="63" y="535" class="s">标准 grader 返回部分修复，resolved=False。</text><text x="63" y="572" class="m">按测试规则推导，不是观察到的模型输出。</text>
+<rect x="601" y="417" width="557" height="177" fill="#fff" stroke="#b8a697" stroke-width="2"/><text x="622" y="456" class="t">4.1.0 的边界：不能等同“全部实际通过”</text><text x="622" y="496" class="s">SKIPPED 不进成功或失败分母；XFAIL 算成功。</text><text x="622" y="535" class="s">一项跳过，其余通过，也可能判完整修复。</text><text x="622" y="572" class="m">论文专用复测代码未公开，如何处理仍未知。</text>
+<text x="42" y="645" class="m">来源：固定 SWE-bench Verified 数据、Astropy PR 与官方 swebench 4.1.0 源码。两份评分实现须分开说明。</text>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#5b6470"/></marker></defs></svg>

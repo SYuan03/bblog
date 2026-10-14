@@ -21,55 +21,61 @@
 #overview-panel{position:fixed;inset:0;z-index:30;padding:48px;background:#10161ddd}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:100%;margin:auto;padding:24px;background:#f7f4ec;overflow:auto}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.overview-head button{border:0;background:none;font-size:28px;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{padding:13px;border:1px solid var(--line);background:#fff;text-align:left;cursor:pointer}.overview-grid button[aria-current="true"]{border-color:var(--blue);color:var(--blue)}.overview-grid b{display:block;font:700 12px/1 var(--mono)}.overview-grid span{display:block;margin-top:6px;font-size:15px}
 @media(max-width:720px){#controls{width:calc(100% - 14px);justify-content:center}.current-title{display:none}#controls button,#controls a{padding:0 9px}.overview-grid{grid-template-columns:1fr 1fr}.utility-label,.return-label{display:none}}
 @media print{html,body{height:auto;overflow:visible;background:#fff}.deck{position:static;width:auto;height:auto;transform:none!important}.slide{position:relative;display:grid!important;width:1600px;height:900px;page-break-after:always}#controls,#progress,#overview-panel{display:none!important}}
+/* Neutral reading surface; chart colors continue to encode the original groups. */
+:root{--paper:#fff;--ink:#20252b;--body:#424b56;--muted:#596775;--line:#d9dfe5}
+html,body{background:#edf1f5}
+.overview-card{background:#fff;color:var(--ink)}
+.slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
+#controls button,#controls a{white-space:nowrap;flex-shrink:0}
 </style>
 </head>
 <body>
 <main class="deck" id="deck">
   <section class="slide" data-title="论文结论">
     <div class="top"><b>01 · AGENTIC HARNESS ENGINEERING</b><span>Observability-Driven Automatic Evolution</span></div>
-    <h1>把 harness 变成可编辑、可追责、可回滚的优化对象</h1>
-    <div class="body"><div class="hero"><div><p class="statement">AHE 不训练 base model。它让另一个 agent 读执行证据，直接修改 <strong>prompt、tool、middleware 与 memory</strong>，再用下一轮真实 task delta 判断这次修改是否成立。</p><span class="interest">作者兴趣度 10 / 10</span></div><div class="numbers"><div class="number"><b>69.7 → 77.0</b><span>Terminal-Bench 2 pass@1</span></div><div class="number"><b>32 h</b><span>89 题 × 2 rollouts × 10 rounds</span></div></div></div></div>
+    <h1>让模型依据失败记录修改执行程序，再核验和回滚</h1>
+    <div class="body"><div class="hero"><div><p class="statement">AHE 不更新模型权重。维护模型读执行记录，改<strong>提示、工具、调用前后处理和记忆</strong>；再看下一轮哪些题由失败变成功，哪些反而退化。</p><span class="interest">作者兴趣度 10 / 10</span></div><div class="numbers"><div class="number"><b>69.7 → 77.0</b><span>178 次尝试的平均成功率，称为 pass@1</span></div><div class="number"><b>32 h</b><span>89 题，每题 2 次完整尝试，共 10 轮修改</span></div></div></div></div>
     <div class="foot"><span>Lin et al., arXiv:2604.25850v4</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="为什么难">
-    <div class="top"><b>02 · MOTIVATION</b><span>模型固定，优化模型外的执行系统</span></div>
-    <h2>自动改 prompt 很容易；自动改完整 harness 有三个结构性难点</h2>
-    <div class="body"><div class="problem"><div class="panel"><span class="tag">HETEROGENEOUS ACTION SPACE</span><h3>修改面不是一种文本</h3><p>system prompt、tool schema、Python implementation、middleware、skills、sub-agent config 与 memory 的语义完全不同。</p></div><div class="arrow">＋</div><div class="panel"><span class="tag">WEAK FEEDBACK</span><h3>轨迹长，因果链又散</h3><p>一次 rollout 可跨数百步。最后的 PASS/FAIL 很难说明是哪条命令、哪个 guard 或哪次 cleanup 造成结果。</p></div></div></div>
+    <div class="top"><b>02 · 研究问题</b><span>模型固定，优化模型外的执行系统</span></div>
+    <h2>改完整执行程序，至少要处理两类难点</h2>
+    <div class="body"><div class="problem"><div class="panel"><span class="tag">可修改对象不同</span><h3>各类文件有各自的作用</h3><p>系统提示、工具参数、Python 实现、调用处理、技能、子 Agent 配置和记忆，不能按同一种文本修改。</p></div><div class="arrow">＋</div><div class="panel"><span class="tag">成败不足以定位错误</span><h3>轨迹长，关键步骤难找</h3><p>一次任务可跨数百步。最后的成败很难说明是哪条命令、哪次拦截或清理造成结果。</p></div></div></div>
     <div class="foot"><span>论文 §1–3。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="三层 observability">
-    <div class="top"><b>03 · CORE IDEA</b><span>每个修改都要能被下一轮证伪</span></div>
-    <h2>三个 observability 分别解决“改什么、根据什么改、怎么知道改对了”</h2>
-    <div class="body"><div class="pillars"><div class="pillar"><code>01 / COMPONENT</code><h3>组件可观测</h3><p>七类组件都落成固定路径下的文件。一个逻辑修改对应一个 Git commit，可以逐文件回滚。</p><div class="out">输出：明确、可执行的修改空间</div></div><div class="pillar"><code>02 / EXPERIENCE</code><h3>经验可观测</h3><p>Agent Debugger 把约 10M tokens 的 raw traces 压成 benchmark overview、per-task report，并保留逐步回钻。</p><div class="out">输出：带根因的证据语料</div></div><div class="pillar"><code>03 / DECISION</code><h3>决策可观测</h3><p>change manifest 写下 failure evidence、root cause、predicted fixes 与 risk tasks；下一轮按 task flip 结算。</p><div class="out">输出：可证伪的 edit contract</div></div></div></div>
+    <div class="top"><b>03 · 核心方法</b><span>每个修改都要能被下一轮证伪</span></div>
+    <h2>三个可观测层分别说明：能改哪里、哪里出错、改后怎样核验</h2>
+    <div class="body"><div class="pillars"><div class="pillar"><code>01 / 可修改文件</code><h3>知道能改哪里</h3><p>七类组件都落成固定路径下的文件。一个逻辑修改对应一个 Git commit，可以逐文件回滚。</p><div class="out">输出：文件路径与修改范围</div></div><div class="pillar"><code>02 / 执行记录</code><h3>知道哪里出错</h3><p>负责整理记录的模型称为 Agent Debugger。它将约 1,000 万 tokens 的记录整理为总览与逐题报告，仍可回查原步骤。</p><div class="out">输出：错误经过与证据位置</div></div><div class="pillar"><code>03 / 修改预测</code><h3>知道改后怎么验</h3><p>修改清单写出错误证据、原因、预计修好的题与可能退化的题；下一轮按实际成败变化核验。</p><div class="out">输出：下一轮可检验的预测</div></div></div></div>
     <div class="foot"><span>论文 §3；Figure 2。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="论文总览图">
-    <div class="top"><b>04 · ORIGINAL FIGURE 2</b><span>Components → traces → evidence → edits</span></div>
-    <h2>一个闭环里，三种 artifact 都能被另一个 agent 直接读取</h2>
-    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-2-method.png" alt="AHE 论文 Figure 2"></div><div class="caption">论文 Figure 2，作者官方仓库版本。左侧是可编辑 harness，右侧把 raw trace 压成可回钻证据，再由 Evolve Agent 写回组件。</div></div></div>
+    <div class="top"><b>04 · 原论文 Figure 2</b><span>组件 → 执行记录 → 分析报告 → 修改</span></div>
+    <h2>维护模型可以直接读取组件文件、执行证据和修改预测</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-2-method.png" alt="AHE 论文 Figure 2" width="1267" height="809"></div><div class="caption">论文 Figure 2，作者官方仓库版本。左侧是模型外的执行系统，称为 harness；右侧把原始记录整理成报告，再由负责维护的 Evolve Agent 修改组件文件。</div></div></div>
     <div class="foot"><span>官方仓库 assets/figures/method.png，MIT。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="一次迭代怎么跑">
-    <div class="top"><b>05 · ALGORITHM 1</b><span>rollout → clean → attribute → distill → evolve → commit</span></div>
+    <div class="top"><b>05 · 一轮修改</b><span>执行 → 整理 → 核对 → 分析 → 修改 → 保存</span></div>
     <h2>第 t 轮先评估第 t-1 轮的修改，再生成第 t 轮候选</h2>
-    <div class="body" style="display:block"><div class="flow"><div class="step"><b>1 · ROLLOUT</b><h3>每题 k 次</h3><p>同一个当前 harness 在 fresh E2B sandbox 中执行。</p></div><div class="step"><b>2 · CLEAN</b><h3>规范化轨迹</h3><p>原始 message、tool output 与 verifier result 写成文件。</p></div><div class="step"><b>3 · ATTRIBUTE</b><h3>结算旧预测</h3><p>用 task-level flips 检查上一轮 manifest，回滚无效修改。</p></div><div class="step"><b>4 · DISTILL</b><h3>压成证据层</h3><p>先读 overview，需要时回钻 detail 与 raw trace。</p></div><div class="step"><b>5 · EVOLVE</b><h3>修改 harness</h3><p>选正确组件层，写 change manifest。</p></div><div class="step"><b>6 · COMMIT</b><h3>版本化</h3><p>一项逻辑修改一个 commit；保留 best-so-far。</p></div></div><div class="loop-note">论文用 <strong>k = 2</strong>。因此每题不是只有一个 0/1，而是能暴露“同题一条过、一条不过”的 partial-pass 信号。</div></div>
-    <div class="foot"><span>论文 Algorithm 1；Appendix A。</span><span class="pg"></span></div>
+    <div class="body" style="display:block"><div class="flow"><div class="step"><b>1 · 执行</b><h3>每题 k 次</h3><p>当前程序在新建 E2B 隔离工作区执行。</p></div><div class="step"><b>2 · 整理</b><h3>规范化轨迹</h3><p>把消息、工具输出和验收结果写成文件。</p></div><div class="step"><b>3 · 核对</b><h3>结算旧预测</h3><p>核验上一轮清单，并记录已评测的最佳版本。</p></div><div class="step"><b>4 · 分析</b><h3>生成报告</h3><p>先读总览，必要时查逐题报告和原始记录。</p></div><div class="step"><b>5 · 修改</b><h3>改组件文件</h3><p>维护模型按报告决定撤销或重做哪些修改。</p></div><div class="step"><b>6 · 保存</b><h3>独立提交</h3><p>一项修改一个提交。新文件等下一轮执行后验收。</p></div></div><div class="loop-note">论文用 <strong>k = 2</strong>，可对照同题一过一错的尝试。固定代码先给当前输入版本计分，再写下一轮文件；修改效果报告不会自行撤销文件。</div></div>
+    <div class="foot"><span>论文 Algorithm 1、Appendix A；按 evolve.py @8b2a55d 的实际版本顺序解释。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="七类组件与证据层">
-    <div class="top"><b>06 · EDIT SURFACE</b><span>目录结构本身就是控制面</span></div>
+    <div class="top"><b>06 · 修改范围</b><span>固定目录明确哪些组件可以修改</span></div>
     <h2>同一种失败模式，应落到最有执行力的组件层</h2>
-    <div class="body"><div class="layers"><div class="file-grid"><div class="file"><b>systemprompt.md</b><span>全局行为规则</span></div><div class="file"><b>tool_descriptions/</b><span>调用前可见契约</span></div><div class="file"><b>tools/</b><span>能力与硬拦截</span></div><div class="file"><b>middleware/</b><span>跨步骤状态和注入</span></div><div class="file"><b>skills/</b><span>按需工作流</span></div><div class="file"><b>sub_agents/</b><span>隔离式委派</span></div><div class="file"><b>LongTermMEMORY.md</b><span>跨任务边界案例</span></div><div class="file"><b>Git history</b><span>diff 与回滚边界</span></div></div><div class="evidence"><div><b>OVERVIEW</b><p>跨 89 题汇总 recurring failure classes。</p></div><div><b>DETAIL/{TASK}.MD</b><p>逐题根因、pass/fail 对照与证据定位。</p></div><div><b>RAW TRACE</b><p>只有摘要不足时才回看原始消息和工具调用。</p></div><div><b>READ-ONLY BOUNDARY</b><p>runs、verifier、tracer、model config 不可写，防止 optimizer 改考试本身。</p></div></div></div></div>
+    <div class="body"><div class="layers"><div class="file-grid"><div class="file"><b>systemprompt.md</b><span>全局行为规则</span></div><div class="file"><b>tool_descriptions/</b><span>调用前可见契约</span></div><div class="file"><b>tools/</b><span>能力与硬拦截</span></div><div class="file"><b>middleware/</b><span>跨步骤状态和注入</span></div><div class="file"><b>skills/</b><span>按需工作流</span></div><div class="file"><b>sub_agents/</b><span>隔离式委派</span></div><div class="file"><b>LongTermMEMORY.md</b><span>跨任务边界案例</span></div><div class="file"><b>Git history</b><span>diff 与回滚边界</span></div></div><div class="evidence"><div><b>OVERVIEW</b><p>汇总 89 题反复出现的错误类型。</p></div><div><b>DETAIL/{TASK}.MD</b><p>逐题错误原因、成败对照与证据位置。</p></div><div><b>RAW TRACE</b><p>只有摘要不足时才回看原始消息和工具调用。</p></div><div><b>READ-ONLY BOUNDARY</b><p>运行记录、验收器、追踪器和模型配置不可改，避免维护模型改变考试本身。</p></div></div></div></div>
     <div class="foot"><span>论文 §3.1–3.2；Appendix B.2；官方代码。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="change manifest">
-    <div class="top"><b>07 · DECISION CONTRACT</b><span>理由不算证据，下一轮 task delta 才算</span></div>
-    <h2>每个 edit 在落地时就写明：预计修谁，也可能伤到谁</h2>
+    <div class="top"><b>07 · 修改清单</b><span>下一轮真实成败变化才是核验依据</span></div>
+    <h2>每次修改都写明：预计修好哪些题，哪些题可能退化</h2>
     <div class="body"><div class="manifest"><pre class="code"><span class="c">// change_manifest.json</span>
 {
   <span class="k">"id"</span>: <span class="s">"chg-8"</span>,
@@ -78,56 +84,56 @@
   <span class="k">"predicted_fixes"</span>: [<span class="s">"path-tracing"</span>, ...],
   <span class="k">"risk_tasks"</span>: [...],
   <span class="k">"constraint_level"</span>: <span class="s">"tool_impl"</span>
-}</pre><div class="verdicts"><div class="verdict"><b>EFFECTIVE</b><span>预测任务全部从 fail 变 pass，且风险未命中。</span></div><div class="verdict"><b>PARTIALLY_EFFECTIVE / MIXED</b><span>只修到部分任务，或同时出现预测内 regression。</span></div><div class="verdict bad"><b>INEFFECTIVE / HARMFUL</b><span>没有命中 predicted fix，或只触发 regression。文件级 rollback。</span></div></div></div></div>
-    <div class="foot"><span>Appendix B.2；官方 evolve.py: evaluate_changes。</span><span class="pg"></span></div>
+}</pre><div class="verdicts"><div class="verdict"><b>EFFECTIVE：预计修复全命中</b><span>预计修复题全部转为成功，声明的风险题未退化。未声明的退化另列报告。</span></div><div class="verdict"><b>PARTIALLY_EFFECTIVE / MIXED</b><span>前者只修好部分题；后者修好的同时，也有声明的风险题退化。</span></div><div class="verdict bad"><b>INEFFECTIVE / HARMFUL</b><span>前者没有修好预计题；后者还出现声明的退化。维护模型决定怎样撤销或重做。</span></div></div></div></div>
+    <div class="foot"><span>Appendix B.2；evolve.py: evaluate_changes。左侧为字段摘录，含省略号，不是可运行 JSON。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实 case：path-tracing">
-    <div class="top"><b>08 · CASE 1</b><span>正确产物被自己的 cleanup 删除</span></div>
+    <div class="top"><b>08 · 真实案例一</b><span>正确产物被最后的清理动作删除</span></div>
     <h2><code>path-tracing</code>：从 0/2 到 2/2，靠的是执行层保护</h2>
-    <div class="body"><div class="case"><div class="case-card"><h3>任务与 judge</h3><p>Agent 要生成 <code>/app/reconstructed.ppm</code>。Terminal-Bench 2 verifier 只读这个文件，并与 reference image 做逐像素比较。</p><p>失败 rollout 已经生成正确图片并做过自检，随后为了“清理”执行 <code>rm -rf ... /app/reconstructed.ppm</code>。</p></div><div class="trace"><div><b>S1 · BUILD</b><p>render 正确，结构性 acceptance check 通过。</p></div><div class="fail"><b>F1 · DESTROY</b><p>最后一步 cleanup 删除唯一 deliverable；shell exit code 为 0，Agent 误以为可提交。</p></div><div><b>HARNESS EDIT</b><p>final/evaluator-style check 通过后，shell tool 记录 protected files/roots；后续 destructive command 在执行前被拦截。</p></div><div class="pass"><b>PASS</b><p>Agent 收到明确 block，保留图片并结束。下一轮 2/2，verifier 找到且逐像素匹配。</p></div></div></div></div>
+    <div class="body"><div class="case"><div class="case-card"><h3>任务与验收程序</h3><p>Agent 要生成 <code>/app/reconstructed.ppm</code>。任务自带的验收程序称为 verifier，只读这个文件，与参考图逐像素比较。</p><p>失败尝试已生成正确图片并做过自检，随后为了“清理”执行 <code>rm -rf ... /app/reconstructed.ppm</code>。</p></div><div class="trace"><div><b>生成与自检</b><p>图片生成正确，自检也已通过。</p></div><div class="fail"><b>提交前删除</b><p>最后清理删掉唯一交付文件；命令退出码仍为 0，Agent 误以为可提交。</p></div><div><b>修改执行工具</b><p>最终检查通过后，shell 工具记录要保护的文件和目录；后续删除命令在执行前被拦截。</p></div><div class="pass"><b>修复后通过</b><p>Agent 收到拦截提示，保留图片。下一轮 2/2：验收器找到文件，逐像素匹配。</p></div></div></div></div>
     <div class="foot"><span>论文 Appendix C.1.2、C.2.2；官方 evolved_harness。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实 case：MCMC">
-    <div class="top"><b>09 · CASE 2</b><span>“文件存在”不等于真实计算正确</span></div>
-    <h2><code>mcmc-sampling-stan</code>：proxy result 骗过自检，骗不过 verifier</h2>
-    <div class="body"><div class="case"><div class="case-card"><h3>任务与 judge</h3><p>安装 rstan 2.32.7，用 30 条观测拟合 hierarchical beta-binomial model，写出 alpha、beta posterior means。</p><p>Verifier 会重新运行 <code>analysis.R</code>，要求 alpha ∈ [2.84, 2.91]，beta ∈ [16.1, 16.7]。</p></div><div class="trace"><div class="fail"><b>FAIL TRACE</b><p>用 grid integration 得到 proxy 数值并写文件；真实 MCMC 放后台后被提前 kill。最终只检查“文件存在且可解析”。Verifier 重跑未收敛脚本，得到约 1e19 / 2.60e17，2/6 tests fail。</p></div><div><b>TOOL + MIDDLEWARE</b><p>publish-state guard 保护 <code>analysis.R</code>；ExecutionRiskHintsMiddleware 识别 inline proxy 与 shallow validation，并在下一次 model turn 以 FRAMEWORK reminder 提升显著性。</p></div><div class="pass"><b>PASS TRACE</b><p>完整跑 <code>iter=100000</code>，再在 <code>/tmp</code> 独立复跑，约 2.872 / 16.43；6/6 tests pass，后四轮保持 2/2。</p></div></div></div></div>
+    <div class="top"><b>09 · 真实案例二</b><span>“文件存在”不等于真实计算正确</span></div>
+    <h2><code>mcmc-sampling-stan</code>：近似结果骗过自检，骗不过重新执行</h2>
+    <div class="body"><div class="case"><div class="case-card"><h3>任务与验收程序</h3><p>安装 rstan 2.32.7，用 30 条观测估计不同观测的成功概率分布，即 beta-binomial 模型。alpha、beta 是描述该分布的参数。</p><p>要求通过反复采样估计参数（MCMC）。Verifier 重跑 <code>analysis.R</code>，要求均值 alpha ∈ [2.84, 2.91]、beta ∈ [16.1, 16.7]。</p></div><div class="trace"><div class="fail"><b>失败经过</b><p>网格积分得到近似值后写文件，后台 MCMC 却被提前终止。自检只验文件存在；Verifier 重跑得到约 1.28e19 / 2.60e17，六项检查失败两项。</p></div><div><b>修改工具与运行时检查</b><p>执行保护器保留 <code>analysis.R</code>；运行时检查识别替代计算和只验文件存在，在下一次回复前提醒。</p></div><div class="pass"><b>修复后通过</b><p>完整跑 <code>iter=100000</code>，再在 <code>/tmp</code> 独立复跑，约 2.872 / 16.43；六项检查全过，后四轮保持 2/2。</p></div></div></div></div>
     <div class="foot"><span>论文 Appendix C.1.3、Figure 7、C.2.3。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="原图：三种修改层级">
-    <div class="top"><b>10 · ORIGINAL FIGURE 5</b><span>middleware / prompt / tool</span></div>
-    <h2>同一个 failure pattern，可以用软规则、动态提醒或硬拦截处理</h2>
-    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-5-case-study.png" alt="AHE 论文 Figure 5"></div><div class="caption">论文 Figure 5。作者列出三种真实修改：execution-risk middleware、7 条 prompt rules、带 timeout 的 shell tool。</div></div></div>
+    <div class="top"><b>10 · 原论文 Figure 5</b><span>运行时提醒 / 提示规则 / 工具实现</span></div>
+    <h2>同一种错误，可以用提示规则、动态提醒或执行前拦截处理</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-5-case-study.png" alt="AHE 论文 Figure 5" width="2489" height="1536"></div><div class="caption">论文 Figure 5。作者列出三种真实修改：执行风险提醒、7 条提示规则、带超时的 shell 工具。</div></div></div>
     <div class="foot"><span>官方仓库 assets/figures/case_study.png，MIT。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="主结果">
-    <div class="top"><b>11 · TABLE 1 REDRAWN</b><span>Terminal-Bench 2，89 tasks</span></div>
+    <div class="top"><b>11 · 主结果</b><span>全部 89 题都参与修改与最佳版本选择，非独立测试集</span></div>
     <h2>同一 GPT-5.4 high，AHE 达到 77.0%，但 Hard 仍低于 Codex</h2>
     <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>Harness / loop</th><th>All</th><th>Easy</th><th>Medium</th><th>Hard</th></tr></thead><tbody><tr><td>OpenCode</td><td>47.2</td><td>75.0</td><td>52.7</td><td>33.3</td></tr><tr><td>Terminus-2</td><td>62.9</td><td>75.0</td><td>74.5</td><td>40.0</td></tr><tr><td>Codex</td><td>71.9</td><td>75.0</td><td>80.0</td><td class="best">56.7</td></tr><tr><td>NexAU₀</td><td>69.7</td><td>87.5</td><td>78.2</td><td>51.7</td></tr><tr><td>ACE</td><td>68.9</td><td>91.7</td><td>78.2</td><td>48.9</td></tr><tr><td>TF-GRPO</td><td>72.3</td><td class="best">100.0</td><td>79.4</td><td>55.6</td></tr><tr><td><strong>AHE</strong></td><td class="best">77.0</td><td class="best">100.0</td><td class="best">88.2</td><td>53.3</td></tr></tbody></table></div></div>
-    <div class="foot"><span>根据论文 Table 1 重绘；每题 k=2，timeout / infra abort 计失败。</span><span class="pg"></span></div>
+    <div class="foot"><span>根据 Table 1 重绘。pass@1 = 成功尝试数 / (89×2)；超时与基础设施异常均计失败。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="迁移能力">
-    <div class="top"><b>12 · TRANSFER</b><span>冻结 harness，不再 evolution</span></div>
-    <h2>跨 benchmark 的主要收益是省 token；跨模型则五个 operating point 全部为正</h2>
-    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-3-transfer.png" alt="AHE 论文 Figure 3"></div><div class="caption">论文 Figure 3。Terminal-Bench 2 上，GPT-5.4 medium/high/xhigh 与三个跨 family 模型均高于各自 NexAU₀ seed。SWE-bench Verified 上 AHE 75.6% vs seed 75.2%，tokens/trial 526k → 461k。</div></div></div>
+    <div class="top"><b>12 · 迁移实验</b><span>冻结执行程序，不再继续演化</span></div>
+    <h2>换任务集主要省 token；换模型的五种配置均有增益</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/agentic-harness-engineering/figure-3-transfer.png" alt="AHE 论文 Figure 3" width="821" height="542"></div><div class="caption">论文 Figure 3。换模型或推理强度，各配置都高于自身初始 harness。独立的 SWE-bench Verified 500 题上，75.2% → 75.6%，平均每次完整尝试 526k → 461k tokens。</div></div></div>
     <div class="foot"><span>论文 §4.3、Table 2、Figure 3。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="组件消融与归因">
-    <div class="top"><b>13 · ABLATION</b><span>单组件有效，不代表叠加更好</span></div>
-    <h2>memory、tool、middleware 都能单独增益；system prompt 单独使用会退化</h2>
-    <div class="body"><div class="chart"><div class="bar"><span>NexAU₀</span><div class="track"><div class="fill" style="width:69.7%"></div></div><strong>69.7</strong></div><div class="bar"><span>+ memory only</span><div class="track"><div class="fill green" style="width:75.3%"></div></div><strong>75.3</strong></div><div class="bar"><span>+ tool only</span><div class="track"><div class="fill green" style="width:73%"></div></div><strong>73.0</strong></div><div class="bar"><span>+ middleware only</span><div class="track"><div class="fill green" style="width:71.9%"></div></div><strong>71.9</strong></div><div class="bar"><span>+ system prompt only</span><div class="track"><div class="fill orange" style="width:67.4%"></div></div><strong>67.4</strong></div><div class="bar"><span>AHE full</span><div class="track"><div class="fill" style="width:77%"></div></div><strong>77.0</strong></div><div class="chart-note">三个正向单组件增益相加是 +11.1 pp，高于 full AHE 的 +7.3 pp。作者认为多层都在做 closure verification，叠加后会重复消耗 Hard task 的 turn budget。</div></div></div>
+    <div class="top"><b>13 · 组件对照</b><span>单组件有效，不代表叠加更好</span></div>
+    <h2>记忆、工具、调用处理都能单独增益；系统提示单独使用反而退化</h2>
+    <div class="body"><div class="chart"><div class="bar"><span>NexAU₀</span><div class="track"><div class="fill" style="width:69.7%"></div></div><strong>69.7</strong></div><div class="bar"><span>只加记忆</span><div class="track"><div class="fill green" style="width:75.3%"></div></div><strong>75.3</strong></div><div class="bar"><span>只加工具</span><div class="track"><div class="fill green" style="width:73%"></div></div><strong>73.0</strong></div><div class="bar"><span>只加运行时检查</span><div class="track"><div class="fill green" style="width:71.9%"></div></div><strong>71.9</strong></div><div class="bar"><span>只换系统提示</span><div class="track"><div class="fill orange" style="width:67.4%"></div></div><strong>67.4</strong></div><div class="bar"><span>完整 AHE</span><div class="track"><div class="fill" style="width:77%"></div></div><strong>77.0</strong></div><div class="chart-note">单组件增益相加 +11.1 个百分点，完整系统只增 +7.3。Hard 只加记忆为 63.3%，完整 AHE 为 53.3%；作者观察到多层重复要求检查，消耗交互预算。</div></div></div>
     <div class="foot"><span>根据论文 Table 3 重绘。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与限制">
-    <div class="top"><b>14 · TAKEAWAYS</b><span>值得学的是实验结构，也要看清它没证明什么</span></div>
+    <div class="top"><b>14 · 结论与限制</b><span>值得学的是实验结构，也要看清它没证明什么</span></div>
     <h2>这是一套强工程方法；因果归因、成本和泛化仍留下明显缺口</h2>
-    <div class="body"><div class="limits"><div class="limit"><b>WHY IT MATTERS</b><strong>完整 harness 可被自动修改</strong><span>工作面覆盖 prompt、tool、middleware、skill、sub-agent 与 memory，且每次修改可审计。</span></div><div class="limit"><b>ATTRIBUTION GAP</b><strong>修复预测强，回归预测弱</strong><span>fix precision / recall 为 33.7% / 51.4%；regression 为 11.8% / 11.1%。</span></div><div class="limit"><b>EVIDENCE LIMIT</b><strong>单次 10-round campaign</strong><span>没有多 seed evolution；SWE-bench aggregate 只高 seed 0.4 pp，且三个小 repo 退化。</span></div><div class="limit"><b>OPERATING POINT</b><strong>budget 与模型耦合</strong><span>同 family 增益不是单调的；更强 reasoning 可能把 trial 推过 timeout。</span></div></div></div>
+    <div class="body"><div class="limits"><div class="limit"><b>修改对象完整</b><strong>执行程序可被自动修改</strong><span>覆盖提示、工具、运行时检查、技能、子 Agent 和记忆；每次修改可追查。</span></div><div class="limit"><b>预测能力有限</b><strong>修复预测强，退步预测弱</strong><span>修复预测精确率/召回率为 33.7%/51.4%；退步预测仅 11.8%/11.1%。</span></div><div class="limit"><b>独立证据仍少</b><strong>一次十轮演化</strong><span>没有重复实验；独立 SWE-bench 总分只高 0.4 个百分点，三个小仓库下降。</span></div><div class="limit"><b>配置需核对</b><strong>推理强度影响时间预算</strong><span>更长推理可能超时。正文称各角色 high，Table 4 却列维护模型 xhigh，存在记载差异。</span></div></div></div>
     <div class="foot"><span><a href="https://arxiv.org/abs/2604.25850">论文</a> · <a href="https://github.com/china-qijizhifeng/agentic-harness-engineering">官方代码</a></span><span class="pg"></span></div>
   </section>
 </main>
@@ -148,15 +154,66 @@
   const slides=[...document.querySelectorAll('.slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
   if(window.self===window.top)returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
-  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
   function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · Agentic Harness Engineering`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
   async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
   function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
   slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
-  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);document.addEventListener('fullscreenchange',scaleDeck);new ResizeObserver(scaleDeck).observe(document.getElementById('controls'));
   addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
   show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+<script>
+(() => {
+  const panel = document.getElementById('overview-panel');
+  const trigger = document.getElementById('toc');
+  const close = document.getElementById('close-overview');
+  const canvas = document.getElementById('deck');
+  const controls = document.getElementById('controls');
+  if (!panel || !trigger || !close) return;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', '幻灯片总览');
+  trigger.setAttribute('aria-controls', panel.id);
+  const synchronize = () => {
+    const open = !panel.hidden;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (canvas) canvas.inert = open;
+    if (controls) controls.inert = open;
+    if (open) close.focus({ preventScroll: true });
+    else trigger.focus({ preventScroll: true });
+  };
+  new MutationObserver(synchronize).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  trigger.setAttribute('aria-expanded', String(!panel.hidden));
+  document.addEventListener('keydown', (event) => {
+    if (!panel.hidden) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'o') {
+        event.preventDefault(); event.stopImmediatePropagation(); close.click(); return;
+      }
+      if (event.key === 'Tab') {
+        const items = [...panel.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+          .filter((item) => item.getClientRects().length > 0);
+        if (items.length) {
+          const index = items.indexOf(document.activeElement);
+          event.preventDefault(); event.stopImmediatePropagation();
+          items[(index + (event.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+        }
+        return;
+      }
+      event.stopImmediatePropagation(); return;
+    }
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault(); event.stopImmediatePropagation(); trigger.click(); return;
+    }
+    if (event.key === 'Escape' && !document.fullscreenElement && window.parent !== window) {
+      window.parent.postMessage({ type: 'paper-deck-escape' }, location.origin);
+    }
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && panel.hidden) document.getElementById('full')?.focus({ preventScroll: true });
+  });
 })();
 </script>
 </body>

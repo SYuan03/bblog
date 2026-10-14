@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="900" viewBox="0 0 1000 900" role="img" aria-labelledby="title desc">
+  <title id="title">Harness-Zero：预填单元格检查怎样变成学生自己的动作</title>
+  <desc id="desc">原始专用 harness 直接读取表格；改写后的审查规则只能检查可见轨迹，要求学生通过 Bash 比较文件。命令结果进入轨迹，再据此修复。B7 为解释示意，不是公开任务日志。</desc>
+  <style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;fill:#20252d;font-size:24px} .heading{font-size:32px;font-weight:750} .label{font-size:27px;font-weight:700;fill:#365f85} .muted{fill:#596575;font-size:22px} .rule{stroke:#d7dee7;stroke-width:2} .box{fill:#f5f7fa;stroke:#d7dee7;stroke-width:2} .mono{font-family:ui-monospace,Menlo,monospace}</style>
+  <rect width="1000" height="900" fill="#fff"/>
+  <text class="heading" x="40" y="56">把检查动作交给 student，而不是替它检查</text>
+  <text class="muted" x="40" y="96">论文 Appendix B.2 / Code 1–3；单元格坐标 B7 是说明例。</text>
+  <rect class="box" x="40" y="126" width="920" height="118"/>
+  <rect x="62" y="149" width="72" height="68" fill="#e7eff7" stroke="#b9cce0"/>
+  <text class="mono" x="76" y="191">B7</text>
+  <text class="label" x="159" y="169">输入表格里已有的值不能被覆盖</text>
+  <text x="159" y="208">填写空白区域时，批量赋值可能把示例一并改掉。</text>
+  <text class="label" x="40" y="291">原来的专用 harness h*</text>
+  <text x="40" y="333">在模型准备结束时，prefilled_guard 直接比较输入与输出文件。</text>
+  <text x="40" y="372">发现预填的非公式值变化，就拒绝结束。</text>
+  <line class="rule" x1="40" y1="400" x2="960" y2="400"/>
+  <text class="label" x="40" y="446">改写成审查者读取的规则 K</text>
+  <text x="40" y="487">审查者不能打开文件；它只查可见轨迹中有没有比较证据。</text>
+  <text x="40" y="526">若 student 直接结束，审查者用 REPLACE 换成一条 Bash 命令。</text>
+  <path d="M500 550v26m-8-9 8 9 8-9" fill="none" stroke="#365f85" stroke-width="3"/>
+  <rect class="box" x="40" y="592" width="920" height="142"/>
+  <text class="label" x="62" y="634">student 在固定接口 h 中真正执行这次比较</text>
+  <text class="mono" x="62" y="679">PASS  /  FAIL changed cells: ['B7']</text>
+  <text class="muted" x="62" y="716">命令、输出和后续修复都进入训练轨迹；不是审查者的私下结论。</text>
+  <text x="40" y="785">PASS 后再结束；FAIL 后恢复被改的示例，再比较一次。</text>
+  <text x="40" y="824">SFT 学习这些实际动作；部署时不再保留 K 和审查者。</text>
+  <text class="muted" x="40" y="871">边界：这个检查只保护预填值，不是 SpreadsheetBench 的完整评分器。</text>
+</svg>

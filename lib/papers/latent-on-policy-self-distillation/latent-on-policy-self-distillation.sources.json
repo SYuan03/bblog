@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Latent On-Policy Self-Distillation",
     "kind": "research",
@@ -52,32 +52,39 @@
       }
     ],
     "source_visuals_expected": 12,
-    "visual_inventory_complete": true
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么要让 privileged context 自己学？"
+      "locator": "1. Motivation：成功经验该怎样表示"
     },
     {
       "role": "related-work",
-      "locator": "Q2. LOPD 相对 OPSD 改了哪一层？"
+      "locator": "2. Related Work：与文字蒸馏和部署用记忆的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. Composer、margin 与 cold start 怎样工作？"
+      "locator": "3. Method：经验压缩、参数更新与防退化约束"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 数据、结果与 baseline fairness 怎样看？"
+      "locator": "4. Experiments：完成奖励、关键消融与成本口径"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 游戏数据什么时候值得上 latent context？"
+      "locator": "5. Discussion：固定经验来源，隔离表示收益"
     },
     {
       "role": "summary",
-      "locator": "Q6. 公开代码的关键风险是什么？"
+      "locator": "6. Conclusion：结论与公开代码的实现差异"
     }
   ],
   "coverage": [
@@ -90,13 +97,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 1-2"
+          "locator": "§1–3; Figure 1; Algorithm 1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "手写 answer、hint、skill 或 trajectory 都预设了“什么信息重要”；LOPD 把这个选择交给 retriever 与 composer。"
+          "quote": "同时训练学生和教师的 context 时，降低分布差异可以通过削弱教师实现 。"
+        },
+        {
+          "artifact": "article",
+          "quote": "LOPD 用完整任务结果约束这种退化"
         }
       ]
     },
@@ -109,13 +120,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Method section; Algorithm 1"
+          "locator": "§3.1–3.3; Figure 2; Eq. 8–13"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "每个 task-experience pair 经 frozen backbone + trainable encoder LoRA，再由八层共享参数 QFormer cross-attention 压缩。"
+          "quote": "学生先真实执行，教师再用压缩后的成功经验重评同一条记录。"
+        },
+        {
+          "artifact": "article",
+          "quote": "教师主模型固定，学生与压缩模块更新"
         }
       ]
     },
@@ -128,13 +143,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1-5 and ablations"
+          "locator": "Tables 1–2; Figure 3"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "joint training without margin 得 0.551 EnvScaler reward，加 m=0.05 后到 0.637。"
+          "quote": "固定 cold-start composer 得 0.573；联合训练但 m=0 得 0.551，反而下降。m=0.05 得 0.637"
+        },
+        {
+          "artifact": "article",
+          "quote": "Qwen3-4B · LiveCodeBench"
+        },
+        {
+          "artifact": "article",
+          "quote": "主表未报告多训练 seed 方差或置信区间，不足以把 +0.49、+0.55 这样的差异称为显著。"
         }
       ]
     },
@@ -147,13 +170,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Repository audit"
+          "locator": "§4.3; Table 1–2; Figure 6; Appendix B"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "core rollout、teacher、trainer、QFormer composer 与 memory bank code 已公开，但 paper compressor checkpoint、scenarios、bank、embeddings 与 logs 没有。"
+          "quote": "缺同样检索、同样资料和相同预算下的文字压缩对照。"
+        },
+        {
+          "artifact": "article",
+          "quote": "主表未报告多训练 seed 方差或置信区间"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文没有提供这些样本完整的模型输出和官方评分记录。"
         }
       ]
     },
@@ -166,13 +197,189 @@
       "source_locators": [
         {
           "source_id": "code",
-          "locator": "core rollout/teacher/trainer, QFormer composer, memory bank and configs"
+          "locator": "memory/bank.py:38–59 (MemoryBank.build_index), memory/bank.py:90–107 (self-retrieval filter); configs/training/lopd_qwen3_4b_envscaler.yaml; lopd/worker.py:38–49,90–116,236–307; envs/envscaler/runtime.py:43–64 @50c3d7f53f8b062153f23f3f9b56e949c888e071"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "core rollout、teacher、trainer、QFormer composer 与 memory bank code 已公开"
+          "quote": "MemoryBank.build_index() 只编码 instruction"
+        },
+        {
+          "artifact": "article",
+          "quote": "先教师评分、学生更新，再 composer 更新"
+        },
+        {
+          "artifact": "article",
+          "quote": "学生 loss 按全局 token 数；composer 按本地有效记录均值，β 统计按全局 token 数"
+        }
+      ]
+    },
+    {
+      "id": "teacher-gradient-and-margin-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Eq. 11–13; Appendix A.4"
+        },
+        {
+          "source_id": "code",
+          "locator": "lopd/teacher.py:70–107,111–133; memory/serialization.py inject_latent_tokens_into_embeds; lopd/worker.py:236–289 @50c3d7f53f8b062153f23f3f9b56e949c888e071"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "把整次教师调用放进 torch.no_grad() 会切断 composer 的学习"
+        },
+        {
+          "artifact": "article",
+          "quote": "结果约束直接训练的是 composer，学生通过 KL 接收改变后的教师分布"
+        }
+      ]
+    },
+    {
+      "id": "real-case-retrieval-vs-verdict",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 6; §4.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "0.886 是检索相似度，不是成功率"
+        },
+        {
+          "artifact": "article",
+          "quote": "当前任务添加的是 PLAN-HI-03 ，保费 310.25；检索结果添加 BP-HEALTH-010 ，保费 210。"
+        },
+        {
+          "artifact": "article",
+          "quote": "这些编号和数值不能照抄。"
+        }
+      ]
+    },
+    {
+      "id": "checker-and-metric-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "envs/envscaler/runtime.py:43–64, checklist_with_func evaluation and calculate_reward @50c3d7f53f8b062153f23f3f9b56e949c888e071"
+        },
+        {
+          "source_id": "paper",
+          "locator": "Appendix B.3; Table 5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每条检查返回布尔值，失败、异常或非布尔结果不通过。"
+        },
+        {
+          "artifact": "article",
+          "quote": "通过检查数 ÷ 全部检查数 ，空清单为 0"
+        },
+        {
+          "artifact": "deck",
+          "quote": "不是 Figure 6 真实判分，任务检查包未公开。"
+        },
+        {
+          "artifact": "article",
+          "quote": "代码列的 pass@1 是一次生成通过全部测试的题目比例"
+        }
+      ]
+    },
+    {
+      "id": "retrieval-and-pretraining-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Appendix A.1–A.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "评测任务及其记录不得入库。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文没有给出工具任务的具体入库阈值和库大小。"
+        },
+        {
+          "artifact": "article",
+          "quote": "网络重复这个过程八轮，始终使用同一套注意力和前馈参数；八轮不是八套独立参数。"
+        }
+      ]
+    },
+    {
+      "id": "generation-budget-vs-cost",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 4; §4.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "320/1,600=20%"
+        },
+        {
+          "artifact": "article",
+          "quote": "576/1,600=36%"
+        },
+        {
+          "artifact": "article",
+          "quote": "不能进一步写成训练成本降低 70%。"
+        }
+      ]
+    },
+    {
+      "id": "arithmetic-vs-model-reproduction",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq. 8–13; article-authored Python 3.12 example"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "在 top-2 加 tail 的三个事件上，KL≈0.0811"
+        },
+        {
+          "artifact": "article",
+          "quote": "它只核对公式，不复现训练。"
         }
       ]
     }
@@ -183,51 +390,72 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 1; §1–3",
+      "status": "redrawn",
+      "rationale": "固定资料vs可学习context关系重构在开头比较及机制SVG，经验仅采用真实轨迹，不把illustratedtips当实测数据源。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "据 §3、Figure 2、Algorithm 1 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg"
+      ]
     },
     {
       "id": "figure-2",
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 2; §3.3",
+      "status": "redrawn",
+      "rationale": "实际studentrollout→检索→96向量→fixedteacher→top20+tail/KL梯度重绘，教师不执行新动作，fixed参数可传输入gradient。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "据 §3、Figure 2、Algorithm 1 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-2 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg"
+      ]
     },
     {
       "id": "figure-3",
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 3; §4.3",
+      "status": "redrawn",
+      "rationale": "frozen.573/nomargin.551/m.05.637重绘并保留m.10/.20回降，直接检验composer迎合student退化。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "据 Figure 3、Table 3 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-3 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg"
+      ]
     },
     {
       "id": "figure-4",
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4",
+      "source_locator": "Figure 4; §4.3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "训练轨迹完整曲线未绘；deck卡片与正文只列320超对照/576终分/1600基线预算，区分20%与36%及完整成本。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -239,9 +467,9 @@
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5",
+      "source_locator": "Figure 5; §4.3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "latent容量和retrievalcount全五面板未绘，正文保留32最好与64回降、检索非单调，不推越多越好。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -253,27 +481,39 @@
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 6; §4.3",
+      "status": "redrawn",
+      "rationale": "insurance当前任务与rank2参考重绘，差别编号/保费及相似度.886非success明确，LMhead碎词不当计划或无泄漏证明。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "据 Figure 6 重绘真实任务与 rank-2 检索结果"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-6 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/benefits-real-case.svg"
+      ]
     },
     {
       "id": "table-1",
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 1; §4.2",
+      "status": "redrawn",
+      "rationale": "tool三个benchmark及两Qwen模型汇总重排，保留partialreward与最强其他对照，分数小差不称显著。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "工具收益较明显，部分代码差异很小"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -281,13 +521,18 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 2; §4.2",
+      "status": "redrawn",
+      "rationale": "代码两个任务集/两个模型汇总重排到deck表，按题数加权Avg不能直接均百分比，保留+.49/+.55小差。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "Qwen3-4B · LCB / EvalPlus"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -295,23 +540,30 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 3; §4.3",
+      "status": "redrawn",
+      "rationale": "moreturns但fewercalls行为与Base+Composer保留负比较重绘到marginSVG，不能推学会唯一最优计划。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "据 Figure 3、Table 3 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg"
+      ]
     },
     {
       "id": "table-4",
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4",
+      "source_locator": "Table 4; Appendix B.2",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "domain配置完整超参表未绘，正文说明32rollout/lr/temp与coldstart未知步数，paper配置不混入code不同normalization。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -323,13 +575,18 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 5; Appendix B.3",
+      "status": "redrawn",
+      "rationale": "各测试任务数重排deck评测表，工具30/20步与代码single-generation测试不同，thinking+sampling与指标分母先说明。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "63.7 是部分完成奖励，不是全题通过率"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -337,18 +594,193 @@
       "kind": "algorithm",
       "label": "Algorithm 1",
       "source_id": "paper",
-      "source_locator": "Algorithm 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Algorithm 1; §3.3",
+      "status": "redrawn",
+      "rationale": "jointstudent/composer/dualbeta/anchor路线重绘流程图，fixedteacher允许梯度回input，学生detach的rewardconstraint不直接训student。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "据 §3、Figure 2、Algorithm 1 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 algorithm-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg"
+      ]
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 2; Algorithm 1; §3; code @50c3d7f5",
+      "credit": "据 §3、Figure 2、Algorithm 1 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/benefits-real-case.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "Figure 6, env_174_rl-task_29 rank-2 retrieval",
+      "credit": "据 Figure 6 重绘真实任务与 rank-2 检索结果",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "Figure 3; Table 3, joint-optimization and behavior",
+      "credit": "据 Figure 3、Table 3 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Traced task-only retrieval of three records,32 vectors each,96 input replacements,student real execution,teacher same-prefix scoring,student update then composer update on saved probabilities. Calculated 3/5=.6 and A=.2; verified m=0 retains reward and anchor and is not no-constraint training. Main counterexample is frozen .573 vs joint m0 .551 vs .05 .637; 320/1600=20% is not full cost."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "03c1bd79dbfc1568d7682c5886f05e94b62a89730f48f311d2540c4101cfea09",
+      "built_article": "2cccc3422ce2cb78114b5a6b230281a0b129f88631cbdb918805592ef3eac74e",
+      "deck": "a36f213012b148b1155fea625b1094750cd19b2eabc6abf801c59294105c5b4e",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-088/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T08-25-17-814Z-088/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-088.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_qa": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -404,5 +836,119 @@
       "largest-table-or-code",
       "final"
     ]
-  }
+  },
+  "terminology": [
+    {
+      "term": "rollout",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.3; Algorithm 1"
+        }
+      ],
+      "article_quote": "学生先根据任务和真实交互历史写下一步操作，完整执行记录叫 rollout 。"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1, §3.3; Figure 2"
+        }
+      ],
+      "article_quote": "教师读取相同的前文，给学生已经写出的每个位置重新计算“下一 token 的概率”"
+    },
+    {
+      "term": "privileged context",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Eq. 1–4"
+        }
+      ],
+      "article_quote": "教师额外看到的资料叫 privileged context ，只在训练时提供。"
+    },
+    {
+      "term": "latent tokens",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Eq. 5–7"
+        }
+      ],
+      "article_quote": "LOPD 不把资料写成普通提示词，而是生成可训练的输入向量，称为 latent tokens 。每个 latent token 是一个向量位置，不是一段可读词语；不要与前面用于生成文字的 token 混淆。"
+    },
+    {
+      "term": "composer",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Appendix A.1–A.3"
+        }
+      ],
+      "article_quote": "这组压缩模块称为 composer ，包含编码器 LoRA 和 QFormer；三条结果拼接后是 96×d 。"
+    },
+    {
+      "term": "cold start",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.3"
+        }
+      ],
+      "article_quote": "正式蒸馏前有 cold start ：先让固定教师在这些向量帮助下预测成功记录的 assistant token，只更新 composer。"
+    },
+    {
+      "term": "tail bucket",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Eq. 8–10; Appendix A.4"
+        }
+      ],
+      "article_quote": "按教师概率取 top-20，再把词表其余部分合成一个 tail bucket。学生和教师在相同的 21 个事件上计算 reverse KL"
+    },
+    {
+      "term": "latent memory",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.3"
+        }
+      ],
+      "article_quote": "另一条相关路线是 latent memory ：把历史信息保存在连续向量里，做任务时仍读取这些向量。"
+    }
+  ]
 }

@@ -1,66 +1,14 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ViCuR 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="ViCuR 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h1>Teacher privilege 能否来自 student 本来就有的视觉输入？</h1>
-  <p class="lead">ViCuR 用 visual cue 替代 answer/rationale privilege。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>+1.19</h3><p>2B vs OPSD</p></div><div class="card green"><h3>+1.24</h3><p>8B vs OPSD</p></div><div class="card orange"><h3>每 5 层</h3><p>SinkTrack</p></div><div class="card "><h3>7.5/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；main tables</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · TAXONOMY</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>三种视觉相关 context，来源完全不同</h2>
-
-  <div class="content"><div class="grid g3"><div class="card green"><h3>Input cue</h3><p>从原始 image/video 抽取</p></div><div class="card red"><h3>Answer privilege</h3><p>reference answer/rationale</p></div><div class="card orange"><h3>Execution feedback</h3><p>运行 student code 后产生</p></div></div></div>
-  <div class="foot"><span>来源：Sections 1-2；本文分类</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · RECOVERABILITY</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>S=f(X) 是目标，不是自动保证</h2>
-
-  <div class="content"><div class="formula">visual cue S = f(inference input X)</div><div class="callout red"><p>外部 cue generator 仍可能漏信息、歧义或偷偷带入 answer-side facts。</p></div></div>
-  <div class="foot"><span>来源：Method assumption</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · SINKTRACK</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>Sink token 在 prefill 中定期查询全体 visual tokens</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Visual tokens</strong><p>原图 representation</p></div><div class="step"><b>2</b><strong>Layer 5</strong><p>sink cross-attention</p></div><div class="step"><b>3</b><strong>Layer 10</strong><p>再次聚合</p></div><div class="step"><b>4</b><strong>Sink state</strong><p>压入 task evidence</p></div><div class="step"><b>5</b><strong>Decode</strong><p>无额外 per-token module</p></div></div></div>
-  <div class="foot"><span>来源：Figure 3；Section 3</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · CAPACITY</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>Recovery module 不是零成本</h2>
-
-  <div class="content"><div class="grid g2"><div class="card blue"><h3>2B backbone</h3><p>+100.7M parameters（4.52%）</p></div><div class="card orange"><h3>8B backbone</h3><p>+536.9M（5.77%）</p></div></div></div>
-  <div class="foot"><span>来源：model table</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · RESULT</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>ViCuR 稳定小幅胜过 answer-based OPSD</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Setting</th><th>OPSD</th><th>+ViCuR</th></tr></thead><tbody><tr><td>2B</td><td>44.88</td><td>46.07</td></tr><tr><td>8B</td><td>58.15</td><td>59.39</td></tr><tr><td>8B stronger teacher</td><td>63.88</td><td>64.96</td></tr></tbody></table></div></div>
-  <div class="foot"><span>根据 main tables 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · GAME SPLIT</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>Query-side cue 与 current-build feedback 分开做</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>Recoverable</h3><p>asset、对象、视角、UI、目标 mechanic</p></div><div class="card orange"><h3>Execution-derived</h3><p>compile、runtime、render、hidden test</p></div></div></div>
-  <div class="foot"><span>本文实验设计建议</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · CODE</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>Module 可审计，supervision pipeline 不完整</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>SinkTrack + trainer integration</p></div><div class="card red"><h3>缺少</h3><p>cue generator、data、checkpoint</p></div></div></div>
-  <div class="foot"><span>代码审计：a244a244fc24a202bd720f7aac069bb8bd105b06</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2606.05718 · 2026-06-04</span></div>
-  <h2>先用它定义边界，再决定是否加 recovery module</h2>
-
-  <div class="content"><div class="callout"><p>对于 game query-to-code，ViCuR 最重要的贡献是区分 input-recoverable evidence 与 execution feedback。</p></div></div>
-  <div class="foot"><span>兴趣程度 7.5/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/vicur.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ViCuR 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.compact .table{font-size:21px}.diagram{display:block;width:100%;max-height:540px;object-fit:contain}.content{gap:22px}.small{font-size:19px!important}
+.slide .diagram{height:auto;max-height:610px}.slide:first-child .diagram{max-height:440px}.slide .table,.slide.compact .table{font-size:30px}.slide .table th{font-size:27px}.slide .table th,.slide .table td{padding:17px}.slide .card h3{font-size:31px}.slide .card p{font-size:29px}.slide .small{font-size:26px!important}.slide .callout p{font-size:28px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="ViCuR 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 核心问题</span><span>arXiv:2606.05718v1 · 2026-06-04</span></div><h1>会用定理，却把图里的线段认错</h1><p class="lead">ViCuR 在训练时给评分模型补充画面线索，让作答模型学会从原图找到关系；新增视觉分支在部署时仍保留。</p><div class="content"><img class="diagram" src="/lib/papers/vicur/chord-case.svg" alt="真实相交弦案例，错误配对得12，正确配对得3" width="960" height="445"></div><div class="foot"><span>真实案例：Figure 8、10；Appendix E.1。重复 10 次是单题观察，不是全数据集成功率。</span><span>1 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 提示内容</span><span>两种 teacher 输入</span></div><h2>提示解题规则，还是提示图里画了什么？</h2><div class="content"><div class="grid g2"><div class="card orange"><h3>推理提示</h3><p>使用相交弦定理，令 x×8 与 4×6 相等。</p><p class="small">直接提供求解规则，模型可能只学答案附近的句式。</p></div><div class="card blue"><h3>视觉提示</h3><p>两条弦在圆内相交；x 与 8 在同一条弦上，4 与 6 在另一条弦上。</p><p class="small">不写定理和答案；关系可以从部署时仍在的原图确认。</p></div></div><div class="callout"><p>理想条件 S=f(X)：线索完全由图片与问题决定。外部生成器可能犯错或混入答案知识，现实中并非无泄漏保证。</p></div></div><div class="foot"><span>来源：Figure 8；§3.1、Appendix F.1</span><span>2 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 一次训练</span><span>student 先生成，teacher 评同一回答</span></div><h2>额外线索如何进入训练？</h2><div class="content"><img class="diagram" src="/lib/papers/vicur/training-mechanism.svg" alt="student看图片与问题生成，teacher多看线索评估同一回答，更新student及视觉分支" width="960" height="440"></div><div class="foot"><span>来源：§3.2–3.4；公开示例独立加载 teacher 保存的模型权重。同一 backbone 不等于实时共享参数。</span><span>3 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 视觉读取分支</span><span>prefill = 一次处理输入的阶段</span></div><h2>让序列首个 token 定期读取全部视觉向量</h2><div class="content"><div class="flow" style="--n:4"><div class="step"><b>输入</b><strong>图片 → visual tokens</strong><p>一组表示图片区域的向量</p></div><div class="step"><b>0、5、10…层</b><strong>首 token 做 query</strong><p>第一个 &lt;|im_start|&gt; 的内部向量</p></div><div class="step"><b>cross-attention</b><strong>加权读取视觉向量</strong><p>当前层全部视觉向量作 keys/values</p></div><div class="step"><b>输出</b><strong>加回首 token 向量</strong><p>后续文字由原注意力读取；不生成线索文本</p></div></div><div class="grid g2"><div class="card"><h3>2B：+100.7M 参数</h3><p>占原模型约 4.52%</p></div><div class="card"><h3>8B：+536.9M 参数</h3><p>占原模型约 5.77%</p></div></div></div><div class="foot"><span>来源：Figure 2、§3.2–3.4；代码采用零起始层号。借鉴 SinkTrack，但使用新的 cross-attention 参数。</span><span>4 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 更新规则</span><span>token = 模型处理的文字单位</span></div><h2>teacher 多看线索，给 student 的 token 重新打分</h2><div class="content"><div class="formula">Aₙ = log p_teacher(tokenₙ | 图片、问题、线索、前缀)<br>− log p_student(tokenₙ | 图片、问题、前缀)</div><div class="grid g2"><div class="card blue"><h3>teacher 0.4，student 0.2</h3><p>A=log(2)≈0.693：鼓励提高这个 token 的概率。</p></div><div class="card"><h3>teacher 0.2，student 0.4</h3><p>A≈−0.693：抑制这个 token。概率为教学假设，不是实测。</p></div></div><div class="callout"><p>评分差值停止梯度；实际采用概率比与裁剪的策略损失。附录的全词表 forward KL 是理论对应形式，不能当作主训练实现。</p></div></div><div class="foot"><span>来源：§3.3、Eq.6–8；Appendix F.2–F.3</span><span>5 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 主要证据</span><span>七项报告分数的等权平均</span></div><h2>改善 OPSD，但没有超过同表 GRPO</h2><div class="content"><img class="diagram" src="/lib/papers/vicur/main-evidence.svg" alt="2B与8B的完整基线对比" width="1000" height="448"></div><div class="foot"><span>Table 1：Vision R1 训练，275 步。蒸馏每题生成 1 次，GRPO 5 次；不同生成量不能算完全同成本。</span><span>6 / 9</span></div></section>
+<section class="slide compact"><div class="meta"><span>07 · 最能区分原因的实验</span><span>Geometry3K，独立训练 100 epoch</span></div><h2>最大的单项贡献来自换提示内容</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>设置</th><th>2B</th><th>8B</th><th>隔离什么</th></tr></thead><tbody><tr><td>答案提示基线</td><td>34.14</td><td>52.40</td><td>原 OPSD</td></tr><tr><td>只换视觉提示</td><td>36.94</td><td>56.76</td><td>提示来源</td></tr><tr><td>只加读取分支</td><td>35.31</td><td>52.49</td><td>额外结构</td></tr><tr><td>完整 ViCuR</td><td>38.94</td><td>57.05</td><td>两个改动共同作用</td></tr></tbody></table></div><div class="callout"><p>迁移并不总增益：8B MathVista 几何推理子集，视觉提示 87.03，加分支后 85.77。过拟合是作者解释，未被独立因果实验确认。</p></div></div><div class="foot"><span>Table 2 取最后 100 步平均；Table 5 为跨数据集测试。§6 对 Table 2 的文字描述有矛盾，以表中数字为准。</span><span>7 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>08 · 成本与证据边界</span><span>不把诊断指标写成证明</span></div><h2>少出现 Hint，不代表所有泄漏消失</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>实际泄漏诊断</h3><p>仅数输出中完整单词 Hint。8B 第五 epoch：含词样本 3,743→2,424，总出现次数 44,453→17,976。</p><p class="small">不包含 Hint 的答案复制仍可能存在。</p></div><div class="card orange"><h3>额外成本</h3><p>输入处理时间增加 4.3%–24.5%；逐 token 生成不运行分支。</p><p class="small">总耗时随回答长度变化；不能据此保证端到端更快。</p></div></div><div class="callout"><p>注意力热图与两个真实案例符合方法的预期；它们并非某区域注意力导致答对的因果证明。</p></div></div><div class="foot"><span>来源：Table 7–8、Figure 11、Appendix D/E</span><span>8 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 复现与阅读建议</span><span>个人兴趣 7.5/10</span></div><h2>先复核线索质量，再决定要不要加模型分支</h2><div class="content"><div class="grid g2"><div class="card green"><h3>公开且可检查</h3><p>Transformers／vLLM 两端视觉分支、teacher_prompt 字段、sampled-token 蒸馏与示例启动配置。</p></div><div class="card red"><h3>复现仍缺</h3><p>线索生成方法、Parquet 格式训练数据、带初始化分支的 student 模型权重、完整结果运行记录。</p></div></div><div class="callout"><p>最值得读：Figure 8 的提示差别、E.1 的线段配对错误、Table 2/5 的模块消融。游戏执行反馈不属于原图线索，应另做实验，不套用 S=f(X)。</p></div></div><div class="foot"><span>代码固定 a244a244fc24a202bd720f7aac069bb8bd105b06；游戏建议为本文分析，非原论文实验。</span><span>9 / 9</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/vicur.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

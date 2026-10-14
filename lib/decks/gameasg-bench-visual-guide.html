@@ -8,44 +8,52 @@
   <base target="_blank">
   <title>GameASG-Bench 论文图解</title>
   <style>
-    :root{--paper:#f8f5ee;--ink:#182028;--text:#3f4a54;--muted:#737c84;--line:#cbc7be;--blue:#2676c9;--pale-blue:#eaf3fb;--orange:#e86c36;--pale-orange:#faebe3;--green:#368667;--pale-green:#e7f2ec;--red:#b6463f;--dark:#1e252c;--sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--serif:"Songti SC","STSong","Noto Serif CJK SC",serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+    :root{--paper:#fff;--ink:#263445;--text:#465466;--muted:#607082;--line:#d4dde6;--blue:#365f85;--pale-blue:#eef3f8;--orange:#986d49;--pale-orange:#faf4ef;--green:#396f67;--pale-green:#edf5f3;--red:#a0524c;--dark:#1e252c;--sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--serif:"Songti SC","STSong","Noto Serif CJK SC",serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
     *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171c22;color:var(--ink);font-family:var(--sans)}a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}button{font:inherit}
     #viewport{position:fixed;inset:0;overflow:hidden}#deck{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);box-shadow:0 22px 80px #20202035}
-    .slide{position:absolute;inset:0;display:none;padding:27px 64px 25px;background:linear-gradient(90deg,transparent 0 63px,#e8e3da 63px 64px,transparent 64px),var(--paper)}.slide.active{display:flex;flex-direction:column}
+    .slide{position:absolute;inset:0;display:none;padding:27px 64px 25px;background:linear-gradient(90deg,transparent 0 63px,#edf0f4 63px 64px,transparent 64px),var(--paper)}.slide.active{display:flex;flex-direction:column}
     .top{display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--line);font-size:17px;color:var(--muted);letter-spacing:.06em}.top b{color:var(--blue);font:800 16px/1 var(--mono)}
-    h1,h2,h3,p{margin:0}h1,h2{font-family:var(--serif);letter-spacing:-.035em}h1{font-size:78px;line-height:1.04}h2{font-size:48px;line-height:1.15;margin-top:12px}h3{font-size:25px;line-height:1.32}.lead{font-family:var(--serif);font-size:25px;line-height:1.48;color:var(--text);margin-top:10px}.body{flex:1;min-height:0;margin-top:16px;display:flex;flex-direction:column;justify-content:center}.foot{display:flex;justify-content:space-between;gap:22px;align-items:center;padding-top:8px;border-top:1px solid var(--line);font-size:13px;line-height:1.35;color:#707982}.src{max-width:1325px}.pg{white-space:nowrap;font:750 14px/1 var(--mono)}
+    h1,h2,h3,p{margin:0}h1,h2{font-family:var(--sans);letter-spacing:-.025em}h1{font-size:78px;line-height:1.04}h2{font-size:48px;line-height:1.15;margin-top:12px}h3{font-size:25px;line-height:1.32}.lead{font-family:var(--sans);font-size:25px;line-height:1.48;color:var(--text);margin-top:10px}.body{flex:1;min-height:0;margin-top:16px;display:flex;flex-direction:column;justify-content:center}.foot{display:flex;justify-content:space-between;gap:22px;align-items:center;padding-top:8px;border-top:1px solid var(--line);font-size:13px;line-height:1.35;color:#707982}.src{max-width:1325px}.pg{white-space:nowrap;font:750 14px/1 var(--mono)}
     .eyebrow{font:800 17px/1 var(--mono);color:var(--orange);letter-spacing:.1em}.label{font:800 13px/1 var(--mono);color:var(--blue);letter-spacing:.06em}.label.orange{color:var(--orange)}.label.green{color:var(--green)}.mono{font-family:var(--mono)}.blue{color:var(--blue)}.orange{color:var(--orange)}.green{color:var(--green)}.red{color:var(--red)}
-    .split{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center;height:100%}.split.narrow{grid-template-columns:.82fr 1.18fr}.split.wide{grid-template-columns:1.18fr .82fr}.rule-block{padding:22px 24px;border-top:6px solid var(--blue);background:#fff}.rule-block.orange{border-color:var(--orange)}.rule-block.green{border-color:var(--green)}.rule-block h3{font-family:var(--serif);font-size:30px}.rule-block p,.rule-block li{font-size:18px;line-height:1.5;color:var(--text)}.rule-block p{margin-top:12px}.rule-block ul{margin:14px 0 0;padding-left:21px}
-    .metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin-top:32px}.metric{padding:17px 20px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{display:block;font:750 45px/1 var(--serif);color:var(--blue)}.metric span{display:block;margin-top:8px;font-size:14px;line-height:1.35;color:#69727b}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center;height:100%}.split.narrow{grid-template-columns:.82fr 1.18fr}.split.wide{grid-template-columns:1.18fr .82fr}.rule-block{padding:22px 24px;border-top:6px solid var(--blue);background:#fff}.rule-block.orange{border-color:var(--orange)}.rule-block.green{border-color:var(--green)}.rule-block h3{font-family:var(--sans);font-size:30px}.rule-block p,.rule-block li{font-size:18px;line-height:1.5;color:var(--text)}.rule-block p{margin-top:12px}.rule-block ul{margin:14px 0 0;padding-left:21px}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin-top:32px}.metric{padding:17px 20px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{display:block;font:750 45px/1 var(--sans);color:var(--blue)}.metric span{display:block;margin-top:8px;font-size:14px;line-height:1.35;color:#69727b}
     .cover{display:grid;grid-template-columns:1.04fr .96fr;gap:52px;align-items:center;height:100%}.cover h1{margin-top:18px}.cover .lead{font-size:28px;margin-top:25px}.cover-art{position:relative;height:560px;border-left:1px solid var(--line);padding-left:52px;display:flex;flex-direction:column;justify-content:center;gap:20px}.cover-step{position:relative;padding:21px 24px;border:1.5px solid var(--ink);background:#fff;font-size:21px}.cover-step b{font:800 15px/1 var(--mono);color:var(--blue);margin-right:16px}.cover-step:after{content:"↓";position:absolute;left:50%;bottom:-34px;color:var(--orange);font-size:24px}.cover-step:last-child:after{display:none}.cover-step:last-child{border-color:var(--orange);background:var(--pale-orange)}
-    .big-claim{font-family:var(--serif);font-size:39px;line-height:1.34}.big-claim strong{color:var(--blue)}.note{font-size:16px;line-height:1.52;color:var(--text)}
+    .big-claim{font-family:var(--sans);font-size:39px;line-height:1.34}.big-claim strong{color:var(--blue)}.note{font-size:16px;line-height:1.52;color:var(--text)}
     .evidence{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.ev{display:grid;grid-template-columns:62px 1fr;gap:16px;align-items:start;padding:20px 22px;background:#fff;border-left:6px solid var(--green)}.ev:nth-child(3),.ev:nth-child(4){border-color:var(--orange);background:var(--pale-orange)}.ev b{font:800 31px/1 var(--mono);color:var(--green)}.ev:nth-child(3) b,.ev:nth-child(4) b{color:var(--orange)}.ev strong{font-size:22px}.ev span{display:block;margin-top:6px;font-size:17px;line-height:1.42;color:#5f6972}
-    .balance{display:grid;grid-template-columns:1fr 100px 1fr;align-items:center;gap:25px}.extreme{min-height:405px;padding:27px 28px;border-top:7px solid #858c93;background:#fff}.extreme.orange{border-color:var(--orange)}.extreme h3{font-family:var(--serif);font-size:31px}.extreme ul{margin:24px 0 0;padding-left:22px;font-size:17px;line-height:1.72;color:var(--text)}.middle-mark{text-align:center;font:800 72px/1 var(--serif);color:var(--blue)}.contract-center{margin-top:24px;padding:20px;background:var(--dark);color:#e8eef3;font:18px/1.75 var(--mono)}
-    .matrix{display:grid;grid-template-columns:210px repeat(4,1fr);border-top:2px solid var(--ink)}.matrix div{padding:12px 14px;border-bottom:1px solid var(--line);font-size:18px;line-height:1.3}.matrix .head{background:#eceae5;font-weight:800;text-align:center}.matrix .name{font-weight:800}.matrix .focus{background:var(--pale-blue)}.matrix .accent{background:var(--pale-orange);font-weight:800;color:#8e3b1d}
-    .roles{display:grid;grid-template-columns:190px 260px 220px 1fr;border-top:2px solid var(--ink)}.roles div{padding:14px 15px;border-bottom:1px solid var(--line);font-size:18px;line-height:1.32}.roles .head{background:#eceae5;font-weight:800}.roles .human{border-left:6px solid var(--orange)}.roles .agent{border-left:6px solid var(--blue)}
+    .balance{display:grid;grid-template-columns:1fr 100px 1fr;align-items:center;gap:25px}.extreme{min-height:405px;padding:27px 28px;border-top:7px solid #858c93;background:#fff}.extreme.orange{border-color:var(--orange)}.extreme h3{font-family:var(--sans);font-size:31px}.extreme ul{margin:24px 0 0;padding-left:22px;font-size:17px;line-height:1.72;color:var(--text)}.middle-mark{text-align:center;font:800 72px/1 var(--sans);color:var(--blue)}.contract-center{margin-top:24px;padding:20px;background:var(--dark);color:#e8eef3;font:18px/1.75 var(--mono)}
+    .matrix{display:grid;grid-template-columns:210px repeat(4,1fr);border-top:2px solid var(--ink)}.matrix div{padding:12px 14px;border-bottom:1px solid var(--line);font-size:18px;line-height:1.3}.matrix .head{background:#f1f4f7;font-weight:800;text-align:center}.matrix .name{font-weight:800}.matrix .focus{background:var(--pale-blue)}.matrix .accent{background:var(--pale-orange);font-weight:800;color:#8e3b1d}
+    .roles{display:grid;grid-template-columns:190px 260px 220px 1fr;border-top:2px solid var(--ink)}.roles div{padding:14px 15px;border-bottom:1px solid var(--line);font-size:18px;line-height:1.32}.roles .head{background:#f1f4f7;font-weight:800}.roles .human{border-left:6px solid var(--orange)}.roles .agent{border-left:6px solid var(--blue)}
     .paper-frame{height:610px;padding:16px;background:#fff;border:1px solid #d6d2c9;display:flex;align-items:center;justify-content:center}.paper-frame img{display:block;max-width:100%;max-height:100%;object-fit:contain}.paper-frame.tight{height:540px}.paper-caption{margin-top:8px;text-align:center;font-size:13px;line-height:1.35;color:#666f78}
-    .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;align-items:stretch}.flow-step{position:relative;min-height:235px;padding:21px 18px;border-top:6px solid var(--blue);background:#fff}.flow-step:nth-child(even){border-color:var(--orange)}.flow-step b{display:block;font:800 16px/1.3 var(--mono);color:var(--blue)}.flow-step:nth-child(even) b{color:var(--orange)}.flow-step strong{display:block;margin-top:14px;font-family:var(--serif);font-size:24px}.flow-step p{margin-top:11px;font-size:16px;line-height:1.43;color:var(--text)}.flow-step:after{content:"→";position:absolute;right:-20px;top:94px;z-index:2;font-size:24px;color:#7c848b}.flow-step:last-child:after{display:none}.flow-note{margin-top:26px;padding:14px 18px;border-left:5px solid var(--green);background:var(--pale-green);font-size:18px;line-height:1.43}
-    .isolation{display:grid;grid-template-columns:1fr 88px 1fr;align-items:center}.container-box{min-height:365px;padding:27px 29px;border:2px solid var(--blue);background:#fff}.container-box.eval{border-color:var(--orange)}.container-box h3{font-family:var(--serif);font-size:31px}.container-box code{display:block;margin:20px 0;padding:17px 19px;background:var(--dark);color:#eaf0f4;font:15px/1.65 var(--mono)}.container-box li{font-size:16px;line-height:1.58;color:var(--text)}.container-box ul{padding-left:21px}.iso-arrow{text-align:center;font-size:45px;color:var(--orange)}
+    .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;align-items:stretch}.flow-step{position:relative;min-height:235px;padding:21px 18px;border-top:6px solid var(--blue);background:#fff}.flow-step:nth-child(even){border-color:var(--orange)}.flow-step b{display:block;font:800 16px/1.3 var(--mono);color:var(--blue)}.flow-step:nth-child(even) b{color:var(--orange)}.flow-step strong{display:block;margin-top:14px;font-family:var(--sans);font-size:24px}.flow-step p{margin-top:11px;font-size:16px;line-height:1.43;color:var(--text)}.flow-step:after{content:"→";position:absolute;right:-20px;top:94px;z-index:2;font-size:24px;color:#7c848b}.flow-step:last-child:after{display:none}.flow-note{margin-top:26px;padding:14px 18px;border-left:5px solid var(--green);background:var(--pale-green);font-size:18px;line-height:1.43}
+    .isolation{display:grid;grid-template-columns:1fr 88px 1fr;align-items:center}.container-box{min-height:365px;padding:27px 29px;border:2px solid var(--blue);background:#fff}.container-box.eval{border-color:var(--orange)}.container-box h3{font-family:var(--sans);font-size:31px}.container-box code{display:block;margin:20px 0;padding:17px 19px;background:var(--dark);color:#eaf0f4;font:15px/1.65 var(--mono)}.container-box li{font-size:16px;line-height:1.58;color:var(--text)}.container-box ul{padding-left:21px}.iso-arrow{text-align:center;font-size:45px;color:var(--orange)}
     .api{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:center}.code{margin:0;padding:24px 26px;background:var(--dark);color:#e8eef2;font:17px/1.52 var(--mono);white-space:pre-wrap;overflow:hidden}.code .b{color:#7cc0fa}.code .o{color:#f0a27c}.code .g{color:#82cba6}.code .c{color:#96a1aa}.method-list{display:grid;gap:12px}.method{display:grid;grid-template-columns:185px 1fr;gap:16px;padding:16px 18px;border-top:4px solid var(--blue);background:#fff}.method:nth-child(2){border-color:var(--orange)}.method:nth-child(3){border-color:var(--green)}.method:nth-child(4){border-color:#777e85}.method code{font:800 18px/1.3 var(--mono)}.method span{font-size:17px;line-height:1.42;color:#5f6a73}
-    .prepare{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center}.stage{min-height:270px;padding:23px 22px;background:#fff;border-top:6px solid var(--green)}.stage.act{border-color:var(--blue)}.stage.observe{border-color:var(--orange)}.stage h3{font-family:var(--serif);font-size:27px;margin-top:13px}.stage p{font-size:16px;line-height:1.52;color:var(--text);margin-top:14px}.stage-arrow{text-align:center;font-size:33px;color:#7b848b}.forbid{margin-top:22px;padding:15px 18px;border-left:5px solid var(--red);background:#f8e9e6;font-size:15px;line-height:1.45}
+    .prepare{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center}.stage{min-height:270px;padding:23px 22px;background:#fff;border-top:6px solid var(--green)}.stage.act{border-color:var(--blue)}.stage.observe{border-color:var(--orange)}.stage h3{font-family:var(--sans);font-size:27px;margin-top:13px}.stage p{font-size:16px;line-height:1.52;color:var(--text);margin-top:14px}.stage-arrow{text-align:center;font-size:33px;color:#7b848b}.forbid{margin-top:22px;padding:15px 18px;border-left:5px solid var(--red);background:#f8e9e6;font-size:15px;line-height:1.45}
     .code-side{display:grid;grid-template-columns:1.15fr .85fr;gap:29px;align-items:center}.annotations{display:grid;gap:13px}.annotation{padding:17px 19px;border-left:6px solid var(--blue);background:#fff}.annotation:nth-child(2){border-color:var(--orange)}.annotation:nth-child(3){border-color:var(--green)}.annotation strong{font-size:21px}.annotation span{display:block;margin-top:6px;font-size:16px;line-height:1.42;color:#59646e}
-    .case-spec{display:grid;grid-template-columns:.8fr 1.2fr;gap:32px}.game{height:100%;padding:27px;background:var(--dark);color:#fff}.game h3{font-family:var(--serif);font-size:40px}.game p{margin-top:18px;color:#cdd3d8;font-size:19px;line-height:1.5}.game .win{margin-top:27px;padding:15px 17px;border-left:5px solid #70b6f0;background:#ffffff12;font-size:17px;line-height:1.43}.requirements{display:grid;grid-template-columns:1fr 1fr;gap:14px}.req{padding:17px 18px;background:#fff;border-top:5px solid var(--blue)}.req:nth-child(2n){border-color:var(--orange)}.req strong{font-size:20px}.req p{margin-top:7px;font-size:16px;line-height:1.38;color:#5a6570}
-    .trajectory{display:grid;grid-template-columns:1fr 48px 1fr 48px 1fr;align-items:center}.traj{min-height:330px;padding:23px 21px;background:#fff;border-top:6px solid var(--green)}.traj:nth-of-type(2){border-color:var(--blue)}.traj:nth-of-type(3){border-color:var(--orange)}.traj h3{font-family:var(--serif);font-size:30px}.traj pre{margin:16px 0 0;white-space:pre-wrap;font:16px/1.48 var(--mono);color:#35414c}.trace-arrow{text-align:center;font-size:33px;color:#7d858c}
-    .logic{display:grid;grid-template-columns:1fr 1fr;gap:25px}.logic-block{padding:24px;background:#fff;border-top:7px solid var(--blue)}.logic-block:nth-child(2){border-color:var(--orange)}.logic-block h3{font-family:var(--serif);font-size:30px}.logic-block code{display:block;margin-top:18px;padding:19px;background:var(--dark);color:#eef2f5;font:17px/1.52 var(--mono)}.logic-block p{margin-top:15px;font-size:17px;line-height:1.46;color:var(--text)}
+    .case-spec{display:grid;grid-template-columns:.8fr 1.2fr;gap:32px}.game{height:100%;padding:27px;background:var(--dark);color:#fff}.game h3{font-family:var(--sans);font-size:40px}.game p{margin-top:18px;color:#cdd3d8;font-size:19px;line-height:1.5}.game .win{margin-top:27px;padding:15px 17px;border-left:5px solid #70b6f0;background:#ffffff12;font-size:17px;line-height:1.43}.requirements{display:grid;grid-template-columns:1fr 1fr;gap:14px}.req{padding:17px 18px;background:#fff;border-top:5px solid var(--blue)}.req:nth-child(2n){border-color:var(--orange)}.req strong{font-size:20px}.req p{margin-top:7px;font-size:16px;line-height:1.38;color:#5a6570}
+    .trajectory{display:grid;grid-template-columns:1fr 48px 1fr 48px 1fr;align-items:center}.traj{min-height:330px;padding:23px 21px;background:#fff;border-top:6px solid var(--green)}.traj:nth-of-type(2){border-color:var(--blue)}.traj:nth-of-type(3){border-color:var(--orange)}.traj h3{font-family:var(--sans);font-size:30px}.traj pre{margin:16px 0 0;white-space:pre-wrap;font:16px/1.48 var(--mono);color:#35414c}.trace-arrow{text-align:center;font-size:33px;color:#7d858c}
+    .logic{display:grid;grid-template-columns:1fr 1fr;gap:25px}.logic-block{padding:24px;background:#fff;border-top:7px solid var(--blue)}.logic-block:nth-child(2){border-color:var(--orange)}.logic-block h3{font-family:var(--sans);font-size:30px}.logic-block code{display:block;margin-top:18px;padding:19px;background:var(--dark);color:#eef2f5;font:17px/1.52 var(--mono)}.logic-block p{margin-top:15px;font-size:17px;line-height:1.46;color:var(--text)}
     .two-paper{display:grid;grid-template-columns:1fr 1fr;gap:25px}.two-paper figure{margin:0;height:570px;padding:12px;background:#fff;border:1px solid #d5d1c8;display:flex;flex-direction:column}.two-paper img{width:100%;height:520px;object-fit:contain}.two-paper figcaption{font-size:12px;line-height:1.35;color:#6c747c;text-align:center}
     .scoring{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.priority{padding:22px 24px;background:#fff;border-top:7px solid #858c92}.priority.p1{border-color:var(--blue);background:var(--pale-blue)}.priority.p2{border-color:var(--orange);background:var(--pale-orange)}.priority strong{font:800 37px/1 var(--mono)}.priority p{margin-top:10px;font-size:16px;line-height:1.48;color:var(--text)}.formula{margin-top:24px;padding:20px 23px;border-top:2px solid var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.formula code{font:700 21px/1.5 var(--mono);color:#1c5f9e}.formula p{font-size:16px;line-height:1.48;color:var(--text)}
-    .case-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.failure{padding:24px 25px;background:#fff;border-top:7px solid var(--orange)}.failure:nth-child(2){border-color:var(--blue)}.failure h3{font-family:var(--serif);font-size:31px}.failure .stack{margin-top:7px;font:14px/1.4 var(--mono);color:var(--muted)}.failure ol{margin:18px 0 0;padding-left:22px;font-size:17px;line-height:1.5;color:var(--text)}.failure .caught{margin-top:16px;padding:13px 15px;background:var(--pale-orange);font-size:16px;line-height:1.42}.failure:nth-child(2) .caught{background:var(--pale-blue)}
+    .case-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.failure{padding:24px 25px;background:#fff;border-top:7px solid var(--orange)}.failure:nth-child(2){border-color:var(--blue)}.failure h3{font-family:var(--sans);font-size:31px}.failure .stack{margin-top:7px;font:14px/1.4 var(--mono);color:var(--muted)}.failure ol{margin:18px 0 0;padding-left:22px;font-size:17px;line-height:1.5;color:var(--text)}.failure .caught{margin-top:16px;padding:13px 15px;background:var(--pale-orange);font-size:16px;line-height:1.42}.failure:nth-child(2) .caught{background:var(--pale-blue)}
     #controls{position:fixed;right:18px;bottom:16px;z-index:8;display:flex;align-items:stretch;min-height:48px;background:#141a20ed;color:white;border:1px solid #ffffff2b;border-radius:5px;overflow:hidden;box-shadow:0 10px 34px #0005;backdrop-filter:blur(12px)}#controls button,#controls .control-link{min-width:52px;padding:0 14px;border:0;border-right:1px solid #ffffff22;background:transparent;color:white;cursor:pointer;font-weight:750;white-space:nowrap}#controls .control-link{display:flex;align-items:center;text-decoration:none}#controls .control-link[hidden]{display:none}#controls button:hover,#controls button:focus-visible,#controls .control-link:hover,#controls .control-link:focus-visible{background:#ffffff18;outline:none}#controls .control-link:focus-visible{box-shadow:inset 0 0 0 2px #fff}.nav-label,.utility-label,.return-label{margin-left:7px}.utility-icon{font-size:19px}.current-title{display:flex;align-items:center;max-width:220px;padding:0 15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c7d0d7;font-size:14px;border-right:1px solid #ffffff22}.counter{display:flex;align-items:center;padding:0 14px;font:750 14px/1 var(--mono);white-space:nowrap;border-right:1px solid #ffffff22}#progress{position:fixed;left:0;bottom:0;height:5px;background:var(--orange);z-index:9;transition:width .2s ease}
-    #overview-panel[hidden]{display:none}#overview-panel{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:28px;background:#11171ddf;backdrop-filter:blur(10px)}.overview-card{width:min(1180px,100%);max-height:min(760px,calc(100vh - 56px));overflow:auto;border:1px solid #ffffff2a;background:#f8f5ee;box-shadow:0 24px 90px #0008}.overview-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line);background:#f8f5eef2;backdrop-filter:blur(12px)}.overview-head strong{font-family:var(--serif);font-size:27px}.overview-head button{width:42px;height:42px;border:1px solid var(--line);background:#fff;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}.overview-grid button{min-height:94px;padding:17px 18px;border:0;background:#fff;color:var(--ink);text-align:left;cursor:pointer}.overview-grid button:hover,.overview-grid button[aria-current="true"]{background:var(--pale-blue)}.overview-grid b{display:block;font:800 13px/1 var(--mono);color:var(--blue)}.overview-grid span{display:block;margin-top:9px;font-size:17px;font-weight:750}
+    #overview-panel[hidden]{display:none}#overview-panel{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:28px;background:#11171ddf;backdrop-filter:blur(10px)}.overview-card{width:min(1180px,100%);max-height:min(760px,calc(100vh - 56px));overflow:auto;border:1px solid #ffffff2a;background:#fff;box-shadow:0 24px 90px #0008}.overview-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line);background:#ffff2;backdrop-filter:blur(12px)}.overview-head strong{font-family:var(--sans);font-size:27px}.overview-head button{width:42px;height:42px;border:1px solid var(--line);background:#fff;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}.overview-grid button{min-height:94px;padding:17px 18px;border:0;background:#fff;color:var(--ink);text-align:left;cursor:pointer}.overview-grid button:hover,.overview-grid button[aria-current="true"]{background:var(--pale-blue)}.overview-grid b{display:block;font:800 13px/1 var(--mono);color:var(--blue)}.overview-grid span{display:block;margin-top:9px;font-size:17px;font-weight:750}
     @media(max-width:680px){#controls{left:50%;right:auto;bottom:10px;transform:translateX(-50%);min-height:44px}.nav-label,.utility-label,.current-title{display:none}#controls button,#controls .control-link{min-width:46px;padding:0 8px}.counter{padding:0 10px}.overview-grid{grid-template-columns:1fr 1fr}#overview-panel{padding:12px}.overview-card{max-height:calc(100vh - 24px)}}
     @media print{@page{size:16in 9in;margin:0}html,body{width:auto;height:auto;overflow:visible;background:#fff}#viewport{position:static;overflow:visible}#deck{position:static;width:1600px;height:auto;transform:none!important;box-shadow:none}.slide,.slide.active{position:relative;display:flex;flex-direction:column;width:1600px;height:900px;page-break-after:always;break-after:page}#controls,#progress,#overview-panel{display:none!important}}
-  </style>
+/* Neutral reading surface; chart colors continue to encode the original groups. */
+:root{--paper:#fff;--ink:#20252b;--body:#424b56;--muted:#596775;--line:#d9dfe5}
+html,body{background:#edf1f5}
+.overview-card{background:#fff;color:var(--ink)}
+.slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
+#controls button,#controls a{white-space:nowrap;flex-shrink:0}
+.cover-art{gap:34px}
+.cover-step:after{bottom:-29px;font-size:24px;line-height:1}
+</style>
 </head>
 <body>
 <div id="viewport"><main id="deck" aria-label="GameASG-Bench 论文图解">
 
   <section class="slide" data-title="封面">
-    <div class="body"><div class="cover"><div><div class="eyebrow">GAMEASG-BENCH · PAPER WALKTHROUGH</div><h1>如何验证一个游戏<br>真的做完了</h1><p class="lead">从人类事先写好公开规格和隐藏检查，到评测器在浏览器中实际操作游戏，再到严格判断成品是否达到交付标准。</p><div class="metrics"><div class="metric"><strong>47</strong><span>完整浏览器游戏任务</span></div><div class="metric"><strong>336</strong><span>L1 静态检查</span></div><div class="metric"><strong>885</strong><span>L2 行为检查</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div class="cover-art"><div class="cover-step"><b>SPEC</b>人类先写公开规格和隐藏检查</div><div class="cover-step"><b>BUILD</b>Agent 交付可独立运行的 index.html</div><div class="cover-step"><b>VERIFY</b>评测器准备场景、执行真实输入并判定结果</div></div></div></div>
+    <div class="body"><div class="cover"><div><div class="eyebrow">GAMEASG-BENCH · PAPER WALKTHROUGH</div><h1>如何验证一个游戏<br>真的做完了</h1><p class="lead">从人类事先写好公开规格和隐藏检查，到评测器在浏览器中实际操作游戏，再到严格判断成品是否达到交付标准。</p><div class="metrics"><div class="metric"><strong>47</strong><span>完整浏览器游戏任务</span></div><div class="metric"><strong>336</strong><span>L1 源码检查</span></div><div class="metric"><strong>885</strong><span>L2 行为检查</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div class="cover-art"><div class="cover-step"><b>SPEC</b>人类先写公开规格和隐藏检查</div><div class="cover-step"><b>BUILD</b>Agent 交付单页 index.html</div><div class="cover-step"><b>VERIFY</b>评测器准备场景、执行真实输入并判定结果</div></div></div></div>
     <div class="foot"><span class="src">GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development · arXiv:2609.21293</span><span class="pg"></span></div>
   </section>
 
@@ -63,7 +71,7 @@
 
   <section class="slide" data-title="Related work">
     <div class="top"><b>04 · RELATED WORK</b><span>比较任务范围、状态准备与运行证据</span></div><h2>和现有工作的关键区别：评测规则在生成前写好</h2>
-    <div class="body"><div class="matrix"><div class="head">工作</div><div class="head">产物</div><div class="head">状态准备</div><div class="head">运行证据</div><div class="head">评价方式</div><div class="name">APPS / EvalPlus</div><div>函数</div><div>输入样例</div><div>返回值</div><div>预先定义测试</div><div class="name">SWE-bench</div><div>仓库修改</div><div>仓库与 issue</div><div>项目测试</div><div>已有测试套件</div><div class="name">WebGameBench</div><div>浏览器游戏</div><div>先准备游戏状态</div><div>真实浏览器交互</div><div>按规格驱动测试</div><div class="name">GameCraft-Bench</div><div>Godot 项目</div><div>可回放演示</div><div>回放与多模态证据</div><div>隐藏评分规则（rubric）</div><div class="name">GameGen-Verifier</div><div>生成游戏</div><div>运行时注入状态</div><div>前置、交互、后置</div><div>从规格抽取检查点</div><div class="name">GameXpert-Bench</div><div>生成与修复</div><div>生成后汇总事件</div><div>检查源码 + 实际操作</div><div>从多份成品汇总事件，并经人工审核形成评分规则</div><div class="name focus">GameASG-Bench</div><div class="focus">单页浏览器游戏</div><div class="focus">预先声明合法场景</div><div class="focus">快照、真实输入、浏览器信号</div><div class="accent">规格和检查生成前固定</div></div></div>
+    <div class="body"><div class="matrix"><div class="head">工作</div><div class="head">产物</div><div class="head">状态准备</div><div class="head">运行证据</div><div class="head">评价方式</div><div class="name">APPS / EvalPlus</div><div>函数</div><div>输入样例</div><div>返回值</div><div>预先定义测试</div><div class="name">SWE-bench</div><div>仓库修改</div><div>仓库与 issue</div><div>项目测试</div><div>已有测试套件</div><div class="name">WebGameBench</div><div>浏览器游戏</div><div>先准备游戏状态</div><div>真实浏览器交互</div><div>Agent 操作并判断</div><div class="name">GameCraft-Bench</div><div>Godot 项目</div><div>可回放演示</div><div>回放与多模态证据</div><div>隐藏评分规则（rubric）</div><div class="name">GameGen-Verifier</div><div>生成游戏</div><div>运行时注入状态</div><div>前置、交互、后置</div><div>从规格抽取检查点</div><div class="name">GameXpert-Bench</div><div>生成与修复</div><div>生成后汇总事件</div><div>检查源码 + 实际操作</div><div>从多份成品汇总事件，并经人工审核形成评分规则</div><div class="name focus">GameASG-Bench</div><div class="focus">单页浏览器游戏</div><div class="focus">预先声明合法场景</div><div class="focus">快照、真实输入、浏览器信号</div><div class="accent">规格和检查生成前固定</div></div></div>
     <div class="foot"><span class="src">论文 §5.3。表内措辞按原文归纳。</span><span class="pg"></span></div>
   </section>
 
@@ -75,7 +83,7 @@
 
   <section class="slide" data-title="任务文档">
     <div class="top"><b>06 · ORIGINAL TABLE 1</b><span>三份公开任务文档</span></div><h2>Agent 既能看到玩法要求，也能看到评测接口规范</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-1-task-documents-redrawn.svg" alt="根据论文 Table 1 数据重绘的任务文档对照表"></div><div class="paper-caption">根据原论文 Table 1 数据重绘。三份文档 Agent 都能读取；harness（Agent 执行框架）只把 target.md 作为初始提示，其余两份由 Agent 自行打开。</div></div>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-1-task-documents-redrawn.svg" alt="根据论文 Table 1 数据重绘的任务文档对照表" width="1312" height="397"></div><div class="paper-caption">根据原论文 Table 1 数据重绘。三份文档 Agent 都能读取；承载模型与工具的 harness 只把 target.md 作为初始提示，其余两份由 Agent 自行打开。</div></div>
     <div class="foot"><span class="src">根据原论文 Table 1 数据重绘。</span><span class="pg"></span></div>
   </section>
 
@@ -113,12 +121,12 @@ read-only: runners/</code><ul><li>先检查 index.html 是否为有效交付</li
 
   <section class="slide" data-title="合法场景">
     <div class="top"><b>10 · PREPARE, ACT, OBSERVE</b><span>快速进入后期局面，但不跳过真正的玩家操作</span></div><h2>测试可以摆好战场，仍要由玩家动作触发结果</h2>
-    <div class="body"><div class="prepare"><div class="stage"><span class="label green">PREPARE</span><h3>合法前置状态</h3><p>可以调整资源和位置，快速来到待测局面；但游戏在载入后不能已经结束，待测行为也不能已经发生。</p></div><div class="stage-arrow">→</div><div class="stage act"><span class="label">ACT</span><h3>玩家级动作</h3><p>调用公开接口执行“生产单位”“选择目标”等玩家动作，或直接发送鼠标、键盘与触摸事件。</p></div><div class="stage-arrow">→</div><div class="stage observe"><span class="label orange">OBSERVE</span><h3>结果与约束</h3><p>检查胜负、资源和 HUD 是否按预期变化，revision（事件计数器）是否递增，以及本不该变化的字段是否保持不变。</p></div></div><div class="forbid">禁止：直接设好胜负，或靠改血量、坐标伪造待测结果；用固定快照替代真实游戏状态；让测试接口报告的状态与玩家实际看到的状态不一致。</div></div>
+    <div class="body"><div class="prepare"><div class="stage"><span class="label green">PREPARE</span><h3>合法前置状态</h3><p>可以调整资源和位置，快速来到待测局面；但游戏在载入后不能已经结束，待测行为也不能已经发生。</p></div><div class="stage-arrow">→</div><div class="stage act"><span class="label">ACT</span><h3>玩家级动作</h3><p>调用公开接口执行“生产单位”“选择目标”等玩家动作，或直接发送鼠标、键盘与触摸事件。</p></div><div class="stage-arrow">→</div><div class="stage observe"><span class="label orange">OBSERVE</span><h3>结果与约束</h3><p>检查胜负、资源和 HUD 是否按预期变化，revision（游戏报告的变化计数）是否递增，以及本不该变化的字段是否保持不变。</p></div></div><div class="forbid">禁止：直接设好胜负，或靠改血量、坐标伪造待测结果；用固定快照替代真实游戏状态；让测试接口报告的状态与玩家实际看到的状态不一致。</div></div>
     <div class="foot"><span class="src">论文 §2.2；Armor Alley tdd.md 的 scenario setup（场景准备）与 interface integrity（接口状态必须对应真实玩法）约束。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="checks.json">
-    <div class="top"><b>11 · REAL CHECKS.JSON</b><span>Armor Alley 的 L1 接口检查</span></div><h2>这条 L1 检查只确认源码里出现了四个接口方法</h2>
+    <div class="top"><b>11 · REAL CHECKS.JSON</b><span>Armor Alley 字段节选；正则表达式在图中缩写</span></div><h2>这条 L1 检查只确认源码里出现了四个接口方法</h2>
     <div class="body"><div class="code-side"><pre class="code">{
   <span class="b">"id"</span>: "p0-contract-methods-reset-input-snapshot",
   <span class="b">"level"</span>: "P0",
@@ -149,8 +157,8 @@ independent observation:
   ammo / projectile / combat revision
 empty-shell failure:
   fire flag without projectile, cost,
-  or release behavior</pre><div><p class="big-claim"><code>checks.js</code> 不是由同一个模板批量生成。每个任务的作者都会用 JavaScript 手写与该游戏玩法对应的行为检查。</p><div class="rule-block orange" style="margin-top:24px"><p>Armor Alley 的 checks.js 有 814 行。它覆盖启动、飞行、武器、落地补给、生产、地面战争、雷达、暂停、胜负流程和 P2 扩展项。</p></div></div></div></div>
-    <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.js。行数按 2026-09-21 获取的 main 分支文件计算。</span><span class="pg"></span></div>
+  or release behavior</pre><div><p class="big-claim">每个任务的人类作者事先写好 <code>checks.js</code>，用 JavaScript 描述这个游戏的场景、操作与 PASS/FAIL 条件。本文没有据此假定它完全没有使用模板。</p><div class="rule-block orange" style="margin-top:24px"><p>Armor Alley 的 checks.js 有 814 行。它覆盖启动、飞行、武器、落地补给、生产、地面战争、雷达、暂停、胜负流程和 P2 扩展项。</p></div></div></div></div>
+    <div class="foot"><span class="src">官方 tests/armor-alley/checks.js；核对版本 6427cb6。左侧为 Coverage / Rationality Map 的解释性摘录，不是可运行代码。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Armor Alley 玩法">
@@ -160,7 +168,7 @@ empty-shell failure:
   </section>
 
   <section class="slide" data-title="Armor Alley 场景">
-    <div class="top"><b>14 · ARMOR ALLEY TDD</b><span>持续射击测试的公开规范</span></div><h2>场景只准备攻击条件，不提前产生射击结果</h2>
+    <div class="top"><b>14 · ARMOR ALLEY TDD</b><span>公开接口与隐藏测试的条件并不完全一致</span></div><h2>场景只准备攻击条件，不提前产生射击结果</h2>
     <div class="body"><div class="trajectory"><div class="traj"><h3>准备</h3><pre>loadScenario(
   "air_attack_with_targets"
 )
@@ -178,17 +186,18 @@ snapshot held
 keyUp("Space")
 wait 300 ms
 snapshot released</pre></div><div class="trace-arrow">→</div><div class="traj"><h3>观察</h3><pre>按住期间：
-projectiles ↑
-  或 projectile/combat revision ↑
-或 ammo ↓
+弹丸数量 ↑
+  或弹丸/战斗变化计数 ↑
+  或弹药 ↓
 
 松开之后：
-  增长停止</pre></div></div><div class="forbid"><code>tdd.md</code> 要求场景中有可攻击目标；这条 <code>checks.js</code> 实际只把 playing、尚未分出胜负和直升机已升空作为前置判断。通过后，测试才会按下 Space。</div></div>
+  数量最多增加 1
+  或弹丸变化计数不变</pre></div></div><div class="forbid"><code>tdd.md</code> 要求场景中有可攻击目标；这条 <code>checks.js</code> 实际只把 playing、尚未分出胜负和直升机已升空作为前置判断。通过后才按 Space；公开规格没规定必须用 Space，因此其他开火键可能遭到误判。</div></div>
     <div class="foot"><span class="src">Armor Alley tdd.md 与 tests/armor-alley/checks.js。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实键盘检查">
-    <div class="top"><b>15 · REAL BROWSER INPUT</b><span>checks.js 原始逻辑</span></div><h2>浏览器实际收到 Space 的按下和松开事件</h2>
+    <div class="top"><b>15 · REAL BROWSER INPUT</b><span>官方逻辑节选；省略通用辅助函数</span></div><h2>浏览器实际收到 Space 的按下和松开事件</h2>
     <div class="body"><div class="code-side"><pre class="code">const before = setup.snap;
 
 <span class="b">await browser.keyDown('Space');</span>
@@ -204,27 +213,27 @@ if (!grewWhileHeld)
   return FAIL('held fire did not create evidence');
 if (!plateauAfterRelease)
   return FAIL('fire continued after release');
-<span class="g">return PASS('real key path creates and stops fire');</span></pre><div class="annotations"><div class="annotation"><strong>只认真实按键路径</strong><span>射击阶段只发送真实 Space 键。即使 input({type:'holdFire'}) 可用，也不能拿它替代键盘事件。</span></div><div class="annotation"><strong>松开后连续取两次快照</strong><span>松开 300 ms 后先取一次，再等 550 ms 取第二次，确认弹丸不再持续增加。</span></div><div class="annotation"><strong>多种等价证据</strong><span>弹丸数量、弹丸/战斗事件计数器（projectile/combat revision）或弹药减少，都可以作为已经开火的证据；测试不要求某一种内部数据结构。</span></div></div></div></div>
+<span class="g">return PASS('real key path creates and stops fire');</span></pre><div class="annotations"><div class="annotation"><strong>只认真实按键路径</strong><span>射击阶段只发送真实 Space 键。即使 input({type:'holdFire'}) 可用，也不能拿它替代键盘事件。</span></div><div class="annotation"><strong>最后一份不是等待后的新快照</strong><span><code>game.wait(550)</code> 先调用 <code>input(wait)</code> 保存返回状态，再自然等待，最后返回旧状态。不能解释为 550 ms 后重新取样。</span></div><div class="annotation"><strong>多种等价证据</strong><span>弹丸数量、弹丸/战斗事件计数器（projectile/combat revision）或弹药减少，都可以作为已经开火的证据；测试不要求某一种内部数据结构。</span></div></div></div></div>
     <div class="foot"><span class="src">官方仓库 tests/armor-alley/checks.js，p1-keyboard-sustained-fire-release。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="断言逻辑">
-    <div class="top"><b>16 · PASS AND FAIL</b><span>同一需求的正向证据与停止条件</span></div><h2>测试要看到“开始增长”和“停止增长”</h2>
+    <div class="top"><b>16 · PASS AND FAIL</b><span>同一需求的正向证据与停止条件</span></div><h2>开始和停止各是一组 OR 条件，不能读成全部都要满足</h2>
     <div class="body"><div class="logic"><div class="logic-block"><h3>按住期间</h3><code>grewWhileHeld =
   projectileCount ↑
   OR projectileRevision ↑
   OR combatRevision ↑
-  OR ammo ↓</code><p>不同游戏保存和清理弹丸的方式不同，所以检查接受四种等价证据。只把开火标志 <code>firing</code> 设为 true，不能证明游戏真的生成了弹丸或消耗了弹药。</p></div><div class="logic-block"><h3>松开之后</h3><code>plateauAfterRelease =
+  OR ammo ↓</code><p>四种证据只要一种成立。比如弹药减少，即使当前弹丸数不增也能通过；这不等于测试要求一定命中或同时验证了视觉射击。</p></div><div class="logic-block"><h3>松开之后</h3><code>plateauAfterRelease =
   count(afterRelease)
     ≤ count(released) + 1
   OR projectileRevision
-    remains unchanged</code><p>松开后允许最多再多出 1 发，因为松键前触发的弹丸可能稍后才生成；此后弹丸数量或 revision 必须停止增长。</p></div></div></div>
-    <div class="foot"><span class="src">官方 checks.js 中的真实布尔条件，排版仅为便于阅读。</span><span class="pg"></span></div>
+    remains unchanged</code><p>数量最多增加 1 或变化计数不变，只需其中之一。脚本没有说明 +1 的原因；且 afterRelease 来自 wait 接口返回值，不是自然等待后的新观察。</p></div></div></div>
+    <div class="foot"><span class="src">官方 checks.js 第 149–153、435–457 行。布尔条件保持原逻辑；数字推演只验证断言，不代表模型日志。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="L1 与 L2">
     <div class="top"><b>17 · ORIGINAL TABLE 2</b><span>证据层和优先级是两套标签</span></div><h2>336 个源码检查，885 个浏览器行为检查</h2>
-    <div class="body"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-2-check-counts-redrawn.svg" alt="根据论文 Table 2 数据重绘的检查数量表"></div><div class="paper-caption">根据原论文 Table 2 数据重绘。L1：43 项由工具完成的结构和语法检查、288 项正则断言、5 项 anti-pattern 规则（禁止出现的写法）。L2：P0 102 项、P1 534 项、P2 249 项。</div></div>
+    <div class="body"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-2-check-counts-redrawn.svg" alt="根据论文 Table 2 数据重绘的检查数量表" width="1142" height="451"></div><div class="paper-caption">根据原论文 Table 2 数据重绘。L1：43 项由工具完成的结构和语法检查、288 项正则断言、5 项 anti-pattern 规则（禁止出现的写法）。L2：P0 102 项、P1 534 项、P2 249 项。</div></div>
     <div class="foot"><span class="src">根据原论文 Table 2 数据重绘。</span><span class="pg"></span></div>
   </section>
 
@@ -245,43 +254,43 @@ if (!plateauAfterRelease)
 
   <section class="slide" data-title="任务分布">
     <div class="top"><b>20 · ORIGINAL FIGURE 1</b><span>47 个任务的组成</span></div><h2>12 类游戏，32 个 2D，15 个 3D</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/figure-1-corpus-redrawn.svg" alt="根据论文 Figure 1 数据重绘的任务分布图"></div><div class="paper-caption">根据原论文 Figure 1 数据重绘。图中的渲染技术只统计参考实现；Agent 生成的游戏可以使用其他技术。</div></div>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/figure-1-corpus-redrawn.svg" alt="根据论文 Figure 1 数据重绘的任务分布图" width="1480" height="720"></div><div class="paper-caption">根据原论文 Figure 1 数据重绘。图中的渲染技术只统计参考实现；Agent 生成的游戏可以使用其他技术。</div></div>
     <div class="foot"><span class="src">根据原论文 Figure 1 数据重绘。论文只有这一张正式编号 Figure。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="主结果">
     <div class="top"><b>21 · ORIGINAL TABLE 3</b><span>9 种 agent stack（模型与编码工具的组合）</span></div><h2>平均 L2 通过率达 93.2%，严格成功却只有 26/47</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-3-leaderboard-redrawn.svg" alt="根据论文 Table 3 数据重绘的排行榜"></div><div class="paper-caption">根据原论文 Table 3 数据重绘。最佳配置的 L2 平均通过率达到 93.2%，但仍只有 26/47 个任务通过全部必需检查。每个任务在每种配置下只运行一次。</div></div>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-3-leaderboard-redrawn.svg" alt="根据论文 Table 3 数据重绘的排行榜" width="1252" height="659"></div><div class="paper-caption">根据原论文 Table 3 数据重绘。最佳配置的 L2 平均通过率达到 93.2%，但仍只有 26/47 个任务通过全部必需检查。每个任务在每种配置下只运行一次。</div></div>
     <div class="foot"><span class="src">根据原论文 Table 3 数据重绘。GPT-6-Astra + Codex CLI：26/47，55.3%。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="资源使用">
     <div class="top"><b>22 · ORIGINAL TABLE 4</b><span>生成文件大小、token 用量与 API 成本</span></div><h2>文件更大、token 用得更多，并没有稳定对应更多成功任务</h2>
-    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-4-resource-use-redrawn.svg" alt="根据论文 Table 4 数据重绘的资源用量表"></div><div class="paper-caption">根据原论文 Table 4 数据重绘。Input tokens 合并了系统报告的 input、cache-read 和 cache-write 三项。表中这些资源量与完整通过的任务数没有稳定的对应关系。</div></div>
+    <div class="body"><div class="paper-frame"><img src="/lib/papers/gameasg-bench/table-4-resource-use-redrawn.svg" alt="根据论文 Table 4 数据重绘的资源用量表" width="1162" height="671"></div><div class="paper-caption">根据原论文 Table 4 数据重绘。Input tokens 合并了系统报告的 input、cache-read 和 cache-write 三项。表中这些资源量与完整通过的任务数没有稳定的对应关系。</div></div>
     <div class="foot"><span class="src">根据原论文 Table 4 数据重绘；§4.2。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="工具与轮数消融">
-    <div class="top"><b>23 · ORIGINAL TABLES 5 AND 6</b><span>DeepSeek-V4-Flash · Claude Code</span></div><h2>完整工具配置的 P1 通过率最高；轮数太少时，许多任务来不及完成评测</h2>
-    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg" alt="根据论文 Table 5 数据重绘的工具消融表"><figcaption>根据 Table 5 数据重绘。完整工具 18/47，受限工具 6 至 9/47。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg" alt="根据论文 Table 6 数据重绘的轮次预算表"><figcaption>根据 Table 6 数据重绘。轮数上限为 30/60/120 时，分别只有 10/32/47 个任务完成评测。</figcaption></figure></div></div>
-    <div class="foot"><span class="src">根据原论文 Tables 5、6 数据重绘。30 轮时，完成评测的 10 题中有 7 题成功；若以全部 47 题为分母，则为 14.9%。</span><span class="pg"></span></div>
+    <div class="top"><b>23 · ORIGINAL TABLES 5 AND 6</b><span>DeepSeek-V4-Flash · Claude Code</span></div><h2>完整工具提高整题成功；低轮数时完成评测的任务集合不同</h2>
+    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg" alt="根据论文 Table 5 数据重绘的工具消融表" width="1162" height="461"><figcaption>根据 Table 5 数据重绘。无工具 / 文件 / 文件+语法 / 完整工具：7 / 6 / 9 / 18，均除以 47。文件+语法的 P1 反而低于文件条件。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg" alt="根据论文 Table 6 数据重绘的轮次预算表" width="1092" height="412"><figcaption>根据 Table 6 数据重绘。轮数上限为 30/60/120 时，分别只有 10/32/47 个任务完成评测。</figcaption></figure></div></div>
+    <div class="foot"><span class="src">Tables 5–6 重绘。30 轮 7/10、60 轮 13/32、120 轮 18/47 是不同完成子集；主指标始终除以 47，不能据条件分数下降推断多轮更差。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="推理与 Harness">
     <div class="top"><b>24 · ORIGINAL TABLES 7 AND 8</b><span>同样是 18/47，成功的题目却不一样</span></div><h2>High 比 Max 多成功 1 题；两个执行框架各成功 18 题，但共同成功的只有 10 题</h2>
-    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg" alt="根据论文 Table 7 数据重绘的推理强度表"><figcaption>根据 Table 7 数据重绘。High：19/47；Max：18/47。High 使用的 reasoning tokens（推理 token）比 Max 少 26.9%。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-8-harness-redrawn.svg" alt="根据论文 Table 8 数据重绘的 harness 比较表"><figcaption>根据 Table 8 数据重绘。两种 harness（Agent 执行框架）各成功 18/47，但只有 10 题重合。</figcaption></figure></div></div>
+    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg" alt="根据论文 Table 7 数据重绘的推理强度表" width="1107" height="418"><figcaption>根据 Table 7 数据重绘。High：19/47；Max：18/47。High 使用的 reasoning tokens（推理 token）比 Max 少 26.9%。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-8-harness-redrawn.svg" alt="根据论文 Table 8 数据重绘的 harness 比较表" width="1112" height="375"><figcaption>根据 Table 8 数据重绘。两种 harness（模型上下文与工具环境）各成功 18/47，但只有 10 题重合，各有 8 题独有成功、21 题都失败。</figcaption></figure></div></div>
     <div class="foot"><span class="src">根据原论文 Tables 7、8 数据重绘。结果来自单次运行，不能据此建立稳定的绝对排名。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实失败案例">
     <div class="top"><b>25 · ORIGINAL TABLE 9</b><span>总榜看不到的具体失败</span></div><h2>两类具体失败：真实拖拽无效，场景加载后游戏停住</h2>
-    <div class="body"><div class="split narrow"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-9-diagnostics-redrawn.svg" alt="根据论文 Table 9 数据重绘的失败案例表"></div><div class="case-grid" style="grid-template-columns:1fr"><div class="failure"><h3>Diner Dasher</h3><div class="stack">GPT-6-Astra + Codex CLI</div><ol><li>载入 <code>tray_with_correct_item</code> 场景，托盘上已有顾客点的餐。</li><li>从 snapshot 读取餐点和顾客的屏幕边界，以中心点作为拖拽起止位置。</li><li>分别发送真实鼠标与触摸拖拽。</li><li>两条路径下，服务进度和收入都没有增加。</li></ol><div class="caught">L1、L2 P0/P2 通过，P1 核心交互失败。</div></div><div class="failure"><h3>Turbo Smash Beast</h3><div class="stack">DeepSeek-V4-Flash + Claude Code</div><ol><li><code>reset</code> 或 <code>loadScenario</code> 会打开 test mode（测试模式）。</li><li>该模式停掉了游戏按真实时钟自行推进的主循环。</li><li>随后发送真实驾驶输入，车辆仍然不动。</li></ol><div class="caught">接口自测会手动推进时间，真实驾驶自测从新页面开始；两条都没有覆盖“先加载场景，再等待游戏自行运行”。</div></div></div></div></div>
+    <div class="body"><div class="split narrow"><div class="paper-frame tight"><img src="/lib/papers/gameasg-bench/table-9-diagnostics-redrawn.svg" alt="根据论文 Table 9 数据重绘的失败案例表" width="1382" height="448"></div><div class="case-grid" style="grid-template-columns:1fr"><div class="failure"><h3>Diner Dasher</h3><div class="stack">GPT-6-Astra + Codex CLI</div><ol><li>载入 <code>tray_with_correct_item</code> 场景，托盘上已有顾客点的餐。</li><li>从 snapshot 读取餐点和顾客的屏幕边界，以中心点作为拖拽起止位置。</li><li>分别发送真实鼠标与触摸拖拽。</li><li>两条路径下，服务进度和收入都没有增加。</li></ol><div class="caught">L1、L2 P0/P2 通过，P1 核心交互失败。</div></div><div class="failure"><h3>Turbo Smash Beast</h3><div class="stack">DeepSeek-V4-Flash + Claude Code</div><ol><li><code>reset</code> 或 <code>loadScenario</code> 会打开 test mode（测试模式）。</li><li>该模式停掉了游戏按真实时钟自行推进的主循环。</li><li>加载 readyUnlockedLevel 后按住鼠标 350 ms 取样，仍按住再等 450 ms 取样；速度、进度与 HUD 本应上升。</li></ol><div class="caught">接口自测会手动推进时间，真实驾驶自测从新页面开始；两条都没有覆盖“先加载场景，再等待游戏自行运行”。</div></div></div></div></div>
     <div class="foot"><span class="src">根据原论文 Table 9 数据重绘；§4.6、附录 A.1。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与边界">
     <div class="top"><b>26 · TAKEAWAYS</b><span>读完后应该带走的判断</span></div><h2>核心贡献：一条可重复执行的行为证据链</h2>
-    <div class="body"><div class="split"><div><p class="big-claim"><strong>人类先写好公开的评测接口规范和隐藏检查</strong>，Agent 可以自由决定代码结构。评测器再把场景准备、真实输入、状态快照（snapshot）和渲染信号串起来，验证玩家操作是否真的引发规格要求的状态和画面变化。</p><div class="metrics" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><strong>93.2%</strong><span>最佳平均 L2</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div><div class="rule-block"><h3>适合回答</h3><p>单页浏览器游戏是否满足一组预先写好的核心行为要求。</p></div><div class="rule-block orange" style="margin-top:18px"><h3>仍需谨慎</h3><p>结论只来自 47 个任务，而且每种配置只跑一次；也不覆盖需要后端、账号或大型多人服务的游戏。当前评测程序还允许 P1 返回 <code>NOT_APPLICABLE</code>（不适用），并把该项排除在统计之外。</p></div><div class="rule-block green" style="margin-top:18px"><h3>可迁移的方法</h3><p>把测试写成 prepare（准备合法起点）→ act（执行玩家动作）→ observe（读取结果），再检查 invariant（不应被破坏的约束）。</p></div></div></div></div>
+    <div class="body"><div class="split"><div><p class="big-claim"><strong>人类先写好公开的评测接口规范和隐藏检查</strong>，Agent 可以自由决定代码结构。评测器再把场景准备、真实输入、状态快照（snapshot）和渲染信号串起来，验证玩家操作是否真的引发规格要求的状态和画面变化。</p><div class="metrics" style="grid-template-columns:repeat(2,1fr)"><div class="metric"><strong>93.2%</strong><span>最佳平均 L2</span></div><div class="metric"><strong>55.3%</strong><span>最佳严格成功率</span></div></div></div><div><div class="rule-block"><h3>适合回答</h3><p>单页浏览器游戏是否满足一组预先写好的核心行为要求。</p></div><div class="rule-block orange" style="margin-top:18px"><h3>仍需谨慎</h3><p>只有 47 题且每配置只跑一次；未报告系统性错误实现对照。还允许 P1 返回 <code>NOT_APPLICABLE</code> 并排除；Armor 的 Space 要求和 wait 快照顺序也有边界。</p></div><div class="rule-block green" style="margin-top:18px"><h3>可迁移的方法</h3><p>先准备合法起点，再执行玩家动作、读取结果，检查不应破坏的约束；同时用正确和刻意错误的实现检查测试本身。</p></div></div></div></div>
     <div class="foot"><span class="src"><a href="https://arxiv.org/abs/2609.21293">论文</a> · <a href="https://github.com/areal-project/GameASG-Bench">代码与 47 个任务</a> · 解读与重绘：ChrisDing Blog</span><span class="pg"></span></div>
   </section>
 
@@ -314,19 +323,7 @@ if (!plateauAfterRelease)
     const returnToArticle = document.getElementById('return-to-article');
     const fullButton = document.getElementById('full');
     const isEmbedded = window.self !== window.top;
-    if (!isEmbedded) {
-      returnToArticle.hidden = false;
-      returnToArticle.addEventListener('click', event => {
-        const articleUrl = new URL(returnToArticle.href, location.href);
-        let referrerUrl = null;
-        try { referrerUrl = document.referrer ? new URL(document.referrer) : null; } catch (_) {}
-        const cameFromArticle = referrerUrl && referrerUrl.origin === articleUrl.origin && referrerUrl.pathname === articleUrl.pathname;
-        if (cameFromArticle && history.length > 1) {
-          event.preventDefault();
-          history.back();
-        }
-      });
-    }
+    if (!isEmbedded) returnToArticle.hidden = false;
     slides.forEach((slide, i) => { const pg = slide.querySelector('.pg'); if (pg) pg.textContent = `${String(i + 1).padStart(2,'0')} / ${slides.length}`; });
     slides.forEach((slide, i) => {
       const button = document.createElement('button');
@@ -336,18 +333,77 @@ if (!plateauAfterRelease)
       overviewGrid.appendChild(button);
     });
     let index = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
-    function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`;}
+    function scaleDeck(){
+      const controls=document.getElementById('controls').getBoundingClientRect();
+      const bottomGap=Math.max(0,innerHeight-controls.bottom);
+      const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);
+      const scale=Math.min(innerWidth/1600,availableHeight/900);
+      deck.style.transform=`scale(${scale})`;
+      deck.style.left=`${(innerWidth-1600*scale)/2}px`;
+      deck.style.top=`${(availableHeight-900*scale)/2}px`;
+    }
     function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameASG-Bench`;if(updateHash)history.replaceState(null,'',`#${index+1}`);}
     function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
     function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
     function syncFullscreenButton(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出全屏':'全屏';}
     document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());document.addEventListener('fullscreenchange',syncFullscreenButton);syncFullscreenButton();
-    addEventListener('keydown',event=>{if(!overview.hidden){if(event.key==='Escape')closeOverview();return}if(event.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home')show(0);if(event.key==='End')show(slides.length-1);if(event.key.toLowerCase()==='f')document.getElementById('full').click();if(event.key.toLowerCase()==='o')openOverview()});
+    addEventListener('keydown',event=>{if(!overview.hidden){if(event.key==='Escape')closeOverview();return}if(event.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f')document.getElementById('full').click();if(event.key.toLowerCase()==='o')openOverview()});
     let touchStartX = null;
     addEventListener('touchstart',event=>{if(event.target.closest('#controls,#overview-panel'))return;touchStartX=event.changedTouches[0].clientX},{passive:true});
     addEventListener('touchend',event=>{if(touchStartX===null)return;const dx=event.changedTouches[0].clientX-touchStartX;touchStartX=null;if(Math.abs(dx)>48)show(index+(dx<0?1:-1))},{passive:true});
-    addEventListener('resize',scaleDeck);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));scaleDeck();show(index,false);
+    addEventListener('resize',scaleDeck);document.addEventListener('fullscreenchange',scaleDeck);new ResizeObserver(scaleDeck).observe(document.getElementById('controls'));addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));scaleDeck();show(index,false);
   })();
+</script>
+<script>
+(() => {
+  const panel = document.getElementById('overview-panel');
+  const trigger = document.getElementById('toc');
+  const close = document.getElementById('close-overview');
+  const canvas = document.getElementById('deck');
+  const controls = document.getElementById('controls');
+  if (!panel || !trigger || !close) return;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', '幻灯片总览');
+  trigger.setAttribute('aria-controls', panel.id);
+  const synchronize = () => {
+    const open = !panel.hidden;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (canvas) canvas.inert = open;
+    if (controls) controls.inert = open;
+    if (open) close.focus({ preventScroll: true });
+    else trigger.focus({ preventScroll: true });
+  };
+  new MutationObserver(synchronize).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  trigger.setAttribute('aria-expanded', String(!panel.hidden));
+  document.addEventListener('keydown', (event) => {
+    if (!panel.hidden) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'o') {
+        event.preventDefault(); event.stopImmediatePropagation(); close.click(); return;
+      }
+      if (event.key === 'Tab') {
+        const items = [...panel.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+          .filter((item) => item.getClientRects().length > 0);
+        if (items.length) {
+          const index = items.indexOf(document.activeElement);
+          event.preventDefault(); event.stopImmediatePropagation();
+          items[(index + (event.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+        }
+        return;
+      }
+      event.stopImmediatePropagation(); return;
+    }
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault(); event.stopImmediatePropagation(); trigger.click(); return;
+    }
+    if (event.key === 'Escape' && !document.fullscreenElement && window.parent !== window) {
+      window.parent.postMessage({ type: 'paper-deck-escape' }, location.origin);
+    }
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && panel.hidden) document.getElementById('full')?.focus({ preventScroll: true });
+  });
+})();
 </script>
 </body>
 </html>

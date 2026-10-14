@@ -18,127 +18,153 @@
 #overview-panel{position:fixed;z-index:30;inset:0;background:rgba(10,13,16,.78);padding:46px}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:calc(100vh - 92px);margin:auto;overflow:auto;background:#f8f5ee;padding:24px}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.overview-head button{width:36px;height:36px;border:1px solid var(--line);background:#fff;font-size:24px}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);background:#fff;text-align:left}.overview-grid button[aria-current="true"]{border-color:var(--blue);background:#eef4fb}.overview-grid b{font-family:var(--mono);color:var(--blue)}
 @media(max-width:760px){#controls{bottom:8px;gap:4px}.current-title,.utility-label,.return-label{display:none}#controls button,#controls a{padding:0 10px}.overview-grid{grid-template-columns:1fr 1fr}}
 @media print{html,body{overflow:visible;background:#fff}#deck{position:static;width:auto;height:auto;transform:none!important}.slide{display:flex!important;position:relative;width:1600px;height:900px;page-break-after:always}#controls,#overview-panel,#progress{display:none!important}}
+/* Neutral reading surface; chart colors continue to encode the original groups. */
+:root{--paper:#fff;--ink:#20252b;--body:#424b56;--muted:#596775;--line:#d9dfe5}
+html,body{background:#edf1f5}
+.overview-card{background:#fff;color:var(--ink)}
+.slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
+#controls button,#controls a{white-space:nowrap;flex-shrink:0}
+.counter{white-space:nowrap;flex:0 0 auto;min-width:52px;text-align:center}
 </style>
 </head>
 <body>
 <main id="deck">
   <section class="slide" data-title="核心结论">
-    <div class="top"><b>META-HARNESS · PAPER DEEP DIVE</b><span>arXiv:2603.28052v1 · 2026-03-30</span></div>
-    <div class="hero"><div><div class="question">把每次失败的代码、分数和完整执行轨迹都留下，coding agent 能否自己写出更好的 harness？</div><p class="lead" style="margin-top:26px">Meta-Harness 让 Claude Code 像工程师一样检索全部历史、提出代码改动，再由外部 evaluator 独立验收。外层搜索规则反而很简单。</p></div><div><div class="score">9.6 / 10<small>博客作者兴趣度：直接研究完整 harness 的自动工程化</small></div><div class="callout green" style="margin-top:24px"><b>三个结果</b><span>分类 48.6%；IMO-level math 38.8%；TerminalBench-2 上 Opus 4.6 为 76.4%。</span></div><img src="/lib/papers/meta-harness/figure-1-tbench.svg" alt="TerminalBench-2 harness performance" style="display:block;width:100%;max-height:220px;margin-top:18px;object-fit:contain"></div></div>
+    <div class="top"><b>META-HARNESS · 论文图解</b><span>arXiv:2603.28052v1 · 2026-03-30</span></div>
+    <h2>让 Claude Code 看完整历史，再改模型外的执行程序</h2>
+    <p class="lead">保存历次候选的代码、分数和原始执行记录；提案模型自己查错和改代码，基础模型权重始终不更新。</p>
+    <div class="body"><div class="grid2">
+      <div class="stack">
+        <div class="callout"><b>1 · Claude Code 读历史，写出新候选</b><span>用文件搜索和脚本查旧代码及原始记录，不必先把所有失败压成一份摘要。</span></div>
+        <div class="callout"><b>2 · 独立程序检查接口、执行任务、计分</b><span>候选提出者不能自己决定评测结果；每个候选的源码、分数和记录再进入下一轮历史。</span></div>
+        <div class="callout green"><b>分类、数学、终端结果要分开读</b><span>分类准确率 48.6%；奥赛数学 38.8%；TerminalBench-2 上 Opus 4.6 为 76.4%。终端搜索与终测使用同一批 89 道公开任务。</span></div>
+        <p class="lead" style="font-size:18px">博客作者兴趣度 9.6 / 10：完整 harness 自动工程化。Harness 指包在基础模型外的提示构造、记忆、检索和调用程序。</p>
+      </div>
+      <div><img src="/lib/papers/meta-harness/figure-1-tbench.svg" alt="原论文 Figure 1 的 TerminalBench-2 执行系统成绩，Opus 4.6 为 76.4%" style="display:block;width:100%;max-height:450px;object-fit:contain" width="230.88" height="141.5"><p style="font-size:16px;color:var(--muted)">原论文 Figure 1（CC BY 4.0）。终端实验不是独立保留题上的泛化成绩。</p></div>
+    </div></div>
     <div class="foot"><span>标题：Meta-Harness: End-to-End Optimization of Model Harnesses</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="论文在优化什么">
-    <div class="top"><b>02 · OBJECT</b><span>model weights stay frozen</span></div><h2>Harness 包含 system prompt，也包含围绕模型运行的程序</h2>
-    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">STATE</span><h3>存什么</h3><p>Memory、历史样例、环境状态与中间结果。</p></div><div class="panel green"><span class="tag">ACCESS</span><h3>取什么</h3><p>检索规则、路由、去重、排序与 context budget。</p></div><div class="panel orange"><span class="tag">CONTROL</span><h3>何时交给模型</h3><p>Prompt construction、tool loop、completion check 与 retry。</p></div></div></div>
-    <div class="foot"><span>来源：论文 §1、§3。搜索目标是 harness code；被包裹的 base model 固定。</span><span class="pg"></span></div>
+    <div class="top"><b>02 · 优化对象</b><span>模型权重始终冻结</span></div><h2>Harness 包含系统提示，也包含围绕模型运行的程序</h2>
+    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">保存状态</span><h3>存什么</h3><p>记忆、历史样例、环境状态与中间结果。</p></div><div class="panel green"><span class="tag">检索规则</span><h3>取什么</h3><p>检索规则、路由、去重、排序和输入长度限制。</p></div><div class="panel orange"><span class="tag">调用流程</span><h3>何时交给模型</h3><p>构造提示、执行工具、检查完成状态和重试。</p></div></div></div>
+    <div class="foot"><span>来源：论文 §1、§3。搜索目标是执行程序代码；被调用的基础模型固定。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="主循环">
-    <div class="top"><b>03 · OUTER LOOP</b><span>propose → validate → evaluate → log</span></div><h2>Proposer 不直接改线上系统；外层程序控制验证与计分</h2>
-    <div class="body figure medium"><img src="/lib/papers/meta-harness/figure-2-loop.svg" alt="Meta-Harness search loop"></div>
-    <div class="foot"><span>原论文 Figure 2，CC BY 4.0。每个候选的 code、score、trace 都进入下一轮可检索文件系统。</span><span class="pg"></span></div>
+    <div class="top"><b>03 · 搜索循环</b><span>提案 → 检查代码 → 评测 → 保存记录</span></div><h2>提案模型写候选代码；外层程序控制验证、计分和版本选择</h2>
+    <div class="body figure medium"><img src="/lib/papers/meta-harness/figure-2-loop.svg" alt="Meta-Harness search loop" width="4080" height="1455"></div>
+    <div class="foot"><span>原论文 Figure 2，CC BY 4.0。每个候选的代码、分数、执行记录 都进入下一轮可检索文件系统。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="为什么需要文件系统">
-    <div class="top"><b>04 · MOTIVATION</b><span>diagnostic footprint ≫ one prompt</span></div><h2>一次 harness 评测最多产生约 1,000 万 tokens，摘要会丢掉因果线索</h2>
-    <div class="body"><div class="grid2"><div class="panel orange"><span class="tag">COMPRESSED OPTIMIZER</span><h3>先替 proposer 决定“什么重要”</h3><p>Score-only 只留下结果；summary 把多条失败压成短解释；window 只看近期候选。</p><p>如果真正的错误来自十轮前的 prompt 变化，信息在进入 proposer 前就消失了。</p></div><div class="panel blue"><span class="tag">META-HARNESS</span><h3>把历史变成外部工作区</h3><p>Claude Code 自己用 grep、cat 和脚本选择要读的 code、score 与 raw trace。</p><p>TerminalBench search 每轮中位读取 82 个文件，其中 source 41%、trace 40%。</p></div></div></div>
-    <div class="foot"><span>来源：论文 §1、§3、Appendix A.1，Tables 1、8。</span><span class="pg"></span></div>
+    <div class="top"><b>04 · 诊断材料</b><span>可用记录量与实际模型输入不同</span></div><h2>一次评测可产生约 1,000 万 tokens 的记录，提案模型只读取其中相关部分</h2>
+    <div class="body"><div class="grid2"><div class="panel orange"><span class="tag">压缩后的反馈</span><h3>先替提案模型筛选历史</h3><p>只看分数会丢掉执行细节；摘要压缩多次失败；近期窗口舍弃早期候选。</p><p>如果真正的错误来自十轮前的提示变化，相关记录可能在提案模型读到前就被删掉。</p></div><div class="panel blue"><span class="tag">META-HARNESS</span><h3>把历史变成外部工作区</h3><p>Claude Code 自己用 grep、cat 和脚本选择要读的代码、分数与原始记录。</p><p>TerminalBench 搜索中，每轮读取文件数的中位数是 82；源码占 41%，执行记录占 40%。</p></div></div></div>
+    <div class="foot"><span>来源：Tables 1、8。1,000 万是作者估算的最重评测材料量，不是一次输入长度或统一预算对照。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="和已有优化器差在哪">
-    <div class="top"><b>05 · RELATED WORK</b><span>target · feedback · update unit</span></div><h2>它把“反馈带宽”和“可执行代码空间”同时放大</h2>
-    <div class="body"><table class="table"><thead><tr><th>路线</th><th>改什么</th><th>Proposer 看什么</th><th>与 Meta-Harness 的边界</th></tr></thead><tbody><tr><td>GEPA</td><td>prompt / text artifact</td><td>单 candidate 的 rollout feedback / summary</td><td>反馈丰富，但不保留全 population 的 raw traces。</td></tr><tr><td>AlphaEvolve / OpenEvolve</td><td>指定函数或程序</td><td>program archive + scalar scores</td><td>有 code search；历史诊断信号更薄。</td></tr><tr><td>TTT-Discover</td><td>test-time artifact</td><td>window + PUCT reuse</td><td>搜索规则更强；proposer 输入更受结构约束。</td></tr><tr><td>ACE / MCE</td><td>memory / natural-language skills</td><td>在线样例与反思</td><td>是被优化的 harness baseline，不是通用 code optimizer。</td></tr><tr><td>HarnessForge / Co-Harness</td><td>harness + model weights</td><td>失败归因与成功轨迹</td><td>共同优化 matched pair；本文只改 harness、冻结模型。</td></tr></tbody></table></div>
+    <div class="top"><b>05 · 邻近路线</b><span>改什么 · 看什么反馈 · 谁负责更新</span></div><h2>提案模型能检索历次代码与原始记录，不必只读摘要</h2>
+    <div class="body"><table class="table"><thead><tr><th>路线</th><th>改什么</th><th>提案模型看什么</th><th>与 Meta-Harness 的边界</th></tr></thead><tbody><tr><td>GEPA</td><td>提示或其他文本产物</td><td>一个候选的执行反馈或摘要</td><td>反馈较丰富，但不保留所有候选的原始记录。</td></tr><tr><td>AlphaEvolve / OpenEvolve</td><td>指定函数或程序</td><td>历史程序与汇总分数</td><td>搜索代码；可读到的原始排错记录较少。</td></tr><tr><td>TTT-Discover</td><td>推理时产生的程序等产物</td><td>近期窗口；PUCT 优先复用高分且少访问的候选</td><td>搜索规则不同；提案输入受预设结构限制。</td></tr><tr><td>ACE / MCE</td><td>记忆与自然语言技能描述</td><td>在线样例与反思</td><td>用作待优化执行程序的基线，不是通用代码优化器。</td></tr><tr><td>HarnessForge / Co-Harness</td><td>执行程序与模型权重</td><td>失败归因与成功轨迹</td><td>共同优化模型与程序的配合；本文只改程序。</td></tr></tbody></table></div>
     <div class="foot"><span>来源：论文 §2、Appendix F；HarnessForge arXiv:2606.01779；Co-Harness arXiv:2607.22688。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="完整历史是否真的有用">
-    <div class="top"><b>06 · ABLATION</b><span>same classification search setting</span></div><h2>Raw traces 不是装饰：去掉后，最优候选也追不上 full-history 的中位数</h2>
-    <div class="body"><div class="grid3"><div class="panel orange"><span class="tag">SCORES ONLY</span><div class="metric">34.6 / 41.3</div><p>median / best accuracy；能看 code 与 score，不能看 trace。</p></div><div class="panel orange"><span class="tag">+ SUMMARY</span><div class="metric">34.9 / 38.7</div><p>加入 LLM summary 仍未恢复诊断信息。</p></div><div class="panel green"><span class="tag">FULL HISTORY</span><div class="metric">50.0 / 56.7</div><p>code + score + raw execution traces。</p></div></div></div>
-    <div class="foot"><span>来源：论文 Table 3。这里报告 search-set candidate 分布，不是最终 held-out test 表。</span><span class="pg"></span></div>
+    <div class="top"><b>06 · 原始记录消融</b><span>相同分类搜索设置</span></div><h2>去掉原始执行记录后，最优候选也低于完整历史组的中位数</h2>
+    <div class="body"><div class="grid3"><div class="panel orange"><span class="tag">只看代码与分数</span><div class="metric">34.6 / 41.3</div><p>候选准确率的中位数 / 最高值；可看代码和分数，不能看执行记录。</p></div><div class="panel orange"><span class="tag">再加摘要</span><div class="metric">34.9 / 38.7</div><p>加入模型生成的摘要，仍低于完整记录组。</p></div><div class="panel green"><span class="tag">完整历史</span><div class="metric">50.0 / 56.7</div><p>代码、分数与原始执行记录。</p></div></div></div>
+    <div class="foot"><span>来源：论文 Table 3。这里是搜索集上候选的分数分布，不是独立最终测试成绩。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="分类搜索结果">
-    <div class="top"><b>07 · TEXT CLASSIFICATION</b><span>40 proposals · 3 search datasets</span></div><h2>四次评测追平其他优化器的最终水平，40 次后拉开十余点</h2>
-    <div class="body"><div class="pair-images"><figure><img src="/lib/papers/meta-harness/figure-1-search.svg" alt="Harness optimizer search progress"><figcaption>Figure 1 左：best-so-far search accuracy</figcaption></figure><figure><img src="/lib/papers/meta-harness/figure-4-curves.svg" alt="Search curves across optimizers"><figcaption>Figure 4：每个 candidate 与 best-so-far 曲线</figcaption></figure></div></div>
-    <div class="foot"><span>原论文 Figures 1、4，CC BY 4.0。比较使用同一 Opus 4.6 proposer 与相同 candidate-evaluation budget。</span><span class="pg"></span></div>
+    <div class="top"><b>07 · 分类搜索</b><span>40 个候选 · 3 个搜索数据集</span></div><h2>四次评测追平其他优化器的最终水平，40 次后拉开十余点</h2>
+    <div class="body"><div class="pair-images"><figure><img src="/lib/papers/meta-harness/figure-1-search.svg" alt="Harness optimizer search progress" width="230.86" height="141.5"><figcaption>Figure 1 左：历次候选最高搜索准确率</figcaption></figure><figure><img src="/lib/papers/meta-harness/figure-4-curves.svg" alt="Search curves across optimizers" width="385.68" height="237.18"><figcaption>Figure 4：各候选分数与历次最高分曲线</figcaption></figure></div></div>
+    <div class="foot"><span>原论文 Figures 1、4，CC BY 4.0。比较使用同一 Opus 4.6 提案模型与相同候选评测次数。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="分类测试与成本">
-    <div class="top"><b>08 · CLASSIFICATION TEST</b><span>held-out test results</span></div><h2>48.6% 平均准确率，比 ACE 高 7.7 pp；context 只有约四分之一</h2>
-    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-3-pareto.svg" alt="Accuracy versus context Pareto frontier"></div><div class="stack"><div class="callout green"><b>Meta-Harness</b><span>48.6% accuracy；Table 2 报 11.4K context。</span></div><div class="callout"><b>ACE</b><span>40.9%；50.8K context。</span></div><div class="callout orange"><b>单位冲突</b><span>Table 2 写 tokens；Figure 3 与 Appendix Table 9 写 characters。论文未解释换算，不能把两者混用。</span></div></div></div>
+    <div class="top"><b>08 · 分类测试</b><span>不参与候选选择的测试题</span></div><h2>平均准确率 48.6%，比 ACE 高 7.7 个百分点；输入约四分之一</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-3-pareto.svg" alt="Accuracy versus context Pareto frontier" width="247.83" height="158.65"></div><div class="stack"><div class="callout green"><b>Meta-Harness</b><span>准确率 48.6%；Table 2 报输入长度 11.4K。</span></div><div class="callout"><b>ACE</b><span>准确率 40.9%；输入长度 50.8K。</span></div><div class="callout orange"><b>单位冲突</b><span>Table 2 写 tokens；Figure 3 与 Appendix Table 9 写 characters。论文未解释换算，不能把两者混用。</span></div></div></div>
     <div class="foot"><span>原论文 Figure 3，CC BY 4.0；Table 2、Appendix Table 9。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="分类 harness 长什么样">
-    <div class="top"><b>09 · DISCOVERED PROGRAMS</b><span>not merely more few-shot examples</span></div><h2>搜索得到的是不同的 retrieval 与 prompt-construction 程序</h2>
-    <div class="body"><div class="pair-images"><figure><img src="/lib/papers/meta-harness/figure-5-draft-verification.webp" alt="Draft-verification harness"><figcaption>Figure 5：先 draft，再检索 confirmers 与 challengers</figcaption></figure><figure><img src="/lib/papers/meta-harness/figure-6-label-primed.webp" alt="Label-primed query-anchored harness"><figcaption>Figure 6：label primer + coverage + local contrastive pairs</figcaption></figure></div></div>
-    <div class="foot"><span>原论文 Figures 5–6，CC BY 4.0。最终 48.6% 系统采用右侧结构。</span><span class="pg"></span></div>
+    <div class="top"><b>09 · 搜索得到的程序</b><span>检索与提示构造方式各不相同</span></div><h2>搜索得到的是不同检索与提示构造程序</h2>
+    <div class="body"><div class="pair-images"><figure><img src="/lib/papers/meta-harness/figure-5-draft-verification.webp" alt="Draft-verification harness" width="1260" height="860"><figcaption>Figure 5：先拟定分类，再检索支持与反对它的样例</figcaption></figure><figure><img src="/lib/papers/meta-harness/figure-6-label-primed.webp" alt="Label-primed query-anchored harness" width="1300" height="1060"><figcaption>Figure 6：标签说明、类别覆盖和相近样例对比</figcaption></figure></div></div>
+    <div class="foot"><span>Figure 5：5 个近邻→草稿→5 条同标签与 5 条异标签样例；不足 5 条则单次调用。48.6% 系统采用右侧 Figure 6。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Search 与 test 没有混吗">
-    <div class="top"><b>10 · SPLIT CHECK</b><span>classification evidence boundary</span></div><h2>候选只看 search-set 分数；test results 在 finalization 前冻结</h2>
-    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-7-val-test.png" alt="Search versus test accuracy"></div><div class="stack"><div class="callout green"><b>论文协议</b><span>Proposer never sees test-set results；从 Pareto frontier 才做最终 test。</span></div><div class="callout"><b>公开代码</b><span><code>meta_harness.py</code> 分离 validation evolution 与显式 <code>--test</code> finalization。</span></div><div class="callout orange"><b>但不是访问控制</b><span>公开 repo 含 test data；隔离依赖运行流程，不是文件权限。</span></div></div></div>
+  <section class="slide" data-title="分类搜索与测试的隔离">
+    <div class="top"><b>10 · 数据划分</b><span>分类实验的证据范围</span></div><h2>候选按搜索集分数选，最终测试在选择后才运行</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-7-val-test.png" alt="Search versus test accuracy" width="1531" height="574"></div><div class="stack"><div class="callout green"><b>论文协议</b><span>提案模型不看测试分数；从准确率与输入长度的折中候选中选定后，才做最终测试。</span></div><div class="callout"><b>公开代码</b><span><code>meta_harness.py</code> 将验证集演化与显式 <code>--test</code> 最终测试分开。</span></div><div class="callout orange"><b>但不是访问控制</b><span>公开仓库含测试数据；隔离依赖运行流程，不是文件权限。</span></div></div></div>
     <div class="foot"><span>原论文 Figure 7；论文 §3；官方 repo revision 0cbc31e。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Math harness">
-    <div class="top"><b>11 · RETRIEVAL-AUGMENTED MATH</b><span>250 search · 200 unseen eval</span></div><h2>搜索把同一个 BM25 变成四条题型专用 retrieval policy</h2>
-    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-8-math-router.webp" alt="Discovered math retrieval harness"></div><div class="stack"><div class="callout"><b>Search model</b><span>GPT-OSS-20B 在 250 题上挑选 109 个候选中的最终 harness。</span></div><div class="callout green"><b>Evaluation</b><span>200 道未见 IMO-level problems；每题三次采样。</span></div><div class="callout orange"><b>精确说法</b><span>GPT-OSS-20B 既参与 search 又参与 eval；另外四个模型才是真正 unseen models。</span></div></div></div>
+  <section class="slide" data-title="真实分类题怎样判分">
+    <div class="top"><b>11 · 真实分类题</b><span>meta-harness@0cbc31e</span></div><h2>症状分类比较的是标准疾病标签，不是模型自述“诊断合理”</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><h3>发布测试集第一行</h3><p>I have a burning sensation in my stomach that comes and goes. It's worse when I eat and when I lie down. I also have heartburn and indigestion.</p><p>当前输入是症状文本；标准标签 <code>peptic ulcer disease</code> 用于计分。</p></div><div class="panel"><h3>提取答案 → 归一化 → 精确匹配</h3><p>JSON <code>final_answer</code> 或 <code>[DIAGNOSIS]</code> 内容转小写、整理空白、去掉末尾标点。</p><p>说明输出 A：<code>Peptic ulcer disease.</code> → 相同 → 1。</p><p>说明输出 B：<code>gastritis</code> → 不同 → 0。</p><p>数据集准确率 = 答对数 / 样例数；Table 2 等权平均三个数据集。</p></div></div></div>
+    <div class="foot"><span>data/symptom_diagnosis/test.jsonl:1；data/evaluators.py:79–99。A/B 是本文说明输出，非模型记录；数据标签不是医疗建议。</span><span class="pg"></span></div>
+  </section>
+
+  <section class="slide" data-title="数学检索程序">
+    <div class="top"><b>12 · 数学检索</b><span>250 道搜索题 · 200 道未见测试题</span></div><h2>同一个 BM25 检索器，搜索得到四种按题型选择证据的策略</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-8-math-router.webp" alt="Discovered math retrieval harness" width="1320" height="1060"></div><div class="stack"><div class="callout"><b>搜索阶段</b><span>GPT-OSS-20B 在 250 题上挑选 109 个候选中的最终 harness。</span></div><div class="callout green"><b>最终测试</b><span>200 道未见题，包含答案题、证明题和研究风格题；每题三次采样。</span></div><div class="callout orange"><b>精确说法</b><span>GPT-OSS-20B 既参与搜索又参与测试；另外四个模型才未参与搜索。</span></div></div></div>
     <div class="foot"><span>原论文 Figure 8，CC BY 4.0；§4.2、Appendix C.2–C.3。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Math 结果">
-    <div class="top"><b>12 · MATH RESULTS</b><span>pass@1 · average of 3 samples/problem</span></div><h2>38.8% 平均准确率，比 no-retrieval 高 4.7 pp；五列都上涨</h2>
-    <div class="body"><table class="table"><thead><tr><th>Harness</th><th>GPT-5.4 nano</th><th>GPT-5.4 mini</th><th>Gemini 3.1 FL</th><th>Gemini 3 Flash</th><th>GPT-OSS-20B</th><th>Avg</th></tr></thead><tbody><tr><td>No Retriever</td><td>23.0</td><td>28.8</td><td>28.6</td><td>42.6</td><td>47.6</td><td>34.1</td></tr><tr><td>BM25</td><td>30.2</td><td>29.2</td><td>32.8</td><td class="best">46.6</td><td>48.9</td><td>37.5</td></tr><tr><td>Meta-Harness</td><td class="best">31.7</td><td class="best">30.4</td><td class="best">34.9</td><td>46.3</td><td class="best">50.6</td><td class="best">38.8</td></tr></tbody></table></div>
-    <div class="foot"><span>来源：论文 Table 6。Retrieval corpus 535,356 题，经 exact-prefix 与 Jaccard ≥0.8 去污染。</span><span class="pg"></span></div>
+  <section class="slide" data-title="数学测试结果">
+    <div class="top"><b>13 · 数学结果</b><span>pass@1：每题三次采样结果平均</span></div><h2>38.8% 平均准确率，比无检索高 4.7 个百分点；五列都上涨</h2>
+    <div class="body"><table class="table"><thead><tr><th>Harness</th><th>GPT-5.4 nano</th><th>GPT-5.4 mini</th><th>Gemini 3.1 FL</th><th>Gemini 3 Flash</th><th>GPT-OSS-20B</th><th>Avg</th></tr></thead><tbody><tr><td>No Retriever</td><td>23.0</td><td>28.8</td><td>28.6</td><td>42.6</td><td>47.6</td><td>34.1</td></tr><tr><td>Dense Retrieval (5)</td><td>31.1</td><td>28.3</td><td class="best">37.1</td><td class="best">47.2</td><td>46.7</td><td>38.1</td></tr><tr><td>BM25</td><td>30.2</td><td>29.2</td><td>32.8</td><td>46.6</td><td>48.9</td><td>37.5</td></tr><tr><td>Meta-Harness</td><td class="best">31.7</td><td class="best">30.4</td><td>34.9</td><td>46.3</td><td class="best">50.6</td><td class="best">38.8</td></tr></tbody></table></div>
+    <div class="foot"><span>Table 6：相比最强固定检索平均仅 +0.7 pp，两列落后；每题三次结果平均，不是任一次答对。完整数学 judge 未发布。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="TerminalBench 的证据边界">
-    <div class="top"><b>13 · DISCOVERY BENCHMARK</b><span>same 89 public tasks for search and final score</span></div><h2>TerminalBench-2 结果不是 held-out 泛化实验，而是同一 public benchmark 上的 discovery</h2>
-    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">SEARCH</span><h3>89 public tasks</h3><p>候选用同一整套任务获得反馈；起点为 Terminus 2 与 Terminus-KIRA。</p></div><div class="panel orange"><span class="tag">AUDIT</span><h3>Manual + regex</h3><p>作者检查 task-specific string leakage，但没有独立 task split。</p></div><div class="panel green"><span class="tag">FINAL</span><h3>89 × 5 trials</h3><p>官方 artifact 的 76.4% 是 445 次 trial 汇总。</p></div></div></div>
+    <div class="top"><b>14 · 同题搜索</b><span>搜索和最终计分使用同一批 89 道公开题</span></div><h2>TerminalBench-2 在同一批公开题上搜索与计分，不是独立题目泛化实验</h2>
+    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">搜索</span><h3>89 道公开任务</h3><p>候选用同一整套任务获得反馈；起点为 Terminus 2 与 Terminus-KIRA。</p></div><div class="panel orange"><span class="tag">核查</span><h3>人工与正则检查</h3><p>检查代码是否写入特定题目的字符串；没有另留独立任务集。</p></div><div class="panel green"><span class="tag">终测</span><h3>89 题 × 5 次尝试</h3><p>官方 artifact 的 76.4% 是 445 次尝试的汇总。</p></div></div></div>
     <div class="foot"><span>来源：论文 §4.3；官方 TerminalBench artifact README revision 57fefdb。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实搜索轨迹">
-    <div class="top"><b>14 · ITERATIONS 1–7</b><span>one concrete causal chain</span></div><h2>六次回归后，proposer 换到一条更安全的改动路径</h2>
-    <div class="body"><div class="timeline"><div class="event bad"><b>BASE</b><strong>64.4%</strong><span>Terminus-KIRA search score。</span></div><div class="event bad"><b>ITER 1</b><strong>58.9%</strong><span>marker fix + loop breaker + prompt cleanup；变量混在一起。</span></div><div class="event bad"><b>ITER 2</b><strong>57.8%</strong><span>completion 改写仍带同一 prompt。</span></div><div class="event"><b>ITER 3</b><strong>63.3%</strong><span>识别 confound，只保留 structural fixes。</span></div><div class="event bad"><b>ITER 4–6</b><strong>regress</strong><span>completion flow、prompt、smart wait 仍不稳。</span></div><div class="event good"><b>ITER 7</b><strong>pivot</strong><span>不改 loop，只在第一次 LLM call 前加 env snapshot。</span></div><div class="event good"><b>WHY</b><strong>additive</strong><span>给 hard tasks 更多信息，不碰已验证的脆弱控制流。</span></div></div></div>
-    <div class="foot"><span>来源：论文 Appendix A.2。前四个数字是 search-run score；不要与 76.4% final result 混用。</span><span class="pg"></span></div>
+    <div class="top"><b>15 · 第 1 到 7 轮</b><span>对照历次修改与搜索分数</span></div><h2>前六轮未超过起点；第七轮不再改控制循环，转而增加环境信息</h2>
+    <div class="body"><div class="timeline"><div class="event bad"><b>起点</b><strong>64.4%</strong><span>Terminus-KIRA 搜索分数。</span></div><div class="event bad"><b>第 1 轮</b><strong>58.9%</strong><span>终端标记修复、重复循环处理与提示清理同时改。</span></div><div class="event bad"><b>第 2 轮</b><strong>57.8%</strong><span>完成检查改了，仍沿用同一套提示。</span></div><div class="event"><b>第 3 轮</b><strong>63.3%</strong><span>发现多种改动混在一起，只保留结构修复。</span></div><div class="event bad"><b>第 4 到 6 轮</b><strong>仍退步</strong><span>完成流程、提示和等待规则的修改仍未见改善。</span></div><div class="event good"><b>第 7 轮</b><strong>换策略</strong><span>不改循环，只在首次模型调用前加入环境快照。</span></div><div class="event good"><b>修改范围</b><strong>只加信息</strong><span>提供环境信息，同时不触碰已经验证的控制顺序。</span></div></div></div>
+    <div class="foot"><span>来源：论文 Appendix A.2。这些是搜索阶段分数，不能与最终五次尝试汇总的 76.4% 混用。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="官方代码具体做了什么">
-    <div class="top"><b>15 · INSPECTED IMPLEMENTATION</b><span>agent.py · revision 57fefdb</span></div><h2><code>_gather_env_snapshot()</code> 在 Agent 开始前一次性探测 sandbox</h2>
-    <div class="body"><pre class="code"><span class="c"># 官方实现的关键路径；为版面删去 parse/format 细节</span>
-bootstrap_cmd = (
-  <span class="s">"pwd; ls -la /app/; "</span>
-  <span class="s">"python3 --version; gcc --version; g++ --version; "</span>
-  <span class="s">"node --version; java -version; rustc --version; go version; "</span>
-  <span class="s">"pip3 --version; pip --version; apt-get --version; free -h"</span>
-)
-result = <span class="k">await</span> asyncio.wait_for(
-  env.exec(command=bootstrap_cmd, timeout_sec=<span class="g">15</span>), timeout=<span class="g">20</span>
-)
-snapshot = <span class="s">"[Environment Snapshot]\n"</span> + format_sections(result.stdout)
-initial_prompt = initial_prompt + <span class="s">"\n\n"</span> + snapshot
-<span class="c"># 任何异常都返回空串 / 被 silent fallback 吞掉，不阻断原 agent。</span></pre></div>
-    <div class="foot"><span>官方代码：meta-harness-tbench2-artifact/agent.py:873–991。展示为忠实节选，不是论文伪代码。</span><span class="pg"></span></div>
+    <div class="top"><b>16 · 公开代码</b><span>agent.py · revision 57fefdb</span></div><h2><code>_gather_env_snapshot()</code> 在 Agent 开始前一次性查询隔离环境</h2>
+    <div class="body"><pre class="code"><span class="c"># _gather_env_snapshot 内：省略前面的命令构造与后面的输出解析</span>
+<span class="k">try</span>:
+    result = <span class="k">await</span> asyncio.wait_for(
+        env.exec(command=bootstrap_cmd, timeout_sec=<span class="g">15</span>),
+        timeout=<span class="g">20</span>,
+    )
+<span class="k">except</span> Exception:
+    <span class="k">return</span> <span class="s">""</span>
+
+<span class="c"># 以下另摘自 _run_agent_loop；并非与上面连续的代码</span>
+<span class="k">try</span>:
+    snapshot = <span class="k">await</span> self._gather_env_snapshot()
+    <span class="k">if</span> snapshot:
+        initial_prompt = f<span class="s">"{initial_prompt}\n\n{snapshot}"</span>
+<span class="k">except</span> Exception:
+    <span class="k">pass</span></pre></div>
+    <div class="foot"><span>实际代码节选：agent.py:904–910、985–992，revision 57fefdb；依赖 Harbor 环境，不能作为独立脚本运行。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="TerminalBench 最终 harness">
-    <div class="top"><b>16 · DISCOVERED CODING HARNESS</b><span>Terminus-KIRA + environment bootstrap</span></div><h2>最终改动很小：把原本要花 2–4 turns 探索的信息提前交给 Agent</h2>
-    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-9-tbench-harness.webp" alt="Discovered TerminalBench harness"></div><div class="stack"><div class="callout green"><b>Claude Opus 4.6</b><span>76.4%；Terminus-KIRA 74.7%。官方 artifact：89 tasks × 5 trials。</span></div><div class="callout"><b>Claude Haiku 4.5</b><span>37.6%；下一名 Goose 35.5%。</span></div><div class="callout orange"><b>Where it helped</b><span>比 Terminus-KIRA 多赢 7/89 tasks，最大改善在 protein-assembly 与 path-tracing。</span></div></div></div>
-    <div class="foot"><span>原论文 Figure 9，CC BY 4.0；论文 §4.3、Appendix B.3；官方 artifact README。</span><span class="pg"></span></div>
+    <div class="top"><b>17 · 最终终端程序</b><span>Terminus-KIRA + 环境查询</span></div><h2>首次调用前提供环境信息；节省 2 到 4 轮是作者解释，未单独受控验证</h2>
+    <div class="body image-side"><div><img src="/lib/papers/meta-harness/figure-9-tbench-harness.webp" alt="Discovered TerminalBench harness" width="1260" height="1148"></div><div class="stack"><div class="callout green"><b>Claude Opus 4.6</b><span>76.4%；Terminus-KIRA 74.7%。官方 artifact：89 题 × 5 次尝试。</span></div><div class="callout"><b>Claude Haiku 4.5</b><span>37.6%；下一名 Goose 35.5%。</span></div><div class="callout orange"><b>改善集中在哪里</b><span>89 个任务中有 7 个的通过表现改善，最大改善在 protein-assembly 与 path-tracing；不是新增解出 7 道整题。</span></div></div></div>
+    <div class="foot"><span>Figure 9、§4.3、Appendix B.3。公开材料没有逐任务探索调用数的受控对照；原图 CC BY 4.0。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="三组实验不能混读">
-    <div class="top"><b>17 · EVIDENCE MAP</b><span>what each experiment can establish</span></div><h2>同一套 Meta-Harness，在三个 domain 上回答的是三种不同问题</h2>
-    <div class="body"><table class="table"><thead><tr><th>Domain</th><th>Search signal</th><th>真正 held-out 的东西</th><th>可以说什么</th><th>不能说什么</th></tr></thead><tbody><tr><td>Classification</td><td>3 datasets 的 search split</td><td>原 dataset test + 9 个 OOD datasets</td><td>harness strategy 可跨 dataset 转移</td><td>context 单位有 tokens / chars 冲突</td></tr><tr><td>Math</td><td>250 problems + GPT-OSS-20B</td><td>200 problems + 4 unseen models</td><td>retrieval policy 跨题与跨模型有效</td><td>不能把 GPT-OSS-20B 也叫 unseen</td></tr><tr><td>TerminalBench-2</td><td>全部 89 public tasks</td><td>没有独立 task split</td><td>同 benchmark discovery 可超过强手写 harness</td><td>不能据此证明 OOD task 泛化</td></tr></tbody></table></div>
+    <div class="top"><b>18 · 三组证据</b><span>每组实验回答不同问题</span></div><h2>同一套 Meta-Harness，在三类任务上回答的是三种不同问题</h2>
+    <div class="body"><table class="table"><thead><tr><th>任务</th><th>搜索反馈</th><th>未参与搜索的部分</th><th>可以说什么</th><th>不能说什么</th></tr></thead><tbody><tr><td>文本分类</td><td>3 个数据集的搜索划分</td><td>原数据集测试题与 9 个其他数据集</td><td>程序策略能换数据集使用</td><td>输入长度有 token / 字符单位冲突</td></tr><tr><td>数学</td><td>250 题与 GPT-OSS-20B</td><td>200 题与另 4 个模型</td><td>检索策略能换题目与模型使用</td><td>GPT-OSS-20B 已参与搜索</td></tr><tr><td>TerminalBench-2</td><td>全部 89 道公开题</td><td>没有独立题目划分</td><td>同题搜索可超过强手写程序</td><td>未证明新分布任务的泛化</td></tr></tbody></table></div>
     <div class="foot"><span>来源：论文 §3–§5、Appendix C；结合官方代码与 artifact 复核。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与限制">
-    <div class="top"><b>18 · TAKEAWAYS</b><span>useful result, narrower claim</span></div><h2>最值得复用的是“完整可检索历史 + 外部验收”，不是某个神奇 mutation operator</h2>
-    <div class="body"><div class="grid2"><div class="panel green"><span class="tag">WHAT SURVIVES</span><h3>工程闭环很强</h3><p>Proposer 读 raw traces、写可执行代码；outer loop 做 import validation、benchmark、frontier 与 final test freezing。</p><p>搜索产物可读、可审计，也能直接迁移到不同 base model。</p></div><div class="panel orange"><span class="tag">WHAT REMAINS OPEN</span><h3>泛化与归因仍不完整</h3><p>只研究 Claude Code + Opus 4.6 proposer；TerminalBench 没有 held-out tasks；开源 repo 自称 cleaned release，仅确认“能运行”。</p><p>未来应比较 proposer、独立 benchmark split、搜索成本与代码复杂度。</p></div></div></div>
+    <div class="top"><b>19 · 结论与限制</b><span>保留结果，也保留适用范围</span></div><h2>可检索的完整历史能改善程序搜索；跨任务基准的泛化仍需验证</h2>
+    <div class="body"><div class="grid2"><div class="panel green"><span class="tag">已经验证</span><h3>原始记录有用</h3><p>提案模型读原始记录、写代码；外层程序检查导入、跑评测、记录候选，并在选定后做最终测试。</p><p>搜索产物可检查，也能换基础模型测试。</p></div><div class="panel orange"><span class="tag">尚未验证</span><h3>泛化与归因仍不完整</h3><p>只研究 Claude Code + Opus 4.6 提案模型；TerminalBench 没有独立题目；开源仓库是整理后的版本，仅确认能运行。</p><p>还需比较不同提案模型、独立测试任务、搜索成本与代码复杂度。</p></div></div></div>
     <div class="foot"><span><a href="/posts/论文解读/meta-harness.html" target="_top">返回文章</a> · <a href="https://arxiv.org/abs/2603.28052">原论文</a> · <a href="https://github.com/stanford-iris-lab/meta-harness">官方代码</a></span><span class="pg"></span></div>
   </section>
 </main>
@@ -146,26 +172,77 @@ initial_prompt = initial_prompt + <span class="s">"\n\n"</span> + snapshot
 <div id="controls" aria-label="幻灯片控制">
   <a id="return-to-article" href="/posts/论文解读/meta-harness.html" target="_self" aria-label="返回解读文章" hidden><span aria-hidden="true">↙</span><span class="return-label"> 返回文章</span></a>
   <button id="prev" type="button" aria-label="上一页">←</button><button id="toc" type="button" aria-label="打开目录">☰</button>
-  <span class="current-title" id="current-title">核心结论</span><span class="counter" id="counter">1 / 18</span>
+  <span class="current-title" id="current-title">核心结论</span><span class="counter" id="counter">1 / 19</span>
   <button id="next" type="button" aria-label="下一页">→</button><button id="full" type="button" aria-label="全屏">⛶ <span class="utility-label">全屏</span></button>
 </div>
-<div id="overview-panel" hidden><div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title"><div class="overview-head"><strong id="overview-title">18 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div><div class="overview-grid" id="overview-grid"></div></div></div>
+<div id="overview-panel" hidden><div class="overview-card" role="dialog" aria-modal="true" aria-labelledby="overview-title"><div class="overview-head"><strong id="overview-title">19 页目录</strong><button id="close-overview" type="button" aria-label="关闭目录">×</button></div><div class="overview-grid" id="overview-grid"></div></div></div>
 <div id="progress"></div>
 <script>
 (() => {
   const slides=[...document.querySelectorAll('#deck .slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
   if(window.self===window.top)returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
-  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
   function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · Meta-Harness`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
   function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
   async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
   function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
   slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
-  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);document.addEventListener('fullscreenchange',scaleDeck);new ResizeObserver(scaleDeck).observe(document.getElementById('controls'));
   addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
   show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+<script>
+(() => {
+  const panel = document.getElementById('overview-panel');
+  const trigger = document.getElementById('toc');
+  const close = document.getElementById('close-overview');
+  const canvas = document.getElementById('deck');
+  const controls = document.getElementById('controls');
+  if (!panel || !trigger || !close) return;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', '幻灯片总览');
+  trigger.setAttribute('aria-controls', panel.id);
+  const synchronize = () => {
+    const open = !panel.hidden;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (canvas) canvas.inert = open;
+    if (controls) controls.inert = open;
+    if (open) close.focus({ preventScroll: true });
+    else trigger.focus({ preventScroll: true });
+  };
+  new MutationObserver(synchronize).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  trigger.setAttribute('aria-expanded', String(!panel.hidden));
+  document.addEventListener('keydown', (event) => {
+    if (!panel.hidden) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'o') {
+        event.preventDefault(); event.stopImmediatePropagation(); close.click(); return;
+      }
+      if (event.key === 'Tab') {
+        const items = [...panel.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+          .filter((item) => item.getClientRects().length > 0);
+        if (items.length) {
+          const index = items.indexOf(document.activeElement);
+          event.preventDefault(); event.stopImmediatePropagation();
+          items[(index + (event.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+        }
+        return;
+      }
+      event.stopImmediatePropagation(); return;
+    }
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault(); event.stopImmediatePropagation(); trigger.click(); return;
+    }
+    if (event.key === 'Escape' && !document.fullscreenElement && window.parent !== window) {
+      window.parent.postMessage({ type: 'paper-deck-escape' }, location.origin);
+    }
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && panel.hidden) document.getElementById('full')?.focus({ preventScroll: true });
+  });
 })();
 </script>
 </body>

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Meta-Harness: End-to-End Optimization of Model Harnesses",
     "kind": "research",
@@ -21,7 +21,7 @@
       "kind": "paper",
       "title": "Meta-Harness: End-to-End Optimization of Model Harnesses",
       "url": "https://arxiv.org/abs/2603.28052",
-      "revision": "v1, 2026-03-30",
+      "revision": "v1, 2026-03-30; current entry checked 2026-10-14",
       "used_for": [
         "problem",
         "method",
@@ -58,7 +58,10 @@
         "benchmarking",
         "frontier",
         "test-finalization",
-        "release-caveat"
+        "release-caveat",
+        "released-classification-case",
+        "pure-evaluator",
+        "reference-config"
       ]
     },
     {
@@ -169,27 +172,27 @@
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么已有 prompt optimizer 不足以处理完整 harness？"
+      "locator": "1. Motivation：单个分数为什么不够诊断完整执行程序？"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与 GEPA、OpenEvolve、TTT-Discover、ACE/MCE 和共同进化方法差在哪？"
+      "locator": "2. Related Work：与提示词优化、程序搜索和共同进化的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. 从一个旧候选到一版新 harness，具体经过哪些步骤？"
+      "locator": "3. Method：搜索循环与一次真实失败诊断"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 三组实验分别证明了什么？"
+      "locator": "4. Experiments：分类、数学和终端实验：评分与泛化含义不同"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 对 Claude Code、Codex 这类完整 harness，最值得复用的是什么？"
+      "locator": "5. Discussion：应复用的历史记录与验收规则"
     },
     {
       "role": "summary",
-      "locator": "Q6. 最后怎样评价这篇论文？"
+      "locator": "6. Conclusion：能支持的结论与仍缺的对照"
     }
   ],
   "coverage": [
@@ -208,7 +211,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "方法的核心是 full-history filesystem。"
+          "quote": "Meta-Harness 改完整代码，允许读取所有旧候选的原始执行记录，但不更新被包裹模型的权重。"
         }
       ]
     },
@@ -232,7 +235,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "提出候选、import validation、benchmark、frontier update 与 test finalization 都是独立阶段。"
+          "quote": "Proposer 写候选，外层决定接口验证、任务划分、超时处理、评分、候选保留和最终测试。"
         }
       ]
     },
@@ -251,11 +254,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "scores-only 的 candidate accuracy 中位数 / 最优值为 34.6 / 41.3"
+          "quote": "分类搜索中，只看分数组的候选准确率中位数 / 最高值是 34.6 / 41.3；加入模型摘要后是 34.9 / 38.7；能检索原始执行记录的完整组达到"
         },
         {
           "artifact": "deck",
-          "quote": "code + score + raw execution traces"
+          "quote": "代码、分数与原始执行记录。"
         }
       ]
     },
@@ -321,7 +324,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Iteration 1 同时做 marker stripping、loop breaker、prompt cleanup 和 checklist，降到 58.9%"
+          "quote": "第 1 轮同时删特殊标记、加循环中止逻辑、清理提示并补检查清单，分数降到 58.9%"
         },
         {
           "artifact": "article",
@@ -349,11 +352,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "89 tasks × 5 trials = 445 trials"
+          "quote": "89 题 × 5 次尝试 = 445 次尝试"
         },
         {
           "artifact": "article",
-          "quote": "同一 89 题用于 search 与 final score"
+          "quote": "同一 89 题用于搜索与最终计分"
         }
       ]
     },
@@ -387,7 +390,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "优化对象是完整代码，反馈是跨 population 的 raw history，模型权重保持冻结。"
+          "quote": "Meta-Harness 改完整代码，允许读取所有旧候选的原始执行记录，但不更新被包裹模型的权重。"
         }
       ]
     },
@@ -416,7 +419,133 @@
         },
         {
           "artifact": "article",
-          "quote": "代码库自述为 cleaned release"
+          "quote": "代码库自述为整理后发布的版本"
+        }
+      ]
+    },
+    {
+      "id": "released-classification-case",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "reference_examples/text_classification/data/symptom_diagnosis/test.jsonl:1; data/evaluators.py:79-99"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本文直接调用固定版本的这个函数"
+        },
+        {
+          "artifact": "article",
+          "quote": "两种输出都由本文编写，官方发布材料没有提供这条测试样例的生成回复。"
+        }
+      ]
+    },
+    {
+      "id": "classification-exactness-and-macro",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "official-code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "data/evaluators.py:62-136; inner_loop.py accuracy aggregation"
+        },
+        {
+          "source_id": "paper",
+          "locator": "Table 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "(14.0 + 86.8 + 45.0) / 3 = 48.6%"
+        },
+        {
+          "artifact": "article",
+          "quote": "Table 2 再把三个数据集的准确率等权平均"
+        }
+      ]
+    },
+    {
+      "id": "classification-programs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figures 5-6; Appendix B.1; Table 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "检索出的数据行，不是十个额外模型"
+        },
+        {
+          "artifact": "article",
+          "quote": "一次较长调用里先列出全部合法标签"
+        }
+      ]
+    },
+    {
+      "id": "math-strong-control-and-grader-gap",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 6; Appendix C.2-C.3; Table 11"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "README and reference_examples release scope"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Dense Retrieval（5 条例子）平均 38.1%，只低 0.7 pp"
+        },
+        {
+          "artifact": "article",
+          "quote": "不能据此展示一个可复现的官方证明题 PASS / FAIL。"
+        }
+      ]
+    },
+    {
+      "id": "published-reference-config",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "reference_examples/text_classification/config.yaml; meta_harness.py baseline setup; README"
+        },
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1; Appendix C.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "不能把仓库默认配置当成 Tables 2–4 的完整复现包。"
         }
       ]
     }
@@ -433,11 +562,11 @@
       "placements": [
         {
           "artifact": "deck",
-          "locator": "Figure 1 左：best-so-far search accuracy"
+          "locator": "Figure 1 左：历次候选最高搜索准确率"
         },
         {
           "artifact": "deck",
-          "locator": "三个结果"
+          "locator": "分类、数学、终端结果要分开读"
         }
       ],
       "permission_status": "verified-allowed",
@@ -509,7 +638,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "Figure 4：每个 candidate 与 best-so-far 曲线"
+          "locator": "Figure 4：各候选分数与历次最高分曲线"
         }
       ],
       "permission_status": "verified-allowed",
@@ -530,7 +659,11 @@
       "placements": [
         {
           "artifact": "deck",
-          "locator": "Figure 5：先 draft，再检索 confirmers 与 challengers"
+          "locator": "Figure 5：先拟定分类，再检索支持与反对它的样例"
+        },
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5（CC BY 4.0）"
         }
       ],
       "permission_status": "verified-allowed",
@@ -551,7 +684,11 @@
       "placements": [
         {
           "artifact": "deck",
-          "locator": "Figure 6：label primer + coverage + local contrastive pairs"
+          "locator": "Figure 6：标签说明、类别覆盖和相近样例对比"
+        },
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 6（CC BY 4.0）"
         }
       ],
       "permission_status": "verified-allowed",
@@ -622,7 +759,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "原论文 Figure 9，CC BY 4.0"
+          "locator": "Figure 9、§4.3、Appendix B.3"
         }
       ],
       "permission_status": "verified-allowed",
@@ -643,11 +780,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "已有 text optimizer 每次迭代提供给 proposer 的反馈规模"
+          "locator": "这是可供诊断的材料量，不是一次实际模型输入的长度"
         },
         {
           "artifact": "deck",
-          "locator": "diagnostic footprint"
+          "locator": "可用记录量与实际模型输入不同"
         }
       ],
       "permission_status": "not-applicable",
@@ -670,7 +807,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "48.6% 平均准确率"
+          "locator": "平均准确率 48.6%"
         }
       ],
       "permission_status": "not-applicable",
@@ -689,11 +826,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "scores-only 的 candidate accuracy"
+          "locator": "分类搜索中，只看分数组的候选准确率中位数 / 最高值是 34.6 / 41.3；加入模型摘要后是 34.9 / 38.7；能检索原始执行记录的完整组达到"
         },
         {
           "artifact": "deck",
-          "locator": "Raw traces 不是装饰"
+          "locator": "去掉原始执行记录后"
         }
       ],
       "permission_status": "not-applicable",
@@ -749,7 +886,7 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "五个模型列都比 no-retrieval 高"
+          "locator": "五个模型列都比无检索高"
         },
         {
           "artifact": "deck",
@@ -772,7 +909,7 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "总体 pass rate 76.4%"
+          "locator": "总体通过率 76.4%"
         },
         {
           "artifact": "deck",
@@ -799,7 +936,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "中位读取 82 个文件"
+          "locator": "读取文件数的中位数是 82"
         }
       ],
       "permission_status": "not-applicable",
@@ -841,12 +978,17 @@
       "label": "Table 11",
       "source_id": "paper",
       "source_locator": "p. 24, Table 11",
-      "status": "omitted",
-      "rationale": "The four-source 200-problem breakdown is described as a held-out mixed IMO-level set; per-source counts are not needed for the central mechanism.",
-      "placements": [],
+      "status": "redrawn",
+      "rationale": "The complete four-source 200-problem breakdown is restated in the article to distinguish answer, proof and research-style tasks.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "最终 200 道题由 IMO-AnswerBench 100 题"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "CC BY 4.0",
-      "credit": "",
+      "credit": "根据原论文 Table 11 整理",
       "asset_paths": []
     },
     {
@@ -864,7 +1006,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "propose → validate → evaluate → log"
+          "locator": "提案 → 检查代码 → 评测 → 保存记录"
         }
       ],
       "permission_status": "not-applicable",
@@ -912,7 +1054,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 4080,
+      "height": 1455
     },
     {
       "path": "/lib/papers/meta-harness/figure-3-pareto.svg",
@@ -939,7 +1083,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 386,
+      "height": 237
     },
     {
       "path": "/lib/papers/meta-harness/figure-5-draft-verification.webp",
@@ -951,8 +1097,11 @@
       "license_status": "verified-allowed",
       "license_basis": "Paper licensed CC BY 4.0.",
       "used_in": [
+        "article",
         "deck"
-      ]
+      ],
+      "width": 1260,
+      "height": 860
     },
     {
       "path": "/lib/papers/meta-harness/figure-6-label-primed.webp",
@@ -964,8 +1113,11 @@
       "license_status": "verified-allowed",
       "license_basis": "Paper licensed CC BY 4.0.",
       "used_in": [
+        "article",
         "deck"
-      ]
+      ],
+      "width": 1300,
+      "height": 1060
     },
     {
       "path": "/lib/papers/meta-harness/figure-7-val-test.png",
@@ -992,7 +1144,21 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1320,
+      "height": 1060
+    },
+    {
+      "path": "/lib/papers/meta-harness/reading-case.svg",
+      "origin": "generated",
+      "source_id": "official-code",
+      "source_locator": "reference_examples/text_classification/data/symptom_diagnosis/test.jsonl:1; data/evaluators.py:79–99; inner_loop.py:88–104",
+      "credit": "根据官方测试数据与标签匹配规则绘制；待评分输出由本文编写，非模型记录",
+      "used_in": [
+        "article"
+      ],
+      "width": 600,
+      "height": 1280
     },
     {
       "path": "/lib/papers/meta-harness/figure-9-tbench-harness.webp",
@@ -1006,10 +1172,179 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1260,
+      "height": 1148
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Read complete current note and all 19 slides. Traced symptom classification exact-label 1/0 judge, retrieved five confirming/challenging rows not agents, terminal89x5=445 fixed search tasks and environment-query revision. Recomputed48.6 three-way macro and38.8 math versus38.1 dense best, preserved two model regressions, only four held-out models and classification character/token discrepancy."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "30735523b828a0dcad5510fb93fd07919a96e50b9c7c5a8ac88dff5062fe448b",
+      "built_article": "ba412b424a0417b2781ebf8af586a77fc77dee5260765f804213d9776b7f5ec0",
+      "deck": "bb3cc8eb56f487b62edbb36af98a09725170137e21f324faa9fcc868077ecba0",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-055/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-055/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-055.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "task harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1"
+        }
+      ],
+      "article_quote": "Task harness 是包在固定模型外的程序：它构造提示，维护记忆，决定怎样检索、调用工具、更新状态和结束任务"
+    },
+    {
+      "term": "proposer",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2"
+        }
+      ],
+      "article_quote": "Proposer（候选提出者）是负责改写程序的 Claude Code + Opus 4.6"
+    },
+    {
+      "term": "evaluator",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2"
+        }
+      ],
+      "article_quote": "evaluator（评测程序）在它之外验证接口、执行任务并返回分数"
+    },
+    {
+      "term": "Pareto frontier",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2"
+        }
+      ],
+      "article_quote": "这里的前沿保留“更准但更贵”和“较便宜但稍低分”等互不全面胜出的候选，避免过早把准确率与成本压成一个分数"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -1065,5 +1400,18 @@
       "largest-table-or-code",
       "final"
     ]
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review"
+  },
+  "current_review": {
+    "date": "2026-10-14",
+    "main_agent_primary_text": "complete including appendices",
+    "main_agent_rendered_pages": "all 26 pages via contacts",
+    "case_execution": "check-055-released-judge.py called release pure evaluator at fixed revision; [true,false]; not model/benchmark reproduction",
+    "language_pass": "complete article and 19-slide deck checked; browser QA pending"
   }
 }

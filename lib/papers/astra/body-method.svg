@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="940" viewBox="0 0 1000 940" role="img" aria-labelledby="title desc">
+  <title id="title">ASTRA：分别生成示范与环境，再分阶段训练工具调用模型</title>
+  <desc id="desc">两条生成流程分别固定监督微调示范和强化学习环境。监督微调之后进行强化学习，两个阶段只更新工具调用模型。</desc>
+  <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:34px;font-weight:750}.head{font-size:29px;font-weight:700}.label{font-size:27px;font-weight:650}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}.node{fill:#fff;stroke:#b7c5cf;stroke-width:1.5}.arrow{stroke:#647584;stroke-width:3;fill:none}</style>
+  <rect width="1000" height="940" fill="#fff"/>
+  <text x="40" y="54" class="title">两条生成流程，服务于两个训练阶段</text>
+  <text x="40" y="95" class="body">训练材料先生成并固定；训练只更新调用工具的模型。</text>
+  <rect x="40" y="126" width="920" height="300" fill="#f1f5f8" stroke="#c4d3dd"/>
+  <text x="64" y="168" class="head" fill="#245f87">① 生成固定示范，用于监督微调（SFT）</text>
+  <text x="64" y="207" class="body">输入：1,585 个 MCP 服务的工具文档。</text>
+  <rect x="64" y="232" width="240" height="94" class="node"/>
+  <text x="184" y="268" text-anchor="middle" class="label">工具文档</text>
+  <text x="184" y="306" text-anchor="middle" class="small">名称、参数、用途</text>
+  <path d="M316 279h40m0 0-10-8m10 8-10 8" class="arrow"/>
+  <rect x="368" y="232" width="264" height="94" class="node"/>
+  <text x="500" y="268" text-anchor="middle" class="label">调用关系图</text>
+  <text x="500" y="306" text-anchor="middle" class="small">采样调用链、造任务</text>
+  <path d="M644 279h40m0 0-10-8m10 8-10 8" class="arrow"/>
+  <rect x="696" y="232" width="240" height="94" class="node"/>
+  <text x="816" y="268" text-anchor="middle" class="label">执行示范</text>
+  <text x="816" y="306" text-anchor="middle" class="small">真实或模拟工具</text>
+  <text x="64" y="367" class="body">用七项评分筛选记录，大部分由 LLM 判分。</text>
+  <text x="64" y="405" class="label" fill="#245f87">输出：54,885 条固定示范对话。</text>
+  <rect x="40" y="458" width="920" height="340" fill="#f2f6f4" stroke="#c6d8cf"/>
+  <text x="64" y="500" class="head" fill="#356954">② 生成固定环境，用于在线强化学习（RL）</text>
+  <text x="64" y="539" class="body">输入：可拆成 1–20 个推理步骤的多步问答。</text>
+  <rect x="64" y="564" width="240" height="94" class="node"/>
+  <text x="184" y="600" text-anchor="middle" class="label">问答依赖图</text>
+  <text x="184" y="638" text-anchor="middle" class="small">拆出子问题与答案</text>
+  <path d="M316 611h40m0 0-10-8m10 8-10 8" class="arrow"/>
+  <rect x="368" y="564" width="264" height="94" class="node"/>
+  <text x="500" y="600" text-anchor="middle" class="label">Python 模拟工具</text>
+  <text x="500" y="638" text-anchor="middle" class="small">检查执行与目标输出</text>
+  <path d="M644 611h40m0 0-10-8m10 8-10 8" class="arrow"/>
+  <rect x="696" y="564" width="240" height="94" class="node"/>
+  <text x="816" y="600" text-anchor="middle" class="label">模型做任务</text>
+  <text x="816" y="638" text-anchor="middle" class="small">每次最多 32 轮</text>
+  <text x="64" y="699" class="body">输出：6,596 个固定环境；工具与奖励目标不变。</text>
+  <text x="64" y="738" class="body">F1 奖励考虑解决的子目标数与工具调用次数。</text>
+  <text x="64" y="777" class="body">同题采样多条记录，按组内表现更新当前模型。</text>
+  <text x="500" y="854" text-anchor="middle" class="head">Qwen3 基座 → SFT 检查点 → 多轮 GRPO</text>
+  <text x="40" y="902" class="small">根据论文 §§2–3、Figures 2–4 重绘；能运行不代表真实 API 等价。</text>
+</svg>

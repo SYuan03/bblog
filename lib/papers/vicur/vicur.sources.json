@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "ViCuR: Visual Cues as Recoverable Privilege for Multimodal On-Policy Distillation",
     "kind": "research",
@@ -52,32 +52,39 @@
       }
     ],
     "source_visuals_expected": 19,
-    "visual_inventory_complete": true
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. Answer-side privilege 为什么会制造 mismatch？"
+      "locator": "1. Motivation：知道答案仍可能读错图"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与 Visual-SDPO 的 visual feedback 有何不同？"
+      "locator": "2. Related Work：与答案提示蒸馏和视觉读取方法的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. SinkTrack module 实际做什么？"
+      "locator": "3. Method：训练流程与相交弦案例"
     },
     {
       "role": "experiments",
-      "locator": "Q4. setting 与结果到底怎样？"
+      "locator": "4. Experiments：平均增益、基线退化与模块消融"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 对 multimodal game query 应怎样分层？"
+      "locator": "5. Discussion：先验证线索，再判断新增结构"
     },
     {
       "role": "summary",
-      "locator": "Q6. 官方 repo 还缺哪些关键东西？"
+      "locator": "6. Conclusion：结论与代码复现边界"
     }
   ],
   "coverage": [
@@ -90,13 +97,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 1-2"
+          "locator": "§1–3; Figures 1–2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "teacher 如果直接看到 reference answer 或 rationale，它的 next-token preference 可能依赖 student 在 inference 时永远无法恢复的信息。"
+          "quote": "训练时给负责评分的模型补充画面线索，让作答模型学会从原图找到正确关系。"
         }
       ]
     },
@@ -109,13 +116,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 3; Figure 3"
+          "locator": "§3.2–3.4; Eq. 6–8"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "大约每五个 decoder layers，专用 sink token 在 prefill 中对全部 visual tokens 做一次 cross-attention。"
+          "quote": "student 先独立回答，teacher 再用视觉线索评估同一份回答，梯度只更新 student 及新增分支。"
+        },
+        {
+          "artifact": "article",
+          "quote": "新增分支随 student 的作答损失一起训练，没有额外的线索生成或文字匹配损失。"
         }
       ]
     },
@@ -128,13 +139,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1-4"
+          "locator": "Tables 1–2, 5"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "2B 与 8B 分别提升 1.19 和 1.24，但 ordinary OPSD 在这组实验里低于未训练 base。"
+          "quote": "2B 的 (26.58+51.60+63.4+33.90+40.00+49.22+57.8)/7=46.07 可以直接复算。"
+        },
+        {
+          "artifact": "article",
+          "quote": "8B 提高 1.24，仍比未训练模型低 1.37。"
         }
       ]
     },
@@ -147,13 +162,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Repository audit"
+          "locator": "§6; Table 2; Table 5; Appendix D and F.1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "仓库有 SinkTrack 的 Transformers/vLLM model files 与 distillation plumbing，但没有 cue-generation pipeline、prepared teacher_prompt data 或 trained recovery checkpoint。"
+          "quote": "§6 又称 8B Geometry3K 完整版低于提示版，与 Table 2 的 57.05>56.76 不一致"
+        },
+        {
+          "artifact": "article",
+          "quote": "它衡量提示格式复述，不能排除不含这个词的答案抄袭或错误捷径。"
         }
       ]
     },
@@ -166,13 +185,90 @@
       "source_locators": [
         {
           "source_id": "code",
-          "locator": "SinkTrack Transformers/vLLM files and generic training script"
+          "locator": "vicur/modeling_qwen3_vl.py; vicur/qwen3_vl.py; run_qwen3_vl_example.sh @a244a244fc24a202bd720f7aac069bb8bd105b06"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "仓库有 SinkTrack 的 Transformers/vLLM model files 与 distillation plumbing"
+          "quote": "在 0、5、10…层注入；不是从第 5 层才第一次运行。"
+        },
+        {
+          "artifact": "article",
+          "quote": "示例默认是 Geometry3K 式 1,024／2,048 长度、100 epoch，而非主表的 Vision R1 设置"
+        }
+      ]
+    },
+    {
+      "id": "real-case-and-verdict",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figures 8, 10; Appendix E.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "把 4 与 x 配在一起，于是 4x=6×8 ，得到 x=12 。"
+        },
+        {
+          "artifact": "article",
+          "quote": "正确恢复配对，得到 4×6=x×8 ，因此 x=3 。"
+        },
+        {
+          "artifact": "article",
+          "quote": "三者正确次数分别是 5/10、7/10、10/10 。"
+        }
+      ]
+    },
+    {
+      "id": "cue-origin-and-theory-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1, §4; Appendix F.1; source artifact"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文没有公开这批线索由谁、用什么模型和提示批量生成，不能声称它们全是人工标注。"
+        },
+        {
+          "artifact": "article",
+          "quote": "现实的外部模型或标注者会犯错、产生不同措辞，也可能掺入答案知识"
+        }
+      ]
+    },
+    {
+      "id": "inference-latency-boundary",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 6–7; Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "输入处理时间增加 4.3%–24.5%，但逐 token 生成阶段不再运行分支。"
+        },
+        {
+          "artifact": "article",
+          "quote": "不能凭“无额外解码操作”就宣称端到端一定更快。"
         }
       ]
     }
@@ -183,37 +279,51 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 1; §3.1–3.3",
+      "status": "redrawn",
+      "rationale": "答案提示与视觉线索的教师输入区别在Q2比较表及机制SVG重构，明确部署仍有原图、新分支，不把recoverable当泄漏已消除。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "ViCuR 同时改变 teacher 的提示和 student 的视觉读取结构。"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/vicur/training-mechanism.svg"
+      ]
     },
     {
       "id": "figure-2",
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 2; §3.2–3.4",
+      "status": "redrawn",
+      "rationale": "重绘首token query读取visual keys/values再加回首token，补零起始层号与训练/vLLM两端边界。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "每隔五层"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-2 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/vicur/training-mechanism.svg"
+      ]
     },
     {
       "id": "figure-3",
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3",
+      "source_locator": "Figure 3; §5.2",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "全回答与前后50%分段logprob训练曲线未绘，正文未将概率接近直接解释成最终准确率提高。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -225,9 +335,9 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4",
+      "source_locator": "Figure 4; Appendix D",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "OPSD各epoch完整Hint曲线未绘，只保留第五epoch实际完整词计数，避免诊断图冒充所有泄漏率。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -239,9 +349,9 @@
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5",
+      "source_locator": "Figure 5; Appendix B.2",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "更多teacher/student pair几何增量图未呈现；正文保留主2B/8B和强teacher对照，不把两点概括为任意规模可提升。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -253,9 +363,9 @@
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6",
+      "source_locator": "Figure 6; Appendix B.3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "Geometry3K全rollout训练/test准确率与logprob差曲线未绘，避免以图代替未公开逐步数值。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -267,9 +377,9 @@
       "kind": "figure",
       "label": "Figure 7",
       "source_id": "paper",
-      "source_locator": "Figure 7",
+      "source_locator": "Figure 7; Appendix B.3",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "四等分token曲线未展示，文章将实际sampledtokenloss与全词表理论KL分开，不声称完整分段机制诊断。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -281,23 +391,30 @@
       "kind": "figure",
       "label": "Figure 8",
       "source_id": "paper",
-      "source_locator": "Figure 8",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 8; Appendix D–E.1",
+      "status": "redrawn",
+      "rationale": "真实弦图的推理提示/视觉提示差别重绘，定理与线段关系区别明示，不把提示题面编成benchmark完整日志。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 8、10 与附录 E.1 的真实 Geometry3K 案例重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-8 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/vicur/chord-case.svg"
+      ]
     },
     {
       "id": "figure-9",
       "kind": "figure",
       "label": "Figure 9",
       "source_id": "paper",
-      "source_locator": "Figure 9",
+      "source_locator": "Figure 9; Appendix D",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "OPD无提示基线的Hint低计数图未展示；仅说明explicitHint与答案复制不同，未用OPSD数据替代OPD统计。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -309,23 +426,30 @@
       "kind": "figure",
       "label": "Figure 10",
       "source_id": "paper",
-      "source_locator": "Figure 10",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 10; Appendix E.1",
+      "status": "redrawn",
+      "rationale": "两真实案例概览选相交弦重绘、MathVista曲线用文字说明；保留估计数值是模型输出不是原曲线数据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 8、10 与附录 E.1 的真实 Geometry3K 案例重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-10 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/vicur/chord-case.svg"
+      ]
     },
     {
       "id": "figure-11",
       "kind": "figure",
       "label": "Figure 11",
       "source_id": "paper",
-      "source_locator": "Figure 11",
+      "source_locator": "Figure 11; Appendix E.1",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "两题各层attentionheatmap未复制，颜色权重仅支持机制相容，不可给出锁定正确区域的因果保证。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -337,27 +461,39 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 1; §4–5",
+      "status": "redrawn",
+      "rationale": "七项等权主平均重排，保留未训练和GRPO，防止只展示OPSD增量掩盖8B仍退化。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Table 1 重绘，保留未训练与 GRPO 对照。"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/vicur/main-evidence.svg"
+      ]
     },
     {
       "id": "table-2",
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 2; §5.2",
+      "status": "redrawn",
+      "rationale": "Geometry3K独立100epoch的四组消融重排在deck表，明确最后100步平均、8B分支额外仅0.29。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "最大的单项贡献来自换提示内容"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -365,9 +501,9 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3",
+      "source_locator": "Table 3; Appendix A.1",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "主VisionR1与Geometry3K配置未保留整表，仅逐项解释275步/batch/长度/生成次数，避免混用示例配置。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -379,9 +515,9 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4",
+      "source_locator": "Table 4; Appendix A.2",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "VLMEvalKit默认judge与温度/长度由文字说明，未展示完整参数表，不声称不同benchmark使用同一字符串judge。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -393,9 +529,9 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5",
+      "source_locator": "Table 5; Appendix B.1",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "跨几何迁移表未整表绘，保留最区分性的8BMathVista87.03→85.77反例，防止“模块必然提高”结论。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -407,9 +543,9 @@
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6",
+      "source_locator": "Table 6; Appendix C",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "总训练时间表未重绘，文章只报单机配置和推理成本，未用无decode额外操作宣称训练无成本。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -421,9 +557,9 @@
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7",
+      "source_locator": "Table 7; Appendix C",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "small/large完整prefill/decode/length/total列未重画，保留prefill4.3%–24.5%和端到端长度混杂。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -435,9 +571,9 @@
       "kind": "table",
       "label": "Table 8",
       "source_id": "paper",
-      "source_locator": "Table 8",
+      "source_locator": "Table 8; Appendix D",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "各scale/epoch全部Hintsamples/occurrences未列，只给8B第五epoch核对诊断分母及局限。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -445,8 +581,177 @@
       "asset_paths": []
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/vicur/training-mechanism.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 1–2; §3.2–3.4; code @a244a244",
+      "credit": "按 §3.2–3.4 与固定版本代码重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/chord-case.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-8",
+      "source_id": "paper",
+      "source_locator": "Figures 8, 10; Appendix E.1",
+      "credit": "根据 Figure 8、10 与附录 E.1 的真实 Geometry3K 案例重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/main-evidence.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table 1, Overall Avg. across seven datasets",
+      "credit": "根据 Table 1 重绘，保留未训练与 GRPO 对照",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Separate same-sized teacher scoring current student answer,visual cue from original image,first token at layers0,5,10 reads all visual tokens; division0.4/.2 log=.693; chord pairing4*6=x*8 gives3 vs4x=6*8 gives12. Full7-metric means,2B1.19/8B1.24 gains vs OPSD but below GRPO,8B transfer87.03->85.77 and source contradiction preserved."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "4eed1597c2dd67b1e8487a3a30299d18c769fa90c69a49a7a04710ec8607ed94",
+      "built_article": "89a589f4ce46aebfd8f7a08c5c9a5693af3389c81fec9ebd8bb6b3277035b751",
+      "deck": "59d832341a516b6b1fb53899f87de6c36cbe5f1c7f20abc089fe7dd4c50c218d",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-083/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T08-43-12-770Z-083/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-083.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction.",
+      "previous_failed_report": "output/playwright/games/current-2026-10-14T08-25-17-814Z-083/foundation-deck-qa.json (opening image touched footer; not counted as passed; fixed and verified in selected 08-43 batch)"
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_qa": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -502,5 +807,119 @@
       "largest-table-or-code",
       "final"
     ]
-  }
+  },
+  "terminology": [
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Figure 1"
+        }
+      ],
+      "article_quote": "训练中的作答模型称为 student。它只收到图片与问题，先生成一份回答"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Eq. 5–8"
+        }
+      ],
+      "article_quote": "评分模型称为 teacher，多看一段训练时才提供的提示，再计算 student 已经写出的每个 token 的概率。"
+    },
+    {
+      "term": "visual cue",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Figure 8"
+        }
+      ],
+      "article_quote": "ViCuR 的提示描述原图中的关系，作者称它为 visual cue。"
+    },
+    {
+      "term": "on-policy distillation（OPD）",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Eq. 6–8"
+        }
+      ],
+      "article_quote": "这种在 student 自己生成的回答上训练的方法叫 on-policy distillation（OPD）；teacher 使用同尺寸模型时，本文沿用 OPSD 的名称。"
+    },
+    {
+      "term": "visual tokens",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 2"
+        }
+      ],
+      "article_quote": "图片先被编码成一组 visual tokens，即图片区域对应的向量。"
+    },
+    {
+      "term": "prefill",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 2"
+        }
+      ],
+      "article_quote": "处理整段输入的阶段叫 prefill。"
+    },
+    {
+      "term": "cross-attention",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 2"
+        }
+      ],
+      "article_quote": "cross-attention 为各区域计算权重，加权汇总后，再加回这个首 token 的向量。"
+    },
+    {
+      "term": "hidden state",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 2"
+        }
+      ],
+      "article_quote": "序列中第一个 <|im_start|> token 的 hidden state（内部向量）作为一个 query，读取当前层全部视觉向量作为 keys 与 values。"
+    }
+  ]
 }

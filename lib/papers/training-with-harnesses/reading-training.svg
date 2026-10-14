@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1260" viewBox="0 0 600 1260" role="img" aria-labelledby="title desc">
+<title id="title">同一份回答，两种输入条件</title><desc id="desc">当前模型直接采样回答。Harness 另行调用当前模型组装输入 C。学生只看题目，冻结初始副本多看 C，两边评估同一份回答的下一词概率，只更新学生。论文与公开代码的 KL 顺序不同。</desc>
+<defs><style>text{font-family:"PingFang SC",Arial,sans-serif;fill:#24292f}.title{font-size:32px;font-weight:700}.h{font-size:29px;font-weight:700}.b{font-size:28px}.s{font-size:24px;fill:#536171}.box{fill:#f5f7f9;stroke:#d1dbe4;stroke-width:2}.arrow{stroke:#536171;stroke-width:3;marker-end:url(#a)}</style><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#536171"/></marker></defs>
+<rect width="600" height="1260" fill="#fff"/>
+<text class="title" x="28" y="50">同一份回答，两种输入条件</text>
+<text class="s" x="28" y="88">OPHSD · 一次参数更新</text>
+<rect class="box" x="28" y="120" width="544" height="136" rx="8"/>
+<text class="h" x="48" y="162">① 当前模型独立作答</text>
+<text class="b" x="48" y="204">只读原题 x，采样回答 ŷ。</text>
+<text class="s" x="48" y="240">这份回答是后面共同评估的对象。</text>
+<path class="arrow" d="M300 266V296"/>
+<rect class="box" x="28" y="308" width="544" height="182" rx="8"/>
+<text class="h" x="48" y="350">② Harness 另起一条路径</text>
+<text class="b" x="48" y="392">仍调用当前模型，检索或规划。</text>
+<text class="b" x="48" y="432">把原题与中间材料组装成 C。</text>
+<text class="s" x="48" y="473">不改写 ŷ，也不拿最终答案替换 ŷ。</text>
+<path class="arrow" d="M300 500V530"/>
+<rect x="28" y="542" width="544" height="300" rx="8" fill="#eef4fa" stroke="#a9c5df" stroke-width="2"/>
+<text class="h" x="48" y="584">③ 在同一个回答位置算概率</text>
+<text class="b" x="48" y="630">Student：原题＋ŷ 的已有前缀</text>
+<text class="b" x="48" y="672">→ 下一个 token 的分布 pS</text>
+<path d="M48 698H552" stroke="#cad7e4"/>
+<text class="b" x="48" y="738">冻结初始副本：C＋相同前缀</text>
+<text class="b" x="48" y="780">→ 下一个 token 的分布 pT</text>
+<text class="s" x="48" y="824">Token 是模型每步预测的文字单位。</text>
+<path class="arrow" d="M300 852V882"/>
+<rect class="box" x="28" y="894" width="544" height="180" rx="8"/>
+<text class="h" x="48" y="936">④ 比较分布，只更新 Student</text>
+<text class="b" x="48" y="979">论文：KL(pT || pS)</text>
+<text class="b" x="48" y="1021">公开代码默认：KL(pS || pT)</text>
+<text class="s" x="48" y="1058">方向不同，不能混称同一训练协议。</text>
+<text class="b" x="28" y="1125">下一批重新采样、重新运行 harness。</text>
+<text class="s" x="28" y="1167">Teacher 权重始终冻结；它的输入会变。</text>
+<text class="s" x="28" y="1222">根据 Figure 1、Eq. 3 与官方代码重绘</text>
+</svg>

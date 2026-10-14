@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>GAGAR 论文图解</title>
-  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
+  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2">
 </head>
 <body>
 <div class="viewport"><main class="stage" aria-label="GAGAR 论文图解">
@@ -16,7 +16,7 @@
       <div class="grid g3">
         <div class="card red"><h3>0/1 奖励</h3><p>所有通过测试的执行轨迹都得到相同奖励。一次精准修复和一次带有多余改动的修复没有区别。</p></div>
         <div class="card blue"><h3>主动检查代码</h3><p>另一个能读取代码仓库的模型系统担任判分 Agent，同时查看任务、执行轨迹、代码改动与测试输出，只给成功候选排序。</p></div>
-        <div class="card green"><h3>重新分配</h3><p>低质量成功样本让出一部分 advantage，高质量样本得到更多训练权重。</p></div>
+        <div class="card green"><h3>重新分配</h3><p>低质量成功样本让出一部分正训练权重（advantage），高质量样本得到更多权重。</p></div>
       </div>
     </div>
     <div class="foot"><span>论文第 1、3 节</span><span>1 / 12</span></div>
@@ -75,17 +75,17 @@
     <h2>质量排序先变成系数，再作用于正 advantage</h2>
     <div class="content">
       <div class="grid g3">
-        <div class="card green"><h3>T1</h3><p>各维度至少 4 分且没有严重问题。第一名系数为 1.0，后续并列组为 0.9。</p></div>
-        <div class="card orange"><h3>T2</h3><p>中间档按并列组排名，从 0.85 线性下降到 0.4。</p></div>
-        <div class="card red"><h3>T3</h3><p>包含未要求的大规模重写、只对测试生效的绕过方案等严重缺陷，系数固定为 0.2。</p></div>
+        <div class="card green"><h3>T1</h3><p>各维度至少 4 分且没有严重问题。第一并列组全部为 1.0，后续组为 0.9。</p></div>
+        <div class="card orange"><h3>T2</h3><p>不属于 T3、又未达到 T1 的中间档。按并列组排名从 0.85 降到 0.4；只有一组则为 0.85。</p></div>
+        <div class="card red"><h3>T3</h3><p>确认有未要求的重写、测试特殊处理、方案得 1 分，或精简与副作用两项都 ≤2。系数固定 0.2。</p></div>
       </div>
     </div>
-    <div class="foot"><span>论文附录 A.1、公式 6</span><span>5 / 12</span></div>
+    <div class="foot"><span>附录 A.1、公式 6：测试特殊处理属 T3；确认使用泄漏或外部答案时，先将正确性 reward 置零。</span><span>5 / 12</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>06 · 公式构造例</span><span>不是公开的真实案例</span></div>
-    <h2>一个解释性例子：为什么必须重新分配，而不是直接打折</h2>
+    <h2>公式例：如何保留原来正权重的总量</h2>
     <p class="lead">论文没有发布真实尝试组。下面只演示公式 2，不代表观察到的训练样本。</p>
     <div class="content">
       <div class="grid g3">
@@ -106,14 +106,14 @@
         <div class="card green"><h3>上限未触发</h3><p>正 advantage 总量不变，失败样本的 advantage 不变，组内平均值仍为 0。</p></div>
         <div class="card red"><h3>上限触发</h3><p>λ 被截到 1.5，随后重新减去组内平均值。排序保留，但正权重总量与失败样本的 advantage 不再严格保持。</p></div>
       </div>
-      <div class="formula">λ_bnd = min(λ, 1.5)</div>
+      <div class="formula">λ_bnd = min(λ, 1.5)<br>[0.75,0.15,−0.5,−0.5] → [0.775,0.175,−0.475,−0.475]</div><p class="lead">重新居中后仍零和，但正总量为 0.95，不再是 1。直接对质量 reward 重新居中也能零和；论文只降权消融没有测试这项对照。</p>
     </div>
     <div class="foot"><span>论文附录 A.2、公式 7</span><span>7 / 12</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>08 · 主要结果</span><span>DeepSWE 第 28 步</span></div>
-    <h2>同一模型存档上，GAGAR 同时提高通过率并缩短执行轨迹</h2>
+    <h2>同一训练步数比较，GAGAR 同时提高通过率并缩短执行轨迹</h2>
     <div class="content">
       <div class="grid g3">
         <div class="metric"><strong>62.2 vs 50.2</strong><span>DeepSWE v1.1 的三次采样平均通过率，GAGAR 对二元奖励基线，图中相差 12.0 个百分点。</span></div>
@@ -133,21 +133,21 @@
         <div class="metric"><strong>69.8%</strong><span>成功候选的平均胜率。</span></div>
         <div class="metric"><strong>65.0%</strong><span>在尝试组内排名第一的比例，并列时平分。</span></div>
       </div>
-      <div class="callout red"><p>固定随机抽取 30 个 DeepSWE 任务，由 Claude Opus 5 读取保存的执行轨迹、代码改动与测试结果。论文没有报告人工复核或不同判分者之间的一致程度。</p></div>
+      <div class="callout red"><p>随机抽取 30 个任务，每种方法最多三次尝试，包括失败；匿名并随机排序，由 Claude Opus 5 共同审查。69.8% 胜率只算成功候选，不是整个审计的分母。未报告人工审查一致性。</p></div>
     </div>
     <div class="foot"><span>论文第 4.3 节、图 3</span><span>9 / 12</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>10 · 消融实验</span><span>重新分配是否重要</span></div>
-    <h2>只给低质量成功样本降权，会让正负训练信号失衡</h2>
+    <h2>未经重新居中的单纯降权，在本实验中更不稳定</h2>
     <div class="content">
       <table class="table">
         <thead><tr><th>DeepSWE 第 28 步</th><th>完整 GAGAR</th><th>只降权</th></tr></thead>
         <tbody><tr><td>三次采样平均通过率</td><td class="ours">62.2%</td><td>56.2%</td></tr><tr><td>平均交互轮数</td><td class="ours">111.6</td><td>143.5</td></tr><tr><td>平均 token 数</td><td class="ours">172.9k</td><td>236.0k</td></tr><tr><td>第 30 步的策略熵（输出选择的分散程度）</td><td class="ours">0.513</td><td class="bad">0.905</td></tr></tbody>
       </table>
     </div>
-    <div class="foot"><span>论文第 4.4 节、图 4</span><span>10 / 12</span></div>
+    <div class="foot"><span>论文第 4.4 节、图 4；这组消融没测试对质量奖励重新居中，不能否定所有奖励变换。</span><span>10 / 12</span></div>
   </section>
 
   <section class="slide">
@@ -167,7 +167,7 @@
     <h2>值得借鉴的是训练权重设计，最需要补的是判分证据</h2>
     <div class="content">
       <div class="grid g2">
-        <div class="card blue"><h3>可复用</h3><p>把可执行测试保留为正确性门槛，再在成功轨迹内比较可维护性；同时守住正负 advantage 的量级。</p></div>
+        <div class="card blue"><h3>可复用</h3><p>保留可执行测试，在成功轨迹内比较质量并重分配正权重。无上限公式精确保留正总量；带上限实现仍零和，但量级可能改变。</p></div>
         <div class="card orange"><h3>下一项实验</h3><p>公开匿名化的任务、尝试组、代码改动和评分数据包，让人工审查者与不同判分 Agent 重复评分，并报告稳定性和开发者返工时间。</p></div>
       </div>
     </div>
@@ -176,6 +176,6 @@
 </main></div>
 <div class="overview" aria-label="页面总览"></div>
 <nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/gagar.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
-<script src="/lib/decks/paper-deck-v2.js"></script>
+<script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script>
 </body>
 </html>

@@ -1,18 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
-  <title id="title">Logbert benchmark case</title>
-  <desc id="desc">A fixed ten-row log fixture is loaded, the Statistic tab is selected, and exact programmatic and visual assertions decide the result.</desc>
-  <style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#1f2933}.h{font-size:34px;font-weight:760}.k{font-size:14px;font-weight:800;letter-spacing:1.4px}.t{font-size:21px;font-weight:720}.p{font-size:17px;fill:#52606d}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px}.box{fill:#fff;stroke:#cbd3da;stroke-width:2}.blue{fill:#eaf2f8;stroke:#3977a6}.green{fill:#e9f4ef;stroke:#2e806f}.orange{fill:#fbefe7;stroke:#bd6737}.red{fill:#f9eceb;stroke:#a84644}.arrow{stroke:#7b8794;stroke-width:3;fill:none;marker-end:url(#m)}</style>
-  <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#7b8794"/></marker></defs>
-  <rect width="1400" height="760" fill="#f7f7f4"/>
-  <text x="55" y="58" class="h">真实 case：Logbert 的 Statistic 页面怎样判 PASS / FAIL</text>
-  <g transform="translate(55 100)"><rect class="box blue" width="250" height="250" rx="10"/><text x="20" y="36" class="k" fill="#3977a6">1 · FIXTURE</text><text x="20" y="76" class="t">sample_log4net_mixed.log</text><text x="20" y="112" class="p">固定 10 条消息：</text><text x="20" y="147" class="mono">Info  = 5</text><text x="20" y="178" class="mono">Error = 3</text><text x="20" y="209" class="mono">Debug = 2</text><text x="20" y="238" class="p">fixture 随隐藏测试分发给 evaluator</text></g>
-  <path class="arrow" d="M315 225H370"/>
-  <g transform="translate(380 100)"><rect class="box orange" width="250" height="250" rx="10"/><text x="20" y="36" class="k" fill="#bd6737">2 · ACTIONS</text><text x="20" y="76" class="t">打开 → 载入 → 等待 → 切页</text><text x="20" y="112" class="mono">File → New Logger</text><text x="20" y="143" class="mono">select fixture; OK</text><text x="20" y="174" class="mono">wait Number populated</text><text x="20" y="205" class="mono">click Statistic</text><text x="20" y="238" class="p">交互深度：0 → 1 → 2 → 3</text></g>
-  <path class="arrow" d="M640 225H695"/>
-  <g transform="translate(705 100)"><rect class="box green" width="290" height="250" rx="10"/><text x="20" y="36" class="k" fill="#2e806f">3 · PROGRAMMATIC</text><text x="20" y="76" class="t">UI Automation 读取精确状态</text><text x="20" y="112" class="mono">sorted(labels)</text><text x="20" y="143" class="mono">== ["20%","30%","50%"]</text><text x="20" y="174" class="mono">len(labels) == 3</text><text x="20" y="205" class="mono">"17%" not in labels</text><text x="20" y="238" class="p">少一个、多一个或残留旧值都失败</text></g>
-  <path class="arrow" d="M1005 225H1060"/>
-  <g transform="translate(1070 100)"><rect class="box blue" width="275" height="250" rx="10"/><text x="20" y="36" class="k" fill="#3977a6">4 · VISUAL</text><text x="20" y="76" class="t">Qwen3.7-Plus 判画面</text><text x="20" y="112" class="p">50% 扇区最大，20% 最小</text><text x="20" y="143" class="p">legend 显示 Debug:2 / Info:5 / Error:3</text><text x="20" y="174" class="p">Statistic 已选中</text><text x="20" y="205" class="p">10-row grid、Running 与 10 Messages 不变</text><text x="20" y="238" class="p">输入是完整 application-window capture</text></g>
-  <g transform="translate(55 410)"><rect class="box green" width="610" height="220" rx="10"/><text x="22" y="38" class="k" fill="#2e806f">PASS</text><text x="22" y="78" class="t">同一轮交互同时满足两种证据</text><text x="22" y="116" class="p">程序通道读到三个准确百分比，没有 stale 17%；</text><text x="22" y="148" class="p">视觉通道看到与 reference 一致的饼图、legend 和页面状态。</text><text x="22" y="190" class="p">最后再进入平台内 macro average，而不是整题单一布尔值。</text></g>
-  <g transform="translate(735 410)"><rect class="box red" width="610" height="220" rx="10"/><text x="22" y="38" class="k" fill="#a84644">ONE CONCRETE FAIL TRACE</text><text x="22" y="78" class="t">饼图“看起来像”，但百分比标签仍是旧状态</text><text x="22" y="116" class="p">例如页面包含 50%、30%、20%，同时残留 17%。</text><text x="22" y="148" class="p">视觉判断可能仍认可大体布局；程序断言会因 label 数量为 4</text><text x="22" y="180" class="p">且出现 17% 而失败。此轨迹由公开断言推演，不是模型日志。</text></g>
-  <text x="55" y="696" class="p">根据 Figure 8、Appendix C.5 与官方测试清单重绘；测试由作者生成、在 reference 上回放并经人工复核后冻结。</text>
+  <title id="title">Logbert 隐藏测试从日志到判定</title>
+  <desc id="desc">评测器加载十条固定日志，打开 Statistic 页。程序通道检查三个精确百分比，视觉通道检查饼图与界面。多出旧值 17% 的失败分支是根据公开断言推演的说明。</desc>
+  <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.h{font-size:34px;font-weight:750}.label{font-size:21px;font-weight:700}.p{font-size:19px;fill:#53616b}.small{font-size:17px;fill:#65717a}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px}.box{fill:#fff;stroke:#d5dce0;stroke-width:1.5}</style>
+  <rect width="1400" height="760" fill="#fff"/>
+  <text x="54" y="56" class="h">Logbert：十条日志，如何检查 Statistic 页真的算对</text>
+  <text x="54" y="95" class="p">作者生成检查，在原软件上回放并人工复核后冻结；Agent 不能看隐藏测试。</text>
+  <rect x="54" y="126" width="624" height="183" class="box"/>
+  <text x="78" y="163" class="label" fill="#245f87">1 · 评测器准备固定输入</text>
+  <text x="78" y="202" class="code">sample_log4net_mixed.log</text>
+  <text x="78" y="240" class="p">共 10 条消息：Info 5，Error 3，Debug 2。</text>
+  <text x="78" y="278" class="p">固定文件负责重现同一个初始状态，论文称为 fixture。</text>
+  <path d="M689 214H711" stroke="#6d7d89" stroke-width="3"/><path d="m711 214-9-6v12z" fill="#6d7d89"/>
+  <rect x="722" y="126" width="624" height="183" class="box"/>
+  <text x="746" y="163" class="label" fill="#245f87">2 · Runner 执行界面操作</text>
+  <text x="746" y="202" class="p">打开 File → New Logger，选择日志，确认。</text>
+  <text x="746" y="240" class="p">等待 Number 列出现，再点击 Statistic 标签页。</text>
+  <text x="746" y="278" class="p">从菜单到统计页经过三个导航层次（depth 3）。</text>
+  <rect x="54" y="334" width="624" height="213" fill="#edf4f8" stroke="#bdd1df"/>
+  <text x="78" y="371" class="label" fill="#245f87">3a · Prog：读取控件文字</text>
+  <text x="78" y="415" class="code">sorted(labels) == ["20%", "30%", "50%"]</text>
+  <text x="78" y="458" class="code">len(labels) == 3; "17%" not in labels</text>
+  <text x="78" y="502" class="p">三条条件全部成立，程序 case 才通过。</text>
+  <rect x="722" y="334" width="624" height="213" fill="#eff6f3" stroke="#c2d9ce"/>
+  <text x="746" y="371" class="label" fill="#2f7d6b">3b · VLM：Qwen3.7-Plus 判断窗口截图</text>
+  <text x="746" y="410" class="p">50% 扇区最大、20% 最小；图例计数为 5 / 3 / 2。</text>
+  <text x="746" y="448" class="p">Statistic 选中；十行列表、Running、10 Messages 保留。</text>
+  <text x="746" y="502" class="p">每项视觉断言分别计分，不替代精确文字检查。</text>
+  <rect x="54" y="574" width="1292" height="120" fill="#faf3f2" stroke="#dfc6c2"/>
+  <text x="78" y="611" class="label" fill="#a64643">一个明确失败：页面还残留上一状态的 17%</text>
+  <text x="78" y="649" class="p">即使看到 50%、30%、20%，第四个 17% 标签仍使程序检查失败；视觉布局可能看起来正常。</text>
+  <text x="78" y="678" class="small">此失败分支根据公开断言推演，不是模型日志。两种通道各自计分，再按平台规则汇总。</text>
+  <text x="54" y="733" class="small">根据论文 Figure 8、Appendix C.5 与公开任务清单重绘；完整隐藏测试包没有在本文中重现。</text>
 </svg>

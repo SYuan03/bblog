@@ -1,38 +1,705 @@
 {
-  "schema_version": 2,
-  "paper": {"title": "Groupwise Agentic Grading and Advantage Redistribution for Code Agent RL", "kind": "research", "primary_source_ids": ["paper"]},
-  "artifacts": {"article": "content/_posts/062-gagar.md", "deck": "lib/decks/gagar-visual-guide.html", "embed_src": "/lib/decks/gagar-visual-guide.html"},
+  "schema_version": 3,
+  "paper": {
+    "title": "Groupwise Agentic Grading and Advantage Redistribution for Code Agent RL",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/062-gagar.md",
+    "deck": "lib/decks/gagar-visual-guide.html",
+    "embed_src": "/lib/decks/gagar-visual-guide.html"
+  },
   "sources": [
-    {"id": "paper", "kind": "paper", "title": "Groupwise Agentic Grading and Advantage Redistribution for Code Agent RL", "url": "https://arxiv.org/pdf/2609.32577v1", "revision": "v1", "used_for": ["problem", "method", "experiments", "limitations"]},
-    {"id": "arxiv-meta", "kind": "metadata", "title": "arXiv metadata for 2609.32577", "url": "https://export.arxiv.org/api/query?id_list=2609.32577", "revision": "checked 2026-10-05", "used_for": ["v1-date", "title", "authors"]}
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Groupwise Agentic Grading and Advantage Redistribution for Code Agent RL",
+      "url": "https://arxiv.org/pdf/2609.32577v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "method",
+        "experiments",
+        "limitations"
+      ]
+    },
+    {
+      "id": "arxiv-meta",
+      "kind": "metadata",
+      "title": "arXiv metadata for 2609.32577",
+      "url": "https://export.arxiv.org/api/query?id_list=2609.32577",
+      "revision": "checked 2026-10-05",
+      "used_for": [
+        "v1-date",
+        "title",
+        "authors"
+      ]
+    }
   ],
-  "paper_reading": {"main_agent_complete_read": true, "appendices_included": true, "extracted_text_reviewed": true, "rendered_pages_reviewed": true, "page_count": 16, "rendered_page_ranges": [{"start": 1, "end": 16}], "source_visuals_expected": 6, "visual_inventory_complete": true, "inventory_note": "All 16 pages were checked as extracted text and rendered pages. The arXiv PDF does not grant figure-reuse permission, so no paper pixels are reused; method and result facts are redrawn in new SVG/HTML compositions."},
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 16,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 16
+      }
+    ],
+    "source_visuals_expected": 6,
+    "visual_inventory_complete": true,
+    "inventory_note": "All 16 pages were checked as extracted text and rendered pages. The arXiv PDF does not grant figure-reuse permission, so no paper pixels are reused; method and result facts are redrawn in new SVG/HTML compositions.",
+    "current_review": {
+      "review_date": "2026-10-14",
+      "main_agent_complete_read": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 16,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 16
+        }
+      ],
+      "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/three-papers-2026-10-05/gagar.txt",
+      "notes": "Complete root v1 text and 16 rendered pages; Eq2 sequence-level advantage conservation, tiers, cap/recentering, human audit and matched-step results checked."
+    }
+  },
   "note_sections": [
-    {"role": "problem", "locator": "Q1. 为什么可执行测试还不够？"},
-    {"role": "related-work", "locator": "Q2. 它和结果奖励、过程奖励、大语言模型判分有什么区别？"},
-    {"role": "method", "locator": "Q3. 一组执行轨迹怎样变成新的训练信号？"},
-    {"role": "experiments", "locator": "Q4. 实验怎样做，结果具体说明了什么？"},
-    {"role": "future-work", "locator": "Q5. 这套方法下一步最值得验证什么？"},
-    {"role": "summary", "locator": "Q6. 最终应该怎样评价 GAGAR？"}
+    {
+      "role": "problem",
+      "locator": "1. Motivation：通过同一套测试的代码，质量仍可能不同"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：从单个评分到成功实现之间的比较"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：质量排序如何改变一组轨迹的训练权重"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：通过率、执行长度与质量审计"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：判分稳定性与真实开发成本"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：保留测试门槛，但别扩大守恒与质量结论"
+    }
   ],
   "coverage": [
-    {"id": "mechanism", "claim_type": "author-claim", "source_ids": ["paper"], "source_locators": [{"source_id": "paper", "locator": "Sections 3.1-3.4; Appendix A.1"}], "evidence": [{"artifact": "article", "quote": "质量较差的成功样本让出一部分权重，再按质量比例分给其他成功样本"}, {"artifact": "deck", "quote": "质量排序先变成系数，再作用于正 advantage"}]},
-    {"id": "bounded-implementation", "claim_type": "author-claim", "source_ids": ["paper"], "source_locators": [{"source_id": "paper", "locator": "Appendix A.2, Equation 7"}], "evidence": [{"artifact": "article", "quote": "正权重总量和失败轨迹的 advantage 不再严格等于原值"}, {"artifact": "deck", "quote": "论文的精确守恒公式与带上限的实际分支有区别"}]},
-    {"id": "controlled-results", "claim_type": "reproduced-calculation", "source_ids": ["paper"], "source_locators": [{"source_id": "paper", "locator": "Section 4.2, Figure 2"}], "evidence": [{"artifact": "article", "quote": "DeepSWE 的 `avg@3` 为 62.2% 对 50.2%"}, {"artifact": "deck", "quote": "62.2 vs 50.2"}]},
-    {"id": "quality-audit", "claim_type": "author-claim", "source_ids": ["paper"], "source_locators": [{"source_id": "paper", "locator": "Section 4.3, Figure 3"}], "evidence": [{"artifact": "article", "quote": "另一个结果是对 30 个随机 DeepSWE 任务进行质量审计"}, {"artifact": "deck", "quote": "“代码质量更好”的证据来自一次小规模大语言模型（LLM）判分审计"}]},
-    {"id": "evidence-gap", "claim_type": "unknown", "source_ids": ["paper"], "source_locators": [{"source_id": "paper", "locator": "Full paper and appendix artifact inventory"}], "evidence": [{"artifact": "article", "quote": "论文没有发布真实任务、候选代码改动、判分过程或最终档位"}, {"artifact": "deck", "quote": "判分提示词、真实候选代码与逐项评分没有公开"}]}
+    {
+      "id": "mechanism",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.1-3.4; Appendix A.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "线上 grader 是固定的、强化学习前 SFT 的 MiMo-V2.6-Pro"
+        },
+        {
+          "artifact": "article",
+          "quote": "这组轨迹全部完成后，才启动该组的质量检查。其他任务组可以同时继续生成"
+        }
+      ]
+    },
+    {
+      "id": "bounded-implementation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.2, Equation 7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "组内仍为零和，成功排序仍保留，但正权重总和从 1.0 变成 0.95"
+        },
+        {
+          "artifact": "article",
+          "quote": "直接把成功 reward 设成质量系数，然后减去新的组均值，也会产生零和 advantage"
+        }
+      ]
+    },
+    {
+      "id": "controlled-results",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.2, Figure 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "DeepSWE 的 <code>avg@3</code> 为 62.2% 对 50.2%"
+        },
+        {
+          "artifact": "article",
+          "quote": "公平的共同训练区间只到第 28 步"
+        }
+      ]
+    },
+    {
+      "id": "quality-audit",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.3, Figure 3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "另一个结果是对 30 个随机 DeepSWE 任务进行质量审计"
+        },
+        {
+          "artifact": "article",
+          "quote": "这次审计改用 Claude Opus 5，区别于线上固定 Pro grader。"
+        }
+      ]
+    },
+    {
+      "id": "evidence-gap",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Full paper and appendix artifact inventory"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文没有发布真实任务、候选代码改动、判分过程或最终档位"
+        }
+      ]
+    }
   ],
   "source_visuals": [
-    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 4, Figure 1","status":"omitted","rationale":"The method is restated in a new evidence-boundary diagram without copying source pixels or layout.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 8, Figure 2","status":"omitted","rationale":"Exact shared-step values are redrawn in an original chart rather than reusing the paper plot.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 9, Figure 3","status":"omitted","rationale":"The 30-task audit values are restated in a new combined results graphic.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 10, Figure 4","status":"omitted","rationale":"The downweight-only ablation is retained as exact values in article and deck tables.","placements":[],"permission_status":"not-applicable","permission_basis":"Source pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 11, Table 1","status":"omitted","rationale":"External and mixed-task results are summarized in prose because they are not a controlled GAGAR ablation.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]},
-    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 14, Table 2","status":"omitted","rationale":"The five dimensions and weights are restated in original HTML text and deck cards.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]}
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 4, Figure 1",
+      "status": "redrawn",
+      "rationale": "Pipeline is redrawn with passing-attempt selection, fixed grader and bounded redistribution; it does not imply serialized grading across task groups.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文图 1 与第 3.1-3.3 节重绘"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Figure 1 重绘",
+      "asset_paths": [
+        "/lib/papers/gagar/body-method.svg"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 2",
+      "status": "redrawn",
+      "rationale": "The shared-step DeepSWE pass, turn and token values are displayed without extending them to multiple training seeds.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文图 2-3 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "同一训练步数比较，GAGAR 同时提高通过率并缩短执行轨迹"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Figures 2–3 重绘",
+      "asset_paths": [
+        "/lib/papers/gagar/body-results.svg"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 9, Figure 3",
+      "status": "redrawn",
+      "rationale": "The 30-task LLM quality audit is redrawn alongside pass-rate evidence and is labeled separately from the fixed training grader.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文图 2-3 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "69.8%"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Figures 2–3 重绘",
+      "asset_paths": [
+        "/lib/papers/gagar/body-results.svg"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 10, Figure 4",
+      "status": "redrawn",
+      "rationale": "Selected shared-step downweight-only ablation values are displayed in a new HTML table; it does not test reward adjustment plus recentering.",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "未经重新居中的单纯降权，在本实验中更不稳定"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Figure 4 整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 11, Table 1",
+      "status": "omitted",
+      "rationale": "External and mixed-task results are summarized in prose because they are not a controlled GAGAR ablation.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Source table not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 14, Table 2",
+      "status": "redrawn",
+      "rationale": "The five code-quality dimensions are reorganized into cards with the original numeric weights.",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "五个维度评价代码是否接近可直接合并的质量"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Table 2 整理",
+      "asset_paths": []
+    }
   ],
   "figures": [
-    {"path":"/lib/papers/gagar/cover.svg","origin":"generated","source_id":"paper","source_locator":"Sections 3.1-3.3 and Figure 1","credit":"根据论文方法重新绘制","license_status":"not-applicable","license_basis":"Original SVG composition using paper facts.","used_in":["article"]},
-    {"path":"/lib/papers/gagar/results.svg","origin":"generated","source_id":"paper","source_locator":"Figures 2-3","credit":"根据论文 Figures 2-3 数据重新绘制","license_status":"not-applicable","license_basis":"Original SVG composition using published values.","used_in":["article"]}
+    {
+      "path": "/lib/papers/gagar/body-case.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "Equations 2–4; Appendix A.2",
+      "credit": "本文根据公式构造并复算的解释例，不是真实训练日志",
+      "license_status": "not-applicable",
+      "license_basis": "Original editable SVG layout; no source pixels reused.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/gagar/body-method.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Figure 1; Sections 3.1–3.3",
+      "credit": "根据论文 Figure 1 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG composition using primary-source facts.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "figure-1"
+    },
+    {
+      "path": "/lib/papers/gagar/body-results.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Figures 2–3; shared step 28 and separate 30-task quality audit",
+      "credit": "根据论文 Figures 2–3 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG composition using primary-source facts.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "figure-2"
+    }
   ],
-  "qa": {"reading_layout":{"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},"viewports":[{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],"tested_surfaces":{"article_body":true,"embedded_deck":true,"standalone_deck":true},"language_review":{"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},"interactions":{"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},"inspected_slides":["opening","densest","largest-table-or-code","final"]}
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Read complete current note and all12 slides. Fixed Pro grader16 trajectories; tiers and W not thresholds; no published real grader case labelled. Uncapped lambda1.667 keeps positive weight1, cap1.5/recenter produces[.775,.175,-.475,-.475],positive.95. Matched step28 62.2vs50.2, baseline removes all reshaping not onlyGAGAR,30 LLM quality evaluations not humans."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "29eacd2306595de88db3cc72c5fd5f71e8f0a7400495a5700d72111b27d1007a",
+      "built_article": "0e5ad9be1abfda1abf2571f95f29a99eefded99ea1b18bc64ea492fd55330803",
+      "deck": "b6bee97682b5ad08b74b2826ed70af2ddf23f254a95ec749caa8ba99c03cacbb",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-062/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-062/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-062.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "rollout group",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1: groupwise trajectories"
+        }
+      ],
+      "article_quote": "同一道任务的 16 次尝试构成一个 **rollout group（尝试组）**。"
+    },
+    {
+      "term": "policy",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1: trainable policy and grading"
+        }
+      ],
+      "article_quote": "模型当前用于生成这些尝试的版本叫 **policy（策略模型）**"
+    },
+    {
+      "term": "mean-centered advantage",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3 and Appendix A.2: advantage redistribution"
+        }
+      ],
+      "article_quote": "每条奖励减去同组平均值后的训练权重。不再除以奖励标准差"
+    },
+    {
+      "term": "grader",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2: agentic grading"
+        }
+      ],
+      "article_quote": "GAGAR 要求 **grader（判分 Agent）** 比较同一任务中已经通过测试的候选实现。"
+    },
+    {
+      "term": "quality coefficients",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.1: tier-to-coefficient mapping"
+        }
+      ],
+      "article_quote": "T1 的质量系数为 1.0 或 0.9；T2 从 0.85 降至 0.4；T3 为 0.2。"
+    }
+  ],
+  "editorial_revision": {
+    "date": "2026-10-13",
+    "scope": "Substantive clarification of roles, cases, evaluation conditions, controlled comparisons, limits and article/deck consistency.",
+    "primary_checks": "All extracted main text and key Appendix A formulas reviewed; selected rendered pages checked. No new page-by-page rendered review of all 16 pages.",
+    "full_paper_reading_record": "paper_reading preserves the previous complete-reading record; this revision does not recertify every rendered page.",
+    "rendering": "All three new article-column SVGs rendered and directly inspected at 780px. Complete three-surface browser run performed at three viewports before the final shared-CSS rebuild; final affected article/typography/containment/code/exit checks completed against 22:30:59 +0800 output. See qa.browser_qa_note for exact scopes and mobile limitations."
+  },
+  "qa_history": [
+    {
+      "scope": "Previous artifact version; invalidated by 2026-10-13 content and visual changes",
+      "record": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.76,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ]
+      }
+    },
+    {
+      "archived_at": "2026-10-14",
+      "reason": "Content revised; prior QA does not certify current bytes.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "article_visuals_interleaved": true
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "browser_qa_note": "Complete article/embed/standalone browser run on the 2026-10-13 21:44:41–42 +0800 build covered 12 slides on both deck surfaces at 1600×1000, 1512×982 and 390×844 (72 slide checks), all 3 figure dialogs at all widths, buttons/keyboard/hash/overview/fullscreen/Escape/focus-mode exits and stable return-to-article. The final 22:30:59 +0800 build (Tide CSS v22, article CSS v7, Tide JS v18) was separately rechecked for all three article layouts, every loaded/centered/contained figure, internal code/table/formula scrolling, neutral wrapper colors/typography, bounded section/figure/tail screenshots, focus exits and one figure-dialog exit per width; final-affected-report.json records that affected run, not a new complete slide run. Full prior run record: gagar-qa-final.json. Dense mobile slides and thumbnails are scaled previews; clear-width figure view requires scrolling and sometimes additional zoom. Mobile viewport was exercised with mouse/pointer, not native-device touch. Very tall fullPage screenshots were not used alone as reading evidence."
+      }
+    }
+  ]
 }

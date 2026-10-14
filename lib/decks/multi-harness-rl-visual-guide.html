@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>What Does Multi-Harness RL Learn? · 论文图解</title>
+<title>Multi-Harness Reinforcement Learning for Coding Agents · 论文图解</title>
 <style>
 :root{--paper:#f8f5ee;--ink:#20252b;--muted:#66717b;--line:#cfd4da;--blue:#285d9b;--orange:#ad5735;--green:#2b7562;--red:#a0443d;--sans:Arial,"PingFang SC","Microsoft YaHei",sans-serif;--serif:Georgia,"Songti SC",serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#151a20;color:var(--ink);font-family:var(--sans)}a{color:inherit}button,a{font:inherit}
@@ -11,6 +11,7 @@
 .hero{display:grid;grid-template-columns:1.14fr .86fr;gap:56px;align-items:end;flex:1}.hero .question{font:700 51px/1.12 var(--serif)}.hero .answer{border-left:6px solid var(--blue);padding:8px 0 8px 28px;color:var(--muted);font-size:24px;line-height:1.48}.hero .score{color:var(--blue);font:800 58px/1 var(--mono)}.hero .score small{display:block;margin-top:14px;color:var(--muted);font:600 16px/1.4 var(--sans)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%}.panel{min-width:0;padding:24px 26px;border:1px solid var(--line);background:#fff}.panel.blue{border-top:5px solid var(--blue)}.panel.orange{border-top:5px solid var(--orange)}.panel.green{border-top:5px solid var(--green)}.panel.red{border-top:5px solid var(--red)}.tag{display:block;margin-bottom:10px;color:var(--blue);font:800 14px/1 var(--mono);letter-spacing:1px}.panel h3{margin:0 0 10px;font:700 27px/1.2 var(--serif)}.panel p,.panel li{margin:.35em 0;color:var(--muted);font-size:19px;line-height:1.5}.panel ul{margin:0;padding-left:1.1em}.metric{color:var(--blue);font:800 43px/1 var(--mono)}.metric small{display:block;margin-top:12px;color:var(--muted);font:600 16px/1.4 var(--sans)}
 .figure{display:flex;align-items:center;justify-content:center;width:100%;height:100%}.figure img{display:block;max-width:100%;max-height:610px}.figure.small img{max-height:535px}.image-side{display:grid;grid-template-columns:1.22fr .78fr;gap:28px;align-items:center;width:100%}.image-side>div:first-child{min-width:0}.image-side img{display:block;width:100%;max-height:570px;object-fit:contain}.stack{display:grid;gap:14px}.callout{padding:17px 19px;border-left:5px solid var(--blue);background:#fff}.callout.orange{border-color:var(--orange)}.callout.green{border-color:var(--green)}.callout.red{border-color:var(--red)}.callout b{display:block;margin-bottom:5px;color:var(--ink);font-size:19px}.callout span{color:var(--muted);font-size:16px;line-height:1.45}
+.body.figure{height:auto;min-height:0}.body.figure img{width:100%;height:100%;max-height:100%;object-fit:contain}
 .flow{display:flex;align-items:stretch;width:100%}.step{position:relative;flex:1;min-width:0;padding:22px 18px;border:1px solid var(--line);background:#fff}.step+.step{margin-left:34px}.step+.step:before{content:"";position:absolute;left:-35px;top:50%;width:34px;height:2px;background:var(--blue)}.step+.step:after{content:"";position:absolute;left:-8px;top:calc(50% - 5px);border-left:9px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}.step b{display:block;margin-bottom:8px;color:var(--blue);font:800 15px/1.3 var(--mono)}.step strong{display:block;margin-bottom:8px;font-size:21px}.step span{display:block;color:var(--muted);font-size:16px;line-height:1.45}
 .formula{width:100%;padding:24px 26px;text-align:center;border-block:1px solid var(--line);background:#fff;font:700 27px/1.55 var(--mono)}.formula small{display:block;margin-top:12px;color:var(--muted);font:400 16px/1.5 var(--sans)}.table{width:100%;border-collapse:collapse;background:#fff;font-size:17px;line-height:1.38}.table th,.table td{padding:11px 12px;border:1px solid var(--line);text-align:left;vertical-align:top}.table th{background:#eef4fb;color:#26394d}.table td:first-child{font-weight:700}.best{color:var(--green);font-weight:800}.warn{color:var(--orange);font-weight:750}.code{width:100%;margin:0;padding:22px 24px;overflow:hidden;border:1px solid #39414a;background:#20262d;color:#e8edf2;font:16px/1.55 var(--mono);white-space:pre-wrap}.code .c{color:#96a3af}.code .k{color:#7ab5f3}.code .s{color:#dcb17a}.code .g{color:#83c9a7}
 .lane{display:grid;grid-template-columns:190px 1fr;gap:18px;width:100%;align-items:center}.lane+.lane{margin-top:18px}.lane>strong{font:800 16px/1.3 var(--mono);color:var(--blue)}.nodes{display:flex;gap:10px;align-items:center}.node{padding:15px 18px;border:1px solid var(--line);background:#fff;font-size:16px}.node.hidden{border-color:var(--red);background:#fff0ef}.node.good{border-color:var(--green);background:#edf7f2}.node:after{content:"→";margin-left:18px;color:var(--blue)}.node:last-child:after{content:"";margin:0}.limits{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;background:var(--line)}.limit{min-height:190px;padding:23px;background:#fff}.limit b{display:block;color:var(--orange);font:800 14px/1 var(--mono);letter-spacing:1px}.limit strong{display:block;margin:11px 0 8px;font-size:22px}.limit span{color:var(--muted);font-size:17px;line-height:1.45}
@@ -18,115 +19,135 @@
 #overview-panel{position:fixed;z-index:30;inset:0;background:rgba(10,13,16,.78);padding:46px}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:calc(100vh - 92px);margin:auto;overflow:auto;background:#f8f5ee;padding:24px}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.overview-head button{width:36px;height:36px;border:1px solid var(--line);background:#fff;font-size:24px}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);background:#fff;text-align:left}.overview-grid button[aria-current="true"]{border-color:var(--blue);background:#eef4fb}.overview-grid b{font-family:var(--mono);color:var(--blue)}
 @media(max-width:760px){#controls{bottom:8px;gap:4px}.current-title,.utility-label,.return-label{display:none}#controls button,#controls a{padding:0 10px}.overview-grid{grid-template-columns:1fr 1fr}}
 @media print{html,body{overflow:visible;background:#fff}#deck{position:static;width:auto;height:auto;transform:none!important}.slide{display:flex!important;position:relative;width:1600px;height:900px;page-break-after:always}#controls,#overview-panel,#progress{display:none!important}}
+/* Neutral reading surface; chart colors continue to encode the original groups. */
+:root{--paper:#fff;--ink:#20252b;--body:#424b56;--muted:#596775;--line:#d9dfe5}
+html,body{background:#edf1f5}
+.overview-card{background:#fff;color:var(--ink)}
+.slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
+#controls button,#controls a{white-space:nowrap;flex-shrink:0}
+.counter{white-space:nowrap;flex:0 0 auto;min-width:52px;text-align:center}
 </style>
 </head>
 <body>
 <main id="deck">
   <section class="slide" data-title="核心结论">
-    <div class="top"><b>MULTI-HARNESS RL · PAPER DEEP DIVE</b><span>arXiv:2609.04518 · 2026-09-03</span></div>
-    <div class="hero"><div><div class="question">跨 harness 比较 reward，真的会让 coding model 学到可迁移能力吗？</div><p class="lead" style="margin-top:28px">同一批 records、同一 SFT 起点、同一更新预算，只把 GRPO group 从 task × harness 改成 task。换到 unseen weak-ReAct 后，Cross 没有测出稳定优势。</p></div><div><div class="score">9.7 / 10<small>博客作者兴趣度：强控制实验，直接对应 Claude Code / Codex harness 研究</small></div><div class="callout green" style="margin-top:30px"><b>Held-out · avg@8</b><span>Cross − Within = +0.25 pp，95% CI [−0.48,+1.02]。</span></div></div></div>
-    <div class="foot"><span>标题：What Does Multi-Harness RL Learn? Credit Assignment and Portability in Coding Agents</span><span class="pg"></span></div>
+    <div class="top"><b>MULTI-HARNESS RL · 论文图解</b><span>初次公开 2026-09-03 · 解读 v2（2026-10-09）</span></div>
+    <h2>跨接口分组只有小幅增益，执行接口本身的影响更大</h2>
+    <p class="lead">从同一个监督微调（SFT）模型出发，使用相同执行记录和预算；训练只改变成功与失败互相比较的分组方式。</p>
+    <div class="body"><div class="grid2">
+      <div class="stack">
+        <div class="callout"><b>同一道修复题 · 四套执行程序</b><span>Aider、OpenHands、Qwen Code、SWE-agent 产生固定的成功与失败记录，之后不重新采集。</span></div>
+        <div class="grid2"><div class="panel blue"><span class="tag">Within</span><h3>同题、同接口互比</h3><p>每个接口分别计算组均值和标准差。</p></div><div class="panel orange"><span class="tag">Cross</span><h3>同题、跨接口互比</h3><p>四个接口的记录合成一个比较组。</p></div></div>
+        <div class="callout"><b>两种模型都用独立隐藏测试复测</b><span>分别检查四个原接口和未参与训练的 weak-ReAct 接口，避免把原接口提升当成迁移成功。</span></div>
+      </div>
+      <div class="stack">
+        <div class="panel blue"><span class="tag">原接口 · 相对 SFT</span><div class="metric">+0.48 / +0.77 pp</div><p>Within / Cross 的估计增益；同一结果表中，执行接口的列均值差异为 7.13 pp。</p></div>
+        <div class="callout green"><b>未见 weak-ReAct · 每题八次取平均</b><span>Cross − Within = +0.25 pp，95% 置信区间 [−0.48,+1.02]。两种规则都未显著超过 SFT；pp 表示百分点。</span></div>
+        <p class="lead" style="font-size:18px">博客作者兴趣度 9.7 / 10：受控实验检验多接口训练的收益与迁移。</p>
+      </div>
+    </div></div>
+    <div class="foot"><span>Multi-Harness Reinforcement Learning for Coding Agents: Training Gains and Harness Dependence</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="研究问题">
-    <div class="top"><b>02 · QUESTION</b><span>exposure ≠ credit assignment</span></div><h2>“多 harness 训练”至少混着两个不同干预</h2>
-    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">EXPOSURE</span><h3>模型见过多种交互接口</h3><p>Prompt、tool schema、observation、retry 与 context policy 都不同。</p><p>本文两条主线都固定为四种 harness exposure。</p></div><div class="panel orange"><span class="tag">GROUPING</span><h3>不同接口的 reward 是否直接比较</h3><p>Within 在 task-harness pair 内标准化；Cross 把同一 task 的四种 harness 放进一个 GRPO group。</p><p>这才是本文唯一改变的主变量。</p></div></div></div>
+    <div class="top"><b>02 · 研究问题</b><span>先区分接口接触与分数分组</span></div><h2>见过四套执行程序，与合并它们的成绩，是两个训练选择</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">哪些接口产生数据</span><h3>Harness 是模型外的执行程序</h3><p>它提供提示、工具、命令输出、重试和历史管理。本文两组都使用 Aider、OpenHands、Qwen Code、SWE-agent。</p><p>没有匹配的单接口训练对照，不能单独判断接口数量的作用。</p></div><div class="panel orange"><span class="tag">哪些成绩放在一起比较</span><h3>Within 与 Cross 的主变量</h3><p>GRPO 用同组成功与失败的分数，决定鼓励或压低哪些生成。</p><p>Within 比同题同接口；Cross 合并同题四接口。本文只改变这个分组边界。</p></div></div></div>
     <div class="foot"><span>来源：论文 §1、§3。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="为什么 harness 是大变量">
-    <div class="top"><b>03 · MOTIVATION</b><span>same checkpoint, different interface</span></div><h2>同一模型换评测 harness，平均 solve rate 相差 4.3 倍</h2>
-    <div class="body"><div class="grid4"><div class="panel blue"><span class="tag">AIDER</span><div class="metric">2.14%</div><p>六种 recipe 的列均值。</p></div><div class="panel green"><span class="tag">OPENHANDS</span><div class="metric">9.27%</div><p>同一批 checkpoint 的列均值。</p></div><div class="panel orange"><span class="tag">HARNESS RANGE</span><div class="metric">7.13 pp</div><p>2.14% → 9.27%，4.3×。</p></div><div class="panel"><span class="tag">RECIPE RANGE</span><div class="metric">0.91 pp</div><p>5.55% → 6.46%，1.16×。</p></div></div></div>
-    <div class="foot"><span>来源：论文 Figure 2、Table 1；24,000 attempted evaluations。</span><span class="pg"></span></div>
+    <div class="top"><b>03 · 动机</b><span>六种模型分别交给四种接口评测</span></div><h2>评测接口的列均值差异，远大于模型的行均值差异</h2>
+    <div class="body"><div class="grid4"><div class="panel blue"><span class="tag">Aider</span><div class="metric">2.14%</div><p>六种模型在此接口的列均值。</p></div><div class="panel green"><span class="tag">OpenHands</span><div class="metric">9.27%</div><p>同样六种模型在此接口的列均值。</p></div><div class="panel orange"><span class="tag">接口列均值</span><div class="metric">7.13 pp</div><p>最大值 − 最小值。</p></div><div class="panel"><span class="tag">模型行均值</span><div class="metric">0.91 pp</div><p>Base 5.55% → Cross 6.46%。</p></div></div></div>
+    <div class="foot"><span>v2 Figure 2、Table 4；共尝试 24,000 次。这是均值规模比较，不是每个模型都相差同一倍数。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="相关工作坐标">
-    <div class="top"><b>04 · RELATED WORK</b><span>同一术语下的不同 grouping boundary</span></div><h2>ClawGym II 做 Within，HarnessX 更接近 Cross；其他系统把多个变量一起改变</h2>
-    <div class="body"><table class="table"><thead><tr><th>工作</th><th>多 harness 信号</th><th>评测边界</th><th>本文的判断</th></tr></thead><tbody><tr><td>ClawGym II</td><td>task-harness pair 内归一化</td><td>native + transfer</td><td>对应 Within；完整训练 recipe 同时变化。</td></tr><tr><td>HarnessX</td><td>跨 harness / model version pooling</td><td>end-to-end</td><td>对应 Cross；演化过程与 credit rule 混在一起。</td></tr><tr><td>POLAR</td><td>production harness 内 GRPO</td><td>各自 native harness</td><td>不能区分 source adaptation 与 portability。</td></tr><tr><td>OpenForgeRL</td><td>三 harness SFT + RL</td><td>ClawEval held-out</td><td>报告正向 transfer，但 exposure 与训练阶段同时改变。</td></tr><tr><td>Orchard</td><td>full-harness SFT</td><td>matched / mismatched 2×2</td><td>显示很强的 interface lock-in。</td></tr></tbody></table></div>
-    <div class="foot"><span>来源：论文 §2、Appendix K。跨论文数字不是统一 leaderboard。</span><span class="pg"></span></div>
+    <div class="top"><b>04 · 相关工作</b><span>不同工作改变的变量并不相同</span></div><h2>系统论文训练完整方案；本文只控制分数分组</h2>
+    <div class="body"><table class="table"><thead><tr><th>工作</th><th>训练方式</th><th>评测边界</th><th>不能直接归因于什么</th></tr></thead><tbody><tr><td>ClawGym II</td><td>同题同接口内标准化</td><td>原接口 + 换接口</td><td>完整训练设置变化；不能只归因于 Within。</td></tr><tr><td>HarnessX</td><td>同题跨接口及模型版本分组</td><td>完整系统结果</td><td>版本演化与分组规则同时变化。</td></tr><tr><td>Polar</td><td>分别在真实部署程序内做 GRPO</td><td>每个模型在原训练接口测试</td><td>没有单独测迁移到新接口。</td></tr><tr><td>OpenForgeRL</td><td>单接口或三接口 SFT+RL</td><td>三接口模型的 OpenClaw / Codex 都是已见接口</td><td>+9.5 / +20.3 pp 不能叫未见接口收益。</td></tr><tr><td>Orchard</td><td>分别用两接口记录做 SFT</td><td>训练评测匹配 / 不匹配 2×2</td><td>检验的是 SFT 接口匹配，不是 RL 分组。</td></tr></tbody></table></div>
+    <div class="foot"><span>v2 §2、Appendix D；跨论文数据、模型、预算不同，不组成统一榜单。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="控制实验全景">
-    <div class="top"><b>05 · CONTROLLED DESIGN</b><span>same data · same budget · different grouping</span></div><h2>训练记录被冻结后，Within 与 Cross 只在 advantage 分组处岔开</h2>
-    <div class="body figure"><img src="/lib/papers/multi-harness-rl/protocol.svg" alt="Controlled multi-harness experiment"></div>
+    <div class="top"><b>05 · 受控实验</b><span>同数据、同预算，不同分组</span></div><h2>先固定执行记录，再改变相对分的比较组</h2>
+    <div class="body figure"><img src="/lib/papers/multi-harness-rl/protocol.svg" alt="Controlled multi-harness experiment" width="1200" height="660"></div>
     <div class="foot"><span>根据论文 Figure 1 重绘。原论文为 arXiv non-exclusive distribution license，未复用原图像素。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="两个 GRPO 分组">
-    <div class="top"><b>06 · GROUPING RULE</b><span>one numerator, two baselines</span></div><h2>同一条 binary reward，因为比较对象不同，会得到不同 advantage</h2>
-    <div class="body" style="flex-direction:column;justify-content:center;gap:28px"><div class="formula">A<sub>Within</sub>(x,h,i) = [r(x,h,i) − μ(x,h)] / [σ(x,h)+ε]<small>同一 task、同一 harness 的 rollouts 相互比较，harness-level offset 被消掉。</small></div><div class="formula">A<sub>Cross</sub>(x,h,i) = [r(x,h,i) − μ(x)] / [σ(x)+ε]<small>同一 task 的四种 harness 全部入组，强 harness 的成功先验会进入 advantage。</small></div></div>
-    <div class="foot"><span>来源：论文 Equations 1–2、8。</span><span class="pg"></span></div>
+    <div class="top"><b>06 · 分组公式</b><span>advantage：比组均值好或差多少</span></div><h2>同一条 0/1 分，比较对象不同，相对得分就不同</h2>
+    <div class="body" style="flex-direction:column;justify-content:center;gap:28px"><div class="formula">A<sub>Within</sub>(x,h,i) = [r(x,h,i) − μ(x,h)] / [σ(x,h)+ε]<small>同题同接口的尝试互比，接口本身整体强弱造成的偏移被消掉。</small></div><div class="formula">A<sub>Cross</sub>(x,h,i) = [r(x,h,i) − μ(x)] / [σ(x)+ε]<small>同题四接口一起比较，强接口本身更容易成功的影响也进入相对得分。</small></div></div>
+    <div class="foot"><span>v2 Equation 2；μ 为组均值、σ 为组标准差、ε 防止除零。相对分用于加权生成 token 的更新。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="一个分组例子">
-    <div class="top"><b>07 · WORKED EXAMPLE</b><span>解释性例子，不是公开 episode log</span></div><h2>假设同题四种 harness 的 reward 是 0、0、1、1</h2>
-    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">WITHIN</span><h3>先按 harness 分开</h3><p>每套 harness 只和自己的重复 rollout 比。某套 harness 若全成功或全失败，该组方差为 0，所有 trace 的 advantage 也为 0。</p><p>实际 manifest 中 55.1% 的 Within groups 是这种 all-pass / all-fail group。</p></div><div class="panel orange"><span class="tag">CROSS</span><h3>四套 harness 直接竞争</h3><p>同题里成功的 harness 得正 advantage，失败的得负 advantage。183 个入选任务的 pooled group 全都有非零方差。</p><p>这会扩大 gradient coverage，也把 harness 成功率写进 credit。</p></div></div></div>
-    <div class="foot"><span>来源：论文 §3、Appendix E、Table 7。Reward vector 仅用于解释机制。</span><span class="pg"></span></div>
+    <div class="top"><b>07 · 算一个小组</b><span>两接口简化例子，不是论文模型日志</span></div><h2>同题 A 四次全对、B 四次全错：Within 全为 0，Cross 约为 ±1</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">Within</span><h3>A 与 B 分别减各自均值</h3><p>A：分数都是 1，均值 1；B：分数都是 0，均值 0。两组的分子都为 0，advantage 全为 0。</p><p>真实数据：698 个组中 44.8% 有混合结果；全对或全错的组对应 55.1% 的执行。两个百分比的分母不同。</p></div><div class="panel orange"><span class="tag">Cross</span><h3>八次执行合成一组</h3><p>组均值 0.5，总体标准差 0.5；忽略很小的 ε，成功约 +1，失败约 −1。</p><p>183 个入选任务都同时有成功和失败，因此执行的非零 advantage 占比为 100%；它依赖任务筛选。</p></div></div></div>
+    <div class="foot"><span>v2 §3、§5.1、Appendix A.1、Table 1。零 advantage 只关闭奖励项，KL 约束仍可能更新模型。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="训练数据账本">
-    <div class="top"><b>08 · DATA LEDGER</b><span>SWE-Gym training · SWE-bench Verified evaluation</span></div><h2>梯度只来自 183 个“harness 会产生分歧”的任务</h2>
-    <div class="body"><div class="grid4"><div class="panel blue"><span class="tag">SFT</span><div class="metric">186</div><p>tasks，8,841 records。</p></div><div class="panel green"><span class="tag">RL MANIFEST</span><div class="metric">183</div><p>tasks，5,543 episodes。</p></div><div class="panel orange"><span class="tag">RECORDS</span><div class="metric">81,216</div><p>四条 RL arms 完全一致。</p></div><div class="panel"><span class="tag">UPDATES</span><div class="metric">81,200</div><p>每条 arm 实际完成数相同。</p></div></div></div>
-    <div class="foot"><span>来源：论文 Appendix D、G，Tables 7–8。训练与评测 benchmark family 分离。</span><span class="pg"></span></div>
+    <div class="top"><b>08 · 数据与训练</b><span>SWE-Gym 训练；Verified 评测，任务不重叠</span></div><h2>任务、完整执行、处理后记录、优化器更新，必须分开计数</h2>
+    <div class="body"><div class="grid4"><div class="panel blue"><span class="tag">SFT 起点</span><div class="metric">186</div><p>任务；8,841 条成功执行处理后的记录。</p></div><div class="panel green"><span class="tag">RL 任务</span><div class="metric">183</div><p>任务；5,543 次完整执行。同题合并后既有成功又有失败。</p></div><div class="panel orange"><span class="tag">训练记录</span><div class="metric">81,216</div><p>四种方案相同；具体切分规则未公开。</p></div><div class="panel"><span class="tag">日志更新次数</span><div class="metric">81,200</div><p>各方案一次重放；与记录数不能直接等同。</p></div></div></div>
+    <div class="foot"><span>v2 Appendix A.1–A.2，Tables 1–2。lr=3e-7、KL=0.01；保留原生成 token，环境输出不计生成损失。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Sealed oracle">
-    <div class="top"><b>09 · JUDGE</b><span>what the agent sees vs what scores it</span></div><h2>Agent 交 patch；隐藏测试决定 binary reward；基础设施故障不算模型失败</h2>
-    <div class="body"><div style="width:100%"><div class="lane"><strong>VISIBLE</strong><div class="nodes"><span class="node good">GitHub issue</span><span class="node good">base repository</span><span class="node good">harness tools</span><span class="node good">tool outputs</span></div></div><div class="lane"><strong>HIDDEN</strong><div class="nodes"><span class="node hidden">test patch</span><span class="node hidden">FAIL_TO_PASS</span><span class="node hidden">PASS_TO_PASS</span></div></div><div class="lane"><strong>VERDICT</strong><div class="nodes"><span class="node">apply patch</span><span class="node">run tests</span><span class="node">parse log</span><span class="node good">resolved 0 / 1</span></div></div></div></div>
-    <div class="foot"><span>来源：论文 §3、Appendix D/L；SWE-bench 4.1.0 grading.py。</span><span class="pg"></span></div>
+    <div class="top"><b>09 · 判定流程</b><span>逐题隔离复测：sealed per-instance oracle</span></div><h2>模型交代码补丁，独立隐藏测试判定成功 1 或失败 0</h2>
+    <div class="body"><div style="width:100%"><div class="lane"><strong>VISIBLE</strong><div class="nodes"><span class="node good">GitHub 问题说明</span><span class="node good">基线代码仓库</span><span class="node good">执行程序的工具</span><span class="node good">工具输出</span></div></div><div class="lane"><strong>HIDDEN</strong><div class="nodes"><span class="node hidden">隐藏测试补丁</span><span class="node hidden">新回归测试 F2P</span><span class="node hidden">原有测试 P2P</span></div></div><div class="lane"><strong>VERDICT</strong><div class="nodes"><span class="node">应用代码与测试补丁</span><span class="node">运行测试</span><span class="node">解析日志</span><span class="node good">成功 1 / 失败 0</span></div></div></div></div>
+    <div class="foot"><span>v2 §3.3、Appendix B.2；通用规则见 swebench 4.1.0 grading.py。执行中测试曾有 2.58% 乐观误判。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="真实评测 case">
-    <div class="top"><b>10 · REAL CASE</b><span>astropy__astropy-12907</span></div><h2>嵌套 CompoundModel：两条新测试要修好，13 条原有测试不能退化</h2>
-    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/judge-case.svg" alt="SWE-bench Verified real case"></div>
-    <div class="foot"><span>来源：SWE-bench Verified official dataset。论文没有公开本 case 的逐条 harness trajectory。</span><span class="pg"></span></div>
+    <div class="top"><b>10 · 真实任务</b><span>astropy__astropy-12907</span></div><h2>一行修复怎样过真实测试，标准评分器又有什么边界？</h2>
+    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/judge-case.svg" alt="SWE-bench Verified real case" width="1200" height="690"></div>
+    <div class="foot"><span>来源：固定 SWE-bench Verified 数据、Astropy PR #12907、swebench 4.1.0。论文专用复测与模型日志未公开。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Source harness 矩阵">
-    <div class="top"><b>11 · SOURCE RESULTS</b><span>six recipes × four evaluation harnesses</span></div><h2>列从左到右明显变深，行与行之间只小幅移动</h2>
-    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/source-matrix.svg" alt="Source harness result matrix"></div>
-    <div class="foot"><span>根据论文 Figure 2 / Table 1 重绘。Cross − SFT = +0.77 pp，95% CI [+0.03,+1.52]。</span><span class="pg"></span></div>
+    <div class="top"><b>11 · 原接口成绩</b><span>六种模型 × 四种评测接口</span></div><h2>原接口增益 +0.48 / +0.77 pp，接口列均值差异 7.13 pp</h2>
+    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/source-matrix.svg" alt="Source harness result matrix" width="1200" height="670"></div>
+    <div class="foot"><span>v2 Figure 2 / Table 4 重绘。Cross − SFT 的 99% 多重比较校正区间 [−0.21,+1.75] 含 0。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Held-out 结果">
-    <div class="top"><b>12 · PORTABILITY</b><span>weak-ReAct excluded from training</span></div><h2>六条 recipe 的 spread 比实验最小可检测差异还小</h2>
-    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/heldout.svg" alt="Held-out weak-ReAct results"></div>
-    <div class="foot"><span>根据论文 Figure 3a、Tables 2–4 重绘。</span><span class="pg"></span></div>
+    <div class="top"><b>12 · 未见接口</b><span>weak-ReAct 未参与训练</span></div><h2>未见接口上，Within 与 Cross 都没有显著超过 SFT</h2>
+    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/heldout.svg" alt="Held-out weak-ReAct results" width="1200" height="650"></div>
+    <div class="foot"><span>v2 Figure 3a、Tables 5–7 重绘。avg@8 配对差值用各自完整题目集合，不等于绝对均值直接相减。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="如何读负结果">
-    <div class="top"><b>13 · STATISTICAL READING</b><span>absence of detection ≠ exact equality</span></div><h2>实验排除了大效应，没有证明 Cross 与 Within 数学等价</h2>
-    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">AVG@4</span><div class="metric">1.19–1.42 pp</div><p>六个 held-out contrast 的 80% power 最小可检差异。</p></div><div class="panel green"><span class="tag">AVG@8</span><div class="metric">0.88–1.14 pp</div><p>尝试数翻倍，precision 提高，点估计也朝 0 收缩。</p></div><div class="panel orange"><span class="tag">CLAIM</span><h3>no detectable portability</h3><p>小于约 1 pp 的真实差异仍可能存在，论文不能把它排除。</p></div></div></div>
-    <div class="foot"><span>来源：论文 §5、Appendix D/L，Tables 3–4。</span><span class="pg"></span></div>
+    <div class="top"><b>13 · 统计解释</b><span>不显著，不能推出等价</span></div><h2>最小可检出效应描述实验精度，不是已排除差异的上限</h2>
+    <div class="body"><div class="grid3"><div class="panel blue"><span class="tag">每题四次尝试</span><div class="metric">1.19–1.42 pp</div><p>估计达到 80% 检出概率所需的真实差异。</p></div><div class="panel green"><span class="tag">每题八次尝试</span><div class="metric">0.88–1.14 pp</div><p>区间更窄；Cross − Within 为 +0.25 pp，区间仍含 0。</p></div><div class="panel orange"><span class="tag">题目集合也不同</span><h3>绝对分不能直接相减</h3><p>绝对均值用 500 题及有效尝试；八次配对先筛 486 题，再选双方八次完整的题。三项差值不必可加。</p></div></div></div>
+    <div class="foot"><span>v2 Appendix B.2、Tables 5–7；最小可检出效应由区间宽度近似估计，不能证明零效应。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Seeds 与 on-policy 复核">
-    <div class="top"><b>14 · ROBUSTNESS</b><span>sign flips across seeds</span></div><h2>Cross − Within 的 seed 波动比两者平均差异更大</h2>
-    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">THREE SEEDS · AVG@4</span><h3>+0.62 / +0.05 / −0.20 pp</h3><p>合并差值 +0.16 pp，95% CI [−0.41,+0.72]。Within 与 Cross 自己的 seed range 分别为 0.45 与 0.42 pp。</p></div><div class="panel orange"><span class="tag">RE-COLLECTED CROSS</span><h3>后半程改为 on-policy</h3><p>相对 offline Cross 为 +0.13 [−0.85,+1.10]；相对 Within 为 +0.75 [−0.10,+1.65]。区间仍跨 0。</p></div></div></div>
-    <div class="foot"><span>来源：论文 §5、Appendix D，Tables 2–3。</span><span class="pg"></span></div>
+  <section class="slide" data-title="随机种子与一次重采">
+    <div class="top"><b>14 · 稳定性</b><span>三种训练随机种子；Cross 一次中途重采</span></div><h2>训练随机种子的差值有正有负，一次重采也没有显著改善</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">三种 seed · avg@4</span><h3>+0.62 / +0.05 / −0.20 pp</h3><p>合并差值 +0.16 pp，95% CI [−0.41,+0.72]；对题目重采样，固定三种已观察的 seed。</p><p>Within / Cross 的跨 seed 最大分差为 0.45 / 0.42 pp。</p></div><div class="panel orange"><span class="tag">一次重采的 Cross</span><h3>重跑原 183 题，131 题仍有混合结果</h3><p>中途模型采新记录供后半程训练；首次更新概率比与 ESS 均为 1.000。</p><p>较离线 Cross：+0.13 pp [−0.85,+1.10]。只检验一次重采，不是持续在线对照。</p></div></div></div>
+    <div class="foot"><span>v2 §4.2、Appendix B.1–B.2、Tables 5–6。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Advantage 中的 harness identity">
-    <div class="top"><b>15 · CREDIT DIAGNOSTIC</b><span>can a classifier recover the harness?</span></div><h2>Cross 确实把 harness 成功先验写进 advantage</h2>
-    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">OUT-OF-FOLD TEST</span><h3>只看 advantage 猜 harness</h3><p>183 tasks hashed into five folds；每条 arm 和自己的 within-task shuffled-label null 比。</p><p>Within：+0.02 pp [−0.38,+0.46]；Cross：+4.48 pp [+3.22,+5.83]。</p></div><div class="panel orange"><span class="tag">FAILED RESIDUALIZATION</span><h3>Baseline population 选错了</h3><p>Baseline 从 1,008 个多数全失败的任务估计，训练却只用 183 个 disagreement tasks。它只去掉 9% offset，残留 identity +4.54 pp。</p></div></div></div>
-    <div class="foot"><span>来源：论文 §6、Appendix E/I，Table 9。</span><span class="pg"></span></div>
+    <div class="top"><b>15 · 训练信号诊断</b><span>只用一个相对分，能否猜出来源接口？</span></div><h2>Cross 的相对分包含接口信息；两个对照都未单独隔离其影响</h2>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">按任务五折验证</span><h3>同题不能跨训练与测试折</h3><p>分类器输入 advantage，预测 harness；减去同题内标签随机打乱的基准准确率。</p><p>Cross：30.63% − 26.15% = +4.48 pp；Within：+0.02 pp，区间含 0。关联不证明模型记住了接口。</p></div><div class="panel orange"><span class="tag">辅助对照</span><h3>信号数量与接口可预测性未分开</h3><p>Coverage-matched 置零部分相对分，也降低接口可预测性。Residualized 减去其他任务的接口均分，但估计分布与训练分布不同，接口仍可预测。</p><p>两项较 Cross 的未见接口差值都不显著。</p></div></div></div>
+    <div class="foot"><span>v2 §5、Appendix A.2 / C.1、Table 9；对照联合改变或未充分改变目标属性，不能确定因果贡献。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Action composition">
-    <div class="top"><b>16 · BEHAVIOR DIAGNOSTIC</b><span>interface dominates repertoire</span></div><h2>换 harness 会重排行为；换 credit rule 几乎不动</h2>
-    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/diagnostics.svg" alt="Harness identity and action distribution diagnostics"></div>
-    <div class="foot"><span>根据论文 Figures 3b–4、Tables 9–10 重绘。Aider 因 plain-chat transcript 未纳入 action labels。</span><span class="pg"></span></div>
+  <section class="slide" data-title="动作频率诊断">
+    <div class="top"><b>16 · 行为诊断</b><span>这里比较 SFT 与 Cross，没有比较 Within 与 Cross</span></div><h2>换接口的动作频率差异，远大于同接口内 SFT 与 Cross 的差异</h2>
+    <div class="body figure small"><img src="/lib/papers/multi-harness-rl/diagnostics.svg" alt="Harness identity and action distribution diagnostics" width="1200" height="680"></div>
+    <div class="foot"><span>v2 Figures 3b–4、Tables 9–10 重绘。编辑后测试只标编辑；频率不评价动作是否正确。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="限制与故障审计">
-    <div class="top"><b>17 · LIMITS</b><span>what still remains uncertain</span></div><h2>结论窄而可信；复现材料和外部有效性仍有缺口</h2>
-    <div class="body"><div class="limits"><div class="limit"><b>SCOPE</b><strong>一套 model family 与预算</strong><span>Qwen3-8B、Python tasks、四个 source harness、一个 weak-ReAct held-out。</span></div><div class="limit"><b>POWER</b><strong>小于约 1 pp 的差异未排除</strong><span>绝对 solve rate 低，source 主要是 avg@2。</span></div><div class="limit"><b>ARTIFACT</b><strong>arXiv 没有公开 artifact URL</strong><span>论文描述 JSON、grader 和 weak-ReAct release，但本次无法独立定位。</span></div><div class="limit"><b>SELECTION</b><strong>只训练 disagreement tasks</strong><span>这是 Cross 产生梯度的必要条件，也限定了目标分布。</span></div><div class="limit"><b>LABELER</b><strong>11 / 160 turns 误标</strong><span>8 个错误出现在 SWE-agent；action JSD 仍相差两个数量级。</span></div><div class="limit"><b>INFRA AUDIT</b><strong>五类静默故障被发现并修复</strong><span>包括 container 污染、20% episode 丢失、grader crash 和 cache 截断。</span></div></div></div>
-    <div class="foot"><span>来源：论文 §9、Appendix C/H/J/L；artifact URL 检查于 2026-09-29。</span><span class="pg"></span></div>
+    <div class="top"><b>17 · 限制</b><span>结论依赖当前数据、模型、接口和统计精度</span></div><h2>低成功率、弱 SFT 起点和未公开材料，都限制结论范围</h2>
+    <div class="body"><div class="limits"><div class="limit"><b>模型范围</b><strong>训练只有 Qwen3-8B</strong><span>Python 修复，成功率多为 1%–10%；没有高能力模型验证。</span></div><div class="limit"><b>统计精度</b><strong>小差异仍与区间相容</strong><span>未见接口仅一个 weak-ReAct；不显著不等价。</span></div><div class="limit"><b>实验材料</b><strong>v2 明确尚未公开</strong><span>执行程序、专用评分器、结果与分析计划拟以后发布。</span></div><div class="limit"><b>筛选条件</b><strong>183 题都有混合结果</strong><span>非零信号全覆盖依赖筛选；没有单接口训练对照。</span></div><div class="limit"><b>SFT 起点</b><strong>未独立调优超参数</strong><span>与 RL 同用 3e-7 学习率及预算；不代表最优 SFT 配方。</span></div><div class="limit"><b>执行故障</b><strong>哪些排除，哪些算 0</strong><span>基础设施无判定排除；Seed-Coder 的 32 次上下文超限算失败。</span></div></div></div>
+    <div class="foot"><span>v2 Limitations、Appendix A.2 / B.1 / E.1；论文与 source archive 核对于 2026-10-14。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与研究入口">
-    <div class="top"><b>18 · TAKEAWAYS</b><span>for Claude Code / Codex harness research</span></div><h2>想证明模型学到了可迁移能力，必须把接口换掉再测</h2>
-    <div class="body"><div class="grid2"><div class="panel green"><span class="tag">WHAT THE PAPER SHOWS</span><h3>Cross credit changes the signal</h3><p>Harness identity 可从 advantage 恢复；source harness 上有小幅收益。</p><p>但 held-out score、seed 复核与 action composition 都没有显示额外 portability。</p></div><div class="panel blue"><span class="tag">WHAT TO DO NEXT</span><h3>把 harness 当成一等实验变量</h3><p>报告训练 exposure、grouping boundary、source delta、unseen-harness delta、grader 与版本。</p><p>下一步应做多种 held-out interface 和更细粒度 credit assignment。</p></div></div></div>
+    <div class="top"><b>18 · 结论</b><span>对 Claude Code / Codex 相关训练研究的启发</span></div><h2>原流程中变好、换流程仍变好、分组改变带来收益，要分别证明</h2>
+    <div class="body"><div class="grid2"><div class="panel green"><span class="tag">本研究的证据</span><h3>小幅训练增益，大幅接口差异</h3><p>原接口的 Within / Cross 估计增益为 +0.48 / +0.77 pp；接口列均值差异 7.13 pp。</p><p>未见接口两种规则都未显著超过 SFT，Cross 未稳定超过 Within；没有证明多接口 RL 无用。</p></div><div class="panel blue"><span class="tag">下一步对照</span><h3>增加接口与持续在线训练</h3><p>固定任务、预算、评分器，轮流留出不同接口；再比较持续采集下两种分组规则。</p><p>对照应验证非零信号数量与接口可预测性是否真的被单独改变。</p></div></div></div>
     <div class="foot"><span><a href="/posts/论文解读/multi-harness-rl.html" target="_top">返回文章</a> · <a href="https://arxiv.org/abs/2609.04518">原论文</a></span><span class="pg"></span></div>
   </section>
 </main>
@@ -144,16 +165,67 @@
   const slides=[...document.querySelectorAll('#deck .slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
   if(window.self===window.top)returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
-  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
   function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · Multi-Harness RL`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
   function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
   async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
   function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
   slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
-  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);document.addEventListener('fullscreenchange',scaleDeck);new ResizeObserver(scaleDeck).observe(document.getElementById('controls'));
   addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
   show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+<script>
+(() => {
+  const panel = document.getElementById('overview-panel');
+  const trigger = document.getElementById('toc');
+  const close = document.getElementById('close-overview');
+  const canvas = document.getElementById('deck');
+  const controls = document.getElementById('controls');
+  if (!panel || !trigger || !close) return;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', '幻灯片总览');
+  trigger.setAttribute('aria-controls', panel.id);
+  const synchronize = () => {
+    const open = !panel.hidden;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (canvas) canvas.inert = open;
+    if (controls) controls.inert = open;
+    if (open) close.focus({ preventScroll: true });
+    else trigger.focus({ preventScroll: true });
+  };
+  new MutationObserver(synchronize).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  trigger.setAttribute('aria-expanded', String(!panel.hidden));
+  document.addEventListener('keydown', (event) => {
+    if (!panel.hidden) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'o') {
+        event.preventDefault(); event.stopImmediatePropagation(); close.click(); return;
+      }
+      if (event.key === 'Tab') {
+        const items = [...panel.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+          .filter((item) => item.getClientRects().length > 0);
+        if (items.length) {
+          const index = items.indexOf(document.activeElement);
+          event.preventDefault(); event.stopImmediatePropagation();
+          items[(index + (event.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+        }
+        return;
+      }
+      event.stopImmediatePropagation(); return;
+    }
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault(); event.stopImmediatePropagation(); trigger.click(); return;
+    }
+    if (event.key === 'Escape' && !document.fullscreenElement && window.parent !== window) {
+      window.parent.postMessage({ type: 'paper-deck-escape' }, location.origin);
+    }
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && panel.hidden) document.getElementById('full')?.focus({ preventScroll: true });
+  });
 })();
 </script>
 </body>

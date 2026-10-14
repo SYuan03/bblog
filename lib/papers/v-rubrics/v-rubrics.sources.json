@@ -1,46 +1,880 @@
 {
-  "schema_version": 2,
-  "paper": {"title": "V-Rubrics: Visual Faithfulness via Rubric-Based Reinforcement Learning", "kind": "research", "primary_source_ids": ["paper", "official-code", "dataset"]},
-  "artifacts": {"article": "content/_posts/063-v-rubrics.md", "deck": "lib/decks/v-rubrics-visual-guide.html", "embed_src": "/lib/decks/v-rubrics-visual-guide.html"},
+  "schema_version": 3,
+  "paper": {
+    "title": "V-Rubrics: Visual Faithfulness via Rubric-Based Reinforcement Learning",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper",
+      "official-code",
+      "dataset"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/063-v-rubrics.md",
+    "deck": "lib/decks/v-rubrics-visual-guide.html",
+    "embed_src": "/lib/decks/v-rubrics-visual-guide.html"
+  },
   "sources": [
-    {"id":"paper","kind":"paper","title":"V-Rubrics: Visual Faithfulness via Rubric-Based Reinforcement Learning","url":"https://arxiv.org/pdf/2608.25580v1","revision":"v1","used_for":["problem","method","data","experiments","limitations"]},
-    {"id":"arxiv-meta","kind":"metadata","title":"arXiv metadata for 2608.25580","url":"https://export.arxiv.org/api/query?id_list=2608.25580","revision":"checked 2026-10-05","used_for":["v1-date","title","authors"]},
-    {"id":"official-code","kind":"code","title":"V-Rubrics official repository","url":"https://github.com/shulin16/v-rubrics","revision":"6515819cb7b6effdf7cf6b73f868d4d8adc942f1","used_for":["reward-code","prefix-alignment","launch-config","reproducibility"]},
-    {"id":"dataset","kind":"dataset","title":"V-Rubrics 50K","url":"https://huggingface.co/datasets/v-rubrics/v-rubrics-50k","revision":"public preview checked 2026-10-05","used_for":["real-case","schema","rubric-counts"]}
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "V-Rubrics: Visual Faithfulness via Rubric-Based Reinforcement Learning",
+      "url": "https://arxiv.org/pdf/2608.25580v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "method",
+        "data",
+        "experiments",
+        "limitations"
+      ]
+    },
+    {
+      "id": "arxiv-meta",
+      "kind": "metadata",
+      "title": "arXiv metadata for 2608.25580",
+      "url": "https://export.arxiv.org/api/query?id_list=2608.25580",
+      "revision": "checked 2026-10-05",
+      "used_for": [
+        "v1-date",
+        "title",
+        "authors"
+      ]
+    },
+    {
+      "id": "official-code",
+      "kind": "code",
+      "title": "V-Rubrics official repository",
+      "url": "https://github.com/shulin16/v-rubrics",
+      "revision": "6515819cb7b6effdf7cf6b73f868d4d8adc942f1",
+      "used_for": [
+        "reward-code",
+        "prefix-alignment",
+        "launch-config",
+        "reproducibility"
+      ]
+    },
+    {
+      "id": "dataset",
+      "kind": "dataset",
+      "title": "V-Rubrics 50K",
+      "url": "https://huggingface.co/datasets/v-rubrics/v-rubrics-50k",
+      "revision": "f310bc821b547050f210967bec219d979f0d1bd6",
+      "used_for": [
+        "real-case",
+        "schema",
+        "rubric-counts"
+      ]
+    }
   ],
-  "paper_reading": {"main_agent_complete_read":true,"appendices_included":true,"extracted_text_reviewed":true,"rendered_pages_reviewed":true,"page_count":20,"rendered_page_ranges":[{"start":1,"end":20}],"source_visuals_expected":10,"visual_inventory_complete":true,"inventory_note":"All 20 pages and appendices were reviewed as extracted text and rendered pages. The paper PDF pixels are not reused. The official repository is Apache-2.0, but the article uses original SVG/HTML summaries rather than source figures."},
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 20,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 20
+      }
+    ],
+    "source_visuals_expected": 10,
+    "visual_inventory_complete": true,
+    "inventory_note": "All 20 pages and appendices were reviewed as extracted text and rendered pages. The paper PDF pixels are not reused. The official repository is Apache-2.0, but the article uses original SVG/HTML summaries rather than source figures.",
+    "current_review": {
+      "review_date": "2026-10-14",
+      "main_agent_complete_read": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 20,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 20
+        }
+      ],
+      "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/three-papers-2026-10-05/v-rubrics.txt",
+      "notes": "Complete root v1 text and 20 renders; fixed6515819 reward/launcher/VERL patch; raw public row2501 at f310bc821b547050f210967bec219d979f0d1bd6. Overall/knowledge averages and missing-judge behavior corrected."
+    }
+  },
   "note_sections": [
-    {"role":"problem","locator":"Q1. 为什么只看最终答案的奖励无法训练视觉忠实度？"},
-    {"role":"related-work","locator":"Q2. 它与已有视觉模型强化学习和评分项奖励有什么区别？"},
-    {"role":"method","locator":"Q3. 50K 数据、判分模型和前缀权重是怎样连起来的？"},
-    {"role":"experiments","locator":"Q4. 实验结果到底有多大，哪些评测没有提升？"},
-    {"role":"future-work","locator":"Q5. 如果继续做这条路线，哪些实验最有价值？"},
-    {"role":"summary","locator":"Q6. 最终应该怎样评价 V-Rubrics？"}
+    {
+      "role": "problem",
+      "locator": "1. Motivation：答对选项不代表看对了图"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：评分粒度与训练权重的范围"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：图像事实如何变成逐项训练信号"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：评分项的收益与前缀定位的证据边界"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：控制奖励权重，验证自动标注"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：支持细项奖励，但尚未隔离定位收益"
+    }
   ],
   "coverage": [
-    {"id":"data-construction","claim_type":"author-claim","source_ids":["paper","dataset"],"source_locators":[{"source_id":"paper","locator":"Sections 3.2-3.4; Appendix C; Table 4"},{"source_id":"dataset","locator":"row chart_02501_3c2e6864 and dataset metadata"}],"evidence":[{"artifact":"article","quote":"最终得到 18,121 个困难样本、25,306 个中等样本和 6,821 个简单样本"},{"artifact":"deck","quote":"50K 样本对应 352,938 条评分项"}]},
-    {"id":"judge-boundary","claim_type":"author-claim","source_ids":["paper","official-code"],"source_locators":[{"source_id":"paper","locator":"Section 3.5.1 and Appendix D.5"},{"source_id":"official-code","locator":"src/v_rubrics/training/rewards/sequence_rubric_reward.py lines 23-37"}],"evidence":[{"artifact":"article","quote":"它只读取模型回答和一条本身包含判断所需信息的文字标准"},{"artifact":"deck","quote":"如果自动标注漏掉图中事实，训练时的判分模型无法回到原图补救"}]},
-    {"id":"real-case","claim_type":"reproduced-calculation","source_ids":["paper","dataset"],"source_locators":[{"source_id":"paper","locator":"Figure 1 and Equations 3-4"},{"source_id":"dataset","locator":"AI2D original_id 2501, uid chart_02501_3c2e6864"}],"evidence":[{"artifact":"article","quote":"若模型只回答 `spring tide`"},{"artifact":"deck","quote":"评分项得分 = 5 / 26 = 0.1923"}]},
-    {"id":"prefix-code","claim_type":"inspected-implementation","source_ids":["official-code"],"source_locators":[{"source_id":"official-code","locator":"prefix_rubric_reward.py lines 215-246 and 315-437"}],"evidence":[{"artifact":"article","quote":"再用阈值 60 的模糊匹配尝试定位"},{"artifact":"deck","quote":"支持句无法可靠定位时，这项权重退回整段回答"}]},
-    {"id":"model-results","claim_type":"reproduced-calculation","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Tables 1-3, Sections 4.3-4.4"}],"evidence":[{"artifact":"article","quote":"额外收益是 1.79 与 0.51 个百分点"},{"artifact":"deck","quote":"评分项方法比只看答案高 1.79 和 0.51 个百分点"}]},
-    {"id":"release-config-gap","claim_type":"inspected-implementation","source_ids":["paper","official-code"],"source_locators":[{"source_id":"paper","locator":"Appendix D.2, Table 6"},{"source_id":"official-code","locator":"training/rl/README.md lines 7-27; launchers/paper_grpo.sh lines 43-104"}],"evidence":[{"artifact":"article","quote":"公开仓库还带来另一层复现风险"},{"artifact":"deck","quote":"两个公开启动脚本同时改变了奖励权重与归因方法"}]},
-    {"id":"limitations","claim_type":"interpretation","source_ids":["paper","official-code","dataset"],"source_locators":[{"source_id":"paper","locator":"Section 4.4, Section 5, Appendix D.5"},{"source_id":"official-code","locator":"reward modules and canonical launcher at revision 6515819"},{"source_id":"dataset","locator":"public dataset schema and row 2501"}],"evidence":[{"artifact":"article","quote":"评分项全部自动生成，判分模型不看图"},{"artifact":"deck","quote":"人工抽样审核或标注者一致性"}]}
+    {
+      "id": "data-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.2-3.4; Appendix C; Table 4"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "row chart_02501_3c2e6864 and dataset metadata"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "最终得到 18,121 个困难样本、25,306 个中等样本和 6,821 个简单样本"
+        },
+        {
+          "artifact": "article",
+          "quote": "Gemini-3-Pro 根据图像、问题指令与参考回答，为每条样本生成 JSON 格式的评分项。"
+        }
+      ]
+    },
+    {
+      "id": "judge-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.5.1 and Appendix D.5"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "src/v_rubrics/training/rewards/sequence_rubric_reward.py lines 23-37"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它只读取模型回答和一条本身包含判断所需信息的文字标准"
+        },
+        {
+          "artifact": "article",
+          "quote": "判为 1 是成功避免，判为 0 才是确认违反。"
+        }
+      ]
+    },
+    {
+      "id": "real-case",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 1 and Equations 3-4"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "AI2D original_id 2501, uid chart_02501_3c2e6864"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "选项用从 0 开始的编号，<code>(3) spring tide</code> 是第四个选项"
+        },
+        {
+          "artifact": "article",
+          "quote": "`Rrub=5/26≈0.1923`"
+        }
+      ]
+    },
+    {
+      "id": "prefix-code",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "prefix_rubric_reward.py lines 215-246 and 315-437"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "third_party/patches/verl.patch lines 97-205: independent normalization, sample/population standard deviations and [-1,3] clipping"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "固定代码 <code>6515819</code> 先完全匹配、忽略大小写匹配，再用阈值 60 的模糊匹配定位。"
+        },
+        {
+          "artifact": "article",
+          "quote": "前缀包括支持句之前的所有 token，不是只奖励那句话。"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开实现先等待答案等价性判断完成，再并发调用各条评分项的判分"
+        },
+        {
+          "artifact": "article",
+          "quote": "在乘固定权重之前把标准分裁剪到 <code>[−1,3]</code>"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1-3, Sections 4.3-4.4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "通用与知识类总体平均分提高 1.79 个百分点，视觉推理类提高 0.51 个百分点"
+        },
+        {
+          "artifact": "article",
+          "quote": "在 MathVerse V/O 上低 2.79"
+        }
+      ]
+    },
+    {
+      "id": "release-config-gap",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix D.2, Table 6"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "training/rl/README.md lines 7-27; launchers/paper_grpo.sh lines 43-104"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Rubric 组训练 batch 为 192，answer-only 为 480"
+        },
+        {
+          "artifact": "article",
+          "quote": "同一个官方启动脚本提供两种模式，默认使用不同的奖励权重"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "official-code",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.4, Section 5, Appendix D.5"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "reward modules and canonical launcher at revision 6515819"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "public dataset schema and row 2501"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "评分项全部自动生成，判分模型不看图"
+        },
+        {
+          "artifact": "article",
+          "quote": "最后 0.30 个百分点同时包含“每项分别标准化”和“前缀定位”两处变化"
+        }
+      ]
+    }
   ],
   "source_visuals": [
-    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 1, Figure 1","status":"omitted","rationale":"The spring-tide case is reconstructed from the released dataset row and explained in original HTML rather than copying the figure.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 3, Figure 2","status":"omitted","rationale":"The pipeline is redrawn as an original evidence-boundary diagram.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 5, Figure 3","status":"omitted","rationale":"Dataset counts are restated with exact values in text and deck metrics.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 8, Figure 4","status":"omitted","rationale":"Qualitative examples are described but source screenshots are not copied.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 6, Table 1","status":"omitted","rationale":"Main averages and negative deltas are redrawn in a new chart and table.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]},
-    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p. 8, Table 2","status":"omitted","rationale":"Main averages and selected benchmark deltas are redrawn in original layouts.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]},
-    {"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p. 8, Table 3","status":"omitted","rationale":"The three ablation values are restated in prose and the configuration caveat is added separately.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]},
-    {"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"Appendix C, Table 4","status":"omitted","rationale":"The 17-source total and rubric counts are retained without reproducing the source layout.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]},
-    {"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"Appendix C.3, Table 5","status":"omitted","rationale":"Rubric schema and generation rules are summarized in prose.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]},
-    {"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"Appendix D.2, Table 6","status":"omitted","rationale":"The settings needed for the paper-versus-release comparison are restated in text.","placements":[],"permission_status":"not-applicable","permission_basis":"Source table not reused.","credit":"","asset_paths":[]}
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 1, Figure 1",
+      "status": "redrawn",
+      "rationale": "The spring-tide example is reconstructed from the released zero-indexed answer row and six text rubric items; the example reward is a labeled calculation, not a released policy reward log.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "真实数据行 <code>original_id=2501</code>"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Figure 1 与公开 AI2D 数据行 2501 整理",
+      "asset_paths": [
+        "/lib/papers/v-rubrics/body-case.svg"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2",
+      "status": "redrawn",
+      "rationale": "The method/data pipeline is redrawn to separate image-aware annotation from text-only training judging and full-prefix masking.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文图 1-3 与第 3.2-3.5 节重绘"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Figure 2 重绘",
+      "asset_paths": [
+        "/lib/papers/v-rubrics/body-method.svg"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 3",
+      "status": "omitted",
+      "rationale": "Dataset counts are restated with exact values in text and deck metrics.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Paper pixels not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 4",
+      "status": "omitted",
+      "rationale": "Qualitative examples are described but source screenshots are not copied.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Paper pixels not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 6, Table 1",
+      "status": "redrawn",
+      "rationale": "Published general/knowledge metrics are summarized in 0–100 bars and exact averages; no local truncated axis magnifies small gains.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文表 1-3 重绘"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Tables 1–2 重绘",
+      "asset_paths": [
+        "/lib/papers/v-rubrics/body-results.svg"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 2",
+      "status": "redrawn",
+      "rationale": "Published visual reasoning averages and negative cases are combined in the same untruncated-scale chart.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文表 1-3 重绘"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original layout using published facts; source pixels not reused.",
+      "credit": "根据论文 Tables 1–2 重绘",
+      "asset_paths": [
+        "/lib/papers/v-rubrics/body-results.svg"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 3",
+      "status": "redrawn",
+      "rationale": "The three ablation values are displayed with the joint standardization/localization confound, not assigned to localization alone.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "只看答案为 66.25；把评分项作用于整段回答为 67.74；逐项标准化并作用于前缀为 68.04"
+        },
+        {
+          "artifact": "deck",
+          "locator": "一个启动脚本的两种模式：权重与归因方法都不同"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Table 3 整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "Appendix C, Table 4",
+      "status": "omitted",
+      "rationale": "The 17-source total and rubric counts are retained without reproducing the source layout.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Source table not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "Appendix C.3, Table 5",
+      "status": "omitted",
+      "rationale": "Rubric schema and generation rules are summarized in prose.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Source table not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "Appendix D.2, Table 6",
+      "status": "omitted",
+      "rationale": "The settings needed for the paper-versus-release comparison are restated in text.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Source table not reused.",
+      "credit": "",
+      "asset_paths": []
+    }
   ],
   "figures": [
-    {"path":"/lib/papers/v-rubrics/cover.svg","origin":"generated","source_id":"paper","source_locator":"Figures 1-3 and Sections 3.2-3.5","credit":"根据论文数据构建与训练流程重新绘制","license_status":"not-applicable","license_basis":"Original SVG composition using paper facts.","used_in":["article"]},
-    {"path":"/lib/papers/v-rubrics/results.svg","origin":"generated","source_id":"paper","source_locator":"Tables 1-3","credit":"根据论文 Tables 1-3 数据重新绘制","license_status":"not-applicable","license_basis":"Original SVG composition using published values.","used_in":["article"]}
+    {
+      "path": "/lib/papers/v-rubrics/body-case.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Figure 1; dataset original_id=2501 / uid chart_02501_3c2e6864",
+      "credit": "根据论文 Figure 1 与公开数据行重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original editable SVG; original pixels and layout not traced.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "figure-1"
+    },
+    {
+      "path": "/lib/papers/v-rubrics/body-method.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Figure 2; Sections 3.2–3.5",
+      "credit": "根据论文 Figure 2 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG composition using primary-source facts.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "figure-2"
+    },
+    {
+      "path": "/lib/papers/v-rubrics/body-results.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Tables 1–2",
+      "credit": "根据论文 Tables 1–2 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG composition using primary-source facts.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "table-1"
+    }
   ],
-  "qa": {"reading_layout":{"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},"viewports":[{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],"tested_surfaces":{"article_body":true,"embedded_deck":true,"standalone_deck":true},"language_review":{"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},"interactions":{"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},"inspected_slides":["opening","densest","largest-table-or-code","final"]}
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Read complete current note and all12 slides, deck4-12 completed this turn.50K auto VF/RC/IF rubrics; scorer doesn't see image. AI2D chart_02501_3c2e6864 true option3 is fourth, six weights26; answer-only5/26 leads .5962; twelve grouped answers withsix satisfy prefixcontribution.0962. Answers graded first then rubrics; sample/populationSD,[-1,3]clip, failures/fallback differences and .1/.1/.8 vs .5/.05/.45 defaults retained. Batch192vs480/.3 gain not isolated prefix, MathVerse negative retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "6edbc1adbdba092e347f9c1666bdb4d245d8ac6c0678a35af534cbf9d6fd73fc",
+      "built_article": "b29f2a77d323b668108ae031f796a9915a4b88ab6acd24f6f7f6239292ee1da2",
+      "deck": "bc0b9af2600b78ca4338a498f183169ee91f7b30b9f53187faa12db822f6ba32",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-063/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-063/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-063.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "rubric items",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.3–3.4: rubric construction"
+        }
+      ],
+      "article_quote": "作者把参考回答拆成多条可独立判断的评分项（rubric items）"
+    },
+    {
+      "term": "Visual Faithfulness",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3: rubric categories"
+        }
+      ],
+      "article_quote": "**Visual Faithfulness (VF，视觉忠实度)** 检查文字是否与图里可见的对象、数量、关系或数值一致"
+    },
+    {
+      "term": "Prefix credit",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.5: prefix attribution"
+        }
+      ],
+      "article_quote": "系统会找到这句话结束处的 token（模型处理的文本单位），并让该项 advantage（在组内标准化后的训练权重）只作用到这一位置之前。"
+    },
+    {
+      "term": "PITFALL",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.4–3.5: negatively weighted items"
+        }
+      ],
+      "article_quote": "负权重的 **PITFALL** 条目写的是“应避免某个错误”，判为 1 是成功避免，判为 0 才是确认违反。"
+    },
+    {
+      "term": "z-score",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Equations 5–7: item-wise normalization"
+        }
+      ],
+      "article_quote": "<code>z</code> 是同题回答组中的减均值/除标准差操作"
+    }
+  ],
+  "editorial_revision": {
+    "date": "2026-10-13",
+    "scope": "Substantive clarification of roles, cases, evaluation conditions, controlled comparisons, limits and article/deck consistency.",
+    "primary_checks": "Key policy/judge boundaries, public row 2501 and prefix reward code at 6515819 reviewed; no fresh whole 20-page rendered read.",
+    "full_paper_reading_record": "paper_reading preserves the previous complete-reading record; this revision does not recertify every rendered page.",
+    "rendering": "All three new article-column SVGs rendered and directly inspected at 780px. Complete three-surface browser run performed at three viewports before the final shared-CSS rebuild; final affected article/typography/containment/code/exit checks completed against 22:30:59 +0800 output. See qa.browser_qa_note for exact scopes and mobile limitations."
+  },
+  "qa_history": [
+    {
+      "scope": "Previous artifact version; invalidated by 2026-10-13 content and visual changes",
+      "record": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.76,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ]
+      }
+    },
+    {
+      "archived_at": "2026-10-14",
+      "reason": "Content revised; prior QA does not certify current bytes.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "article_visuals_interleaved": true
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "browser_qa_note": "Complete article/embed/standalone browser run on the 2026-10-13 21:44:41–42 +0800 build covered 12 slides on both deck surfaces at 1600×1000, 1512×982 and 390×844 (72 slide checks), all 3 figure dialogs at all widths, buttons/keyboard/hash/overview/fullscreen/Escape/focus-mode exits and stable return-to-article. The final 22:30:59 +0800 build (Tide CSS v22, article CSS v7, Tide JS v18) was separately rechecked for all three article layouts, every loaded/centered/contained figure, internal code/table/formula scrolling, neutral wrapper colors/typography, bounded section/figure/tail screenshots, focus exits and one figure-dialog exit per width; final-affected-report.json records that affected run, not a new complete slide run. Full prior run record: v-rubrics-qa-final.json. Dense mobile slides and thumbnails are scaled previews; clear-width figure view requires scrolling and sometimes additional zoom. Mobile viewport was exercised with mouse/pointer, not native-device touch. Very tall fullPage screenshots were not used alone as reading evidence."
+      }
+    }
+  ]
 }

@@ -1,66 +1,18 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visual-SDPO 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="Visual-SDPO 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · CLOSEST MATCH</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h1>执行 student 代码，再用 render 教回 code</h1>
-  <p class="lead">Visual-SDPO 把 screenshot、rubric 和 error 当 teacher-only context。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>78.6</h3><p>ChartMimic</p></div><div class="card green"><h3>82.6</h3><p>Design2Code</p></div><div class="card orange"><h3>29%</h3><p>GRPO render budget</p></div><div class="card "><h3>10/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；Tables 1-3</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · FAILURE</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>Executable code 仍会生成明显错误的 artifact</h2>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Visual-SDPO 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>
+.content{gap:22px}.tight .card p{font-size:19px}.tight .table{font-size:17px}.tight .table th,.tight .table td{padding:11px 13px}.case-diagram{display:grid;grid-template-columns:1fr 80px 1fr;gap:20px;align-items:center}.case-diagram .arrow{text-align:center;font-size:44px;color:var(--blue)}.plot{position:relative;height:250px;border-left:2px solid var(--line);border-bottom:2px solid var(--line);background:#fff}.legend{position:absolute;right:15px;top:85px;padding:20px 27px;border:2px solid var(--red);background:#fff;color:var(--red);font-size:23px}.plot svg{width:100%;height:100%}.formula{font-size:22px}.formula small{display:block;margin-top:10px;font:18px/1.5 Arial,"PingFang SC",sans-serif;color:var(--text)}.foot{font-size:16px}
 
-  <div class="content"><div class="grid g4"><div class="card red"><h3>Overlap</h3><p>元素重叠</p></div><div class="card orange"><h3>Clipping</h3><p>文字被裁</p></div><div class="card blue"><h3>Alignment</h3><p>布局错位</p></div><div class="card green"><h3>Contrast</h3><p>可读性不足</p></div></div></div>
-  <div class="foot"><span>来源：Introduction</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · LOOP</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>训练环闭合在 student 自己的 artifact 上</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Code</strong><p>student on-policy</p></div><div class="step"><b>2</b><strong>Execute</strong><p>renderer/browser</p></div><div class="step"><b>3</b><strong>Observe</strong><p>screenshot/error</p></div><div class="step"><b>4</b><strong>Teacher</strong><p>score same code</p></div><div class="step"><b>5</b><strong>Update</strong><p>KL + GRPO</p></div></div></div>
-  <div class="foot"><span>来源：Method overview</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · CREDIT</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>不是每个 code token 都该为 defect 负责</h2>
-
-  <div class="content"><div class="formula">w(token∈stmt) = 1 + (α−1) · max IoU(stmt regions, defects)</div><div class="callout"><p>visual region 先映射到 statement，再放大 implicated token 的 distillation weight。</p></div></div>
-  <div class="foot"><span>来源：Visual-Grounded Code Credit Weighting</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · INSTRUMENT</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>三类 renderer 使用不同 source map</h2>
-
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>Matplotlib</h3><p>artist hook + stack frame + bbox</p></div><div class="card green"><h3>HTML</h3><p>source metadata + browser rectangle</p></div><div class="card orange"><h3>Slides</h3><p>python-pptx shape construction hook</p></div></div></div>
-  <div class="foot"><span>来源：Method implementation</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · RESULT</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>Visual feedback 稳定超过 reference-code OPSD</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Benchmark</th><th>OPSD</th><th>GRPO</th><th>Visual-SDPO</th></tr></thead><tbody><tr><td>ChartMimic</td><td>77.0</td><td>76.2</td><td>78.6</td></tr><tr><td>Design2Code</td><td>78.6</td><td>80.0</td><td>82.6</td></tr><tr><td>AeSlides</td><td>—</td><td>58.2</td><td>60.7</td></tr></tbody></table></div></div>
-  <div class="foot"><span>根据 Tables 1-3 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · FAILED EXECUTION</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>代码跑不起来，也还有学习信号</h2>
-
-  <div class="content"><div class="grid g2"><div class="card red"><h3>GRPO reward</h3><p>execution failure → 0</p></div><div class="card green"><h3>Teacher context</h3><p>traceback / browser error 仍可输入</p></div></div></div>
-  <div class="foot"><span>来源：Objective description</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · GAME TRANSLATION</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>把 region→statement 扩展成 event→code span</h2>
-
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>Compile</h3><p>diagnostic → syntax/type span</p></div><div class="card green"><h3>Gameplay</h3><p>event/test → signal/state code</p></div><div class="card orange"><h3>Visual</h3><p>frame diff → node/property</p></div></div></div>
-  <div class="foot"><span>本文实验设计建议</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · REPRODUCTION</span><span>arXiv:2606.10334 · 2026-06-09</span></div>
-  <h2>最值得做，也最需要补齐公开性</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>论文给出</h3><p>principle、formula、benchmark gains</p></div><div class="card red"><h3>论文缺少</h3><p>code、α/β、optimizer、detector details</p></div></div></div>
-  <div class="foot"><span>兴趣程度 10/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/visual-sdpo.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+.slide .table,.slide.tight .table{font-size:30px}.slide .table th{font-size:26px}.slide .table th,.slide .table td,.slide.tight .table th,.slide.tight .table td{padding:16px 17px}.slide .card h3{font-size:30px}.slide .card p,.slide.tight .card p{font-size:28px}.slide .callout p{font-size:27px}.slide .step b{font-size:23px}.slide .step strong{font-size:28px}.slide .step p{font-size:25px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="Visual-SDPO 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 研究问题</span><span>arXiv:2606.10334v1 · 2026-06-09</span></div><h1>让模型从自己代码的画面缺陷中学习</h1><p class="lead">代码能运行，不保证图例、文字和布局正确。Visual-SDPO 把执行后的画面用于训练，并提高缺陷对应语句的训练权重。</p><div class="content"><div class="grid g3"><div class="metric"><strong>78.6</strong><span>ChartMimic：两类视觉分数均值</span></div><div class="metric"><strong>82.6</strong><span>Design2Code：五项指标均值</span></div><div class="metric"><strong>60.7</strong><span>AeSlides：四项布局指标均值</span></div></div><div class="callout"><p>这三个数不是完整程序功能通过率。论文没有公开单题代码和执行日志，图例遮挡只能作为机制示意。</p></div></div><div class="foot"><span>来源：Introduction；Tables 1–3；兴趣 10/10 仅表示博客作者个人兴趣</span><span>1 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 最接近的对照</span><span>§1；§4</span></div><h2>参考代码、整图奖励与局部反馈，改变的是不同环节</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>训练时得到什么</th><th>怎样使用</th></tr></thead><tbody><tr><td>参考代码 OPSD</td><td>教师多看标准源码</td><td>重评学生自己写出的代码概率</td></tr><tr><td>GRPO</td><td>整份输出的最终奖励</td><td>比较一组生成代码的奖励</td></tr><tr><td>推理阶段视觉修改</td><td>执行画面与批评文字</td><td>每次部署反复执行并重写</td></tr><tr class="ours"><td>Visual-SDPO</td><td>当前代码画面、缺陷位置和报错</td><td>教师重评同一代码，局部加权蒸馏＋GRPO</td></tr></tbody></table></div><div class="callout"><p>定位画面到源码已有调试工具。本文使用定位结果分配语言模型训练权重，但实验没有单独隔离定位的贡献。</p></div></div><div class="foot"><span>相关工作：视觉代码训练、PPTAgent 等修改流程；§4.2 的输出到源码定位</span><span>2 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 一次更新</span><span>§2.1–2.4</span></div><h2>先生成并执行代码，再对同一串代码评分</h2><div class="content"><div class="flow" style="--n:5"><div class="step"><b>1 · 作答</b><strong>student</strong><p>只看原始要求与可选参考图，生成代码 y。</p></div><div class="step"><b>2 · 执行</b><strong>渲染器</strong><p>执行 y，输出画面；失败则输出报错。</p></div><div class="step"><b>3 · 诊断</b><strong>检测与定位</strong><p>给缺陷区域，并记录画面元素对应语句。</p></div><div class="step"><b>4 · 评分</b><strong>teacher</strong><p>多看画面或诊断，重评 y 的每个前缀概率。</p></div><div class="step"><b>5 · 更新</b><strong>训练程序</strong><p>局部加权蒸馏与最终奖励共同更新 student。</p></div></div><div class="callout"><p>teacher 不生成一条新代码替换 y；输入已有的参考图片，与执行 y 后新增的截图，不是同一种信息。</p></div></div><div class="foot"><span>根据方法流程重绘；数学上逐位置定义，实现可批量前向计算</span><span>3 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 参数与信息边界</span><span>§2.2</span></div><h2>两个分支共享当前参数，不是冻结初始教师</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>student：接收梯度</h3><p>输入原始任务；采样并计算自己代码的概率 pS。只有这条分支的训练损失反向更新模型。</p></div><div class="card green"><h3>teacher：本次概率停止梯度</h3><p>输入原始任务、额外画面和同一代码前文；计算 pT 后 detach，把它当作本次固定评分。</p></div></div><div class="formula">本轮：θ → pS 与 pT；损失只沿 pS 更新 θ<br><small>下一轮两分支都会使用更新后的 θ。停止本次梯度，不等于参数永远停在初始时刻。</small></div><div class="callout"><p>测试直接从要求生成代码；这套训练不要求测试时额外调用 teacher 或重复视觉修改。</p></div></div><div class="foot"><span>§2.2 的共享当前 θ 与 detach；区别于 OPHSD 的固定初始教师</span><span>4 / 11</span></div></section>
+<section class="slide tight"><div class="meta"><span>05 · 画面如何关联源码</span><span>§2.3–2.4</span></div><h2>记录“哪条语句创建哪个元素”，再读取元素矩形</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>工具</th><th>源码线索</th><th>画面区域</th></tr></thead><tbody><tr><td>Matplotlib</td><td>创建绘图对象（artist）时记录用户源码行与调用栈</td><td>绘制后的 get_window_extent()</td></tr><tr><td>HTML / 浏览器</td><td>元素携带 data-src-* 属性</td><td>getBoundingClientRect()</td></tr><tr><td>python-pptx</td><td>创建幻灯片元素（shape）时记录源语句</td><td>shape 的位置与大小</td></tr><tr><td>未记录的工具</td><td>额外视觉模型判断对应语句</td><td>代码、截图、缺陷区域一起输入</td></tr></tbody></table></div><div class="callout red"><p>论文没有公开完整记录程序、检测器型号或阈值。一条语句可对应多个区域，同一缺陷也可能涉及多条语句。</p></div></div><div class="foot"><span>方法披露，不是已开源实现核验；代码与检测细节仍缺失</span><span>5 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 论文示意与计算</span><span>Figure 1；§2.4</span></div><h2>图例遮住曲线，图例语句得到更高权重</h2><div class="content"><div class="case-diagram"><div class="plot"><svg viewBox="0 0 500 250" aria-label="图例遮挡曲线的教学示意"><path d="M30 210 L100 180 L170 200 L260 110 L350 130 L470 70" stroke="#245e99" stroke-width="8" fill="none"/></svg><div class="legend">图例遮挡区域</div></div><div class="arrow">→</div><div class="card blue"><h3>语句权重</h3><p>假设 α=3，元素矩形与缺陷的 IoU=0.5，严重性=1。</p><p style="margin-top:16px">该语句 w=1+(3−1)×0.5=2；其他未对应缺陷的语句仍为 1。</p></div></div><div class="callout"><p>图例遮挡来自论文 Figure 1；坐标、α 和重叠比例由本页补充演算，不是模型日志、作者超参数或已验证修复。</p></div></div><div class="foot"><span>IoU：矩形交集面积÷并集面积；未公布这道示例的代码与更新结果</span><span>6 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 完整训练目标</span><span>§2.4–2.5</span></div><h2>局部提高权重，仍保留其他代码和最终奖励</h2><div class="content"><div class="formula">resp(s) = max<sub>i,b</sub> IoU(b, region<sub>i</sub>) × severity<sub>i</sub><br>w<sub>t</sub> = 1 + (α−1) resp(s(t))<br>L<sub>visual</sub> = Σ<sub>t</sub>w<sub>t</sub> KL(pS ∥ detach(pT)) / Σ<sub>t</sub>w<sub>t</sub></div><div class="grid g2"><div class="card blue"><h3>归一化</h3><p>除以权重总和。import、声明等未对应画面元素的语句仍取 1，并未停止训练。</p></div><div class="card green"><h3>最终目标</h3><p>Lvisual + β LGRPO。整份代码奖励 r=r_exec×r_vis；运行失败 r=0，报错仍可给 teacher。</p></div></div></div><div class="foot"><span>s(t)：token 所属最小语句；severity 为 0/1；α、β 的实验数值未披露</span><span>7 / 11</span></div></section>
+<section class="slide tight"><div class="meta"><span>08 · 一份输出怎样变成分数</span><span>Tables 1–3；§3</span></div><h2>三套指标要各自解释，不能统称成功率</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>评测</th><th>怎样评分</th><th>可复算的值</th></tr></thead><tbody><tr><td>ChartMimic</td><td>Low 为文字、布局、类型、颜色 F1 均值；High 为 GPT-4o 评审；两者平均</td><td>(74.8+82.3)/2=78.55≈78.6；运行率另报 92.7%</td></tr><tr><td>Design2Code</td><td>CLIP 图像特征相似度、区块、文字、位置、颜色五项均值</td><td>(89.2+69.7+84.9+82.4+86.8)/5=82.6</td></tr><tr><td>AeSlides</td><td>画幅比例、留白、碰撞、失衡，统一到越高越好后平均</td><td>60.7；四项明细未公开，无法复算</td></tr></tbody></table></div><div class="callout"><p>三领域分别训练，Qwen3-VL-8B-Instruct 为各表基础模型。幻灯片没有标准源码，所以没有参考代码 OPSD 对照。</p></div></div><div class="foot"><span>图表使用可执行 Chart2Code 子集；网页 WebCode2M/WebSight；幻灯片按完整 deck 留出</span><span>8 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 最有区分力的结果</span><span>Tables 1–3</span></div><h2>完整组合超过 GRPO，局部加权贡献仍待隔离</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>主分数</th><th>基础模型</th><th>参考代码 OPSD</th><th>GRPO</th><th>Visual-SDPO</th></tr></thead><tbody><tr><td>ChartMimic</td><td>67.9</td><td>77.0</td><td>76.2</td><td class="ours">78.6</td></tr><tr><td>Design2Code</td><td>72.1</td><td>78.6</td><td>80.0</td><td class="ours">82.6</td></tr><tr><td>AeSlides</td><td>49.5</td><td>不适用</td><td>58.2</td><td class="ours">60.7</td></tr></tbody></table></div><div class="callout red"><p>没有 α=1 的均匀视觉蒸馏对照。视觉输入、局部权重与联合奖励一并改变，不能把 +2.4/+2.6/+2.5 全部归给定位。</p></div></div><div class="foot"><span>根据三张主表重绘；未报告多训练种子方差</span><span>9 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>10 · 成本与复现</span><span>§3；全文公开性核查</span></div><h2>29% 是特定预算口径，不是全部训练成本</h2><div class="content"><div class="grid g2"><div class="card orange"><h3>作者报告的 29%</h3><p>达到 GRPO 完整训练成绩所需的生成及渲染预算。缺少各领域明细与完整教师前向成本。</p></div><div class="card red"><h3>未披露的运行条件</h3><p>α、β、学习率、batch、更新次数、温度、检测阈值；也没有精确墙钟时间或完整训练代码。</p></div></div><div class="callout"><p>11 页，没有附录或官方仓库链接。可以讨论算法与表中结果，不能称为按原配置已独立复现。</p></div></div><div class="foot"><span>论文证据与未知分别标记；没有模型训练复现</span><span>10 / 11</span></div></section>
+<section class="slide"><div class="meta"><span>11 · 下一项实验</span><span>本文建议，非作者已验证结论</span></div><h2>先固定视觉反馈，只改变语句权重</h2><div class="content"><div class="grid g3"><div class="card blue"><h3>保持一致</h3><p>模型、代码生成量、渲染次数与评分器。避免把额外计算当作算法收益。</p></div><div class="card green"><h3>关键对照</h3><p>均匀权重 α=1、真实区域加权、同数量随机语句加权，分别有无 GRPO。</p></div><div class="card orange"><h3>推广边界</h3><p>静态文字裁切可以定位元素；交互逻辑错误还需执行事件与状态证据，一张截图不足。</p></div></div><div class="callout"><p>可保留的方向：用自己代码执行后的诊断训练生成模型。最需要补的证据：局部定位的独立贡献与完整成本。</p></div></div><div class="foot"><span>结论与实验建议；不把游戏扩展当成原论文方法</span><span>11 / 11</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/visual-sdpo.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

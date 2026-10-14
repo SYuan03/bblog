@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses",
     "kind": "research",
@@ -72,32 +72,41 @@
     ],
     "source_visuals_expected": 24,
     "visual_inventory_complete": true,
-    "inventory_note": "Inventory covers Figures 1-13, Tables 1-5, Algorithm 1, four appendix prompt blocks that function as important implementation visuals, and the official repository banner used for the cover."
+    "inventory_note": "Inventory covers Figures 1-13, Tables 1-5, Algorithm 1, four appendix prompt blocks that function as important implementation visuals, and the official repository banner used for the cover.",
+    "current_review": {
+      "reviewed_on": "2026-10-14",
+      "reviewer": "main-agent",
+      "text_lines_reviewed": "1-2467, including Appendix C.2.1-C.2.2 recheck",
+      "rendered_pages_reviewed": "1-35, including all appendices",
+      "code_revision": "8b2a55d97590363fe50c3cc6b5e833b020a4bb4c",
+      "code_locators": ["evolve.py:2242-2322, 2361-2453, 4265-4440", "experiments/evolved_harness/tools/shell_tools/run_shell_command.py"],
+      "findings": "Corrected Figure 1 line legend; separated evaluated input snapshot from new unscored edits; explained evolve-agent rollback decision and declared-risk-only attribution; made evolution-set reuse, model-config disagreement, efficiency denominator and memory-only Hard result explicit."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么需要自动做 harness engineering？"
+      "locator": "1. Motivation：为什么修改执行程序需要任务级证据？"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它和 prompt evolution、agent workflow search 有什么区别？"
+      "locator": "2. Related Work：从提示优化到完整执行层修改"
     },
     {
       "role": "method",
-      "locator": "Q3. AHE 的每轮修改和结算怎样运行？"
+      "locator": "3. Method：一轮修改：执行、诊断、预测与复测"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 实验、真实 case 和 judge 到底说明了什么？"
+      "locator": "4. Experiments：从两条失败记录理解评分与修改效果"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 对 Claude Code、Codex 这类 harness 研究有什么启发？"
+      "locator": "5. Discussion：可复用的修改协议，以及还需要补的对照"
     },
     {
       "role": "summary",
-      "locator": "Q6. 这篇论文的证据边界和最终判断是什么？"
+      "locator": "6. Conclusion：单次演化证明了什么，哪些稳定性仍未知？"
     }
   ],
   "coverage": [
@@ -116,7 +125,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "把 coding agent 的 harness 当成一个可以自动维护的软件系统"
+          "quote": "论文允许维护模型编辑七类文件：系统提示、工具说明、工具实现、middleware、技能文件、子 Agent 配置和长期经验。"
         }
       ]
     },
@@ -135,7 +144,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Experience observability 的关键是 progressive disclosure"
+          "quote": "论文称这种 progressive disclosure（先总览、再局部、最后原始记录）的入口约 10K tokens，原始记录约 10M。"
         }
       ]
     },
@@ -153,13 +162,13 @@
         },
         {
           "source_id": "repo",
-          "locator": "evolve.py: load_change_manifest and evaluate_changes at 8b2a55d"
+          "locator": "evolve.py:2242-2322 evaluate_changes; 2361-2415 update_best_ever; 4265-4440 evaluate input snapshot before new edits, at 8b2a55d"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "用 task-level flip 结算上一轮 manifest"
+          "quote": "新文件还没有分数，要等下一轮执行；不能把当前成绩记给刚写出的修改。"
         }
       ]
     },
@@ -183,7 +192,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "shell tool 同时记录 protected output，并在后续删除命令执行前返回 block"
+          "quote": "第 5 轮提示说明“通过验收后的状态应保留”；终端工具记录受保护输出，在删除命令执行前拦截。"
         }
       ]
     },
@@ -221,7 +230,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "约 2.872 / 16.43，6/6 tests pass"
+          "quote": "约 2.872 / 16.43，六项测试全部通过"
         }
       ]
     },
@@ -240,7 +249,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "AHE 的总分最高，主要来自 55 个 Medium tasks"
+          "quote": "AHE 的总分最高，主要来自 55 道中等难度题"
         }
       ]
     },
@@ -259,7 +268,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Aggregate success 从 NexAU₀ 的 75.2% 到 75.6%，只高 0.4 pp；tokens/trial 从 526k 降到 461k"
+          "quote": "总体成功率从 NexAU₀ 的 75.2% 到 75.6%，只高 0.4 个百分点；完整结束的尝试平均 token 从 526k 降到 461k"
         }
       ]
     },
@@ -278,7 +287,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "system prompt only 为 67.4%"
+          "quote": "只加记忆为 75.3%、只加工具为 73.0%、只加调用处理为 71.9%，均高于初始 69.7%；只换系统提示则为 67.4%。"
         }
       ]
     },
@@ -297,7 +306,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "regression prediction 是 11.8% / 11.1%"
+          "quote": "退化预测是 11.8% / 11.1%"
         }
       ]
     },
@@ -321,7 +330,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "公开目录里没有 Terminal-Bench 2 task pack"
+          "quote": "公开目录里没有 Terminal-Bench 2 任务包"
         }
       ]
     },
@@ -345,7 +354,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "主结果来自一条十轮 campaign，没有多 seed 的均值和方差"
+          "quote": "主结果来自一条十轮实验，没有不同随机种子的均值和方差"
         },
         {
           "artifact": "article",
@@ -395,7 +404,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "ORIGINAL FIGURE 2"
+          "locator": "04 · 原论文 Figure 2"
         }
       ],
       "permission_status": "verified-allowed",
@@ -420,7 +429,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "12 · TRANSFER"
+          "locator": "12 · 迁移实验"
         }
       ],
       "permission_status": "verified-allowed",
@@ -459,7 +468,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "ORIGINAL FIGURE 5"
+          "locator": "10 · 原论文 Figure 5"
         }
       ],
       "permission_status": "verified-allowed",
@@ -494,11 +503,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "Case 2：为什么“两个数字文件都在”仍然 FAIL？"
+          "locator": "两个结果文件存在，计算过程却没有完成"
         },
         {
           "artifact": "deck",
-          "locator": "09 · CASE 2"
+          "locator": "09 · 真实案例二"
         }
       ],
       "permission_status": "not-applicable",
@@ -605,7 +614,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "TABLE 1 REDRAWN"
+          "locator": "11 · 主结果"
         }
       ],
       "permission_status": "not-applicable",
@@ -647,11 +656,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "system prompt only 为 67.4%"
+          "locator": "只加记忆为 75.3%、只加工具为 73.0%、只加调用处理为 71.9%，均高于初始 69.7%；只换系统提示则为 67.4%。"
         },
         {
           "artifact": "deck",
-          "locator": "13 · ABLATION"
+          "locator": "13 · 组件对照"
         }
       ],
       "permission_status": "not-applicable",
@@ -703,11 +712,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "一轮不是“改完再看总分”"
+          "locator": "每轮先重跑任务、核对上一轮预测，再提出下一轮修改。"
         },
         {
           "artifact": "deck",
-          "locator": "05 · ALGORITHM 1"
+          "locator": "05 · 一轮修改"
         }
       ],
       "permission_status": "not-applicable",
@@ -818,7 +827,9 @@
       "license_basis": "Official repository is MIT licensed at revision 8b2a55d.",
       "used_in": [
         "article"
-      ]
+      ],
+      "width": 1390,
+      "height": 672
     },
     {
       "path": "/lib/papers/agentic-harness-engineering/figure-2-method.png",
@@ -832,7 +843,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1267,
+      "height": 809
     },
     {
       "path": "/lib/papers/agentic-harness-engineering/figure-3-transfer.png",
@@ -846,7 +859,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 821,
+      "height": 542
     },
     {
       "path": "/lib/papers/agentic-harness-engineering/figure-5-case-study.png",
@@ -860,10 +875,179 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 2489,
+      "height": 1536
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all14slides reread, including initially truncated Related Work/Method gap. Traced currentversion score→pastprediction audit→best-version update→new unscored edit. Recomputed178 attempt denominator; EFFECTIVE only declaredrisks/fixes, no auto totalrollback; post-successguard and Hardmemory63.3 vsfull53.3 counterexample retained. Hidden taskcheckers unavailable, visible code behavior separate."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "c69a2b035e46cd4bfe2321980d424d66bf6fcfd9f1a766f7c576425cbb0dcb93",
+      "built_article": "e02f6c9b776f4f34b2ba31d9c46edd25e57f2aeeb2466da622e714a35cb0c312",
+      "deck": "d1c704f7183f8e03aaf1a98a399528a031bdf885786b94523bd6578c61b4c617",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-049/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-049/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-049.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2.1"
+        }
+      ],
+      "article_quote": "模型输出回答或命令，外面的执行程序负责构造上下文、运行工具、截断长输出、保存经验和阻止危险动作"
+    },
+    {
+      "term": "middleware",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 2.1"
+        }
+      ],
+      "article_quote": "Middleware 是执行中自动触发的检查代码，例如在命令结束后识别错误，或在下一次模型调用前插入提醒"
+    },
+    {
+      "term": "observability",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3; Figure 2"
+        }
+      ],
+      "article_quote": "这三层合称 observability，在这里就是能追查修改对象、错误过程和判断依据"
+    },
+    {
+      "term": "change manifest",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Appendix B"
+        }
+      ],
+      "article_quote": "这些预测写在 change manifest，也就是随修改保存的清单里"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -919,5 +1103,11 @@
       "largest-table-or-code",
       "final"
     ]
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review"
   }
 }

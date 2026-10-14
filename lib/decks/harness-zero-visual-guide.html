@@ -24,6 +24,12 @@
 #overview-panel{position:fixed;inset:0;z-index:30;padding:48px;background:#10161ddd}#overview-panel[hidden]{display:none}.overview-card{max-width:1100px;max-height:100%;margin:auto;padding:24px;background:#f7f4ec;overflow:auto}.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.overview-head button{border:0;background:none;font-size:28px;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{padding:13px;border:1px solid var(--line);background:#fff;text-align:left;cursor:pointer}.overview-grid button[aria-current="true"]{border-color:var(--blue);color:var(--blue)}.overview-grid b{display:block;font:700 12px/1 var(--mono)}.overview-grid span{display:block;margin-top:6px;font-size:15px}
 @media(max-width:720px){#controls{width:calc(100% - 14px);justify-content:center}.current-title{display:none}#controls button,#controls a{padding:0 9px}.overview-grid{grid-template-columns:1fr 1fr}.utility-label,.return-label{display:none}}
 @media print{html,body{height:auto;overflow:visible;background:#fff}.deck{position:static;width:auto;height:auto;transform:none!important}.slide{position:relative;display:grid!important;width:1600px;height:900px;page-break-after:always}#controls,#progress,#overview-panel{display:none!important}}
+/* Neutral reading surface; chart colors continue to encode the original groups. */
+:root{--paper:#fff;--ink:#20252b;--body:#424b56;--muted:#596775;--line:#d9dfe5}
+html,body{background:#edf1f5}
+.overview-card{background:#fff;color:var(--ink)}
+.slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
+#controls button,#controls a{white-space:nowrap;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -31,7 +37,7 @@
   <section class="slide" data-title="核心问题">
     <div class="top"><b>01 · HARNESS-ZERO</b><span>Harness Distillation via Agent-as-Harness</span></div>
     <h1>专用 harness 可以下线，<br>它教会模型的流程留下来</h1>
-    <div class="body"><div class="hero"><p class="statement">训练时，harnessing agent 把 <code>h*</code> 的指导逐步翻译成 <code>h</code> 中可执行的 response；部署时只保留 <strong>distilled student + minimal h</strong>。</p><div class="numbers"><div class="number"><b>23.3 → 44.3</b><span>Qwen3.5-9B 三领域 macro average</span></div><div class="number"><b>82.3%</b><span>28 种 harness-exclusive behavior 平均恢复率</span></div></div></div></div>
+    <div class="body"><div class="hero"><p class="statement">训练时，审查模型把 <code>h*</code> 的指导改成学生在 <code>h</code> 中能执行的回复；部署只保留<strong>微调后的学生模型与最小接口 h</strong>。</p><div class="numbers"><div class="number"><b>23.3 → 44.3</b><span>Qwen3.5-9B 三领域无权平均</span></div><div class="number"><b>82.3%</b><span>28 种专用程序才触发的行为，平均恢复率</span></div></div></div></div>
     <div class="foot"><span>Ye et al., arXiv:2609.24974v1</span><span class="pg"></span></div>
   </section>
 
@@ -45,42 +51,42 @@
   <section class="slide" data-title="三个对象">
     <div class="top"><b>03 · NOTATION</b><span>先分清谁在训练，谁在部署</span></div>
     <h2><code>h</code>、<code>h*</code>、<code>K</code> 不是三套同类 harness</h2>
-    <div class="body"><div class="objects"><div class="object"><code>h</code><h3>target harness</h3><p>student 实际运行的固定接口：一个 Bash <code>execute</code> 工具和固定 system prompt。</p><div class="keep">训练与部署都保留</div></div><div class="object"><code>h*</code><h3>evolved student-side harness</h3><p>tools、middleware、skills、memory，直接包住 student 时可以读状态、拦动作或增加工具。</p><div class="keep" style="color:var(--orange)">仅用于产生指导</div></div><div class="object"><code>K</code><h3>private reference harness</h3><p>把 <code>h*</code> 改写成 action recipes、review middleware、guidance 和 failure patterns。</p><div class="keep" style="color:var(--orange)">仅供 harnessing agent 读取</div></div></div></div>
+    <div class="body"><div class="objects"><div class="object"><code>h</code><h3>部署用的固定接口</h3><p>学生模型实际使用的固定接口：Bash <code>execute</code> 工具和固定系统提示。</p><div class="keep">训练与部署都保留</div></div><div class="object"><code>h*</code><h3>训练题上演化的专用程序</h3><p>工具、调用前后处理、技能和记忆。直接包住学生时，可以读状态、拦动作或加工具。</p><div class="keep" style="color:var(--orange)">仅用于产生指导</div></div><div class="object"><code>K</code><h3>审查者私有参考文件</h3><p>把 <code>h*</code> 改成操作指南、审查规则、提示和常见错误，供审查模型读取。</p><div class="keep" style="color:var(--orange)">仅供审查模型读取</div></div></div></div>
     <div class="foot"><span>论文 §3.1。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="论文总览图">
     <div class="top"><b>04 · ORIGINAL FIGURE 1</b><span>Evolve → Review → SFT → Deploy</span></div>
-    <h2>所有 supervision 都先被翻译到目标 action space</h2>
-    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/harness-zero/figure-1-overview.png" alt="Harness-Zero 论文 Figure 1"></div><div class="caption">作者官方 Figure 1。右下角明确标出：部署保留 <code>h</code>，移除 <code>h*</code>、<code>K</code> 与 harnessing agent。</div></div></div>
+    <h2>所有训练示范都先改成学生实际能执行的动作</h2>
+    <div class="body"><div style="width:100%"><div class="paper-figure"><img src="/lib/papers/harness-zero/figure-1-overview.png" alt="Harness-Zero 论文 Figure 1" width="2158" height="1088"></div><div class="caption">作者官方 Figure 1。先做三轮共享程序演化，只分析上一轮失败题；SFT（监督微调）学习接受后的回复。右下角是部署：保留 <code>h</code>，移除专用程序与审查者。</div></div></div>
     <div class="foot"><span>官方仓库 assets/harness-zero.png，Apache-2.0。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="PASS / REPLACE">
-    <div class="top"><b>05 · RESPONSE BOUNDARY</b><span>review 发生在 proposal 执行之前</span></div>
-    <h2>harnessing agent 只改下一步，然后把控制权还给 student</h2>
-    <div class="body" style="display:block"><div class="loop"><div class="step"><b>1 · PROPOSE</b><h3>student 生成 <code>y_t</code></h3><p>这条 response 尚未进入 environment。</p></div><div class="step"><b>2 · REVIEW</b><h3>读取轨迹与 <code>K</code></h3><p>只能使用 student-visible evidence。</p></div><div class="step"><b>3 · DECIDE</b><h3>PASS / REPLACE</h3><p>correction 必须是完整 response。</p></div><div class="step"><b>4 · EXECUTE</b><h3>通过 <code>h</code> 运行</h3><p>最多一个合法 <code>execute</code>。</p></div><div class="step"><b>5 · OBSERVE</b><h3>结果写回轨迹</h3><p>student 从新 observation 继续。</p></div></div><div class="decision"><div><strong>PASS</strong>原 response 合理，不为风格或轻微低效而改写。</div><div class="replace"><strong>REPLACE</strong>用最小、连贯、可执行的 correction 修复关键流程。</div></div></div>
-    <div class="foot"><span>论文 §3.2、Appendix C；官方 review.py。</span><span class="pg"></span></div>
+    <div class="top"><b>05 · RESPONSE BOUNDARY</b><span>模型提出的下一步，先审查再执行</span></div>
+    <h2>审查模型只改下一步，然后让学生继续</h2>
+    <div class="body" style="display:block"><div class="loop"><div class="step"><b>1 · PROPOSE</b><h3>学生生成下一条回复 <code>y_t</code></h3><p>回复中的动作还没有执行。</p></div><div class="step"><b>2 · REVIEW</b><h3>读取轨迹与 <code>K</code></h3><p>只能依赖学生也能看到的证据。</p></div><div class="step"><b>3 · DECIDE</b><h3>PASS / REPLACE</h3><p>替换内容必须是一条完整回复。</p></div><div class="step"><b>4 · EXECUTE</b><h3>通过 <code>h</code> 运行</h3><p>最多一个合法 <code>execute</code>。</p></div><div class="step"><b>5 · OBSERVE</b><h3>结果写回轨迹</h3><p>学生根据新工具输出继续。</p></div></div><div class="decision"><div><strong>PASS</strong>原回复合理，不为风格或轻微低效改写。</div><div class="replace"><strong>REPLACE</strong>用尽量小、连贯且可执行的改动修正关键步骤。</div></div></div>
+    <div class="foot"><span>C.2：表格/AppWorld 替换上限 5、3、1，USPTO 5；代码预算耗尽后直接放行、不再审查。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="可见性边界">
-    <div class="top"><b>06 · EVIDENCE BOUNDARY</b><span>private review 不能泄漏进训练轨迹</span></div>
-    <h2>student 学的是自己做过的检查，不是 reviewer 的批语</h2>
-    <div class="body"><div class="boundary"><div><h3>进入 student-visible trajectory</h3><ul><li>任务与固定 system prompt</li><li>accepted response</li><li><code>execute</code> 的输出和 exit code</li><li>后续 student 可以据此修复</li></ul></div><div class="private"><h3>仅存在于 private review</h3><ul><li><code>K</code> 与 component 私有路径</li><li>被拒绝的原 proposal</li><li>PASS/REPLACE reason</li><li>middleware 的触发提示</li></ul></div></div></div>
-    <div class="foot"><span>论文 §3.2–3.3、Appendix C–D。</span><span class="pg"></span></div>
+    <div class="top"><b>06 · EVIDENCE BOUNDARY</b><span>审查者私有信息不进入训练记录</span></div>
+    <h2>学生学自己执行过的检查，不学审查者批语</h2>
+    <div class="body"><div class="boundary"><div><h3>进入学生可见记录</h3><ul><li>任务与固定系统提示</li><li>审查后实际执行的回复</li><li><code>execute</code> 的输出和 exit code</li><li>学生可以据此修复</li></ul></div><div class="private"><h3>不进入后续执行记录与 SFT</h3><ul><li><code>K</code> 与组件私有路径</li><li>被拒绝的提案由学生生成，只是不执行、不监督</li><li>PASS/REPLACE 的理由</li><li>调用前后处理规则的触发提示</li></ul></div></div></div>
+    <div class="foot"><span>§3.2–3.3、Appendix C–D；SFT 预测接受后的模型回复，工具输出只作上下文。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Spreadsheet 真实 case">
-    <div class="top"><b>07 · WORKED EXAMPLE</b><span>preserving pre-filled cells</span></div>
+  <section class="slide" data-title="论文表格示例">
+    <div class="top"><b>07 · WORKED EXAMPLE</b><span>保留答题区域中预先填写的示例</span></div>
     <h2>答案区域里的示例单元格，本身就是不能改写的规格</h2>
-    <div class="body"><div class="case"><div><div class="sheet"><div class="cell head"></div><div class="cell head">B</div><div class="cell head">C</div><div class="cell head">D</div><div class="cell head">3</div><div class="cell example">18</div><div class="cell">?</div><div class="cell">?</div><div class="cell head">4</div><div class="cell example">24</div><div class="cell">?</div><div class="cell">?</div><div class="cell head">5</div><div class="cell bad">20 ✕</div><div class="cell">?</div><div class="cell">?</div></div><p class="caption">蓝色 B3/B4 是 worked examples；B5 被批量写入后改变了原值。</p></div><div class="case-flow"><div><b>h* / MIDDLEWARE</b><p>finish 时直接读取 sandbox，diff 输入与输出 workbook。</p></div><div><b>K / REVIEW RULE</b><p>不读 sandbox，只检查轨迹里有没有 input–output comparison 的证据。</p></div><div><b>REPLACE</b><p>若 student 直接 finish，替换成普通 Bash/Python 验证命令。</p></div><div><b>SFT SIGNAL</b><p>命令输出进入可见轨迹，模型学会“验证后再提交”。</p></div></div></div></div>
+    <div class="body"><div class="case"><div><div class="sheet"><div class="cell head"></div><div class="cell head">B</div><div class="cell head">C</div><div class="cell head">D</div><div class="cell head">3</div><div class="cell example">18</div><div class="cell">?</div><div class="cell">?</div><div class="cell head">4</div><div class="cell example">24</div><div class="cell">?</div><div class="cell">?</div><div class="cell head">5</div><div class="cell bad">20 ✕</div><div class="cell">?</div><div class="cell">?</div></div><p class="caption">蓝色是预填示例，红色表示被覆盖。坐标与数值仅为示意，非原始任务日志。</p></div><div class="case-flow"><div><b>h* / 原检查代码</b><p>提交前直接读隔离工作区，比较输入与输出表格。</p></div><div><b>K / 改写后审查规则</b><p>不直接读工作区，只检查记录中是否有输入输出比较的证据。</p></div><div><b>REPLACE</b><p>若学生直接提交，替换成 Bash/Python 验证命令。</p></div><div><b>SFT 监督目标</b><p>命令输出进入可见轨迹，模型学会“验证后再提交”。</p></div></div></div></div>
     <div class="foot"><span>论文 Appendix B.2，Code 1–3。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="验证动作如何落地">
     <div class="top"><b>08 · STUDENT-NATIVE ACTION</b><span>根据 Code 1–3 压缩改写</span></div>
-    <h2><code>K</code> 不替 student 偷读文件，而是生成 student 自己能执行的检查</h2>
-    <div class="body"><div class="code-grid"><pre class="code"><span class="c"># accepted response 中的 execute</span>
+    <h2><code>K</code> 不直接读文件，而让学生执行同样的检查</h2>
+    <div class="body"><div class="code-grid"><pre class="code"><span class="c"># 审查后实际执行回复中的 execute</span>
 wb_in  = openpyxl.load_workbook(INPUT)
 wb_out = openpyxl.load_workbook(OUTPUT)
 
@@ -92,49 +98,49 @@ for cell in answer_range:
         changed.append(cell)
 
 print(<span class="s">"PASS"</span> if not changed else changed)
-raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为什么能学</b><span>命令、输出、修复都属于 student 的 action space 和 context。</span></div><div class="note"><b>为什么不是答案泄漏</b><span>reviewer 不知道正确 workbook；它只要求执行可复用的 consistency check。</span></div><div class="note"><b>最终学到什么</b><span>提交前比较输入与输出，并保护 pre-filled examples。</span></div></div></div></div>
-    <div class="foot"><span>示意代码来自论文 Appendix B.2，不是额外 benchmark checker。</span><span class="pg"></span></div>
+raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为什么能学</b><span>命令在学生自己的接口执行，输出和修复过程也都进入学生上下文。</span></div><div class="note"><b>为什么不是答案泄漏</b><span>审查者不知道正确表格，只要求比较输入输出，检查示例是否被覆盖。</span></div><div class="note"><b>最终学到什么</b><span>提交前比较输入输出，保护预填示例。</span></div></div></div></div>
+    <div class="foot"><span>按 Appendix B.2 压缩的示意代码，只检查示例保护，不是完整任务验收器。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="数据与训练">
     <div class="top"><b>09 · DATA & TRAINING</b><span>三个领域分别微调</span></div>
     <h2>同一个最小 <code>h</code>，三套领域轨迹</h2>
-    <div class="body" style="display:block"><div class="data"><div class="domain"><h3>SpreadsheetBench</h3><strong>300 / 100</strong><p>train / held-out test；最终 487 条成功轨迹。</p></div><div class="domain"><h3>AppWorld</h3><strong>147 / 168</strong><p>train / test tasks；168 题组成 56 个 scenario；最终 282 条轨迹。</p></div><div class="domain"><h3>USPTO</h3><strong>500 / 100</strong><p>train / disjoint test；训练覆盖 10 个 reaction classes；保留全部 500 条轨迹。</p></div></div><div class="train"><span>Qwen3.5-9B</span><span>LoRA r=32, α=32</span><span>batch 8</span><span>65,536 tokens</span><span>2 epochs</span><span>seed 42</span></div></div>
-    <div class="foot"><span>论文 §4.1、Appendix D–E。</span><span class="pg"></span></div>
+    <div class="body" style="display:block"><div class="data"><div class="domain"><h3>SpreadsheetBench</h3><strong>300 / 100</strong><p>训练 / 独立测试；最终 487 条成功轨迹。</p></div><div class="domain"><h3>AppWorld</h3><strong>147 / 168</strong><p>训练 / 测试题；56 个场景各 3 题，全对才算成功；最终 282 条轨迹。</p></div><div class="domain"><h3>USPTO</h3><strong>500 / 100</strong><p>训练 / 独立测试；覆盖 10 类反应，预测前体；保留全部 500 条轨迹。</p></div></div><div class="train"><span>Qwen3.5-9B</span><span>LoRA r=32, α=32</span><span>每批 8 条</span><span>最大 65,536 token</span><span>训练 2 遍</span><span>随机种子 42</span></div></div>
+    <div class="foot"><span>§4.1、D–E；代码复现补充：AppWorld 首轮另有 23 条示范/应用说明，工具仍只有 execute。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Agent vs Code harness">
-    <div class="top"><b>10 · TABLE 1 REDRAWN</b><span>frontier models，不做参数更新</span></div>
-    <h2>同一个 evolved harness，经 agent 解释后平均更强</h2>
-    <div class="body"><div class="chart"><div class="bar"><span>minimal <code>h</code></span><div class="track"><div class="fill" style="width:68.6%"></div></div><strong>68.6</strong></div><div class="bar"><span><code>h</code> + empty review</span><div class="track"><div class="fill orange" style="width:69.2%"></div></div><strong>69.2</strong></div><div class="bar"><span>code-as-harness <code>h*</code></span><div class="track"><div class="fill" style="width:78.1%"></div></div><strong>78.1</strong></div><div class="bar"><span>agent-as-harness <code>K</code></span><div class="track"><div class="fill green" style="width:81.1%"></div></div><strong>81.1</strong></div><div class="chart-note">空 <code>K</code> 只比 minimal <code>h</code> 高 0.6 分。增益来自 evolved guidance，不是“多一次模型调用”本身。</div></div></div>
-    <div class="foot"><span>根据论文 Table 1 重绘；六个 benchmark–model setting 的平均百分比。</span><span class="pg"></span></div>
+    <div class="top"><b>10 · TABLE 1 REDRAWN</b><span>强模型实验，不更新权重</span></div>
+    <h2>同一个专用程序，经审查模型改成动作后平均更强</h2>
+    <div class="body"><div class="chart"><div class="bar"><span>最小 <code>h</code></span><div class="track"><div class="fill" style="width:68.6%"></div></div><strong>68.6</strong></div><div class="bar"><span><code>h</code> + 无指导审查</span><div class="track"><div class="fill orange" style="width:69.2%"></div></div><strong>69.2</strong></div><div class="bar"><span>直接挂载程序 <code>h*</code></span><div class="track"><div class="fill" style="width:78.1%"></div></div><strong>78.1</strong></div><div class="bar"><span>按 <code>K</code> 逐步审查</span><div class="track"><div class="fill green" style="width:81.1%"></div></div><strong>81.1</strong></div><div class="chart-note">空 <code>K</code> 只比 最小 <code>h</code> 高 0.6 分。增益来自演化得到的指导，不是“多一次模型调用”本身。</div></div></div>
+    <div class="foot"><span>根据论文 Table 1 重绘；三个领域 × 两个模型，共六种设置的平均百分比。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="蒸馏主结果">
     <div class="top"><b>11 · TABLE 2 REDRAWN</b><span>部署时移除 h*、K、harnessing agent</span></div>
-    <h2>蒸馏后的 9B 模型，在 minimal <code>h</code> 下达到 44.3%</h2>
-    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>Setting</th><th>Spreadsheet</th><th>AppWorld</th><th>USPTO</th><th>Avg.</th></tr></thead><tbody><tr><td>Base + <code>h</code></td><td>31.0</td><td>26.8</td><td>12.0</td><td>23.3</td></tr><tr><td>Base + <code>h*</code></td><td>39.0</td><td>48.2</td><td class="best">38.0</td><td>41.7</td></tr><tr><td>Base + DeepAgents</td><td>35.0</td><td>19.6</td><td>7.0</td><td>20.5</td></tr><tr><td>Base + Claude Code</td><td>31.0</td><td>10.7</td><td>6.0</td><td>15.9</td></tr><tr><td><strong>Harness-Zero + h</strong></td><td class="best">44.0</td><td class="best">58.9</td><td>30.0</td><td class="best">44.3</td></tr></tbody></table></div></div>
-    <div class="foot"><span>根据论文 Table 2 重绘；pass@1 / SGC，single run。</span><span class="pg"></span></div>
+    <h2>蒸馏后的 9B 模型，在 最小 <code>h</code> 下达到 44.3%</h2>
+    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>设置</th><th>表格任务</th><th>AppWorld</th><th>USPTO</th><th>三领域平均</th></tr></thead><tbody><tr><td>原模型 + <code>h</code></td><td>31.0</td><td>26.8</td><td>12.0</td><td>23.3</td></tr><tr><td>原模型 + <code>h*</code></td><td>39.0</td><td>48.2</td><td class="best">38.0</td><td>41.7</td></tr><tr><td>原模型 + DeepAgents</td><td>35.0</td><td>19.6</td><td>7.0</td><td>20.5</td></tr><tr><td>原模型 + Claude Code</td><td>31.0</td><td>10.7</td><td>6.0</td><td>15.9</td></tr><tr><td><strong>Harness-Zero + h</strong></td><td class="best">44.0</td><td class="best">58.9</td><td>30.0</td><td class="best">44.3</td></tr></tbody></table></div></div>
+    <div class="foot"><span>根据论文 Table 2 重绘；pass@1 / SGC，单次运行；AppWorld 58.9% = 33 / 56 场景。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="什么轨迹值得蒸馏">
-    <div class="top"><b>12 · TABLE 3 REDRAWN</b><span>collection success ≠ distillation value</span></div>
-    <h2>Oracle 把采集成功率推到 98.6%，蒸馏后却只有 15.0%</h2>
-    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>USPTO trajectory source</th><th>Collection</th><th>Test under <code>h</code></th></tr></thead><tbody><tr><td>Teacher rollout</td><td>52.0</td><td>12.0</td></tr><tr><td>Teacher under <code>h*</code></td><td>62.0</td><td class="bad">3.0</td></tr><tr><td>Student under <code>h*</code></td><td>39.4</td><td>12.0</td></tr><tr><td>Empty <code>K</code> review</td><td>44.2</td><td>11.0</td></tr><tr><td>Oracle-answer review</td><td class="best">98.6</td><td>15.0</td></tr><tr><td><strong>Harness-Zero <code>K</code></strong></td><td>59.4</td><td class="best">30.0</td></tr></tbody></table></div></div>
-    <div class="foot"><span>根据论文 Table 3 重绘；同一 500-task split 与训练 recipe。</span><span class="pg"></span></div>
+    <div class="top"><b>12 · TABLE 3 REDRAWN</b><span>采集成功不等于适合蒸馏</span></div>
+    <h2>审查者读取标准答案，采集 98.6% 成功；蒸馏测试 15.0%</h2>
+    <div class="body"><div class="table-wrap"><table class="table"><thead><tr><th>USPTO 轨迹来源</th><th>采集成功率</th><th><code>h</code> 下测试</th></tr></thead><tbody><tr><td>GPT-5.6 Sol 独立做题</td><td>52.0</td><td>12.0</td></tr><tr><td>GPT-5.6 Sol 使用 <code>h*</code></td><td>62.0</td><td class="bad">3.0</td></tr><tr><td>Qwen3.5-9B 使用 <code>h*</code></td><td>39.4</td><td>12.0</td></tr><tr><td>空 <code>K</code> 下审查</td><td>44.2</td><td>11.0</td></tr><tr><td>审查者可读标准答案</td><td class="best">98.6</td><td>15.0</td></tr><tr><td><strong>Harness-Zero <code>K</code></strong></td><td>59.4</td><td class="best">30.0</td></tr></tbody></table></div></div>
+    <div class="foot"><span>根据论文 Table 3 重绘；同一批 500 道采集题与训练方案。</span><span class="pg"></span></div>
   </section>
 
-  <section class="slide" data-title="Behavior recovery">
-    <div class="top"><b>13 · TABLE 4 REDRAWN</b><span>28 harness-exclusive patterns</span></div>
-    <h2>82.3% 表示在专门挑出的 support tasks 上恢复行为</h2>
-    <div class="body"><div class="recover"><div class="big-number"><strong>82.3%</strong><span>28 个 pattern 的平均 recovery</span></div><div class="pattern-list"><div class="pattern"><span>Protect pre-filled cells</span><b>24/26 · 92%</b></div><div class="pattern"><span>Retrieve complete pages</span><b>21/53 · 40%</b></div><div class="pattern"><span>Validate with RDKit</span><b>60/60 · 100%</b></div><div class="pattern"><span>Choose action vs. answer</span><b>24/33 · 73%</b></div><div class="note" style="border-color:var(--orange)"><b>解读边界</b><span>support set 按构造让 base + <code>h</code> 为 0%、base + <code>h*</code> 为 100%；它不是自然分布上的总体行为准确率。</span></div></div></div></div>
+  <section class="slide" data-title="行为恢复率">
+    <div class="top"><b>13 · TABLE 4 REDRAWN</b><span>28 类专用程序触发的行为</span></div>
+    <h2>82.3% 是在专门挑选的任务上恢复行为</h2>
+    <div class="body"><div class="recover"><div class="big-number"><strong>82.3%</strong><span>28 类行为的平均恢复率</span></div><div class="pattern-list"><div class="pattern"><span>保护预填单元格</span><b>24/26 · 92%</b></div><div class="pattern"><span>读取完整分页</span><b>21/53 · 40%</b></div><div class="pattern"><span>用 RDKit 检查分子格式</span><b>60/60 · 100%</b></div><div class="pattern"><span>区分执行动作与作答</span><b>24/33 · 73%</b></div><div class="note" style="border-color:var(--orange)"><b>解读边界</b><span>样本按行为差异筛选：原模型 + <code>h</code> 不做、+ <code>h*</code> 会做。恢复率不是自然任务上的总体行为准确率。</span></div></div></div></div>
     <div class="foot"><span>根据论文 Table 4、Appendix G 重绘。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与限制">
     <div class="top"><b>14 · TAKEAWAYS</b><span>什么可以留下，什么暂时留不下</span></div>
-    <h2>Action-space 对齐是方法成立的前提，强 reviewer 与训练成本是代价</h2>
-    <div class="body"><div class="limits"><div class="limit"><b>WHAT WORKS</b><strong>程序化流程</strong><span>inspection、verification、recovery 容易通过 response 示范并由 SFT 吸收。</span></div><div class="limit"><b>WHAT LAGS</b><strong>深领域知识</strong><span>USPTO：distilled 30.0%，仍低于 <code>h*</code> 的 38.0%。</span></div><div class="limit"><b>REVIEWER</b><strong>弱模型会改坏</strong><span>Qwen3.6-35B-A3B 上 agent-as-harness 比 code-as-harness 低 12 分。</span></div><div class="limit"><b>COLLECTION COST</b><strong>100.1s → 237.2s</strong><span>USPTO 平均延迟约 2.4×；部署阶段不再支付。</span></div></div></div>
+    <h2>示范动作必须能在部署接口执行；代价是逐步审查与采集成本</h2>
+    <div class="body"><div class="limits"><div class="limit"><b>较容易迁移</b><strong>程序化流程</strong><span>检查文件、验证结果和恢复动作，能通过实际回复示范并由 SFT 学习。</span></div><div class="limit"><b>尚未充分迁移</b><strong>深领域知识</strong><span>USPTO：蒸馏后 30.0%，仍低于 <code>h*</code> 的 38.0%。</span></div><div class="limit"><b>审查者能力</b><strong>弱审查模型也会改坏</strong><span>Qwen3.6-35B-A3B 上逐步审查比直接挂载程序低 12 分。</span></div><div class="limit"><b>采集成本</b><strong>100.1s → 237.2s</strong><span>USPTO 平均延迟约 2.4×；部署阶段不再支付。</span></div></div></div>
     <div class="foot"><span><a href="https://arxiv.org/abs/2609.24974">论文</a> · <a href="https://github.com/metaevo-ai/harness-zero">代码与数据</a></span><span class="pg"></span></div>
   </section>
 </main>
@@ -170,12 +176,7 @@ raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为
   if(!isEmbedded) returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
 
-  function scaleDeck(){
-    const scale=Math.min(innerWidth/1600,innerHeight/900);
-    deck.style.transform=`scale(${scale})`;
-    deck.style.left=`${(innerWidth-1600*scale)/2}px`;
-    deck.style.top=`${(innerHeight-900*scale)/2}px`;
-  }
+  function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
   function show(next,updateHash=true){
     index=Math.max(0,Math.min(slides.length-1,next));
     slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));
@@ -215,7 +216,7 @@ raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为
   fullButton.addEventListener('click',toggleFullscreen);
   document.addEventListener('fullscreenchange',syncFullscreen);
   addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));
-  addEventListener('resize',scaleDeck);
+  addEventListener('resize',scaleDeck);document.addEventListener('fullscreenchange',scaleDeck);new ResizeObserver(scaleDeck).observe(document.getElementById('controls'));
   addEventListener('keydown',event=>{
     if(event.key==='Escape'){
       if(!overview.hidden){closeOverview();return}
@@ -228,6 +229,57 @@ raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为
     if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}
   });
   show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+<script>
+(() => {
+  const panel = document.getElementById('overview-panel');
+  const trigger = document.getElementById('toc');
+  const close = document.getElementById('close-overview');
+  const canvas = document.getElementById('deck');
+  const controls = document.getElementById('controls');
+  if (!panel || !trigger || !close) return;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', '幻灯片总览');
+  trigger.setAttribute('aria-controls', panel.id);
+  const synchronize = () => {
+    const open = !panel.hidden;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (canvas) canvas.inert = open;
+    if (controls) controls.inert = open;
+    if (open) close.focus({ preventScroll: true });
+    else trigger.focus({ preventScroll: true });
+  };
+  new MutationObserver(synchronize).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  trigger.setAttribute('aria-expanded', String(!panel.hidden));
+  document.addEventListener('keydown', (event) => {
+    if (!panel.hidden) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'o') {
+        event.preventDefault(); event.stopImmediatePropagation(); close.click(); return;
+      }
+      if (event.key === 'Tab') {
+        const items = [...panel.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+          .filter((item) => item.getClientRects().length > 0);
+        if (items.length) {
+          const index = items.indexOf(document.activeElement);
+          event.preventDefault(); event.stopImmediatePropagation();
+          items[(index + (event.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+        }
+        return;
+      }
+      event.stopImmediatePropagation(); return;
+    }
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault(); event.stopImmediatePropagation(); trigger.click(); return;
+    }
+    if (event.key === 'Escape' && !document.fullscreenElement && window.parent !== window) {
+      window.parent.postMessage({ type: 'paper-deck-escape' }, location.origin);
+    }
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && panel.hidden) document.getElementById('full')?.focus({ preventScroll: true });
+  });
 })();
 </script>
 </body>

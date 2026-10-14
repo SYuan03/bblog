@@ -1,11 +1,14 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "LEGO-Anything: Coding Agents for 3D Scene Reconstruction",
     "kind": "benchmark",
     "primary_source_ids": [
       "paper"
-    ]
+    ],
+    "arxiv_id": "2609.36380",
+    "version": "v1",
+    "earliest_arxiv_date": "2026-09-28"
   },
   "artifacts": {
     "article": "content/_posts/075-lego-anything.md",
@@ -17,8 +20,8 @@
       "id": "paper",
       "kind": "paper",
       "title": "LEGO-Anything: Coding Agents for 3D Scene Reconstruction",
-      "url": "https://arxiv.org/abs/2609.36380",
-      "revision": "v1, first posted 2026-09-28; CC BY 4.0",
+      "url": "https://arxiv.org/abs/2609.36380v1",
+      "revision": "arXiv 2609.36380v1; earliest v1 public date 2026-09-28",
       "used_for": [
         "problem",
         "related-work",
@@ -106,35 +109,1063 @@
     ],
     "source_visuals_expected": 30,
     "visual_inventory_complete": true,
-    "inventory_note": "The 33-page v1 PDF was read as extracted text and visually reviewed across all pages. The inventory includes Figures 1-21 and Tables 1-9. No numbered algorithms appear. Selected relationships and tables are redrawn in HTML/CSS; no paper pixels are reused."
+    "review_round": "2026-10-13 collection revision",
+    "status": "main-agent-full-text-and-all-rendered-pages-reviewed",
+    "inventory_note": "Current numbered inventory checked against complete extracted text and all rendered pages, including appendices.",
+    "local_sources": {
+      "pdf": "/tmp/paper-collection-068-079.OK3giP/2609.36380v1.pdf",
+      "text": "tmp/pdfs/collection-primary-068-076/2609.36380/paper.txt",
+      "rendered_pages": "tmp/pdfs/collection-primary-068-076/2609.36380/main-reread"
+    },
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "text_lines_reviewed": "1883",
+      "primary_text": "tmp/pdfs/collection-primary-068-076/2609.36380/paper.txt",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 33
+        }
+      ],
+      "rendered_review_location": "tmp/pdfs/collection-primary-068-076/2609.36380/main-reread",
+      "pdf_sha256": "bdabba87e8cf55a10911d08e105ca8be551788e3c7754e88b6e5c9c7935cca46",
+      "changes": "Completed primary v1 main+appendix text and all 33 rendered pages; inspected fixed website results/provenance/ex01/ex05/appendix evidence; corrected mask-scoped geometry, object eligibility, human compatibility vs exact direction, six-model paper vs four-model released JSON, real Office scores, severity selection, single-run effort protocol, plugin bounds, auxiliary articulation and serving path; expanded deck to 20 slides. No independent hosted reconstruction run."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么要把单图 3D 重建写成程序？"
+      "locator": "1. Motivation：把单图重建写成可执行场景"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与已有 3D reconstruction 工作差在哪里？"
+      "locator": "2. Related Work：与对象重建和程序化建模的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. LEGO-Bench 是怎样构造和评分的？"
+      "locator": "3. Method：LEGO-Bench 的构造与完整评分路径"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 实验结果说明当前 Agent 卡在哪里？"
+      "locator": "4. Experiments：主结果、复杂度与后期退化"
     },
     {
       "role": "future-work",
-      "locator": "Q5. LEGO-Plugin 和 LEGO-World 各自验证了什么？"
+      "locator": "5. Discussion：过程修正与场景下游用途"
     },
     {
       "role": "summary",
-      "locator": "Q6. 这篇论文最终证明了什么，哪里还不够？"
+      "locator": "6. Conclusion：结论与仍待验证的边界"
     }
   ],
   "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1; §3; Figure 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "给一张图片，让模型在 Blender 里把整个场景重新搭出来。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Figure 3; Table 2; Appendix D.1–D.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者使用 LychSim 模拟器组装场景，并从 Fab 选择许可条款允许 AI 使用的资产。"
+        },
+        {
+          "artifact": "article",
+          "quote": "104 个逻辑场景和 208 张输入图。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Appendix D.1/D.4; Figure 17; Table 7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "程序先检查对象是否碰撞、摆放是否稳定，人工再检查构图和拍摄质量；未通过的场景会返工。"
+        },
+        {
+          "artifact": "article",
+          "quote": "隐藏几何、深度和对象 mask 由模拟器导出，不是看图猜出来的人工三维标注。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Appendix D/E/F/I"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "<tr><td>一张 RGB 彩色图</td><td>参考几何与深度</td><td><code>scene.blend</code></td></tr>"
+        },
+        {
+          "artifact": "article",
+          "quote": "<tr><td>图像尺寸、水平视场角（FOV）</td><td>每个对象的像素范围与配对关系</td><td><code>scene.glb</code></td></tr>"
+        },
+        {
+          "artifact": "article",
+          "quote": "Blender MCP、文件与代码工具"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "website-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eqs. 2–4; Appendix E.1–E.4; website assets/explorer/ex05/metrics.json"
+        },
+        {
+          "source_id": "website-repo",
+          "locator": "Eqs. 2–4; Appendix E.1–E.4; website assets/explorer/ex05/metrics.json"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "所有评分对象等权平均，称为 <strong>object macro average</strong>"
+        },
+        {
+          "artifact": "article",
+          "quote": "Reconstruction 0.5731、Appearance 0.5441，因此 Overall 为 (0.5731+0.5441)/2=0.5586。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "website-repo",
+        "research-repo-check"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix E/I: scoring protocol; released task-specific checker not found"
+        },
+        {
+          "source_id": "website-repo",
+          "locator": "fixed website revision; assets/explorer/ex05/metrics.json; run 928fa0fc-9e4b-4f41-9c46-7e3b96ceb02d"
+        },
+        {
+          "source_id": "research-repo-check",
+          "locator": "2026-10-14 GitHub API 404 record for xirui-li/lego-anything"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本轮核查留存的 2026-10-14 GitHub API 结果为 404，无法区分未公开、私有或地址不存在。"
+        },
+        {
+          "artifact": "article",
+          "quote": "外观更容易逐项复核：512×288 共 147,456 个像素，命中 80,226 个，正好得到 0.544067。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 3/4; Figures 4–12; Appendix F"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "图中能看到变暗或视角变化，但没有具体代码 diff，不能据此锁定是哪一步修改造成退化。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Table 1; Appendix A"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文同时要求单图输入、完整场景和可执行程序，并用模拟器真值评价。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "website-repo",
+        "research-repo-check"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6–7; Appendix B/E/H; website README.md; research repository 404"
+        },
+        {
+          "source_id": "website-repo",
+          "locator": "§6–7; Appendix B/E/H; website README.md; research repository 404"
+        },
+        {
+          "source_id": "research-repo-check",
+          "locator": "§6–7; Appendix B/E/H; website README.md; research repository 404"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "研究仓库与评测器实现尚未公开"
+        },
+        {
+          "artifact": "article",
+          "quote": "单张图片无法唯一确定背后的 3D 世界。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 2, Figure 1",
+      "status": "redrawn",
+      "rationale": "单图到可执行 Blender 场景的目标用流程和关键数字重画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "给一张图，Agent 能否写出一个可执行的 3D 世界？"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 4, Figure 2",
+      "status": "redrawn",
+      "rationale": "Interpret、Plan、Code、Execute、Revise 与最终只是最后版本的关系重画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "Agent 交替修改程序与检查结果，最终提交只是最后一个版本"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 2 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 3",
+      "status": "redrawn",
+      "rationale": "资产、模拟装配、程序检查、人工检查与公开 RGB/隐藏几何边界重画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "专业资产先组成模拟器场景，再经过物理检查与人工复核"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 3、Table 2 与 Appendix D 重绘。作者用模拟器生成输入图及对应的几何、深度和对象 mask，并把后者留给评测器；人工检查负责构图与拍摄质量。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 3 重绘",
+      "asset_paths": [
+        "/lib/papers/lego-anything/body-method.svg"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 7, Figure 4",
+      "status": "redrawn",
+      "rationale": "Office 42 题的 Low→XHigh 三模型端点与 GPT-5.6 非单调限制直接对照。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "对象更多时还原质量下降，提高推理强度主要帮助 GPT-6 系列"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 4 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 5",
+      "status": "redrawn",
+      "rationale": "过程退化的比例和最好到最终的差值用数值面板概括；原图完整时间曲线不复制。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "最严重的共有案例：最好中间版本明显优于最后版本"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 5 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 6",
+      "status": "redrawn",
+      "rationale": "self/cross 几何与外观判断的四项一致率并列，保留近随机的几何结论。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "只看参考图与渲染图，模型自评几何没有稳定优势"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 6 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p. 9, Figure 7",
+      "status": "redrawn",
+      "rationale": "初始化、对象证据检查与编辑事务/回退分别显示，不把插件替代 Agent 的规划。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "初始化、证据检查和版本回退分别处理三类轨迹失败"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 7 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p. 9, Figure 8",
+      "status": "redrawn",
+      "rationale": "六模型相对 plugin 增益直接标注，并保留最强模型仅 2.1% 的限制。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "弱模型提升最大；最强 Astra 只增加 2.1%"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 8 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p. 9, Figure 9",
+      "status": "omitted",
+      "rationale": "两个插件场景的原始渲染对照未复制；正文保留 Reception 14.7→32.5、Copy room 10.9→27.8，并指出这是对三次基线中的最好值，不能当总体均值。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p. 19, Figure 10",
+      "status": "omitted",
+      "rationale": "六配置的 token-cost proxy 与成绩散点未复画；正文解释统一价格重算与外部工具未计费的边界，不把 proxy 当实际账单。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "p. 20, Figure 11",
+      "status": "omitted",
+      "rationale": "共同任务交集上的首个可评版本时间、退化频率和最好至最终损失未复画完整曲线；正文保留墙钟时间与各自运行比例不同的结论。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "p. 21, Figure 12",
+      "status": "redrawn",
+      "rationale": "House bedroom 的真实最佳与最终 Q 值显示，不补造未公开代码动作。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "最严重的共有案例：最好中间版本明显优于最后版本"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 12 与 Appendix B.2 重绘。步骤和得分来自原文；这是按退化严重程度选择的案例，未公开造成变化的代码 diff。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 12 重绘",
+      "asset_paths": [
+        "/lib/papers/lego-anything/body-case.svg"
+      ]
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "p. 22, Figure 13",
+      "status": "omitted",
+      "rationale": "同一 run_01 参考图与六种最终场景的完整定性拼图未复制。本稿用可复算的 Office 输出和 Figure 12 的版本退化案例解释结果，未复现全部视觉外观。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "p. 23, Figure 14",
+      "status": "omitted",
+      "rationale": "室内、室外和 Bird’s-Eye 输入拼图未复制；数据来源段说明这些分组，但不以文字声称重现了原始图像的细节。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "p. 23, Figure 15",
+      "status": "omitted",
+      "rationale": "逐场景评分对象数量分布未复画；正文明确配对家族复杂度增加不等于用全局对象数量定义难度。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-16",
+      "kind": "figure",
+      "label": "Figure 16",
+      "source_id": "paper",
+      "source_locator": "p. 24, Figure 16",
+      "status": "omitted",
+      "rationale": "评分对象尺寸从小物件到建筑、城市结构的分布未复画；本稿未逐项重现尺度直方图，评分部分保留按参考深度给容差而不统一米制阈值。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-17",
+      "kind": "figure",
+      "label": "Figure 17",
+      "source_id": "paper",
+      "source_locator": "p. 25, Figure 17",
+      "status": "omitted",
+      "rationale": "443 资产经过 15 轮人工关节审核的状态流未复画完整图；正文保留人工接受 URDF 与静态/可动标签的来源，以及补齐标注后仍零分的结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-18",
+      "kind": "figure",
+      "label": "Figure 18",
+      "source_id": "paper",
+      "source_locator": "p. 26, Figure 18",
+      "status": "redrawn",
+      "rationale": "产物有效、可见表面 F1、重新渲染外观与无效样例留在分母四层拆开。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "几何评分：按隐藏 mask 划定对象的可见表面"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 18 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-19",
+      "kind": "figure",
+      "label": "Figure 19",
+      "source_id": "paper",
+      "source_locator": "p. 27, Figure 19",
+      "status": "omitted",
+      "rationale": "固定共享子集上 F@2/5/10%、RGB 容差和对齐方式的敏感度图未复画；正文给出正式 5% 深度容差、RGB 30、不对齐/缩放，并保留改变协议会改变排名的限制。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-20",
+      "kind": "figure",
+      "label": "Figure 20",
+      "source_id": "paper",
+      "source_locator": "p. 28, Figure 20",
+      "status": "omitted",
+      "rationale": "人工评分的登录、例题和双盲比较界面截图未复制；正文解释 pairwise 人工偏好与评测指标的一致性，界面外观本身不是算法步骤。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-21",
+      "kind": "figure",
+      "label": "Figure 21",
+      "source_id": "paper",
+      "source_locator": "p. 29, Figure 21",
+      "status": "omitted",
+      "rationale": "完整默认用户提示截图未复制；可见输入与交付物表列明 scene.blend、scene.glb 和 final.png，并说明评测器重新渲染而不直接使用 final.png。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 3, Table 1",
+      "status": "redrawn",
+      "rationale": "邻近工作按输入、产物与隐藏评测轴重排，而非只列论文名。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "任务的独特组合：单图输入、完整场景、可执行程序、隐藏 3D 真值"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 1 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 5, Table 2",
+      "status": "redrawn",
+      "rationale": "443 资产、8 环境、17 主题、104 场景/208 输入按数据构建流程显示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "专业资产先组成模拟器场景，再经过物理检查与人工复核"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 2 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 6, Table 3",
+      "status": "redrawn",
+      "rationale": "六个模型室内/室外的 V/R/A/S 用表格重画，主结果关键标准差在正文保留。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "产物有效性接近饱和，几何与外观才拉开模型差距"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Table 3 重绘，单位为百分比。文件有效性接近饱和，几何与外观仍有大差距；正文另列专用系统，不能只据这张图判断全部基线。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 3 重绘",
+      "asset_paths": [
+        "/lib/papers/lego-anything/body-results.svg"
+      ]
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 4",
+      "status": "redrawn",
+      "rationale": "三个难度层 Overall 的 24.6/21.3/20.5 与近饱和 Validity 并列。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "对象更多时还原质量下降，提高推理强度主要帮助 GPT-6 系列"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 4 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 5",
+      "status": "redrawn",
+      "rationale": "检测、分割、深度三项 readout 与专用模型对照，标记各 100 图为独立 track。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "同一类场景可以导出检测、分割和深度，精度仍落后专用模型"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 5 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 20, Table 6",
+      "status": "omitted",
+      "rationale": "Bird’s-Eye 压力子集的逐模型 V/R/A/S 结果未重排完整表；正文保留其不同于室内/室外主实验的范围，不能用主表代表所有分组。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p. 24, Table 7",
+      "status": "omitted",
+      "rationale": "正式关节 GT 清单的资产和可动部件覆盖表未重排；正文说明要求来自人工接受的 URDF，及同一固定 Office 场景补齐 14 可动对象后仍零分。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 30, Table 8",
+      "status": "redrawn",
+      "rationale": "6×6 原矩阵只汇总到正文需要的 self/cross 几何/外观均值，不假称重现全部单元。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "只看参考图与渲染图，模型自评几何没有稳定优势"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 8 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 32, Table 9",
+      "status": "omitted",
+      "rationale": "自然图像检测/分割/深度比较的有效预测覆盖表未重排；正文保留每轨 100 图、缺失预测仍进 AP 分母、匹配诊断只用共同有效对的区别。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/lego-anything/body-method.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 3、Table 2 与 Appendix D 重绘。作者用模拟器生成输入图及对应的几何、深度和对象 mask，并把后者留给评测器；人工检查负责构图与拍摄质量。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "method",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 3",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/lego-anything/body-case.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 12 与 Appendix B.2 重绘。Astra 的 Q 从 33.90% 跌到 4.35%；图中步骤与得分来自公开案例，具体退化代码 diff 未公开。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "source_visual_id": "figure-12",
+      "source_id": "paper",
+      "source_locator": "p. 21, Figure 12",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/lego-anything/body-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Table 3 重绘，单位为百分比。文件有效性接近饱和，几何与外观仍有大差距；正文保留三次运行的关键标准差。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "results",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p. 6, Table 3",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    }
+  ],
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 20 slides read; all initially truncated experiment and plugin segments explicitly reread. Traced 104 authored scenes,208 images,443 assets and hidden geometry; V deliverable validity distinct from normal process exit. Reconstruction uses 5% depth tolerance, reference masks and object average without alignment; appearance rerenders with RGB max-channel≤30. Real Office928fa0fc case R .573074/A .544067/overall .558571 and 80,226/147,456 checked. Repository404, 240 human pairs vs960 records, Gen3DSR geometry lead, best-run selection, Office plugin42, nonidentical100-image task sets and articulation zero retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "7a2faf3286606251fee0fab7d350d53544c11f35611d59d103316222d36aefe3",
+      "built_article": "0b92667f0fbab7c6dc7a6a02ff94b5222a7d5e51dbf2dd39e16e046c94993f0a",
+      "deck": "5669c29fdad3844f2a58e75e9fb019c567abc7eb11f4fc9518cb94766ee47724",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-075/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-075/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-075.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_reading_record": {
+    "record_preserved_from_schema_version": 2,
+    "paper_reading": {
+      "main_agent_complete_read": true,
+      "appendices_included": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 33,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 33
+        }
+      ],
+      "source_visuals_expected": 30,
+      "visual_inventory_complete": true,
+      "inventory_note": "The 33-page v1 PDF was read as extracted text and visually reviewed across all pages. The inventory includes Figures 1-21 and Tables 1-9. No numbered algorithms appear. Selected relationships and tables are redrawn in HTML/CSS; no paper pixels are reused."
+    },
+    "source_revisions": [
+      {
+        "id": "paper",
+        "url": "https://arxiv.org/abs/2609.36380",
+        "revision": "v1, first posted 2026-09-28; CC BY 4.0"
+      }
+    ],
+    "not_valid_for": "本轮全文与全页渲染复读；旧的 true 仅留作历史记录，不用来认证当前修订。"
+  },
+  "legacy_qa_record": {
+    "record_preserved_from_schema_version": 2,
+    "qa": {
+      "reading_layout": {
+        "deck_first": true,
+        "toc_h2_only": true,
+        "surface": "neutral-light",
+        "body_font": "sans-serif",
+        "body_font_px": 17,
+        "line_height": 1.76,
+        "figures_centered": true,
+        "internal_scroll_for_tables_and_code": true,
+        "page_horizontal_overflow": false
+      },
+      "viewports": [
+        {
+          "width": 1600,
+          "height": 1000,
+          "passed": true
+        },
+        {
+          "width": 1512,
+          "height": 982,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        }
+      ],
+      "tested_surfaces": {
+        "article_body": true,
+        "embedded_deck": true,
+        "standalone_deck": true
+      },
+      "language_review": {
+        "technical_terms_contextualized": true,
+        "actors_disambiguated": true,
+        "read_aloud_complete": true,
+        "facts_rechecked_after_rewrite": true
+      },
+      "interactions": {
+        "buttons": true,
+        "keyboard": true,
+        "hash_navigation": true,
+        "fullscreen": true,
+        "escape": true,
+        "standalone_return_to_article": true,
+        "immersive_mode_exit": true,
+        "usable_state_after_exit": true
+      },
+      "inspected_slides": [
+        "opening",
+        "densest",
+        "largest-table-or-code",
+        "final"
+      ]
+    },
+    "not_valid_for": "当前文章、deck、配图与正在更新的全站主题；旧通过不能替代重建后浏览器验收。"
+  },
+  "legacy_coverage_record": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
@@ -382,628 +1413,264 @@
       ]
     }
   ],
-  "source_visuals": [
+  "terminology": [
     {
-      "id": "figure-1",
-      "kind": "figure",
-      "label": "Figure 1",
-      "source_id": "paper",
-      "source_locator": "p. 2, Figure 1",
-      "status": "redrawn",
-      "rationale": "The task contract is redrawn as the deck opening scene-program diagram and the article workflow.",
-      "placements": [
+      "term": "scene program",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "给一张 RGB 图片"
-        },
-        {
-          "artifact": "deck",
-          "locator": "给一张图，coding agent"
+          "source_id": "paper",
+          "locator": "§3; Figure 1"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS composition using paper facts; no source pixels reused.",
-      "credit": "根据论文 Figure 1 重绘",
-      "asset_paths": []
+      "article_quote": "Blender 是三维建模与渲染软件，本文的 Agent 用 Python 创建相机、对象、材质、灯光和层级。可再次执行的这份代码称为 **scene program**。"
     },
     {
-      "id": "figure-2",
-      "kind": "figure",
-      "label": "Figure 2",
-      "source_id": "paper",
-      "source_locator": "p. 4, Figure 2",
-      "status": "redrawn",
-      "rationale": "The construction workflow is simplified into five explicit stages.",
-      "placements": [
+      "term": "mesh",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "INTERPRET"
-        },
-        {
-          "artifact": "deck",
-          "locator": "Agent 交替修改程序"
+          "source_id": "paper",
+          "locator": "Appendix E.1"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS composition.",
-      "credit": "根据论文 Figure 2 重绘",
-      "asset_paths": []
+      "article_quote": "**mesh** 是由顶点与面组成的表面几何"
     },
     {
-      "id": "figure-3",
-      "kind": "figure",
-      "label": "Figure 3",
-      "source_id": "paper",
-      "source_locator": "p. 5, Figure 3",
-      "status": "redrawn",
-      "rationale": "The benchmark-construction sequence is redrawn with its human-review branch summarized in text.",
-      "placements": [
+      "term": "instance mask",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "从资产到 208 张输入图"
-        },
-        {
-          "artifact": "deck",
-          "locator": "专业资产先进入 simulator scene"
+          "source_id": "paper",
+          "locator": "§4.2; Appendix E.2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS composition.",
-      "credit": "根据论文 Figure 3 重绘",
-      "asset_paths": []
+      "article_quote": "**instance mask** 标记图中哪些像素属于同一个对象；深度记录可见表面距离相机有多远。"
     },
     {
-      "id": "figure-4",
-      "kind": "figure",
-      "label": "Figure 4",
-      "source_id": "paper",
-      "source_locator": "p. 7, Figure 4",
-      "status": "redrawn",
-      "rationale": "The three GPT-6 low-to-XHigh endpoints are restated as direct-label bars.",
-      "placements": [
+      "term": "precision",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "Astra 从 32.3 升至 61.8"
-        },
-        {
-          "artifact": "deck",
-          "locator": "更多 reasoning 主要帮助 GPT-6 系列"
+          "source_id": "paper",
+          "locator": "Appendix E.2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS bars using published values.",
-      "credit": "根据论文 Figure 4 重绘",
-      "asset_paths": []
+      "article_quote": "逐对象的 <strong>precision</strong> 是候选表面点中有多少比例落在参考表面容差内"
     },
     {
-      "id": "figure-5",
-      "kind": "figure",
-      "label": "Figure 5",
-      "source_id": "paper",
-      "source_locator": "p. 8, Figure 5",
-      "status": "redrawn",
-      "rationale": "The non-monotonic trajectory is represented with a concrete best-to-final trace.",
-      "placements": [
+      "term": "recall",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "轨迹中的退化"
-        },
-        {
-          "artifact": "deck",
-          "locator": "后期编辑会破坏已经正确的相机"
+          "source_id": "paper",
+          "locator": "Appendix E.2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS trace using published diagnostics.",
-      "credit": "根据论文 Figure 5 与 Appendix B.2 重绘",
-      "asset_paths": []
+      "article_quote": "<strong>recall</strong> 是参考表面有多少比例被候选覆盖。"
     },
     {
-      "id": "figure-6",
-      "kind": "figure",
-      "label": "Figure 6",
-      "source_id": "paper",
-      "source_locator": "p. 8, Figure 6",
-      "status": "redrawn",
-      "rationale": "Self-versus-cross judge averages are shown as four direct metrics.",
-      "placements": [
+      "term": "object macro average",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "Self-judgment 对 Reconstruction"
-        },
-        {
-          "artifact": "deck",
-          "locator": "模型能看出颜色和光照差异"
+          "source_id": "paper",
+          "locator": "Appendix E.2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS metrics using published values.",
-      "credit": "根据论文 Figure 6 与 Table 8 重绘",
-      "asset_paths": []
+      "article_quote": "所有评分对象等权平均，称为 <strong>object macro average</strong>，不是把大桌子的全部点和小物体的点一起平均。"
     },
     {
-      "id": "figure-7",
-      "kind": "figure",
-      "label": "Figure 7",
-      "source_id": "paper",
-      "source_locator": "p. 9, Figure 7",
-      "status": "redrawn",
-      "rationale": "The three plugin interventions are redrawn as method cards.",
-      "placements": [
+      "term": "transaction",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
         {
-          "artifact": "article",
-          "locator": "三种针对性干预"
-        },
-        {
-          "artifact": "deck",
-          "locator": "初始化、证据检查和版本回退"
+          "source_id": "paper",
+          "locator": "§5; Appendix G"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS composition.",
-      "credit": "根据论文 Figure 7 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-8",
-      "kind": "figure",
-      "label": "Figure 8",
-      "source_id": "paper",
-      "source_locator": "p. 9, Figure 8",
-      "status": "redrawn",
-      "rationale": "All six reported relative gains are redrawn as direct-label bars.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "六个模型全部提高 Overall"
-        },
-        {
-          "artifact": "deck",
-          "locator": "弱模型提升最大"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS bars using published values.",
-      "credit": "根据论文 Figure 8 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-9",
-      "kind": "figure",
-      "label": "Figure 9",
-      "source_id": "paper",
-      "source_locator": "p. 9, Figure 9",
-      "status": "omitted",
-      "rationale": "The two qualitative examples are described with exact published scores; source pixels are unnecessary.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-10",
-      "kind": "figure",
-      "label": "Figure 10",
-      "source_id": "paper",
-      "source_locator": "p. 19, Figure 10",
-      "status": "omitted",
-      "rationale": "The cost proxy lacks an exact published conversion formula and is secondary to the main reconstruction results.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-11",
-      "kind": "figure",
-      "label": "Figure 11",
-      "source_id": "paper",
-      "source_locator": "p. 20, Figure 11",
-      "status": "omitted",
-      "rationale": "Trajectory timing, regression and regret are summarized with exact reported values and scope caveats in prose.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-12",
-      "kind": "figure",
-      "label": "Figure 12",
-      "source_id": "paper",
-      "source_locator": "p. 21, Figure 12",
-      "status": "redrawn",
-      "rationale": "The severe best-to-last regression is represented as a text trace with the published checkpoint values.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "House bedroom 案例"
-        },
-        {
-          "artifact": "deck",
-          "locator": "FINAL Q = 4.35%"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS trace using published values.",
-      "credit": "根据论文 Figure 12 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-13",
-      "kind": "figure",
-      "label": "Figure 13",
-      "source_id": "paper",
-      "source_locator": "p. 22, Figure 13",
-      "status": "omitted",
-      "rationale": "The six-by-six qualitative grid is useful for visual browsing but not required for the causal explanation.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-14",
-      "kind": "figure",
-      "label": "Figure 14",
-      "source_id": "paper",
-      "source_locator": "p. 23, Figure 14",
-      "status": "omitted",
-      "rationale": "Representative inputs are summarized by the benchmark environment and split description.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-15",
-      "kind": "figure",
-      "label": "Figure 15",
-      "source_id": "paper",
-      "source_locator": "p. 23, Figure 15",
-      "status": "omitted",
-      "rationale": "Object-count distributions are secondary because difficulty is formally defined by nested matched families, not raw counts.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-16",
-      "kind": "figure",
-      "label": "Figure 16",
-      "source_id": "paper",
-      "source_locator": "p. 24, Figure 16",
-      "status": "omitted",
-      "rationale": "Object-size distributions are secondary to the benchmark construction and metric path.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-17",
-      "kind": "figure",
-      "label": "Figure 17",
-      "source_id": "paper",
-      "source_locator": "p. 25, Figure 17",
-      "status": "omitted",
-      "rationale": "The 15-round articulation annotation flow is summarized with its final 368 static and 75 articulated counts.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-18",
-      "kind": "figure",
-      "label": "Figure 18",
-      "source_id": "paper",
-      "source_locator": "p. 26, Figure 18",
-      "status": "redrawn",
-      "rationale": "Validity, geometry and rerendered appearance are split across three consecutive metric slides.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "四个分数怎样计算？"
-        },
-        {
-          "artifact": "deck",
-          "locator": "一次提交必须留下三个可用产物"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS diagrams.",
-      "credit": "根据论文 Figure 18 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-19",
-      "kind": "figure",
-      "label": "Figure 19",
-      "source_id": "paper",
-      "source_locator": "p. 27, Figure 19",
-      "status": "omitted",
-      "rationale": "The six-task threshold and point-budget sensitivity study is reported as a limitation of metric tuning rather than redrawn.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-20",
-      "kind": "figure",
-      "label": "Figure 20",
-      "source_id": "paper",
-      "source_locator": "p. 28, Figure 20",
-      "status": "omitted",
-      "rationale": "The annotation UI is secondary; human-study sample size and agreement are discussed in the evidence notes rather than visually reproduced.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-21",
-      "kind": "figure",
-      "label": "Figure 21",
-      "source_id": "paper",
-      "source_locator": "p. 29, Figure 21",
-      "status": "omitted",
-      "rationale": "The short vanilla prompt is summarized through the visible-input and deliverable contract.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-1",
-      "kind": "table",
-      "label": "Table 1",
-      "source_id": "paper",
-      "source_locator": "p. 3, Table 1",
-      "status": "redrawn",
-      "rationale": "Neighboring benchmarks are reorganized around input, output and evaluation boundary.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "它与已有 3D reconstruction 工作差在哪里？"
-        },
-        {
-          "artifact": "deck",
-          "locator": "任务的独特组合"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML table using published comparisons.",
-      "credit": "根据论文 Table 1 与 Appendix A 整理",
-      "asset_paths": []
-    },
-    {
-      "id": "table-2",
-      "kind": "table",
-      "label": "Table 2",
-      "source_id": "paper",
-      "source_locator": "p. 5, Table 2",
-      "status": "redrawn",
-      "rationale": "The benchmark counts are shown as direct metrics beside the construction flow.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "443 个注册资产"
-        },
-        {
-          "artifact": "deck",
-          "locator": "443 registered assets"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS metrics using published counts.",
-      "credit": "根据论文 Table 2 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-3",
-      "kind": "table",
-      "label": "Table 3",
-      "source_id": "paper",
-      "source_locator": "p. 6, Table 3",
-      "status": "redrawn",
-      "rationale": "The six coding-agent rows are reproduced in accessible HTML tables; baseline caveats remain in prose.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "Model + Codex"
-        },
-        {
-          "artifact": "deck",
-          "locator": "Validity 接近饱和"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML tables using published values.",
-      "credit": "根据论文 Table 3 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-4",
-      "kind": "table",
-      "label": "Table 4",
-      "source_id": "paper",
-      "source_locator": "p. 7, Table 4",
-      "status": "redrawn",
-      "rationale": "Complexity-tier headline values are redrawn as direct-label bars.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "Overall 从 Easy 24.6"
-        },
-        {
-          "artifact": "deck",
-          "locator": "三个 complexity tiers 的平均 Overall"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS bars using published values.",
-      "credit": "根据论文 Table 4 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-5",
-      "kind": "table",
-      "label": "Table 5",
-      "source_id": "paper",
-      "source_locator": "p. 10, Table 5",
-      "status": "redrawn",
-      "rationale": "All three natural-image results and specialist baselines are reproduced directly.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "一份场景，直接读出三种视觉任务"
-        },
-        {
-          "artifact": "deck",
-          "locator": "同一类 scene representation"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS table and cards using published values.",
-      "credit": "根据论文 Table 5 重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-6",
-      "kind": "table",
-      "label": "Table 6",
-      "source_id": "paper",
-      "source_locator": "p. 20, Table 6",
-      "status": "omitted",
-      "rationale": "The ten-case Bird's-Eye stress-test detail is secondary to the main Indoor and Outdoor results.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-7",
-      "kind": "table",
-      "label": "Table 7",
-      "source_id": "paper",
-      "source_locator": "p. 24, Table 7",
-      "status": "omitted",
-      "rationale": "Canonical articulation counts are summarized in the limitations section.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-8",
-      "kind": "table",
-      "label": "Table 8",
-      "source_id": "paper",
-      "source_locator": "p. 30, Table 8",
-      "status": "redrawn",
-      "rationale": "The 6x6 matrix is summarized by the four self-versus-cross averages needed for the argument.",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "Self-judgment 对 Reconstruction"
-        },
-        {
-          "artifact": "deck",
-          "locator": "45.8%"
-        }
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Original HTML/CSS summary using published values.",
-      "credit": "根据论文 Table 8 汇总重绘",
-      "asset_paths": []
-    },
-    {
-      "id": "table-9",
-      "kind": "table",
-      "label": "Table 9",
-      "source_id": "paper",
-      "source_locator": "p. 32, Table 9",
-      "status": "omitted",
-      "rationale": "The 100 attempted, 94/94/99 scored and 93/93/99 paired denominators are stated explicitly in prose.",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "Source layout not reused.",
-      "credit": "",
-      "asset_paths": []
+      "article_quote": "这个可以接受或整体撤销的编辑单位称为 <strong>transaction</strong>。"
     }
   ],
-  "figures": [],
-  "qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 17,
-      "line_height": 1.76,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
+  "revision_record": {
+    "round": "2026-10-13",
+    "editor": "revise_harness_search_benchmarks",
+    "state": "local-revision-pending-main-paper-read-and-final-browser-review",
+    "primary_read_required_by": "paper-deep-dive-blog SKILL.md",
+    "completed": [
+      "Causal method/evaluation walkthrough revised",
+      "Real-case sources and missing-artifact boundaries retained",
+      "Metric denominators, sampling and selection conditions corrected",
+      "Terminology first-use ledger recorded",
+      "Three source-credited body visuals rebuilt",
+      "All numbered source visuals carried forward with placements or explicit omissions",
+      "Deck screenshot body visuals replaced with article-native SVG layouts; old WebP retained."
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  }
+    "pending": [
+      "Main agent full paper and appendix text reread",
+      "Main agent every rendered paper page reread",
+      "Verify complete visual inventory against rendered pages",
+      "Freshly rebuilt full article plus embedded/standalone deck QA at three viewports and all exit paths"
+    ],
+    "code_audit_status": "Fixed-revision findings preserved; no full training or benchmark rerun claimed."
+  },
+  "qa_history": [
+    {
+      "archived_on": "2026-10-14",
+      "reason": "Primary reread and content corrections invalidate prior built-byte QA.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "article_visuals_interleaved": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "mobile_body_font_px": 16.5,
+          "body_color": "rgb(36, 41, 47)",
+          "body_surface": "rgb(255, 255, 255)",
+          "actual_desktop_column_px": 780
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true,
+          "overview_thumbnail_selection": true,
+          "home_end": true,
+          "focus_restoration": true,
+          "figure_enlargement": true,
+          "figure_zoom": true,
+          "figure_internal_xy_scroll": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "status": "browser-and-visual-qa-complete; primary-paper-reread-is-separate",
+        "partial_subagent_review": {
+          "role": "targeted-editorial-and-evidence-revision",
+          "full_primary_read_certified": false,
+          "source_structure_checked": true,
+          "six_h2_in_source": true,
+          "body_images_after_embed": 3,
+          "body_images_sized": true,
+          "source_visual_mapping_updated": true,
+          "deck_capture_diagnostic": {
+            "report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/deck-revision-068-079/capture-report.json",
+            "viewport": {
+              "width": 1728,
+              "height": 900
+            },
+            "all_slide_bounds_checked": true,
+            "html_deck_only": true,
+            "not_full_article_or_interaction_qa": true
+          },
+          "article_native_visuals": {
+            "count": 3,
+            "format": "SVG",
+            "canvas_width": 1050,
+            "main_label_font_px": 25,
+            "legacy_webp_preserved": true,
+            "prototype_actual_column_review": "All 36 assigned body diagrams reviewed at actual 780px desktop column; mobile details reviewed in 780px XY-scroll dialog.",
+            "all_three_at_actual_desktop_column_reviewed": true
+          }
+        },
+        "review_round": "2026-10-13 unified readable article + native SVG + figure dialog build",
+        "review_scope": "本项只认证正文与两种 deck 的实际浏览器、视觉和交互检查；不代替 paper_reading 的主代理阅读全文记录。",
+        "evidence": {
+          "base_url": "http://localhost:4181",
+          "detail_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-detail-group-3-report.json",
+          "typography_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-body-typography-report.json",
+          "article_summary_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-article-summary-report.json",
+          "fresh_language_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-fresh-build-language-report.json",
+          "mobile_figure_center_bottom_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-mobile-center-bottom-report.json",
+          "actual_visual_review": {
+            "desktop_opening_summary_footer_and_deck_endpoints": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/lego-anything-desktop-opening-final-review.png",
+            "mobile_opening_summary_and_deck_roles": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/lego-anything-mobile-article-deck-review.png",
+            "mobile_enlarged_body_figure_detail": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/lego-anything-mobile-details-contact.png",
+            "desktop_body_figures": [
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/lego-anything-1512-body-1.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/lego-anything-1512-body-2.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/lego-anything-1512-body-3.png"
+            ],
+            "slide_roles": {
+              "opening": 1,
+              "densest": 10,
+              "largest_table_or_code": 10,
+              "final": 18
+            },
+            "reviewed_by": "assigned subagent; all listed contact sheets inspected visually after native-column review"
+          }
+        },
+        "readability_conditions": {
+          "article_body": "普通正文实际测量：桌面 17px，手机 16.5px，行高比例 1.78；lead 不用于正文字号认证。",
+          "desktop_figures": "1050px SVG 在 780px 正文列显示；主标签 25px 实际约 18.57px，已按此列宽逐图看过。",
+          "mobile_inline_figures": "手机 inline 图是概览，不认证密集文字可直接读；点击放大后保持 780px 图宽，主标签约 18.57px，可在页内左右与上下滚动。",
+          "enlarged_figure_controls": "整图、清晰、放大、缩小、关闭、Escape 与焦点返回均实测；居中/底部内容可滚动到达。",
+          "embedded_deck": "嵌入 deck 是概览；复杂图表细读使用桌面大屏、fullscreen 或正文放大图。",
+          "phone_portrait_deck": "手机竖屏嵌入与独立 deck 的密集表/代码仅作概览，不把边界检查通过称为密集文字细读通过。"
+        }
+      }
+    }
+  ]
 }

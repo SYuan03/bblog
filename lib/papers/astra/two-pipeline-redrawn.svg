@@ -1,51 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
-  <title id="title">ASTRA two-stage training pipeline</title>
-  <desc id="desc">The SFT branch synthesizes trajectories from MCP tool graphs. The RL branch synthesizes executable mock environments from question decompositions.</desc>
-  <rect width="1400" height="720" fill="#fbfaf7"/>
-  <text x="54" y="68" font-family="Georgia, Songti SC, serif" font-size="38" font-weight="700" fill="#192127">同一个模型，先学会“怎么调用”，再通过 rollout 学会“何时调用”</text>
-  <g font-family="Arial, PingFang SC, sans-serif">
-    <text x="54" y="119" font-size="18" fill="#69737a">作者把训练拆成两条数据生产线。两条线的输入、judge 和用途不同。</text>
-
-    <g transform="translate(54 165)">
-      <rect width="615" height="430" fill="#edf4f8" stroke="#39789f" stroke-width="2"/>
-      <text x="28" y="44" font-size="21" font-weight="700" fill="#39789f">SFT · static tool topology</text>
-      <text x="28" y="79" font-size="18" fill="#39464f">真实 MCP 文档定义有哪些 tool，以及哪些调用可以衔接。</text>
-      <g transform="translate(28 119)">
-        <rect width="142" height="74" fill="#fff" stroke="#a6bfce"/><text x="71" y="32" text-anchor="middle" font-size="18" fill="#1c2931">MCP docs</text><text x="71" y="55" text-anchor="middle" font-size="14" fill="#6a747b">1,585 servers</text>
-        <path d="M153 37h40" stroke="#39789f" stroke-width="3"/><path d="m193 37-10-7v14z" fill="#39789f"/>
-        <rect x="205" width="142" height="74" fill="#fff" stroke="#a6bfce"/><text x="276" y="32" text-anchor="middle" font-size="18" fill="#1c2931">tool graph</text><text x="276" y="55" text-anchor="middle" font-size="14" fill="#6a747b">random walks</text>
-        <path d="M358 37h40" stroke="#39789f" stroke-width="3"/><path d="m398 37-10-7v14z" fill="#39789f"/>
-        <rect x="410" width="148" height="74" fill="#fff" stroke="#a6bfce"/><text x="484" y="32" text-anchor="middle" font-size="18" fill="#1c2931">rollout</text><text x="484" y="55" text-anchor="middle" font-size="14" fill="#6a747b">real + mock tools</text>
-      </g>
-      <line x1="28" y1="228" x2="587" y2="228" stroke="#c8d7df"/>
-      <text x="28" y="267" font-size="16" font-weight="700" fill="#26343d">筛选信号</text>
-      <text x="28" y="299" font-size="16" fill="#47545c">7 个 trajectory-level 分数，大部分由 LLM judge 给出</text>
-      <text x="28" y="332" font-size="16" fill="#47545c">tool status + conciseness + context understanding + planning + final answer</text>
-      <rect x="28" y="361" width="559" height="42" fill="#dbe9f1"/>
-      <text x="308" y="389" text-anchor="middle" font-size="18" font-weight="700" fill="#275f82">输出：54,885 条 SFT trajectory</text>
-    </g>
-
-    <g transform="translate(731 165)">
-      <rect width="615" height="430" fill="#eef5f1" stroke="#397a63" stroke-width="2"/>
-      <text x="28" y="44" font-size="21" font-weight="700" fill="#397a63">RL · semantic dependency topology</text>
-      <text x="28" y="79" font-size="18" fill="#39464f">复杂问题先拆成 sub-QA，再为非叶子步骤生成 Python tool。</text>
-      <g transform="translate(28 119)">
-        <rect width="142" height="74" fill="#fff" stroke="#a4c1b5"/><text x="71" y="32" text-anchor="middle" font-size="18" fill="#1c2931">QA graph</text><text x="71" y="55" text-anchor="middle" font-size="14" fill="#6a747b">1-20 hops</text>
-        <path d="M153 37h40" stroke="#397a63" stroke-width="3"/><path d="m193 37-10-7v14z" fill="#397a63"/>
-        <rect x="205" width="142" height="74" fill="#fff" stroke="#a4c1b5"/><text x="276" y="32" text-anchor="middle" font-size="18" fill="#1c2931">Python tool</text><text x="276" y="55" text-anchor="middle" font-size="14" fill="#6a747b">sandbox check</text>
-        <path d="M358 37h40" stroke="#397a63" stroke-width="3"/><path d="m398 37-10-7v14z" fill="#397a63"/>
-        <rect x="410" width="148" height="74" fill="#fff" stroke="#a4c1b5"/><text x="484" y="32" text-anchor="middle" font-size="18" fill="#1c2931">online RL</text><text x="484" y="55" text-anchor="middle" font-size="14" fill="#6a747b">up to 32 turns</text>
-      </g>
-      <line x1="28" y1="228" x2="587" y2="228" stroke="#c8d9d1"/>
-      <text x="28" y="267" font-size="16" font-weight="700" fill="#26343d">训练信号</text>
-      <text x="28" y="299" font-size="16" fill="#47545c">sub-task 命中数 n̂、所需 sub-task 数 n、tool calls 数 c</text>
-      <text x="28" y="332" font-size="16" fill="#47545c">F1 reward 同时奖励 coverage，并惩罚多余调用</text>
-      <rect x="28" y="361" width="559" height="42" fill="#dcece4"/>
-      <text x="308" y="389" text-anchor="middle" font-size="18" font-weight="700" fill="#2d674f">输出：6,596 个 isolated environment</text>
-    </g>
-
-    <path d="M493 628h414" stroke="#20282e" stroke-width="3"/><path d="m907 628-12-8v16z" fill="#20282e"/>
-    <text x="700" y="663" text-anchor="middle" font-size="17" fill="#4d5961">Qwen3 base → SFT checkpoint → online GRPO</text>
-  </g>
-  <text x="54" y="697" font-family="Arial, PingFang SC, sans-serif" font-size="14" fill="#7a8288">根据论文 Sections 2-3 与 Figures 2-4 重绘；不表示两个数据集共享同一套 judge。</text>
+  <title id="title">ASTRA 两条独立数据流程与两阶段训练</title>
+  <desc id="desc">监督微调使用从工具文档生成的固定示范。强化学习使用从多步问答生成的固定 Python 模拟环境，让当前模型产生新轨迹并按奖励更新。两阶段均只训练工具调用模型。</desc>
+  <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.h{font-size:34px;font-weight:750}.label{font-size:22px;font-weight:700}.p{font-size:20px;fill:#53616b}.small{font-size:17px;fill:#65717a}.node{fill:#fff;stroke:#c1cdd5;stroke-width:1.5}.arrow{stroke:#6b7c89;stroke-width:3}</style>
+  <rect width="1400" height="720" fill="#fff"/>
+  <text x="54" y="59" class="h">先模仿工具调用示范，再用自己执行任务得到的奖励训练</text>
+  <text x="54" y="104" class="p">两个阶段分别生成材料；SFT 的评分筛选示范，RL 的奖励指导当前模型更新，不能混用。</text>
+  <rect x="54" y="147" width="620" height="445" fill="#eff5f9" stroke="#bdd1df"/>
+  <text x="80" y="188" class="label" fill="#245f87">第一条流程 · 固定示范 → SFT</text>
+  <text x="80" y="226" class="p">从 1,585 个 MCP 服务的文档，组织可能连续调用的工具。</text>
+  <rect x="80" y="254" width="164" height="89" class="node"/><text x="162" y="290" text-anchor="middle" class="label">工具文档</text><text x="162" y="321" text-anchor="middle" class="small">名称、参数、用途</text>
+  <path class="arrow" d="M255 298H278"/><path d="m278 298-9-6v12z" fill="#6b7c89"/>
+  <rect x="290" y="254" width="164" height="89" class="node"/><text x="372" y="290" text-anchor="middle" class="label">调用关系图</text><text x="372" y="321" text-anchor="middle" class="small">采样调用链、造任务</text>
+  <path class="arrow" d="M465 298H488"/><path d="m488 298-9-6v12z" fill="#6b7c89"/>
+  <rect x="500" y="254" width="148" height="89" class="node"/><text x="574" y="290" text-anchor="middle" class="label">执行示范</text><text x="574" y="321" text-anchor="middle" class="small">真实或模拟工具</text>
+  <text x="80" y="392" class="p">七项评分：理解、规划、工具调用成功、简洁性等。</text>
+  <text x="80" y="429" class="p">大部分由 LLM 判分；先筛选，再用保留的记录训练。</text>
+  <rect x="80" y="465" width="568" height="67" fill="#dfeaf2"/>
+  <text x="364" y="507" text-anchor="middle" class="label" fill="#245f87">54,885 条固定示范对话</text>
+  <text x="80" y="564" class="small">示范生成完后固定；SFT 更新模型，不重新生成工具。</text>
+  <rect x="726" y="147" width="620" height="445" fill="#f0f6f3" stroke="#c2d9ce"/>
+  <text x="752" y="188" class="label" fill="#2f7d6b">第二条流程 · 固定环境 → online RL</text>
+  <text x="752" y="226" class="p">把多步问答拆成依赖关系，再写成可执行 Python 工具。</text>
+  <rect x="752" y="254" width="164" height="89" class="node"/><text x="834" y="290" text-anchor="middle" class="label">问答依赖图</text><text x="834" y="321" text-anchor="middle" class="small">1-20 个推理步骤</text>
+  <path class="arrow" d="M927 298H950"/><path d="m950 298-9-6v12z" fill="#6b7c89"/>
+  <rect x="962" y="254" width="164" height="89" class="node"/><text x="1044" y="290" text-anchor="middle" class="label">模拟工具</text><text x="1044" y="321" text-anchor="middle" class="small">运行并检查目标输出</text>
+  <path class="arrow" d="M1137 298H1160"/><path d="m1160 298-9-6v12z" fill="#6b7c89"/>
+  <rect x="1172" y="254" width="148" height="89" class="node"/><text x="1246" y="290" text-anchor="middle" class="label">模型做任务</text><text x="1246" y="321" text-anchor="middle" class="small">每次最多 32 轮</text>
+  <text x="752" y="392" class="p">F1 奖励同时计算解决的子目标和工具调用次数。</text>
+  <text x="752" y="429" class="p">同一道题采样多条记录，比组内好坏，再更新模型。</text>
+  <rect x="752" y="465" width="568" height="67" fill="#dfeee6"/>
+  <text x="1036" y="507" text-anchor="middle" class="label" fill="#2f7d6b">6,596 个固定、彼此隔离的环境</text>
+  <text x="752" y="564" class="small">工具与奖励目标固定；RL 只更新调用工具的 policy。</text>
+  <text x="700" y="643" text-anchor="middle" class="label">Qwen3 基座 → SFT 检查点 → 多轮 GRPO</text>
+  <text x="54" y="692" class="small">根据论文 Sections 2-3 与 Figures 2-4 重绘。“能运行并输出目标”不等于已验证真实 API 行为。</text>
 </svg>

@@ -1,66 +1,48 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPCD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPCD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>
 .dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
 </style></head><body><div class="viewport"><main class="stage" aria-label="OPCD 论文图解"><section class="slide active">
   <div class="meta"><span>01 · QUESTION</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h1>怎样把 agent 历史变成无需携带的模型能力？</h1>
-  <p class="lead">OPCD 让 student 无 context rollout，再由 context-conditioned teacher 重评同一轨迹。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>79.7</h3><p>Math OPCD</p></div><div class="card green"><h3>53.9</h3><p>Sokoban filtered experience</p></div><div class="card orange"><h3>50 updates</h3><p>主训练长度</p></div><div class="card "><h3>8.5/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；Tables 1-3</span><span>1 / 9</span></div>
+<h1>OPCD：把历史经验训练进模型，下一次不再携带它</h1><p class="lead">先用模型总结历史；可训练模型自己回答，冻结的初始模型额外读经验，评价同一回答的下一词概率。</p><div class="content"><div class="grid g4"><div class="card blue"><h3>79.7 ± 0.5%</h3><p>随机经验，数学测试</p></div><div class="card"><h3>53.9%</h3><p>验证后选经验，Sokoban</p></div><div class="card"><h3>300 份</h3><p>30 次积累 × 10 种子</p></div><div class="card"><h3>8.5/10</h3><p>个人兴趣程度</p></div></div></div>
+<div class="foot"><span>v2Tables1–2；v1公开2026-02-12</span><span>1 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>02 · EXPERIENCE</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>一段历史不等于一条可用经验</h2>
-
-  <div class="content"><div class="grid g3"><div class="card red"><h3>Raw trace</h3><p>失败、重复与环境噪声全部保留</p></div><div class="card blue"><h3>Consolidated</h3><p>模型总结可迁移的规则</p></div><div class="card green"><h3>Filtered</h3><p>只保留对当前任务有帮助的经验</p></div></div></div>
-  <div class="foot"><span>来源：Section 3；experience ablation</span><span>2 / 9</span></div>
+<h2>生成经验不查答案，选经验却可以用验证答案</h2><div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>30 个历史任务</strong><p>模型逐个解题或交互，保留原始记录。</p></div><div class="step"><b>2</b><strong>逐次总结</strong><p>提炼新经验，追加到旧经验；数学不提供正确答案。</p></div><div class="step"><b>3</b><strong>重复 10 次</strong><p>得到 300 份累积 context 版本，不是 300 个人工标注。</p></div><div class="step"><b>4</b><strong>随机取或按分筛选</strong><p>Table 1 取三份积累十步的经验；filtered 用验证题挑最高分。</p></div><div class="step"><b>5</b><strong>固定经验训练</strong><p>50 次参数更新；论文每批 128 个训练样本，游戏最多 5 轮。</p></div></div><div class="callout"><p>经验上限：数学 16,384 tokens、游戏 8,192。生成无标签与选择有验证信号必须分开。</p></div></div>
+<div class="foot"><span>v2§4.2与AppendixA.3</span><span>2 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>03 · PROTOCOL</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>response token 只生成一次，prompt 重建两次</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Rollout</strong><p>student 无 experience</p></div><div class="step"><b>2</b><strong>Save</strong><p>固定 response tokens</p></div><div class="step"><b>3</b><strong>Rebuild</strong><p>teacher prompt 加 experience</p></div><div class="step"><b>4</b><strong>Rescore</strong><p>同 tokens 再算 log-prob</p></div><div class="step"><b>5</b><strong>Reverse KL</strong><p>student || teacher</p></div></div></div>
-  <div class="foot"><span>来源：Algorithm 1；官方 opcd code</span><span>3 / 9</span></div>
+<h2>student 自己尝试一次，teacher 不生成替代答案</h2><div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>student 生成</strong><p>输入任务或当前历史，不查经验，得到回答 y。</p></div><div class="step"><b>2</b><strong>保存 y</strong><p>固定同一回答与每个已生成前缀。</p></div><div class="step"><b>3</b><strong>两种输入</strong><p>student 读任务；teacher 多读经验 c。</p></div><div class="step"><b>4</b><strong>批量概率</strong><p>同位置计算 student 分布 p 与 teacher 分布 q，不逐词重采样。</p></div><div class="step"><b>5</b><strong>reverse KL</strong><p>p‖q；更新 student，主设置 teacher 冻结。</p></div></div><div class="callout"><p>teacher 概率是训练参照；文本游戏是否到达目标仍由环境判断，数学由正确答案判断。</p></div></div>
+<div class="foot"><span>v2Algorithm1，机制重绘</span><span>3 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>04 · LOSS</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>Top-256 是近似，不是完整词表 KL</h2>
-
-  <div class="content"><div class="formula">Σ p_student · (log p_student − log p_teacher)</div><div class="callout red"><p>代码可只保留 student 概率最高 256 个 vocabulary entries；除非 retained mass 接近 1，否则不等于 full KL。</p></div></div>
-  <div class="foot"><span>来源：官方代码 6f53ef4…</span><span>4 / 9</span></div>
+<h2>top-256 取自 student；它是词表近似，不是完整 KL</h2><div class="content"><div class="formula">KL(p‖q) = Σᵥ pᵥ log(pᵥ/qᵥ)</div><div class="grid g2"><div class="card blue"><h3>概率示意</h3><p>teacher=(.9,.1)，student=(.7,.3)：KL≈.154；student=(.8,.2) 后 KL≈.044。</p><p>仅为计算示例，不是观测模型输出。</p></div><div class="card"><h3>论文 Appendix A.3</h3><p>只保留 student 概率最高的 256 个候选词。截去尾部质量后，与 full-vocabulary KL 不自动相等。</p><p>数学 / 游戏默认不重新归一化；截断值不保证非负。Llama-8B 安全例显式开启。</p></div></div></div>
+<div class="foot"><span>v2Eq2与AppendixA.3；概率为说明</span><span>4 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>05 · NEGATIVE RESULT</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>Raw trace 让数学 validation 变差</h2>
-
-  <div class="content"><div class="barset"><div class="scoreline"><span>Base</span><div class="track"><i class="fill gray" style="--v:75.1%"></i></div><b>75.1</b></div><div class="scoreline"><span>Raw traces</span><div class="track"><i class="fill orange" style="--v:70.5%"></i></div><b>70.5</b></div><div class="scoreline"><span>Summarized context</span><div class="track"><i class="fill " style="--v:77.4%"></i></div><b>77.4</b></div><div class="scoreline"><span>OPCD</span><div class="track"><i class="fill green" style="--v:79.7%"></i></div><b>79.7</b></div></div></div>
-  <div class="foot"><span>根据 ablation table 重绘</span><span>5 / 9</span></div>
+<h2>真实 Figure 9：总结写得像攻略，也可能错误</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>公开经验内容</h3><p>“avoid obstacles represented by ‘H’ (walls)”</p><p>“moving right to expand the grid”</p><p>这些是模型根据历史生成的文本，不是人工游戏规则。</p></div><div class="card"><h3>对应任务</h3><p>Frozen Lake：3×3 地图、两个洞，到达 G；正文称危险格为 holes。</p><p>移动不会扩展地图。Figure 9 未给完整棋盘、动作回放或单题 judge 日志。</p></div></div><div class="callout"><p>这份真实样本说明需要检查经验是否正确；不补造成功路线。Sokoban 则为 6×6、一个箱子。</p></div></div>
+<div class="foot"><span>v2Figure9经验重绘；与A.2规则对照</span><span>5 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>06 · TEXT GAME</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>固定 teacher 比持续自更新稳定得多</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>Fixed split</h3><p>Sokoban 53.9</p></div><div class="card red"><h3>Continual self-distill</h3><p>Sokoban 18.8</p></div></div></div>
-  <div class="foot"><span>来源：text-game experiments</span><span>6 / 9</span></div>
+<h2>主测试与两项消融：把三种条件分开读</h2><div class="content"><div class="grid g3"><div class="card blue"><h3>Table 1：主测试</h3><p>数学 Base 75.0% → OPCD 79.7 ± .5%；Frozen Lake 6.3% →26.5 ±6.4%。</p><p>随机经验；不是 raw-trace 同次测试。</p></div><div class="card"><h3>Table 6：验证消融</h3><p>无经验 75.1%，原始尝试记录（raw trace）70.5%，总结经验 77.4%。</p><p>积累至十步期间的验证平均，不是第十步终点。</p></div><div class="card"><h3>Table 5：teacher</h3><p>Sokoban：冻结 teacher 53.9%，共同持续更新18.8%。</p><p>共享更新可能不稳定，不是默认设置。</p></div></div><div class="callout"><p>经验实验每 2 步保存、选测试最佳；系统提示取测试最佳三个版本均值，均有选择偏差。</p></div></div>
+<div class="foot"><span>v2Tables1/5/6分开重绘</span><span>6 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>07 · GAME CODE</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>把 build log、filtered trace 与 lesson 分开测</h2>
-
-  <div class="content"><div class="grid g3"><div class="card orange"><h3>完整日志</h3><p>保留真实试错，但 token 极长</p></div><div class="card blue"><h3>筛选轨迹</h3><p>删除已证伪分支</p></div><div class="card green"><h3>跨任务 lesson</h3><p>便于检索，可能丢掉关键状态</p></div></div></div>
-  <div class="foot"><span>本文实验设计建议</span><span>7 / 9</span></div>
+<h2>同一任务如何计分：环境完成率，而非经验文本流畅度</h2><div class="content"><div class="grid g3"><div class="card"><h3>数学</h3><p>1,000 测试题，检查最终数值答案。训练回答上限16,384 tokens。</p></div><div class="card"><h3>Frozen Lake</h3><p>128 测试任务，避洞到目标；最多5轮，每轮1,024 tokens。</p></div><div class="card"><h3>Sokoban</h3><p>128 测试任务，将箱子推到目标；部分规则删去，模型需探索。</p></div></div><div class="formula">说明性计数：49 /128 ≈38.3%；不是声称拿到论文49局日志</div><div class="callout"><p>系统规则（system prompt）任务也纳入论文，但安全 Llama-3.2-3B 的OPCD83.1%略低于离线蒸馏83.3%，并非全胜。</p></div></div>
+<div class="foot"><span>v2§4.2与Tables3–4</span><span>7 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>08 · CODE</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>LMOps 实现完整，复现成本也高</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>公开</h3><p>veRL fork、环境、experience pipeline</p></div><div class="card red"><h3>注意</h3><p>text-game 经验需 online stage 生成</p></div></div></div>
-  <div class="foot"><span>代码审计：6f53ef41c951de0962bbf27fe3f5819eabc8ce0e</span><span>8 / 9</span></div>
+<h2>公开训练流程，但代码默认值与论文设置要分开</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>LMOps / opcd</h3><p>student 选 top-256，下标交给 teacher；默认回答 tokens 合并平均。</p><p>游戏奖励只记录表现，蒸馏不以此运行 GRPO 更新。</p></div><div class="card"><h3>别混默认值</h3><p>论文batch128；官方游戏示例batch64、温度.7，数学例温度.6。</p><p>游戏动作取最后一个匹配；环境奖励 1 才算成功。TextArena 未固定版本。</p></div></div></div>
+<div class="foot"><span>代码固定 6f53ef41…；核损失 / runner，未重跑训练</span><span>8 / 9</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>09 · VERDICT</span><span>arXiv:2602.12275 · 2026-02-12</span></div>
-  <h2>经验先提炼，再谈 distillation</h2>
-
-  <div class="content"><div class="callout"><p>成功轨迹是否有用，取决于它怎样被压缩、过滤并对齐到 student 当前状态；“更多历史”不是单调增益。</p></div></div>
-  <div class="foot"><span>兴趣程度 8.5/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/on-policy-context-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<h2>整理经验有用，但结果还包含选择和额外训练</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>支持</h3><p>同样给经验时，student 自己生成训练回答的蒸馏优于离线蒸馏：后者的训练回答来自 teacher。</p></div><div class="card"><h3>限制</h3><p>经验筛选使用验证分；保存版本按测试分选择；直接查经验与蒸馏比较时，后者还多用一批训练题。</p></div></div><div class="callout"><p>论文测试数学、文本游戏与系统规则行为，没有测试完整游戏代码生成。</p></div></div>
+<div class="foot"><span>本文总结；附录测试checkpoint选择限制</span><span>9 / 9</span></div>
+</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/on-policy-context-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

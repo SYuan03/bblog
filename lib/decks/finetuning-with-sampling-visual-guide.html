@@ -1,34 +1,34 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>Finetuning with Sampling 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>Finetuning with Sampling 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"></head>
 <body>
 <div class="viewport"><main class="stage" aria-label="Finetuning with Sampling 论文图解">
   <section class="slide active">
-    <div class="meta"><span>01 · SFT 反超 RL？</span><span>arXiv:2610.02140</span></div>
-    <h1>专家答案直接做 SFT，数学准确率反而从 0.315 降到 0.243</h1>
+    <div class="meta"><span>01 · 问题</span><span>arXiv:2610.02140</span></div>
+    <h1>专家答案直接做监督微调（SFT），数学准确率反而下降</h1>
     <p class="lead">这是 MATH(3,4,5) 同分布测试集上的结果。论文把问题归因于训练数据与基础模型的生成分布不匹配。</p>
-    <div class="content"><div class="grid g2"><div class="card red"><h3>SFT 缺什么</h3><p>能直接学习专家答案，即使基础模型自己从未生成过这种正确解法；但低概率的专家 token 序列可能带来较大的参数更新、弱泛化和旧能力遗忘。</p></div><div class="card orange"><h3>RL 缺什么</h3><p>训练样本来自当前模型，更新更接近原分布；但困难题若一组 rollout（模型独立作答）全部失败，组内奖励没有差异，也就没有可用学习信号。</p></div></div><div class="callout"><p>作者的折中：保留专家解法提供的信息，先让基础模型把答案改写成自己更常生成的形式，再做标准 SFT。</p></div></div>
+    <div class="content"><div class="grid g2"><div class="card red"><h3>SFT：学习固定答案</h3><p>准确率为 0.315→0.243。低概率的专家 token（模型处理的文本单位）序列可能带来较大更新、弱泛化和旧能力遗忘。</p></div><div class="card orange"><h3>强化学习（RL）：自己作答</h3><p>训练样本来自当前模型，更新更接近原分布；但困难题若一组 rollout（模型独立作答）全部失败，组内奖励没有差异，也就没有可用学习信号。</p></div></div><div class="callout"><p>作者保留专家解法提供的信息，先让基础模型把答案改写成自己更常生成的形式，再做标准 SFT。</p></div></div>
     <div class="foot"><span>论文第 1、5 节与 Table 1</span><span>1 / 8</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>02 · 目标分布</span><span>Information projection</span></div>
     <h2>在所有正确答案中，保留基础模型原来的相对概率</h2>
-    <div class="content"><div class="formula">p<sub>C</sub>(x) ∝ p<sub>base</sub>(x) · 1[x ∈ C]</div><div class="grid g3"><div class="card"><h3>C：答案约束</h3><p>所有与专家轨迹信息等价的回答。数学和化学近似看最终答案；医疗任务由 GPT-5-mini 判断语义等价。</p></div><div class="card blue"><h3>p<sub>base</sub>：学生习惯</h3><p>在正确集合内部，基础模型原本越容易生成的答案，目标分布仍给它越高概率。</p></div><div class="card green"><h3>训练保持不变</h3><p>采样完成后仍用普通交叉熵做 SFT。作者移动的是数据分布，不是损失函数。</p></div></div></div>
+    <div class="content"><div class="formula">p<sub>C</sub>(x) ∝ p<sub>base</sub>(x) · 1[x ∈ C]</div><div class="grid g3"><div class="card"><h3>C：答案约束</h3><p>所有与专家轨迹信息等价的回答。数学和化学近似看最终答案；医疗任务由 GPT-5-mini 判断语义等价。</p></div><div class="card blue"><h3>p<sub>base</sub>：学生习惯</h3><p>在正确集合内部，基础模型原本越容易生成的答案，目标分布仍给它越高概率。</p></div><div class="card green"><h3>训练保持不变</h3><p>采样完成后仍用交叉熵训练，即提高目标回答中每个 token 的生成概率。改变的是数据分布。</p></div></div></div>
     <div class="foot"><span>论文 Definition 1–2、Proposition 1</span><span>2 / 8</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>03 · 附录真实例子</span><span>CO₂ + H₂O → C₃H₆O₃ + O₂</span></div>
-    <h2>解法和答案保留，后缀由基础模型重新组织</h2>
-    <div class="content"><div class="flow" style="--n:4"><div class="step"><b>1</b><strong>专家答案</strong><p>给出 3、3、1、3 的正确系数与守恒推导。</p></div><div class="step"><b>2</b><strong>切一段前缀</strong><p>代码随机选择 token 位置，只保留当前位置之前的回答。</p></div><div class="step"><b>3</b><strong>重写后缀</strong><p>提示词同时提供原题、完整专家答案和当前前缀，让基础模型续写。</p></div><div class="step"><b>4</b><strong>接受并检查</strong><p>公开代码只保留平均对数概率更高的候选；最终 checker 再验证方程是否配平。</p></div></div><div class="grid g2"><div class="card green"><h3>附录中的结果</h3><p>Original 与 Boosted 都得到 3 CO₂ + 3 H₂O → C₃H₆O₃ + 3 O₂。</p></div><div class="card orange"><h3>不能省略的边界</h3><p>论文没有发布该样本每轮候选的完整接受记录。全部改写数据中仍有约 4%–6% 未通过正确性检查。</p></div></div></div>
-    <div class="foot"><span>论文 Appendix A、C.1；官方 boost_sci.py</span><span>3 / 8</span></div>
+    <h2>配平答案保留，不代表所有解释都保持正确</h2>
+    <div class="content"><div class="flow" style="--n:4"><div class="step"><b>1</b><strong>专家答案</strong><p>给出 3、3、1、3 的正确系数与守恒推导。</p></div><div class="step"><b>2</b><strong>切一段前缀</strong><p>代码随机选择 token 位置，只保留当前位置之前的回答。</p></div><div class="step"><b>3</b><strong>重写后缀</strong><p>提示词同时提供原题、完整专家答案和当前前缀，让基础模型续写。</p></div><div class="step"><b>4</b><strong>接受并检查</strong><p>候选平均对数概率提高才保留；最终提取方程，与参考的分子式、顺序和整数系数比较。</p></div></div><div class="grid g2"><div class="card green"><h3>附录中的结果</h3><p>原答案与改写都得到 3 CO₂ + 3 H₂O → C₃H₆O₃ + 3 O₂。全体系数乘二仍守恒，却不等于参考，官方比较会判失败。</p></div><div class="card orange"><h3>附录里的反例</h3><p>另一条改写答对 150.130 g/mol，却把 oxane（氧杂环己烷）错说成五元环；实际六元环含五个碳与一个氧。</p></div></div></div>
+    <div class="foot"><span>论文 Appendix A 原/改写输出；C.1；固定 boost_sci.py，无逐轮接受日志</span><span>3 / 8</span></div>
   </section>
 
   <section class="slide">
-    <div class="meta"><span>04 · 三条理论结论</span><span>理想 MH 转移规则</span></div>
-    <h2>理论保证的是完整 Metropolis-Hastings 链</h2>
-    <div class="content"><div class="grid g3"><div class="card blue"><h3>命题 1 · 唯一目标</h3><p>满足答案约束 C 的分布中，离基础模型最近的 KL 投影正是 p<sub>C</sub>。</p></div><div class="card blue"><h3>命题 2 · 可执行转换</h3><p>针对 p<sub>C</sub> 使用普通 proposal，与针对 p<sub>base</sub> 使用保证答案等价的 proposal，在接受规则上等价。</p></div><div class="card green"><h3>命题 3 · 每步不退</h3><p>若 π<sub>k</sub> 是第 k 步数据分布，则 KL(π<sub>k+1</sub> ∥ p<sub>base</sub>) ≤ KL(π<sub>k</sub> ∥ p<sub>base</sub>)。</p></div></div><div class="callout red"><p>这三条结论依赖正确的 MH 接受概率、平稳分布与 information-preserving proposal。公开代码删掉了其中一部分，因此不能直接继承全部保证。</p></div></div>
+    <div class="meta"><span>04 · 三条理论结论</span><span>按概率决定接受候选</span></div>
+    <h2>完整 Metropolis-Hastings（MH）采样才有理论保证</h2>
+    <div class="content"><div class="grid g3"><div class="card blue"><h3>命题 1 · 唯一目标</h3><p>满足答案约束 C 的分布中，离基础模型最近的 KL 投影正是 p<sub>C</sub>；KL 衡量两种回答分布的差别。</p></div><div class="card blue"><h3>命题 2 · 可执行转换</h3><p>针对 p<sub>C</sub> 使用普通候选生成规则（proposal），与针对 p<sub>base</sub> 使用保证答案等价的候选规则，在接受规则上等价。</p></div><div class="card green"><h3>命题 3 · 每步不退</h3><p>若 π<sub>k</sub> 是第 k 步数据分布，则 KL(π<sub>k+1</sub> ∥ p<sub>base</sub>) ≤ KL(π<sub>k</sub> ∥ p<sub>base</sub>)。</p></div></div><div class="callout red"><p>三条结论依赖正确的 MH 接受概率、稳定的目标分布与保持答案信息的候选规则。公开代码删掉了其中一部分，不能直接继承全部保证。</p></div></div>
     <div class="foot"><span>论文 Proposition 1–3</span><span>4 / 8</span></div>
   </section>
 
@@ -45,24 +45,24 @@ if target_log_prob_prop[0] &gt; target_log_prob_cur[0]:
     <div class="meta"><span>06 · 数学结果</span><span>Qwen2.5-3B</span></div>
     <h2>Sampling SFT 均分 0.534，超过 GRPO 0.457 与 UFT 0.452</h2>
     <div class="content"><table class="table"><thead><tr><th>方法</th><th>MATH(3,4,5)</th><th>数学新任务均分</th><th>旧能力均分</th></tr></thead><tbody><tr><td>Base</td><td>0.315</td><td>0.318</td><td>0.422</td></tr><tr><td>SFT</td><td class="bad">0.243</td><td>0.242</td><td>0.389</td></tr><tr><td>GRPO</td><td>0.457</td><td>0.457</td><td>0.414</td></tr><tr><td>UFT</td><td>0.470</td><td>0.452</td><td>0.421</td></tr><tr><td class="ours">Sampling SFT</td><td class="ours">0.495</td><td class="ours">0.534</td><td class="ours">0.420</td></tr><tr><td class="ours">Sampling SFT + RL</td><td class="ours">0.545</td><td class="ours">0.567</td><td class="ours">0.430</td></tr></tbody></table><div class="callout green"><p>0.420 / 0.422 = 99.5%：Sampling SFT 基本保住基础模型在 Chemistry、MMLU、GPQA 三项上的平均旧能力。</p></div></div>
-    <div class="foot"><span>论文 Table 1；均为 single-shot accuracy，未报告多随机种子误差</span><span>6 / 8</span></div>
+    <div class="foot"><span>论文 Table 1；均为每题单次回答准确率（single-shot accuracy），未报告多随机种子误差</span><span>6 / 8</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>07 · 结果边界</span><span>正确性、迁移与计算成本</span></div>
     <h2>方法依赖目标基座，改写会消耗计算，也会产生错误答案</h2>
-    <div class="content"><div class="grid g2"><div class="card orange"><h3>两组设置未胜出</h3><p>Qwen 医疗：Sampling SFT 45.8，OPSD 46.6。Olmo 化学：58.3 对 59.7。</p></div><div class="card orange"><h3>换基座要重采样</h3><p>用 Olmo 改写的数据训练 Qwen，化学准确率只有 57.33%，低于普通 SFT 的 61.8%。</p></div><div class="card red"><h3>正确性约 94%–96%</h3><p>脚本写出 <code>is_correct</code>，但 README 未说明训练前是否过滤失败记录；公开数据也未包含最终改写集。</p></div><div class="card red"><h3>一次性成本约 26.9 万 token/轨迹</h3><p>按论文 Eq. 9 的 T=1856、N=10、B=32 代入。它是理论生成量估算，不是完整 GPU 或美元账单。</p></div></div></div>
+    <div class="content"><div class="grid g2"><div class="card orange"><h3>两组设置未胜出</h3><p>Qwen 医疗：Sampling SFT 45.8，OPSD 46.6。Olmo 化学：58.3 对 59.7。OPSD 是用当前模型生成数据、再训练同一模型的自蒸馏基线。</p></div><div class="card orange"><h3>换基座要重采样</h3><p>用 Olmo 改写的数据训练 Qwen，化学准确率只有 57.33%，低于普通 SFT 的 61.8%。</p></div><div class="card red"><h3>正确性约 94%–96%</h3><p>脚本写出 <code>is_correct</code>，但 README 未说明训练前是否过滤失败记录；公开数据也未包含最终改写集。</p></div><div class="card red"><h3>一次性成本约 26.9 万 token/轨迹</h3><p>按论文 Eq. 9 的 T=1856、N=10、B=32 代入。它是理论生成量估算，不是完整 GPU 或美元账单。</p></div></div></div>
     <div class="foot"><span>论文 Table 1–2、Appendix B–C、Eq. 9；官方 README</span><span>7 / 8</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>08 · 结论</span><span>博客作者兴趣度 8.0 / 10</span></div>
-    <h2>SFT 的问题可能先从数据分布修，而不是先换训练目标</h2>
-    <div class="content"><div class="grid g2"><div class="card green"><h3>论文已支持</h3><p>在 Qwen 化学与数学实验中，Sampling SFT 同时改善新任务表现和旧能力保留；数学再接 RL 达到 0.567。</p></div><div class="card blue"><h3>最值得复用</h3><p>把专家信息当约束，让学生模型参与生成自己的训练答案，再用标准 SFT 学习。</p></div><div class="card orange"><h3>尚未证明</h3><p>单次实验、没有误差条；医疗与 Olmo 有负结果；公开贪心代码不满足完整 MH 接受规则。</p></div><div class="card"><h3>下一项关键实验</h3><p>固定生成预算，对比严格 MH、公开贪心近似与“多次改写取最高概率”，并公开过滤后的数据和接受轨迹。</p></div></div></div>
+    <h2>用学生模型改写专家数据，再做普通监督微调</h2>
+    <div class="content"><div class="grid g2"><div class="card green"><h3>论文已支持</h3><p>在 Qwen 化学与数学实验中，Sampling SFT 同时改善新任务表现和旧能力保留；数学再接 RL 达到 0.567。</p></div><div class="card blue"><h3>最值得复用</h3><p>把专家信息当约束，让学生模型参与生成自己的训练答案，再用标准 SFT 学习。</p></div><div class="card orange"><h3>尚未证明</h3><p>单次实验、没有误差条；医疗与 Olmo 有负结果；公开贪心代码不满足完整 MH 接受规则。</p></div><div class="card"><h3>下一项关键实验</h3><p>固定生成预算，对比严格 MH、公开贪心近似与“多次改写取最高平均对数概率”，并公开过滤后的数据和接受轨迹。</p></div></div></div>
     <div class="foot"><span>结论来自论文、公开代码与本文复算；兴趣度不等于论文质量评级</span><span>8 / 8</span></div>
   </section>
 </main></div>
 <div class="overview" aria-label="页面总览"></div>
 <nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/finetuning-with-sampling.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
-<script src="/lib/decks/paper-deck-v2.js"></script>
+<script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script>
 </body></html>

@@ -1,11 +1,14 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "On-Policy Context Distillation for Language Models",
     "kind": "research",
     "primary_source_ids": [
       "paper"
-    ]
+    ],
+    "arxiv_id": "2602.12275",
+    "version": "v2",
+    "earliest_arxiv_date": "2026-02-12"
   },
   "artifacts": {
     "article": "content/_posts/078-on-policy-context-distillation.md",
@@ -17,8 +20,8 @@
       "id": "paper",
       "kind": "paper",
       "title": "On-Policy Context Distillation for Language Models",
-      "url": "https://arxiv.org/pdf/2602.12275v2",
-      "revision": "v2",
+      "url": "https://arxiv.org/abs/2602.12275v2",
+      "revision": "arXiv 2602.12275v2; earliest v1 public date 2026-02-12",
       "used_for": [
         "problem",
         "method",
@@ -52,35 +55,792 @@
       }
     ],
     "source_visuals_expected": 20,
-    "visual_inventory_complete": true
+    "visual_inventory_complete": true,
+    "review_round": "2026-10-13 collection revision",
+    "status": "main-agent-full-text-and-all-rendered-pages-reviewed",
+    "inventory_note": "Current numbered inventory checked against complete extracted text and all rendered pages, including appendices.",
+    "local_sources": {
+      "pdf": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/opd-opsd-privileged-context/phase3_deep_dive/papers/2602.12275.pdf",
+      "text": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/opd-opsd-privileged-context/phase3_deep_dive/rendered/2602.12275/paper.txt",
+      "rendered_pages": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/opd-opsd-privileged-context/phase3_deep_dive/rendered/2602.12275/main-reread"
+    },
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "text_lines_reviewed": "1010",
+      "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/opd-opsd-privileged-context/phase3_deep_dive/rendered/2602.12275/paper.txt",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 17
+        }
+      ],
+      "rendered_review_location": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/opd-opsd-privileged-context/phase3_deep_dive/rendered/2602.12275/main-reread",
+      "pdf_sha256": "9b37000d483584ff333d61cebc9f485afee367923d45128aea5b50f11db613af",
+      "changes": "All 17 pages read in extracted text and all rendered pages. Re-read fixed 6f53ef41 official loss, trainer, game runner, scripts and config via raw GitHub API. Corrected v2 front-page title versus running header, Table 1 three contexts after ten accumulation steps, item extraction, unnormalized student-selected top-256, default pooled token mean, game rewards logging only, last action and binary close reward, unpinned TextArena, full system-prompt results, OOD declines, mean-to-ten validation not endpoint, and experience-best versus system-top-three test checkpoint selection. Moved real Figure 9 case visual beside case. No multi-GPU training claimed."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. OPCD 为什么不直接把历史轨迹做 SFT？"
+      "locator": "1. Motivation：从读经验到不查经验也能完成任务"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它相对 OPSD 新增了什么？"
+      "locator": "2. Related Work：关键区别是由谁生成训练回答"
     },
     {
       "role": "method",
-      "locator": "Q3. 同一个 student response 怎样被 teacher 重评？"
+      "locator": "3. Method：经验构造、选择与 on-policy 训练"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 哪些实验最值得记住？"
+      "locator": "4. Experiments：任务判定、主结果与负对照"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 游戏 query-to-code 可以怎样借它？"
+      "locator": "5. Discussion：将经验质量与训练收益分开"
     },
     {
       "role": "summary",
-      "locator": "Q6. 代码能复现到什么程度？"
+      "locator": "6. Conclusion：有效的是整理后的经验，不是任意历史"
     }
   ],
   "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1; §2; Figure 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "OPCD 的改变发生在训练记录的来源：student 先自己回答，teacher 再在这条回答已经经过的位置提供概率参照。"
+        }
+      ]
+    },
+    {
+      "id": "method-contract",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Algorithm 1; Appendix A.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "30 × 10 = 300"
+        },
+        {
+          "artifact": "article",
+          "quote": "teacher 参数保持不变，更新只作用于 student。"
+        },
+        {
+          "artifact": "article",
+          "quote": "只求和 student 概率最高的 256 个候选词"
+        }
+      ]
+    },
+    {
+      "id": "main-result",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1/2/5/6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 6 是<strong>经验积累至第十步期间的数学验证成绩平均</strong>：原始记录为 <strong>70.5%</strong>，不带经验为 <strong>75.1%</strong>，提炼后的经验为 <strong>77.4%</strong>"
+        },
+        {
+          "artifact": "article",
+          "quote": "Table 5 的 Sokoban 冻结 teacher 为 <strong>53.9%</strong>，持续更新的同一模型同时当 teacher 和 student 只有 <strong>18.8%</strong>"
+        }
+      ]
+    },
+    {
+      "id": "case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 9; Appendix A.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "moving right to expand the grid"
+        },
+        {
+          "artifact": "article",
+          "quote": "经验样本却称 <code>H</code> 为 “walls”；向右走也不会扩展地图。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.3; Tables 3/4/5/6; repository"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "经验实验每 2 步保存 checkpoint，报告测试准确率最高的版本；系统提示实验对测试分最高的三个 checkpoint 取平均"
+        },
+        {
+          "artifact": "article",
+          "quote": "安装脚本未固定 TextArena 版本。本次核查是阅读代码，没有重跑多 GPU 训练。"
+        }
+      ]
+    },
+    {
+      "id": "code-audit",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "6f53ef41; dp_actor.py 698–742; core_algos.py 524–550 and 831–876; ray_trainer.py 2350–2818; vllm_rollout_spmd.py 828–891"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "数学和游戏示例默认 <code>kl_renorm_topk=False</code>，不把剩下的概率重新凑成总和为 1 的分布。"
+        },
+        {
+          "artifact": "article",
+          "quote": "最终奖励在这个蒸馏阶段<strong>只用于记录表现，不作为 GRPO 奖励更新参数</strong>"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "Figure 1",
+      "status": "redrawn",
+      "rationale": "student 不查经验采样，冻结 teacher 在同一回答上算概率，部署不带经验重画。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "student 自己尝试一次，teacher 不生成替代答案"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 1 与 Algorithm 1 重绘。teacher 不生成替代解答；同一回答分别在带经验与不带经验的输入下计算概率。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 1 重绘",
+      "asset_paths": [
+        "/lib/papers/on-policy-context-distillation/body-method.svg"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "Figure 2",
+      "status": "omitted",
+      "rationale": "不同 Qwen3 尺寸在数学与游戏上的主结果图未完整重画；结果表分开随机经验和验证筛选经验，不把不同条件的点拼成一条曲线。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "Figure 3",
+      "status": "omitted",
+      "rationale": "安全训练与医学遗忘的曲线未复画；正文明确该图是 Qwen2.5-7B 教 3B，区别于同尺寸系统提示主表，并保留遗忘边界。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "Figure 4",
+      "status": "omitted",
+      "rationale": "数学经验提炼的完整 prompt 未复制；正文解释从成功/失败记录与正确答案整理 EXPERIENCE ITEM，不把原始记录直接当有效经验。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "Figure 5",
+      "status": "omitted",
+      "rationale": "文字游戏经验提炼的完整 prompt 未复制；正文结合 Frozen Lake 原例说明总结会写错 H 的意义，而非经过人工认证的规则。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "Figure 6",
+      "status": "omitted",
+      "rationale": "累计经验参与新题求解的完整 prompt 未复制；方法段保留先收集经验再用附加上下文评估，蒸馏采样时 student 不看经验。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "Figure 7",
+      "status": "omitted",
+      "rationale": "积累经验的逐步验证曲线未复画；结果图保留 Table 6 的至十步期间验证平均，明确它不是第十步终点或主测试成绩。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "Figure 8",
+      "status": "omitted",
+      "rationale": "数学经验条目的完整列表未复制。本稿以 Frozen Lake 的错误经验作具体案例，并将成功/失败记录提炼与经验筛选条件分开解释。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "Figure 9",
+      "status": "redrawn",
+      "rationale": "保留模型错误经验中的 H=walls 和向右扩展地图说法，并对照真实规则。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "真实 Figure 9：总结写得像攻略，也可能错误"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 9 重绘并与 Appendix A.2 规则对照。它是模型总结的经验，不是人工确认的游戏规则；本图不补造棋盘或逐步日志。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Figure 9 重绘",
+      "asset_paths": [
+        "/lib/papers/on-policy-context-distillation/body-case.svg"
+      ]
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "Figure 10",
+      "status": "omitted",
+      "rationale": "医学角色系统提示的完整文本未复制；正文说明它是训练时额外上下文、测试时去除，并保留同尺寸医学分类结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "Figure 11",
+      "status": "omitted",
+      "rationale": "安全分类系统提示的完整文本未复制；正文说明四类安全标签和不同尺寸传递实验，未把提示文本当新增人工标签。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "Figure 12",
+      "status": "omitted",
+      "rationale": "MedMCQA 多选用户指令未复制；正文保留医学按准确率计分和模型尺寸，未重现全部提示格式。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "Figure 13",
+      "status": "omitted",
+      "rationale": "安全分类用户指令的完整文本未复制；正文说明按分类标签评测，并分开医学 OOD 曲线与同尺寸安全主表。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "Table 1",
+      "status": "redrawn",
+      "rationale": "随机经验下主测试 79.7±0.5 与普通基线/离线蒸馏分开。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主测试与两项消融：把三种条件分开读"
+        },
+        {
+          "artifact": "article",
+          "locator": "根据 Tables 1、2、5、6 分开重绘。79.7% 为主测试；75.1、70.5、77.4 为积累至十步期间的验证平均，不能拼成同一测试曲线。"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 1 重绘",
+      "asset_paths": [
+        "/lib/papers/on-policy-context-distillation/body-results.svg"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "Table 2",
+      "status": "redrawn",
+      "rationale": "验证后选经验的各任务成绩在正文表格分组，区别于随机经验主实验。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "同一任务如何计分：环境完成率，而非经验文本流畅度"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 2 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "Table 3",
+      "status": "omitted",
+      "rationale": "同尺寸医学系统提示主表未整表复制；正文保留具体模型与成绩，避免与 Table 5 的医学 3B teacher 消融混为同一次比较。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "Table 4",
+      "status": "omitted",
+      "rationale": "同尺寸安全系统提示主表未整表复制；正文说明安全分类范围，并将 Figure 3 的 7B→3B 教师实验另列。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "No source image reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "Table 5",
+      "status": "redrawn",
+      "rationale": "冻结与共享更新 teacher 的 Sokoban 53.9/18.8 对照直接显示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主测试与两项消融：把三种条件分开读"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 5 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "Table 6",
+      "status": "redrawn",
+      "rationale": "无经验 75.1、原始记录 70.5、提炼经验 77.4 分列为积累至十步期间的验证平均；不标成第十步 endpoint 或主测试。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "主测试与两项消融：把三种条件分开读"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Table 6 重绘",
+      "asset_paths": []
+    },
+    {
+      "id": "algorithm-1",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper",
+      "source_locator": "Algorithm 1",
+      "status": "redrawn",
+      "rationale": "无经验生成、经验输入重评与 student top-256 reverse KL 更新按顺序图展示。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "student 自己尝试一次，teacher 不生成替代答案"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
+      "credit": "根据原论文 Algorithm 1 重绘",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/on-policy-context-distillation/body-method.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 1 与 Algorithm 1 重绘。teacher 不生成替代解答；同一回答分别在带经验与不带经验的输入下计算概率。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "method",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/on-policy-context-distillation/body-case.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Figure 9 重绘并与 Appendix A.2 规则对照。它是模型总结的经验，不是人工确认的游戏规则；本图不补造棋盘或逐步日志。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "Figure 9",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    },
+    {
+      "path": "/lib/papers/on-policy-context-distillation/body-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据 Tables 1、5、6 分开重绘。79.7% 为主测试；75.1→70.5→77.4 为经验验证消融，不能拼成同一测试曲线。",
+      "used_in": [
+        "article"
+      ],
+      "placement": "results",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table 1",
+      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+    }
+  ],
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "30tasks sequential10seed300cumulativecontexts;3random10thcontexts not3fixedcontextseeds;filtered selected withvalidation. FrozenLakeHwall/gridexpands falseexperience genuine,notverifierlog. student256gatherteacher fullsoftmax no renorm default maynegative,pooledtokens,rewardloggingnotobjective.128tasks49/128=38.3,actualrunnerlastactionreward1only TextArenaunpinned;Table6validationaveragedhistorydistinctmain79.7;besttestcheckpoints/top3systemtests selection."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "e36c6b48569293796952a3808c1e50126ffd24f54014b4376e1cf06a5dba794c",
+      "built_article": "a81de777f972f1f2329174430d2fab7cee98dccd095279dce1123302ebce530b",
+      "deck": "5b3e53369ddc79659aac015dbd0fc1db2d74531156a4b7afe1c99ff918c3bea3",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-078/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T08-25-17-814Z-078/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-078.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_reading_record": {
+    "record_preserved_from_schema_version": 2,
+    "paper_reading": {
+      "main_agent_complete_read": true,
+      "appendices_included": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 17,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 17
+        }
+      ],
+      "source_visuals_expected": 20,
+      "visual_inventory_complete": true
+    },
+    "source_revisions": [
+      {
+        "id": "paper",
+        "url": "https://arxiv.org/pdf/2602.12275v2",
+        "revision": "v2"
+      }
+    ],
+    "not_valid_for": "本轮全文与全页渲染复读；旧的 true 仅留作历史记录，不用来认证当前修订。"
+  },
+  "legacy_qa_record": {
+    "record_preserved_from_schema_version": 2,
+    "qa": {
+      "reading_layout": {
+        "deck_first": true,
+        "toc_h2_only": true,
+        "surface": "neutral-light",
+        "body_font": "sans-serif",
+        "body_font_px": 16.5,
+        "line_height": 1.75,
+        "figures_centered": true,
+        "internal_scroll_for_tables_and_code": true,
+        "page_horizontal_overflow": false
+      },
+      "viewports": [
+        {
+          "width": 1600,
+          "height": 1000,
+          "passed": true
+        },
+        {
+          "width": 1512,
+          "height": 982,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        }
+      ],
+      "tested_surfaces": {
+        "article_body": true,
+        "embedded_deck": true,
+        "standalone_deck": true
+      },
+      "language_review": {
+        "technical_terms_contextualized": true,
+        "actors_disambiguated": true,
+        "read_aloud_complete": true,
+        "facts_rechecked_after_rewrite": true
+      },
+      "interactions": {
+        "buttons": true,
+        "keyboard": true,
+        "hash_navigation": true,
+        "fullscreen": true,
+        "escape": true,
+        "standalone_return_to_article": true,
+        "immersive_mode_exit": true,
+        "usable_state_after_exit": true
+      },
+      "inspected_slides": [
+        "opening",
+        "densest",
+        "largest-table-or-code",
+        "final"
+      ]
+    },
+    "not_valid_for": "当前文章、deck、配图与正在更新的全站主题；旧通过不能替代重建后浏览器验收。"
+  },
+  "legacy_coverage_record": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
@@ -177,344 +937,250 @@
       ]
     }
   ],
-  "source_visuals": [
+  "terminology": [
     {
-      "id": "figure-1",
-      "kind": "figure",
-      "label": "Figure 1",
-      "source_id": "paper",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Figure 1"
+        }
+      ],
+      "article_quote": "正在更新参数的模型称为 <strong>student</strong>，它接收题目或当前游戏历史，自己生成回答。"
     },
     {
-      "id": "figure-2",
-      "kind": "figure",
-      "label": "Figure 2",
-      "source_id": "paper",
-      "source_locator": "Figure 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "term": "on-policy rollout",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Algorithm 1"
+        }
+      ],
+      "article_quote": "用当前模型亲自尝试任务、取得训练记录的操作叫 <strong>on-policy rollout</strong>。"
     },
     {
-      "id": "figure-3",
-      "kind": "figure",
-      "label": "Figure 3",
-      "source_id": "paper",
-      "source_locator": "Figure 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "term": "teacher",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Appendix A.3"
+        }
+      ],
+      "article_quote": "主实验另保留一份不更新参数的模型副本，称为 <strong>teacher</strong>；它额外读取经验，计算同一条回答每个位置的下一词概率。"
     },
     {
-      "id": "figure-4",
-      "kind": "figure",
-      "label": "Figure 4",
-      "source_id": "paper",
-      "source_locator": "Figure 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "term": "context",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Figure 1"
+        }
+      ],
+      "article_quote": "附加在输入中的这份经验文字就是本文的 <strong>context</strong>。teacher 的概率是训练参照，不能代替环境对任务成败的判断。"
     },
     {
-      "id": "figure-5",
-      "kind": "figure",
-      "label": "Figure 5",
-      "source_id": "paper",
-      "source_locator": "Figure 5",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "term": "filtered",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2; Appendix A.3"
+        }
+      ],
+      "article_quote": "另一组 <strong>filtered</strong> 设置先评估经验质量：把每份候选经验放到新任务前，用 <strong>1,000 道数学验证题或 128 个游戏验证任务</strong>评估，再选成绩最高的一份。"
     },
     {
-      "id": "figure-6",
-      "kind": "figure",
-      "label": "Figure 6",
-      "source_id": "paper",
-      "source_locator": "Figure 6",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-7",
-      "kind": "figure",
-      "label": "Figure 7",
-      "source_id": "paper",
-      "source_locator": "Figure 7",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-8",
-      "kind": "figure",
-      "label": "Figure 8",
-      "source_id": "paper",
-      "source_locator": "Figure 8",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-9",
-      "kind": "figure",
-      "label": "Figure 9",
-      "source_id": "paper",
-      "source_locator": "Figure 9",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-10",
-      "kind": "figure",
-      "label": "Figure 10",
-      "source_id": "paper",
-      "source_locator": "Figure 10",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-11",
-      "kind": "figure",
-      "label": "Figure 11",
-      "source_id": "paper",
-      "source_locator": "Figure 11",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-12",
-      "kind": "figure",
-      "label": "Figure 12",
-      "source_id": "paper",
-      "source_locator": "Figure 12",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "figure-13",
-      "kind": "figure",
-      "label": "Figure 13",
-      "source_id": "paper",
-      "source_locator": "Figure 13",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-1",
-      "kind": "table",
-      "label": "Table 1",
-      "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-2",
-      "kind": "table",
-      "label": "Table 2",
-      "source_id": "paper",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-3",
-      "kind": "table",
-      "label": "Table 3",
-      "source_id": "paper",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-4",
-      "kind": "table",
-      "label": "Table 4",
-      "source_id": "paper",
-      "source_locator": "Table 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-5",
-      "kind": "table",
-      "label": "Table 5",
-      "source_id": "paper",
-      "source_locator": "Table 5",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "table-6",
-      "kind": "table",
-      "label": "Table 6",
-      "source_id": "paper",
-      "source_locator": "Table 6",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "algorithm-1",
-      "kind": "algorithm",
-      "label": "Algorithm 1",
-      "source_id": "paper",
-      "source_locator": "Algorithm 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "term": "checkpoint",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.3"
+        }
+      ],
+      "article_quote": "经验实验每 2 步保存 checkpoint，报告测试准确率最高的版本；系统提示实验对测试分最高的三个 checkpoint 取平均</strong>。checkpoint 是保存的模型参数版本，后者不是三个随机种子的平均。"
     }
   ],
-  "figures": [],
-  "qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 16.5,
-      "line_height": 1.75,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
+  "revision_record": {
+    "round": "2026-10-13",
+    "editor": "revise_harness_search_benchmarks",
+    "state": "local-revision-pending-main-paper-read-and-final-browser-review",
+    "primary_read_required_by": "paper-deep-dive-blog SKILL.md",
+    "completed": [
+      "Causal method/evaluation walkthrough revised",
+      "Real-case sources and missing-artifact boundaries retained",
+      "Metric denominators, sampling and selection conditions corrected",
+      "Terminology first-use ledger recorded",
+      "Three source-credited body visuals rebuilt",
+      "All numbered source visuals carried forward with placements or explicit omissions",
+      "Deck screenshot body visuals replaced with article-native SVG layouts; old WebP retained."
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  }
+    "pending": [
+      "Main agent full paper and appendix text reread",
+      "Main agent every rendered paper page reread",
+      "Verify complete visual inventory against rendered pages",
+      "Freshly rebuilt full article plus embedded/standalone deck QA at three viewports and all exit paths"
+    ],
+    "code_audit_status": "Inherited fixed-revision audit; this round some network file reads timed out; not newly executed training."
+  },
+  "qa_history": [
+    {
+      "archived_on": "2026-10-14",
+      "reason": "Primary reread and content corrections invalidate prior built-byte QA.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "article_visuals_interleaved": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "mobile_body_font_px": 16.5,
+          "body_color": "rgb(36, 41, 47)",
+          "body_surface": "rgb(255, 255, 255)",
+          "actual_desktop_column_px": 780
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true,
+          "overview_thumbnail_selection": true,
+          "home_end": true,
+          "focus_restoration": true,
+          "figure_enlargement": true,
+          "figure_zoom": true,
+          "figure_internal_xy_scroll": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "status": "browser-and-visual-qa-complete; primary-paper-reread-is-separate",
+        "partial_subagent_review": {
+          "role": "targeted-editorial-and-evidence-revision",
+          "full_primary_read_certified": false,
+          "source_structure_checked": true,
+          "six_h2_in_source": true,
+          "body_images_after_embed": 3,
+          "body_images_sized": true,
+          "source_visual_mapping_updated": true,
+          "deck_capture_diagnostic": {
+            "report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/deck-revision-068-079/capture-report.json",
+            "viewport": {
+              "width": 1728,
+              "height": 900
+            },
+            "all_slide_bounds_checked": true,
+            "html_deck_only": true,
+            "not_full_article_or_interaction_qa": true
+          },
+          "article_native_visuals": {
+            "count": 3,
+            "format": "SVG",
+            "canvas_width": 1050,
+            "main_label_font_px": 25,
+            "legacy_webp_preserved": true,
+            "prototype_actual_column_review": "All 36 assigned body diagrams reviewed at actual 780px desktop column; mobile details reviewed in 780px XY-scroll dialog.",
+            "all_three_at_actual_desktop_column_reviewed": true
+          }
+        },
+        "review_round": "2026-10-13 unified readable article + native SVG + figure dialog build",
+        "review_scope": "本项只认证正文与两种 deck 的实际浏览器、视觉和交互检查；不代替 paper_reading 的主代理阅读全文记录。",
+        "evidence": {
+          "base_url": "http://localhost:4181",
+          "detail_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-detail-group-4-report.json",
+          "typography_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-body-typography-report.json",
+          "article_summary_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-article-summary-report.json",
+          "fresh_language_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-fresh-build-language-report.json",
+          "mobile_figure_center_bottom_report": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/qa-mobile-center-bottom-report.json",
+          "actual_visual_review": {
+            "desktop_opening_summary_footer_and_deck_endpoints": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/on-policy-context-distillation-desktop-opening-final-review.png",
+            "mobile_opening_summary_and_deck_roles": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/on-policy-context-distillation-mobile-article-deck-review.png",
+            "mobile_enlarged_body_figure_detail": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/on-policy-context-distillation-mobile-details-contact.png",
+            "desktop_body_figures": [
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/on-policy-context-distillation-1512-body-1.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/on-policy-context-distillation-1512-body-2.png",
+              "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/harness-068-079/on-policy-context-distillation-1512-body-3.png"
+            ],
+            "slide_roles": {
+              "opening": 1,
+              "densest": 6,
+              "largest_table_or_code": 7,
+              "final": 9
+            },
+            "reviewed_by": "assigned subagent; all listed contact sheets inspected visually after native-column review"
+          }
+        },
+        "readability_conditions": {
+          "article_body": "普通正文实际测量：桌面 17px，手机 16.5px，行高比例 1.78；lead 不用于正文字号认证。",
+          "desktop_figures": "1050px SVG 在 780px 正文列显示；主标签 25px 实际约 18.57px，已按此列宽逐图看过。",
+          "mobile_inline_figures": "手机 inline 图是概览，不认证密集文字可直接读；点击放大后保持 780px 图宽，主标签约 18.57px，可在页内左右与上下滚动。",
+          "enlarged_figure_controls": "整图、清晰、放大、缩小、关闭、Escape 与焦点返回均实测；居中/底部内容可滚动到达。",
+          "embedded_deck": "嵌入 deck 是概览；复杂图表细读使用桌面大屏、fullscreen 或正文放大图。",
+          "phone_portrait_deck": "手机竖屏嵌入与独立 deck 的密集表/代码仅作概览，不把边界检查通过称为密集文字细读通过。"
+        }
+      }
+    }
+  ]
 }

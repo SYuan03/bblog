@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Is More Privileged Information Better? From Solution Traces to Problem-Solving Structure in Self-Distilled Reasoning",
     "kind": "research",
@@ -28,6 +28,7 @@
     }
   ],
   "paper_reading": {
+    "appendix_status": "No separate appendix in the 9-page primary paper; appendices_included means none was omitted.",
     "main_agent_complete_read": true,
     "appendices_included": true,
     "extracted_text_reviewed": true,
@@ -40,32 +41,39 @@
       }
     ],
     "source_visuals_expected": 10,
-    "visual_inventory_complete": true
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么把 solution 改写成 problem space？"
+      "locator": "1. Motivation：为什么不直接把完整标准解给教师"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 四个字段分别承担什么角色？"
+      "locator": "2. Related Work：与答案蒸馏、计划辅助方法有什么不同"
     },
     {
       "role": "method",
-      "locator": "Q3. PS-OPSD 的训练与对照怎样设计？"
+      "locator": "3. Method：从标准解提取四字段，再重评学生回答"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 结果与 checkpoint 聚合有什么限制？"
+      "locator": "4. Experiments：主表优势与统一模型比较须分开"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 游戏版 problem-space context 应该长什么样？"
+      "locator": "5. Discussion：后续最值得验证的方向"
     },
     {
       "role": "summary",
-      "locator": "Q6. 为什么它只能当概念参照？"
+      "locator": "6. Conclusion：结论与复现限制"
     }
   ],
   "coverage": [
@@ -78,13 +86,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 1-2"
+          "locator": "§1, §3; Figure 1; Table 1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "完整 solution 绑定一个具体推理轨迹，还可能让 teacher 依赖 final answer；problem-space guidance 只保留可执行的状态变化。"
+          "quote": "作者希望保留解题关系，减少教师对具体答案、措辞和计算顺序的依赖。"
         }
       ]
     },
@@ -97,13 +105,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Method section and Algorithm 1"
+          "locator": "§3–4; Algorithm 1; Eq. 5–7"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "student 只看 question，teacher 看四字段 guidance 并评分 student 自己的 tokens。"
+          "quote": "先离线生成提示，训练时保持提示与教师固定，只更新学生。"
+        },
+        {
+          "artifact": "article",
+          "quote": "教师关闭 LoRA 且不跟踪梯度，学生只更新 LoRA。"
         }
       ]
     },
@@ -116,13 +128,17 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1-5"
+          "locator": "Tables 1, 2, 5"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "PS-OPSD 在三个 scale 都高于 OPSD，但 Avg 仍可能混合每个 benchmark 独立选出的最佳 checkpoint。"
+          "quote": "三个规模的主表平均分最高，但它不是一个固定部署模型在所有测试集上的统一结果。"
+        },
+        {
+          "artifact": "article",
+          "quote": "PS-OPSD 相对 OPSD 的平均变化分别为 −0.68 / +0.00 / +0.68 点"
         }
       ]
     },
@@ -135,13 +151,136 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Experimental details and artifact check"
+          "locator": "§6; Table 5; full artifact"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文没有公开 official repository、run manifests、exact temperature、clipping threshold、完整 batch/LR/update/LoRA 设置。"
+          "quote": "提示只来自一份正确解；没有独立证明减少所有特权信息依赖，统一模型比较也不普遍领先。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文未公开官方仓库、完整运行配置、精确温度/截断值、LoRA 参数和全部训练超参数"
+        }
+      ]
+    },
+    {
+      "id": "guidance-provenance-and-exposure",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2–3.3; §4; Figure 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "提取模型为 Qwen3.6-35B-A3B"
+        },
+        {
+          "artifact": "article",
+          "quote": "提示由模型离线提取，不是人工逐题撰写。"
+        },
+        {
+          "artifact": "article",
+          "quote": "提示没有被拼进学生采样或部署输入。"
+        }
+      ]
+    },
+    {
+      "id": "worked-case-and-equation-boundary",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 2 symbolic rate-composition example"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "数值 a=12,b=8,c=6,d=12,T₁=T₂=2 由本文补充以便计算，不是论文真实测试样本。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Python 3.12 精确分数示例，可核对变换；它不包含模型训练，不是作者代码"
+        }
+      ]
+    },
+    {
+      "id": "metric-and-checkpoint-selection",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq. 8; Tables 1, 5 captions"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "某题 12 次答对 6 次，平均准确率贡献为 50%"
+        },
+        {
+          "artifact": "article",
+          "quote": "Table 1 的 ± 是 三个独立训练种子的样本标准差"
+        },
+        {
+          "artifact": "article",
+          "quote": "在 正在报告的测试集 上挑跨三个种子平均分最高的 checkpoint"
+        }
+      ]
+    },
+    {
+      "id": "representation-controls",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2; §4–5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "换成同长度但来自另一题的提示，4B 平均分从 64.32 降到 61.76"
+        },
+        {
+          "artifact": "article",
+          "quote": "Flattened PS 在 HMMT25 反而高 1.39 点"
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-item-clipping",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq. 5–7; Algorithm 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者明确计算 全词表 ，截断后不再是未修改的数学 KL；不能写成只给采样词的损失设上限。"
         }
       ]
     }
@@ -152,37 +291,51 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 1; §3.1–3.3",
+      "status": "redrawn",
+      "rationale": "离线四字段提取与在线question-onlystudent、冻结teacher重绘，部署移除提示，保留原OPSD损失不变。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 1、Algorithm 1 与 §4 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/problem-space-guided-opsd/teacher-context-flow.svg"
+      ]
     },
     {
       "id": "figure-2",
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 2; §3.2",
+      "status": "redrawn",
+      "rationale": "符号船速示例重绘为倒数线性化/解方程/反变换，文章额外数值与代码清楚标为教学，不当真实benchmark。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "变换结构来自 Figure 2"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-2 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/problem-space-guided-opsd/boat-worked-case.svg"
+      ]
     },
     {
       "id": "figure-3",
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3",
+      "source_locator": "Figure 3; §5",
       "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
+      "rationale": "4B每20–100步三测试曲线未逐点绘，正文保留末端优势晚出现但不是每中间步领先，结果图是聚合而非源曲线。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -194,13 +347,18 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Figure 4; §5.3",
+      "status": "redrawn",
+      "rationale": "explicitPIinvocation发生率未重画整曲线，deck卡片重排训练/未见验证两组终点百分比，明示不是所有泄漏证明。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "训练题 3.0%→0.5%；未见验证题 2.2%→0.4%。"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 figure-4 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -208,27 +366,39 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 1; §4–5",
+      "status": "redrawn",
+      "rationale": "三个规模主表均值与sampleSD重排，checkpoint图并列oracle与统一模型，保留不能当部署分数。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Table 1 与 Table 5 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/problem-space-guided-opsd/checkpoint-evidence.svg"
+      ]
     },
     {
       "id": "table-2",
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 2; §4–5",
+      "status": "redrawn",
+      "rationale": "四字段/flatten/mismatch/pathcorrupt重排对照表，保留token、题型、难度控制与HMMT反例。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Flattened PS"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -236,13 +406,18 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 3; §5",
+      "status": "redrawn",
+      "rationale": "better/worse/tied次数变化在deck卡片重排，18更多/7更少/65相同不当新增解决18题。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "90 题中的次数变化"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -250,13 +425,18 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 4; §5",
+      "status": "redrawn",
+      "rationale": "难题覆盖/原已会题保留/净增长重排deck卡片，保留与GRPO净增长同为+2，不混成平均正确率。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "完全不会题的覆盖"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
       "asset_paths": []
     },
     {
@@ -264,32 +444,214 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Table 5; §5",
+      "status": "redrawn",
+      "rationale": "统一checkpoint准确率差重绘，明确1.7B反向/4B持平；entropy不当解法语义多样性。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Table 1 与 Table 5 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/problem-space-guided-opsd/checkpoint-evidence.svg"
+      ]
     },
     {
       "id": "algorithm-1",
       "kind": "algorithm",
       "label": "Algorithm 1",
       "source_id": "paper",
-      "source_locator": "Algorithm 1",
-      "status": "omitted",
-      "rationale": "文章与 deck 使用可编辑的 HTML 流程、表格或直接数字重新组织证据，未复制原版排版。",
-      "placements": [],
+      "source_locator": "Algorithm 1; §3.3",
+      "status": "redrawn",
+      "rationale": "offline缓存、关闭LoRA教师、同studentprefix全词表损失与仅studentLoRA更新重建在流程图，不补未公开温度/阈值。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据 Figure 1、Algorithm 1 与 §4 重绘"
+        }
+      ],
       "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
+      "credit": "根据原论文 algorithm-1 重绘事实，未复制原版排版",
+      "asset_paths": [
+        "/lib/papers/problem-space-guided-opsd/teacher-context-flow.svg"
+      ]
     }
   ],
-  "figures": [],
+  "figures": [
+    {
+      "path": "/lib/papers/problem-space-guided-opsd/teacher-context-flow.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1; Algorithm 1; §3–4",
+      "credit": "根据 Figure 1、Algorithm 1 与 §4 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/problem-space-guided-opsd/boat-worked-case.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 2 symbolic example; article-authored numeric illustration",
+      "credit": "变换结构来自 Figure 2",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/problem-space-guided-opsd/checkpoint-evidence.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Tables 1 and 5; different checkpoint aggregation",
+      "credit": "根据 Table 1 与 Table 5 重绘",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Offline Qwen3.6extract1verifiedsolution fourfields cached,studentrollout frozeninitialteacher noLoRA plushint,studentLoRAupdate,pervocab min positivecap before sum. Symbolicboat case paper,article values v10,u2 independent;12samples accuracy !=pass12. Oracle separatebestcheckpoint pertest main wins butTable5singlecheckpoint relative -0.68/0/+0.68;three trainingseedSD;wrong/flattened/orderingcontrols qualified."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "7ae5c0fe344bc6bf397011fc9fdafbce656255312e9f026a43521074a0152db3",
+      "built_article": "73b8f5b9ee0e0693ad4d70f07c60a7fab9fc4ced3b238ae6488beff823b3f429",
+      "deck": "97e72c644b416f1e981576ee9ba6da0821af4973dbc2f7bd5895a6df8dd17d2f",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-085/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T05-37-01-161Z-085/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-085.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "legacy_qa": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -345,5 +707,105 @@
       "largest-table-or-code",
       "final"
     ]
-  }
+  },
+  "terminology": [
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Figure 1"
+        }
+      ],
+      "article_quote": "接受更新、最后部署的模型叫 student（学生）"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Figure 1"
+        }
+      ],
+      "article_quote": "额外看到训练材料并给学生回答打概率的分支叫 teacher（教师）。"
+    },
+    {
+      "term": "privileged information",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Figure 1"
+        }
+      ],
+      "article_quote": "只在训练时给教师的材料叫 privileged information（特权信息）。"
+    },
+    {
+      "term": "rollout",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Algorithm 1"
+        }
+      ],
+      "article_quote": "学生一次生成的完整回答叫 rollout；其中一个 token 是模型一步预测的文字单位。"
+    },
+    {
+      "term": "on-policy self-distillation（OPSD）",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; Eq. 5–7; Algorithm 1"
+        }
+      ],
+      "article_quote": "教师重评学生已经写出的同一回答，而非先写一条新答案让学生背诵；这就是本文使用的 on-policy self-distillation（OPSD，基于学生当前回答的自蒸馏）。"
+    },
+    {
+      "term": "Problem-Space Guidance",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2; Figure 2"
+        }
+      ],
+      "article_quote": "作者把正确解改写成 Problem-Space Guidance ：记录从题目出发怎样进行合法变换的提示。"
+    },
+    {
+      "term": "oracle envelope",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1 caption; §4–5"
+        }
+      ],
+      "article_quote": "Avg 可能把三个不同 checkpoint 的最好成绩拼起来；作者称其 oracle envelope。"
+    }
+  ]
 }

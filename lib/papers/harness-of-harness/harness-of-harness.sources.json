@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Harness-of-Harness: Multi-Day Autonomous Software Development with Continual Improvement",
     "kind": "research",
@@ -110,32 +110,56 @@
     ],
     "source_visuals_expected": 43,
     "visual_inventory_complete": true,
-    "inventory_note": "The rendered v1 PDF contains Figures 1-16, Tables 1-25, Algorithm 1, and Listing 1. Every numbered item is inventoried. All 16 paper figures are retained with CC BY 4.0 credit; tables, Algorithm 1, and Listing 1 are either redrawn/summarized in HTML or explicitly omitted."
+    "inventory_note": "The rendered v1 PDF contains Figures 1-16, Tables 1-25, Algorithm 1, and Listing 1. Every numbered item is inventoried. All 16 paper figures are retained with CC BY 4.0 credit; tables, Algorithm 1, and Listing 1 are either redrawn/summarized in HTML or explicitly omitted.",
+    "current_review": {
+      "reviewed_on": "2026-10-14",
+      "reviewer": "main-agent",
+      "text_lines_reviewed": "1-2806, including all appendices and bounded rereads of 1550-1910 and 2411-2806",
+      "rendered_pages_reviewed": "1-53 in six contact sheets; dense Table 22 page 48 separately inspected",
+      "code_revision": "ae7cc6fbea312ab50657f6b6036b04974846e151",
+      "code_reviewed": [
+        "hoh-lite/src/gameloop/core/roles.py and runtime.py",
+        "hoh-lite/src/gameloop/harnesses/runtime.py, codex.py, opencode.py",
+        "hoh-lite/src/gameloop/adapters/gamecraft_bench/planner.py and runner.py, relevant role launch, isolation, hashing, and planning paths",
+        "hoh-lite/src/gameloop/templates/project_planner_prompt.md",
+        "Fusepoint three Loop 70 public receipts at 55b442fc10c3851505bbf29db2a6c1489edd9b5e; GitHub blob API verified and cached under tmp/papers/2609.01481/loop-70"
+      ],
+      "findings": [
+        "Planner artifact-inspection permission in main paper differs from appendix/public prompt and separate planning workspace. Article/deck distinguish design and implementation.",
+        "RoleBinding validates configuration, not filesystem enforcement. Codex Planner defaults read-only; OpenCode Planner denies tools; GameCraft QA writes a disposable copy while bubblewrap hides original/private paths and original-source hashes are checked. Explicit unisolated mode disclosed.",
+        "Vanilla Continuation same-session wording in main text exceeds appendix's guaranteed artifact and harness/model continuation; absent public experiment receipts cannot resolve shared conversation state.",
+        "Table 1 Dominance uses twelve cross-system configurations, while Figure 5 uses eleven Codex checkpoints. Baselines 22% and 27.33% cannot be merged as one accuracy trajectory.",
+        "Table 22 Lighthouse contradicts every-task ablation claim: Full HoH 80.90 versus no Warm-Start 81.50.",
+        "GameCraft subset extended an earlier fixed subset, not a fresh uniform sample. Main benchmark and GPT-5.6-Sol/Godot 4.7 Fusepoint case use different tools/settings.",
+        "Public Developer receipt only anchors source hashes and a separate unexposed detailed receipt. Removed unsupported six-path and self-reported PASS assertions; public Tester FAIL and blocked phase remain verifiable.",
+        "Algorithm walkthrough now puts pre-edit baseline before development. Optional Figures 12-16 gallery retains all originals without interrupting the main reading route."
+      ]
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么现有 coding harness 很难连续开发几天？"
+      "locator": "1. Motivation：多日开发为什么需要单独维护验证记录？"
     },
     {
       "role": "related-work",
-      "locator": "Q2. HoH 和多 Agent、长上下文、harness 自优化有什么区别？"
+      "locator": "2. Related Work：与多 Agent、长上下文和执行程序自优化的区别"
     },
     {
       "role": "method",
-      "locator": "Q3. 一轮 HoH 到底怎样运行？"
+      "locator": "3. Method：一轮 HoH：规划、开发、冻结版本、独立测试"
     },
     {
       "role": "experiments",
-      "locator": "Q4. 实验怎么评，结果和真实 case 说明什么？"
+      "locator": "4. Experiments：评分、对照实验与真实开发失败"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 对 Claude Code、Codex harness 研究有什么启发？"
+      "locator": "5. Discussion：值得复用的规则与后续对照"
     },
     {
       "role": "summary",
-      "locator": "Q6. 这篇论文目前能证明什么，不能证明什么？"
+      "locator": "6. Conclusion：已证明的收益与仍未解决的限制"
     }
   ],
   "coverage": [
@@ -202,7 +226,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Planner 或 Tester 如果拿到读写 workspace，初始化就会报错。"
+          "quote": "Planner 或 Tester 如果被配置为读写工作区，初始化就会报错。"
         }
       ]
     },
@@ -236,7 +260,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "从 15 个 game family 各采 3 题，seed 20260707。"
+          "quote": "在先前固定子集上，用 seed 20260707 分层补齐至 15 类各 3 题，选题不参考模型分数。"
         },
         {
           "artifact": "article",
@@ -287,7 +311,7 @@
         },
         {
           "artifact": "article",
-          "quote": "ProgramBench 的 Pass Rate† 不是 solved-task rate"
+          "quote": "ProgramBench 的 <code>Pass Rate†</code> 是先算每题隐藏测试通过比例、再对题目取平均"
         }
       ]
     },
@@ -316,11 +340,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Tester 先验证 clean boot"
+          "quote": "QA 先检查正常启动，再进入游戏"
         },
         {
           "artifact": "article",
-          "quote": "这个 PASS 只表示开发阶段结束"
+          "quote": "规则要求所有必需检查通过、阻断项为空且无 major/blocker 级发现"
         }
       ]
     },
@@ -381,7 +405,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "去掉 Warm-Start 后是 63.67。后者还把 token 从 8.41M 推到 11.12M"
+          "quote": "每轮从初始工作区重建、不沿旧项目继续（w/o Warm-Start）后为 63.67"
+        },
+        {
+          "artifact": "article",
+          "quote": "最后一项还把 token 从 8.41M 推到 11.12M。"
         }
       ]
     },
@@ -405,11 +433,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "advance 只产生 idle/walk sample"
+          "quote": "但推进后只看到待机和走路，没有发现目标、允许开火、射击、换弹、受击或死亡的证据。"
         },
         {
           "artifact": "article",
-          "quote": "llvmpipe sample 只有 8 FPS"
+          "quote": "使用 llvmpipe 软件渲染的一次采样只有 8 FPS"
         }
       ]
     },
@@ -438,7 +466,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "每个 task-condition 只有一次有效 run"
+          "quote": "每个任务与配置只跑一次有效实验"
         },
         {
           "artifact": "article",
@@ -446,7 +474,88 @@
         },
         {
           "artifact": "article",
-          "quote": "附录定义 PXI scoring，却没有出现它所说的 main-paper PXI result table"
+          "quote": "  <div><b>Fusepoint 是单案例</b><span>70 轮开发记录展示了持久开发与回归，但论文没有对照同预算对照，也没有给出完整独立人工产品验收。附录定义 PXI 评分，却没有出现它所说的正文 PXI 结果表。</span></div>"
+        }
+      ]
+    },
+    {
+      "id": "paper-vs-runtime-permissions",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "hoh-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Appendix A.2 Planner prompt"
+        },
+        {
+          "source_id": "hoh-repo",
+          "locator": "ae7cc6f: templates/project_planner_prompt.md; harnesses/codex.py and opencode.py; adapters/gamecraft_bench/planner.py and runner.py, _visual_tester_bwrap_prefix and _visual_tester_harness_command"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这段代码校验的是配置，实际阻止读写还要看后续如何启动进程和挂载文件。"
+        }
+      ]
+    },
+    {
+      "id": "dominance-comparison-pools",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4 Figure 5; Appendix B.7 Equations 13-16"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Figure 5 与主表的 Dominance 不能直接拼成一条曲线。"
+        }
+      ]
+    },
+    {
+      "id": "decisive-ablation-counterexample",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4 ablation paragraph and Table 22 p.48 Lighthouse row"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "完整方法 80.90，去掉 Warm-Start 反而是 81.50。"
+        }
+      ]
+    },
+    {
+      "id": "public-developer-receipt-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "fusepoint-repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "fusepoint-repo",
+          "locator": "55b442fc .gameloop/receipts/loop-0070/developer-ae1b25ecebf6.json; public git tree lacks referenced detailed receipt path"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公开 Developer 记录没有详细实现日志。"
         }
       ]
     }
@@ -909,11 +1018,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "去掉 Plan Update"
+          "locator": "w/o Plan Update"
         },
         {
           "artifact": "deck",
-          "locator": "No Plan Update"
+          "locator": "w/o Plan Update"
         }
       ],
       "permission_status": "not-applicable",
@@ -955,11 +1064,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "Planner 或 Tester 如果拿到读写 workspace"
+          "locator": "实际启动部分有三处值得区分"
         },
         {
           "artifact": "deck",
-          "locator": "RUNTIME ENFORCEMENT"
+          "locator": "配置检查与实际文件隔离是两层保护"
         }
       ],
       "permission_status": "not-applicable",
@@ -1001,11 +1110,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "每个 task-condition 只有 1 次有效 run"
+          "locator": "每个任务在每种配置下只有一次有效实验"
         },
         {
           "artifact": "deck",
-          "locator": "每个 task-condition 一次有效 run"
+          "locator": "每种任务配置只跑一次有效实验"
         }
       ],
       "permission_status": "not-applicable",
@@ -1020,7 +1129,7 @@
       "source_id": "paper",
       "source_locator": "p. 31, Table 8",
       "status": "omitted",
-      "rationale": "Computing environments for artifact development and evaluation. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "开发与评测计算环境的完整配置表未复制；正文区分 coding harness、测试工具和隐藏 scorer，不据总体 token 声称统一硬件成本。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1042,7 +1151,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "45 tasks"
+          "locator": "45 题"
         }
       ],
       "permission_status": "not-applicable",
@@ -1057,7 +1166,7 @@
       "source_id": "paper",
       "source_locator": "p. 32, Table 10",
       "status": "omitted",
-      "rationale": "GameCraft task catalog and reporting-group mapping. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "GameCraft 全任务名称及报告分组映射未复制；正文解释 65 题、18 机制与五个报告类别的区别，并用具体案例串联开发与验收。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1075,11 +1184,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "4 个 Implementation、9 个 Performance、2 个 Research"
+          "locator": "4 个实现、9 个性能、2 个研究任务"
         },
         {
           "artifact": "deck",
-          "locator": "4 Implementation、9 Performance、2 Research"
+          "locator": "4 道实现、9 道性能、2 道研究"
         }
       ],
       "permission_status": "not-applicable",
@@ -1102,7 +1211,7 @@
         },
         {
           "artifact": "deck",
-          "locator": "frogsgame-rl"
+          "locator": "要求更高驱动版本的题"
         }
       ],
       "permission_status": "not-applicable",
@@ -1121,11 +1230,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "去掉 Evidence Feedback"
+          "locator": "w/o Evidence Feedback"
         },
         {
           "artifact": "deck",
-          "locator": "No Evidence Feedback"
+          "locator": "w/o Evidence Feedback"
         }
       ],
       "permission_status": "not-applicable",
@@ -1140,7 +1249,7 @@
       "source_id": "paper",
       "source_locator": "p. 39, Table 14",
       "status": "omitted",
-      "rationale": "Complete GameCraft task scores for Codex. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "Codex 的逐 GameCraft 任务分数未整表复制；正文给出按 loop 汇总和总体条件，原图保留可视结果，不能由均值推断每题改善。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1154,7 +1263,7 @@
       "source_id": "paper",
       "source_locator": "p. 40, Table 15",
       "status": "omitted",
-      "rationale": "Complete GameCraft task scores for OpenCode. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "OpenCode 的逐 GameCraft 任务分数未整表复制；正文保留其独立 harness/model 配置和总体成绩，未把它与 Codex 合并成一个系统。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1168,7 +1277,7 @@
       "source_id": "paper",
       "source_locator": "p. 41, Table 16",
       "status": "omitted",
-      "rationale": "Complete GameCraft task scores for Pi. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "Pi 的逐 GameCraft 任务分数未整表复制；正文保留其总体比较及控制条件，全任务结果仍应查原表。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1182,7 +1291,7 @@
       "source_id": "paper",
       "source_locator": "p. 43, Table 17",
       "status": "omitted",
-      "rationale": "Complete FrontierSWE task rewards for Codex. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "Codex 的逐 FrontierSWE 奖励表未复制；本文保留各类与 loop 变化，不将任务奖励均值误当完整项目通过率。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1196,7 +1305,7 @@
       "source_id": "paper",
       "source_locator": "p. 43, Table 18",
       "status": "omitted",
-      "rationale": "Complete FrontierSWE task rewards for OpenCode. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "OpenCode 的逐 FrontierSWE 奖励表未复制；其模型、工具和总体结果与 Codex 分开，全任务差异不在本稿逐行重现。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1210,7 +1319,7 @@
       "source_id": "paper",
       "source_locator": "p. 44, Table 19",
       "status": "omitted",
-      "rationale": "Complete FrontierSWE task rewards for Pi. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "Pi 的逐 FrontierSWE 奖励表未复制；正文保留独立系统范围，不能把另一系统的逐题表现当其记录。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1224,7 +1333,7 @@
       "source_id": "paper",
       "source_locator": "p. 45, Table 20",
       "status": "omitted",
-      "rationale": "Task-level GameCraft scores for the budget-controlled comparison. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "控制 coding pass 数的 GameCraft 逐题分数未复制；正文直接解释 HoH 与 continuation 控制了什么、未控制什么，并保留总体分。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1238,7 +1347,7 @@
       "source_id": "paper",
       "source_locator": "p. 46, Table 21",
       "status": "omitted",
-      "rationale": "Task-level cumulative token usage for the budget-controlled comparison. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "控制实验逐题累计 token 表未复制；正文明确 coding pass 相同不意味着所有模型调用或累计 token 同成本。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1252,7 +1361,7 @@
       "source_id": "paper",
       "source_locator": "p. 47, Table 22",
       "status": "omitted",
-      "rationale": "Task-level GameCraft ablation scores. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "逐任务消融表未整表复制；正文保留 Lighthouse 去掉 Warm-Start 81.50 高于完整 80.90 的反例，否定“每道题都下降”的过强说法。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1266,7 +1375,7 @@
       "source_id": "paper",
       "source_locator": "p. 48, Table 23",
       "status": "omitted",
-      "rationale": "Mean cumulative coding-harness tokens for ablation variants. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "消融变体累计 coding-harness token 细表未复制；正文结合原曲线说明分数与 token 各有口径，不能把质量收益当免费。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1280,7 +1389,7 @@
       "source_id": "paper",
       "source_locator": "p. 49, Table 24",
       "status": "omitted",
-      "rationale": "Aggregate FrontierSWE resource usage. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "FrontierSWE 资源汇总完整表未复制；正文分开 executor/coding token 与外层操作，未据此给同总成本算法排名。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1294,7 +1403,7 @@
       "source_id": "paper",
       "source_locator": "p. 52, Table 25",
       "status": "omitted",
-      "rationale": "Scores for the 15 qualitative GameCraft examples. is inventoried but not reproduced as a full visual; the article keeps only the findings needed for the main argument.",
+      "rationale": "15 个定性 GameCraft 案例的分项分数未整表复制；正文与原图说明每类取 HoH@3 最高题，15 题/60 产物不是随机抽样。",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "",
@@ -1361,7 +1470,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1595,
+      "height": 948
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-2-development-modes.webp",
@@ -1375,7 +1486,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1983,
+      "height": 920
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-3-hoh-framework.webp",
@@ -1389,7 +1502,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 8305,
+      "height": 4388
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-4-gamecraft-components.webp",
@@ -1403,7 +1518,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1549,
+      "height": 400
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-5-frontierswe-dominance.webp",
@@ -1417,7 +1534,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 691,
+      "height": 491
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-6-gamecraft-examples.webp",
@@ -1431,7 +1550,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1479,
+      "height": 725
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-7-gamecraft-groups.webp",
@@ -1445,7 +1566,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1508,
+      "height": 471
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-8-frontierswe-categories.webp",
@@ -1459,7 +1582,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1540,
+      "height": 451
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-9-budget-tradeoff.webp",
@@ -1473,7 +1598,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1508,
+      "height": 465
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-10-ablation.webp",
@@ -1487,7 +1614,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1508,
+      "height": 388
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-11-token-distribution.webp",
@@ -1501,7 +1630,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1495,
+      "height": 404
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-12-action.webp",
@@ -1515,7 +1646,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1521,
+      "height": 686
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-13-timing.webp",
@@ -1529,7 +1662,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1521,
+      "height": 686
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-14-strategy.webp",
@@ -1543,7 +1678,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1521,
+      "height": 686
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-15-simulation.webp",
@@ -1557,7 +1694,9 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1521,
+      "height": 686
     },
     {
       "path": "/lib/papers/harness-of-harness/figure-16-adventure.webp",
@@ -1571,10 +1710,179 @@
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "width": 1521,
+      "height": 686
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all22slides read. Traced fixedharnessmodel Planner→Developer→freezeQA→nextversion evidence. Distinguished configreadonly from actualbubblewrap isolation, paperPlanner sourcevisibility vsrelease. RecomputedGameCraft80B and15taskmean, Dominance12vs11pool; Loop70 fail vslocalstartup pass, single-runnature, Lighthouse warmstartnegative and ProgramBench denominatorgap retained."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "5bca07dffb3da904d52dd0daba5865f404fc89fa03f5f1fd5b394557abbcfdf6",
+      "built_article": "b408153bd36dd7d582e97c968700213eefa400434ac8d740407ef61701a1b37a",
+      "deck": "a78f899f2ce7384b2935a4277f48afbd06db008df4eb3c783a79955868b116a3",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-051/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-051/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-051.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "artifact state",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.1-3.3; Appendix A"
+        }
+      ],
+      "article_quote": "Artifact state <code>A_t</code> 是第 <code>t</code> 轮结束时实际保存的代码、配置、资源和项目元数据"
+    },
+    {
+      "term": "evidence state",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.1-3.3; Appendix A"
+        }
+      ],
+      "article_quote": "Evidence state <code>E_t</code> 是验证记录：哪些行为已经有截图、操作回放（replay）、运行时状态记录（runtime trace）、日志或公开测试支持，哪些仍缺证据（gap）"
+    },
+    {
+      "term": "PRD",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.1-3.3; Appendix A"
+        }
+      ],
+      "article_quote": "PRD（Product Requirements Document）是公开的产品需求文档。Planner 把它拆成本轮开发文档 <code>D_t</code>：要做什么、怎样验收、哪些已通过功能不能改坏"
+    },
+    {
+      "term": "warm-start",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3; Appendix B.6"
+        }
+      ],
+      "article_quote": "从上一轮项目 <code>A_(t-1)</code> 继续开发（warm-start），读取需求与 <code>D_t</code>；只有它能写项目，先测旧版本，再修改和自测"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -1631,5 +1939,11 @@
       "final"
     ],
     "browser_qa_note": "Fresh build checked on 2026-09-29 at 1600x1000, 1512x982, and 390x844. Article, embedded deck, and standalone deck have no page-level horizontal overflow; all 16 article figures load and remain inside the reading column. Opening, slides 9/13, and final slide were visually inspected. Buttons, Arrow/Home/End navigation, URL hashes, fullscreen entry, Escape exit, standalone return link, article focus-mode entry, and both button/Escape focus-mode exit passed. Article and standalone-deck consoles reported zero errors and warnings."
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review"
   }
 }

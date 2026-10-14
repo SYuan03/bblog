@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Video2World 论文图解</title>
-  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css">
+  <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2">
   <style>
     .visual{display:flex;align-items:center;justify-content:center;min-height:0}.visual img{display:block;max-width:100%;max-height:520px;object-fit:contain}.visual.white{padding:12px;background:#fff;border:1px solid var(--line)}
     .overview.open{grid-auto-rows:max-content}
@@ -14,78 +14,78 @@
 <div class="viewport"><main class="stage" aria-label="Video2World 论文图解">
   <section class="slide active">
     <div class="meta"><span>01 · TASK</span><span>arXiv:2610.04432v1 · 2026-10-03</span></div>
-    <h1>从一段 embodied video，交付一个真的能执行任务的 simulator package</h1>
-    <div class="content split"><div><p class="lead"><strong>Video2World 测 coding agent 能否同时完成场景重建、robot retargeting（把示范动作转换到目标机器人上）、控制生成与物理调试。</strong></p><div class="grid g3"><div class="metric"><strong>189</strong><span>videos</span></div><div class="metric"><strong>222</strong><span>instances</span></div><div class="metric"><strong>39</strong><span>task families</span></div></div></div><div class="visual white"><img src="/lib/papers/video2world/figure-1.png" alt="原论文 Figure 1"></div></div>
-    <div class="foot"><span>原论文 Figure 1（CC BY-SA 4.0）</span><span>1 / 18</span></div>
+    <h1>从一段操作视频，交付能执行同一任务的模拟程序包</h1>
+    <div class="content split"><div><p class="lead">Video2World 测能写代码的 Agent 是否会恢复场景、把示范动作转换到目标机器人上、生成控制程序并调通物理执行。</p><div class="grid g3"><div class="metric"><strong>189</strong><span>输入视频</span></div><div class="metric"><strong>222</strong><span>视频与目标配置组合</span></div><div class="metric"><strong>39</strong><span>任务类别</span></div></div></div><div class="visual white"><img src="/lib/papers/video2world/figure-1.png" alt="原论文 Figure 1" width="2024" height="1104"></div></div>
+    <div class="foot"><span>原论文 Figure 1（CC BY-SA 4.0）</span><span>1 / 19</span></div>
   </section>
 
   <section class="slide">
     <div class="meta"><span>02 · PART 0</span><span>what “world model” means here</span></div>
     <h2>这里的 world model 不是未来帧生成，而是可继续操作的世界</h2>
-    <div class="content"><div class="grid g3"><div class="card"><h3>Video generation</h3><p>输出像真的 pixels；不要求对象可碰撞、机器人可控制。</p></div><div class="card"><h3>3D reconstruction</h3><p>恢复 geometry 与 appearance；不一定能完成原任务。</p></div><div class="card blue"><h3>Interactive world modeling</h3><p>scene、assets、robot、controls 和 physics 全部可执行，且任务 judge 必须通过。</p></div></div><div class="callout" style="margin-top:24px"><p>一只看起来很像的瓶子，如果机械臂抓不住、没有立稳或没有松手，Task Success 仍是 0。</p></div></div>
-    <div class="foot"><span>论文 Introduction、Section 3</span><span>2 / 18</span></div>
+    <div class="content"><div class="grid g3"><div class="card"><h3>视频生成</h3><p>输出看起来真实的画面；不要求对象可碰撞、机器人可控制。</p></div><div class="card"><h3>三维重建</h3><p>恢复形状与外观；不一定能完成原任务。</p></div><div class="card blue"><h3>Interactive world modeling</h3><p>把场景、资源、机器人、动作与物理参数写成可执行程序。任务评分器还要确认确实完成目标。</p></div></div><div class="callout" style="margin-top:24px"><p>任务成功记为 Task Success。瓶子即使很像，若抓不住、没立稳或没松手，这项仍为 0；能加载场景只说明 Build 成功。</p></div></div>
+    <div class="foot"><span>论文 Introduction、Section 3</span><span>2 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>03 · OVERVIEW</span><span>agent construction → hidden evaluation</span></div>
-    <h2>Agent 自己看视频、写 package、运行候选重建；隐藏 evaluator 最后统一执行</h2>
-    <div class="content visual white"><img src="/lib/papers/video2world/figure-2.png" alt="原论文 Figure 2"></div>
-    <div class="foot"><span>原论文 Figure 2：完整 benchmark overview</span><span>3 / 18</span></div>
+    <h2>Agent 看视频、写程序包并检查候选；隐藏评测器最后统一执行</h2>
+    <div class="content visual white"><img src="/lib/papers/video2world/figure-2.png" alt="原论文 Figure 2" width="2020" height="999"></div>
+    <div class="foot"><span>原论文 Figure 2：完整 benchmark overview</span><span>3 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>04 · RELATED WORK</span><span>the exact boundary</span></div>
-    <h2>Video2World 位于 policy、real-to-sim、3D reconstruction 与 simulator coding 的交叉处</h2>
-    <div class="content"><table class="table"><thead><tr><th>路线</th><th>主要输出</th><th>缺少 Video2World 的哪一部分</th></tr></thead><tbody><tr><td>Video2Policy</td><td>从人类视频学习 robot policy</td><td>不要求 Agent 交付 scene、assets 与完整 simulator package</td></tr><tr><td>Agentic Real2Sim</td><td>自动化真实世界到 simulation</td><td>最接近；本文进一步统一 benchmark、隐藏 reference 与多 coding-agent 系统比较</td></tr><tr><td>BVB</td><td>视频到 Blender scene / procedure</td><td>视觉重建为主，不以 robot actuation 和 task judge 为中心</td></tr><tr><td>SceneActBench</td><td>场景与动作到 simulation</td><td>任务规格并非主要来自 embodied video</td></tr><tr><td>CaP-X / EmbodiedSWE</td><td>robot code / embodied repo patch</td><td>分别缺完整环境重建，或不评测新世界的物理执行</td></tr></tbody></table></div>
-    <div class="foot"><span>论文 Table 1 与 Related Work；相邻论文官方摘要复核</span><span>4 / 18</span></div>
+    <h2>它把动作策略、真实场景转模拟、三维重建与代码生成放到同一评测</h2>
+    <div class="content"><table class="table"><thead><tr><th>路线</th><th>主要输出</th><th>与 Video2World 的差别</th></tr></thead><tbody><tr><td>Video2Policy</td><td>从人类视频学习机器人动作策略</td><td>不要求 Agent 交付场景、资源与完整模拟程序包</td></tr><tr><td>Agentic Real2Sim</td><td>自动把真实场景还原到模拟器</td><td>问题最接近；这里统一任务、隐藏参考与多套代码 Agent 的比较</td></tr><tr><td>BVB</td><td>视频到 Blender 场景与构建过程</td><td>视觉重建为主，不以机器人控制和任务评分为中心</td></tr><tr><td>SceneActBench</td><td>在已有三维场景里执行视觉指定的操作</td><td>不从操作视频恢复整个模拟世界与机器人控制</td></tr><tr><td>CaP-X / EmbodiedSWE</td><td>代码控制机器人完成具身任务</td><td>以控制行为为主，不同时评测整个世界的重建</td></tr></tbody></table></div>
+    <div class="foot"><span>论文 Table 1 与 Related Work；相邻论文官方摘要复核</span><span>4 / 19</span></div>
   </section>
 
   <section class="slide tight">
-    <div class="meta"><span>05 · DATA</span><span>eight source groups</span></div>
-    <h2>189 段视频经过 target configuration 展开成 222 个实例</h2>
-    <div class="content"><div class="grid g4"><div class="card"><h3>Robot data</h3><p>FurnitureBench 64<br>DROID 20<br>RoboDojo 25</p></div><div class="card"><h3>Human videos</h3><p>HOI4D 9→18<br>HOT3D 7→14<br>DexYCB 11→22<br>OakInk2 6→12</p></div><div class="card"><h3>Other</h3><p>in-house 37<br>reconstructed twins 10</p></div><div class="card blue"><h3>为什么会增加</h3><p>33 段 human video 同时配 arm 与 paired-hand（成对机械手）两种目标配置。</p></div></div><div class="callout" style="margin-top:22px"><p>最终是 39 个 task families（共用一套判定逻辑的任务类别）；各类等权，样本多的来源不会自动获得更高权重。</p></div></div>
-    <div class="foot"><span>Sections 3.1、8.1-8.2；Figure A1 / Tables A2-A4</span><span>5 / 18</span></div>
+    <div class="meta"><span>05 · 数据</span><span>Table A8 · 九组来源</span></div>
+    <h2>189 段视频换用不同目标机器人，形成 222 个实例</h2>
+    <div class="content"><div class="grid g4"><div class="card"><h3>机器人示范</h3><p>FurnitureBench 64<br>DROID 20<br>RoboDojo 25</p></div><div class="card"><h3>人类操作视频</h3><p>视频数 → 实例数<br>HOI4D 9→18<br>HOT3D 7→14<br>DexYCB 11→22<br>OakInk2 6→12</p></div><div class="card"><h3>其他来源</h3><p>作者补采 37<br>已有重建对照 10</p></div><div class="card blue"><h3>为什么会增加</h3><p>33 段人类视频同时配机械臂与 paired-hand（成对机械手）两种目标配置。</p></div></div><div class="callout" style="margin-top:22px"><p>最终是 39 个 task families（共用一套判定逻辑的任务类别）；各类等权，样本多的来源不会自动获得更高权重。</p></div></div>
+    <div class="foot"><span>Section 3.1；Appendix B.1–B.2；Figure A1 / Table A8</span><span>5 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>06 · ANNOTATION</span><span>video → evaluation specification</span></div>
     <h2>人工复核的对象级评测规则定义任务是否完成，不要求逐像素复刻</h2>
-    <div class="content split"><div class="visual white"><img src="/lib/papers/video2world/annotation-example.png" alt="原论文 Figure A2"></div><div><div class="card"><h3>HOI4D bottle transfer</h3><p>87 帧、15 Hz。标注拿起与松手时刻、瓶子高度轨迹、初始与接收支撑面，以及终态放置的允许范围。</p></div><div class="callout" style="margin-top:18px"><p>图中的手绘轮廓只是视觉说明，不是 segmentation label（逐像素分割标注）；轨迹和条件来自隐藏人工标注，也不会给 Agent。</p></div></div></div>
-    <div class="foot"><span>原论文 Figure A2、Appendix 8.3</span><span>6 / 18</span></div>
+    <div class="content split"><div class="visual white"><img src="/lib/papers/video2world/annotation-example.png" alt="原论文 Figure A2" width="1627" height="785"></div><div><div class="card"><h3>HOI4D bottle transfer</h3><p>87 帧、15 Hz。标注拿起与松手时刻、瓶子高度轨迹、初始与接收支撑面，以及终态放置的允许范围。</p></div><div class="callout" style="margin-top:18px"><p>图中的手绘轮廓只是视觉说明，不是 segmentation label（逐像素分割标注）；轨迹和条件来自隐藏人工标注，也不会给 Agent。</p></div></div></div>
+    <div class="foot"><span>原论文 Figure A2、Appendix B.3</span><span>6 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>07 · INFORMATION BOUNDARY</span><span>what the agent does and does not know</span></div>
-    <h2>Agent 只拿到 RGB 与公共接口；reference geometry、trajectory 和 judge 全部隐藏</h2>
-    <div class="content grid g2"><div class="card green"><h3>可以看到</h3><ul><li>RGB 视频、尺寸、帧数</li><li>simulator / robot 公共说明</li><li>robot assets、joint limits、control format</li><li>shell、文件、图像、代码工具</li><li>自己的候选重建、渲染画面与报错</li></ul></div><div class="card red"><h3>不能看到</h3><ul><li>reference scene / mesh</li><li>原示范的测量轨迹与 robot logs</li><li>隐藏的相机标定参数</li><li>reference controls / submission</li><li>按任务编写的成功条件与 benchmark scores</li></ul></div></div>
-    <div class="foot"><span>Sections 3.2、8.3、Appendix 7</span><span>7 / 18</span></div>
+    <h2>Agent 只拿到 RGB 与公共接口；参考几何、轨迹和评分规则隐藏</h2>
+    <div class="content grid g2"><div class="card green"><h3>可以看到</h3><ul><li>RGB 视频、尺寸、帧数</li><li>模拟器与机器人的公共说明</li><li>机器人资源、关节范围、控制格式</li><li>终端、文件、图像、代码工具</li><li>自己的候选重建、渲染画面与报错</li></ul></div><div class="card red"><h3>不能看到</h3><ul><li>参考场景与表面网格</li><li>原示范的测量轨迹与机器人日志</li><li>隐藏的相机标定参数</li><li>参考控制序列与提交包</li><li>按任务编写的成功条件与评测分数</li></ul></div></div>
+    <div class="foot"><span>Sections 3.2、B.3、Appendix A</span><span>7 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>08 · PACKAGE</span><span>what must be executable</span></div>
-    <h2>提交包同时描述 scene、control protocol 和动作序列</h2>
-    <div class="content split"><div class="visual white"><img src="/lib/papers/video2world/protocol.svg" alt="提交与评测协议"></div><div><pre class="code">protocol.json
+    <h2>提交包同时描述场景、控制协议和动作序列</h2>
+    <div class="content split"><div class="visual white"><img src="/lib/papers/video2world/protocol.svg" alt="提交与评测协议" width="1400" height="680"></div><div><pre class="code">protocol.json
 actions.npy
 scene.json | scene.xml
 assets/
 expected/obj_poses.npy  # optional
 source/
-report.md</pre><div class="callout red"><p><code>obj_poses.npy</code> 只声明预期轨迹，不能驱动物体；运动必须由 robot actuation 与 simulator physics 产生。</p></div></div></div>
-    <div class="foot"><span>官方 docs/benchmark.md；Appendix 7</span><span>8 / 18</span></div>
+report.md</pre><div class="callout red"><p><code>obj_poses.npy</code> 只声明预期轨迹，不能驱动物体；运动必须由机器人控制和模拟器物理产生。</p></div></div></div>
+    <div class="foot"><span>官方 docs/benchmark.md；Appendix A</span><span>8 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>09 · EVALUATOR</span><span>package → verdict</span></div>
     <h2>Build、功能、几何和运动来自同一次记录下来的物理执行</h2>
-    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Validate</strong><p>schema、文件、assets、control array。</p></div><div class="step"><b>2</b><strong>Build</strong><p>在 SAPIEN / Isaac Sim / MuJoCo 加载。</p></div><div class="step"><b>3</b><strong>Execute</strong><p>按时间步施加 robot controls。</p></div><div class="step"><b>4</b><strong>Judge</strong><p>检查事件、顺序、终态与物理有效性。</p></div><div class="step"><b>5</b><strong>Compare</strong><p>与隐藏 reference 对齐几何和轨迹。</p></div></div><div class="callout" style="margin-top:22px"><p>Build 成功只说明 package 能加载。最强系统 build 约 93%，Task Success 却只有 25.5%。</p></div></div>
-    <div class="foot"><span>Sections 3.2-3.3；Appendix 9；官方 runner / metrics</span><span>9 / 18</span></div>
+    <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>检查格式</strong><p>文件结构、资源与控制数组。</p></div><div class="step"><b>2</b><strong>构建</strong><p>在 SAPIEN / Isaac Sim / MuJoCo 加载。</p></div><div class="step"><b>3</b><strong>执行</strong><p>按时间步施加机器人控制。</p></div><div class="step"><b>4</b><strong>判定</strong><p>检查事件、顺序、终态与物理有效性。</p></div><div class="step"><b>5</b><strong>比较</strong><p>与隐藏参考对齐几何和轨迹。</p></div></div><div class="callout" style="margin-top:22px"><p>Build 成功只说明程序包能加载。最强系统 Build 约 93%，Task Success 却只有 25.5%。</p></div></div>
+    <div class="foot"><span>Sections 3.2-3.3；Appendix C；官方 runner / metrics</span><span>9 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>10 · WORKED CASE</span><span>DROID upright bottle</span></div>
-    <h2>真实案例：83 帧视频 → 79×7 controls → 97 个执行状态</h2>
-    <div class="content split equal"><div class="visual white"><img src="/lib/papers/video2world/worked-evaluation-example.png" alt="原论文 Figure A3"></div><div><div class="timeline"><div class="card"><strong>0.4 s</strong><p>抓住</p></div><div class="card"><strong>2.6 s</strong><p>开始移动</p></div><div class="card"><strong>12.8 s</strong><p>松手</p></div><div class="card"><strong>19.2 s</strong><p>终态通过</p></div></div><div class="callout" style="margin-top:18px"><p>输入 640×640、7.5 Hz、约 10.93 s。后 41 个执行状态不进入运动误差，但仍用于判断最终是否释放并静止。</p></div></div></div>
-    <div class="foot"><span>原论文 Figure A3、Appendix 8.4</span><span>10 / 18</span></div>
+    <h2>真实案例：83 帧视频 → 97×7 控制数组 → 97 个执行状态</h2>
+    <div class="content split equal"><div class="visual white"><img src="/lib/papers/video2world/worked-evaluation-example.png" alt="原论文 Figure A3" width="1394" height="1139"></div><div><div class="timeline"><div class="card"><strong>0.4 s</strong><p>抓住</p></div><div class="card"><strong>2.6 s</strong><p>开始移动</p></div><div class="card"><strong>12.8 s</strong><p>松手</p></div><div class="card"><strong>19.2 s</strong><p>终态通过</p></div></div><div class="callout" style="margin-top:18px"><p>输入 640×640、7.5 Hz、约 10.93 s。外部控制程序在两轮间执行候选并回传画面，本例 Agent 无直接模拟器工具。后 41 个状态只参与终态检查，不进入运动误差。</p></div></div></div>
+    <div class="foot"><span>原论文 Figure A3、Appendix B.4</span><span>10 / 19</span></div>
   </section>
 
   <section class="slide tight">
@@ -93,60 +93,68 @@ report.md</pre><div class="callout red"><p><code>obj_poses.npy</code> 只声明�
     <h2>PASS 不是“最后一帧像直立”，而是支撑、方向、释放与静止同时成立</h2>
     <div class="content"><pre class="code"># simplified from v2w/metrics/task.py:652-675
 geometry_ok = supported and angle_deg &lt;= 30
-success = geometry_ok and released and quiescent</pre><div class="grid g4"><div class="card"><h3>初态 gate</h3><p>一开始已满足 upright goal 时，不动作不能得分。</p></div><div class="card"><h3>support</h3><p>support gap &lt; 0.01 mm；clearance 门槛 1 cm。</p></div><div class="card"><h3>orientation</h3><p>upright tolerance 30°；实例终态轴误差 1.78°。</p></div><div class="card green"><h3>结果</h3><p>Build=1，Success=1，Progress=100%。</p></div></div></div>
-    <div class="foot"><span>官方 task.py:652–675；Appendix 8.4</span><span>11 / 18</span></div>
+success = geometry_ok and released and quiescent</pre><div class="grid g4"><div class="card"><h3>初态检查</h3><p>一开始已满足直立目标时，不动作不能得分。</p></div><div class="card"><h3>桌面支撑</h3><p>实测支撑间隙 &lt;0.01 mm；允许间隙 1 cm，桌边余量 5 mm。</p></div><div class="card"><h3>姿态</h3><p>直立容差 30°；本例瓶轴与桌面法线约差 0.009°。</p></div><div class="card green"><h3>结果</h3><p>Build=1，Success=1，Progress=100%。</p></div></div></div>
+    <div class="foot"><span>task.py:652–675；Appendix B.4；仍被夹持或缺静止证据均 FAIL</span><span>11 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>12 · V2WSCORE</span><span>function + geometry + dynamics</span></div>
-    <h2>先把误差映射成 quality，再按实例、task family 两级聚合</h2>
-    <div class="content"><div class="formula">quality(e) = max(0, 1 − e / τ)<br>F = (Success + Progress) / 2<br>V2WScore = Build × (F + G + D) / 3</div><div class="grid g3"><div class="card"><h3>Function F</h3><p>Task Success 与 stage-wise Progress。</p></div><div class="card"><h3>Geometry G</h3><p>Scene / Shape / Size；主要阈值 τ=10 cm。</p></div><div class="card"><h3>Dynamics D</h3><p>T-APE τ=20 cm；R-APE 90°；T-RPE 10 cm。</p></div></div><div class="callout" style="margin-top:18px"><p>瓶子实例按公开公式解释性重算约 80.6，但论文没有发布它的正式 per-instance composite score，不能当官方数值。</p></div></div>
-    <div class="foot"><span>v2w/scoring.py:219–305；v2w/config/score.json</span><span>12 / 18</span></div>
+    <h2>先把误差换成质量分，再按实例、任务类别两级平均</h2>
+    <div class="content"><div class="formula">quality(e) = max(0, 1 − e / τ)<br>F = (Success + Progress) / 2<br>V2WScore = Build × (F + G + D) / 3</div><div class="grid g3"><div class="card"><h3>功能 F</h3><p>Task Success 与分阶段进度的平均。</p></div><div class="card"><h3>几何 G</h3><p>场景、形状与尺寸质量分的平均；阈值 τ=10 cm。</p></div><div class="card"><h3>运动 D</h3><p>绝对平移/旋转、相对平移误差，阈值依次为 20 cm / 90° / 10 cm。</p></div></div><div class="callout" style="margin-top:18px"><p>瓶子实例按公开公式解释性重算约 80.6，但论文没有发布它的正式实例复合分，不能当官方数值。</p></div></div>
+    <div class="foot"><span>v2w/scoring.py:219–305；v2w/config/score.json</span><span>12 / 19</span></div>
   </section>
 
   <section class="slide tight">
-    <div class="meta"><span>13 · MAIN RESULT</span><span>nine agent systems + HAR</span></div>
-    <h2>Fable-5.1 总分与任务成功率最高；Astra 在部分 object-level geometry 指标最好</h2>
-    <div class="content visual white"><img src="/lib/papers/video2world/results.svg" alt="主结果重绘"></div>
-    <div class="foot"><span>根据原论文 Table 2 重绘；39 个 family 等权平均</span><span>13 / 18</span></div>
+    <div class="meta"><span>13 · MAIN RESULT</span><span>九套 Agent 系统 + 人类辅助重建（HAR）</span></div>
+    <h2>Fable-5.1 总分与任务成功率最高；Astra 的部分物体几何指标更好</h2>
+    <div class="content visual white"><img src="/lib/papers/video2world/results.svg" alt="主结果重绘" width="1400" height="760"></div>
+    <div class="foot"><span>根据原论文 Table 2 重绘；39 个 family 等权平均</span><span>13 / 19</span></div>
   </section>
 
   <section class="slide tight">
     <div class="meta"><span>14 · HUMAN CHECKS</span><span>preference and effector motion</span></div>
     <h2>HAR 更强，但它能使用额外的原始数据，也不是完美上限</h2>
-    <div class="content mini-gallery"><figure><img src="/lib/papers/video2world/human-study.png" alt="原论文 Figure 3"><figcaption>Figure 3 · 12 名内部 rater、243 个有效 pairwise judgments、39 cases</figcaption></figure><figure><img src="/lib/papers/video2world/effector-agreement.png" alt="原论文 Figure 5"><figcaption>Figure 5 · 40 个成功 HAR instances 的 source / simulated effector statistics</figcaption></figure></div>
-    <div class="foot"><span>HAR 可使用 CAD、RGB-D、calibration、robot logs、task predicates 与人工调试</span><span>14 / 18</span></div>
+    <div class="content mini-gallery"><figure><img src="/lib/papers/video2world/human-study.png" alt="原论文 Figure 3" width="1287" height="820"><figcaption>Figure 3 · 12 名内部评审，243 条有效判断，81 个视频对 / 39 个案例</figcaption></figure><figure><img src="/lib/papers/video2world/effector-agreement.png" alt="原论文 Figure 5" width="1279" height="609"><figcaption>Figure 5 · 40 个原始评分下成功的 HAR 实例 / 35 段视频；非策略训练实验</figcaption></figure></div>
+    <div class="foot"><span>HAR 是人类辅助重建，可用 CAD、RGB-D、相机标定、机器人日志、任务规则与人工调试</span><span>14 / 19</span></div>
   </section>
 
   <section class="slide tight">
-    <div class="meta"><span>15 · JUDGE REFINEMENT</span><span>function is not geometry</span></div>
-    <h2>成功交互与几何误差必须分开；judge 也需要用反例修正</h2>
-    <div class="content split equal"><div class="visual white"><img src="/lib/papers/video2world/construction-cases.png" alt="原论文 Figure A5"></div><div><div class="card red"><h3>错误接受</h3><p>只看终点的规则曾让初态已经满足宽松目标的 lampshade 得分；加入“必须离开初始目标并重新放置”后才修正。</p></div><div class="card green" style="margin-top:16px"><h3>错误拒绝</h3><p>两个 Astra bottle reconstruction 已直立、支撑、释放，却因错误轴方向与不必要的绝对终点约束被拒；人工复核后改为通过。</p></div></div></div>
-    <div class="foot"><span>原论文 Figure A5、Appendix 8.7</span><span>15 / 18</span></div>
+    <div class="meta"><span>15 · 动作与场景互换</span><span>Table A14–A15 · 条件子集，非全 benchmark</span></div>
+    <h2>自家场景与动作一起成功，拆开后仍可能同时失败</h2>
+    <p class="lead">Set A：读取物体状态的固定控制器在 HAR 场景成功的 20 个实例。Set B：HAR 动作在 HAR 场景成功的 44 个实例。</p>
+    <div class="content"><table class="table"><thead><tr><th>执行配置</th><th>Set A（可用记录合并）</th><th>Set B（可用记录合并）</th></tr></thead><tbody><tr><td>Agent 动作 × Agent 场景</td><td>24.3% / 177 条</td><td>16.2% / 390 条</td></tr><tr><td>Agent 动作 × HAR 场景，原样</td><td>2.3% / 174 条</td><td>2.3% / 385 条</td></tr><tr><td>同一动作按隐藏初始物体位置平移</td><td>15.5% / 174 条</td><td>15.1% / 385 条</td></tr><tr><td>HAR 动作 × Agent 场景</td><td>12.1% / 174 条</td><td>9.9% / 385 条</td></tr></tbody></table><div class="callout" style="margin-top:22px"><p>自家执行已成功的记录中，19/43 与 30/63 同时未通过两项互换测试（44% / 48%）。场景与动作可能互相适配；不能推成场景对所有控制器都不可用。</p></div></div>
+    <div class="foot"><span>根据 Appendix D.1 / Tables A13–A15 整理；平移用了特权位置，执行条件未完全匹配。</span><span>15 / 19</span></div>
   </section>
 
   <section class="slide tight">
-    <div class="meta"><span>16 · SAME VIDEO, DIFFERENT FAILURES</span><span>case studies</span></div>
+    <div class="meta"><span>16 · JUDGE REFINEMENT</span><span>function is not geometry</span></div>
+    <h2>成功交互与几何误差分开测；评分规则也需要用反例修正</h2>
+    <div class="content split equal"><div class="visual white"><img src="/lib/papers/video2world/construction-cases.png" alt="原论文 Figure A5" width="1590" height="838"></div><div><div class="card red"><h3>错误接受</h3><p>只看终点的规则曾让初态已经满足宽松目标的灯罩得分；加入“必须离开初始目标并重新放置”后才修正。</p></div><div class="card green" style="margin-top:16px"><h3>错误拒绝</h3><p>两个 Astra 立瓶子结果已直立、支撑、释放，却因错误轴方向与不必要的绝对终点约束被拒；人工复核后改为通过。</p></div></div></div>
+    <div class="foot"><span>原论文 Figure A5、Appendix B.7</span><span>16 / 19</span></div>
+  </section>
+
+  <section class="slide tight">
+    <div class="meta"><span>17 · SAME VIDEO, DIFFERENT FAILURES</span><span>case studies</span></div>
     <h2>几何接近、终点位置正确或画面里物体被抬高，都不自动等于成功</h2>
-    <div class="content mini-gallery"><figure><img src="/lib/papers/video2world/case-pose.png" alt="Figure A7"><figcaption>A7 · 堆叠成功但 object-frame rotation error 很大</figcaption></figure><figure><img src="/lib/papers/video2world/case-receiver.png" alt="Figure A8"><figcaption>A8 · 终点接近通过，receiver top-face 条件失败</figcaption></figure><figure><img src="/lib/papers/video2world/case-nine-bowl.png" alt="Figure A9"><figcaption>A9 · 同一 bowl-nesting 视频，九模型只有三套成功</figcaption></figure><figure><img src="/lib/papers/video2world/case-nine-lift.png" alt="Figure A10"><figcaption>A10 · can 被抬高仍可能因 IK 或 penetration 被拒</figcaption></figure></div>
-    <div class="foot"><span>原论文 Figures A7-A10</span><span>16 / 18</span></div>
+    <div class="content mini-gallery"><figure><img src="/lib/papers/video2world/case-pose.png" alt="Figure A7" width="1169" height="523"><figcaption>A7 · 堆叠成功，但以物体坐标系计算的旋转误差很大</figcaption></figure><figure><img src="/lib/papers/video2world/case-receiver.png" alt="Figure A8" width="1168" height="523"><figcaption>A8 · 终点接近目标，但接收盒缺少带孔顶盖，顶面覆盖未达 0.50</figcaption></figure><figure><img src="/lib/papers/video2world/case-nine-bowl.png" alt="Figure A9" width="1179" height="1252"><figcaption>A9 · 同一套碗视频，九模型只有三套成功</figcaption></figure><figure><img src="/lib/papers/video2world/case-nine-lift.png" alt="Figure A10" width="1174" height="1252"><figcaption>A10 · 罐子被抬高，仍可能因逆运动学不可行或机器人穿透被拒</figcaption></figure></div>
+    <div class="foot"><span>原论文 Figures A7-A10</span><span>17 / 19</span></div>
   </section>
 
   <section class="slide tight">
-    <div class="meta"><span>17 · EMBODIMENT & TIMING</span><span>two final case studies</span></div>
-    <h2>同一个任务换 robot 会改变结果；慢几秒也可能功能成功但 motion error 变大</h2>
-    <div class="content mini-gallery"><figure><img src="/lib/papers/video2world/case-egocentric.png" alt="Figure A12"><figcaption>A12 · 候选在 7.2 s 完成，而示范窗口只有 1.6 s</figcaption></figure><figure><img src="/lib/papers/video2world/case-native-final.png" alt="Figure A13"><figcaption>A13 · 同一 RoboDojo 视频，X5 与 xArm7 出现不同成功/失败原因</figcaption></figure></div>
-    <div class="foot"><span>原论文 Figures A12-A13</span><span>17 / 18</span></div>
+    <div class="meta"><span>18 · EMBODIMENT & TIMING</span><span>two final case studies</span></div>
+    <h2>换机器人会改变结果；动作慢几秒也可能成功，但轨迹误差变大</h2>
+    <div class="content mini-gallery"><figure><img src="/lib/papers/video2world/case-egocentric.png" alt="Figure A12" width="1154" height="829"><figcaption>A12 · 候选在 7.2 s 完成，而示范窗口只有 1.6 s</figcaption></figure><figure><img src="/lib/papers/video2world/case-native-final.png" alt="Figure A13" width="982" height="1123"><figcaption>A13 · 同一 RoboDojo 视频，X5 与 xArm7 出现不同成功/失败原因</figcaption></figure></div>
+    <div class="foot"><span>原论文 Figures A12-A13</span><span>18 / 19</span></div>
   </section>
 
   <section class="slide tight">
-    <div class="meta"><span>18 · VERDICT</span><span>interest 9.2 / 10</span></div>
+    <div class="meta"><span>19 · VERDICT</span><span>interest 9.2 / 10</span></div>
     <h2>可执行评测链已经成立；统计分母和受控系统比较仍需补齐</h2>
-    <div class="content"><div class="grid g2"><div class="card green"><h3>论文已经建立</h3><ul><li>video → package → physics rollout → judge 的完整 protocol</li><li>功能、几何和轨迹分开报告</li><li>真实案例暴露多个“看起来对、执行不对”的失败</li></ul></div><div class="card orange"><h3>仍不能忽略</h3><ul><li>222 / 215 / 179 / 112 四种统计分母未完全对齐</li><li>OpenCode、Codex CLI、Claude Code 使用的 harness 不同</li><li>HAR 使用额外信息且人工工时没有系统记录</li><li>human study 的评审来自作者与公司内部</li></ul></div></div><div class="callout" style="margin-top:20px"><p><strong>目前最明确的结论：</strong>很多系统能造出可加载的世界，却不能让 robot 在其中稳定完成视频里的任务。</p></div></div>
-    <div class="foot"><span>博客作者兴趣度只表示本人兴趣；不是论文质量评级</span><span>18 / 18</span></div>
+    <div class="content"><div class="grid g2"><div class="card green"><h3>论文已经建立</h3><ul><li>视频 → 程序包 → 物理执行 → 任务判定的完整协议</li><li>功能、几何和轨迹分开报告</li><li>真实案例暴露多个“看起来对、执行不对”的失败</li></ul></div><div class="card orange"><h3>仍不能忽略</h3><ul><li>222 / 215 / 179 / 112 分母未对齐；HAR 类别均值主表58.8%、附录 C.5为57.3%</li><li>OpenCode、Codex CLI、Claude Code 使用的 harness 不同</li><li>HAR 用额外信息；附录 C.5 对 18 个 A2 不可行实例保留/剔除的描述互相冲突</li><li>人工研究的评审来自作者与公司内部</li></ul></div></div><div class="callout" style="margin-top:20px"><p>很多系统能造出可加载的世界，却不能让机器人在其中稳定完成视频里的任务。</p></div></div>
+    <div class="foot"><span>博客作者兴趣度只表示本人兴趣；不是论文质量评级</span><span>19 / 19</span></div>
   </section>
 </main></div>
 <div class="overview" aria-label="页面总览"></div>
 <nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/video2world.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
-<script src="/lib/decks/paper-deck-v2.js"></script>
+<script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script>
 </body></html>

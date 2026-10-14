@@ -2,9 +2,9 @@
 title: "[2026-10-04] Self-Evaluating Recursive Agents"
 permalink: "/posts/论文解读/self-evaluating-recursive-agents.html"
 date: "2026-10-09T13:20:00+08:00"
-updated: "2026-10-09T18:10:00+08:00"
+updated: "2026-10-13T22:00:00+08:00"
 cover: "/lib/papers/sera/cover.svg"
-description: "SERA 用强化学习训练同一个 Qwen3-4B 模型拆任务、执行和评价。关键对照是：只加评价训练不够，还要把学到的 rubric 用作子任务执行奖励。本文分开解释训练、普通评测和测试时选择，并对照代码说明运行框架、交互预算和真实题目。"
+description: "SERA 训练同一个 Qwen3-4B 模型拆任务、执行并写评分标准。实验表明，训练评价能力需要与采用这些评价的执行奖励配合。本文沿真实合成任务讲清三种训练、最终验收、交互预算和关键负结果。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -20,7 +20,7 @@ tags:
   - "Multi-Agent"
 ---
 
-<link rel="stylesheet" href="/styles/paper-deep-dive-v2.css">
+<link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
 
 <div class="paper-reading">
 
@@ -34,19 +34,20 @@ tags:
 
 <p class="lead">SERA 研究的是：Agent 学会评价自己拆出的子任务，能否也把任务做得更好？作者用强化学习训练同一个 Qwen3-4B 模型，分别处理执行、委派和评价；论文将这组共享权重称为策略（policy）。训练时，模型生成子任务评分标准（rubric），用真实成败训练这些标准，再按标准给子任务执行奖励。rubric 走独立的评价路径，不会交给执行子 Agent 当作指令。</p>
 
+<aside class="part0"><span class="kicker">PART 0 · 训练与评测分开看</span><h3>同一套权重，三种使用方式</h3><p>训练程序交替更新同一组模型参数：执行阶段（E）按节点完成情况训练求解和委派输出；委派阶段（D）再按成功任务树中不再委派的末端节点（叶节点）覆盖率训练委派；评分标准训练阶段（RT）检验 rubric 能否分清成功与失败。token 是模型预测的文字单位，各阶段只训练指定输出中的 token。</p><p>主表的 N=1 指每道题只运行一棵递归执行树；模型直接拆任务、执行，最后由程序检查根任务是否完成。额外 N=2 实验在每次委派时运行两棵候选子树，再用 rubric 选择其中一棵。RT 的 8 条训练分支与测试的 N=2 是两个设置。</p></aside>
+
 <div class="metrics" aria-label="SERA 关键数字"><div class="metric"><strong>74.31%</strong><span>TextCraft 主表成功率</span></div><div class="metric"><strong>65.07%</strong><span>TextWorld 主表成功率</span></div><div class="metric"><strong>45.62%</strong><span>RAO + RT 的 TextWorld 负结果</span></div><div class="metric"><strong>20 轮</strong><span>每个递归 Agent 的模型轮数上限</span></div></div>
 
 <aside class="keypoints"><h3>先记住</h3><ul><li>评价训练需要与 rubric 执行奖励配合。只给 RAO 加评价训练，TextWorld 从 51.93% 降至 45.62%。</li><li>主表的普通评测只跑递归执行，不生成或评分 rubric；额外 N=2 实验才在推理时选择候选子树。</li><li>每个根/子 Agent 最多 20 轮模型决策，不等于整题只交互 20 次。论文没有报告每题平均模型调用数。</li></ul></aside>
 
-<aside class="part0"><span class="kicker">PART 0 · 训练与评测分开看</span><h3>同一套权重，三种使用方式</h3><p>训练时，执行奖励、委派奖励和 rubric 训练奖励交替更新同一组模型参数。主表 N=1 评测时，训练好的模型直接拆任务、执行，最后由程序检查根任务是否完成。额外 N=2 实验会在委派点运行两棵候选子树，再用 rubric 选择其中一棵。训练的 8 条分支与测试的 N=2 是两个不同设置。</p></aside>
 
-## Q1. 为什么递归 Agent 需要自己学会验收子任务？
+<h2 id="研究问题：递归任务缺少子目标验收标准">1. Motivation：递归任务缺少子目标验收标准</h2>
 
 <p><strong>根任务通常可验证，Agent 临时提出的中间任务却没有现成答案。</strong>根目标可以是“准备并吃掉两道菜”，程序检查最后的食材和菜品状态即可。途中委派的“检查储藏室，把有用食材送到厨房”，则需要结合当时的目标判断：有没有找齐、是否误用了共享食材、返回结果能否让父 Agent 继续。只看整题成败，很难分清各个子任务做得怎样。</p>
 
-<p>递归 Agent 把子目标交给另一个使用相同权重的 Agent，子 Agent 也能继续委派。前作 RAO 让程序 verifier 或 LLM judge 给树上每个节点二元标签，分别指程序验证和模型判断。每个子任务都要额外判断，标签也只回答做没做成。SERA 想减少这类外部监督，同时学到更细的评价。SERA 把问题拆成 execution、delegation 和 evaluation 三种能力，每种能力使用独立奖励，再交替更新同一组参数。</p>
+<p>递归 Agent 把子目标交给另一个使用相同权重的 Agent，子 Agent 也能继续委派。前作 RAO 让程序检查器（verifier）或模型评审（LLM judge）给树上每个节点二元标签。每个子任务都要额外判断，标签也只回答做没做成。SERA 希望减少这类外部监督，并用有权重的条件评价完成质量；执行、委派、评价分别使用独立奖励，交替更新同一组参数。</p>
 
-## Q2. 它与 RAO、普通 rubric 奖励有什么区别？
+<h2 id="与-RAO-和已有-rubric-训练的区别">2. Related Work：与 RAO 和已有 rubric 训练的区别</h2>
 
 <p><strong>SERA 同时训练评价能力，并把模型给出的评价用于执行奖励。</strong>rubric 是针对当前子目标的一组评分条件。未经训练的模型也能写这些条件，但写得合理不代表能区分真实成功和失败。作者从相同委派点采样多条分支，用外部标签检验评分是否把成功分支排在失败分支前面，目标分差至少为 0.2。</p>
 
@@ -56,19 +57,21 @@ tags:
 
 <p>固定过程奖励通常评价一条求解轨迹中的步骤。SERA 的子目标和任务树由 Agent 临时生成，评分标准也要适应当前委派。RubricEM、ARCO、EvoRubrics 等工作同样学习 rubric；这里的区别是递归任务结构，以及执行、拆解、评价共用一个 policy。</p>
 
-## Q3. 一次训练怎样运行，三套奖励分别更新哪些 token？
+<h2 id="方法：执行、委派和评分标准的交替训练">3. Method：执行、委派和评分标准的交替训练</h2>
 
-<p><strong>三种奖励分别训练执行输出、委派语句和 rubric 生成输出。</strong>作者记执行为 E、委派为 D、rubric 训练为 RT。完整 SERA 按 16 : 2 : 2 的优化步数交替训练，比例不是三个奖励的加权系数。</p>
+<p><strong>每次优化只使用一种奖励，但执行阶段的输出也包括委派动作。</strong>Appendix B.2 明确区分：E 训练求解与委派 token；D 只训练委派 token；RT 只训练写 rubric 的 token。完整 SERA 按 16 : 2 : 2 的优化步数交替训练，这个比例决定阶段运行频率。</p>
 
-### Execution：用冻结 rubric 给 child 连续分
+<figure class="figure reading-diagram"><a href="/lib/papers/sera/training-and-evaluation.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/training-and-evaluation.svg" width="600" height="1160" alt="SERA 执行、委派与评分标准训练的输入、奖励和 token 更新边界"></a><figcaption>根据 Figure 1、§3 和 Appendix B.2 重绘。执行阶段也训练委派输出；D 额外用叶节点覆盖率训练委派。RT 的评分调用与实际执行不进入它自己的优化样本。</figcaption></figure>
 
-<p>rubric 生成器读取父任务、委派前的父轨迹、初始状态、子目标、工具和预算，不读取子任务的未来轨迹或结果。公开提示要求 4 至 8 个 <code>rubric_items</code>，包括权重、零分和满分条件，另有 <code>success_gate</code> 与 <code>failure_conditions</code>。执行 child 拿到子目标和执行上下文，不拿到这份 rubric。</p>
+<h3 id="执行阶段：固定评分标准，评估子任务结果">3.1 执行阶段：固定评分标准，评估子任务结果</h3>
 
-<p>子 Agent 结束后，同一 policy 接受一次独立的评分调用：输入是冻结的 rubric、完整轨迹和最终环境状态，输出是 success gate 与 <code>final_score ∈ [0,1]</code>。根节点仍使用环境给出的成败；非根节点改用 rubric 分数。这个阶段只更新执行轨迹中的 token，生成 rubric 和评分调用产生的 token 都不接收梯度。</p>
+<p>rubric 生成器读取父任务、委派前的父轨迹、初始状态、子目标、工具和预算，不读取子任务之后的轨迹或结果。公开提示要求 4 至 8 个 <code>rubric_items</code>，每项带权重、零分和满分条件；<code>success_gate</code> 规定完成子任务必须满足什么，<code>failure_conditions</code> 列出哪些失败会让整份评分归零。执行子 Agent 拿到子目标和执行上下文，不拿到这份 rubric。固定的是同一子任务的评分标准，不是冻结整个模型权重。</p>
+
+<p>子 Agent 结束后，同一 policy 接受一次独立的评分调用：输入是固定的 rubric、完整轨迹和最终环境状态，输出是完成条件的 0/1 与 <code>final_score ∈ [0,1]</code>。§3.2 的节点分数为 <code>s = g × Σ w_j c_j</code>：g 表示子任务是否完成，w_j 是条件权重、总和为 1，c_j 是该项的 0 至 1 得分。g=0 时总分必须为 0，即使部分条件已满足。根节点仍使用环境给出的成败；非根节点改用 s。E 更新求解和委派输出，生成 rubric 和评分调用的输出不直接接收梯度。</p>
 
 <p>论文以“委派前生成 rubric”描述信息边界。公开实现并非必须等它写完：<a href="https://github.com/OliverLeeXZ/SERA/blob/0443b190ccde59486904988e50893102df4563ab/Training/runtime/rubric_subagent_reward/async_pipeline.py#L77-L138">异步执行路径</a>先准备委派前信息，再并发生成 rubric 和运行 child；RT 路径则先采集分支，再用不含子结果的父轨迹前缀生成 rubric。真正约束是生成器看不到子结果，同一组评分始终使用同一份 rubric。</p>
 
-### Rubric generation：fork 8 条分支做排序
+<h3 id="评分标准训练：复制-8-条同起点分支，检验排序">3.2 评分标准训练：复制 8 条同起点分支，检验排序</h3>
 
 <p>训练框架在同一个委派点复制环境，针对相同的子任务目标采样 <code>B=8</code> 条分支轨迹。第 0 条分支继续真实执行，并把最终状态提交给父 Agent；另外 7 条只用于训练。TextCraft 用程序检查器标记每条分支的成败。TextWorld 的临时子任务没有统一程序检查器，因此改用 Kimi 做二元判断。如果 8 条分支全成功或全失败，这组数据没有排序信息，会被跳过。</p>
 
@@ -76,33 +79,35 @@ tags:
 
 <p><a href="https://github.com/OliverLeeXZ/SERA/blob/0443b190ccde59486904988e50893102df4563ab/Training/runtime/rubric_generation_ranking/stage.py#L29-L63">实现</a>遍历所有成功与失败的配对，rubric 生成动作的奖励为 <code>-L_rank</code>，强化学习据此更新生成 rubric 的 token。评分器输出与梯度断开，不直接作为优化样本。不过三个角色共用权重，其他阶段的更新仍会改变评分行为；这不能证明模型不会利用奖励漏洞。</p>
 
-### Delegation：成功树里的 leaf coverage
+<h3 id="委派阶段：按成功树中的叶节点覆盖率分配奖励">3.3 委派阶段：按成功树中的叶节点覆盖率分配奖励</h3>
 
 <p>一次委派的奖励是 <code>root_success × subtree_leaves / all_tree_leaves</code>。如果根任务失败，树中所有委派奖励都是 0；如果根任务成功，覆盖 2/3 叶节点的委派动作就得到 2/3。代码只把奖励给到生成 <code>launch_subagent(...)</code> 语句的那段 token。完整 SERA 不再按子任务的 success gate 筛选叶节点，而且所有叶节点等权。因此，“覆盖更多叶节点”只能粗略代表承担了更多工作。</p>
 
 <p>训练使用全参数 Adam，学习率 <code>3e-6</code>。每次更新取 8 道根题，每题采样 8 棵独立树；这与 RT 在某个委派点复制 8 条分支不同。CISPO 控制策略更新幅度，留一基线（LOO）用其他样本奖励作比较：E 比较其他根树的成败，D 先平均每树委派分再跨树比较，RT 在 batch 的有效委派组之间比较。作者还按深度出现频率调整权重，避免浅层输出占主导。</p>
 
-## Q4. 模型、Agent harness、题目与最终分数具体怎样测？
+<h2 id="实验：真实任务、成功率与关键负结果">4. Experiments：真实任务、成功率与关键负结果</h2>
 
 <p><strong>主表测的是训练后模型的递归任务成功率，最终由程序判定，N=1 不生成或评分 rubric。</strong>固定模型为 Qwen3-4B-Instruct-2507，各方法用相同总优化步数，TextCraft 250 次、TextWorld 400 次，再比较 checkpoint。这不等于各方法消耗相同 token 或运行相同时间。</p>
 
-<p>TextCraft 用仓库内的 <code>platoon</code> 递归运行时与 CodeAct，通过 IPython 调用工具。TextWorld 用作者实现的 Python V9 composite coordination runtime，解析 action、inventory、delegate、finish block。两者都不是 Codex CLI、Claude Code 或 OpenHands。</p>
+<p>TextCraft 用仓库内的 <code>platoon</code> 递归运行框架；执行 Agent 按 CodeAct 方式输出 Python 代码，再由 IPython 运行并调用工具。TextWorld 用作者实现的 Python V9 协作运行程序，解析模型输出中的行动、库存查询、委派和结束标记。两者都不是 Codex CLI、Claude Code 或 OpenHands。</p>
 
-<div class="table-scroll"><table><thead><tr><th>普通递归评测设置</th><th>TextCraft-Synth</th><th>TextWorld-Sync</th></tr></thead><tbody><tr><td>任务来源</td><td>程序生成配方；训练 852 道 Medium</td><td>CookingWorld 食物数据库；训练 1,500、开发 200</td></tr><tr><td>最终题集</td><td>632：四档 147/213/136/136</td><td>1,400：7 个任务族 × 4 档 × 50</td></tr><tr><td>模型采样</td><td colspan="2">temperature 0；每题一棵递归执行树；不调用 rubric</td></tr><tr><td>模型轮数上限</td><td colspan="2">根/子 Agent 各 20 轮；根深度 0，最大深度 3；Agent 总数随委派变化</td></tr><tr><td>一轮的含义</td><td>一个 Python cell，可含多个工具调用</td><td>一次模型输出；库存查询和委派不等于世界动作</td></tr><tr><td>上下文 / 单次输出</td><td>10,240 / 512 tokens</td><td>13,312 / 3,072 tokens</td></tr><tr><td>PASS</td><td>显式 finish，目标物净增量达标</td><td>全部食材、处理、prepare 和 eat 完成</td></tr><tr><td>聚合</td><td>按 632 题加权</td><td>每档 350 题，等价四档宏平均</td></tr></tbody></table></div>
+<div class="table-scroll"><table><thead><tr><th>普通递归评测设置</th><th>TextCraft-Synth</th><th>TextWorld-Sync</th></tr></thead><tbody><tr><td>任务来源</td><td>程序生成配方；训练 852 道 Medium</td><td>CookingWorld 食物数据库；训练 1,500、开发 200</td></tr><tr><td>最终题集</td><td>632：四档 147/213/136/136</td><td>1,400：7 个任务族 × 4 档 × 50</td></tr><tr><td>模型采样</td><td colspan="2">temperature 0；每题一棵递归执行树；不调用 rubric</td></tr><tr><td>模型轮数上限</td><td colspan="2">根/子 Agent 各 20 轮；根深度 0，最大深度 3；Agent 总数随委派变化</td></tr><tr><td>一轮的含义</td><td>一次 Python 代码块（cell），可含多个工具调用</td><td>一次模型输出；库存查询和委派不等于世界动作</td></tr><tr><td>上下文 / 单次输出</td><td>10,240 / 512 tokens</td><td>13,312 / 3,072 tokens</td></tr><tr><td>PASS</td><td>显式 finish，目标物净增量达标</td><td>全部食材、处理、prepare 和 eat 完成</td></tr><tr><td>聚合</td><td>按 632 题加权</td><td>每档 350 题，等价四档宏平均</td></tr></tbody></table></div>
 
 <p>公开 single-agent baseline 不委派，根节点上限是 200 轮、深度 0，不能与递归 Agent 一起写成 20 轮。TextWorld 全题世界动作另有共享预算，生成区间是 Easy 115 至 125、Medium 95 至 100、Hard 75 至 90、Extreme 65 至 80；实际读取 <code>parallelism.shared_environment_max_steps</code>，不固定为 100。TextCraft 训练样例的 <code>max_steps=75</code> 是任务预算，也不是每节点 20 轮。论文没有报告每题平均模型调用或工具调用数，只能核实上限和计数方式。</p>
 
-### 两个真实题目怎样走
+<h3 id="两个真实题目怎样走">4.1 两个真实题目怎样走</h3>
 
-<div class="case"><h4>TextCraft：<code>textcraft_synth.train.0</code></h4><p>目标是 <code>Craft the following items: 3x a1_i5</code>。初始库存提供 raw_a1=71、raw_a9=27、raw_a4=48 等原料，目标有五层配方依赖。Agent 可查配方和库存，提示不提供标准计划。公开 gold trace 有 22 次 craft；末级先备齐 <code>a7_i4=3</code>、<code>a3_i4_23=3</code>、<code>a9_i4=3</code>，再消费这些中间物，产出 3 个 <code>a1_i5</code>。</p><p>这段顺序依据公开参考轨迹整理，不是模型实测日志，也不是 22 轮模型调用。检查器只在显式 <code>finish()</code> 后验收，计算 <code>final_count - initial_count</code>。净新增至少 3 个 a1_i5 才 PASS，初始库存中已有的目标物不能冒充本次产出。若最后只产出 2 个，即使中间配方都做对，也判 FAIL；这是按检查规则推得的失败示例。</p></div>
+<div class="case"><h4>TextCraft：<code>textcraft_synth.train.0</code></h4><p>目标是 <code>Craft the following items: 3x a1_i5</code>。初始库存提供 raw_a1=71、raw_a9=27、raw_a4=48 等原料，目标有五层配方依赖。Agent 可查配方和库存，提示不提供标准计划。公开标准操作序列（gold trace）中有 22 次 craft；末级先备齐 <code>a7_i4=3</code>、<code>a3_i4_23=3</code>、<code>a9_i4=3</code>，再消费这些中间物，产出 3 个 <code>a1_i5</code>。</p><p>这段顺序依据公开参考轨迹整理，不是模型实测日志，也不是 22 轮模型调用。检查器只在显式 <code>finish()</code> 后验收，计算 <code>final_count - initial_count</code>。净新增至少 3 个 a1_i5 才 PASS，初始库存中已有的目标物不能冒充本次产出。若最后只产出 2 个，即使中间配方都做对，也判 FAIL；这是按检查规则推得的失败示例。</p></div>
 
-<div class="case"><h4>TextWorld：<code>cookingworld_multidish_train_multi_dish_fork_join_medium_0000</code></h4><p>这道公开训练题 seed=850000，有 9 个地点、11 个干扰物，库存容量为 1，整题共享 96 次世界动作。dish_1 要 red apple、orange bell pepper 都 roasted + sliced，olive oil 与 water 保持 raw + uncut；dish_2 同样处理 carrot、purple potato，salt 与 flour 保持原状。Agent 看到配方、当前位置、可见物体、合法动作和剩余预算，不直接看到未探索地点的完整状态。</p><p>执行时要寻找、收集并按配方处理食材，然后对每道菜 prepare 和 eat。各 Agent 的位置和历史独立，库存、食材状态、菜品和动作预算共享；普通委派不会复制独立世界，环境动作加锁后提交。<a href="https://github.com/OliverLeeXZ/SERA/blob/0443b190ccde59486904988e50893102df4563ab/Runtime/environments/textworld/composite_scorer.py#L14-L45">根任务检查器</a>要求每种食材都已收集、没有被删除、处理方式完全匹配，而且每道菜都已完成并吃掉。漏吃第二道菜或把应 roasted 的食材做成其他不可逆状态，根分都是 0。这是按公开规则说明失败，不冒充模型日志。</p></div>
+<figure class="figure reading-diagram"><a href="/lib/papers/sera/two-dish-real-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/two-dish-real-case.svg" width="600" height="1200" alt="TextWorld 公开两菜题的配方、共享预算、收集处理动作和程序验收规则"></a><figcaption>根据官方 Dataset 首条两菜题与 <code>composite_scorer.py</code> 整理。Figure 2 是另一道五菜示意；这里不是重画那道题，也不是模型执行日志。</figcaption></figure>
+
+<div class="case"><h4>TextWorld：<code>cookingworld_multidish_train_multi_dish_fork_join_medium_0000</code></h4><p>这道公开训练题 seed=850000，有 9 个地点、11 个干扰物，库存容量为 1，整题共享 96 次世界动作。dish_1 要 red apple、orange bell pepper 都 roasted + sliced（烤制并切片），olive oil 与 water 保持 raw + uncut（未处理、未切）；dish_2 同样处理 carrot、purple potato，salt 与 flour 保持原状。Agent 看到配方、当前位置、可见物体、合法动作和剩余预算，不直接看到未探索地点的完整状态。</p><p>执行时要寻找、收集并按配方处理食材，然后对每道菜 prepare 和 eat。各 Agent 的位置和历史独立，库存、食材状态、菜品和动作预算共享；普通委派不会复制独立世界，环境动作加锁后提交。<a href="https://github.com/OliverLeeXZ/SERA/blob/0443b190ccde59486904988e50893102df4563ab/Runtime/environments/textworld/composite_scorer.py#L14-L45">根任务检查器</a>要求每种食材都已收集、没有被删除、处理方式完全匹配，而且每道菜都已完成并吃掉。漏吃第二道菜或把应 roasted 的食材做成其他不可逆状态，根分都是 0。这是按公开规则说明失败，不冒充模型日志。</p></div>
 
 <p>主表报告 3 个 seeds 的均值 ± 标准差，不是置信区间；每道题最终只有成功或失败，运行错误按失败计入，完成整套题才生成 final report。用 Table 1 的四档 SERA 均值复算，TextCraft 为 <code>(99.09×147 + 97.81×213 + 78.92×136 + 6.13×136) / 632 = 74.314%</code>；TextWorld 四档题数相同，均值为 <code>65.0725%</code>，与报告一致。</p>
 
 <p>两个环境向模型公开的信息也不同。TextCraft 的配方可通过 <code>get_info</code> 查询，但标准计划和检查器状态不会进入提示。TextWorld 会在任务描述中列出完整食材要求，却不会直接给出物体位置、共享世界的完整对象树，以及检查器读取的内部状态。Agent 只能从观察结果、合法动作和库存查询中逐步发现。论文发布后，题目文件与检查代码都是公开的，因此这不是长期保密测试；作者也没有分析基础模型是否见过这些数据。</p>
 
-<p>TextWorld 的训练、开发和测试题彼此独立。TextCraft 的 632 题同时用于验证和最终评测，默认关闭周期性验证。它缺少独立盲测集，但不能仅凭共用题池认定发生了泄漏。TextWorld 的七个任务族突出 fork-join、critical path、load balanced、resource constrained、dependency gate、conflict 和 hierarchical 协调结构。作者用生成程序固定题目 manifest，根检查器也由环境程序定义，不是人工逐题给分。论文 Figure 2 的“五道菜、甜点误做果汁”是说明性例子，不能当成本文两菜 manifest 或模型实测日志。</p>
+<p>TextWorld 的训练、开发和测试题彼此独立。TextCraft 的 632 题同时用于验证和最终评测，默认关闭周期性验证。它缺少独立盲测集，但不能仅凭共用题池认定发生了泄漏。TextWorld 的七个任务族分别强调拆开再汇合（fork-join）、决定整体耗时的关键路径（critical path）、工作量均衡（load balanced）、资源限制（resource constrained）、先完成前置任务才能继续（dependency gate）、共享操作冲突（conflict）和多层拆解（hierarchical）。作者用生成程序固定每题的配方、状态和预算记录，根检查器也由环境程序定义，不是人工逐题给分。论文 Figure 2 的“五道菜、甜点误做果汁”是说明性例子，不能当成本文两菜记录或模型实测日志。</p>
 
 <div class="table-scroll"><table><thead><tr><th>Table 1 · 成功率 %</th><th>TextCraft</th><th>TextWorld</th></tr></thead><tbody><tr><td>RAO</td><td>68.93 ± 0.78</td><td>51.93 ± 1.42</td></tr><tr><td>RAO + D</td><td>68.93 ± 1.17</td><td>51.33 ± 0.50</td></tr><tr><td>RAO + RT</td><td>72.47 ± 0.16</td><td>45.62 ± 0.46</td></tr><tr><td>SERA w/o D &amp; RT</td><td>72.26 ± 0.18</td><td>51.10 ± 0.15</td></tr><tr><td>SERA w/o D</td><td><b>74.84 ± 1.41</b></td><td>60.26 ± 1.16</td></tr><tr><td>SERA</td><td>74.31 ± 0.90</td><td><b>65.07 ± 3.48</b></td></tr></tbody></table></div>
 
@@ -114,7 +119,9 @@ tags:
 
 <p>外部监督和完整成本要分开看。Table 2 中 TextCraft verifier 调用从 550.94K 降到 257.96K；TextWorld judge 从 147.80K 降到 35.79K，输入/输出 token 从 633.80M/16.13M 降到 125.32M/4.27M。无 RT 的 rubric 奖励版本在 TextWorld 不用外部 judge，却只有 51.10%。Table 7 同样使用 2 × 8 H200：TextCraft 的 RAO/SERA 用时 29h36m/24h06m；TextWorld 为 13h08m/24h14m。外部标签更少，不等于总训练更便宜。</p>
 
-## Q5. 如果想学习或复现，最值得先做哪一部分？
+<figure class="figure reading-diagram"><a href="/lib/papers/sera/results-and-cost.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/results-and-cost.svg" width="600" height="960" alt="SERA 在 TextWorld 的奖励与 RT 对照、TextCraft 负结果和外部标签成本区别"></a><figcaption>根据 Tables 1、2、7 重绘。图中同时保留负结果：RT 在二元执行奖励下退步；TextCraft 加 D 略降；TextWorld 外部标签减少但训练用时增加。</figcaption></figure>
+
+<h2 id="代码阅读与后续验证">5. Discussion：代码阅读与后续验证</h2>
 
 <p><strong>先把一组同起点分支的评价过程看懂，再接训练。</strong>学习原型可以用可复制的小环境，记录父轨迹前缀、子目标、一份 rubric、各分支轨迹、最终状态、真实成败和 policy 分数，检查成功与失败配对的差值。它只能验证评价过程，不能代替 SERA 的强化学习结果。执行 child 的输入与评分调用要分开。</p>
 
@@ -126,7 +133,7 @@ tags:
 
 <p>一个可信的后续实验，应固定检查器标签总数、实际运行时间和轨迹 token 总量，把“自评能否减少外部监督”与“额外反事实计算是否划算”分开比较。还可以在 coding agent 或 research agent 上加入有噪声的检查器，并暂时拆开 rubric 生成器与评分器，观察同一 policy 兼任两者时是否出现共谋或奖励漂移。</p>
 
-## Q6. 最后怎样评价 SERA？
+<h2 id="结论与测试时选择的边界">6. Conclusion：结论与测试时选择的边界</h2>
 
 <p><strong>它支持“训练评价与使用评价奖励相配合”这一结论，证据来自一个 4B 模型和两个合成文字环境。</strong>普通评测的增益来自训练后的权重，不需要每个子任务在推理时再写 rubric。额外 Table 4 才研究测试时选择：SERA N=1 为 65.07 ± 3.48，policy N=2 为 67.50 ± 0.54，论文 Kimi N=2 为 67.29 ± 0.69。未经 SERA 训练时，对应三项只有 16.79、16.57、18.00，增加候选数没有同样收益。</p>
 
@@ -136,6 +143,6 @@ tags:
 
 <div class="limit-grid"><div><b>模型范围</b><span>只测试 Qwen3-4B-Instruct-2507，尚不知道更大模型是否有同样增益。</span></div><div><b>任务范围</b><span>两个 benchmark 都是合成文字环境，代码库和网页任务尚未验证。</span></div><div><b>评价风险</b><span>共享权重仍可能造成评价漂移；评分输出不收梯度不能排除奖励漏洞。</span></div><div><b>拆解近似</b><span>叶节点等权，结构大小不一定等于真实贡献。</span></div><div><b>数据边界</b><span>TextCraft 共用验证与最终评测池，但不能据此直接判定泄漏。</span></div><div><b>复用边界</b><span>代码仓库根目录没有项目级 LICENSE；Hugging Face checkpoint 仓库单独保留 Apache-2.0。</span></div></div>
 
-<p class="source-note">2026-10-09 修订：重新核对全文、附录及公开代码，纠正 rubric 与 child 的关系、训练/普通评测/测试时选择的混淆、交互预算口径，补齐 RAO + RT 等消融。证据范围为 arXiv:2610.04902v1 全部 17 页、Figure 1 和 2、Table 1 至 8；代码固定 revision <code>0443b190ccde59486904988e50893102df4563ab</code>，checkpoint 页面固定 revision <code>a5e3c1e141efd1cdf0988debec42ca315d5c752b</code>。本文核验源码与论文，未运行 GPU 训练或声称复现模型得分。</p>
+<p class="source-note">2026-10-13 修订：重新核对 17 页全文与逐页渲染，补正 E 也训练委派 token 的边界，按公开程序核查根任务验收和测试时选择，并补三张正文专用大字图。证据范围包括 Figures 1、2 与 Tables 1 至 8；代码固定 revision <code>0443b190ccde59486904988e50893102df4563ab</code>，checkpoint 页面固定 revision <code>a5e3c1e141efd1cdf0988debec42ca315d5c752b</code>。本文核验源码与论文，未运行 GPU 训练或声称复现模型得分。</p>
 
 </div>

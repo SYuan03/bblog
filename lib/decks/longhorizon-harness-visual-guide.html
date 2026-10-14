@@ -23,119 +23,125 @@
 .limits{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:100%;background:var(--line)}.limit{min-height:190px;padding:22px;background:#fff}.limit b{display:block;color:var(--orange);font:750 14px/1 ui-monospace,SFMono-Regular,Menlo,monospace}.limit strong{display:block;margin:14px 0 9px;font:700 27px/1.2 Georgia,"Songti SC",serif}.limit span{color:var(--text);font-size:18px;line-height:1.5}
 #controls{position:fixed;z-index:20;left:50%;bottom:18px;display:flex;align-items:center;gap:8px;transform:translateX(-50%);padding:8px;background:rgba(16,21,27,.92);color:#fff;border:1px solid rgba(255,255,255,.18)}#controls button,#controls a{flex:0 0 auto;height:38px;padding:0 13px;border:0;background:#2a333d;color:#fff;font:650 14px/38px inherit;text-decoration:none;white-space:nowrap;cursor:pointer}#controls button:hover,#controls a:hover{background:#3a4652}.current-title{flex:0 1 170px;width:170px;min-width:0;overflow:hidden;padding:0 10px;font-size:13px;text-align:center;text-overflow:ellipsis;white-space:nowrap}.counter{font:700 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}.return-label,.utility-label{display:inline}#progress{position:fixed;z-index:21;left:0;bottom:0;height:4px;background:#4f91db;transition:width .18s ease}#overview-panel{position:fixed;z-index:30;inset:0;display:grid;place-items:center;background:rgba(9,13,18,.82)}#overview-panel[hidden]{display:none}.overview-card{width:min(980px,90vw);max-height:82vh;overflow:auto;padding:22px;background:#1b222a;color:#fff;border:1px solid #4c5763}.overview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.overview-head button{border:0;background:#303b46;color:#fff;font-size:25px;cursor:pointer}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.overview-grid button{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1px solid #3d4853;background:#252e37;color:#fff;text-align:left;cursor:pointer}.overview-grid button[aria-current="true"]{border-color:#69a6ea;background:#243c56}.overview-grid b{color:#77ace6;font:700 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace}.overview-grid span{font-size:14px;line-height:1.35}
 @media(max-width:700px){#controls{bottom:10px}.current-title{display:none}.return-label,.utility-label{display:none}.overview-grid{grid-template-columns:1fr 1fr}}@media print{html,body{overflow:visible;background:#fff}.deck{position:static!important;transform:none!important;width:1600px;height:auto;box-shadow:none}.slide{position:relative;display:flex!important;width:1600px;height:900px;page-break-after:always}#controls,#overview-panel,#progress{display:none!important}}
+/* Neutral reading surface; chart colors continue to encode the original groups. */
+:root{--paper:#fff;--ink:#20252b;--body:#424b56;--muted:#596775;--line:#d9dfe5}
+html,body{background:#edf1f5}
+.overview-card{background:#fff;color:var(--ink)}
+.slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
+#controls button,#controls a{white-space:nowrap;flex-shrink:0}
 </style>
 </head>
 <body>
 <main class="deck" id="deck">
   <section class="slide" data-title="论文结论">
     <div class="top"><b>01 · LONGHORIZON-HARNESS</b><span>arXiv:2608.01964 · 2026-08-03</span></div>
-    <h1>长任务需要的不是更长记忆，而是可审计的状态推进</h1>
-    <div class="body"><div class="hero"><div class="thesis"><span class="tag">MANAGE · EXECUTE · AUDIT</span><p>Manager 把原任务拆成有验收条件的 bounded contract。Executor 每轮以 fresh context 做一次状态变化。Auditor 只读检查环境，只有审计通过的事实才能进入下一轮。</p><div class="mini-metrics"><div><b>51.8 → 80.7</b><span>WeaveBench PassRate</span></div><div><b>69.7 → 77.2</b><span>Terminal-Bench 2.1</span></div><div><b>2.8 → 8.3</b><span>OSWorld Binary</span></div></div></div><div class="score"><strong>9.5 / 10</strong><span>作者兴趣度。和 Claude Code、Codex 这类完整 harness 的长期任务可靠性高度相关。</span></div></div></div>
+    <h1>把已核验进度单独保存，再分轮执行长任务</h1>
+    <div class="body"><div class="hero"><div class="thesis"><span class="tag">分派 · 执行 · 核验</span><p>任务管理者 Manager 写本轮目标和验收要求；Executor 在新会话执行；Auditor 独立检查环境。三者构成外层运行系统（harness），不更新模型。</p><div class="mini-metrics"><div><b>51.8 → 80.7%</b><span>Weave：分数 ≥ 0.8 的任务比例</span></div><div><b>69.7 → 77.2%</b><span>Terminal：测试通过率，89 题 × 3 次</span></div><div><b>2.8 → 8.3%</b><span>OSWorld：分数 = 1 的任务比例</span></div></div></div><div class="score"><strong>9.5 / 10</strong><span>作者兴趣度。直接涉及 Claude Code、Codex 这类完整执行系统在长任务中的可靠性。</span></div></div></div>
     <div class="foot"><span>Ma et al., LongHorizon-Harness。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="为什么长上下文仍会失稳">
-    <div class="top"><b>02 · MOTIVATION</b><span>一个 context 同时执行、记账、给自己判分</span></div>
+    <div class="top"><b>02 · 问题来源</b><span>同一上下文同时执行、记进度、给自己判分</span></div>
     <h2>失败往往发生在步骤之间，而不是某一步做不会</h2>
-    <div class="body"><div class="three"><div class="card"><b>COMPOUNDING ERROR</b><div class="sym">e₁ → e₂ → e₃</div><h3>早期错误变成后续前提</h3><p>Agent 把一次误判写进计划，后面的动作都围绕错误状态继续推进。</p></div><div class="card"><b>CONTEXT ROT</b><div class="sym">8k → 80k → 800k</div><h3>历史越长，关键状态越难取回</h3><p>工具输出、截图和试错淹没当前目标；上下文长度增长不等于状态更清楚。</p></div><div class="card"><b>SELF-ASSESSMENT</b><div class="sym">do ≈ judge?</div><h3>执行者也负责宣布完成</h3><p>文件“看起来存在”、界面“看起来正确”，都可能被当作已经满足任务。</p></div></div></div>
-    <div class="foot"><span>论文 §1。作者把问题归结为 compounding errors、context rot 与 task-state loss。</span><span class="pg"></span></div>
+    <div class="body"><div class="three"><div class="card"><b>错误被反复沿用</b><div class="sym">e₁ → e₂ → e₃</div><h3>早期错误变成后续前提</h3><p>Agent 把一次误判写进计划，后面的动作都围绕错误状态继续推进。</p></div><div class="card"><b>关键信息难找</b><div class="sym">历史不断变长</div><h3>历史越长，关键状态越难取回</h3><p>工具输出、截图和试错淹没当前目标；上下文长度增长不等于状态更清楚。</p></div><div class="card"><b>缺少独立核验</b><div class="sym">执行 ≠ 验收</div><h3>执行者也负责宣布完成</h3><p>文件“看起来存在”、界面“看起来正确”，都可能被当作已经满足任务。</p></div></div></div>
+    <div class="foot"><span>论文 §1。作者把问题归结为 compounding errors、context rot 与 task-state loss（任务状态丢失）。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="和相邻工作的边界">
-    <div class="top"><b>03 · RELATED WORK</b><span>训练 harness、修改 harness、运行 harness 是三件事</span></div>
+    <div class="top"><b>03 · 相邻研究</b><span>训练 harness、修改 harness、运行 harness 是三件事</span></div>
     <h2>LongHorizon-Harness 不改模型，也不改 Claude Code/Codex 的内部循环</h2>
-    <div class="body"><table class="matrix"><thead><tr><th>路线</th><th>主要改什么</th><th>何时发生</th><th>核心证据</th></tr></thead><tbody><tr><td>Harness-Zero</td><td>把 teacher harness 的策略蒸馏进模型</td><td>训练阶段</td><td>可执行任务的 RL / SFT 信号</td></tr><tr><td>Agentic Harness Engineering</td><td>自动修改 prompt、tool、middleware、memory</td><td>跨任务演化</td><td>真实 rollout 与 task flip</td></tr><tr class="ours"><td>LongHorizon-Harness</td><td>外置 task state，按轮包裹现有 backend</td><td>单次任务运行时</td><td>环境中的独立只读审计</td></tr><tr><td>普通 Claude Code / Codex</td><td>在一个会话中规划、执行、压缩上下文</td><td>单次任务运行时</td><td>自身工具结果与自我判断</td></tr></tbody></table></div>
+    <div class="body"><table class="matrix"><thead><tr><th>路线</th><th>主要改什么</th><th>何时发生</th><th>核心证据</th></tr></thead><tbody><tr><td>Harness-Zero</td><td>把专用程序示范的操作蒸馏进模型</td><td>训练阶段</td><td>执行成功的示范及模型自己尝试的结果</td></tr><tr><td>Agentic Harness Engineering</td><td>自动修改提示、工具、中间处理逻辑和记忆</td><td>跨任务演化</td><td>真实执行记录与逐题成败变化</td></tr><tr class="ours"><td>LongHorizon-Harness</td><td>外置任务状态，分轮调用现有执行程序</td><td>单次任务运行时</td><td>环境中的独立只读审计</td></tr><tr><td>普通 Claude Code / Codex</td><td>在一个会话中规划、执行、压缩上下文</td><td>单次任务运行时</td><td>自身工具结果与自我判断</td></tr></tbody></table></div>
     <div class="foot"><span>边界来自本论文 §1–2；相邻论文为 blog 中的 Harness-Zero 与 AHE。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="官方结果总览图">
-    <div class="top"><b>04 · OFFICIAL REPOSITORY FIGURE</b><span>同模型 paired comparison 与参考榜单混合展示</span></div>
-    <h2>先看提升，再看哪些比较真正 matched</h2>
-    <div class="body"><div class="figure-page"><img src="/lib/papers/longhorizon-harness/harness-performance.webp" alt="LongHorizon-Harness 官方仓库性能总览图"><div class="caption">官方仓库 <code>assets/harness_perf.png</code>，MIT License。WeaveBench 的 51.8→80.7 和 Terminal-Bench 的 69.7→77.2 是同 Qwen 3.7-Plus、同 Claude Code backend 的直接对比；OSWorld 主表把 single-action baseline 与 hybrid GUI+CLI 放在一起。</div></div></div>
+    <div class="top"><b>04 · 官方仓库图</b><span>同模型配对结果与参考榜单混合展示</span></div>
+    <h2>先看提升，再确认哪些比较条件相同</h2>
+    <div class="body"><div class="figure-page"><img src="/lib/papers/longhorizon-harness/harness-performance.webp" alt="LongHorizon-Harness 官方仓库性能总览图" width="2200" height="1800"><div class="caption">官方仓库 <code>assets/harness_perf.png</code>，MIT License。WeaveBench 的 51.8→80.7 和 Terminal-Bench 的 69.7→77.2 是同 Qwen 3.7-Plus、同 Claude Code backend 的直接对比；OSWorld 主表把 single-action baseline 与 hybrid GUI+CLI 放在一起。</div></div></div>
     <div class="foot"><span>官方仓库 revision a1dd930；论文 Tables 1–4。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="MEA 总览">
-    <div class="top"><b>05 · OFFICIAL REPOSITORY FIGURE</b><span>Manager 无环境权限，Executor 可写，Auditor 只读</span></div>
+    <div class="top"><b>05 · 官方仓库图</b><span>论文设计：Manager 不访问环境，Executor 可写，Auditor 只读</span></div>
     <h2>一轮只允许一个主要状态变化</h2>
-    <div class="body"><div class="figure-page"><img src="/lib/papers/longhorizon-harness/manage-execute-audit.webp" alt="LongHorizon-Harness Manage Execute Audit 架构图"><div class="caption">官方仓库 <code>assets/mea_main.png</code>，MIT License。图中的 report 是跨轮证据；当前源码还增加了 contract audit，最终完成需要 complete、clean、aligned 同时成立。</div></div></div>
+    <div class="body"><div class="figure-page"><img src="/lib/papers/longhorizon-harness/manage-execute-audit.webp" alt="LongHorizon-Harness Manage Execute Audit 架构图" width="2400" height="1600"><div class="caption">官方仓库 <code>assets/mea_main.png</code>，MIT License。图中的 report 是跨轮证据；当前源码还增加了 contract audit，最终完成需要 complete、clean、aligned 同时成立。</div></div></div>
     <div class="foot"><span>论文 Figure 2；官方仓库 README 与源码。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="task state 与 contract">
-    <div class="top"><b>06 · PERSISTENT STATE</b><span>保留的是可验证语义，不是完整聊天记录</span></div>
-    <h2>Manager 维护两样东西：当前状态和稳定验收契约</h2>
-    <div class="body"><div class="schema"><div class="state"><div class="state-head">CURRENT TASK STATE Sᵢ</div><ul><li><strong>Requirement</strong>：原任务中的目标或限制。</li><li><strong>Artifact</strong>：执行中创建或修改的输出。</li><li><strong>Fact</strong>：后续轮次需要依赖的环境事实。</li><li>每条事实引用 <code>round_003</code> 一类审计轮次。</li></ul><div class="status-row"><span>completed</span><span>pending</span><span>blocked</span><span>untrusted</span></div></div><div class="contract"><div><b>GOAL</b><p>这一轮要改变的一个主要环境状态。</p></div><div><b>ACCEPTANCE</b><p>哪些可观察条件同时成立才算完成。</p></div><div><b>BOUNDARIES</b><p>不能碰哪些对象，允许用什么流程。</p></div><div><b>DEPENDENCIES</b><p>已满足与未满足的前置条件，以及路由理由。</p></div><div><b>EVIDENCE</b><p>只附上 contract 明确引用的 audit reports。</p></div><div><b>PERSISTENCE</b><p>最终状态必须写入用户或下游真正消费的位置。</p></div></div></div></div>
+    <div class="top"><b>06 · 跨轮保留什么</b><span>保留核验过的任务进度，不保留完整聊天记录</span></div>
+    <h2>Manager 维护当前进度，以及每轮的验收要求</h2>
+    <div class="body"><div class="schema"><div class="state"><div class="state-head">任务进度 Task state Sᵢ</div><ul><li><strong>Requirement</strong>：原任务中的目标或限制。</li><li><strong>Artifact</strong>：执行中创建或修改的输出。</li><li><strong>Fact</strong>：后续轮次需要依赖的环境事实。</li><li>每条事实引用 <code>round_003</code> 一类审计轮次。</li></ul><div class="status-row"><span>已完成</span><span>待完成</span><span>受阻</span><span>尚不可信</span></div></div><div class="contract"><div><b>目标</b><p>这一轮要改变的一个主要环境状态。</p></div><div><b>验收</b><p>哪些可观察条件同时成立才算完成。</p></div><div><b>边界</b><p>不能碰哪些对象，允许用什么流程。</p></div><div><b>依赖</b><p>已满足与未满足的前置条件，以及执行方式的选择理由。</p></div><div><b>证据</b><p>只附上本轮验收要求（contract）明确引用的核验报告。</p></div><div><b>保存位置</b><p>结果必须写入用户或下游真正使用的位置。</p></div></div></div></div>
     <div class="foot"><span>论文 §2.2；源码 prompt_texts.py:8–18、70–103。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="一轮如何执行">
-    <div class="top"><b>07 · ONE AUDITED TRANSITION</b><span>默认最多 25 轮；executor 1800 秒，manager/auditor 各 300 秒</span></div>
+    <div class="top"><b>07 · 一轮执行</b><span>默认最多 25 轮；Executor 1800 秒，Manager/Auditor 各 300 秒</span></div>
     <h2>Executor 的“我做完了”只能触发审计，不能直接改 task state</h2>
-    <div class="body"><div class="timeline"><div class="step"><b>1 · READ</b><h3>读取状态</h3><p>Manager 看到原任务、task state 和历史 audit reports，看不到环境。</p></div><div class="step"><b>2 · CONTRACT</b><h3>选一件事</h3><p>写 goal、acceptance、boundary 和相关证据引用。</p></div><div class="step"><b>3 · EXECUTE</b><h3>fresh context</h3><p>Claude Code 或 Codex 只收到本轮上下文，并可修改环境。</p></div><div class="step"><b>4 · REPORT</b><h3>自述结果</h3><p>输出做了什么、产物在哪里、遇到什么问题。此时仍不可信。</p></div><div class="step"><b>5 · AUDIT</b><h3>只读重查</h3><p>从环境核验文件、应用状态、日志、截图与持久化结果。</p></div><div class="step"><b>6 · UPDATE</b><h3>推进状态</h3><p>Manager 采用 audit 支持的事实，保留 gaps 和 untrusted 项。</p></div><div class="step"><b>7 · ROUTE</b><h3>下一轮</h3><p>execute、ask、blocked 或 done。完成有硬条件。</p></div></div></div>
-    <div class="foot"><span>论文 Equations 1–3；源码 manager.py:491–978。</span><span class="pg"></span></div>
+    <div class="body"><div class="timeline"><div class="step"><b>1 · 读取</b><h3>读取进度</h3><p>Manager 看到原任务、当前进度和历史核验报告。论文设计不让它访问环境。</p></div><div class="step"><b>2 · 分派</b><h3>选一件事</h3><p>写目标、验收条件、不能改的对象和相关证据引用。</p></div><div class="step"><b>3 · 执行</b><h3>新会话</h3><p>Claude Code 或 Codex 只收到本轮信息，并可修改环境。</p></div><div class="step"><b>4 · 报告</b><h3>自述结果</h3><p>输出做了什么、产物在哪里、遇到什么问题。此时仍未验证。</p></div><div class="step"><b>5 · 核验</b><h3>只读重查</h3><p>从环境核验文件、应用状态、日志、截图与已保存结果。</p></div><div class="step"><b>6 · 更新</b><h3>更新进度</h3><p>Manager 采用核验支持的事实，保留缺项和尚未可信的结论。</p></div><div class="step"><b>7 · 决定</b><h3>下一轮</h3><p>继续执行、询问用户、报告受阻，或结束。</p></div></div></div>
+    <div class="foot"><span>论文 Equations 1–3；Figure 20 另展示 Auditor 600 秒／命令 660 秒超时，不能混同默认预算。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="内部 Auditor 怎样判">
-    <div class="top"><b>08 · INTERNAL JUDGE</b><span>过程审计，不是 benchmark 最终评分器</span></div>
+    <div class="top"><b>08 · 内部核验</b><span>过程审计，不是 benchmark 最终评分器</span></div>
     <h2><code>Next: done</code> 必须跨过三个独立条件</h2>
-    <div class="body"><div class="judge"><div><h3>Auditor 的前三行是控制协议</h3><div class="control"><span>Status: complete | incomplete | blocked</span><span>Integrity: clean | suspect | violation</span><span>Contract audit: aligned | unknown | needs_revision | invalid</span></div><p>随后逐项写 evidence、gaps、blocking constraints 和对 task state 的建议更新。Executor 的 claim 只能帮助定位证据。</p></div><div><h3>源码层的硬 guard</h3><ul><li>审计期间做 workspace snapshot diff；发生 mutation 会升级为 integrity violation。</li><li>存在 blocking constraint 时，<code>complete</code> 会被降为 <code>incomplete</code>。</li><li>Manager 请求 done 时，最近一份有效报告必须同时是 complete、clean、aligned。</li></ul><div class="guard">if status == complete<br>and integrity == clean<br>and contract_audit == aligned:<br>&nbsp;&nbsp;accept done<br>else:<br>&nbsp;&nbsp;inject synthetic repair feedback</div></div></div></div>
-    <div class="foot"><span>源码 auditor_agent.py:276–314；manager.py:525–563、1522–1534。</span><span class="pg"></span></div>
+    <div class="body"><div class="judge"><div><h3>当前源码解析前三行</h3><div class="control"><span>Status: complete | incomplete | blocked</span><span>Integrity: clean | suspect | violation</span><span>Contract audit: aligned | unknown | needs_revision | invalid</span></div><p>分别判断是否完成、核验是否违规、验收要求是否忠于原任务。正文再列证据、缺项、阻断条件和进度更新建议。</p></div><div><h3>源码明确拒绝哪些结束请求</h3><ul><li>Claude Code 适配器比较工作区前后快照；发现写入就标为违规。</li><li>仍有阻断项时，<code>complete</code> 会被改成 <code>incomplete</code>。</li><li>Manager 请求结束，最近报告必须同时是 complete、clean、aligned。</li></ul><div class="guard">complete：已完成<br>clean：未发现核验违规<br>aligned：验收要求与原任务一致<br>缺一项 → 拒绝结束，送回缺项</div></div></div></div>
+    <div class="foot"><span>源码 auditor_agent.py:276–314；manager.py:525–563、1522–1534。第三行是仓库附加条件，论文 §2.4 没有同样列出。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Claude Code 与 Codex 适配">
-    <div class="top"><b>09 · AGENTADAPTER</b><span>保留 backend 内部 agent loop，只控制外层 episode</span></div>
-    <h2>fresh context 来自新的 CLI episode，不是简单清空一段聊天</h2>
-    <div class="body"><div class="adapters"><div class="adapter-list"><div class="adapter"><b>Claude Code</b><span><code>--print --output-format stream-json</code>，关闭 auto memory 与 prompt history；按角色禁用工具。</span></div><div class="adapter"><b>Codex CLI</b><span><code>codex exec --json</code>，从 stdin 读取本轮 prompt；可注入 model、reasoning effort 与 MCP 配置。</span></div><div class="adapter"><b>Episode</b><span>每轮生成唯一 prompt 文件，在同一任务 workspace 启动新进程，并设置独立 timeout。</span></div></div><div class="boundary"><h3>真正跨轮保留什么？</h3><div class="line"><span class="dot"></span><span>原始任务、Manager 写下的 task state 与 stable contract。</span></div><div class="line"><span class="dot"></span><span>当前 contract 明确引用的 audit reports。</span></div><div class="line"><span class="dot" style="background:var(--red)"></span><span>不保留 Executor 的 raw trajectory 与内部 reasoning。</span></div><div class="line"><span class="dot" style="background:var(--orange)"></span><span>注意：Codex adapter 默认在隔离环境内 bypass 自身 sandbox；安全边界依赖外部环境和角色配置。</span></div></div></div></div>
+    <div class="top"><b>09 · 代码适配</b><span>保留原执行程序的内部循环，外层每次启动新会话</span></div>
+    <h2>上下文不继承旧聊天，任务文件仍保留</h2>
+    <div class="body"><div class="adapters"><div class="adapter-list"><div class="adapter"><b>Claude Code</b><span><code>--print --output-format stream-json</code>，关闭自动记忆和提示历史；按角色禁用部分工具。</span></div><div class="adapter"><b>Codex CLI</b><span><code>codex exec --json</code>，从标准输入读取本轮提示；可配置模型、思考档位与 MCP 工具连接。</span></div><div class="adapter"><b>新会话</b><span>每轮生成唯一提示文件，在同一任务工作区启动新进程，设置独立超时。</span></div></div><div class="boundary"><h3>设计边界不等于硬沙箱</h3><div class="line"><span class="dot"></span><span>保留原任务、当前进度、验收要求和明确引用的核验报告；不传完整执行轨迹。</span></div><div class="line"><span class="dot" style="background:var(--orange)"></span><span>固定源码允许 GUI/CLI Executor 使用重叠工具；Auditor 仍可调用 Bash 和计算机操作工具。</span></div><div class="line"><span class="dot" style="background:var(--red)"></span><span>Codex 默认绕过自身沙箱；Claude Code 的角色禁用名单和快照检测也不是进程隔离。</span></div></div></div></div>
     <div class="foot"><span>源码 cli_agent.py:47–119；adapters/claude_code.py:45–184；adapters/codex.py:47–104。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="外部 benchmark judge">
-    <div class="top"><b>10 · EXTERNAL EVALUATION</b><span>内部 auditor 推进过程，外部 judge 结算最终成绩</span></div>
+    <div class="top"><b>10 · 最终评分</b><span>内部 Auditor 更新进度，外部 judge 结算最终成绩</span></div>
     <h2>三套 benchmark 使用三种不同的最终评分路径</h2>
-    <div class="body"><div style="width:100%"><div class="bench"><div><h3>WeaveBench</h3><div class="n">114 tasks</div><p>Judge 读取 task spec、results artifacts 和完整 <code>chat.jsonl</code>。逐 artifact 拆 clause，再打 8 个维度。</p><div class="judge-note"><strong>PassRate</strong> = score ≥ 0.8 的任务占比；<strong>Overall</strong> = 114 题平均分。</div></div><div><h3>OSWorld 2.0</h3><div class="n">108 tasks</div><p>使用官方 <code>env.evaluate()</code>。Binary 只认 final score = 1；Partial 是全部任务细粒度得分均值。</p><div class="judge-note">主表 baseline 是 single-action GUI，本文是 hybrid GUI+CLI。</div></div><div><h3>Terminal-Bench 2.1</h3><div class="n">3 runs / task</div><p>Harbor + Docker，保留每题 CPU、memory 和环境限制；每题三次独立 trial 后取均值。</p><div class="judge-note">每个 trial 5 小时；论文 Figure 3 还混入官方外部成绩。</div></div></div><div class="formula">WeaveBench final_score = is_hack ? 0 : min(mean(8 dimension scores), deliverable_correctness)</div></div></div>
+    <div class="body"><div style="width:100%"><div class="bench"><div><h3>WeaveBench</h3><div class="n">114 题</div><p>Opus 4.7 读取任务、产物和完整 <code>chat.jsonl</code>，逐项核对要求，再给 8 个维度打分。</p><div class="judge-note"><strong>PassRate</strong> = 分数 ≥ 0.8 的任务比例；<strong>Overall</strong> = 114 题平均分。</div></div><div><h3>OSWorld 2.0</h3><div class="n">108 题</div><p>官方 <code>env.evaluate()</code> 给每题得分。Binary 只认分数 = 1；Partial 为 108 题平均分。</p><div class="judge-note">对照仅用单动作 GUI，本文结合 GUI 与命令行。</div></div><div><h3>Terminal-Bench 2.1</h3><div class="n">89 题 × 3 次</div><p>Harbor + Docker 保留 CPU、内存和环境限制。267 条记录中，测试全部通过才得 1。</p><div class="judge-note">每次最多 5 小时；success rate = 全部 reward 之和 / 267。</div></div></div><div class="formula">WeaveBench：利用评分漏洞则为 0；否则 final_score = min(八维平均分, 产物正确性)</div></div></div>
     <div class="foot"><span>论文 §3.1、Appendix A；WeaveBench official judge prompt。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Case：Wireshark 卡死">
-    <div class="top"><b>11 · REAL CASE / WEB_TASK_16</b><span>WebRTC simulcast-layer audit</span></div>
+    <div class="top"><b>11 · 真实案例 / WEB_TASK_16</b><span>检查 WebRTC 同时发送的不同质量视频层</span></div>
     <h2>识别出 GUI 卡住还不够，必须把失败转成下一轮可执行状态</h2>
-    <div class="body"><div class="case-grid"><div class="brief"><h3>任务与 judge 看什么</h3><p>Agent 要在浏览器和 Wireshark 中完成 WebRTC 分析，留下多类证据。最终 WeaveBench judge 同时读任务要求、结果目录和完整轨迹，逐 clause 核验证据。</p><div class="score-jump"><strong>0.59 → 0.92</strong><span>论文 Figure 7</span></div></div><div class="trace"><div><b>BASELINE</b><p>已识别 <code>Decode As</code> 对话框无响应。</p></div><div class="bad"><b>FAIL LOOP</b><p>仍围绕同一个按钮重试 400 多步，后续端口与证据没有补齐。</p></div><div><b>AUDITED STATE</b><p>Harness 把“已验证进度”和“GUI blocker”分别写入状态，避免下一轮重做前半段。</p></div><div class="good"><b>RECOVERY</b><p>Manager 改派剩余证据子任务，最后补齐 browser charts、JSON state 和 packet evidence。</p></div></div></div></div>
+    <div class="body"><div class="case-grid"><div class="brief"><h3>任务与最终 judge</h3><p>WeaveBench 官方任务要求用浏览器图表、JSON 和抓包交叉检查视频层。最终 judge 核对任务、产物和完整轨迹。</p><div class="score-jump"><strong>0.59 → 0.92</strong><span>论文 Figure 7</span></div></div><div class="trace"><div><b>对照诊断</b><p>已识别 <code>Decode As</code> 对话框无响应。</p></div><div class="bad"><b>重复失败</b><p>仍重试 400 多步，只解码一条流，缺失证据未补齐。</p></div><div><b>保存进度</b><p>把已核验结果与未解决的界面阻碍分开，下一轮只补缺项。</p></div><div class="good"><b>完成交叉检查</b><p>约 46.5 秒的 f 层 fps=0、frameWidth=0×0；帧率图的 38–52 秒区间为 0；再核查 21,018 个包。</p></div></div></div></div>
     <div class="foot"><span>论文 §3.4，Figures 7 与 14。分数由 WeaveBench trajectory-aware judge 给出。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Case：表面正确，语义错误">
-    <div class="top"><b>12 · REAL CASE / DOC_TASK_2 + DOC_TASK_4</b><span>LibreOffice Writer / Calc</span></div>
+    <div class="top"><b>12 · 真实案例 / DOC_TASK_2 + DOC_TASK_4</b><span>LibreOffice Writer / Calc</span></div>
     <h2>视觉完成、文件语义、修复前证据是三种不同的验收条件</h2>
-    <div class="body"><div class="judge"><div><h3>DOC_task_2：heading normalization</h3><p>Baseline 直接编辑 ODT，让标题看起来粗且大，却没有通过指定的 LibreOffice workflow，也没有正确写入底层 style/outline level，judge 给 0.00。</p><p>LongHorizon-Harness 用 CLI 检查 ODT 结构，再回到 GUI 完成应用内修改并复核，得分 0.89。</p><div class="control"><span>外观像 heading ≠ 底层 style 是 heading</span></div></div><div><h3>DOC_task_4：修复 VLOOKUP</h3><p>任务同时要求证明修复前的错误和修复后的正确结果。Baseline 修完再补前态截图，重开文件后错误状态已经不可恢复，证据链自相矛盾，得分 0.45。</p><p>Harness 把 pre-repair evidence 设为 pending prerequisite，先保存前态，再修改公式和复核，得分 0.87。</p><div class="control"><span>先保存不可逆前态，再执行 repair</span></div></div></div></div>
+    <div class="body"><div class="judge"><div><h3>DOC_task_2：统一标题样式</h3><p>Baseline 发现 FakeBoldParagraph 后直接编辑 XML，没有按要求在 LibreOffice 中操作，也未证实 PDF 导出，judge 给 0.00。</p><p>LongHorizon 通过 GUI 应用 Heading 1，逐页复查；Auditor 随后解析 XML，确认 15 个标题为 Heading_20_1、outline-level=1，得 0.89。</p><div class="control"><span>先 GUI 修改，再 XML 核验</span></div></div><div><h3>DOC_task_4：修复 VLOOKUP</h3><p>Baseline 已保存部分初始错误截图，但证据未收全就改 XML；重开仍有 Err:510，文件与截图序列不一致，得 0.45。</p><p>LongHorizon 把缺失的修复前截图留作待办，收全后才修改，再核验九张前后截图，得 0.87。</p><div class="control"><span>先收全修复前证据，再修改</span></div></div></div></div>
     <div class="foot"><span>论文 §3.4，Figures 8、9、12。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="Case：隐藏验收条件">
-    <div class="top"><b>13 · TERMINAL-BENCH CASES</b><span>最终 verifier 与内部 auditor 仍是两层</span></div>
-    <h2>CLI 任务里，file exists 往往只满足了最弱的一条条件</h2>
-    <div class="body"><div class="judge"><div><h3>SQLite gcov build</h3><p>任务要求编译带 gcov instrumentation 的 SQLite。验收条件包含可执行文件可运行、覆盖率符号存在、<code>.gcno</code> 文件生成，以及约定路径下的持久化结果。</p><p>Baseline 得到 reward 0；Harness 把多条件 build 写进 contract，逐项编译、检查与修复，reward 1。</p></div><div><h3>mystery binary</h3><p>Agent 需要独立复刻目标二进制行为。字符串、strace 和局部输出只能作为 hypothesis。最终 artifact 还要能编译、在多类输入上行为一致，并满足大小和独立性约束。</p><p>Harness 把探索结果保存为 audited facts，直到 C 实现跨过最终 verifier，reward 1。</p></div></div></div>
+    <div class="top"><b>13 · TERMINAL-BENCH 案例</b><span>最终测试与内部核验仍是两层</span></div>
+    <h2>文件存在、可以编译，不等于所有测试通过</h2>
+    <div class="body"><div class="judge"><div><h3>SQLite：编译并启用覆盖率</h3><p>gcov 用于检查代码哪些部分运行过。对照的编译和 PATH 测试通过，但覆盖率测试失败，reward 0。</p><p>LongHorizon 在六轮中检查源码、编译位置、覆盖率符号、<code>.gcno</code> 文件和最终保存位置，三项测试全过，reward 1。</p></div><div><h3>mystery binary：独立复刻图像</h3><p>对照文件存在且能编译，但图像相似度测试失败。LongHorizon 交付独立 C 程序，静态编译，gzip 后小于 2000 字节，不调用原程序。</p><p>公开案例中图像一致，移走原程序后 MD5 仍一致；九轮后 reward 1。未展示多类输入，不据此宣称普遍等价。</p></div></div></div>
     <div class="foot"><span>论文 Appendix C.2，Figures 19–20。Terminal-Bench 任务的最终 reward 由官方 tests 产生。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="主结果如何读">
-    <div class="top"><b>14 · RESULTS</b><span>蓝色只表示本文配置，不表示所有行都能直接比较</span></div>
-    <h2>稳定提升出现在 matched pairs；最大数字未必是最干净的因果证据</h2>
-    <div class="body"><div class="results"><div class="bars"><div class="bar"><span>Weave baseline</span><div class="track"><div class="fill" style="width:51.8%;opacity:.42"></div></div><strong>51.8</strong></div><div class="bar"><span>Weave + LH</span><div class="track"><div class="fill" style="width:80.7%"></div></div><strong>80.7</strong></div><div class="bar"><span>Terminal baseline</span><div class="track"><div class="fill" style="width:69.7%;opacity:.42"></div></div><strong>69.7</strong></div><div class="bar"><span>Terminal + LH</span><div class="track"><div class="fill" style="width:77.2%"></div></div><strong>77.2</strong></div><div class="bar"><span>OSWorld baseline</span><div class="track"><div class="fill" style="width:21.5%;opacity:.42"></div></div><strong>21.5</strong></div><div class="bar"><span>OSWorld + LH</span><div class="track"><div class="fill" style="width:35.2%"></div></div><strong>35.2</strong></div></div><div class="result-notes"><div><b>WeaveBench</b><span>同 Qwen 3.7-Plus、同 Claude Code executor；权限设置与官方榜单不同，所以 41.2 只能作参考。</span></div><div><b>Terminal-Bench</b><span>69.7→77.2 为同模型、同 Claude Code 的主对比，每题三次。</span></div><div><b>OSWorld</b><span>2.8→8.3 Binary、21.5→35.2 Partial；同时改变了 orchestration 与 GUI-only / hybrid tool pool。</span></div></div></div></div>
+    <div class="top"><b>14 · 主结果</b><span>蓝色只表示本文配置，不表示所有行都能直接比较</span></div>
+    <h2>稳定提升出现在条件相同的配对实验；最大数字未必是最干净的因果证据</h2>
+    <div class="body"><div class="results"><div class="bars"><div class="bar"><span>Weave baseline</span><div class="track"><div class="fill" style="width:51.8%;opacity:.42"></div></div><strong>51.8</strong></div><div class="bar"><span>Weave + LH</span><div class="track"><div class="fill" style="width:80.7%"></div></div><strong>80.7</strong></div><div class="bar"><span>Terminal baseline</span><div class="track"><div class="fill" style="width:69.7%;opacity:.42"></div></div><strong>69.7</strong></div><div class="bar"><span>Terminal + LH</span><div class="track"><div class="fill" style="width:77.2%"></div></div><strong>77.2</strong></div><div class="bar"><span>OSWorld baseline</span><div class="track"><div class="fill" style="width:21.5%;opacity:.42"></div></div><strong>21.5</strong></div><div class="bar"><span>OSWorld + LH</span><div class="track"><div class="fill" style="width:35.2%"></div></div><strong>35.2</strong></div></div><div class="result-notes"><div><b>WeaveBench</b><span>同 Qwen 3.7-Plus、同 Claude Code 执行后端；权限设置与官方榜单不同，所以 41.2 只能作参考。</span></div><div><b>Terminal-Bench</b><span>69.7→77.2 为同模型、同 Claude Code 的主对比，每题三次。</span></div><div><b>OSWorld</b><span>2.8→8.3 Binary、21.5→35.2 Partial；同时改变了多角色编排和可用工具：仅图形操作，或图形界面加命令行。</span></div></div></div></div>
     <div class="foot"><span>论文 Tables 1–3。OSWorld Opus subset 的表格值是 20.6→35.3。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="成本与适用范围">
-    <div class="top"><b>15 · COST AND TASK FIT</b><span>Auditor 是主要新增 token 支出</span></div>
+    <div class="top"><b>15 · 成本与适用范围</b><span>Auditor 是主要新增 token 支出</span></div>
     <h2>可靠性来自更多核验，但成本不是固定倍数</h2>
     <div class="body"><div class="costs"><div><h3>按 benchmark 看总成本</h3><div class="costline"><span>WeaveBench</span><i style="width:58%"></i><b>2.3×</b></div><div class="costline"><span>OSWorld output</span><i style="width:91%"></i><b>3.6×</b></div><div class="costline"><span>Terminal-Bench</span><i style="width:31%;background:var(--green)"></i><b>-24%</b></div><p>Terminal-Bench 中，分轮和审计减少了无效重试；OSWorld 则付出更多观察与恢复。</p></div><div><h3>谁在花新增 token？</h3><div class="costline"><span>Manager</span><i style="width:15%;background:var(--blue)"></i><b>2–8%</b></div><div class="costline"><span>Auditor</span><i style="width:64%;background:var(--orange)"></i><b>19–38%</b></div><p>效果更偏向需要保留、检查、修订多个环境状态的任务。纯数学、短算法或单步感知瓶颈受益较小，部分细分类别还会回退。</p></div></div></div>
     <div class="foot"><span>论文 Figures 4–6；§3.3；Table 4。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="结论与证据边界">
-    <div class="top"><b>16 · TAKEAWAYS</b><span>强工程设计，因果拆分仍未完成</span></div>
-    <h2>状态机与 judge 契约，才是这套方法可复用的部分</h2>
-    <div class="body"><div class="limits"><div class="limit"><b>WHAT IS PROVEN</b><strong>matched harness 对比有明显增益</strong><span>WeaveBench 和 Terminal-Bench 的主 paired results 支持“外置状态 + fresh episode + 独立审计”的整套系统有效。</span></div><div class="limit"><b>MISSING ABLATION</b><strong>三个组件没有拆开消融</strong><span>无法判断收益分别来自 task state、fresh context、Auditor，还是更长总预算与 GUI/CLI 路由。</span></div><div class="limit"><b>PROTOCOL GAP</b><strong>OSWorld 同时改变 tool pool</strong><span>baseline 是 single-action GUI，本文是 hybrid GUI+CLI，因此不能把全部提升归于 MEA。</span></div><div class="limit"><b>RESEARCH NEXT</b><strong>让 audit 变便宜、可校准</strong><span>应测 auditor false positive、不同模型交叉审计、固定 compute 下的预算分配，以及各组件独立贡献。</span></div></div></div>
+    <div class="top"><b>16 · 结论与边界</b><span>整套系统有增益，各组件贡献仍未拆清</span></div>
+    <h2>可复用的是任务状态与明确验收条件</h2>
+    <div class="body"><div class="limits"><div class="limit"><b>已有证据</b><strong>同模型、同执行程序有总体增益</strong><span>WeaveBench 和 Terminal-Bench 的配对结果支持整套系统有效，尚未控制相同总 token 成本。</span></div><div class="limit"><b>缺少消融</b><strong>三个组件没有拆开检验</strong><span>无法判断收益分别来自进度记录、新会话、Auditor，还是更多计算与 GUI/CLI 分派。</span></div><div class="limit"><b>最强反例</b><strong>原本满分也会被做坏</strong><span>OSWorld Opus 子集的 021、030 都从 1 降到 0；Weave Desktop 平均分 0.8671→0.8465。</span></div><div class="limit"><b>下一步实验</b><strong>检验核验准确性与成本</strong><span>测误放行、跨模型互审、固定总预算和各组件贡献；OSWorld 的工具变化也要单独控制。</span></div></div></div>
     <div class="foot"><span><a href="https://arxiv.org/abs/2608.01964">论文</a> · <a href="https://github.com/AMAP-ML/LongHorizon-Harness">官方代码</a></span><span class="pg"></span></div>
   </section>
 </main>
@@ -156,15 +162,66 @@
   const slides=[...document.querySelectorAll('.slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
   if(window.self===window.top)returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
-  function scaleDeck(){const scale=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`scale(${scale})`;deck.style.left=`${(innerWidth-1600*scale)/2}px`;deck.style.top=`${(innerHeight-900*scale)/2}px`}
+  function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
   function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · LongHorizon-Harness`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
   async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
   function syncFullscreen(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出':'全屏'}
   slides.forEach((slide,i)=>{const pg=slide.querySelector('.pg');if(pg)pg.textContent=`${String(i+1).padStart(2,'0')} / ${slides.length}`;const button=document.createElement('button');button.type='button';button.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${slide.dataset.title}</span>`;button.addEventListener('click',()=>{show(i);closeOverview()});overviewGrid.appendChild(button)});
-  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);
+  document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',toggleFullscreen);document.addEventListener('fullscreenchange',syncFullscreen);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1),10)||1)-1,false));addEventListener('resize',scaleDeck);document.addEventListener('fullscreenchange',scaleDeck);new ResizeObserver(scaleDeck).observe(document.getElementById('controls'));
   addEventListener('keydown',event=>{if(event.key==='Escape'){if(!overview.hidden){closeOverview();return}if(document.fullscreenElement){document.exitFullscreen();return}}if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f'){event.preventDefault();toggleFullscreen()}});
   show(index,false);scaleDeck();syncFullscreen();
+})();
+</script>
+<script>
+(() => {
+  const panel = document.getElementById('overview-panel');
+  const trigger = document.getElementById('toc');
+  const close = document.getElementById('close-overview');
+  const canvas = document.getElementById('deck');
+  const controls = document.getElementById('controls');
+  if (!panel || !trigger || !close) return;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', '幻灯片总览');
+  trigger.setAttribute('aria-controls', panel.id);
+  const synchronize = () => {
+    const open = !panel.hidden;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (canvas) canvas.inert = open;
+    if (controls) controls.inert = open;
+    if (open) close.focus({ preventScroll: true });
+    else trigger.focus({ preventScroll: true });
+  };
+  new MutationObserver(synchronize).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  trigger.setAttribute('aria-expanded', String(!panel.hidden));
+  document.addEventListener('keydown', (event) => {
+    if (!panel.hidden) {
+      if (event.key === 'Escape' || event.key.toLowerCase() === 'o') {
+        event.preventDefault(); event.stopImmediatePropagation(); close.click(); return;
+      }
+      if (event.key === 'Tab') {
+        const items = [...panel.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+          .filter((item) => item.getClientRects().length > 0);
+        if (items.length) {
+          const index = items.indexOf(document.activeElement);
+          event.preventDefault(); event.stopImmediatePropagation();
+          items[(index + (event.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+        }
+        return;
+      }
+      event.stopImmediatePropagation(); return;
+    }
+    if (event.key.toLowerCase() === 'o') {
+      event.preventDefault(); event.stopImmediatePropagation(); trigger.click(); return;
+    }
+    if (event.key === 'Escape' && !document.fullscreenElement && window.parent !== window) {
+      window.parent.postMessage({ type: 'paper-deck-escape' }, location.origin);
+    }
+  }, true);
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && panel.hidden) document.getElementById('full')?.focus({ preventScroll: true });
+  });
 })();
 </script>
 </body>

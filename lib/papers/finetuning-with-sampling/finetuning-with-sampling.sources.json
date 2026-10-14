@@ -1,47 +1,877 @@
 {
-  "schema_version": 2,
-  "paper": {"title":"Finetuning with Sampling: SFT Learns Better Than You Think","kind":"research","primary_source_ids":["paper","official-code"]},
-  "artifacts": {"article":"content/_posts/064-finetuning-with-sampling.md","deck":"lib/decks/finetuning-with-sampling-visual-guide.html","embed_src":"/lib/decks/finetuning-with-sampling-visual-guide.html"},
+  "schema_version": 3,
+  "paper": {
+    "title": "Finetuning with Sampling: SFT Learns Better Than You Think",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper",
+      "official-code"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/064-finetuning-with-sampling.md",
+    "deck": "lib/decks/finetuning-with-sampling-visual-guide.html",
+    "embed_src": "/lib/decks/finetuning-with-sampling-visual-guide.html"
+  },
   "sources": [
-    {"id":"paper","kind":"paper","title":"Finetuning with Sampling: SFT Learns Better Than You Think","url":"https://arxiv.org/pdf/2610.02140v1","revision":"v1","used_for":["problem","theory","algorithm","experiments","appendix-cases","limitations"]},
-    {"id":"arxiv-meta","kind":"metadata","title":"arXiv metadata for 2610.02140","url":"https://export.arxiv.org/api/query?id_list=2610.02140","revision":"checked 2026-10-07","used_for":["v1-date","title","authors"]},
-    {"id":"official-code","kind":"code","title":"Finetuning with Sampling official repository","url":"https://github.com/aakaran/finetuning-with-sampling","revision":"aa7080885f114fdc5d141f19c09f53008a1c061e","used_for":["sampling-implementation","correctness-field","seed","trace-field","release-boundary"]}
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Finetuning with Sampling: SFT Learns Better Than You Think",
+      "url": "https://arxiv.org/pdf/2610.02140v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "theory",
+        "algorithm",
+        "experiments",
+        "appendix-cases",
+        "limitations"
+      ]
+    },
+    {
+      "id": "arxiv-meta",
+      "kind": "metadata",
+      "title": "arXiv metadata for 2610.02140",
+      "url": "https://export.arxiv.org/api/query?id_list=2610.02140",
+      "revision": "checked 2026-10-07",
+      "used_for": [
+        "v1-date",
+        "title",
+        "authors"
+      ]
+    },
+    {
+      "id": "official-code",
+      "kind": "code",
+      "title": "Finetuning with Sampling official repository",
+      "url": "https://github.com/aakaran/finetuning-with-sampling",
+      "revision": "aa7080885f114fdc5d141f19c09f53008a1c061e",
+      "used_for": [
+        "sampling-implementation",
+        "correctness-field",
+        "seed",
+        "trace-field",
+        "release-boundary"
+      ]
+    }
   ],
-  "paper_reading": {"main_agent_complete_read":true,"appendices_included":true,"extracted_text_reviewed":true,"rendered_pages_reviewed":true,"page_count":19,"rendered_page_ranges":[{"start":1,"end":19}],"source_visuals_expected":8,"visual_inventory_complete":true,"inventory_note":"All 19 pages, Appendix A examples, Appendix B results, and Appendix C implementation notes were checked as text and rendered pages. No paper pixels are reused because no reusable license was established; method and result facts are redrawn."},
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 19,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 19
+      }
+    ],
+    "source_visuals_expected": 8,
+    "visual_inventory_complete": true,
+    "inventory_note": "All 19 pages, Appendix A examples, Appendix B results, and Appendix C implementation notes were checked as text and rendered pages. No paper pixels are reused because no reusable license was established; method and result facts are redrawn.",
+    "current_review": {
+      "review_date": "2026-10-14",
+      "main_agent_complete_read": true,
+      "extracted_text_reviewed": true,
+      "rendered_pages_reviewed": true,
+      "page_count": 19,
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 19
+        }
+      ],
+      "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/three-papers-2026-10-05/finetuning-with-sampling.txt",
+      "notes": "Complete root v1 text and 19 renders; fixedaa708088 boost_sci.py and canonical checker; retained metric-specific negatives, algorithm/code differences and judge/selection/cost boundaries."
+    }
+  },
   "note_sections": [
-    {"role":"problem","locator":"Q1. 为什么不直接用专家解题记录做 SFT？"},
-    {"role":"related-work","locator":"Q2. 它与强化学习、自蒸馏和加权 SFT 有什么区别？"},
-    {"role":"method","locator":"Q3. 从目标分布到公开代码，算法到底做了什么？"},
-    {"role":"experiments","locator":"Q4. 实验结果能支持多强的结论？"},
-    {"role":"future-work","locator":"Q5. 这条路线下一步应该怎样验证？"},
-    {"role":"summary","locator":"Q6. 最终应该怎样评价这篇论文？"}
+    {
+      "role": "problem",
+      "locator": "1. Motivation：正确答案也可能不适合学生直接学习"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：改损失、在线训练与先改数据"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：目标分布、理论采样与公开近似"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：新任务收益、旧能力保留与反例"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：固定成本比较严格采样与简单重写"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：先改数据的价值与理论实现缺口"
+    }
   ],
   "coverage": [
-    {"id":"sft-regression","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"p. 9, Table 1, Qwen2.5-3B Math, MATH (3,4,5)"}],"evidence":[{"artifact":"article","quote":"MATH(3,4,5) 同分布测试准确率从 0.315 降到 0.243"},{"artifact":"deck","quote":"专家答案直接做 SFT，数学准确率反而从 0.315 降到 0.243"}]},
-    {"id":"target-distribution","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Section 4.1, Definition 1 and Proposition 1"}],"evidence":[{"artifact":"article","quote":"把基础模型的分布限制在正确集合 `C` 内"},{"artifact":"deck","quote":"在所有正确答案中，保留基础模型原来的相对概率"}]},
-    {"id":"theoretical-guarantees","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Section 4.1-4.3, Proposition 1-3"}],"evidence":[{"artifact":"article","quote":"论文的 Proposition 1 证明 `p_C` 是所有满足答案约束的分布中，对 `p_base` 做 KL 投影得到的唯一解"},{"artifact":"deck","quote":"理论保证的是完整 Metropolis-Hastings 链"}]},
-    {"id":"ideal-algorithm","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Section 4.2, Algorithm 1 and Appendix C.2"}],"evidence":[{"artifact":"article","quote":"Algorithm 1 先从专家轨迹开始，按块扩展当前答案"},{"artifact":"deck","quote":"逐块增长答案，每块内部做 10 轮候选重写"}]},
-    {"id":"released-algorithm","claim_type":"inspected-implementation","source_ids":["official-code"],"source_locators":[{"source_id":"official-code","locator":"boost_sci.py lines 188-220; boost_math.py lines 189-227 at aa708088"}],"evidence":[{"artifact":"article","quote":"公开实现更接近只向高处移动的贪心爬山"},{"artifact":"deck","quote":"公开实现采用贪心规则：只要候选平均对数概率更高就接受"}]},
-    {"id":"real-case","claim_type":"author-claim","source_ids":["paper","official-code"],"source_locators":[{"source_id":"paper","locator":"Appendix A, Chemistry example"},{"source_id":"official-code","locator":"boost_sci.py lines 315-368 at aa708088"}],"evidence":[{"artifact":"article","quote":"真实案例：附录 A 的化学方程式"},{"artifact":"deck","quote":"解法和答案保留，后缀由基础模型重新组织"}]},
-    {"id":"data-correctness","claim_type":"inspected-implementation","source_ids":["paper","official-code"],"source_locators":[{"source_id":"paper","locator":"Appendix C.1"},{"source_id":"official-code","locator":"boost_sci.py lines 337-368; boost_math.py lines 341-366; README at aa708088"}],"evidence":[{"artifact":"article","quote":"论文报告最终改写数据集的正确率在 93.94% 到 95.86% 之间"},{"artifact":"deck","quote":"正确性约 94%–96%"}]},
-    {"id":"compute-cost","claim_type":"reproduced-calculation","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Appendix C.2, Equation 9"}],"evidence":[{"artifact":"article","quote":"每条轨迹约 26.9 万个生成 token"},{"artifact":"deck","quote":"一次性成本约 26.9 万 token/轨迹"}]},
-    {"id":"model-results","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"p. 9, Table 1; Appendix B, Table 2"}],"evidence":[{"artifact":"article","quote":"Sampling SFT 在 Qwen 数学新任务上得到 0.534，超过 GRPO 的 0.457 和 UFT 的 0.452"},{"artifact":"deck","quote":"Sampling SFT 均分 0.534，超过 GRPO 0.457 与 UFT 0.452"}]},
-    {"id":"capability-retention","claim_type":"reproduced-calculation","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"p. 9, Table 1, Qwen2.5-3B Math old-task average"}],"evidence":[{"artifact":"article","quote":"保持率为 `0.420 / 0.422 = 99.5%`"},{"artifact":"deck","quote":"0.420 / 0.422 = 99.5%"}]},
-    {"id":"limitations","claim_type":"interpretation","source_ids":["paper","official-code"],"source_locators":[{"source_id":"paper","locator":"Section 5 and Appendices B-C"},{"source_id":"official-code","locator":"repository inventory at revision aa708088"}],"evidence":[{"artifact":"article","quote":"全部结果都只来自一次实验"},{"artifact":"deck","quote":"单次实验、没有误差条；医疗与 Olmo 有负结果"}]}
+    {
+      "id": "sft-regression",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 9, Table 1, Qwen2.5-3B Math, MATH (3,4,5)"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "MATH(3,4,5) 同分布测试准确率从 0.315 降到 0.243"
+        }
+      ]
+    },
+    {
+      "id": "target-distribution",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1, Definition 1 and Proposition 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "把基础模型的分布限制在正确集合 `C` 内"
+        }
+      ]
+    },
+    {
+      "id": "theoretical-guarantees",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1-4.3, Proposition 1-3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Proposition 3 说明，在这些条件成立时，第 `k+1` 步数据分布到基础模型的 KL 距离不会大于第 `k` 步"
+        }
+      ]
+    },
+    {
+      "id": "ideal-algorithm",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.2, Algorithm 1 and Appendix C.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Algorithm 1 把专家轨迹作为 proposal 的输入，按块扩展当前答案。"
+        },
+        {
+          "artifact": "article",
+          "quote": "每生成一个新块，算法就在已有部分中随机选切分点，用原题、专家解答与保留的前缀生成同长度候选"
+        }
+      ]
+    },
+    {
+      "id": "released-algorithm",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "boost_sci.py lines 188-220; boost_math.py lines 189-227 at aa708088"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公开实现更接近只向高处移动的贪心爬山"
+        },
+        {
+          "artifact": "article",
+          "quote": "打分时却只提供原题，不提供专家解答"
+        }
+      ]
+    },
+    {
+      "id": "real-case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A, Chemistry example"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "boost_sci.py lines 315-368 at aa708088"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "左边 C/H/O 为 3/6/9，右边也是 3/6/9"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有给逐轮候选的概率或接受日志"
+        }
+      ]
+    },
+    {
+      "id": "data-correctness",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.1"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "boost_sci.py lines 337-368; boost_math.py lines 341-366; README at aa708088"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文报告最终改写数据集的正确率在 93.94% 到 95.86% 之间"
+        },
+        {
+          "artifact": "article",
+          "quote": "把 oxane / tetrahydropyran 错写成 five-membered ring（五元环）；它实际是六元环"
+        }
+      ]
+    },
+    {
+      "id": "compute-cost",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.2, Equation 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每条轨迹约 26.9 万个生成 token"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 9, Table 1; Appendix B, Table 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Sampling SFT 在 Qwen 数学新任务上得到 0.534，超过 GRPO 的 0.457 和 UFT 的 0.452"
+        }
+      ]
+    },
+    {
+      "id": "capability-retention",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 9, Table 1, Qwen2.5-3B Math old-task average"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "保持率为 <code>0.420/0.422≈99.5%</code>"
+        },
+        {
+          "artifact": "article",
+          "quote": "Chemistry 实际从 <code>0.283</code> 降到 <code>0.266</code>"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 5 and Appendices B-C"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "repository inventory at revision aa708088"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它没有说明每个最终结果的全部选定参数与独立选择集，也没有给出多随机种子、置信区间或同成本对照"
+        }
+      ]
+    }
   ],
   "source_visuals": [
-    {"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p. 2, Figure 1","status":"omitted","rationale":"Headline chemistry and retention values are restated in new charts.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p. 4, Figure 2","status":"redrawn","rationale":"The target-distribution relation is reconstructed with original HTML and SVG layouts; no paper pixels are reused.","placements":[{"artifact":"article","locator":"根据论文图 2、算法 1 与公开 `boost_sci.py` 重绘"},{"artifact":"deck","locator":"在所有正确答案中，保留基础模型原来的相对概率"}],"permission_status":"not-applicable","permission_basis":"Original composition based on cited facts.","credit":"根据论文 Figure 2 重绘","asset_paths":[]},
-    {"id":"algorithm-1","kind":"algorithm","label":"Algorithm 1","source_id":"paper","source_locator":"p. 6, Algorithm 1","status":"redrawn","rationale":"The ideal MH steps are reconstructed as an original five-stage HTML flow and compared with released code.","placements":[{"artifact":"article","locator":"Algorithm 1 的完整流程与成本"},{"artifact":"deck","locator":"逐块增长答案，每块内部做 10 轮候选重写"}],"permission_status":"not-applicable","permission_basis":"Original composition based on cited algorithm steps.","credit":"根据论文 Algorithm 1 重绘","asset_paths":[]},
-    {"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p. 9, Table 1","status":"redrawn","rationale":"Selected controlled comparisons, old-capability retention, and negative results are redrawn in original tables and cards.","placements":[{"artifact":"article","locator":"Qwen2.5-3B 数学平均分"},{"artifact":"deck","locator":"Sampling SFT 均分 0.534，超过 GRPO 0.457 与 UFT 0.452"}],"permission_status":"not-applicable","permission_basis":"Original composition using published values.","credit":"根据论文 Table 1 数据重绘","asset_paths":[]},
-    {"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p. 10, Figure 3","status":"omitted","rationale":"Likelihood-shift direction is described without copying the histogram.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p. 11, Figure 4","status":"omitted","rationale":"Pass-at-k evidence is summarized in prose because exact plotted samples are not tabulated.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p. 11, Figure 5","status":"omitted","rationale":"The monotonic trend is reported with its experiment scope instead of tracing the plot.","placements":[],"permission_status":"not-applicable","permission_basis":"Paper pixels not reused.","credit":"","asset_paths":[]},
-    {"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"Appendix B, Table 2","status":"redrawn","rationale":"Olmo chemistry and retention values are restated in an original chart, article table, and deck card.","placements":[{"artifact":"article","locator":"Olmo-3-7B 化学"},{"artifact":"deck","locator":"Olmo 化学：58.3 对 59.7"}],"permission_status":"not-applicable","permission_basis":"Original composition using published values.","credit":"根据论文 Table 2 数据重绘","asset_paths":[]}
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 2, Figure 1",
+      "status": "omitted",
+      "rationale": "Headline chemistry and retention values are restated in new charts.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Paper pixels not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 4, Figure 2",
+      "status": "redrawn",
+      "rationale": "The conditioning/proposal flow is redrawn as a public greedy approximation distinct from the theoretical MH target distribution.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文图 2、算法 1 与公开 <code>boost_sci.py</code> 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "在所有正确答案中，保留基础模型原来的相对概率"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Figure 2 与 Algorithm 1 整理",
+      "asset_paths": [
+        "/lib/papers/finetuning-with-sampling/body-method.svg"
+      ]
+    },
+    {
+      "id": "algorithm-1",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper",
+      "source_locator": "p. 6, Algorithm 1",
+      "status": "redrawn",
+      "rationale": "Block growth, proposal and acceptance are reorganized in HTML; theoretical transition and release approximation remain distinct.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "逐块采样与计算成本"
+        },
+        {
+          "artifact": "deck",
+          "locator": "逐块增长答案，每块内部做 10 轮候选重写"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Algorithm 1 整理",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 1",
+      "status": "redrawn",
+      "rationale": "Published mathematical metrics and mean are displayed without treating new-task mean as MATH accuracy.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文 Table 1 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Sampling SFT 均分 0.534，超过 GRPO 0.457 与 UFT 0.452"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original composition using published facts; source pixels not reused.",
+      "credit": "根据论文 Table 1 重绘",
+      "asset_paths": [
+        "/lib/papers/finetuning-with-sampling/body-results.svg"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 10, Figure 3",
+      "status": "omitted",
+      "rationale": "Likelihood-shift direction is described without copying the histogram.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Paper pixels not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 4",
+      "status": "omitted",
+      "rationale": "Pass-at-k evidence is summarized in prose because exact plotted samples are not tabulated.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Paper pixels not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 5",
+      "status": "omitted",
+      "rationale": "The monotonic trend is reported with its experiment scope instead of tracing the plot.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Paper pixels not reused.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "Appendix B, Table 2",
+      "status": "redrawn",
+      "rationale": "Olmo chemistry and retention values are restated in an original chart, article table, and deck card.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Olmo-3-7B 化学"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Olmo 化学：58.3 对 59.7"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "Original composition using published values.",
+      "credit": "根据论文 Table 2 数据重绘",
+      "asset_paths": []
+    }
   ],
   "figures": [
-    {"path":"/lib/papers/finetuning-with-sampling/cover.svg","origin":"generated","source_id":"paper","source_locator":"Figure 2, Algorithm 1 and official boost_sci.py","credit":"根据论文与公开实现重新绘制","license_status":"not-applicable","license_basis":"Original SVG composition using verified facts.","used_in":["article"]},
-    {"path":"/lib/papers/finetuning-with-sampling/results.svg","origin":"generated","source_id":"paper","source_locator":"Table 1","credit":"根据论文 Table 1 数据重新绘制","license_status":"not-applicable","license_basis":"Original SVG composition using published values.","used_in":["article"]}
+    {
+      "path": "/lib/papers/finetuning-with-sampling/body-case.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "Appendix A and C.1–C.2; fixed boost_sci.py aa708088",
+      "credit": "根据原论文附录真实输出及公开代码整理；FAIL 配平为本文构造",
+      "license_status": "not-applicable",
+      "license_basis": "Original editable SVG layout; no source pixels reused.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/finetuning-with-sampling/body-method.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Figure 2; Algorithm 1; fixed boost_sci.py aa708088",
+      "credit": "根据论文 Figure 2 与公开实现重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG composition using primary-source facts.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "figure-2"
+    },
+    {
+      "path": "/lib/papers/finetuning-with-sampling/body-results.svg",
+      "origin": "author-redrawn",
+      "source_id": "paper",
+      "source_locator": "Table 1",
+      "credit": "根据论文 Table 1 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG composition using primary-source facts.",
+      "used_in": [
+        "article"
+      ],
+      "source_visual_id": "table-1"
+    }
   ],
-  "qa": {"reading_layout":{"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"sans-serif","body_font_px":17,"line_height":1.76,"figures_centered":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},"viewports":[{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],"tested_surfaces":{"article_body":true,"embedded_deck":true,"standalone_deck":true},"language_review":{"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},"interactions":{"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},"inspected_slides":["opening","densest","largest-table-or-code","final"]}
+  "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 8 slides read. Distinguished theory pC and Metropolis-Hastings sampling from release greedy mean-token log probability; generation sees the answer but scoring does not. Rechecked 269,120 tokens, balanced chemical coefficients (3,3,1,3), invalid scale-two reference, incorrect five-member oxane intermediate, is_correct not used for filtering, math/medicine/Olmo negative results, and unequal budgets."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "9ca0cca9f882351ea6f867fe18b0939fb0ab54972fee91a8f94ae0e77c8bb893",
+      "built_article": "9e53656fff0a9ce2d3725ebbedc63d0e5b15ccb7d15d69bc53eb98a35a4b7704",
+      "deck": "77299c8eaaa727078add1e7a37b538e570198f7f96bc9e586039ae723ff41df3",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-064/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-064/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-064.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "SFT",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Introduction and Section 3: standard SFT"
+        }
+      ],
+      "article_quote": "监督微调（SFT，用固定问题/回答训练）"
+    },
+    {
+      "term": "Metropolis-Hastings",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.2: acceptance transition"
+        }
+      ],
+      "article_quote": "Metropolis-Hastings（MH，一种按接受概率在候选之间移动的采样算法）"
+    },
+    {
+      "term": "off-policy expert trajectory",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Introduction/Section 3: demonstration source"
+        }
+      ],
+      "article_quote": "这里的 **off-policy expert trajectory** 是由别人或另一套系统提供的正确解答。Off-policy 指数据不是当前模型自己生成"
+    },
+    {
+      "term": "information projection",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1, Proposition 1"
+        }
+      ],
+      "article_quote": "答案仍与专家解答等价，但在这些正确答案里尽量遵循基础模型的概率分布。这个条件分布写成 `p_C`"
+    },
+    {
+      "term": "proposal",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Algorithm 1 and boost_sci.py generation vs likelihood calls"
+        }
+      ],
+      "article_quote": "<code>proposal_vLLM</code> 让它看到原题、完整专家解答和当前前缀，继续生成后缀"
+    }
+  ],
+  "editorial_revision": {
+    "date": "2026-10-13",
+    "scope": "Substantive clarification of roles, cases, evaluation conditions, controlled comparisons, limits and article/deck consistency.",
+    "primary_checks": "Extracted main/appendix evidence and git-show code aa708088 reviewed; original chemistry outputs and ring-structure error inspected. Arithmetic check executed. No fresh page-by-page rendering of all 19 pages.",
+    "full_paper_reading_record": "paper_reading preserves the previous complete-reading record; this revision does not recertify every rendered page.",
+    "rendering": "All three new article-column SVGs rendered and directly inspected at 780px. Complete three-surface browser run performed at three viewports before the final shared-CSS rebuild; final affected article/typography/containment/code/exit checks completed against 22:30:59 +0800 output. See qa.browser_qa_note for exact scopes and mobile limitations."
+  },
+  "qa_history": [
+    {
+      "scope": "Previous artifact version; invalidated by 2026-10-13 content and visual changes",
+      "record": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.76,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ]
+      }
+    },
+    {
+      "archived_at": "2026-10-14",
+      "reason": "Content revised; prior QA does not certify current bytes.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "article_visuals_interleaved": true
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "browser_qa_note": "Complete article/embed/standalone browser run on the 2026-10-13 21:44:41–42 +0800 build covered 8 slides on both deck surfaces at 1600×1000, 1512×982 and 390×844 (48 slide checks), all 3 figure dialogs at all widths, buttons/keyboard/hash/overview/fullscreen/Escape/focus-mode exits and stable return-to-article. The final 22:30:59 +0800 build (Tide CSS v22, article CSS v7, Tide JS v18) was separately rechecked for all three article layouts, every loaded/centered/contained figure, internal code/table/formula scrolling, neutral wrapper colors/typography, bounded section/figure/tail screenshots, focus exits and one figure-dialog exit per width; final-affected-report.json records that affected run, not a new complete slide run. Full prior run record: finetuning-with-sampling-qa-final.json. Dense mobile slides and thumbnails are scaled previews; clear-width figure view requires scrolling and sometimes additional zoom. Mobile viewport was exercised with mouse/pointer, not native-device touch. Very tall fullPage screenshots were not used alone as reading evidence."
+      }
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Video2World: Benchmarking Coding Agents for Interactive World Modeling from Embodied Videos",
     "kind": "benchmark",
@@ -105,32 +105,48 @@
     ],
     "source_visuals_expected": 37,
     "visual_inventory_complete": true,
-    "inventory_note": "The 79-page v1 PDF was read as extracted text and visually reviewed page-by-page in four contact sheets. The inventory contains Figures 1-5, Figures A1-A13, Tables 1-2 and Tables A1-A17. All 18 numbered figures are reused under the paper's CC BY-SA 4.0 license across the article and embedded deck. Table 2 is redrawn; Table 1 is reorganized with additional primary-source comparisons; secondary appendix tables are represented by exact prose or omitted with explicit reasons."
+    "inventory_note": "Complete inventory checked against the 79-page v1 PDF text and all rendered pages. Figures 1–5 and A1–A13; Tables 1–2 and A1–A17. All original figures reuse CC BY-SA 4.0; corrected source table descriptions and locators in current main-agent read.",
+    "current_review": {
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "primary_text": "/Users/chris/Documents/Chris-Lab/projs/bblog/tmp/pdfs/video2world/2610.04432v1.txt",
+      "text_lines_reviewed": "1–4213 including all appendices; current turn 1621–4213 and extraction-gap recheck 81–185, prior turn 1–1620",
+      "rendered_page_ranges": [
+        {
+          "start": 1,
+          "end": 79
+        }
+      ],
+      "rendered_review_location": "tmp/pdfs/video2world-main-reread/contact-01-04.jpg … contact-77-79.jpg",
+      "primary_code_revision": "44b1760c52cc14e519aa88b5a91c374e09b81653",
+      "code_review": "Fixed task.py completion gate/upright verdict/lid coverage, scorer applicability/missing-data/family aggregation and benchmark.md directly inspected.",
+      "changes": "Corrected nine source groups, annotation versus HAR provenance, no invented annotation UI, managed/native budget distinction, CD/APE fitting boundaries, existing conditioned cross-execution findings, Figure A2/A3/A5/A8/A10 captions and PDF-internal denominator/reference conflicts."
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "Q1. 为什么要评测“从视频重建可交互世界”？"
+      "locator": "1. Motivation：视频没有自动给出能交互的模拟世界"
     },
     {
       "role": "related-work",
-      "locator": "Q2. 它与相邻工作差在哪里？"
+      "locator": "2. Related Work：视频策略、场景重建与可执行程序"
     },
     {
       "role": "method",
-      "locator": "Q3. 189 段视频怎样变成 222 个实例，Agent 能看到什么？"
+      "locator": "3. Benchmark / Protocol：视频、人工参考与隐藏物理判定"
     },
     {
       "role": "experiments",
-      "locator": "Q4. evaluator 怎样把一个 package 变成 PASS / FAIL？"
+      "locator": "4. Experiments：能构建与能完成任务之间的距离"
     },
     {
       "role": "future-work",
-      "locator": "Q5. 九个系统表现如何，这对下一步研究意味着什么？"
+      "locator": "5. Discussion：先对齐分母，再区分感知与控制的失败"
     },
     {
       "role": "summary",
-      "locator": "Q6. 这篇论文真正证明了什么，还有哪些问题没解决？"
+      "locator": "6. Conclusion：可执行评测已经建立，可靠重建尚未解决"
     }
   ],
   "coverage": [
@@ -149,7 +165,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "coding agent 能否只看一段真实的人或机器人的操作视频，写出一个能在物理模拟器中重新执行该任务的完整 package"
+          "quote": "要求它写出一个能在物理模拟器中完成同一任务的程序包"
         }
       ]
     },
@@ -163,21 +179,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 3.1; Appendices 8.1-8.2; Tables A2-A4; Figure A1"
+          "locator": "Appendix B.1 / Table A8"
         },
         {
-          "source_id": "official-data",
-          "locator": "public benchmark release checked 2026-10-06"
+          "source_id": "paper",
+          "locator": "Appendix B.1–B.2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "作者从八类数据来源收集 189 段视频"
+          "quote": "作者把 189 段视频配到目标模拟器"
         },
         {
-          "artifact": "deck",
-          "quote": "189 段视频经过 target configuration 展开成 222 个实例"
+          "artifact": "article",
+          "quote": "其中 33 段人类视频各配机械臂"
         }
       ]
     },
@@ -191,21 +207,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Appendices 8.3, 8.5 and 8.7; Figures A2, A4-A5"
+          "locator": "Appendix B.3 / B.5 / B.7"
         },
         {
-          "source_id": "official-code",
-          "locator": "v2w/metrics/task.py at revision 44b1760c"
+          "source_id": "paper",
+          "locator": "Appendix B.7"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "任务判定来自 benchmark 作者编写和复核的 task definition 与 evaluator 逻辑，具体门槛随 task family 改变"
+          "quote": "作者先用源数据构造隐藏标注，再另做人类辅助重建"
         },
         {
-          "artifact": "deck",
-          "quote": "人工复核的对象级评测规则定义任务是否完成，不要求逐像素复刻"
+          "artifact": "article",
+          "quote": "参考执行失败不会自动使一个标注作废"
         }
       ]
     },
@@ -229,11 +245,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Agent 明确看不到什么？"
+          "quote": "按任务制定的成功条件与评测分数"
         },
         {
-          "artifact": "deck",
-          "quote": "reference geometry、trajectory 和 judge 全部隐藏"
+          "artifact": "article",
+          "quote": "这个案例没有赋予 Agent 直接运行 simulator 的工具"
         }
       ]
     },
@@ -247,7 +263,7 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 3.3; Appendix 9.7; Equation 30"
+          "locator": "Section 3.3; Appendix C.7; Equation 30"
         },
         {
           "source_id": "official-code",
@@ -276,7 +292,7 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Appendix 8.4; Figure A3"
+          "locator": "Appendix B.4; Figure A3"
         },
         {
           "source_id": "official-code",
@@ -293,8 +309,8 @@
           "quote": "0.4 秒抓住瓶子，2.6 秒开始移动，12.8 秒松手，19.2 秒才完成终态判定"
         },
         {
-          "artifact": "deck",
-          "quote": "success = geometry_ok and released and quiescent"
+          "artifact": "article",
+          "quote": "代码返回失败，原因是 <code>still held or release unrecorded</code>"
         }
       ]
     },
@@ -316,8 +332,8 @@
           "quote": "不能概括成“整个重建最准确”"
         },
         {
-          "artifact": "deck",
-          "quote": "最强系统 build 约 93%，Task Success 却只有 25.5%"
+          "artifact": "article",
+          "quote": "自动系统与人类辅助重建之间仍有明显距离"
         }
       ]
     },
@@ -341,11 +357,11 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Video2World 把视频理解、场景重建、目标 embodiment"
+          "quote": "它要求把理解视频、恢复场景和控制目标机器人一起交付"
         },
         {
-          "artifact": "deck",
-          "quote": "Video2World 位于 policy、real-to-sim、3D reconstruction 与 simulator coding 的交叉处"
+          "artifact": "article",
+          "quote": "Table 2 是 **system-level comparison"
         }
       ]
     },
@@ -359,21 +375,21 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 4.2 and 6; Appendices 8.5-8.7, 9.4-9.5, 10-13; Table A12"
+          "locator": "Appendix C.4–C.5, PDF p.60 Table A12"
         },
         {
-          "source_id": "official-code",
-          "locator": "public repository and scorer at revision 44b1760c"
+          "source_id": "paper",
+          "locator": "Appendix C.5 versus Table 2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文没有解释 222 与 215 的七个实例差额，也无法确定这里指哪张表"
+          "quote": "论文也没有解释 222 与 215 的七个实例差额"
         },
         {
-          "artifact": "deck",
-          "quote": "OpenCode、Codex CLI、Claude Code 使用的 harness 不同"
+          "artifact": "article",
+          "quote": "附录 C.5 却列 113/222（50.9% 实例率）及 57.3% 类别均值"
         }
       ]
     }
@@ -440,7 +456,7 @@
       "placements": [
         {
           "artifact": "deck",
-          "locator": "Figure 3 · 12 名内部 rater"
+          "locator": "Figure 3 · 12 名内部评审"
         }
       ],
       "permission_status": "verified-allowed",
@@ -482,7 +498,7 @@
       "placements": [
         {
           "artifact": "deck",
-          "locator": "Figure 5 · 40 个成功 HAR instances"
+          "locator": "Figure 5 · 40 个原始评分下成功的 HAR 实例"
         }
       ],
       "permission_status": "verified-allowed",
@@ -497,7 +513,7 @@
       "kind": "figure",
       "label": "Figure A1",
       "source_id": "paper",
-      "source_locator": "Appendix 8.2, Figure A1",
+      "source_locator": "Appendix B.2, Figure A1",
       "status": "reused",
       "rationale": "The complete family inventory makes the 222-instance denominator inspectable.",
       "placements": [
@@ -518,7 +534,7 @@
       "kind": "figure",
       "label": "Figure A2",
       "source_id": "paper",
-      "source_locator": "Appendix 8.3, Figure A2",
+      "source_locator": "Appendix B.3, Figure A2",
       "status": "reused",
       "rationale": "It exposes how a video becomes an object-level evaluation specification.",
       "placements": [
@@ -543,7 +559,7 @@
       "kind": "figure",
       "label": "Figure A3",
       "source_id": "paper",
-      "source_locator": "Appendix 8.4, Figure A3",
+      "source_locator": "Appendix B.4, Figure A3",
       "status": "reused",
       "rationale": "This is the paper's complete worked evaluation example.",
       "placements": [
@@ -568,7 +584,7 @@
       "kind": "figure",
       "label": "Figure A4",
       "source_id": "paper",
-      "source_locator": "Appendix 8.5, Figure A4",
+      "source_locator": "Appendix B.5, Figure A4",
       "status": "reused",
       "rationale": "It documents HAR outcomes and the limited scope of recorded trial histories.",
       "placements": [
@@ -589,7 +605,7 @@
       "kind": "figure",
       "label": "Figure A5",
       "source_id": "paper",
-      "source_locator": "Appendix 8.7, Figure A5",
+      "source_locator": "Appendix B.7, Figure A5",
       "status": "reused",
       "rationale": "It gives concrete counterexamples separating task completion from geometry.",
       "placements": [
@@ -614,7 +630,7 @@
       "kind": "figure",
       "label": "Figure A6",
       "source_id": "paper",
-      "source_locator": "Appendix 10, Figure A6",
+      "source_locator": "Appendix D.1, Figure A6",
       "status": "reused",
       "rationale": "The plot provides the exact direct-reuse and adaptation comparison under shifted layouts.",
       "placements": [
@@ -635,7 +651,7 @@
       "kind": "figure",
       "label": "Figure A7",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A7",
+      "source_locator": "Appendix F.1, Figure A7",
       "status": "reused",
       "rationale": "It shows successful completion despite pose disagreement.",
       "placements": [
@@ -656,13 +672,13 @@
       "kind": "figure",
       "label": "Figure A8",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A8",
+      "source_locator": "Appendix F.1, Figure A8",
       "status": "reused",
       "rationale": "It shows why endpoint proximity is insufficient.",
       "placements": [
         {
           "artifact": "deck",
-          "locator": "A8 · 终点接近通过"
+          "locator": "A8 · 终点接近目标"
         }
       ],
       "permission_status": "verified-allowed",
@@ -677,13 +693,13 @@
       "kind": "figure",
       "label": "Figure A9",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A9",
+      "source_locator": "Appendix F.2, Figure A9",
       "status": "reused",
       "rationale": "Nine systems on one bowl task reveal geometry/function disagreement.",
       "placements": [
         {
           "artifact": "deck",
-          "locator": "A9 · 同一 bowl-nesting 视频"
+          "locator": "A9 · 同一套碗视频"
         }
       ],
       "permission_status": "verified-allowed",
@@ -698,13 +714,13 @@
       "kind": "figure",
       "label": "Figure A10",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A10",
+      "source_locator": "Appendix F.2, Figure A10",
       "status": "reused",
       "rationale": "Nine systems on one lift task expose physical-validity failures.",
       "placements": [
         {
           "artifact": "deck",
-          "locator": "A10 · can 被抬高"
+          "locator": "A10 · 罐子被抬高"
         }
       ],
       "permission_status": "verified-allowed",
@@ -719,7 +735,7 @@
       "kind": "figure",
       "label": "Figure A11",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A11",
+      "source_locator": "Appendix F.2, Figure A11",
       "status": "reused",
       "rationale": "It separates task-condition misses from physical-validity rejection for the two nine-model cases.",
       "placements": [
@@ -740,7 +756,7 @@
       "kind": "figure",
       "label": "Figure A12",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A12",
+      "source_locator": "Appendix F.3, Figure A12",
       "status": "reused",
       "rationale": "It explains functional success with temporal mismatch.",
       "placements": [
@@ -761,7 +777,7 @@
       "kind": "figure",
       "label": "Figure A13",
       "source_id": "paper",
-      "source_locator": "Appendix 12, Figure A13",
+      "source_locator": "Appendix F.4, Figure A13",
       "status": "reused",
       "rationale": "It shows distinct outcomes across two target robots for one demonstration.",
       "placements": [
@@ -792,11 +808,11 @@
       "placements": [
         {
           "artifact": "article",
-          "locator": "Video2World 把视频理解、场景重建"
+          "locator": "视频策略、场景重建与可执行程序"
         },
         {
           "artifact": "deck",
-          "locator": "Video2World 位于 policy"
+          "locator": "它把动作策略、真实场景转模拟、三维重建与代码生成"
         }
       ],
       "permission_status": "not-applicable",
@@ -826,7 +842,8 @@
       "permission_basis": "Original SVG composition using published values.",
       "credit": "根据原论文 Table 2 重绘",
       "asset_paths": [
-        "/lib/papers/video2world/results.svg"
+        "/lib/papers/video2world/results.svg",
+        "/lib/papers/video2world/body-results.svg"
       ]
     },
     {
@@ -834,7 +851,7 @@
       "kind": "table",
       "label": "Table A1",
       "source_id": "paper",
-      "source_locator": "Appendix 7, Table A1",
+      "source_locator": "Appendix A, Table A1",
       "status": "omitted",
       "rationale": "The full environment configuration inventory is summarized by named simulator versions and package requirements.",
       "placements": [],
@@ -848,7 +865,7 @@
       "kind": "table",
       "label": "Table A2",
       "source_id": "paper",
-      "source_locator": "Appendix 8.1, Table A2",
+      "source_locator": "Appendix A, Table A2",
       "status": "omitted",
       "rationale": "Per-source counts are reproduced in the Q3 HTML table.",
       "placements": [],
@@ -862,7 +879,7 @@
       "kind": "table",
       "label": "Table A3",
       "source_id": "paper",
-      "source_locator": "Appendix 8.2, Table A3",
+      "source_locator": "Appendix A, Table A3",
       "status": "omitted",
       "rationale": "The 39-family inventory is provided in original Figure A1 and prose.",
       "placements": [],
@@ -876,7 +893,7 @@
       "kind": "table",
       "label": "Table A4",
       "source_id": "paper",
-      "source_locator": "Appendix 8.2, Table A4",
+      "source_locator": "Appendix A, Table A4",
       "status": "omitted",
       "rationale": "Task composition details are summarized by source and target embodiment in Q3.",
       "placements": [],
@@ -890,7 +907,7 @@
       "kind": "table",
       "label": "Table A5",
       "source_id": "paper",
-      "source_locator": "Appendix 8.3, Table A5",
+      "source_locator": "Appendix A, Table A5",
       "status": "omitted",
       "rationale": "Hidden annotation availability is explained as the public-versus-hidden boundary.",
       "placements": [],
@@ -904,7 +921,7 @@
       "kind": "table",
       "label": "Table A6",
       "source_id": "paper",
-      "source_locator": "Appendix 8.4, Table A6",
+      "source_locator": "Appendix A, Table A6",
       "status": "omitted",
       "rationale": "Worked-example inputs, controls and execution counts are narrated with exact values beside Figure A3.",
       "placements": [],
@@ -918,7 +935,7 @@
       "kind": "table",
       "label": "Table A7",
       "source_id": "paper",
-      "source_locator": "Appendix 8.4, Table A7",
+      "source_locator": "Appendix A, Table A7",
       "status": "omitted",
       "rationale": "Worked-example metric values and event times are reproduced in prose and the case slide.",
       "placements": [],
@@ -932,7 +949,7 @@
       "kind": "table",
       "label": "Table A8",
       "source_id": "paper",
-      "source_locator": "Appendix 8.4, Table A8",
+      "source_locator": "Appendix B.1, Table A8",
       "status": "omitted",
       "rationale": "The upright-bottle judge thresholds are explained directly with inspected code.",
       "placements": [],
@@ -946,7 +963,7 @@
       "kind": "table",
       "label": "Table A9",
       "source_id": "paper",
-      "source_locator": "Appendix 8.5, Table A9",
+      "source_locator": "Appendix B.1, Table A9",
       "status": "omitted",
       "rationale": "Reference-construction workflows are summarized in the HAR discussion.",
       "placements": [],
@@ -960,7 +977,7 @@
       "kind": "table",
       "label": "Table A10",
       "source_id": "paper",
-      "source_locator": "Appendix 8.5, Table A10",
+      "source_locator": "Appendix B.5, Table A10",
       "status": "omitted",
       "rationale": "Privileged information available to HAR is enumerated in prose next to Figure A4.",
       "placements": [],
@@ -974,7 +991,7 @@
       "kind": "table",
       "label": "Table A11",
       "source_id": "paper",
-      "source_locator": "Appendix 9, Table A11",
+      "source_locator": "Appendix C.5, Table A11",
       "status": "omitted",
       "rationale": "HAR outcome attribution is reproduced with exact instance counts in Q5.",
       "placements": [],
@@ -988,7 +1005,7 @@
       "kind": "table",
       "label": "Table A12",
       "source_id": "paper",
-      "source_locator": "Appendix 9.5, Table A12",
+      "source_locator": "Appendix C.5, Table A12",
       "status": "omitted",
       "rationale": "All three per-instance denominators and the missing cross-reference are discussed explicitly in Q6.",
       "placements": [],
@@ -1002,9 +1019,9 @@
       "kind": "table",
       "label": "Table A13",
       "source_id": "paper",
-      "source_locator": "Appendix 9.7, Table A13",
+      "source_locator": "Appendix D.1, Table A13",
       "status": "omitted",
-      "rationale": "V2WScore weights and thresholds are reproduced from the public scorer and score.json.",
+      "rationale": "Cross-execution cells are described in article and added deck slide; full source layout is not reproduced.",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "Source layout not reused.",
@@ -1016,13 +1033,18 @@
       "kind": "table",
       "label": "Table A14",
       "source_id": "paper",
-      "source_locator": "Appendix 9, Table A14",
-      "status": "omitted",
-      "rationale": "Secondary robustness values are not needed to explain the primary score path.",
-      "placements": [],
+      "source_locator": "Appendix D.1, Table A14",
+      "status": "redrawn",
+      "rationale": "Compact HTML comparison preserves pooled success rates and available-row denominators for both conditioned diagnostic sets.",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "Set A（可用记录合并）"
+        }
+      ],
       "permission_status": "not-applicable",
       "permission_basis": "Source layout not reused.",
-      "credit": "",
+      "credit": "根据 Appendix D.1 / Tables A13–A15 整理",
       "asset_paths": []
     },
     {
@@ -1030,9 +1052,9 @@
       "kind": "table",
       "label": "Table A15",
       "source_id": "paper",
-      "source_locator": "Appendix 10, Table A15",
+      "source_locator": "Appendix D.1, Table A15",
       "status": "omitted",
-      "rationale": "Cross-execution counts are reported exactly in prose and Figure A6 is retained.",
+      "rationale": "Exact own-success both-transfer-failure counts appear in prose and added deck slide; eight-way source contingency layout is not repeated.",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "Source layout not reused.",
@@ -1044,9 +1066,9 @@
       "kind": "table",
       "label": "Table A16",
       "source_id": "paper",
-      "source_locator": "Appendix 10, Table A16",
+      "source_locator": "Appendix D.1, Table A16",
       "status": "omitted",
-      "rationale": "Per-model adaptation details are secondary to the paired aggregate and retained Figure A6.",
+      "rationale": "Per-model conditioned rates have roughly 20 rows and wide uncertainty; aggregate diagnostic and limits are retained instead.",
       "placements": [],
       "permission_status": "not-applicable",
       "permission_basis": "Source layout not reused.",
@@ -1058,7 +1080,7 @@
       "kind": "table",
       "label": "Table A17",
       "source_id": "paper",
-      "source_locator": "Appendix 11, Table A17",
+      "source_locator": "Appendix E, Table A17",
       "status": "omitted",
       "rationale": "Per-episode cost and wall-clock values for the key systems are reproduced in prose.",
       "placements": [],
@@ -1078,7 +1100,6 @@
       "license_status": "not-applicable",
       "license_basis": "Original explanatory composition.",
       "used_in": [
-        "article",
         "deck"
       ]
     },
@@ -1092,7 +1113,6 @@
       "license_status": "not-applicable",
       "license_basis": "Original SVG using published numbers.",
       "used_in": [
-        "article",
         "deck"
       ]
     },
@@ -1335,19 +1355,61 @@
         "article",
         "deck"
       ]
+    },
+    {
+      "path": "/lib/papers/video2world/body-method.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "Sections 3-5 and Appendices 7-9",
+      "credit": "根据论文与公开 benchmark 文档原创绘制",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG using primary-source facts.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video2world/body-results.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "Table 2",
+      "credit": "根据原论文 Table 2 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column SVG using primary-source facts.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video2world/body-case.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "Figure A3; Appendix B.4; official v2w/metrics/task.py:652-675",
+      "credit": "根据 Figure A3、Appendix 8.4 与公开 v2w/metrics/task.py 重绘",
+      "license_status": "not-applicable",
+      "license_basis": "Original article-column execution walkthrough from verified primary material.",
+      "used_in": [
+        "article"
+      ]
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
       "surface": "neutral-light",
       "body_font": "sans-serif",
       "body_font_px": 17,
-      "line_height": 1.76,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
       "figures_centered": true,
+      "article_visuals_interleaved": true,
       "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
     },
     "viewports": [
       {
@@ -1375,7 +1437,11 @@
       "technical_terms_contextualized": true,
       "actors_disambiguated": true,
       "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all 19 slides read, including the initially truncated geometry-scoring segment. Traced 189 videos, 222 instances and 39 families; Astra's 83-frame video, 97 actions with seven controls and terminal support/upright/released/quiescent checks. Recomputed F1 from G=.605,D=.814 to 80.6 as an article calculation, not model log. Preserved conflicting instance totals/HAR rates, macro versus instance metrics, conditional transfer, repairs that break old tasks and unmatched harness budgets."
     },
     "interactions": {
       "buttons": true,
@@ -1385,13 +1451,275 @@
       "escape": true,
       "standalone_return_to_article": true,
       "immersive_mode_exit": true,
-      "usable_state_after_exit": true
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
     },
     "inspected_slides": [
       "opening",
       "densest",
       "largest-table-or-code",
       "final"
-    ]
-  }
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "addb85072abad791d547e5404ca3dc44be5b53f7796cd0837ca7056067bbb29c",
+      "built_article": "5175ecda235b249affca23c45e789d8dda2088ebfa8810ea69254c1a4eda2941",
+      "deck": "3d95a5c9ef17972b947a93a246f783386bdf612d0c5603c335655a318e17b990",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-065/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-065/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-065.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "error": "0"
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "error": "0"
+        }
+      ],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "mesh",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2 and Appendix A: scene assets"
+        }
+      ],
+      "article_quote": "三维表面由 **mesh**（网格模型）表示"
+    },
+    {
+      "term": "Task Success / Build",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.3: functional metrics"
+        }
+      ],
+      "article_quote": "一次实际执行中任务是否完成记为 **Task Success**。瓶子画得很像却抓不住，这项仍为 0；能正确加载并启动场景则记为 **Build=1**"
+    },
+    {
+      "term": "embodiment",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1: target configurations"
+        }
+      ],
+      "article_quote": "目标机器人或手的类型叫 embodiment；同一视频换一种 embodiment，会形成不同任务实例。"
+    },
+    {
+      "term": "Chamfer Distance",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.1, Eqs.12–19"
+        }
+      ],
+      "article_quote": "表面点之间的距离叫 Chamfer Distance（CD）"
+    },
+    {
+      "term": "APE / RPE",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.2, Eqs.20–26"
+        }
+      ],
+      "article_quote": "按示范时刻比较平移的 T-APE 为 7.77 cm、比较朝向的 R-APE 为 9.27°；比较短时位移增量的 T-RPE 为 0.68 cm"
+    }
+  ],
+  "editorial_revision": {
+    "date": "2026-10-13",
+    "scope": "Substantive clarification of roles, cases, evaluation conditions, controlled comparisons, limits and article/deck consistency.",
+    "primary_checks": "Primary HTML Appendix 8.4/9.5 and fixed official task.py/scoring.py read. 97×7 controls, controller-only execution, observed tilt and incompatible denominators checked. Local temporary PDF is incomplete and not used; no fresh full 79-page read/render.",
+    "full_paper_reading_record": "paper_reading preserves the previous complete-reading record; this revision does not recertify every rendered page.",
+    "rendering": "All three new article-column SVGs rendered and directly inspected at 780px. Complete three-surface browser run performed at three viewports before the final shared-CSS rebuild; final affected article/typography/containment/code/exit checks completed against 22:30:59 +0800 output. See qa.browser_qa_note for exact scopes and mobile limitations."
+  },
+  "qa_history": [
+    {
+      "scope": "Previous artifact version; invalidated by 2026-10-13 content and visual changes",
+      "record": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.76,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ]
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "reason": "Prior QA predates current content, added slide and shared deck interaction/style changes; not certification of current bytes.",
+      "qa": {
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "figures_centered": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "article_visuals_interleaved": true
+        },
+        "viewports": [
+          {
+            "width": 1600,
+            "height": 1000,
+            "passed": true
+          },
+          {
+            "width": 1512,
+            "height": 982,
+            "passed": true
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "browser_qa_note": "Complete article/embed/standalone browser run on the 2026-10-13 21:44:41–42 +0800 build covered 18 slides on both deck surfaces at 1600×1000, 1512×982 and 390×844 (108 slide checks), all 14 figure dialogs at all widths, buttons/keyboard/hash/overview/fullscreen/Escape/focus-mode exits and stable return-to-article. The final 22:30:59 +0800 build (Tide CSS v22, article CSS v7, Tide JS v18) was separately rechecked for all three article layouts, every loaded/centered/contained figure, internal code/table/formula scrolling, neutral wrapper colors/typography, bounded section/figure/tail screenshots, focus exits and one figure-dialog exit per width; final-affected-report.json records that affected run, not a new complete slide run. Full prior run record: video2world-qa-final.json. Dense mobile slides and thumbnails are scaled previews; clear-width figure view requires scrolling and sometimes additional zoom. Mobile viewport was exercised with mouse/pointer, not native-device touch. Very tall fullPage screenshots were not used alone as reading evidence."
+      }
+    }
+  ]
 }

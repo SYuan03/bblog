@@ -2,9 +2,9 @@
 title: "[2026-01-26] Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models"
 permalink: "/posts/论文解读/self-distilled-reasoner.html"
 date: "2026-10-08T18:30:00+08:00"
-updated: "2026-10-08T18:30:00+08:00"
+updated: "2026-10-12T16:00:00+08:00"
 cover: "/lib/papers/self-distilled-reasoner/cover.svg"
-description: "OPSD 让同一个模型在两种上下文下分别充当学生和 teacher：学生只看问题并生成自己的轨迹，teacher 额外看到 verified solution，再给同一批 token 密集监督。本文同时核对论文与官方代码。"
+description: "模型先只看题目写答案，再让冻结的同模型副本多看标准解，计算这份答案每个位置的下一词概率。OPSD 用两份概率的差异训练模型，不需要另请一个更大的模型生成训练答案。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -19,7 +19,7 @@ tags:
   - "Privileged Information"
 ---
 
-<link rel="stylesheet" href="/styles/paper-deep-dive-v2.css">
+<link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
 
 <div class="paper-reading">
 
@@ -27,47 +27,95 @@ tags:
 <div class="source-links"><a href="https://arxiv.org/abs/2601.18734">论文主页</a><a href="https://arxiv.org/pdf/2601.18734v3">论文 PDF</a><a href="https://github.com/siyan-zhao/OPSD">官方代码</a></div>
 
 <section class="deck-wrap" aria-label="OPSD 交互图解">
-  <div class="deck-head"><strong>9 页交互图解 · 先看训练链、真实 case 与复现边界</strong><a href="/lib/decks/self-distilled-reasoner-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>9 页交互图解 · 训练过程、真实案例与复现边界</strong><a href="/lib/decks/self-distilled-reasoner-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed"><div class="post-deck-embed-frame"><iframe src="/lib/decks/self-distilled-reasoner-visual-guide.html" title="OPSD 论文图解，共 9 页" allow="fullscreen" loading="eager"></iframe></div><p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>按 Esc 退出全屏；独立打开后可返回文章</span></p></div>
 </section>
 
-<p class="lead">OPSD 建立了这条研究线最基本的训练合同：学生只看部署时能看到的问题，生成自己的 completion；冻结的同模型 teacher 多看一份训练期 reference solution，并在学生已经走到的每个 token prefix 上给出完整词表分布。</p>
+<p class="lead">训练时，当前模型先只看题目，写出自己的答案。训练开始时保存的一份同模型副本保持冻结，它额外阅读标准解，再计算当前答案各位置的下一词概率。OPSD 用两份概率分布的差异更新模型。标准解不直接成为训练输出，训练落在当前模型自己会写到的位置上。</p>
+
+<aside class="part0"><span class="kicker">PART 0 · 先把角色和训练位置说清楚</span><h3>模型自己生成，再由多看标准解的副本提供监督</h3><p>把问题记为 <code>x</code>，正在更新的模型称为 <strong>student</strong>，它自己生成推理 <code>y</code>。<strong>token</strong> 是模型一次预测的文字单位；在第 <code>t</code> 个 token 前已写出的 <code>y&lt;t</code> 称为 <strong>prefix</strong>。冻结副本称为 <strong>teacher</strong>，它多看标准解，但计算的是 student 同一 prefix 后的概率。<strong>on-policy rollout</strong> 指当前 student 自己生成的这次尝试，区别于固定数据集答案。<strong>KL divergence</strong> 衡量两份下一 token 概率表的差异。student 用 <strong>LoRA</strong> 更新附加的低秩参数，基础模型不改；梯度不更新 teacher。</p></aside>
 
 <div class="metrics" aria-label="OPSD 关键数字"><div class="metric"><strong>43.4</strong><span>Qwen3-1.7B OPSD 平均分</span></div><div class="metric"><strong>1</strong><span>每题一个 student rollout</span></div><div class="metric"><strong>1,024</strong><span>主实验最大输出 token</span></div><div class="metric"><strong>9/10</strong><span>个人兴趣程度</span></div></div>
 
-<aside class="keypoints"><h3>先记住</h3><ul><li>它是最适合复用的最小 OPSD 基线，但不是“full reference code 一定最好”的证据。</li><li>teacher 不生成替代答案；它只对 student 已经采样的 token 重新打分。</li><li>论文的 dense loss 没有先判断 student 轨迹是否正确，游戏代码必须另保留可执行 verifier。</li></ul></aside>
+<aside class="keypoints"><h3>先记住</h3><ul><li>teacher 不生成替代答案；它对 student 已经生成的 prefix 计算完整词表概率。</li><li>主实验 teacher 固定在初始模型；只有 student 的 LoRA 参数更新。</li><li>训练用单次、最长 1,024 token 的输出，评测用 12 次、最长 38K token 的尝试，两者不是同一预算。</li><li>每个位置有概率监督，并不等于每条生成答案都已被判定正确。</li></ul></aside>
 
-<aside class="part0"><span class="kicker">PART 0 · 先把 on-policy 说清楚</span><h3>“On-policy”指监督落在 student 已经写出的 token 前缀上</h3><p>把问题记为 <code>x</code>，student 自己生成代码或推理 <code>y ~ πθ(·|x)</code>。这里的 prefix 指 <code>y&lt;t</code>，也就是生成到第 <code>t</code> 个 token 前已经写出的内容。teacher 看到额外信息 <code>z</code>，但仍然评估同一个 prefix。SFT 的训练 token 来自数据集，OPSD 的训练 token 来自当前 student。</p></aside>
 
-## Q1. OPSD 到底解决了什么问题？
+<h2 id="为什么让模型在自己的回答上接受监督">1. Motivation：为什么让模型在自己的回答上接受监督</h2>
 
-<p><strong>OPSD 的关键不是让学生模仿一条 teacher 生成的答案，而是让 teacher 在学生自己的 token prefix 上重新打分。</strong>传统 knowledge distillation 常由更大的 teacher 生成或标注数据；OPSD 让同一个 base checkpoint 通过“有没有 reference solution”形成能力差异，省掉独立大 teacher。</p><p>动机来自一个训练分布问题。离线 demonstration 很少覆盖 student 会犯的具体错误，RL 的 outcome reward 又只告诉系统最后对不对。OPSD 让 student 暴露自己的错误路径，再让多看一份 verified reasoning trace 的 teacher 在每个位置提供分布监督。</p>
+<p><strong>当前模型会生成自己的错误，训练应覆盖这些实际出现的位置。</strong>SFT 通常只训练标准答案中的后续 token，推理时模型却可能走到训练集没有覆盖的错误 prefix；只看最终答案的强化学习又难以指出哪一步应改。OPSD 让 student 先走自己的路径，再让看过标准解的 teacher 在同一位置提供下一 token 分布。</p><p>省掉的是另一个独立、更大的 teacher，不是所有外部数据。本文仍需要含标准推理与答案的 OpenThoughts 数据；这个标准解只在训练时给 teacher。论文没有验证仅凭最终代码、完全没有解题过程也能得到相同效果。</p>
 
-## Q2. 它与 SFT、GRPO 和普通 distillation 的边界在哪里？
+<h2 id="与-SFT、GRPO-和独立教师蒸馏的区别">2. Related Work：与 SFT、GRPO 和独立教师蒸馏的区别</h2>
 
-<div class="table-scroll"><table><thead><tr><th>方法</th><th>谁生成训练 token</th><th>监督信号</th><th>部署时额外上下文</th></tr></thead><tbody><tr><td>SFT</td><td>数据集 reference</td><td>next-token likelihood</td><td>无</td></tr><tr><td>GRPO</td><td>当前 student</td><td>可验证 reward 的组内相对优势</td><td>无</td></tr><tr><td>Teacher OPD</td><td>当前 student</td><td>独立 teacher 的 token distribution</td><td>无</td></tr><tr><td>OPSD</td><td>当前 student</td><td>同模型 privileged teacher 的 distribution</td><td>无</td></tr></tbody></table></div><p>OPSD 的优点是 token efficient：主实验每题只采一个最长 1,024-token rollout，而 GRPO 使用八个 rollout、最长 16K token、500 updates。代价是 teacher 的偏好未必等于 correctness，尤其当 reference 只是众多正确解法中的一个。</p>
+<p><strong>与普通 on-policy distillation 相比，OPSD 用额外标准解制造同模型两分支的能力差异。</strong></p>
+<div class="table-scroll"><table><thead><tr><th>方法</th><th>训练文字由谁写</th><th>更新信号</th><th>需要什么外部资料</th></tr></thead><tbody><tr><td>SFT</td><td>固定数据集</td><td>提高标准答案 token 的概率</td><td>完整标准答案</td></tr><tr><td>GRPO</td><td>当前模型多次采样</td><td>按最终正确性比较同组尝试</td><td>可检查的答案或规则</td></tr><tr><td>独立 teacher OPD</td><td>当前 student</td><td>另一模型的下一 token 分布</td><td>独立 teacher</td></tr><tr><td>OPSD</td><td>当前 student</td><td>冻结同模型看标准解后的分布</td><td>标准推理与答案</td></tr></tbody></table></div>
+<p>主实验每题只生成一个最长 1,024 token 的 student 尝试；GRPO 每题生成八个、每个最长 <strong>16,000</strong> token 的尝试，不是 16,384。OPSD 因而减少了生成 token，但还要计算两个分支的完整词表概率，不能仅凭输出长度推断实际 GPU 时间减少相同倍数。teacher 对某一种标准解的偏好，也不等于数学或代码的唯一正确性。</p>
 
-## Q3. 一次 OPSD update 具体怎么走？
+<p>更近的相关工作有三组。<strong>Learning by Distilling Context</strong> 给同模型 teacher 额外上下文，再用它生成的答案做 SFT；OPSD 改成 student 自己采样和软概率监督。<strong>STaR / ReST</strong> 生成尝试、按正确性筛选后训练；OPSD 不要求这条 student 回答先通过答案检查。<strong>In-context Editing</strong> 已用 student 采样与上下文诱导的软分布学习知识编辑；因此“同模型多看 context”本身不是首次出现，本文的重点是推理任务、标准解上下文与逐词表分量截断。同期 SDPO 使用环境反馈，SDFT 研究持续学习，附加信息与任务都不同。</p>
 
-<p><strong>student 先从 question-only prompt 采样，teacher 再用同一个 prefix 加 reference solution 计算分布。</strong>只有 completion token 参与 loss；teacher 冻结，student 更新 LoRA。</p><ol><li>collator 生成 student prompt：只有 problem。</li><li>student 以当前参数采样 completion。</li><li>teacher prompt 加入 problem、reference solution 和过渡说明，再拼回 student completion。</li><li>teacher 与 student 都对 completion 位置输出完整 vocabulary logits。</li><li>训练最小化 teacher-to-student forward KL。</li></ol><div class="code-scroll"><pre><code># 根据 audited commit 写成的等价伪代码
+<h2 id="一轮训练：生成、重评、更新">3. Method：一轮训练：生成、重评、更新</h2>
+
+<figure class="figure wide"><a href="/lib/papers/self-distilled-reasoner/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/self-distilled-reasoner/body-method.svg" width="1050" height="787" alt="OPSD 当前 student 采样、冻结 teacher 重评与完整分布损失流程" loading="lazy" decoding="async"></a><figcaption>根据 Figure 1 与 Algorithm 1 重绘。回答只由 student 生成一次；teacher 多看标准解，在完全相同的前缀后提供概率参照。</figcaption></figure>
+
+<p><strong>训练只生成一次 student 回答，再用两种输入计算同一回答位置的概率。</strong>先用一条题目理解流程。Figure 2 的原例是求 <code>f(x)=3x²+2x−5</code> 在 <code>x=2</code> 的导数；标准解为 <code>f′(x)=6x+2</code>，所以答案 14。student 只收到题目；teacher 额外收到这条标准解及“理解后按自己的方法解答”的过渡说明。这个说明让后续 prefix 在语言上自然衔接，teacher 本身并不另外生成一条推理。</p>
+<ol><li>数据整理器从同一记录构造仅含题目的 student 输入，和包含题目、标准解的 teacher 输入。</li><li>当前 student 生成一份回答，不提前筛掉错误尝试。</li><li>把完全相同的回答 token 拼到两种输入后；teacher 不用标准解替换 student 轨迹。</li><li>两分支一次批量前向计算各回答位置的完整词表概率。只有回答位置计入损失，题目与标准解位置不计。</li><li>teacher 输出不反传梯度；训练更新 student 的 LoRA 参数。LoRA 是附加在冻结基础模型上的低秩可训练参数。</li></ol>
+
+<div class="formula">L = Eᵧ∼student [(1/|y|) Σₜ Σᵥ qₜ(v) log(qₜ(v)/pₜ(v))]</div>
+
+<p><code>pₜ</code> 是 student 只看题目和已写 prefix 的概率，<code>qₜ</code> 是 teacher 还看标准解的概率；对词表 <code>v</code> 求和是 <strong>forward KL，KL(q‖p)</strong>，然后对回答位置平均。这是<strong>截断前</strong>的分布损失。即使 student 在某一处采到了一个错误 token，监督仍包含其他候选 token，而不只给这个被选词一个分数。</p>
+
+<p>假设一个简化位置只有两种候选，teacher 对“14 / 错误候选”的概率为 (0.8,0.2)，student 为 (0.5,0.5)，KL 为 <code>0.8 ln(1.6)+0.2 ln(0.4)≈0.193</code>；student 改为 (0.7,0.3) 后降到约 0.026。这里的概率和单 token 假设均为本文示意，并非论文模型输出。它解释分布如何靠近，不证明整条推理正确。</p>
+
+<div class="code-scroll"><pre><code># 根据固定公开版本整理的流程伪代码，不是可直接运行的训练器
 y = student.generate(problem)
 with student.disable_adapter():   # 冻结的 base checkpoint 充当 teacher
     q = teacher_logits(problem, reference_solution, y.prefixes)
 p = student_logits(problem, y.prefixes)
-loss = KL(q || p)                  # completion positions only</code></pre></div><p><strong>固定 teacher 通过暂时关闭 LoRA adapter 实现</strong>。当前代码的 <code>jsd_token_clip</code> 会先逐 vocabulary component 截断 divergence，再求和；它不是“每个 token 的总 KL 算完后再 clip”。</p>
+loss = KL(q || p)                  # completion positions only</code></pre></div>
+<p>固定 teacher 在代码中通过暂时关闭 LoRA adapter 实现。<code>opsd_trainer.py::generalized_jsd_loss</code> 的 <code>beta=0</code> 是 forward KL，<code>beta=1</code> 是 reverse KL；主结论使用前者。<code>jsd_token_clip</code> 在词表分量求和前逐项设置<strong>上限</strong>，不是先算完整 token KL 再截断，更不是把值限制在 <code>[-τ,+τ]</code>。</p>
 
-## Q4. 实验设置与结果能支持什么结论？
+```python
+# 固定公开代码的 forward-KL 分支；q 已停止梯度。
+component = q * (log_q - log_p)       # [batch, 回答位置, 词表]
+component = component.clamp(max=tau) # 只封顶正贡献，负贡献不设下限
+loss = component[completion_mask].sum() / completion_mask.sum()
+```
 
-<p>主数据约 30K OpenThoughts 数学题，模型为 Qwen3-1.7B/4B/8B。batch 32，学习率 <code>5e-6</code>，LoRA rank 64、alpha 128，主实验 100 updates。</p><div class="table-scroll"><table><thead><tr><th>模型</th><th>Base</th><th>GRPO</th><th>OPSD</th></tr></thead><tbody><tr><td>Qwen3-1.7B</td><td>37.1</td><td>37.7</td><td><b>43.4</b></td></tr><tr><td>Qwen3-4B</td><td>61.2</td><td>62.7</td><td><b>63.6</b></td></tr><tr><td>Qwen3-8B</td><td>61.8</td><td>64.0</td><td><b>64.8</b></td></tr></tbody></table></div><p><strong>Qwen3-1.7B 的平均分从 37.1 提到 43.4</strong>，增益在最小模型上最大。paper ablation 中 full-vocabulary forward KL 强于 reverse KL、JSD 和 sampled-token matching；把 rollout 从 1,024 延到 4,096 没有稳定收益。</p><p>要注意论文若干 headline 取 best checkpoint。它能说明 OPSD 在这些数学设置上有效，不能说明同一 context 和 checkpoint 对所有任务都最优。</p>
+<p>单个 <code>q·log(q/p)</code> 可以是负数。把大的正项封顶、保留负项后，总损失也可能为负，仓库 README 同样提醒了这一点；不能把截断后的值当成始终非负的“概率距离”。代码在整个 batch 的有效回答位置上平均，长回答占更多位置；论文 Algorithm 1 则写为先逐回答平均、再逐样本平均。变长回答下这两种聚合不同，复现时应明确选哪一种。</p>
 
-## Q5. 对游戏 query-to-code 应该怎么改？
+<p>公开默认参数也不等于论文主实验：<code>fixed_teacher=False</code> 时，用当前 student 权重做 teacher；主实验启动脚本明确加了 <code>--fixed_teacher</code>。当前仓库还有 EMA teacher、先生成 teacher 推理、只取概率最高若干候选词等选项；本文的主链不包含这些路径。脚本中 1.7B/4B 的截断上限为 0.05、8B 为 0.06；README 另列的非 thinking 实验用了更小上限，不能混成同一配置。</p>
 
-<p><strong>第一版可以直接复用它的“student rollout + frozen self-teacher”骨架，但要把 reference solution 拆成多种 context 条件。</strong>最小对照应包含 full reference code、implementation plan、engine/API inventory、当前 build 的 compiler/runtime diagnostic，以及无 privileged context 的 reward-only baseline。</p><p>游戏代码有大量正确替代实现，所以必须额外构造“功能正确但 scene tree、class 名和控制流远离 reference”的程序。若 teacher 对这些正确程序给出更高 KL，就说明它在教 reference similarity，而不是 correctness。</p>
+<figure class="figure wide"><a href="/lib/papers/self-distilled-reasoner/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/self-distilled-reasoner/body-case.svg" width="1050" height="816" alt="OPSD Figure 2 导数示例：f′(x)=6x+2，代入 x=2 得 14" loading="lazy" decoding="async"></a><figcaption>根据 Figure 2 的真实输入示例重绘。这是解释两种输入的 prompt 例子，不是测试日志；公开版本另用 boxed 答案检查正确性。</figcaption></figure>
 
-## Q6. 复现时最容易踩哪些坑？
+<h2 id="评测规则、主结果与消融">4. Experiments：评测规则、主结果与消融</h2>
 
-<p><strong>完整 reference solution 并不等于正确性信号</strong>。代码仓库是可运行基线，但 audited commit 比原论文发布晚，含 chat-template、ZeRO-2、point-wise clipping 和 EMA teacher 等后续改动。复现实验必须记录 commit，并明确 fixed teacher、loss estimator 与 clipping 方式。</p><p>仓库没有检测到明确 license。用于论文实验前还要确认复用条款。我的兴趣程度是 9/10：它应当作为实现起点，但研究贡献应放在 context 设计、state alignment 与 execution-grounded credit，而不是再次证明数学题上的 full-solution OPSD。</p>
+<p><strong>数学实验支持少量 student 生成配合完整分布监督，但结果采用最佳训练版本。</strong>训练最多 30K OpenThoughts 数学题，Qwen3-1.7B、4B、8B，batch 32、学习率 <code>5e-6</code>、LoRA rank 64 与 alpha 128，100 次更新。主实验 student 关闭 thinking mode，teacher 开启；训练生成 temperature 为 1.1。训练用八张 A100 或 H100、AdamW、bfloat16。评测开启 thinking，temperature=1.0、top-p=.95、top-k=-1，每条最多 <strong>38,912 token</strong>。关闭 thinking 的训练输出，不能与开启 thinking 的测试推理长度混为同一预算。</p>
 
-<p class="source-note">证据范围：本文阅读全文与附录，并分别检查 PDF 文本和逐页渲染；代码结论固定到文中注明的 commit。兴趣程度 9/10 只表示博客作者对该方向的个人兴趣，不是通用论文评分。</p>
+<p><strong>Avg@12</strong> 是一道题独立生成 12 次后，正确次数除以 12，再对所有题平均；不是 12 次有一次正确就算该题通过。若一道题 12 次答对 5 次，贡献 5/12≈41.7%，不是 100%。Table 2 最后再等权平均 AIME24、AIME25、HMMT25：1.7B 的 <code>(57.2+43.9+29.2)/3=43.43</code>，得到 43.4。</p>
+
+<div class="table-scroll"><table><thead><tr><th>模型</th><th>Base</th><th>SFT</th><th>GRPO</th><th>OPSD</th></tr></thead><tbody><tr><td>Qwen3-1.7B</td><td>37.1</td><td>35.8</td><td>37.7</td><td><strong>43.4</strong></td></tr><tr><td>Qwen3-4B</td><td>61.2</td><td>58.6</td><td>62.7</td><td>63.6</td></tr><tr><td>Qwen3-8B</td><td>61.8</td><td>59.8</td><td>64.0</td><td>64.8</td></tr></tbody></table></div>
+
+<p>OPSD 每 20 步评测，取 100 步以内最好成绩；GRPO 取 500 步内峰值。它们不是同一个固定训练步的比较，也没有提供多种独立训练 seed 的稳定排名。OPSD 对 1.7B 提升 6.3 个百分点，但 8B 在 HMMT25 为 45.8，低于 GRPO 的 46.7；平均更高不意味着每个任务都更高。</p>
+
+<p>Table 2 没有说明这些峰值是否来自同一个共同 checkpoint，或各测试集分别挑最好；因此不能把表格理解成一个预先固定 checkpoint 的最终测试。SFT 的退化被作者归因于参考解较简短、导致测试推理变短，这是原文的解释，不是单独控制解答长度后证实的因果结论。</p>
+
+<p>分布方向消融用 Qwen3-1.7B 的 AIME25 Avg@12：forward KL 在 step 50/100 为 43.9/41.1，reverse KL 为 37.5/35.0，JSD 为 36.9/39.0，base 为 36.7。forward KL 仍会从峰值回落，不应写成持续单调提升。</p>
+
+<p>完整词表与只看采样词的消融是另一设置：Qwen3-4B、训练生成上限 2,048，报告的是 <strong>pass@8</strong>，不是主表 Avg@12。完整词表在 AIME25/HMMT25 为 84.1/60.0，采样词为 82.1/57.3。pass@8 看多次尝试是否能覆盖正确答案，Avg@12 则平均每次尝试的正确率，数值不能直接相减。采样词分支用 <code>log q(yₜ)−log p(yₜ)</code> 作停止梯度的权重，再乘 <code>−log p(yₜ)</code>；它不是把完整词表 KL 简单删掉未采样项。</p>
+
+<p>把生成长度从 1,024 增至 4,096 没有稳定收益；完整词表前向却需要保存“batch × 回答长度 × 词表大小”的概率信息，显存成本高于只取一个词。词类诊断又只平均 10 道题，并按预设关键词区分 math/style，不能把较大数学词 KL 直接当作推理能力证明。GRPO 在该数据上许多采样组全对或全错，组内奖励没有差异，因而缺少更新信号；这不是所有 RL 数据必然发生的性质。</p>
+
+<p>公开代码固定到 <code>ae7d2519e94920c4eb6206c0c26de46d9c50abae</code>。其中 <code>eval/evaluate_math.py</code> 从最后一个 <code>\boxed{...}</code> 提取答案，<code>math_verify</code> 解析、检查数学等价，5 秒超时；没有 boxed 答案直接判错，检查异常时退到字符串比较。比如 <code>\boxed{14}</code> 对 14 可判对，普通文字“答案 14”若没有 boxed 仍被格式检查拒绝。这是该公开版本的实现，不代表论文当时的所有 grader 细节都已证明完全一致；Figure 2 的导数题也是 prompt 示例，不是实际测试日志。</p>
+
+<figure class="figure wide"><a href="/lib/papers/self-distilled-reasoner/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/self-distilled-reasoner/body-results.svg" width="1050" height="618" alt="OPSD Qwen3 三种规模的 Avg@12 及三项数学任务等权平均" loading="lazy" decoding="async"></a><figcaption>根据 Table 2 重绘。Avg@12 平均十二次尝试的正确率，不是任意一次正确即过；1.7B 的三项平均为 43.43，报告 43.4。</figcaption></figure>
+
+<h2 id="能迁移到哪些数据，应该怎样验证">5. Discussion：能迁移到哪些数据，应该怎样验证</h2>
+
+<p><strong>若换成游戏生成，先检验“看到代码的 teacher 能否正确评价另一种实现”。</strong>标准代码、从代码提取的功能说明、引擎 API 使用信息可以分别作为 teacher 附加输入；student 仍只看原始图文需求。正确程序可能采用完全不同的节点、类名与控制流，不能只因为远离参考风格就长期惩罚它。应准备功能正确但实现不同的程序，用编译、运行和玩法检查确认正确性，再观察 teacher 分布是否仍偏向参考写法。</p><p>这是本文的迁移建议，不是 OPSD 已完成的实验。论文主要使用已含推理过程的数学数据；没有证明代码或其摘要在没有强模型推理轨迹时一定能替代它，也不能用 KL 降低代替可执行验收。</p>
+
+<h2 id="结论与复现边界">6. Conclusion：结论与复现边界</h2>
+
+<p><strong>OPSD 给出了可以直接检查的最小训练流程，但 teacher 偏好仍需要正确性检验。</strong>主论文使用初始冻结 teacher、完整词表 forward KL 和逐分量截断；后来的公开代码还含其他 teacher 更新或损失选项，不能把所有默认值都当成原实验。复现应记录代码 revision、teacher 是否更新、thinking mode、采样长度与 checkpoint 选择。</p><p>仓库此前没有检测到明确 license，复用前应确认条款。个人兴趣程度 9/10。最值得保留的是当前模型自己采样、同一 prefix 上比较两种上下文的分布；最不能跳过的是标准解质量、替代解法和实际任务判分。</p>
+
+<p class="source-note">主要来源：arXiv v3，Figures 1–3、Table 2、Table 3 与 Appendix B；公开代码固定版本 <code>ae7d2519e94920c4eb6206c0c26de46d9c50abae</code> 的 <code>opsd_trainer.py</code> 和 <code>eval/evaluate_math.py</code>。导数题来自论文 prompt 示例，KL 算例与 Avg@12 说明为本文计算。兴趣程度 9/10 仅表示博客作者个人兴趣。</p>
 
 </div>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="450" viewBox="0 0 980 450" role="img" aria-labelledby="title desc">
+<title id="title">训练与诊断使用不同输入</title><desc id="desc">学生只看问题生成回答，教师多看参考解重评同一回答；四种候选解属于诊断，不是四个教师。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10" fill="#245e99"/></marker></defs>
+<rect width="980" height="450" fill="#fff"/><g font-family="Arial,PingFang SC,Microsoft YaHei,sans-serif" fill="#24292f">
+<text x="30" y="40" font-size="25" font-weight="700">训练：相同学生前文，教师额外看参考解</text>
+<g fill="#f4f7fa" stroke="#d3dde7"><rect x="30" y="70" width="235" height="133" rx="9"/><rect x="317" y="70" width="300" height="133" rx="9"/><rect x="670" y="70" width="280" height="133" rx="9"/></g>
+<text x="47" y="103" font-size="20" font-weight="700">学生：问题 → 8 条回答</text><text x="47" y="136" font-size="18">看不到参考解</text><text x="47" y="167" font-size="18">记录每个位置的 token 概率</text>
+<text x="334" y="103" font-size="20" font-weight="700">教师：问题 + 正确解</text><text x="334" y="136" font-size="18">重评学生已写出的相同回答</text><text x="334" y="167" font-size="18">不给教师侧反向传播梯度</text>
+<text x="687" y="103" font-size="20" font-weight="700">分布差异 → 更新学生</text><text x="687" y="136" font-size="18">主实验：JSD、损失截断</text><text x="687" y="167" font-size="18">之后教师以 EMA 0.001 跟随</text>
+<path d="M268 136H309M620 136H662" stroke="#245e99" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="30" y="248" font-size="25" font-weight="700">诊断：固定前文，强制读取四种目标解</text>
+<g fill="#f4f7fa" stroke="#d3dde7"><rect x="30" y="273" width="430" height="135" rx="9"/><rect x="515" y="273" width="435" height="135" rx="9"/></g>
+<text x="47" y="305" font-size="19">① 教师看过的正确解　② 同题另一正确解</text><text x="47" y="337" font-size="19">③ 同题错误解　　　　④ 别题正确解</text><text x="47" y="378" font-size="17" fill="#536171">输入是固定文本；不再让模型生成四条回答</text>
+<text x="532" y="305" font-size="20" font-weight="700">每个目标：教师平均 log p − 学生平均 log p</text><text x="532" y="338" font-size="19">原解远高于另一正确解 → 参考解偏好</text><text x="532" y="377" font-size="17" fill="#536171">这是概率诊断，不是准确率或互信息估计</text>
+<path d="M463 337H507" stroke="#245e99" stroke-width="2.5" marker-end="url(#arrow)"/>
+</g></svg>

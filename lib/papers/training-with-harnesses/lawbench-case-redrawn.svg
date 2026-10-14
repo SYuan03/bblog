@@ -2,9 +2,9 @@
   <title id="title">LawBench case where the harness hurts</title>
   <desc id="desc">For LawBench task 3-3 item 44, the standalone trained student keeps negligent homicide as a candidate, while the retrieval harness retrieves one-sided intentional injury examples and drops the gold label.</desc>
   <defs><style>.t{font-family:Inter,"PingFang SC",Arial,sans-serif;fill:#19242b}.title{font-size:50px;font-weight:760}.sub{font-size:23px;fill:#52616a}.h{font-size:27px;font-weight:720}.b{font-size:20px}.s{font-size:17px;fill:#5c6a72}.box{stroke-width:3}</style></defs>
-  <rect width="1600" height="980" fill="#fbfaf6"/>
+  <rect width="1600" height="980" fill="#fff"/>
   <text class="t title" x="70" y="78">真实 case：外部检索把已经学会的比较过程带偏</text>
-  <text class="t sub" x="70" y="120">LawBench-3-3, idx 44；gold label = negligent homicide（过失致人死亡）</text>
+  <text class="t sub" x="70" y="120">LawBench-3-3, idx 44；数据集标准标签为 negligent homicide（过失致人死亡）</text>
 
   <rect class="box" x="70" y="172" width="1460" height="154" rx="10" fill="#edf2f3" stroke="#71838d"/>
   <text class="t h" x="108" y="218">案件事实的关键点</text>
@@ -17,22 +17,22 @@
   <rect x="110" y="512" width="620" height="92" rx="8" fill="#fff" stroke="#8db6aa" stroke-width="2"/>
   <text class="t b" x="420" y="552" text-anchor="middle">intentional injury  ↔  negligent homicide</text>
   <text class="t s" x="420" y="582" text-anchor="middle">比较主观故意、既往疾病与因果关系</text>
-  <text class="t b" x="110" y="660">最终同时输出两个标签，其中包含 gold label。</text>
+  <text class="t b" x="110" y="660">最终同时输出两个标签，其中包含标准标签。</text>
   <text class="t h" x="110" y="718" fill="#2f7d6b">set-F1 = 0.67</text>
   <text class="t s" x="110" y="768">论文把这种“先回想相似案，再比较候选”的写法</text>
-  <text class="t s" x="110" y="797">解释为 student 内化了 case-based comparison。</text>
+  <text class="t s" x="110" y="797">解释为模型学到参考案例、再比较候选的方法。</text>
 
   <rect class="box" x="830" y="390" width="700" height="444" rx="12" fill="#fff0ee" stroke="#a84b47"/>
   <text class="t h" x="870" y="438">Mode B：给同一个模型重新挂上 harness</text>
   <text class="t b" x="870" y="483">Draft 阶段的 5 个近邻全部含 intentional injury：</text>
   <text class="t s" x="890" y="523">0.814 / 0.811 / 0.808 / 0.799 / 0.797</text>
   <text class="t b" x="870" y="570">Verify 阶段的 challenger 又来自无关类别：</text>
-  <text class="t s" x="890" y="610">unlawful trespass, rape, murder, theft ...</text>
+  <text class="t s" x="890" y="610">侵入住宅、强奸、谋杀、盗窃等</text>
   <text class="t b" x="870" y="665">没有一个检索样例提示 negligent homicide。</text>
   <text class="t h" x="870" y="718" fill="#a84b47">最终只输出 intentional injury，set-F1 = 0</text>
-  <text class="t s" x="870" y="768">这里不是“harness 原理失效”，而是 embedding 检索</text>
-  <text class="t s" x="870" y="797">给了单边证据，覆盖了模型原本的双向比较。</text>
+  <text class="t s" x="870" y="768">按问题相似度检索到的样例偏向一类标签，</text>
+  <text class="t s" x="870" y="797">干扰了模型原本对两个候选的比较。</text>
 
   <rect x="278" y="878" width="1044" height="64" rx="32" fill="#19242b"/>
-  <text x="800" y="919" text-anchor="middle" font-family="Inter,PingFang SC,Arial,sans-serif" font-size="23" font-weight="700" fill="#fff">论文据此说明：训练时有用的 scaffold，部署时未必还应该保留</text>
+  <text x="800" y="919" text-anchor="middle" font-family="Inter,PingFang SC,Arial,sans-serif" font-size="23" font-weight="700" fill="#fff">论文据此讨论：训练时有用的辅助流程，部署时仍可能干扰模型</text>
 </svg>

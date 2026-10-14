@@ -1,9 +1,12 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "paper": {
     "title": "Harness-Zero: Harness Distillation via Agent-as-Harness",
     "kind": "research",
-    "primary_source_ids": ["paper", "repo"]
+    "primary_source_ids": [
+      "paper",
+      "repo"
+    ]
   },
   "artifacts": {
     "article": "content/_posts/048-harness-zero把harness蒸馏进模型.md",
@@ -17,7 +20,16 @@
       "title": "Harness-Zero: Harness Distillation via Agent-as-Harness",
       "url": "https://arxiv.org/abs/2609.24974",
       "revision": "v1, 2026-09-21",
-      "used_for": ["problem", "related-work", "method", "experiments", "limitations", "figures", "tables", "appendices"]
+      "used_for": [
+        "problem",
+        "related-work",
+        "method",
+        "experiments",
+        "limitations",
+        "figures",
+        "tables",
+        "appendices"
+      ]
     },
     {
       "id": "repo",
@@ -25,7 +37,25 @@
       "title": "metaevo-ai/harness-zero",
       "url": "https://github.com/metaevo-ai/harness-zero",
       "revision": "aa63a7751997969c2880896f9df3098c7f650fe2",
-      "used_for": ["review-schema", "runtime", "data-provenance", "figure-asset", "license"]
+      "used_for": [
+        "review-schema",
+        "runtime",
+        "data-provenance",
+        "figure-asset",
+        "license"
+      ]
+    },
+    {
+      "id": "appworld-evaluator",
+      "kind": "code",
+      "title": "AppWorld evaluator at v0.1.3.post1",
+      "url": "https://github.com/StonyBrookNLP/appworld/blob/66ad8099e12188ece0d3fe45e661dbc01880813b/src/appworld/evaluator.py",
+      "revision": "66ad8099e12188ece0d3fe45e661dbc01880813b (v0.1.3.post1)",
+      "used_for": [
+        "single-task-all-tests-success",
+        "scenario-minimum-score",
+        "SGC-aggregation"
+      ]
     }
   ],
   "paper_reading": {
@@ -34,158 +64,747 @@
     "extracted_text_reviewed": true,
     "rendered_pages_reviewed": true,
     "page_count": 25,
-    "rendered_page_ranges": [{"start": 1, "end": 25}],
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 25
+      }
+    ],
     "source_visuals_expected": 17,
     "visual_inventory_complete": true,
-    "inventory_note": "Inventory covers Figure 1, Tables 1-11, Code 1-3, and Prompt 1-2 in the rendered v1 PDF. Code and prompt blocks are recorded as appendix visuals because the audit schema has no separate code/prompt kind."
+    "inventory_note": "Inventory covers Figure 1, Tables 1-11, Code 1-3, and Prompt 1-2 in the rendered v1 PDF. Code and prompt blocks are recorded as appendix visuals because the audit schema has no separate code/prompt kind.",
+    "current_collection_review": {
+      "date": "2026-10-14",
+      "reviewer": "main-agent",
+      "extracted_text_complete": true,
+      "extracted_text_lines": 1539,
+      "rendered_pages_complete": true,
+      "page_count": 25,
+      "note": "Completion transcribed from the main-agent report received on 2026-10-14: complete primary text (lines 1-1539), all 25 full-size rendered pages, appendices and revised article reviewed. Subsequent targeted precision additions are recorded in revision_review; language sign-off remains separate."
+    }
   },
   "note_sections": [
-    {"role": "problem", "locator": "Q1. 为什么要把 harness 蒸馏掉？"},
-    {"role": "related-work", "locator": "Q2. 它和已有工作差在哪？"},
-    {"role": "method", "locator": "Q3. Harness-Zero 具体怎么做？"},
-    {"role": "experiments", "locator": "Q4. 实验到底说明了什么？"},
-    {"role": "future-work", "locator": "Q5. 这项工作给 agent 训练带来什么启发？"},
-    {"role": "summary", "locator": "Q6. 结论与限制"}
+    {
+      "role": "problem",
+      "locator": "1. Motivation：专用执行程序的收益，能否保留在模型里？"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：与优化执行程序、联合训练和上下文蒸馏的区别"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：从执行前审查，到微调与部署"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：三个领域怎样评分，哪些行为真正迁移了？"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：训练数据必须与部署工具兼容"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：已证明的收益与尚未解决的依赖"
+    }
   ],
   "coverage": [
     {
       "id": "central-claim",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Abstract; Sections 1 and 5"}],
-      "evidence": [{"artifact": "article", "quote": "程序化 harness 行为可以在不保留专用 harness 的情况下，较大比例地迁移进一个 9B 模型。"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Abstract; Sections 1 and 5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "程序化 harness 行为可以在不保留专用 harness 的情况下，较大比例地迁移进一个 9B 模型。"
+        }
+      ]
     },
     {
       "id": "three-harness-roles",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Sections 3.1-3.3; Figure 1"}],
-      "evidence": [{"artifact": "article", "quote": "harnessing agent 用 PASS/REPLACE 把指导翻译成目标 action space h 中的 response"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.1-3.3; Figure 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "审查模型用 PASS/REPLACE 把指导改写成 <code>h</code> 能执行的 response"
+        }
+      ]
     },
     {
       "id": "response-review-protocol",
       "claim_type": "inspected-implementation",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [
-        {"source_id": "paper", "locator": "Section 3.2; Appendix C.2-C.3"},
-        {"source_id": "repo", "locator": "src/harness_zero/review.py and src/harness_zero/harness.py at aa63a775"}
+      "source_ids": [
+        "paper",
+        "repo"
       ],
-      "evidence": [{"artifact": "article", "quote": "PASS 却带 replacement、REPLACE 没有 replacement、replacement 既无可见文字也无 tool call。"}]
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Appendix C.2-C.3"
+        },
+        {
+          "source_id": "repo",
+          "locator": "src/harness_zero/review.py and src/harness_zero/harness.py at aa63a775"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "官方格式检查拒绝三种情况：保留原回复却又附替代内容；要求替换却没有替代内容；替代回复既没有文字也没有工具调用。"
+        }
+      ]
     },
     {
       "id": "visibility-boundary",
       "claim_type": "author-claim",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [
-        {"source_id": "paper", "locator": "Section 3.2; Appendix C.3 and D"},
-        {"source_id": "repo", "locator": "src/harness_zero/harness.py at aa63a775"}
+      "source_ids": [
+        "paper",
+        "repo"
       ],
-      "evidence": [{"artifact": "article", "quote": "harnessing agent 没有 student sandbox 的私有挂载，也不能读取隐藏答案。"}]
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Appendix C.3 and D"
+        },
+        {
+          "source_id": "repo",
+          "locator": "src/harness_zero/harness.py at aa63a775"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "审查者没有独立访问任务环境的接口，也看不到隐藏答案。"
+        }
+      ]
     },
     {
       "id": "spreadsheet-worked-case",
       "claim_type": "author-claim",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [
-        {"source_id": "paper", "locator": "Appendix B.2, Code 1-3"},
-        {"source_id": "repo", "locator": "harness_bank/spreadsheetbench at aa63a775"}
+      "source_ids": [
+        "paper",
+        "repo"
       ],
-      "evidence": [{"artifact": "article", "quote": "SFT 学到的是“提交前主动比较”，不是某个隐藏 middleware 的调用名。"}]
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix B.2, Code 1-3"
+        },
+        {
+          "source_id": "repo",
+          "locator": "harness_bank/spreadsheetbench at aa63a775"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "SFT 学到提交前主动比较输入与输出的动作，而非一个部署时不存在的工具名。"
+        }
+      ]
     },
     {
       "id": "data-and-training",
       "claim_type": "author-claim",
-      "source_ids": ["paper", "repo"],
-      "source_locators": [
-        {"source_id": "paper", "locator": "Section 4.1; Appendices D and E.3"},
-        {"source_id": "repo", "locator": "data/README.md at aa63a775"}
+      "source_ids": [
+        "paper",
+        "repo"
       ],
-      "evidence": [{"artifact": "article", "quote": "SpreadsheetBench 487 条轨迹，AppWorld 282 条，USPTO 500 条。"}]
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1; Appendices D and E.3"
+        },
+        {
+          "source_id": "repo",
+          "locator": "data/README.md at aa63a775"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "SpreadsheetBench 487 条轨迹，AppWorld 282 条，USPTO 500 条。"
+        }
+      ]
     },
     {
       "id": "agent-as-harness-result",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.2, Table 1"}],
-      "evidence": [{"artifact": "article", "quote": "Table 1 在 GPT-5.6 Sol 和 DeepSeek-V4-Pro 上做了六个 benchmark–model 设置。"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.2, Table 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 1 在 GPT-5.6 Sol 和 DeepSeek-V4-Pro 上做了三个领域 × 两个模型的六种设置。"
+        }
+      ]
     },
     {
       "id": "distillation-result",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.3, Table 2"}],
-      "evidence": [{"artifact": "article", "quote": "根据论文 Table 2，macro average 从 23.3% 升到 44.3%"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.3, Table 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "根据论文 Table 2，三领域平均从 <strong>23.3% 升到 44.3%"
+        }
+      ]
     },
     {
       "id": "signal-ablation",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.4, Table 3"}],
-      "evidence": [{"artifact": "article", "quote": "拿到 oracle answer 的 reviewer 把采集成功率推到 98.6%，微调后只有 15.0%"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.4, Table 3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "审查者拿到标准答案时，采集成功率为 98.6%，微调后仅 15.0%"
+        }
+      ]
     },
     {
       "id": "behavior-recovery",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 4.5, Table 4; Appendix G"}],
-      "evidence": [{"artifact": "article", "quote": "28 个 pattern 的平均恢复率为 82.3%"}]
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.5, Table 4; Appendix G"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "28 种行为的平均恢复率为 <strong>82.3%</strong>。例如“保护预填单元格”是 24/26（92%），“读取完整分页”是 21/53（40%），“用 RDKit 验证”是 60/60（100%）。这里不能把 82.3% 当成自然任务分布上的总体行为准确率：样本筛选已使原模型 + <code>h</code> 为 0%、原模型 + <code>h*</code> 为 100%。它测的是蒸馏能否在专门挑出的“只有专用程序能触发该行为”的场景里恢复行为。"
+        }
+      ]
     },
     {
       "id": "limitations",
       "claim_type": "author-claim",
-      "source_ids": ["paper"],
-      "source_locators": [{"source_id": "paper", "locator": "Section 5; Appendix F"}],
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 5; Appendix F"
+        }
+      ],
       "evidence": [
-        {"artifact": "article", "quote": "agent-as-harness 为 237.2 秒，约 2.4×"},
-        {"artifact": "article", "quote": "在 DeepSeek-V4-Flash、Qwen3.6-35B-A3B 上则分别低 1 分和 12 分"},
-        {"artifact": "article", "quote": "主要 pass@1 / SGC 都是 single-run"}
+        {
+          "artifact": "article",
+          "quote": "agent-as-harness 为 237.2 秒，约 2.4×"
+        },
+        {
+          "artifact": "article",
+          "quote": "在 DeepSeek-V4-Flash、Qwen3.6-35B-A3B 上则分别低 1 分和 12 分"
+        },
+        {
+          "artifact": "article",
+          "quote": "主要 pass@1 / SGC 都是单次运行结果"
+        }
+      ]
+    },
+    {
+      "id": "shared-three-round-harness-evolution",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.1, pp.14-16; text lines 749-755, 871-903"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这一步共做三轮：每轮只分析上一轮失败的题"
+        },
+        {
+          "artifact": "article",
+          "quote": "共享组件不能写入某道题的答案、具体单元格、文件名或只适用于该题的步骤。"
+        }
+      ]
+    },
+    {
+      "id": "review-replacement-budget",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.2, p.21; text lines 1240-1245"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "SpreadsheetBench 和 AppWorld 分别用每题最多 5、3、1 次替换的设置采集轨迹，USPTO 始终最多 5 次。"
+        }
+      ]
+    },
+    {
+      "id": "proposal-visibility-versus-training-target",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Sections 3.2-3.3; Appendix C.1 and D"
+        },
+        {
+          "source_id": "repo",
+          "locator": "src/harness_zero/harness.py and src/harness_zero/sft.py at aa63a775"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "被拒绝的原始提案是学生自己生成的，审查者也会读它"
+        },
+        {
+          "artifact": "article",
+          "quote": "SFT 以接受后的模型回复为学习目标，任务提示与工具输出则作为上下文；不会要求模型预测工具输出。"
+        }
+      ]
+    },
+    {
+      "id": "appworld-strict-scenario-scoring",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo",
+        "appworld-evaluator"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 4.1, p.6; 168 test_normal tasks grouped into 56 three-task scenarios"
+        },
+        {
+          "source_id": "repo",
+          "locator": "envs/appworld/runtime/grade.py:18-29 at aa63a775; success bool becomes binary reward and errors zero"
+        },
+        {
+          "source_id": "appworld-evaluator",
+          "locator": "src/appworld/evaluator.py:191-193 (TestTracker.success), 330-373 (Metric._compute_metrics)"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "三题都成功才算这个场景成功"
+        },
+        {
+          "artifact": "article",
+          "quote": "33 / 56 × 100 ≈ 58.9%"
+        }
+      ]
+    },
+    {
+      "id": "appworld-fixed-code-context-supplement",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "envs/appworld/README.md at aa63a775, Why a dedicated agent; envs/appworld/agent.py and common_context.py"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它在首轮加入 23 条示范、用户身份和应用说明，加上系统提示共 24 条消息。"
+        }
+      ]
+    },
+    {
+      "id": "replacement-exhaustion-runtime-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "src/harness_zero/student.py:182-188 at aa63a775; HarnessReviewMiddleware skips reviewer after replacement count reaches limit"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "在替换次数耗尽后直接放行后续提案，不再调用审查模型。"
+        },
+        {
+          "artifact": "article",
+          "quote": "因此不能把整条轨迹的成本统一写成每步至少两次调用。"
+        }
       ]
     }
   ],
   "source_visuals": [
     {
-      "id": "figure-1", "kind": "figure", "label": "Figure 1", "source_id": "paper", "source_locator": "p. 4, Figure 1",
-      "status": "reused", "rationale": "The complete method overview is the clearest way to connect evolve/adapt, response review, SFT, and deployment removal.",
-      "placements": [{"artifact": "article", "locator": "论文 Figure 1。"}, {"artifact": "deck", "locator": "ORIGINAL FIGURE 1"}],
-      "permission_status": "verified-allowed", "permission_basis": "The identical asset is distributed in the official repository under Apache-2.0 at revision aa63a775.",
-      "credit": "论文 Figure 1；作者官方仓库 assets/harness-zero.png", "asset_paths": ["/lib/papers/harness-zero/figure-1-overview.png"]
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 4, Figure 1",
+      "status": "reused",
+      "rationale": "The complete method overview is the clearest way to connect evolve/adapt, response review, SFT, and deployment removal.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "论文 Figure 1。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "ORIGINAL FIGURE 1"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "The identical asset is distributed in the official repository under Apache-2.0 at revision aa63a775.",
+      "credit": "论文 Figure 1；作者官方仓库 assets/harness-zero.png",
+      "asset_paths": [
+        "/lib/papers/harness-zero/figure-1-overview.png"
+      ]
     },
     {
-      "id": "table-1", "kind": "table", "label": "Table 1", "source_id": "paper", "source_locator": "p. 6, Table 1",
-      "status": "redrawn", "rationale": "The four-condition average isolates whether evolved guidance or generic review explains the effect.",
-      "placements": [{"artifact": "article", "locator": "根据论文 Table 1 重绘"}, {"artifact": "deck", "locator": "TABLE 1 REDRAWN"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 1 数据重绘", "asset_paths": []
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 6, Table 1",
+      "status": "redrawn",
+      "rationale": "The four-condition average isolates whether evolved guidance or generic review explains the effect.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文 Table 1 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "TABLE 1 REDRAWN"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 1 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "table-2", "kind": "table", "label": "Table 2", "source_id": "paper", "source_locator": "p. 7, Table 2",
-      "status": "redrawn", "rationale": "This is the main deployment result and requires all three domains plus the macro average.",
-      "placements": [{"artifact": "article", "locator": "根据论文 Table 2"}, {"artifact": "deck", "locator": "TABLE 2 REDRAWN"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 2 数据重绘", "asset_paths": []
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 2",
+      "status": "redrawn",
+      "rationale": "This is the main deployment result and requires all three domains plus the macro average.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文 Table 2"
+        },
+        {
+          "artifact": "deck",
+          "locator": "TABLE 2 REDRAWN"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 2 数据重绘",
+      "asset_paths": [
+        "/lib/papers/harness-zero/body-results.svg"
+      ]
     },
     {
-      "id": "table-3", "kind": "table", "label": "Table 3", "source_id": "paper", "source_locator": "p. 7, Table 3",
-      "status": "redrawn", "rationale": "The ablation separates collection success from downstream distillation value and exposes action-space mismatch.",
-      "placements": [{"artifact": "article", "locator": "根据论文 Table 3 重绘"}, {"artifact": "deck", "locator": "TABLE 3 REDRAWN"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 3 数据重绘", "asset_paths": []
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 3",
+      "status": "redrawn",
+      "rationale": "The ablation separates collection success from downstream distillation value and exposes action-space mismatch.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据论文 Table 3 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "TABLE 3 REDRAWN"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 3 数据重绘",
+      "asset_paths": []
     },
     {
-      "id": "table-4", "kind": "table", "label": "Table 4", "source_id": "paper", "source_locator": "p. 8, Table 4",
-      "status": "redrawn", "rationale": "Selected patterns make the recovery metric concrete while the text explains its conditioned support set.",
-      "placements": [{"artifact": "article", "locator": "4.5 82.3% 的 behavior recovery 怎么算？"}, {"artifact": "deck", "locator": "TABLE 4 REDRAWN"}],
-      "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 4 数据重绘", "asset_paths": []
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 4",
+      "status": "redrawn",
+      "rationale": "Selected patterns make the recovery metric concrete while the text explains its conditioned support set.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "4.5 82.3% 的行为恢复率怎么算？"
+        },
+        {
+          "artifact": "deck",
+          "locator": "TABLE 4 REDRAWN"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 4 数据重绘",
+      "asset_paths": []
     },
-    {"id": "table-5", "kind": "table", "label": "Table 5", "source_id": "paper", "source_locator": "pp. 17-18, Table 5", "status": "omitted", "rationale": "The complete evolved-harness component inventory is too long for the reader-facing note; the four component types and the relevant Spreadsheet guard are explained directly.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "table-6", "kind": "table", "label": "Table 6", "source_id": "paper", "source_locator": "p. 18, Table 6", "status": "omitted", "rationale": "Its tool/middleware/skill/memory mapping is reproduced as concise prose before the worked case, avoiding a second redundant table.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "table-7", "kind": "table", "label": "Table 7", "source_id": "paper", "source_locator": "pp. 18-19, Table 7", "status": "omitted", "rationale": "The exhaustive private-reference component list is implementation detail; the article retains the component taxonomy and the exact prefilled-diff path used in the case.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "table-8", "kind": "table", "label": "Table 8", "source_id": "paper", "source_locator": "p. 23, Table 8", "status": "redrawn", "rationale": "Only the agent-versus-code deltas across model capability tiers are needed to explain the reviewer-capability limitation.", "placements": [{"artifact": "article", "locator": "在 DeepSeek-V4-Flash、Qwen3.6-35B-A3B 上则分别低 1 分和 12 分"}], "permission_status": "not-applicable", "permission_basis": "", "credit": "根据论文 Table 8 数据概括", "asset_paths": []},
-    {"id": "table-9", "kind": "table", "label": "Table 9", "source_id": "paper", "source_locator": "p. 24, Table 9", "status": "omitted", "rationale": "The full four-pattern AppWorld detector inventory is summarized through representative recovery values in the Table 4 explanation.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "table-10", "kind": "table", "label": "Table 10", "source_id": "paper", "source_locator": "pp. 24-25, Table 10", "status": "omitted", "rationale": "The full 18-pattern Spreadsheet inventory would dominate the article; the worked prefilled-cell pattern and support-set construction are retained.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "table-11", "kind": "table", "label": "Table 11", "source_id": "paper", "source_locator": "p. 25, Table 11", "status": "omitted", "rationale": "The six USPTO detectors are not needed individually; the article reports representative RDKit recovery and the domain-level limitation.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "code-1", "kind": "appendix-visual", "label": "Code 1", "source_id": "paper", "source_locator": "p. 18, Code 1", "status": "redrawn", "rationale": "The original student-side guard is the first link in the worked prefilled-cell example and is narrated before the adapted check.", "placements": [{"artifact": "article", "locator": "Code 1–3 压缩改写"}], "permission_status": "not-applicable", "permission_basis": "", "credit": "根据 Appendix B.2 / Code 1 改写", "asset_paths": []},
-    {"id": "code-2", "kind": "appendix-visual", "label": "Code 2", "source_id": "paper", "source_locator": "p. 18, Code 2", "status": "redrawn", "rationale": "The review-time evidence check explains why the harnessing agent does not need private sandbox access.", "placements": [{"artifact": "article", "locator": "Code 1–3 压缩改写"}], "permission_status": "not-applicable", "permission_basis": "", "credit": "根据 Appendix B.2 / Code 2 改写", "asset_paths": []},
-    {"id": "code-3", "kind": "appendix-visual", "label": "Code 3", "source_id": "paper", "source_locator": "p. 19, Code 3", "status": "redrawn", "rationale": "The student-native workbook comparison is included as executable-looking code so the action-space translation is concrete.", "placements": [{"artifact": "article", "locator": "Code 1–3 压缩改写"}, {"artifact": "deck", "locator": "根据 Code 1–3 压缩改写"}], "permission_status": "not-applicable", "permission_basis": "", "credit": "根据 Appendix B.2 / Code 3 改写", "asset_paths": []},
-    {"id": "prompt-1", "kind": "appendix-visual", "label": "Prompt 1", "source_id": "paper", "source_locator": "pp. 21-22, Prompt 1", "status": "omitted", "rationale": "The long harnessing-agent system prompt is not reproduced; its response budget, visibility boundary, PASS/REPLACE rules, and minimal-correction policy are explained in prose.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []},
-    {"id": "prompt-2", "kind": "appendix-visual", "label": "Prompt 2", "source_id": "paper", "source_locator": "p. 23, Prompt 2", "status": "omitted", "rationale": "The short student system prompt is summarized exactly as one Bash execute tool, fresh shell per call, persistent filesystem, and final text response.", "placements": [], "permission_status": "not-applicable", "permission_basis": "", "credit": "", "asset_paths": []}
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "pp. 17-18, Table 5",
+      "status": "omitted",
+      "rationale": "The complete evolved-harness component inventory is too long for the reader-facing note; the four component types and the relevant Spreadsheet guard are explained directly.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 18, Table 6",
+      "status": "omitted",
+      "rationale": "Its tool/middleware/skill/memory mapping is reproduced as concise prose before the worked case, avoiding a second redundant table.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "pp. 18-19, Table 7",
+      "status": "omitted",
+      "rationale": "The exhaustive private-reference component list is implementation detail; the article retains the component taxonomy and the exact prefilled-diff path used in the case.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 23, Table 8",
+      "status": "redrawn",
+      "rationale": "Only the agent-versus-code deltas across model capability tiers are needed to explain the reviewer-capability limitation.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "在 DeepSeek-V4-Flash、Qwen3.6-35B-A3B 上则分别低 1 分和 12 分"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据论文 Table 8 数据概括",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 24, Table 9",
+      "status": "omitted",
+      "rationale": "The full four-pattern AppWorld detector inventory is summarized through representative recovery values in the Table 4 explanation.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "pp. 24-25, Table 10",
+      "status": "omitted",
+      "rationale": "The full 18-pattern Spreadsheet inventory would dominate the article; the worked prefilled-cell pattern and support-set construction are retained.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "p. 25, Table 11",
+      "status": "omitted",
+      "rationale": "The six USPTO detectors are not needed individually; the article reports representative RDKit recovery and the domain-level limitation.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "code-1",
+      "kind": "appendix-visual",
+      "label": "Code 1",
+      "source_id": "paper",
+      "source_locator": "p. 18, Code 1",
+      "status": "redrawn",
+      "rationale": "The original student-side guard is the first link in the worked prefilled-cell example and is narrated before the adapted check.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Code 1–3 压缩改写"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据 Appendix B.2 / Code 1 改写",
+      "asset_paths": []
+    },
+    {
+      "id": "code-2",
+      "kind": "appendix-visual",
+      "label": "Code 2",
+      "source_id": "paper",
+      "source_locator": "p. 18, Code 2",
+      "status": "redrawn",
+      "rationale": "The review-time evidence check explains why the harnessing agent does not need private sandbox access.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Code 1–3 压缩改写"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据 Appendix B.2 / Code 2 改写",
+      "asset_paths": []
+    },
+    {
+      "id": "code-3",
+      "kind": "appendix-visual",
+      "label": "Code 3",
+      "source_id": "paper",
+      "source_locator": "p. 19, Code 3",
+      "status": "redrawn",
+      "rationale": "The student-native workbook comparison is included as executable-looking code so the action-space translation is concrete.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Code 1–3 压缩改写"
+        },
+        {
+          "artifact": "deck",
+          "locator": "根据 Code 1–3 压缩改写"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "根据 Appendix B.2 / Code 3 改写",
+      "asset_paths": []
+    },
+    {
+      "id": "prompt-1",
+      "kind": "appendix-visual",
+      "label": "Prompt 1",
+      "source_id": "paper",
+      "source_locator": "pp. 21-22, Prompt 1",
+      "status": "omitted",
+      "rationale": "The long harnessing-agent system prompt is not reproduced; its response budget, visibility boundary, PASS/REPLACE rules, and minimal-correction policy are explained in prose.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "prompt-2",
+      "kind": "appendix-visual",
+      "label": "Prompt 2",
+      "source_id": "paper",
+      "source_locator": "p. 23, Prompt 2",
+      "status": "omitted",
+      "rationale": "The short student system prompt is summarized exactly as one Bash execute tool, fresh shell per call, persistent filesystem, and final text response.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    }
   ],
   "figures": [
     {
@@ -197,16 +816,282 @@
       "credit": "论文 Figure 1；作者官方仓库（Apache-2.0）",
       "license_status": "verified-allowed",
       "license_basis": "Official metaevo-ai/harness-zero repository is Apache-2.0 at revision aa63a775.",
-      "used_in": ["article", "deck"]
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "width": 2158,
+      "height": 1088
+    },
+    {
+      "path": "/lib/papers/harness-zero/body-case.svg",
+      "origin": "generated",
+      "credit": "根据论文 Appendix B.2 / Code 1–3 整理的正文专用图；B7 为说明坐标",
+      "used_in": [
+        "article"
+      ],
+      "placement": "case",
+      "width": 1000,
+      "height": 900
+    },
+    {
+      "path": "/lib/papers/harness-zero/body-results.svg",
+      "origin": "author-redrawn",
+      "credit": "根据论文 Table 2 数据重绘的正文专用图",
+      "used_in": [
+        "article"
+      ],
+      "placement": "results",
+      "width": 1000,
+      "height": 740,
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 2"
     }
   ],
   "qa": {
-    "reading_layout": {"deck_first": true, "toc_h2_only": true, "surface": "neutral-light", "body_font": "sans-serif", "body_font_px": 17, "line_height": 1.76, "figures_centered": true, "internal_scroll_for_tables_and_code": true, "page_horizontal_overflow": false},
-    "viewports": [{"width": 1600, "height": 1000, "passed": true}, {"width": 1512, "height": 982, "passed": true}, {"width": 390, "height": 844, "passed": true}],
-    "tested_surfaces": {"article_body": true, "embedded_deck": true, "standalone_deck": true},
-    "language_review": {"technical_terms_contextualized": true, "actors_disambiguated": true, "read_aloud_complete": true, "facts_rechecked_after_rewrite": true},
-    "interactions": {"buttons": true, "keyboard": true, "hash_navigation": true, "fullscreen": true, "escape": true, "standalone_return_to_article": true, "immersive_mode_exit": true, "usable_state_after_exit": true},
-    "inspected_slides": ["opening", "densest", "largest-table-or-code", "final"],
+    "status": "completed-current-artifacts; external-service-history-retained",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.78,
+      "mobile_body_font_px": 16.5,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-14",
+      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+      "reader_reconstruction": "Complete current note and all14 slides reread. Traced successful/failing rollouts, generated harness reasoning segments, filtering and SFT vs on-policy sequence update; data provenance, held-out boundaries and judge aggregation preserved. Compared fullharnessdistillation with simple trajectory/format controls and negative cases."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_mode": "isolated-headless",
+    "current_artifact_hashes": {
+      "article": "19af66d672588c16fa8a782358c88915d53e52152273942bec9de6dd4460d60d",
+      "built_article": "e2da82278e5d58ddb585b45538540eedb912926e892b0ebf2fa557991c99fe75",
+      "deck": "f4469ff04be4275069d50f7dda3e6e37551d745e569cca1ac5be5e6f46bebcfe",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        }
+      ]
+    },
+    "browser_evidence": {
+      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-048/numbered-article-qa.json",
+      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-048/foundation-deck-qa.json",
+      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-048.json",
+      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+    },
+    "external_service_boundary": {
+      "historical_raw_page_errors": [],
+      "figure_raw_errors": [],
+      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+    },
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+  },
+  "terminology": [
+    {
+      "term": "harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3; Figure 1"
+        }
+      ],
+      "article_quote": "论文称这套程序为 harness。本文把待训练模型称为 student，把每一步的回答与工具调用称为 response"
+    },
+    {
+      "term": "harnessing agent",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.2; Figure 1"
+        }
+      ],
+      "article_quote": "论文把这个审查角色称为 harnessing agent。它参考专用流程，但替换后的命令必须能由最小 <code>h</code> 执行"
+    },
+    {
+      "term": "private reference K",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1"
+        }
+      ],
+      "article_quote": "得到 <code>h*</code> 后，作者再把它改写成审查者读取的参考文件 <code>K</code>。"
+    },
+    {
+      "term": "action recipe",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Section 3.1; Appendix B.2"
+        }
+      ],
+      "article_quote": "原来的专用工具改成 action recipe，也就是用 Bash/Python 完成同类操作的脚本说明"
+    }
+  ],
+  "qa_prior_to_2026_10_13": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 17,
+      "line_height": 1.76,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
     "browser_qa_note": "Fresh dist tested on 2026-09-28. Article, embedded deck, and standalone deck passed at 1600x1000, 1512x982, and 390x844 with no horizontal page overflow. Inspected slides 1, 4, 7, 8, 12, and 14. Exercised button and keyboard navigation, direct hash loading, overview Escape, fullscreen entry and exit through the visible control and F key, and standalone return-to-article after direct hash navigation. Tables and code scroll inside their containers on mobile."
+  },
+  "revision_review": {
+    "date": "2026-10-13",
+    "scope": "Chinese prose, six semantic section headings, first-use concepts, training and evaluation flow, illustrative scoring calculations, selective primary-source checks, image intrinsic dimensions and enlargement links, exact source-quote synchronization",
+    "primary_reading_boundary": "Prior paper_reading is a historical record. This delegated revision does not claim a fresh complete paper read or rendered-page review by the revision subagent; final full-paper review and browser QA belong to the main agent.",
+    "status": "awaiting-main-agent-review",
+    "targeted_precision_additions": {
+      "date": "2026-10-14",
+      "scope": [
+        "Appendix A three-round failure-only evolution and no task-specific answers",
+        "Appendix C.2 replacement budgets",
+        "discarded proposals versus accepted history and SFT targets",
+        "chemistry prerequisites before task table",
+        "plain-Chinese result labels",
+        "AppWorld strict SGC and fixed-code initial-context supplement",
+        "fixed runtime automatically passes proposals without review after replacement budget exhaustion"
+      ],
+      "reviewer": "delegated revision agent following main-agent primary-read findings",
+      "status": "awaiting-main-agent-review-of-targeted-additions"
+    }
   }
 }

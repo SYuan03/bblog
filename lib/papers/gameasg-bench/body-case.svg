@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-label="Diner Dasher 隐藏鼠标拖拽检查与真实失败判定">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#456c93"/></marker></defs>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;fill:#263445}.title{font-size:36px;font-weight:700}.head{font-size:29px;font-weight:700}.body{font-size:27px}.small{font-size:23px;fill:#526276}.mono{font-family:Menlo,Consolas,monospace;font-size:24px}.blue{fill:#365f85}.red{fill:#9a4b46}.rule{stroke:#ccd5df;stroke-width:2}.flow{stroke:#456c93;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+<rect width="1200" height="820" fill="#fff"/>
+<text x="44" y="58" class="title">Diner Dasher：拖拽动作完成了，订单还得真的完成</text>
+<text x="44" y="104" class="small">真实 case 来自作者手写的 checks.js；下图表示检查顺序，不是游戏截图。</text>
+<rect x="44" y="140" width="342" height="282" rx="5" fill="#f5f7fa" stroke="#ccd5df" stroke-width="2"/><text x="64" y="184" class="head">1  准备合法场景</text>
+<text x="64" y="229" class="body">托盘已有正确菜品</text>
+<text x="64" y="271" class="body">顾客正在等待该订单</text>
+<text x="64" y="313" class="body">从状态快照读取两者</text>
+<text x="64" y="355" class="body">在页面中的实际边界</text>
+<rect x="429" y="140" width="342" height="282" rx="5" fill="#f5f7fa" stroke="#ccd5df" stroke-width="2"/><text x="449" y="184" class="head">2  浏览器鼠标拖拽</text>
+<text x="449" y="229" class="body">从菜品中心按下左键</text>
+<text x="449" y="271" class="body">6 步移动到顾客中心</text>
+<text x="449" y="313" class="body">每一步自然等待 40 ms</text>
+<text x="449" y="355" class="body">松开后再等待 250 ms</text>
+<rect x="814" y="140" width="342" height="282" rx="5" fill="#f5f7fa" stroke="#ccd5df" stroke-width="2"/><text x="834" y="184" class="head">3  比較动作后状态</text>
+<text x="834" y="229" class="body">重新读取 snapshot</text>
+<text x="834" y="271" class="body">先确认订单或收入增加</text>
+<text x="834" y="313" class="body">若订单项数增加</text>
+<text x="834" y="355" class="body">托盘物品数还必须减少</text>
+<path d="M386 283H426" class="flow"/><path d="M771 283H811" class="flow"/>
+<rect x="44" y="460" width="1112" height="112" rx="5" fill="#eef4f9" stroke="#ccd5df" stroke-width="2"/>
+<text x="64" y="504" class="head">第一条判定：至少一种服务进度增加</text>
+<text x="64" y="546" class="mono">served ↑  或  revenue ↑  或  customersServed ↑</text>
+<rect x="44" y="600" width="1112" height="108" rx="5" fill="#fbf3f1" stroke="#ccd5df" stroke-width="2"/>
+<text x="64" y="642" class="head">论文记录的 FAIL：三种服务进度都没有增加</text>
+<text x="64" y="685" class="body">测试在这一步结束，尚未走到托盘变化与渲染变化检查。</text>
+<text x="44" y="754" class="small">渲染检查另有条件：前后 render hash 都非空时，hash 或 renderRevision 须改变。</text>
+<text x="44" y="787" class="small">来源：§4.6、Table 9；tests/diner-dasher/checks.js。图由本文整理。</text>
+</svg>

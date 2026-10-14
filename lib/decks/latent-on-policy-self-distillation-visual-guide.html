@@ -1,66 +1,17 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LOPD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="LOPD 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h1>Privileged context 能不能不再由人手写？</h1>
-  <p class="lead">LOPD 检索成功 experiences，并把它们压成 continuous latent tokens。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>3×32</h3><p>default latent tokens</p></div><div class="card green"><h3>48.78</h3><p>4B LiveCodeBench</p></div><div class="card orange"><h3><30%</h3><p>rollout budget</p></div><div class="card "><h3>7/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；main tables</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · PIPELINE</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>Experience 先检索，再编码与压缩</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Retrieve</strong><p>3 successes</p></div><div class="step"><b>2</b><strong>Encode</strong><p>frozen backbone + LoRA</p></div><div class="step"><b>3</b><strong>Compress</strong><p>8-layer QFormer</p></div><div class="step"><b>4</b><strong>Teacher</strong><p>latent-conditioned</p></div><div class="step"><b>5</b><strong>Student</strong><p>on-policy KL</p></div></div></div>
-  <div class="foot"><span>来源：Method overview</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · REPRESENTATION</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>每条 experience 默认 32 latent tokens</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>优点</h3><p>比长 trajectory 短，end-to-end learnable</p></div><div class="card red"><h3>代价</h3><p>不可读，难检查 leakage 与语义</p></div></div></div>
-  <div class="foot"><span>来源：architecture settings</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · MARGIN</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>防止 composer 把 teacher 变弱来“作弊”</h2>
-
-  <div class="content"><div class="formula">teacher advantage × (2·reward − 1) ≥ margin</div><div class="callout"><p>dual variable 保持 teaching privilege；L2 anchor 限制 latent drift。</p></div></div>
-  <div class="foot"><span>来源：Privileged-margin objective</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · SETTING</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>Tool-use 与 code generation 两条线</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Domain</th><th>Training data</th><th>Evaluation</th></tr></thead><tbody><tr><td>Tool use</td><td>2,349 EnvScaler tasks</td><td>EnvScaler / BFCL / ACEBench</td></tr><tr><td>Code</td><td>≈7K verified TACO</td><td>LiveCodeBench / HumanEval+ / MBPP+</td></tr></tbody></table></div></div>
-  <div class="foot"><span>来源：Experiment section</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · RESULT</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>Margin 决定 joint training 是否退化</h2>
-
-  <div class="content"><div class="barset"><div class="scoreline"><span>Frozen composer</span><div class="track"><i class="fill gray" style="--v:57.3%"></i></div><b>0.573</b></div><div class="scoreline"><span>Joint no margin</span><div class="track"><i class="fill orange" style="--v:55.1%"></i></div><b>0.551</b></div><div class="scoreline"><span>LOPD m=.05</span><div class="track"><i class="fill green" style="--v:63.7%"></i></div><b>0.637</b></div></div></div>
-  <div class="foot"><span>EnvScaler reward ×100 显示；根据 ablation 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · RETRIEVAL</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>更多 experience 不单调更好</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>3 items</h3><p>最早达到 0.637</p></div><div class="card orange"><h3>>3 items</h3><p>没有稳定继续增益</p></div></div></div>
-  <div class="foot"><span>来源：retrieval ablation</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · LEAKAGE</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>默认 allow_self_retrieval=true 必须改</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>Safe report</h3><p>same-task disabled</p></div><div class="card red"><h3>Oracle only</h3><p>same-task allowed，单独报告</p></div></div></div>
-  <div class="foot"><span>代码审计：configs and memory bank</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2608.13040 · 2026-08-13</span></div>
-  <h2>适合第二阶段，不适合最早一轮实验</h2>
-
-  <div class="content"><div class="grid g2"><div class="card blue"><h3>先做</h3><p>readable contexts + verifier + routing</p></div><div class="card green"><h3>再做</h3><p>latent compression with leakage controls</p></div></div></div>
-  <div class="foot"><span>兴趣程度 7/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/latent-on-policy-self-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LOPD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.diagram{display:block;width:100%;max-height:590px;object-fit:contain}.compact .table{font-size:21px}.compact .table th,.compact .table td{padding:12px}.small p{font-size:21px}.code{font-size:22px}.content{gap:18px}
+.slide .diagram{height:auto}.slide .table,.slide .compact .table{font-size:29px}.slide .table th{font-size:26px}.slide .table th,.slide .table td{padding:16px}.slide .card h3{font-size:30px}.slide .card p{font-size:28px}.slide .callout p{font-size:27px}.slide .step b{font-size:22px}.slide .step strong{font-size:28px}.slide .step p{font-size:28px}
+</style></head><body><div class="viewport"><main class="stage" aria-label="LOPD 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 问题</span><span>arXiv:2608.13040v1 · 2026-08-13</span></div><h1>成功经验，怎样变成适合学生的指导？</h1><p class="lead">LOPD 同时学习学生和经验的表示，防止压缩模块把教师越训越弱。</p><div class="content"><div class="grid g2"><div class="card"><h3>现有输入是固定资料</h3><p>完整答案、参考路径、文字总结都预先决定教师看什么。当前学生可能已经走上另一条路径。</p></div><div class="card"><h3>这里的输入可以训练</h3><p>检索三条成功记录，压成 96 个向量。固定教师重评学生实际记录，再更新学生和压缩模块。</p></div></div><div class="callout"><p>EnvScaler：Qwen3-4B 平均完成奖励 48.6 → 63.7。部署仍能用工具，只移除训练用经验。</p></div></div><div class="foot"><span>§1–3、Table 1；个人兴趣 7/10，仅代表博客作者兴趣</span><span>1 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 最近对照</span><span>按本文实验配置比较</span></div><h2>LOPD 改的是经验输入与它的梯度</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>教师多看什么</th><th>监督方式 / 教师</th></tr></thead><tbody><tr><td>OPSD</td><td>同题成功参考</td><td>全词表 KL，按教师概率加权；固定初始模型</td></tr><tr><td>SDFT</td><td>文字示范</td><td>KL 按教师概率加权；学生移动平均</td></tr><tr><td>SDPO</td><td>同一步采样中成功的学生路径</td><td>教师最高 K 项 + 其余合并；KL 按学生概率加权；移动平均</td></tr><tr><td>Skill-SD</td><td>总结的有效 / 失败做法和建议流程</td><td>结果奖励 + 采样 token 蒸馏</td></tr><tr><td>LOPD</td><td>成功记录 → 可训练连续向量</td><td>KL 按学生概率加权 + 结果约束；主模型固定</td></tr></tbody></table></div><div class="callout"><p>KL 衡量两份下一词概率表的差异，方向决定谁给各词加权。latent memory 指部署时仍读取的向量记忆；LOPD 部署时移除经验模块。</p></div></div><div class="foot"><span>§2、Appendix B.1；基线损失和资料来源不同，并非只替换表示</span><span>2 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 一次迭代</span><span>教师不执行新动作</span></div><h2>学生真实执行，教师用额外经验重评</h2><div class="content"><img class="diagram" src="/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg" width="1080" height="670" alt="学生、环境、经验压缩与教师重评分的完整流程"></div><div class="foot"><span>据 Figure 2、Algorithm 1 重绘；学生与教师同一起点，更新后参数不再相同</span><span>3 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 数据与压缩</span><span>J=3，K=32</span></div><h2>每条经验单独压缩，不生成提示词</h2><div class="content"><div class="flow" style="--n:4"><div class="step"><b>01 · 入库</b><strong>训练集成功记录</strong><p>任务 + 动作 / 返回；删除过长的环境返回。评测记录不得入库。</p></div><div class="step"><b>02 · 检索</b><strong>相似度 top-3</strong><p>Qwen3-Embedding-8B，4,096 维；FAISS 精确检索，查询只有任务。</p></div><div class="step"><b>03 · 编码</b><strong>当前任务 + 每条记录</strong><p>主模型冻结，只训练附加的小矩阵（LoRA），rank 8；得到 Tⱼ×d 表示。</p></div><div class="step"><b>04 · 压缩</b><strong>32 个查询</strong><p>QFormer 用 32 个查询向量加权读取记录，再变换；同一参数重复八轮。每条 32×d，三条 96×d。</p></div></div><div class="callout"><p>初始化先训练压缩模块预测成功记录。资料量、初始化步数与工具入库阈值未完整披露。</p></div></div><div class="foot"><span>§3.2、A.1–A.3；检索器固定，没有参与参数更新</span><span>4 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 梯度与输入</span><span>固定参数 ≠ 关闭前向梯度</span></div><h2>向量替换输入中的占位符，梯度穿过教师</h2><div class="content"><div class="grid g2"><div class="card"><h3>输入替换</h3><p>首条用户消息插入 96 个占位 token，用压缩向量替换其输入表示（embedding）。位置在首层 Transformer 前，不是中间层。</p></div><div class="card"><h3>梯度去向</h3><p>教师主参数固定，编码 LoRA 在重评分时关闭。但教师前向计算仍保留梯度，才能把损失传回向量和压缩模块（composer）。</p></div></div><div class="formula">保留教师概率最高的 20 个 token；其余词表合成一项<br>KL = Σ pS log(pS / pT)</div><div class="callout"><p>监督 assistant 动作 token，不监督用户与工具返回。代码先不记录梯度来计算学生概率，更新压缩模块时重新保留教师输入的梯度。</p></div></div><div class="foot"><span>Eq. 8–10、A.4；teacher.py、worker.py、serialization.py</span><span>5 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 防退化约束</span><span>结果奖励不提供逐 token 真值</span></div><h2>教师不能靠迎合学生降低 KL</h2><div class="content"><div class="formula">δ = log pT(学生采样的 token) − sg[log pS(同一 token)]<br>A = 2r − 1；Δ = 平均 Aδ<br>min 学生与压缩模块、max β：<br>L = KL + β(m − Δ) + λ‖cφ − sg[cφ₀]‖²</div><div class="grid g2"><div class="card"><h3>完整成功：A=+1</h3><p>鼓励教师提高这条学生记录的采样概率；完整失败：A=−1，方向相反。</p></div><div class="card"><h3>不是教师成功率差</h3><p>Δ 是结果加权的对数概率差。sg 表示停止梯度：这一项不直接更新学生，只约束压缩模块；KL 再指导学生。</p></div></div><div class="callout"><p>m=.05、λ=.2、ηβ=.5。若两分布完全相同，Δ≈0，惩罚增加；不是数学上逐步正确性的保证。</p></div></div><div class="foot"><span>Eq. 11–13、Algorithm 1；锚定向量可缓存</span><span>6 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 真实工具案例</span><span>Figure 6，不是完整判分日志</span></div><h2>同类操作，不能照抄另一题的编号</h2><div class="content"><img class="diagram" src="/lib/papers/latent-on-policy-self-distillation/benefits-real-case.svg" width="1080" height="640" alt="保险方案任务与另一题检索记录的真实差别"></div><div class="foot"><span>参考 rank-2 相似度 .886；缺该例完整学生路径、检查清单和逐项判分</span><span>7 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>08 · 评测</span><span>先读分母，再读分数</span></div><h2>63.7 是部分完成奖励，不是全题通过率</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>评测</th><th>规模</th><th>分数含义</th></tr></thead><tbody><tr><td>EnvScaler</td><td>200 题</td><td>每题通过检查数 / 全部检查数，再任务平均</td></tr><tr><td>BFCL-v3</td><td>四个子集各 200</td><td>官方多轮工具评测，四项平均</td></tr><tr><td>ACEBench</td><td>multi-step 20 / multi-turn 30</td><td>20/30 加权；多轮用 DeepSeek-V4-Flash 用户模拟器</td></tr><tr><td>LiveCodeBench</td><td>v5 279 / v6 131</td><td>代码全部测试通过；按题数加权 Avg</td></tr><tr><td>EvalPlus</td><td>HumanEval+ 164 / MBPP+ 378</td><td>一次生成全部测试通过；按题数加权 Avg</td></tr></tbody></table></div><div class="callout"><p>正文示意：5 项检查过 3 项，r=.6、A=.2。不是 Figure 6 真实判分，任务检查包未公开。</p></div></div><div class="foot"><span>Appendix B.2–B.3；EnvScaler runtime.py。0.7 / .95 / top-k20，thinking 开启</span><span>8 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 汇总结果</span><span>10 个组合汇总第一，不是每个子集第一</span></div><h2>工具收益较明显，部分代码差异很小</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>模型 / 评测</th><th>最强对照</th><th>LOPD</th><th>差值</th></tr></thead><tbody><tr><td>Qwen3-4B · EnvScaler / BFCL / ACE</td><td>61.8 / 25.25 / 56.0</td><td>63.7 / 27.38 / 60.6</td><td>+1.9 / +2.13 / +4.6</td></tr><tr><td>Qwen3-8B · EnvScaler / BFCL / ACE</td><td>60.2 / 29.00 / 58.0</td><td>66.4 / 29.88 / 62.7</td><td>+6.2 / +.88 / +4.7</td></tr><tr><td>Qwen3-4B · LCB / EvalPlus</td><td>48.29 / 80.07</td><td>48.78 / 81.36</td><td>+.49 / +1.29</td></tr><tr><td>Olmo3-7B · LCB / EvalPlus</td><td>48.29 / 77.86</td><td>50.98 / 78.41</td><td>+2.69 / +.55</td></tr></tbody></table></div><div class="callout"><p>主表未报告多个训练种子的方差或置信区间，不能称小差异显著。不同基线还使用不同教师、KL 与辅助奖励。</p></div></div><div class="foot"><span>Tables 1–2；差值为百分点，LCB 是 LiveCodeBench 汇总</span><span>9 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>10 · 关键反证</span><span>比较不同 margin，而非只看主表</span></div><h2>m=0 的联合训练，比固定压缩模块更差</h2><div class="content"><img class="diagram" src="/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg" width="1080" height="640" alt="固定压缩器与不同 margin 联合训练对比，正反行为统计"></div><div class="foot"><span>Figure 3、Table 3；8/16/32/64/128 向量收益也不单调</span><span>10 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>11 · 效率与代码边界</span><span>不要把 rollout 比例写成总费用</span></div><h2>20% 的记录超过对照，达到自身高分需 36%</h2><div class="content"><div class="grid g2"><div class="card"><h3>Figure 4</h3><p>320 条生成后 reward &gt; .61；576 条到 .637。对照在 1,600 条末尾为 .611 / .588；后续 LOPD 稳在 .63–.64。</p></div><div class="card"><h3>未计入的成本</h3><p>经验收集、检索向量、初始化、压缩模块反向传播。论文没有完整 GPU 小时与总 token 账单。</p></div></div><div class="callout"><p>代码保留教师概率最高的 20 个 token；先更新学生，再用保存的旧学生概率更新压缩模块。自建经验库只编码任务说明，训练配置允许同题检索。</p></div></div><div class="foot"><span>Figure 4；固定 commit 50c3d7f5，worker.py / bank.py / configs</span><span>11 / 12</span></div></section>
+<section class="slide"><div class="meta"><span>12 · 应保留的结论</span><span>表示的作用仍需等资料对照</span></div><h2>核心算法：约束可训练的教师输入，避免教师变弱</h2><div class="content"><div class="grid g2"><div class="card"><h3>实验证据</h3><p>固定压缩模块 .573，联合训练 m=0 得 .551、m=.05 得 .637。更多参数不足以解释收益。</p></div><div class="card"><h3>最需要补的对照</h3><p>同三条记录、同预算：文字、等长总结、固定向量、学习向量。同题和跨题经验分开，测试错误步骤干预。</p></div></div><div class="callout"><p>该版本有主训练流程与学生模型链接，但缺压缩模块权重、经验库与向量、任务检查包和完整日志；不能声称已重跑论文。</p></div></div><div class="foot"><span>原文 20 页：6 Figures、5 Tables、Algorithm 1；本文重绘事实，来源见正文</span><span>12 / 12</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/latent-on-policy-self-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

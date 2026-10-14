@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="990" viewBox="0 0 1000 990" role="img" aria-labelledby="title desc">
+<title id="title">HarnessOpt-Bench 固定做题模型与三分区反馈</title><desc id="desc">优化者修改目标程序，固定模型在隔离服务执行。开发给逐题轨迹，验证给汇总，测试隐藏。初始最终三次评测和两轮独立优化不同。</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:33px;font-weight:750}.head{font-size:28px;font-weight:700}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:25px;fill:#35424b}</style>
+<rect width="1000" height="990" fill="#fff"/>
+<text x="40" y="53" class="title">优化者改程序；做题模型、工具与评分规则固定</text>
+<text x="40" y="97" class="body">外层使用 Claude Code / Codex / OpenCode；内层模型不换。</text>
+<rect x="40" y="130" width="920" height="151" fill="#f7f8f8" stroke="#ccd4d9"/>
+<text x="64" y="174" class="head">修改 → 提交不可变 commit → 可信服务实际执行</text>
+<text x="64" y="216" class="body">来源 benchmark 检查产物并扣额度；不能改任务、环境或评分器。</text>
+<text x="64" y="257" class="small">测试数据和凭证不在优化者可访问的目录里。</text>
+<rect x="40" y="312" width="920" height="141" fill="#f1f5f8" stroke="#c4d3dd"/>
+<text x="64" y="356" class="head" fill="#245f87">开发（dev）：逐题得分与完整执行轨迹</text>
+<text x="64" y="398" class="body">用于定位失败、调试候选；累计题次最多四遍开发题。</text>
+<text x="64" y="434" class="small">可查询某些题目，不必每次执行整个分区。</text>
+<rect x="40" y="484" width="920" height="141" fill="#f2f6f4" stroke="#c6d8cf"/>
+<text x="64" y="528" class="head" fill="#356954">验证（validation）：只给所选题目的汇总分</text>
+<text x="64" y="570" class="body">不回传逐题输出或完整轨迹；累计题次最多四遍验证题。</text>
+<text x="64" y="606" class="small">验证总分支持选候选，但不是完整开发诊断。</text>
+<rect x="40" y="656" width="920" height="141" fill="#fbf3f2" stroke="#d8bfbb"/>
+<text x="64" y="700" class="head" fill="#85413b">测试（test）：选择最终版本前完全隐藏</text>
+<text x="64" y="742" class="body">初始和最终版本各做题三次；平均分用于 normalized gain。</text>
+<text x="64" y="778" class="small">每种配置独立优化两轮，不等于一题作答两次。</text>
+<text x="40" y="853" class="code">g = (E(最终) − E(初始)) / (1 − E(初始))</text>
+<text x="40" y="897" class="body">g 表示初始程序剩余得分空间，被最终程序补上了多少。</text>
+<text x="40" y="943" class="small">根据 Figure 1、Algorithm 1 与 §3 重绘。</text>
+<text x="40" y="974" class="small">服务端与任务 checker 未获得；图示不冒充官方执行代码。</text>
+</svg>

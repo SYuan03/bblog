@@ -1,66 +1,56 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>π-Distill 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>π-Distill 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>
 .dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
 </style></head><body><div class="viewport"><main class="stage" aria-label="π-Distill 论文图解"><section class="slide active">
   <div class="meta"><span>01 · QUESTION</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h1>Teacher 不开放 reasoning，只给 actions，能学吗？</h1>
-  <p class="lead">π-Distill 把 successful tool-call trajectories 当训练期 privileged information。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>15,885</h3><p>Retail successful traces</p></div><div class="card green"><h3>44.1</h3><p>Travel Planner best</p></div><div class="card orange"><h3>17/21</h3><p>需要非零 RL reward</p></div><div class="card "><h3>8.5/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；dataset appendix；ablations</span><span>1 / 9</span></div>
+<h1>π-Distill：只有成功操作，也能训练不看记录的模型</h1><p class="lead">训练时额外给模型成功操作记录，叫特权信息（PI）；同一模型分别用带 PI 与不带 PI 的输入，同时学习利用参考和独立行动。</p><div class="content"><div class="grid g4"><div class="card blue"><h3>300/500</h3><p>Retail任务有PI（训练期参考）</p></div><div class="card"><h3>44.1 ±2.16%</h3><p>Qwen3-8B，Travel</p></div><div class="card"><h3>17/21</h3><p>非零KL约束更优的设置</p></div><div class="card"><h3>8.5/10</h3><p>个人兴趣程度</p></div></div><div class="callout"><p>17/21不是去掉环境奖励的消融。π-Distill由teacher采样；OPSD对照由student采样。</p></div></div>
+<div class="foot"><span>v3Table1与§8；17/21为KLβ</span><span>1 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>02 · OBSERVABILITY</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>隐藏 reasoning，不等于没有可用监督</h2>
-
-  <div class="content"><div class="grid g3"><div class="card red"><h3>不可见</h3><p>frontier teacher 的 internal chain-of-thought</p></div><div class="card blue"><h3>可见</h3><p>tool name、arguments、observations</p></div><div class="card green"><h3>可验证</h3><p>environment 最终 success / failure</p></div></div></div>
-  <div class="foot"><span>来源：Section 1</span><span>2 / 9</span></div>
+<h2>原始记录有工具返回，主 PI 工具列表却不保留返回值</h2><div class="content"><div class="grid g3"><div class="card"><h3>原始成功轨迹</h3><p>DeepSeek-chat-v3.1：用户、CoT内部推理、工具名、参数和环境返回。</p><p>收集15,885 Retail与1,986 Travel候选成功记录。</p></div><div class="card blue"><h3>三种 PI</h3><p>工具名+参数；只有工具名；模型总结的2–3句提示。</p><p>前两者去掉CoT与环境返回，不是完整原始日志。</p></div><div class="card"><h3>选择与对照</h3><p>每任务最短成功轨迹；Retail300/500有PI，Travel45/45。</p><p>SFT对照仍可用完整CoT，以可控删减模拟隐藏推理。</p></div></div></div>
+<div class="foot"><span>v3§4.2与Figure3，PI类型重绘</span><span>2 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>03 · METHODS</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>两种方法共享 PI，但 teacher 是否更新不同</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>Teacher</th><th>Student</th><th>RL</th></tr></thead><tbody><tr><td>π-Distill</td><td>privileged、联合更新</td><td>unprivileged、匹配 teacher</td><td>联合</td></tr><tr><td>OPSD variant</td><td>privileged self-teacher</td><td>on-policy rollout</td><td>KL penalty + reward</td></tr></tbody></table></div></div>
-  <div class="foot"><span>来源：Section 3；Algorithms 1-2</span><span>3 / 9</span></div>
+<h2>两种算法的采样来源不同，teacher 都不是永久冻结</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th></th><th>π-Distill</th><th>本论文 OPSD</th></tr></thead><tbody><tr><td>先执行任务</td><td>teacher：当前历史s+PI</td><td>student：当前历史s，无PI</td></tr><tr><td>生成新轨迹o</td><td>teacher与环境交互</td><td>student与环境交互</td></tr><tr><td>更新目标</td><td>αJteacher+(1−α)Jstudent</td><td>环境奖励−βKL(student‖teacher)</td></tr><tr><td>student采样校正</td><td>轨迹来自 teacher；以 student/teacher 概率比校正（off-policy）</td><td>轨迹来自 student 自身（on-policy）</td></tr><tr><td>参数</td><td>两种输入共享当前θ</td><td>两种输入共享当前θ</td></tr></tbody></table></div><div class="callout"><p>stop-gradient 只阻止当前项反传梯度；共享参数 θ 仍在更新。α=1 只优化 teacher 目标，student 仍受共享权重影响。</p></div></div>
+<div class="foot"><span>v3§3.1–3.2；Eqs2–5，机制重绘</span><span>3 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>04 · DATA</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>成功 trace 不是人工标注</h2>
-
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>Retail</h3><p>15,885 traces；300/500 tasks 有 PI</p></div><div class="card green"><h3>Travel Planner</h3><p>1,986 traces；45 training tasks</p></div><div class="card orange"><h3>Rule</h3><p>每题保留最短成功 trajectory</p></div></div></div>
-  <div class="foot"><span>来源：Section 4；Appendix data details</span><span>4 / 9</span></div>
+<h2>真实取消订单：状态从 pending 变 cancelled</h2><div class="content"><div class="case-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div class="card"><h3>1 · 邮箱查用户</h3><p>amelia.wilson1598@example.com → find_user_id_by_email → amelia_wilson_4614。</p></div><div class="card"><h3>2 · 读取订单</h3><p>get_order_details("#W3062096")：pending，三件商品合计463.43美元。</p></div><div class="card"><h3>3 · 明确确认</h3><p>确认订单、原因ordered by mistake、PayPal退款；用户回复Yes。</p></div><div class="card blue"><h3>4 · 执行取消</h3><p>cancel_pending_order：返回cancelled、退款463.43及cancel_reason；再告知5–7工作日。</p></div></div><div class="callout"><p>来源Appendix H.3真实成功记录。只口头答“取消”而不调用工具，状态不会改；这是规则推导失败，不是另一条观测日志。</p></div></div>
+<div class="foot"><span>v3AppendixH.3真实成功取消记录</span><span>4 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>05 · SETTING</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>长 context、多轮 agent、三 seeds</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>项</th><th>设置</th></tr></thead><tbody><tr><td>Backbones</td><td>Qwen3-4B/8B；R1-Distill-Llama-8B</td></tr><tr><td>Context</td><td>25K</td></tr><tr><td>Temperature</td><td>0.75</td></tr><tr><td>Steps</td><td>Retail 600；Travel 400</td></tr><tr><td>Hardware</td><td>2×H100</td></tr></tbody></table></div></div>
-  <div class="foot"><span>来源：Appendix hyperparameters</span><span>5 / 9</span></div>
+<h2>一次 teacher 采样怎样同时训练两种输入？</h2><div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>teacher尝试</strong><p>同一模型输入s+PI，与环境交互获得新轨迹o。</p></div><div class="step"><b>2</b><strong>环境判分</strong><p>实际完成情况给R；不是历史记录直接重放。</p></div><div class="step"><b>3</b><strong>teacher目标</strong><p>提高R，减去βKL(teacher‖stopgrad(student))。</p></div><div class="step"><b>4</b><strong>student目标</strong><p>从teacher轨迹学习，用概率比值校正并减KL约束。</p></div><div class="step"><b>5</b><strong>共享更新</strong><p>用α混合目标；α=.5先从0升到.5，持续15 epochs。</p></div></div><div class="callout"><p>2×H100、3种子；Retail batch64，但SFT+RL为128；Travel batch45。RL/OPSD长度上限35K，其他25K。</p></div></div>
+<div class="foot"><span>v3Eqs2–4与Table2；未公开训练代码</span><span>5 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>06 · RESULT</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>Travel Planner 的 PI transfer 明显强于 SFT + RL</h2>
-
-  <div class="content"><div class="barset"><div class="scoreline"><span>Base</span><div class="track"><i class="fill gray" style="--v:23.6%"></i></div><b>23.6</b></div><div class="scoreline"><span>SFT+CoT+RL</span><div class="track"><i class="fill orange" style="--v:32.3%"></i></div><b>32.3</b></div><div class="scoreline"><span>OPSD</span><div class="track"><i class="fill " style="--v:37.5%"></i></div><b>37.5</b></div><div class="scoreline"><span>π-Distill α=1</span><div class="track"><i class="fill green" style="--v:44.1%"></i></div><b>44.1</b></div></div></div>
-  <div class="foot"><span>根据 result table 重绘</span><span>6 / 9</span></div>
+<h2>最优配置随任务变化：Travel α=1，Retail α=0</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Qwen3-8B</th><th>Travel</th><th>Retail</th><th>Airline</th></tr></thead><tbody><tr><td>SFT+CoT+RL</td><td>32.3±1.10%</td><td>29.1±2.14%</td><td>8.00±3.46%</td></tr><tr><td>OPSD</td><td>37.5±1.53%</td><td>27.3±.33%</td><td>14.0±5.66%</td></tr><tr><td>π-Distill α=0</td><td>40.7±1.14%</td><td>31.1±.73%</td><td>12.0±6.00%</td></tr><tr><td>π-Distill α=.5</td><td>41.1±7.24%</td><td>30.6±.67%</td><td>7.33±1.15%</td></tr><tr><td>π-Distill α=1</td><td>44.1±2.16%</td><td>29.7±.33%</td><td>9.33±3.06%</td></tr></tbody></table></div><div class="callout"><p>三种α在Travel都高于带CoT的SFT+RL，但跨域Airline为OPSD更高；.5的Travel波动很大。不能统一称α=1最好。</p></div></div>
+<div class="foot"><span>v3Table1重绘；3种子选择后的统计</span><span>6 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>07 · REWARD</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>Dense PI loss 不能代替 outcome reward</h2>
-
-  <div class="content"><div class="metric"><strong>17 / 21</strong><span>ablation 需要非零 RL coefficient</span></div><div class="callout red"><p>teacher similarity 只能 shaping；最终 task outcome 仍需 environment verifier。</p></div></div>
-  <div class="foot"><span>来源：ablation section</span><span>7 / 9</span></div>
+<h2>17/21 讨论 KL 系数 β，不是奖励系数</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>§8消融</h3><p>固定其他设置，β∈{0,.1,.25,.5}；17/21种配置中非零KL约束更有利。</p><p>β控制teacher与student的概率差距。所有这些RL方法仍有环境奖励。</p></div><div class="card"><h3>评测边界</h3><p>τ-Bench换Qwen-14B用户模拟，删除transfer_to_human_agents；Travel改奖励，直接检查相关约束。</p><p>不是原版公开榜单，不能无条件横比。</p></div></div><div class="callout"><p>成绩采用种子内最佳checkpoint选择；§4.3写连续3个滚动平均，Appendix F示例为种子峰值均值。不是固定同一步的无选择估计。</p></div></div>
+<div class="foot"><span>v3§8与§4.1；AppendixF口径限制</span><span>7 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>08 · GAME CODE</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>先教“何时 compile/run/inspect”，不要先复制 reference code</h2>
-
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>Tool-only</h3><p>compile、run、screenshot 名称</p></div><div class="card orange"><h3>Arguments</h3><p>command、fixture、scene</p></div><div class="card green"><h3>Trace summary</h3><p>failure → repair 的压缩经验</p></div></div></div>
-  <div class="foot"><span>本文实验设计建议</span><span>8 / 9</span></div>
+<h2>有用的参考信息，不一定能传给不看信息的输入</h2><div class="content"><div class="grid g3"><div class="card"><h3>当场帮助</h3><p>带PI的teacher成绩提升多少？先测是否真的会利用参考。</p></div><div class="card blue"><h3>训练传递</h3><p>训练后student不看PI时提升多少？检查概率差距与α。</p></div><div class="card"><h3>复现缺口</h3><p>无官方训练代码；修改后的judge、trace过滤与KL估计无法逐行复核。</p></div></div><div class="callout"><p>游戏代码可将构建/测试记录作训练期参考，但属于后续建议；本文并未测完整游戏项目生成。</p></div></div>
+<div class="foot"><span>v3§7条件分析；代码未公开</span><span>8 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>09 · VERDICT</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-  <h2>概念很重要，复现基线不完整</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>值得借</h3><p>action-only PI + outcome reward</p></div><div class="card red"><h3>缺口</h3><p>无官方 code、trace generation 未公开</p></div></div></div>
-  <div class="foot"><span>兴趣程度 8.5/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/privileged-information-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<h2>共享参数、采样来源与概率约束，构成这篇的算法区别</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>值得借</h3><p>比较teacher采样与student采样，检验teacher如何学会用PI，以及能力怎样在无PI条件下保留。</p></div><div class="card"><h3>不能沿用的简化</h3><p>冻结teacher的OPSD不是这里π-Distill；环境返回不是工具列表PI；17/21不是去奖励消融。</p></div></div><div class="callout"><p>实验模型最大为 8B，PI 只来自一个强模型，没有官方训练仓库；这些限制与主结果一起保留。</p></div></div>
+<div class="foot"><span>本文总结与公开证据边界</span><span>9 / 12</span></div>
+</section><section class="slide">
+<div class="meta"><span>10 · IMPLEMENTATION</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
+<h2>正文目标、算法伪代码与实现说明并不完全一致</h2><div class="content"><div class="grid g2"><div class="card"><h3>π-Distill</h3><p>Eq. 2：teacher 对不带 PI 的 student，加 stop-gradient。E.1：序列 KL 合入奖励。</p><p>Algorithm 1 却写带 PI 的 reference，没有明确上述对应关系。</p></div><div class="card blue"><h3>OPSD</h3><p>E.1：直接对 KL 估计反向传播。Algorithm 2 却将 KL 合入奖励，再算组内优势。</p><p>没有官方实现，无法替作者确定实际执行分支。</p></div></div><div class="callout"><p>长度惩罚仅对成功轨迹，按每轮回答计算：≤2,000 tokens 不扣，之后增加；整条平均最低 −0.3。不是总长超过15K就扣。</p></div></div><div class="foot"><span>v3 Appendix C、E.1–E.3</span><span>10 / 12</span></div></section>
+<section class="slide">
+<div class="meta"><span>11 · NEGATIVE CONTROLS</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
+<h2>8B 的成功不能外推到 4B 与 R1</h2><div class="content"><div class="grid g3"><div class="card blue"><h3>Qwen3-8B</h3><p>GEM 搜索任务：OPSD 与部分 π-Distill 优于 SFT+CoT+RL。</p></div><div class="card"><h3>Qwen3-4B</h3><p>GEM 上 OPSD 明显下降，带 CoT 的 SFT+RL 最强；Retail OPSD23.1% &lt; 基线23.3%。</p></div><div class="card"><h3>R1-8B</h3><p>先用 CoT 做SFT。OPSD Retail14.5% &lt;16.3%，Airline2% &lt;7.33%。GEM未超过Base。</p></div></div><div class="callout"><p>GEM 用 Retail 最佳单个版本，非每个搜索数据集重挑。图中 ± 是标准误，主 Table 1 是标准差。</p></div></div><div class="foot"><span>v3 Table 1、Figure 4，保留退化对照</span><span>11 / 12</span></div></section>
+<section class="slide">
+<div class="meta"><span>12 · REAL FAILURE</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
+<h2>原奖励下：只发一句 Planner 请求，分数也能上升</h2><div class="content"><div class="grid g2"><div class="card"><h3>真实任务与输出</h3><p>7天、Wisconsin三个城市、预算5,700美元。模型没有查机票酒店，只调用 Planner 要它“安排符合预算的行程”。</p><p>Figure18训练 / 测试分仍上升，作者检查后发现反复复用这种模板。</p></div><div class="card blue"><h3>改了什么</h3><p>逐项检查基本要求；满足一项后，才检查对应的预算 / 饮食要求，不再等待全部基本项通过。</p><p>未公开新reward聚合公式，不能称“全部通过才记1”。</p></div></div><div class="callout"><p>这是 Appendix G 的观测失败。高奖励不自动证明任务完成；修改后分数也不能直接与原榜单横比。</p></div></div><div class="foot"><span>v3 Appendix G、Figure 18</span><span>12 / 12</span></div></section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/privileged-information-distillation.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>

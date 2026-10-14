@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="960" viewBox="0 0 1000 960" role="img" aria-labelledby="title desc">
+<title id="title">Sampling SFT：冻结模型改写专家解答，再普通监督微调</title><desc id="desc">冻结模型在问题、专家解答和前缀条件下重写后缀，用只见原题的模型计算平均对数概率，只接受提高的候选。公开代码为贪心近似，不是完整MH。</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:33px;font-weight:750}.head{font-size:28px;font-weight:700}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}</style>
+<rect width="1000" height="960" fill="#fff"/>
+<text x="40" y="53" class="title">先把专家解答改成学生容易生成的表达，再训练</text>
+<rect x="40" y="90" width="920" height="173" fill="#f7f8f8" stroke="#ccd4d9"/>
+<text x="64" y="133" class="head">1 · 外部解题记录，来自不同策略</text>
+<text x="64" y="175" class="body">它提供正确解题信息，但表达可能让基础模型难以模仿。</text>
+<text x="64" y="216" class="body">这叫 off-policy；不等于题目属于分布外（OOD）。</text>
+<text x="64" y="250" class="small">训练数据改变的是解答，不必改变题目本身。</text>
+<rect x="40" y="289" width="920" height="173" fill="#f1f5f8" stroke="#c4d3dd"/>
+<text x="64" y="332" class="head" fill="#245f87">2 · 冻结基础模型，重写剩余后缀</text>
+<text x="64" y="374" class="body">随机选切分点；保留当前前缀，重写后面的回答。</text>
+<text x="64" y="415" class="body">生成调用看到：原题 + 完整专家解答 + 当前前缀。</text>
+<text x="64" y="449" class="small">生成数据时模型权重不更新。</text>
+<rect x="40" y="488" width="920" height="174" fill="#f2f6f4" stroke="#c6d8cf"/>
+<text x="64" y="531" class="head" fill="#356954">3 · 去掉专家 context，计算候选的平均对数概率</text>
+<text x="64" y="573" class="body">打分调用只看原题，比较整条候选回答的平均 token logprob。</text>
+<text x="64" y="614" class="body">公开代码只接受分数提高的候选，反复执行改写与选择。</text>
+<text x="64" y="649" class="small">专家解答不会成为普通作答时的输入。</text>
+<rect x="40" y="688" width="920" height="173" fill="#f7f8f8" stroke="#ccd4d9"/>
+<text x="64" y="731" class="head">4 · 数据固定后，另一份模型副本做普通 SFT</text>
+<text x="64" y="773" class="body">训练输入是原题，目标是保留的改写解答。</text>
+<text x="64" y="814" class="body">论文推导 MH；公开代码缺少提议概率比与随机接受步骤。</text>
+<text x="64" y="848" class="small">所以 MH 的稳定分布保证，不能直接套用到这份实现。</text>
+<text x="40" y="914" class="small">根据 §§2–3、Appendix C 与公开 boost_sci.py（aa708088）重绘。</text>
+<text x="40" y="946" class="small">公开算法是贪心近似；“最终正确”也不保证整段解答信息正确。</text>
+</svg>

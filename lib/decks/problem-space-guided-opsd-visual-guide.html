@@ -1,66 +1,11 @@
-<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PS-OPSD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css"><style>
-.dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="PS-OPSD 论文图解"><section class="slide active">
-  <div class="meta"><span>01 · QUESTION</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h1>比 full solution 更好的 PI，会不会是 problem structure？</h1>
-  <p class="lead">PS-OPSD 用 state、goal、constraints 与 transitions 替代完整推理。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>64.32</h3><p>4B</p></div><div class="card green"><h3>65.40</h3><p>8B</p></div><div class="card orange"><h3>0.5%</h3><p>train PI invocation</p></div><div class="card "><h3>8/10</h3><p>个人兴趣</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；Tables 1-5</span><span>1 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>02 · STRUCTURE</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>四字段把 reference trace 改写成可行动约束</h2>
-
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>Initial</h3><p>已知状态</p></div><div class="card green"><h3>Goal</h3><p>成功条件</p></div><div class="card orange"><h3>Constraints</h3><p>规则边界</p></div><div class="card "><h3>Transitions</h3><p>operator + preconditions + result</p></div></div></div>
-  <div class="foot"><span>来源：Method section</span><span>2 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>03 · PROTOCOL</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>Student rollout 不变，只替换 teacher context</h2>
-
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>Question</strong><p>student only</p></div><div class="step"><b>2</b><strong>Rollout</strong><p>current policy</p></div><div class="step"><b>3</b><strong>Guidance</strong><p>teacher only</p></div><div class="step"><b>4</b><strong>Rescore</strong><p>same tokens</p></div><div class="step"><b>5</b><strong>Forward KL</strong><p>full vocabulary</p></div></div></div>
-  <div class="foot"><span>来源：Algorithm 1</span><span>3 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>04 · EXTRACTOR</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>Guidance 由 35B-A3B model 从 verified solution 提取</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>保留</h3><p>problem dynamics 与 selected path</p></div><div class="card orange"><h3>删除</h3><p>instantiated final answer</p></div></div></div>
-  <div class="foot"><span>来源：data construction</span><span>4 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>05 · ABLATION</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>长度、相关性与顺序分别有贡献</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>4B condition</th><th>Avg</th></tr></thead><tbody><tr><td>Wrong-task matched length</td><td>61.76</td></tr><tr><td>Corrupted order</td><td>62.19</td></tr><tr><td>Flattened fields</td><td>63.61</td></tr><tr><td>PS-OPSD</td><td>64.32</td></tr></tbody></table></div></div>
-  <div class="foot"><span>根据 ablation table 重绘</span><span>5 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>06 · RESULT</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>三个 scale 都高于 OPSD</h2>
-
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>Scale</th><th>Base</th><th>OPSD</th><th>PS-OPSD</th></tr></thead><tbody><tr><td>1.7B</td><td>36.67</td><td>41.08</td><td>43.12</td></tr><tr><td>4B</td><td>61.76</td><td>61.70</td><td>64.32</td></tr><tr><td>8B</td><td>62.31</td><td>63.58</td><td>65.40</td></tr></tbody></table></div></div>
-  <div class="foot"><span>根据 main table 重绘</span><span>6 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>07 · GAME MAP</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>把 game project 写成 implementation-neutral contract</h2>
-
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>Assets/State</h3><p>initial</p></div><div class="card green"><h3>Tests/Goals</h3><p>success</p></div><div class="card orange"><h3>Engine/API</h3><p>constraints</p></div><div class="card "><h3>Plan</h3><p>transitions</p></div></div></div>
-  <div class="foot"><span>本文 game context 映射</span><span>7 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>08 · MISSING</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>关键 setting 与 code 未公开</h2>
-
-  <div class="content"><div class="grid g2"><div class="card green"><h3>Paper 有</h3><p>method、results、controls</p></div><div class="card red"><h3>Release 缺</h3><p>repo、manifest、exact hyperparameters</p></div></div></div>
-  <div class="foot"><span>2026-10-08 artifact check</span><span>8 / 9</span></div>
-</section>
-<section class="slide">
-  <div class="meta"><span>09 · VERDICT</span><span>arXiv:2608.01589 · 2026-08-03</span></div>
-  <h2>适合定义 context，不足以定义 state compatibility</h2>
-
-  <div class="content"><div class="callout"><p>来自一条 reference path 的 transition 仍可能不适配 student 当前 build。</p></div></div>
-  <div class="foot"><span>兴趣程度 8/10</span><span>9 / 9</span></div>
-</section></main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/problem-space-guided-opsd.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js"></script></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PS-OPSD 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.diagram{display:block;width:100%;max-height:590px;object-fit:contain}.compact .table{font-size:19px}.compact .table th,.compact .table td{padding:11px 15px}</style></head><body><div class="viewport"><main class="stage" aria-label="PS-OPSD 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 问题</span><span>arXiv:2608.01589v1 · 2026-08-03</span></div><h1>让教师看解题关系，少看实例化答案</h1><p class="lead">PS-OPSD 把标准解改成四字段提示，仅改变教师上下文。</p><div class="content"><div class="grid g2"><div class="card"><h3>方法</h3><p>离线模型提取已知条件、成功条件、约束和选定变换。固定教师重评学生自己写的回答，学生仍只看问题。</p></div><div class="card"><h3>结果的关键限定</h3><p>按每个测试集挑最好 checkpoint 时三个规模都领先；统一模型的 Table 5 相对 OPSD 为 −0.68 / 0.00 / +0.68 点。</p></div></div><div class="callout"><p>个人兴趣 8/10。提示来自一份正确解，不是所有合法解法的完整状态图。</p></div></div><div class="foot"><span>§1、3–5；Table 1、5</span><span>1 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 完整流程</span><span>提示训练前缓存</span></div><h2>固定教师，只有学生 LoRA 接受更新</h2><div class="content"><img class="diagram" src="/lib/papers/problem-space-guided-opsd/teacher-context-flow.svg" alt="离线构造提示、固定教师与学生更新" width="980" height="420"></div><div class="foot"><span>Figure 1、Algorithm 1、§4；LoRA 是附加的少量训练参数</span><span>2 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 论文案例</span><span>Figure 2：符号示例，非已发布任务日志</span></div><h2>顺逆流题：线性化、求解、反变换</h2><div class="content"><img class="diagram" src="/lib/papers/problem-space-guided-opsd/boat-worked-case.svg" alt="船速题三个变换与本文教学数值" width="1000" height="450"></div><div class="foot"><span>结构来自 Figure 2；v=10、u=2 的数值由本文补充</span><span>3 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 损失</span><span>全词表，而非只对采样词设上限</span></div><h2>每个词表项先截断，再对回答位置平均</h2><div class="content"><div class="formula">d(v) = pT(v) · log[pT(v) / pS(v)]<br>位置损失 = Σv min[d(v), c]</div><div class="grid g2"><div class="card"><h3>具体含义</h3><p>教师与学生使用相同学生前文，教师额外看四字段提示。温度先改变两分支的词表概率，c 截断每个贡献。</p></div><div class="card"><h3>未知不能补写</h3><p>温度、截断阈值与完整运行配置未公开。截断后的目标不是未修改的数学 KL；论文没有给完整复现仓库。</p></div></div></div><div class="foot"><span>Eq. 5–7、Algorithm 1、§4</span><span>4 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 评测分母</span><span>三个独立训练种子；每题 12 条回答</span></div><h2>平均准确率，与至少成功一次分开算</h2><div class="content"><div class="formula">Accuracy = 100 × 总正确回答数 / (12 × 题数)<br>Avg = 三个 benchmark 的准确率等权平均</div><div class="grid g2"><div class="card"><h3>某题 6 / 12 次正确</h3><p>该题平均准确率 50%；pass@12（至少一次成功）却为成功。不能把两者当同一数字。</p></div><div class="card"><h3>不是 12 个训练种子</h3><p>12 是推理采样次数；Table 1 的均值和样本标准差来自三个独立训练种子。</p></div></div></div><div class="foot"><span>Eq. 8、Table 1 caption</span><span>5 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 主要证据</span><span>checkpoint = 训练中保存的参数版本</span></div><h2>两种 checkpoint 比较必须一起看</h2><div class="content"><img class="diagram" src="/lib/papers/problem-space-guided-opsd/checkpoint-evidence.svg" alt="主表拼接最佳checkpoint与统一checkpoint对照" width="1000" height="450"></div><div class="foot"><span>根据 Table 1、5 重绘；看过测试集后的最佳成绩，不是部署选择</span><span>6 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 表示消融</span><span>4B；仍按各测试集选最好 checkpoint</span></div><h2>本题相关性、变换连贯性比长度更重要</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>提示改变</th><th>保持什么 / 破坏什么</th><th>Avg</th></tr></thead><tbody><tr><td>完整四字段</td><td>内容、字段、次序</td><td>64.32</td></tr><tr><td>去字段与层次</td><td>内容、顺序、token 预算保持</td><td>63.61</td></tr><tr><td>同长度另一题提示</td><td>匹配题型、难度、长度；不适配本题</td><td>61.76</td></tr><tr><td>破坏整体变换路径</td><td>每步内部内容保持，跨步依赖破坏</td><td>62.19</td></tr></tbody></table></div><div class="callout"><p>去字段在 HMMT25 反而高 1.39 点，不能说结构化无条件优于纯文本。</p></div></div><div class="foot"><span>Table 2、§4–5</span><span>7 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>08 · 能力与可见行为</span><span>别把次数提升当新增可解题</span></div><h2>减少引用看不见的提示，不等于证明没有泄漏</h2><div class="content"><div class="grid g3"><div class="card"><h3>90 题中的次数变化</h3><p>比 Base：18 题更多正确、7 题更少、65 题相同。不是原本不会的 18 题全被救回。</p></div><div class="card"><h3>完全不会题的覆盖</h3><p>4B PS-OPSD：难题 pass@12 13.04%，原已会题保留 98.51%，净增长 +2；与 GRPO 净增长相同。</p></div><div class="card"><h3>引用不可见提示</h3><p>训练题 3.0%→0.5%；未见验证题 2.2%→0.4%。这是回答行为计数，不是全部信息依赖的因果测量。</p></div></div></div><div class="foot"><span>Figure 4、Table 3–5</span><span>8 / 9</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 结论与限制</span><span>个人兴趣 8/10</span></div><h2>值得借鉴表示对照，复现与部署证据仍不足</h2><div class="content"><div class="grid g2"><div class="card"><h3>下一步</h3><p>独立验证集选一个 checkpoint，再固定评测；比较来自不同正确解的提示、无选定路径的约束，以及学生中途偏离时是否仍适用。</p></div><div class="card"><h3>不要扩展结论</h3><p>只有竞赛数学与三个 Qwen3 规模；无游戏/代码实验。缺公开仓库、完整温度/截断/LoRA/训练配置，离线成本也未完整披露。</p></div></div><div class="callout"><p>表示抽象不是新概念本身；它的贡献是保持相同 OPSD 目标，对教师上下文作可区分的比较。</p></div></div><div class="foot"><span>§2、6；本文代码仅核对船速代数</span><span>9 / 9</span></div></section>
+</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/problem-space-guided-opsd.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>
