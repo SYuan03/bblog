@@ -138,6 +138,7 @@ Pushing `main` triggers the existing Netlify project automatically:
 - Build: `npm run build && npm run check`
 - Publish directory: `dist`
 - Node.js: `22`
+- Build timezone: `Asia/Shanghai` (`TZ` in `netlify.toml`, matching `_config.yml`). Hexo adjusts frontmatter dates using the build host's timezone; a UTC host can shift a date with an explicit `+08:00` offset to the previous day. Keep these settings aligned and verify the visible publication/update dates after deployment.
 
 Do not manually upload `dist/` and do not commit it.
 
