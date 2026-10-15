@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ExeWorldBench · 18 页论文图解</title>
+<style>
+:root{color-scheme:light;--ink:#1b1f23;--muted:#5c6773;--link:#1768d1;--border:#e3e7ee;--soft:#f7f8fa;--font:Georgia,"Times New Roman","Songti SC","Noto Serif CJK SC",serif}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:#f3f5f7;color:var(--ink);font-family:var(--font)}
+button,select{font:inherit}button,a,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link);outline-offset:3px}[hidden]{display:none!important}
+.viewport{height:calc(100% - 54px);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:6px}
+.canvas{width:1200px;height:675px;flex:none;position:relative;background:white;transform-origin:center;box-shadow:0 1px 8px #1b1f230a}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:26px 36px 22px;gap:12px}
+.meta{margin:0;color:var(--muted);font:400 15px/1.45 var(--font);display:flex;justify-content:space-between;gap:12px}
+h1,h2{font-size:32px;line-height:1.35;margin:0;font-weight:700;letter-spacing:0}h1{font-size:36px}h3{font-size:23px;line-height:1.45;margin:0 0 10px}
+p,li{font-size:21px;line-height:1.7;margin:0}p+p{margin-top:10px}ul,ol{margin:4px 0;padding-left:26px}li+li{margin-top:10px}
+.lead{font-size:22px;line-height:1.6}.content{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.split.figure-side{grid-template-columns:340px minmax(0,1fr)}
+.split.result{grid-template-columns:780px minmax(0,1fr);gap:24px}.split.case{grid-template-columns:590px minmax(0,1fr);gap:26px}
+.split>*,.columns>*{min-width:0}.columns{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.text-stack{display:flex;flex-direction:column;gap:14px}.text-stack p+p{margin:0}
+.source{margin-top:auto;border-top:1px solid var(--border);padding-top:9px;color:var(--muted);font-size:15px;line-height:1.5;display:flex;justify-content:space-between;gap:14px}
+.source a{color:var(--muted)}.note{color:var(--muted);font-size:18px;line-height:1.65}.small{font-size:19px}
+.accent{color:var(--link)}.rule{border-block:1px solid var(--border);padding:16px 0}.paper-image{display:block;width:100%;border:0;padding:0;background:white;text-align:center}
+.paper-image img{display:block;max-width:100%;width:auto;height:auto;max-height:440px;margin:0 auto}
+.paper-image[data-tall] img{max-height:480px}.paper-image figcaption{font-size:16px;line-height:1.6;color:var(--muted);margin-top:6px;text-align:left}
+.image-wide img{width:100%;max-height:390px;object-fit:contain}.image-low img{width:100%;max-height:250px;object-fit:contain}
+.split.result .paper-image img{max-height:476px;width:100%;object-fit:contain}.split.case .paper-image img{max-height:470px}
+.figure-side .paper-image img{max-height:465px}.frame-hint{font-size:15px;color:var(--muted);line-height:1.5;text-align:center;margin-top:6px}
+.construction-panels{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.construction-panels .paper-image img{max-height:342px;max-width:100%}
+.construction-copy{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.construction-copy p{font-size:19px;line-height:1.6}
+table{width:100%;border-collapse:collapse;font-size:20px;line-height:1.6}th,td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--border)}th{background:var(--soft);font-weight:700}td:first-child{font-weight:700}
+.compact th,.compact td{padding:9px 12px}.compact{font-size:19px}.score-table{font-size:22px}.score-table th,.score-table td{padding:10px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85em;background:var(--soft);padding:1px 4px}
+pre{margin:0;padding:16px 20px;background:var(--soft);border:1px solid var(--border);overflow:auto;font:18px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+pre code{background:none;padding:0;font:inherit}.formula{padding:14px 18px;border-block:1px solid var(--border);font:21px/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mechanism{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:22px 0;border-block:1px solid var(--border)}
+.mechanism>div{position:relative;padding-right:12px}.mechanism>div:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:6px;color:var(--muted)}
+.mechanism .value{display:block;font:700 30px/1.5 var(--font);color:var(--link)}.mechanism .label{display:block;font-size:21px;line-height:1.55}
+.mechanism .explain{display:block;font-size:18px;color:var(--muted);line-height:1.6;margin-top:7px}
+.sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.sequence section{border-top:2px solid var(--border);padding-top:12px}.sequence p{font-size:20px}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-block:1px solid var(--border);padding:20px 0}
+.timeline div{font-size:19px;line-height:1.6}.timeline b{display:block;color:var(--link);font-size:21px;margin-bottom:6px}
+.controls{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 12px;border-top:1px solid var(--border);background:white}
+.control-group{display:flex;align-items:center;gap:8px;min-width:0}.controls button,.controls select,.controls a{min-height:36px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);font-size:14px;line-height:1.5;text-decoration:none}
+.controls a{color:var(--link);white-space:nowrap}.controls button:disabled{opacity:.35;cursor:default}.controls select{max-width:170px}
+.counter{font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.controls [data-fullscreen]{color:var(--link)}
+dialog{width:min(1250px,calc(100vw - 24px));height:min(96dvh,1050px);max-width:none;max-height:none;border:1px solid var(--border);border-radius:6px;padding:0;overflow:hidden;background:white;color:var(--ink)}
+dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid var(--border);font-size:14px}
+.viewer-actions{display:flex;gap:6px}.viewer-actions button{background:white;border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-size:14px;min-height:36px}.viewer-actions [data-view-close]{color:var(--link)}
+.viewer-body{overflow:auto;min-width:0;min-height:0;padding:12px;overscroll-behavior:contain}.viewer-body img{display:block;max-width:none;max-height:none;height:auto;margin:auto}
+.viewer-caption{margin:0;padding:8px 12px;border-top:1px solid var(--border);font-size:13px;line-height:1.6;color:var(--muted);max-height:100px;overflow:auto}
+@media(max-width:640px){
+ .viewport{padding:0;align-items:stretch}.canvas{width:100%;height:100%;transform:none!important;box-shadow:none}
+ .slide{padding:15px 17px;gap:12px;overflow-y:auto;overscroll-behavior:contain}.meta{font-size:11px;gap:8px}.meta>span:last-child{white-space:nowrap;flex:none}h1,h2{font-size:22px;line-height:1.5}h3{font-size:17px}
+ p,li,.lead{font-size:15px;line-height:1.8}.note,.small{font-size:13px}.content{flex:none;min-height:0;gap:16px}.source{font-size:11px;line-height:1.65;margin-top:18px;flex-wrap:wrap}
+ .split,.split.figure-side,.split.case,.split.result,.columns{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+ .paper-image img,.paper-image[data-tall] img,.split.result .paper-image img,.split.case .paper-image img{max-height:none;width:100%}
+ .figure-side .paper-image{max-width:250px;margin:auto}.paper-image figcaption,.frame-hint{font-size:11px}
+ .construction-panels,.construction-copy{grid-template-columns:1fr;gap:16px}.construction-panels .paper-image img{max-height:none;width:100%}.construction-copy p{font-size:14px;line-height:1.8}
+ table,.compact,.score-table{font-size:13px;line-height:1.6}th,td,.compact th,.compact td{padding:7px 6px}.table-box{overflow-x:auto}.table-box table{min-width:530px}
+ pre{font-size:12px;padding:12px;line-height:1.7}.formula{font-size:12px;padding:10px 0;overflow-x:auto;white-space:nowrap}
+ .mechanism{grid-template-columns:1fr 1fr;gap:16px}.mechanism .value{font-size:22px}.mechanism .label{font-size:15px}.mechanism .explain{font-size:13px}.mechanism>div::after{display:none}
+ .timeline{grid-template-columns:1fr;gap:12px;padding:14px 0}.timeline div{font-size:14px}.timeline b{font-size:15px;margin-bottom:3px}
+ .sequence{grid-template-columns:1fr;gap:16px}.sequence p{font-size:14px}
+ .controls{padding:6px 8px;gap:4px}.controls .control-group{gap:4px}.controls button,.controls a,.controls select{padding:7px 8px;font-size:12px}.controls select{max-width:72px}.counter{font-size:12px}
+ .viewer-head{flex-wrap:wrap;font-size:12px}.viewer-actions{margin-left:auto}.viewer-caption{font-size:11px}
+}
+@media print{html,body{height:auto;background:white}.viewport{height:auto;padding:0;overflow:visible;display:block}.canvas{height:auto;width:1200px;transform:none!important;box-shadow:none}.slide{position:relative;display:flex!important;height:675px;break-after:page}.slide[hidden]{display:flex!important}.controls,dialog{display:none!important}@page{size:landscape;margin:8mm}}
+</style>
+</head>
+<body>
+<main class="viewport" aria-label="论文演示"><div class="canvas" id="canvas">
+
+<section class="slide" data-title="核心问题" aria-label="第 1 页：核心问题">
+<p class="meta"><span>ExeWorldBench · Peng et al. · arXiv v1 · 2026-10-10</span><span>01 / 18</span></p>
+<h1>用代码搭出能工作的 3D 机械装置</h1>
+<p class="lead">一张机构图或一段目标描述，能否变成靠实际机械作用运行的 Blender 场景？</p>
+<div class="content">
+<button class="paper-image image-low" data-image="/lib/papers/exeworldbench/figure-9-detail-codex.png" data-caption="Figure 9 局部裁切：Codex 的 053 任务输出。V=7，ECM=5，G=100%。Peng et al., v1 p.19, CC BY 4.0。" aria-label="放大原文 Figure 9 的 Codex 行"><img src="/lib/papers/exeworldbench/figure-9-detail-codex.png" width="888" height="206" alt="原图裁切：A和B经过共享路口的四个动画时刻"></button>
+<div class="columns"><p>真实题目 <code>053</code>：B 先开始接近，A 先过路口；A 完全离开后，由机械机构放行 B。</p><p>这份输出的目标条件得 100%，机械执行只得 5 / 10。<strong>条件满足率不等于整题机械正确。</strong></p></div>
+</div>
+<p class="source"><span>原文 Figure 9（裁切）；正文有全部 9 图、9 表及真实任务详解。</span><a href="https://arxiv.org/pdf/2610.15166v1" target="_blank" rel="noopener">论文 PDF</a></p>
+</section>
+
+<section class="slide" data-title="Blender 背景" hidden aria-label="第 2 页：Blender 背景">
+<p class="meta"><span>PART 0 · 运动从哪里来</span><span>02 / 18</span></p><h2>关键帧直接规定位置，刚体由物理引擎推进</h2>
+<div class="content split">
+<div class="text-stack"><p>Blender 的 Python 接口 <code>bpy</code> 创建几何、碰撞和关节。<code>.py</code> 是程序，<code>.blend</code> 是运行后保存的场景。</p><p>关键帧：指定物体在某一帧的位置。刚体模拟：设置质量、碰撞形状和约束，由重力、接触等决定后续运动。</p><p>任务允许合理初始驱动，禁止给下游零件安排独立的运动时间表。</p></div>
+<div><pre><code>import bpy
+
+# 教学片段：让现有球参与刚体模拟
+bpy.context.view_layer.objects.active = ball
+ball.select_set(True)
+bpy.ops.rigidbody.object_add()
+ball.rigid_body.type = "ACTIVE"
+ball.rigid_body.mass = 1.0
+ball.rigid_body.collision_shape = "SPHERE"
+bpy.context.scene.gravity = (0, 0, -9.81)</code></pre><p class="note">假设已有球对象；非完整脚本、非 benchmark 解法。论文要求 Blender 5.2，示例未在该版本运行。</p></div>
+</div>
+<p class="source"><span>背景来源：Blender 官方 RigidBodyObject / rigidbody operators；任务约束来自公开提示。</span><span>完整教学片段见正文 Part 0</span></p>
+</section>
+
+<section class="slide" data-title="四种任务" hidden aria-label="第 3 页：四种任务">
+<p class="meta"><span>BENCHMARK · 模型自行决定的内容越来越多</span><span>03 / 18</span></p><h2>273 道题：从机构还原，到目标驱动设计</h2>
+<div class="content">
+<div class="table-box"><table><thead><tr><th>任务 / 独立题数</th><th>输入</th><th>必须自行完成</th></tr></thead><tbody>
+<tr><td>T1 · 50</td><td>单机构静态图</td><td>几何、约束和完整运动</td></tr>
+<tr><td>T2 · 100</td><td>多级装置静态图</td><td>各组件的空间连接与机械传递</td></tr>
+<tr><td>T3-1 · 63</td><td>组件名称 / 定义、组件数与球数</td><td>组件顺序、布局、连接；每实例恰用一次</td></tr>
+<tr><td>T3-2 · 60</td><td>目标、物体、状态、事件及规则</td><td>选择机构，再设计几何与物理实现</td></tr>
+</tbody></table></div>
+<p>论文有 T1、T2、T3 三个主任务，T3 分两种设置。T1/T2 主设置不给运动帧，加入运动参考的版本不增加独立题数；T3 不给视觉参考。</p>
+</div>
+<p class="source"><span>原文 §3.1；公开数据 c6dc85e：50 + 100 + 63 + 60。</span><span>没有训练新模型</span></p>
+</section>
+
+<section class="slide" data-title="T1 数据构建" hidden aria-label="第 4 页：T1 数据构建">
+<p class="meta"><span>DATA CONSTRUCTION · 制作题目，不是模型答题流程</span><span>04 / 18</span></p><h2>T1 怎样保证一张静态图有足够运动线索</h2>
+<div class="content">
+<div class="construction-panels">
+<button class="paper-image" data-image="/lib/papers/exeworldbench/figure-1-t1-source.png" data-caption="Figure 1 的 T1 步骤 1–3 原图裁切：采集与筛选。完整原图在正文 §3.2。Peng et al., v1 p.4, CC BY 4.0。" aria-label="放大 Figure 1 的 T1 采集与筛选"><img src="/lib/papers/exeworldbench/figure-1-t1-source.png" width="529" height="531" alt="原文T1步骤1至3：动画采集、画质筛选与机械复杂性检查"></button>
+<button class="paper-image" data-image="/lib/papers/exeworldbench/figure-1-t1-validation.png" data-caption="Figure 1 的 T1 步骤 4–5 原图裁切：运动可推断性与人工复核。完整原图在正文 §3.2。Peng et al., v1 p.4, CC BY 4.0。" aria-label="放大 Figure 1 的 T1 运动可推断性与人工复核"><img src="/lib/papers/exeworldbench/figure-1-t1-validation.png" width="529" height="393" alt="原文T1步骤4至5：生成静态结构线索、推断运动、验证与人工复核"></button>
+</div>
+<div class="construction-copy"><p>左：公开机械动画经画质过滤；Astra 排除遮挡、歧义与少于 3 个活跃组件的案例。</p><p>右：Astra 看完整运动，写 3 条静态结构线索；Opus 5 只看图与线索推断运动；Astra 核对，再由 5 人排歧义。<strong>这些线索不交给被测模型。</strong></p></div>
+</div>
+<p class="source"><span>原文 §3.2.1 / Figure 1，按阶段裁成两块，未改动英文内容；完整原图在正文。</span><span>未报告人工一致性系数</span></p>
+</section>
+
+<section class="slide" data-title="T2/T3 数据构建" hidden aria-label="第 5 页：T2/T3 数据构建">
+<p class="meta"><span>DATA CONSTRUCTION · 模型生成与人工复核分工</span><span>05 / 18</span></p><h2>T2 从组件库组合，T3 从组件或目标出发</h2>
+<div class="content">
+<div class="construction-panels">
+<button class="paper-image" data-image="/lib/papers/exeworldbench/figure-1-t2-library.png" data-caption="Figure 1 的 T2 组件库原图裁切。850 是组件出现次数，不是题数。Peng et al., v1 p.4, CC BY 4.0。" aria-label="放大 Figure 1 的组件库与分布"><img src="/lib/papers/exeworldbench/figure-1-t2-library.png" width="619" height="399" alt="原文T2组件库与组件分布，斜坡占30.12%"></button>
+<button class="paper-image" data-image="/lib/papers/exeworldbench/figure-1-t2-composition.png" data-caption="Figure 1 的 T2 步骤 2–5 原图裁切：生成序列、人工复核与组件布局。Peng et al., v1 p.4, CC BY 4.0。" aria-label="放大 Figure 1 的序列生成与组合"><img src="/lib/papers/exeworldbench/figure-1-t2-composition.png" width="619" height="525" alt="原文T2序列生成、人工复核、组件布局与最终参考"></button>
+</div>
+<div class="construction-copy"><p>T2：作者预制组件；Astra 提出 4–13 级序列，人工复核，再用 Codex 组合实现。T3-1 抽取 4–12 个组件，<strong>只给模型名称和定义，不给代码</strong>。</p><p>T3-2：三档难度各占 1/3；Astra 按统一格式写规格，Opus 5 检查一致、可解、可构建，再人工复核。组件库和完整参考代码未公开。</p></div>
+</div>
+<p class="source"><span>原文 §3.2.2–3.2.3 / Figure 1，分阶段裁切。参考内部怎样驱动物体，无法从公开材料核查。</span><span>850 是组件出现次数</span></p>
+</section>
+
+<section class="slide" data-title="Harness 与 API" hidden aria-label="第 6 页：Harness 与 API">
+<p class="meta"><span>GENERATION · 相同模型名称不代表相同运行设置</span><span>06 / 18</span></p><h2>Harness 可以执行与修改；API 先一次生成</h2>
+<div class="content">
+<div class="table-box"><table><thead><tr><th></th><th>Harness-based</th><th>API-based</th></tr></thead><tbody>
+<tr><td>模型使用方式</td><td>Astra + Codex CLI；Fable + Claude Code</td><td>单次调用输出完整程序</td></tr>
+<tr><td>工具与产物</td><td>文件系统、shell、Blender；交 .py + .blend</td><td>输出 JSON 的 code 字段</td></tr>
+<tr><td>技术错误修复</td><td>Agent 可在任务内查看和修改</td><td>之后由 Astra + Codex 修复，再记录第二组成绩</td></tr>
+</tbody></table></div>
+<p>Harness 是组织模型、上下文与工具执行的外层软件。API-based 则直接调用模型一次。</p>
+<p><strong>两类设置未严格匹配总 token 数、执行次数与时间。</strong>token 是模型处理的文本单位。API 修复后成绩包含外部模型协助。</p>
+</div>
+<p class="source"><span>原文 §4.2；公开任务 / API 提示。修复不得改预期行为，但每轮代码改动未公开。</span><span>未公开文件隔离配置</span></p>
+</section>
+
+<section class="slide" data-title="评分模型的输入" hidden aria-label="第 7 页：评分模型的输入">
+<p class="meta"><span>JUDGE · 一次独立模型调用怎样给分</span><span>07 / 18</span></p><h2>Opus 5.5 看动画采样帧，不读代码事件日志</h2>
+<div class="content">
+<div class="mechanism"><div><span class="label">完成提交</span><span class="explain">代码和 Blender 场景</span></div><div><span class="label">采样动画帧</span><span class="explain">T1：6 张生成帧<br>T3-1：9 张生成帧</span></div><div><span class="label">提供评价资料</span><span class="explain">参考帧或组件 / 任务条件</span></div><div><span class="label">返回分数</span><span class="explain">JSON；按任务采用 V / M / ECM / G</span></div></div>
+<div class="table-box"><table class="compact"><thead><tr><th>分数</th><th>用于哪些任务</th><th>具体判断</th></tr></thead><tbody>
+<tr><td>V · Visual Structure</td><td>全部</td><td>几何、连接与呈现；结构正确但呈现普通一般 ≤ 8</td></tr>
+<tr><td>M · Mechanical Motion</td><td>T1</td><td>整体运动与约束；参考和生成帧不按下标配对</td></tr>
+<tr><td>ECM · 机械执行分</td><td>T2 / T3</td><td>组件动作与机械传递；断链影响后续各段</td></tr>
+<tr><td>G · 条件满足率</td><td>T3-2</td><td>每条初始、中途、最终条件必须全部满足</td></tr>
+</tbody></table></div>
+<p class="note">T2/T3-2 提示没有统一指定帧数。批量执行程序（runner）、采样参数和汇总代码尚未公开。</p>
+</div>
+<p class="source"><span>公开 eval/t1、eval/t2、eval/t3 提示；原文 §4.1。流程为本文梳理。</span><span>评分提示已公开，完整评测程序未公开</span></p>
+</section>
+
+<section class="slide" data-title="ECM 怎么评分" hidden aria-label="第 8 页：ECM 怎么评分">
+<p class="meta"><span>JUDGE · 多级机械动作与传递</span><span>08 / 18</span></p><h2>每个组件一段；断链后独立运动不再得分</h2>
+<div class="content">
+<p>ECM（Executable Causal Mechanism）同时看前一级对后一级的机械传递，以及后一级完整动作。T2 顺序已给，T3-1 顺序须从帧推断。</p>
+<div class="mechanism"><div><span class="label">initial → C1</span><span class="value">9</span><span class="explain">C1 完整动作</span></div><div><span class="label">C1 → C2</span><span class="value">8</span><span class="explain">传递 + C2 动作</span></div><div><span class="label">C2 → C3</span><span class="value">2</span><span class="explain">传递仅部分成功</span></div><div><span class="label">C3 → C4</span><span class="value">0</span><span class="explain">断链；后来独立启动无效</span></div></div>
+<p><strong>ECM = (9 + 8 + 2 + 0) / 4 = 4.75。</strong>这是教学分数，非实测日志。N 个组件对应 N 段，不是 N−1。</p>
+<p class="note">T3-2 公开提示输出整体 ECM 整数，与正文的笼统分段均值说明不同；不能擅自补出其实现。</p>
+</div>
+<p class="source"><span>公开 eval/t2/prompt1.txt 与 eval/t3/prompt1_1.txt；分数图为本文教学示例。</span><span>时间先后本身不足以证明机械因果</span></p>
+</section>
+
+<section class="slide" data-title="053：物体与事件" hidden aria-label="第 9 页：053 的物体与事件">
+<p class="meta"><span>REAL CASE · t3/task2/053 · 与论文 pp.20–21 对应</span><span>09 / 18</span></p><h2>B 先接近路口，A 先获得通行权</h2>
+<div class="content">
+<button class="paper-image image-low" data-image="/lib/papers/exeworldbench/figure-9-detail-codex.png" data-caption="Figure 9 的 Codex 行裁切。公开 task 053：A、B 各到目标，经共享区，由被动机械组件控制B入口。Peng et al., CC BY 4.0。" aria-label="放大053任务原图"><img src="/lib/papers/exeworldbench/figure-9-detail-codex.png" width="888" height="206" alt="053任务原图的Codex装置与动画时刻"></button>
+<div class="columns"><p>A、B 是运载物，各有目标体积；共享区边界在模拟前声明。被动 <code>object_A</code> 必须机械地控制 B 的进入。</p><p>进入：任意碰撞几何与共享区重叠。离开：全部碰撞几何清出。检查点：中心正向过内部平面。到达：整物体被目标包含。</p></div>
+<p class="note">初始 A、B 静止、在共享区与目标外。state_A0 / state_A1 是预先声明且不重叠的机械姿态范围。</p>
+</div>
+<p class="source"><span>公开 task 053 与 API prompt；Figure 9（裁切）。</span><span>payload = 要运输的物体，不限球</span></p>
+</section>
+
+<section class="slide" data-title="053：时序与失败" hidden aria-label="第 10 页：053 的时序与失败">
+<p class="meta"><span>REAL CASE · 规则规定过程，不能仅看最终位置</span><span>10 / 18</span></p><h2>A 完全离开，才机械地允许已运动的 B 进入</h2>
+<div class="content">
+<div class="timeline"><div><b>1 · B 开始接近</b>必须早于 A 进入；B 仍在共享区外</div><div><b>2 · A 通过</b>进入 → 检查点 → 全部离开</div><div><b>3 · 机构改变</b>A 离开产生真实机械作用</div><div><b>4 · B 被放行</b>进入 → 检查点 → 离开</div><div><b>5 · 持续保持</b>各在目标内，机构处于 state_A1</div></div>
+<div class="formula">E_start_B &lt; E_enter_A<br>E_exit_A ≤ E_change_A1 ≤ E_enter_B<br>E_exit_A &lt; E_enter_B</div>
+<p>R05 允许相邻事件同一模拟步发生；R06 仍规定 A 离开严格早于 B 进入。</p>
+<p class="note">教学失败例：中心出路口、尾部未出就放 B，会违反完全离开 / 无同时占据；A 走完才启动 B，违反 R13；定时开门，违反物理依赖。这些不是模型实测日志。</p>
+</div>
+<p class="source"><span>公开 task 053：R02 / R05 / R06 / R12 / R13。时间关系为本文梳理。</span><span>最终需保持多久 / 运动阈值未规定</span></p>
+</section>
+
+<section class="slide" data-title="053：原始结果" hidden aria-label="第 11 页：053 的原始结果">
+<p class="meta"><span>REAL CASE · 看原图，不编造未发布的判分日志</span><span>11 / 18</span></p><h2>G=100% 仍可能只有 ECM=5</h2>
+<div class="content split case">
+<div><button class="paper-image" data-image="/lib/papers/exeworldbench/figure-9.png" data-caption="Figure 9 完整原图。Codex: V7 ECM5 G100%；Astra API: V7 ECM7 G100%；DeepSeek: V3 ECM1 G28.60%；Qwen: V2 ECM0 G0%。Peng et al., v1 p.19, CC BY 4.0。" aria-label="放大完整Figure 9"><img src="/lib/papers/exeworldbench/figure-9.png" width="888" height="749" alt="Figure 9完整模型输出比较"></button><p class="frame-hint">Figure 9 原图 · 每行是同一输出的四个时刻</p></div>
+<div class="text-stack"><p>V、ECM、G 独立评价。目标条件全部被判满足，也不强制机械分为 10。</p><p>原规格有 7 条 I、13 条 Rules、3 条 F。但 Rules 到评分 B 条目的逐项映射未公开。</p><p><strong>不能拿 23 当官方评分分母，反推 28.60% 通过了哪几条。</strong></p><p class="note">这是作者选择的代表结果，没有逐条 judge 输出或生成代码，不能把缩略图变成详细失败日志。</p></div>
+</div>
+<p class="source"><span>Figure 9；公开 task 053；eval/t3/prompt2_1.txt。</span><span>Judge 只使用可见证据</span></p>
+</section>
+
+<section class="slide" data-title="G 的分母" hidden aria-label="第 12 页：G 的分母">
+<p class="meta"><span>AGGREGATION · 一道题的条件分，怎样变成榜单</span><span>12 / 18</span></p><h2>先按题算比例，再平均；执行失败的题记零</h2>
+<div class="content">
+<p>G（Goal Satisfaction）对每条初始 I、中途 B、最终 F 条件给 0/1。部分、近似、证据不足都为 0。</p>
+<div class="formula">G_i = (P_i^I + P_i^B + P_i^F) / (N_i^I + N_i^B + N_i^F)<br>G = mean_i G_i</div>
+<div class="columns"><div><table class="score-table"><thead><tr><th>教学题</th><th>通过 / 总数</th></tr></thead><tbody><tr><td>A</td><td>3 / 4</td></tr><tr><td>B</td><td>1 / 2</td></tr></tbody></table><p class="small">按题平均：62.50%。全部条目混算：66.67%。论文用前者。</p></div><div class="text-stack"><p>主表：全部题目的均值。附录：只对能执行的题计算质量均值。</p><p>Astra T1：<code>94% × 5.40 ≈ 5.08</code>。Kimi T3-2：<code>(49/60) × 22.20% = 18.13%</code>。</p></div></div>
+</div>
+<p class="source"><span>原文 §4.1 Eq.(1)–(2)、Tables 1/6、4/9；示例条件数虚构，末两项是表值算术复核。</span><span>G 不是严格任务成功率</span></p>
+</section>
+
+<section class="slide" data-title="多级组合结果" hidden aria-label="第 13 页：多级组合结果">
+<p class="meta"><span>RESULTS · 执行错误与机械错误分开看</span><span>13 / 18</span></p><h2>能运行的程序，仍可能接不通整条链</h2>
+<div class="content split result">
+<div><button class="paper-image" data-image="/lib/papers/exeworldbench/table-2.png" data-caption="Table 2 完整原表：T2，100题，全题均值。E执行率，V结构分，ECM机械动作与传递分。下标1/2修复前后。Peng et al., CC BY 4.0。" aria-label="放大原文Table 2"><img src="/lib/papers/exeworldbench/table-2.png" width="1616" height="1016" alt="Table 2原表T2执行率与机械分"></button><p class="frame-hint">Table 2 原表 · 点击看完整大图</p></div>
+<div class="text-stack"><p class="small">T2：Kimi 修复后 79% 可执行，ECM=0。Codex ECM=5.25，Claude Code=4.08。</p><p class="small">T1 也有差距：Kimi 执行率 8% → 86%，M 仅 0.04 → 0.80。</p><p class="small">T3-1：Codex ECM=6.11；Astra API 修复后=3.34。</p><p class="note">不同任务分布，不是同题受控去提示实验；跨 T1/T2/T3 比分数要谨慎。</p></div>
+</div>
+<p class="source"><span>主表 Tables 1–3；全题均值。单题 Figure 7 中 Astra API 的 ECM 高于 Codex。</span><span>平均领先不等于逐题领先</span></p>
+</section>
+
+<section class="slide" data-title="目标设计结果" hidden aria-label="第 14 页：目标设计结果">
+<p class="meta"><span>RESULTS · T3-2 · 60 道目标设计题</span><span>14 / 18</span></p><h2>Codex 的 90.14% 是条件满足率，机械分为 5.82</h2>
+<div class="content split result">
+<div><button class="paper-image" data-image="/lib/papers/exeworldbench/table-4.png" data-caption="Table 4 完整原表：T3-2，全60题。Codex G90.14% ECM5.82；Claude Code G75.19% ECM5.17；Astra API修复后G41.07% ECM2.55。Peng et al., CC BY 4.0。" aria-label="放大原文Table 4"><img src="/lib/papers/exeworldbench/table-4.png" width="1624" height="1012" alt="Table 4原表目标设计任务结果"></button><p class="frame-hint">Table 4 原表 · 点击放大</p></div>
+<div class="text-stack"><p class="small">Astra API 修复后 91.67% 能执行，G=41.07%，ECM=2.55。</p><p class="small">Kimi 修复后 81.67% 能执行，G=18.13%，ECM=0.63。</p><p class="small">初始位置容易满足；中途行为和最终持续状态更难。</p><p class="note">Harness 可多轮执行修改。当前实验没有分离基础模型、更多尝试、执行反馈与外部修复的贡献。</p></div>
+</div>
+<p class="source"><span>Table 4；I/B/F 类别结果见原 Figure 5，正文保留全部附录表。</span><span>无严格整题成功率</span></p>
+</section>
+
+<section class="slide" data-title="级数增加" hidden aria-label="第 15 页：级数增加">
+<p class="meta"><span>ANALYSIS · 长链意味着更多接触与传递机会</span><span>15 / 18</span></p><h2>机械级数增加，ECM 总体下降；Codex 相对稳定</h2>
+<div class="content">
+<button class="paper-image image-wide" data-image="/lib/papers/exeworldbench/figure-2.png" data-caption="Figure 2 完整原图：修复后结果按机械执行级数分组。横轴不是模型工具调用或思考步数。Peng et al., v1 p.9, CC BY 4.0。" aria-label="放大原文Figure 2"><img src="/lib/papers/exeworldbench/figure-2.png" width="1520" height="498" alt="Figure 2原始多级装置ECM曲线"></button>
+<div class="columns"><p class="small">横轴 Step 是装置的机械执行级数。断链后下游零分，会放大早期错误的影响。</p><p class="small">曲线有波动，非逐点下降。未给各组题数、误差条，组件分布也可能不同，不能估算普适的每级损失。</p></div>
+</div>
+<p class="source"><span>原文 §4.6 / Figure 2；本文解释断链规则对均值的影响。</span><span>题目级数 ≠ Agent 修改轮数</span></p>
+</section>
+
+<section class="slide" data-title="运动参考" hidden aria-label="第 16 页：运动参考">
+<p class="meta"><span>ANALYSIS · 看到怎样运动，仍要写出正确结构</span><span>16 / 18</span></p><h2>增加运动帧通常帮助有限，也有负结果</h2>
+<div class="content">
+<button class="paper-image image-wide" data-image="/lib/papers/exeworldbench/figure-4.png" data-caption="Figure 4 完整原图：T2加入运动参考。Codex ECM5.25→5.66；Claude Code4.08→4.34；GLM和Astra API略降。Peng et al., v1 p.10, CC BY 4.0。" aria-label="放大原文Figure 4"><img src="/lib/papers/exeworldbench/figure-4.png" width="1559" height="531" alt="Figure 4原文运动参考对T2的作用"></button>
+<p class="small">T1 的 Figure 3：Codex M 6.32 → 7.08；Astra API 5.08 → 3.40。更多观察不保证更好实现，不能省去反例再概括为普遍提升。</p>
+</div>
+<p class="source"><span>原文 §4.7 / Figures 3–4，完整原图均在正文。</span><span>未补齐各设置执行率与重复统计</span></p>
+</section>
+
+<section class="slide" data-title="Related Work 与边界" hidden aria-label="第 17 页：Related Work 与边界">
+<p class="meta"><span>RELATED WORK / LIMITATIONS · 任务内容和判分证据分开比较</span><span>17 / 18</span></p><h2>机械组合是特色，直接状态验证已有前作</h2>
+<div class="content">
+<div class="table-box"><table class="compact"><thead><tr><th></th><th>主要证据</th><th>更适合回答</th></tr></thead><tbody>
+<tr><td>PhysCodeBench v2</td><td>引擎物理量、专家断言与守恒检查</td><td>物理量和规律是否正确</td></tr>
+<tr><td>WorldCoder-Bench</td><td>动作后的运行状态与隐藏规则；故障注入校准</td><td>浏览器 3D 的行为和界面状态是否一致</td></tr>
+<tr><td>ExeWorldBench</td><td>采样动画帧与机械 / 目标评分提示</td><td>复杂 Blender 机构是否呈现连贯机械过程</td></tr>
+</tbody></table></div>
+<div class="columns"><p>帧中的先后运动不能充分证明代码物理依赖；提示中的“移除 A 会怎样”没有实际干预执行。</p><p>值得补：可信引擎事件、真实阻断 / 移除实验、错误实现检出率，同模型匹配预算，以及多次运行与人工一致性。</p></div>
+</div>
+<p class="source"><span>ExeWorldBench §2–4；PhysCodeBench v2 §3–4；WorldCoder-Bench §2–3。补实验为本文分析。</span><span>不把前作概括成“只看画面”</span></p>
+</section>
+
+<section class="slide" data-title="结论与阅读" hidden aria-label="第 18 页：结论与阅读">
+<p class="meta"><span>CONCLUSION · 博客作者兴趣程度 9 / 10</span><span>18 / 18</span></p><h2>读任务与判分细节，再理解榜单</h2>
+<div class="content">
+<div class="sequence"><section><h3>值得保留</h3><p>四种提示边界；053 的提前接近与机械放行；断链零分；主表与附录的不同分母。</p></section><section><h3>当前证据</h3><p>执行率能高，机械分仍很低。Harness 平均领先，但没有匹配预算或分离反馈贡献。</p></section><section><h3>仍缺材料</h3><p>批量执行程序、组件实现、每轮修复改动、Rules → B 映射、逐题分数与采样参数。</p></section></div>
+<button class="paper-image image-low" data-image="/lib/papers/exeworldbench/figure-9-detail-codex.png" data-caption="Figure 9 Codex 行裁切。目标100%，ECM5。完整案例、图表和证据边界见正文。Peng et al., CC BY 4.0。" aria-label="放大结论中的原图"><img src="/lib/papers/exeworldbench/figure-9-detail-codex.png" width="888" height="206" alt="053的原文机械装置案例"></button>
+<p class="note">正文可独立阅读，含全部 9 张原图、9 张原表、公开提示细节与可运行的算术例子。图表点击可放大；底部“回文章”始终有效。</p>
+</div>
+<p class="source"><span>论文 v1；GitHub 06bb542；Hugging Face c6dc85e。兴趣分仅说明与博客作者的兴趣相关程度。</span><a href="/posts/论文解读/exeworldbench.html" target="_top">继续读正文 →</a></p>
+</section>
+
+</div></main>
+<nav class="controls" aria-label="幻灯片导航">
+<div class="control-group"><button type="button" data-prev aria-label="上一页">←</button><button type="button" data-next aria-label="下一页">→</button><span class="counter" aria-live="polite" data-counter>1 / 18</span><select aria-label="跳转到幻灯片" data-select></select></div>
+<div class="control-group"><button type="button" data-fullscreen aria-pressed="false">全屏</button><a href="/posts/论文解读/exeworldbench.html" target="_top" data-return>回文章</a></div>
+</nav>
+<dialog id="image-viewer" aria-label="原论文图表详情">
+<header class="viewer-head"><span>原论文图表</span><div class="viewer-actions"><button type="button" data-view-fit>整图</button><button type="button" data-view-clear>清晰</button><button type="button" data-view-close>关闭</button></div></header>
+<div class="viewer-body" tabindex="0" aria-label="可滚动的图表"><img alt=""></div><p class="viewer-caption"></p>
+</dialog>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll(".slide")];
+  const canvas = document.querySelector("#canvas");
+  const viewport = document.querySelector(".viewport");
+  const prev = document.querySelector("[data-prev]");
+  const next = document.querySelector("[data-next]");
+  const counter = document.querySelector("[data-counter]");
+  const select = document.querySelector("[data-select]");
+  const fullscreen = document.querySelector("[data-fullscreen]");
+  const viewer = document.querySelector("#image-viewer");
+  const viewerBody = viewer.querySelector(".viewer-body");
+  const viewerImage = viewer.querySelector("img");
+  const caption = viewer.querySelector(".viewer-caption");
+  let index = 0;
+  let imageTrigger = null;
+  let imageMode = "fit";
+  slides.forEach((slide, i) => select.add(new Option((i + 1) + " · " + slide.dataset.title, String(i))));
+  const fromHash = () => {
+    const match = location.hash.match(/^#(?:slide-)?(\d+)$/);
+    return match ? Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1)) : 0;
+  };
+  function show(i, updateHash = true) {
+    index = Math.min(slides.length - 1, Math.max(0, i));
+    slides.forEach((slide, n) => {
+      slide.hidden = n !== index;
+      slide.setAttribute("aria-hidden", String(n !== index));
+    });
+    counter.textContent = (index + 1) + " / " + slides.length;
+    select.value = String(index);
+    prev.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+    document.title = "ExeWorldBench · " + (index + 1) + "/" + slides.length + " · " + slides[index].dataset.title;
+    if (updateHash) history.replaceState(null, "", "#slide-" + (index + 1));
+    slides[index].scrollTop = 0;
+  }
+  function fitCanvas() {
+    if (innerWidth <= 640) { canvas.style.transform = "none"; return; }
+    const scale = Math.max(.1, Math.min((viewport.clientWidth - 12) / 1200, (viewport.clientHeight - 12) / 675));
+    canvas.style.transform = "scale(" + scale + ")";
+  }
+  async function toggleFullscreen() {
+    try {
+      if (viewer.open) viewer.close();
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      fullscreen.textContent = "此处全屏不可用";
+    }
+  }
+  function fitImage() {
+    if (!viewer.open || !viewerImage.naturalWidth) return;
+    const availableWidth = Math.max(1, viewerBody.clientWidth - 24);
+    const availableHeight = Math.max(1, viewerBody.clientHeight - 24);
+    const width = imageMode === "clear" ? Math.max(availableWidth, viewerImage.naturalWidth) :
+      Math.min(availableWidth, availableHeight * viewerImage.naturalWidth / viewerImage.naturalHeight, viewerImage.naturalWidth);
+    viewerImage.style.width = width + "px";
+    viewerBody.scrollTo(0, 0);
+  }
+  prev.addEventListener("click", () => show(index - 1));
+  next.addEventListener("click", () => show(index + 1));
+  select.addEventListener("change", () => show(Number(select.value)));
+  fullscreen.addEventListener("click", toggleFullscreen);
+  addEventListener("hashchange", () => show(fromHash(), false));
+  addEventListener("resize", () => { fitCanvas(); fitImage(); });
+  document.addEventListener("fullscreenchange", () => {
+    fullscreen.textContent = document.fullscreenElement ? "退出全屏" : "全屏";
+    fullscreen.setAttribute("aria-pressed", String(!!document.fullscreenElement));
+    fitCanvas();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.altKey || event.metaKey || event.ctrlKey || /^(SELECT|INPUT|TEXTAREA)$/.test(event.target.tagName)) return;
+    if (viewer.open) {
+      if (event.key === "Escape") { event.preventDefault(); viewer.close(); }
+      return;
+    }
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    else if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    else if (event.key === "Home") { event.preventDefault(); show(0); }
+    else if (event.key === "End") { event.preventDefault(); show(slides.length - 1); }
+    else if (event.key.toLowerCase() === "f") { event.preventDefault(); toggleFullscreen(); }
+    else if (event.key === "Escape") {
+      if (document.fullscreenElement) { event.preventDefault(); document.exitFullscreen(); }
+      else if (window.parent !== window) { window.parent.postMessage({type:"paper-deck-escape"}, location.origin); }
+    }
+  });
+  document.querySelectorAll("[data-image]").forEach(button => button.addEventListener("click", () => {
+    imageTrigger = button;
+    imageMode = "fit";
+    viewerImage.src = button.dataset.image;
+    viewerImage.alt = button.querySelector("img").alt;
+    caption.textContent = button.dataset.caption;
+    viewer.showModal();
+    requestAnimationFrame(fitImage);
+  }));
+  viewerImage.addEventListener("load", fitImage);
+  viewer.querySelector("[data-view-fit]").addEventListener("click", () => { imageMode = "fit"; fitImage(); });
+  viewer.querySelector("[data-view-clear]").addEventListener("click", () => { imageMode = "clear"; fitImage(); });
+  viewer.querySelector("[data-view-close]").addEventListener("click", () => viewer.close());
+  viewer.addEventListener("close", () => imageTrigger?.focus());
+  viewer.addEventListener("click", event => { if (event.target === viewer) viewer.close(); });
+  show(fromHash(), false);
+  fitCanvas();
+})();
+</script>
+</body>
+</html>
