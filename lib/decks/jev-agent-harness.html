@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>JevAgentHarness · 14 页论文图解</title>
+<link rel="icon" href="/MyImgs/icon1.svg">
+<style>
+:root{color-scheme:light;--ink:#1b1f23;--muted:#5c6773;--link:#1768d1;--border:#e3e7ee;--soft:#f7f8fa;--font:Georgia,"Times New Roman","Songti SC","Noto Serif CJK SC",serif}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:#f3f5f7;color:var(--ink);font-family:var(--font)}
+button,select{font:inherit}button,a,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link);outline-offset:3px}[hidden]{display:none!important}
+.viewport{height:calc(100% - 54px);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:6px}
+.canvas{width:1200px;height:675px;flex:none;position:relative;background:white;transform-origin:center;box-shadow:0 1px 8px #1b1f230a}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:26px 36px 22px;gap:12px}
+.meta{margin:0;color:var(--muted);font:400 15px/1.45 var(--font);display:flex;justify-content:space-between;gap:12px}
+h1,h2{font-size:32px;line-height:1.35;margin:0;font-weight:700;letter-spacing:0}h1{font-size:36px}h3{font-size:23px;line-height:1.45;margin:0 0 10px}
+p,li{font-size:21px;line-height:1.7;margin:0}p+p{margin-top:10px}ul,ol{margin:4px 0;padding-left:26px}li+li{margin-top:10px}
+.lead{font-size:22px;line-height:1.6}.content{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.split.figure-side{grid-template-columns:340px minmax(0,1fr)}
+.split.result{grid-template-columns:780px minmax(0,1fr);gap:24px}.split.case{grid-template-columns:590px minmax(0,1fr);gap:26px}
+.split>*,.columns>*{min-width:0}.columns{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.text-stack{display:flex;flex-direction:column;gap:14px}.text-stack p+p{margin:0}
+.source{margin-top:auto;border-top:1px solid var(--border);padding-top:9px;color:var(--muted);font-size:15px;line-height:1.5;display:flex;justify-content:space-between;gap:14px}
+.source a{color:var(--muted)}.note{color:var(--muted);font-size:18px;line-height:1.65}.small{font-size:19px}
+.accent{color:var(--link)}.rule{border-block:1px solid var(--border);padding:16px 0}.paper-image{display:block;width:100%;border:0;padding:0;background:white;text-align:center}
+.paper-image img{display:block;max-width:100%;width:auto;height:auto;max-height:440px;margin:0 auto}
+.paper-image[data-tall] img{max-height:480px}.paper-image figcaption{font-size:16px;line-height:1.6;color:var(--muted);margin-top:6px;text-align:left}
+.image-wide img{width:100%;max-height:390px;object-fit:contain}.image-low img{width:100%;max-height:250px;object-fit:contain}
+.split.result .paper-image img{max-height:476px;width:100%;object-fit:contain}.split.case .paper-image img{max-height:470px}
+.figure-side .paper-image img{max-height:465px}.frame-hint{font-size:15px;color:var(--muted);line-height:1.5;text-align:center;margin-top:6px}
+.construction-panels{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.construction-panels .paper-image img{max-height:342px;max-width:100%}
+.construction-copy{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.construction-copy p{font-size:19px;line-height:1.6}
+table{width:100%;border-collapse:collapse;font-size:20px;line-height:1.6}th,td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--border)}th{background:var(--soft);font-weight:700}td:first-child{font-weight:700}
+.compact th,.compact td{padding:9px 12px}.compact{font-size:19px}.score-table{font-size:22px}.score-table th,.score-table td{padding:10px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85em;background:var(--soft);padding:1px 4px}
+pre{margin:0;padding:16px 20px;background:var(--soft);border:1px solid var(--border);overflow:auto;font:18px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+pre code{background:none;padding:0;font:inherit}.formula{padding:14px 18px;border-block:1px solid var(--border);font:21px/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mechanism{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:22px 0;border-block:1px solid var(--border)}
+.mechanism>div{position:relative;padding-right:12px}.mechanism>div:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:6px;color:var(--muted)}
+.mechanism .value{display:block;font:700 30px/1.5 var(--font);color:var(--link)}.mechanism .label{display:block;font-size:21px;line-height:1.55}
+.mechanism .explain{display:block;font-size:18px;color:var(--muted);line-height:1.6;margin-top:7px}
+.sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.sequence section{border-top:2px solid var(--border);padding-top:12px}.sequence p{font-size:20px}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-block:1px solid var(--border);padding:20px 0}
+.timeline div{font-size:19px;line-height:1.6}.timeline b{display:block;color:var(--link);font-size:21px;margin-bottom:6px}
+.controls{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 12px;border-top:1px solid var(--border);background:white}
+.control-group{display:flex;align-items:center;gap:8px;min-width:0}.controls button,.controls select,.controls a{min-height:36px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);font-size:14px;line-height:1.5;text-decoration:none}
+.controls a{color:var(--link);white-space:nowrap}.controls button:disabled{opacity:.35;cursor:default}.controls select{max-width:170px}
+.counter{font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.controls [data-fullscreen]{color:var(--link)}
+dialog{width:min(1250px,calc(100vw - 24px));height:min(96dvh,1050px);max-width:none;max-height:none;border:1px solid var(--border);border-radius:6px;padding:0;overflow:hidden;background:white;color:var(--ink)}
+dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid var(--border);font-size:14px}
+.viewer-actions{display:flex;gap:6px}.viewer-actions button{background:white;border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-size:14px;min-height:36px}.viewer-actions [data-view-close]{color:var(--link)}
+.viewer-body{overflow:auto;min-width:0;min-height:0;padding:12px;overscroll-behavior:contain}.viewer-body img{display:block;max-width:none;max-height:none;height:auto;margin:auto}
+.viewer-caption{margin:0;padding:8px 12px;border-top:1px solid var(--border);font-size:13px;line-height:1.6;color:var(--muted);max-height:100px;overflow:auto}
+@media(max-width:640px){
+ .viewport{padding:0;align-items:stretch}.canvas{width:100%;height:100%;transform:none!important;box-shadow:none}
+ .slide{padding:15px 17px;gap:12px;overflow-y:auto;overscroll-behavior:contain}.meta{font-size:11px;gap:8px}.meta>span:last-child{white-space:nowrap;flex:none}h1,h2{font-size:22px;line-height:1.5}h3{font-size:17px}
+ p,li,.lead{font-size:15px;line-height:1.8}.note,.small{font-size:13px}.content{flex:none;min-height:0;gap:16px}.source{font-size:11px;line-height:1.65;margin-top:18px;flex-wrap:wrap}
+ .split,.split.figure-side,.split.case,.split.result,.columns{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+ .paper-image img,.paper-image[data-tall] img,.split.result .paper-image img,.split.case .paper-image img{max-height:none;width:100%}
+ .figure-side .paper-image{max-width:250px;margin:auto}.paper-image figcaption,.frame-hint{font-size:11px}
+ .construction-panels,.construction-copy{grid-template-columns:1fr;gap:16px}.construction-panels .paper-image img{max-height:none;width:100%}.construction-copy p{font-size:14px;line-height:1.8}
+ table,.compact,.score-table{font-size:13px;line-height:1.6}th,td,.compact th,.compact td{padding:7px 6px}.table-box{overflow-x:auto}.table-box table{min-width:530px}
+ pre{font-size:12px;padding:12px;line-height:1.7}.formula{font-size:12px;padding:10px 0;overflow-x:auto;white-space:nowrap}
+ .mechanism{grid-template-columns:1fr 1fr;gap:16px}.mechanism .value{font-size:22px}.mechanism .label{font-size:15px}.mechanism .explain{font-size:13px}.mechanism>div::after{display:none}
+ .timeline{grid-template-columns:1fr;gap:12px;padding:14px 0}.timeline div{font-size:14px}.timeline b{font-size:15px;margin-bottom:3px}
+ .sequence{grid-template-columns:1fr;gap:16px}.sequence p{font-size:14px}
+ .controls{padding:6px 8px;gap:4px}.controls .control-group{gap:4px}.controls button,.controls a,.controls select{padding:7px 8px;font-size:12px}.controls select{max-width:72px}.counter{font-size:12px}
+ .viewer-head{flex-wrap:wrap;font-size:12px}.viewer-actions{margin-left:auto}.viewer-caption{font-size:11px}
+}
+@media print{html,body{height:auto;background:white}.viewport{height:auto;padding:0;overflow:visible;display:block}.canvas{height:auto;width:1200px;transform:none!important;box-shadow:none}.slide{position:relative;display:flex!important;height:675px;break-after:page}.slide[hidden]{display:flex!important}.controls,dialog{display:none!important}@page{size:landscape;margin:8mm}}
+</style>
+</head>
+<body>
+<main class="viewport" aria-label="论文演示"><div class="canvas" id="canvas">
+
+<section class="slide" data-title="核心问题"  aria-label="第1页：核心问题"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>01 / 14</span></p><h2>小模型能接管哪些决定，什么时候该交回？</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/figure-3.png" data-caption="Figure 3：八个位置、五种接入方式 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 figure-3"><img src="/lib/papers/jev-agent-harness/figure-3.png" alt="Figure 3：八个位置、五种接入方式"></button><p>选工具、有限参数、是否停止等决定，先由小模型对选项给概率。低于阈值才请大模型决定；自由文本仍由大模型生成。</p></div><p class="source"><span>§1–2 / Figure 3</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="研究流程" hidden aria-label="第2页：研究流程"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>02 / 14</span></p><h2>分别测试，再冻结组合到新任务</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/figure-2.png" data-caption="Figure 2：评测、接入与训练 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 figure-2"><img src="/lib/papers/jev-agent-harness/figure-2.png" alt="Figure 2：评测、接入与训练"></button><p>Stage 1：影子记录、拟合阈值、单项执行测试。Stage 2：冻结选出的接管组合，测试新题。训练主要收益来自 SFT，不是图中所有阶段都有增益。</p></div><p class="source"><span>Figure 2 / §6</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="接管模式" hidden aria-label="第3页：接管模式"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>03 / 14</span></p><h2>谁提议、谁决定，五种模式不同</h2><div class="content"><div class="table-box"><table><tr><th>模式</th><th>控制权</th></tr><tr><td>Replace</td><td>小模型总做决定</td></tr><tr><td>Cascade</td><td>小模型先答，低置信度交回大模型</td></tr><tr><td>Assist</td><td>小模型缩小候选，大模型最终选</td></tr><tr><td>Guard</td><td>大模型提议，小模型批准或退回</td></tr><tr><td>Trigger</td><td>小模型决定可选步骤是否运行，如反思</td></tr></table></div><p>Guard 是模型判断，不是可靠的安全边界。不同模式不能统称为替代大模型。</p></div><p class="source"><span>§2 / Figure 3</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="发货实测" hidden aria-label="第4页：发货实测"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>04 / 14</span></p><h2>五次工具选择接管，仍有两次大模型调用</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/figure-11.png" data-caption="Figure 11：Alice 发货实测，工具阈值 .45 / 参数 .996 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 figure-11"><img src="/lib/papers/jev-agent-harness/figure-11.png" alt="Figure 11：Alice 发货实测，工具阈值 .45 / 参数 .996"></button><p class="small">4B 选 ask_user → find_user → get_orders → ship_order → finish。大模型写追问和最终回复：5→2 次调用，$0.0301→$0.0042，4.4→3.7 秒。</p></div><p class="source"><span>Figure 11 / p.43；按 seed 选出的诊断案例</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="阈值" hidden aria-label="第5页：阈值"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>05 / 14</span></p><h2>0.993 看似很高，仍可能低于接管阈值</h2><div class="content"><div class="split"><div class="text-stack"><p>Alice：工具 ask_user 的 0.96 ≥ .45，由小模型决定。</p><p>缺少 shipping_speed 的 0.993 &lt; .996，参数交回；自由文本追问也需要大模型。</p><p>不同模型、决定位置要分别拟合，不能套用同一个 0.5。</p></div><div><div class="formula">τ = max(0, qL − ΔC / V)</div><p class="small">理想化：正确率已校准。实际按置信度分箱估计收益；找不到可靠区间就全部交回。</p><p class="note">150 校准题，shadow 只记候选不执行。错误价值 V 是观察估计，不是因果保证。</p></div></div></div><p class="source"><span>§2.1 / Appendix A；固定 .5 对照少成功21.5点</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="任务与答案" hidden aria-label="第6页：任务与答案"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>06 / 14</span></p><h2>生成器写世界和答案键，不是人工逐题标注</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/table-6.png" data-caption="Table 6：开发题的输入、世界状态与可接受步骤 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 table-6"><img src="/lib/papers/jev-agent-harness/table-6.png" alt="Table 6：开发题的输入、世界状态与可接受步骤"></button><p class="small">Lena 有 ORD-3872 与 ORD-4002 两张 pending order，先查再问 order_id。客户回复 ORD-4002 后才能取消；答案键不进入模型提示。</p></div><p class="source"><span>Table 6 / p.19；非模型日志</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="严格判分" hidden aria-label="第7页：严格判分"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>07 / 14</span></p><h2>猜中了订单，也不能跳过确认</h2><div class="content"><div class="sequence"><section><h3>可见输入</h3><p>请求、工具说明、已返回观察。不能用检查器知道的订单号冒充已查明。</p></section><section><h3>实际执行</h3><p>正确 ask_user 后，程序返回客户选择。取消 ORD-4002，reason=customer_request。</p></section><section><h3>0 / 1 验收</h3><p>未问就写状态、错订单、近似写工具立即 FAIL；只读绕路只增加步数。</p></section></div><pre><code>if family == "clarify" and not asked:
+    acceptable_write = False
+# 严格模式：错误修改状态立即结束任务</code></pre><p class="note">依据官方 jevgym.py 的教学删节，不是完整独立检查器。</p></div><p class="source"><span>jevgym.py fixed f2932199 / §3</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="三层测试" hidden aria-label="第8页：三层测试"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>08 / 14</span></p><h2>同一状态答题，和真的执行必须分开</h2><div class="content"><div class="table-box"><table><tr><th>层次</th><th>输入 / 执行</th><th>分数</th></tr><tr><td>L1</td><td>3,991 道独立决定</td><td>局部工具、参数与调用判断准确率</td></tr><tr><td>L2</td><td>200 题、5,314 状态，各模型答同一记录</td><td>每题先算状态准确率，再对题平均</td></tr><tr><td>L3</td><td>选择真的执行，后续状态随模型变化</td><td>严格终态要求，每题 0/1</td></tr></table></div><p>无法恢复的 L2 状态排除；L3 错误状态修改立即 FAIL。模板基线 L2 达97.5%，生成器固定套路需要单独警惕。</p></div><p class="source"><span>§3 / Appendix B,E / Table22</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="训练对照" hidden aria-label="第9页：训练对照"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>09 / 14</span></p><h2>SFT 有效，OPD 没被保留</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/table-16.png" data-caption="Table 16：SFT、OPD、GRPO 的信号与结果 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 table-16"><img src="/lib/papers/jev-agent-harness/table-16.png" alt="Table 16：SFT、OPD、GRPO 的信号与结果"></button><p class="small">15,694 状态，30.9% 在错误后。Jev 选对时目标 .3 gold + .7 Jev，选错只用 gold。SFT：交叉熵 + .5 Brier；OPD：学生新状态上向独立 Jev 学选项概率。</p></div><p class="source"><span>Appendix D / Table16；不是特权代码 OPSD</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="负结果" hidden aria-label="第10页：负结果"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>10 / 14</span></p><h2>不能把算法名字当作实验收益</h2><div class="content"><div class="table-box"><table><tr><th>对照</th><th>结果</th><th>能得出什么</th></tr><tr><td>Qwen SFT → OPD</td><td>开发99.7→98.9；错误后99.8→97.9</td><td>本设置没额外收益，不是OPD普遍无效</td></tr><tr><td>StartLux SFT / OPD / GRPO</td><td>困难开发71.5 / 66.5 / 62.5</td><td>作者保留SFT</td></tr><tr><td>25%任务：gold / 混合 / Jev</td><td>L2 98.9 / 98.5 / 93.2</td><td>教师软标签没有不可缺证据</td></tr><tr><td>SFT / +GRPO</td><td>变化任务L3同为96.0</td><td>再花4.5GPUh没有测出收益</td></tr></table></div></div><p class="source"><span>Tables15–17；一seed / 开发与测试不混用</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="退款实测" hidden aria-label="第11页：退款实测"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>11 / 14</span></p><h2>0.98 直接退款，仍是不可撤销错误</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/figure-12.png" data-caption="Figure 12：Mateo 退款，Jev 漏问、4B 先问 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 figure-12"><img src="/lib/papers/jev-agent-harness/figure-12.png" alt="Figure 12：Mateo 退款，Jev 漏问、4B 先问"></button><p class="small">缺退款方式时唯一可接受工具是 ask_user。猜中 original_payment 也不合格。两边选所有工具、不用阈值；大模型填参数。</p></div><p class="source"><span>Figure12 / p.43；诊断样例，不是阈值实验</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="分布变化" hidden aria-label="第12页：分布变化"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>12 / 14</span></p><h2>新规则下，置信度没有及时交回控制权</h2><div class="content"><div class="split"><div><button class="paper-image " data-image="/lib/papers/jev-agent-harness/table-19.png" data-caption="Table19：新业务规则与重训结果 · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 table-19"><img src="/lib/papers/jev-agent-harness/table-19.png" alt="Table19：新业务规则与重训结果"></button></div><div class="text-stack"><p>10客户：大模型88%，未见规则4B只有<strong>3%</strong>；152题错误写状态。</p><p>12客户：4B只有0.5%。重拟合后所有工具交回；重训改善，但可靠性检验仍不足。</p><p class="note">换名字的 shifted tasks 与新增等级/金额规则的 Hard tasks 是不同实验。</p></div></div></div><p class="source"><span>Table19 / D.6；不要只报最大降本</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="实际部署" hidden aria-label="第13页：实际部署"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>13 / 14</span></p><h2>省钱、提速和可靠性要分别核查</h2><div class="content"><button class="paper-image image-wide" data-image="/lib/papers/jev-agent-harness/table-1.png" data-caption="Table1：客服新规则、coding路由与ALFWorld · Zhu et al., v1, CC BY-NC-SA 4.0" aria-label="放大 table-1"><img src="/lib/papers/jev-agent-harness/table-1.png" alt="Table1：客服新规则、coding路由与ALFWorld"></button><p class="small">共享GPU的4B省81.1%却更慢；后来的独占配置才约2.5×。未见房间ALFWorld 88.8→89.6%，非劣效p=.175不足。coding主要路由强/快模型，不是4B独写代码。</p></div><p class="source"><span>Tables1,2,27–30；下降&lt;3点不自动通过非劣效</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+<section class="slide" data-title="结论" hidden aria-label="第14页：结论"><p class="meta"><span>JevAgentHarness · Zhu et al. · 2026-10-15</span><span>14 / 14</span></p><h2>值得借鉴的是测试路线和失败对照</h2><div class="content"><div class="text-stack"><p><strong>特定Agent状态上的SFT，能训练出便宜且准确的选项决策模型。</strong>先测局部，再测自己的执行，最后测新规则。</p><p>OPD在本设置退步、教师软标签未证明必要、高置信度新规则失败：这些比最大降本数更有研究价值。</p><p>PDF中的Codex / Claude Code hooks可用，不等于完成效果验证。仓库后来74题代理路由与20题Codex测试要单独读；小样本未证明可靠性。</p><p class="note">局限：一次训练、模板客服世界、影子校准、新规则；未验证特权代码蒸馏或完整软件生成能力。</p></div></div><p class="source"><span>44页全文 + 官方代码 fixed f2932199；详见正文来源清单</span><a href="https://arxiv.org/pdf/2610.21412v1">论文 PDF</a></p></section>
+</div></main>
+<nav class="controls" aria-label="幻灯片导航">
+<div class="control-group"><button type="button" data-prev aria-label="上一页">←</button><button type="button" data-next aria-label="下一页">→</button><span class="counter" aria-live="polite" data-counter>1 / 18</span><select aria-label="跳转到幻灯片" data-select></select></div>
+<div class="control-group"><button type="button" data-fullscreen aria-pressed="false">全屏</button><a href="/posts/论文解读/jev-agent-harness.html" target="_top" data-return>回文章</a></div>
+</nav>
+<dialog id="image-viewer" aria-label="原论文图表详情">
+<header class="viewer-head"><span>原论文图表</span><div class="viewer-actions"><button type="button" data-view-fit>整图</button><button type="button" data-view-clear>清晰</button><button type="button" data-view-close>关闭</button></div></header>
+<div class="viewer-body" tabindex="0" aria-label="可滚动的图表"><img alt=""></div><p class="viewer-caption"></p>
+</dialog>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll(".slide")];
+  const canvas = document.querySelector("#canvas");
+  const viewport = document.querySelector(".viewport");
+  const prev = document.querySelector("[data-prev]");
+  const next = document.querySelector("[data-next]");
+  const counter = document.querySelector("[data-counter]");
+  const select = document.querySelector("[data-select]");
+  const fullscreen = document.querySelector("[data-fullscreen]");
+  const viewer = document.querySelector("#image-viewer");
+  const viewerBody = viewer.querySelector(".viewer-body");
+  const viewerImage = viewer.querySelector("img");
+  const caption = viewer.querySelector(".viewer-caption");
+  let index = 0;
+  let imageTrigger = null;
+  let imageMode = "fit";
+  slides.forEach((slide, i) => select.add(new Option((i + 1) + " · " + slide.dataset.title, String(i))));
+  const fromHash = () => {
+    const match = location.hash.match(/^#(?:slide-)?(\d+)$/);
+    return match ? Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1)) : 0;
+  };
+  function show(i, updateHash = true) {
+    index = Math.min(slides.length - 1, Math.max(0, i));
+    slides.forEach((slide, n) => {
+      slide.hidden = n !== index;
+      slide.setAttribute("aria-hidden", String(n !== index));
+    });
+    counter.textContent = (index + 1) + " / " + slides.length;
+    select.value = String(index);
+    prev.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+    document.title = "JevAgentHarness · " + (index + 1) + "/" + slides.length + " · " + slides[index].dataset.title;
+    if (updateHash) history.replaceState(null, "", "#slide-" + (index + 1));
+    slides[index].scrollTop = 0;
+  }
+  function fitCanvas() {
+    if (innerWidth <= 640) { canvas.style.transform = "none"; return; }
+    const scale = Math.max(.1, Math.min((viewport.clientWidth - 12) / 1200, (viewport.clientHeight - 12) / 675));
+    canvas.style.transform = "scale(" + scale + ")";
+  }
+  async function toggleFullscreen() {
+    try {
+      if (viewer.open) viewer.close();
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      fullscreen.textContent = "此处全屏不可用";
+    }
+  }
+  function fitImage() {
+    if (!viewer.open || !viewerImage.naturalWidth) return;
+    const availableWidth = Math.max(1, viewerBody.clientWidth - 24);
+    const availableHeight = Math.max(1, viewerBody.clientHeight - 24);
+    const width = imageMode === "clear" ? Math.max(availableWidth, viewerImage.naturalWidth) :
+      Math.min(availableWidth, availableHeight * viewerImage.naturalWidth / viewerImage.naturalHeight, viewerImage.naturalWidth);
+    viewerImage.style.width = width + "px";
+    viewerBody.scrollTo(0, 0);
+  }
+  prev.addEventListener("click", () => show(index - 1));
+  next.addEventListener("click", () => show(index + 1));
+  select.addEventListener("change", () => show(Number(select.value)));
+  fullscreen.addEventListener("click", toggleFullscreen);
+  addEventListener("hashchange", () => show(fromHash(), false));
+  addEventListener("resize", () => { fitCanvas(); fitImage(); });
+  document.addEventListener("fullscreenchange", () => {
+    fullscreen.textContent = document.fullscreenElement ? "退出全屏" : "全屏";
+    fullscreen.setAttribute("aria-pressed", String(!!document.fullscreenElement));
+    fitCanvas();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.altKey || event.metaKey || event.ctrlKey || /^(SELECT|INPUT|TEXTAREA)$/.test(event.target.tagName)) return;
+    if (viewer.open) {
+      if (event.key === "Escape") { event.preventDefault(); viewer.close(); }
+      return;
+    }
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    else if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    else if (event.key === "Home") { event.preventDefault(); show(0); }
+    else if (event.key === "End") { event.preventDefault(); show(slides.length - 1); }
+    else if (event.key.toLowerCase() === "f") { event.preventDefault(); toggleFullscreen(); }
+    else if (event.key === "Escape") {
+      if (document.fullscreenElement) { event.preventDefault(); document.exitFullscreen(); }
+      else if (window.parent !== window) { window.parent.postMessage({type:"paper-deck-escape"}, location.origin); }
+    }
+  });
+  document.querySelectorAll("[data-image]").forEach(button => button.addEventListener("click", () => {
+    imageTrigger = button;
+    imageMode = "fit";
+    viewerImage.src = button.dataset.image;
+    viewerImage.alt = button.querySelector("img").alt;
+    caption.textContent = button.dataset.caption;
+    viewer.showModal();
+    requestAnimationFrame(fitImage);
+  }));
+  viewerImage.addEventListener("load", fitImage);
+  viewer.querySelector("[data-view-fit]").addEventListener("click", () => { imageMode = "fit"; fitImage(); });
+  viewer.querySelector("[data-view-clear]").addEventListener("click", () => { imageMode = "clear"; fitImage(); });
+  viewer.querySelector("[data-view-close]").addEventListener("click", () => viewer.close());
+  viewer.addEventListener("close", () => imageTrigger?.focus());
+  viewer.addEventListener("click", event => { if (event.target === viewer) viewer.close(); });
+  show(fromHash(), false);
+  fitCanvas();
+})();
+</script>
+</body>
+</html>

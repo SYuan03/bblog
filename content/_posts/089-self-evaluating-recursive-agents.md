@@ -2,7 +2,7 @@
 title: "[2026-10-04] Self-Evaluating Recursive Agents"
 permalink: "/posts/论文解读/self-evaluating-recursive-agents.html"
 date: "2026-10-09T13:20:00+08:00"
-updated: "2026-10-13T22:00:00+08:00"
+updated: "2026-10-18T16:00:00+08:00"
 cover: "/lib/papers/sera/cover.svg"
 description: "SERA 训练同一个 Qwen3-4B 模型拆任务、执行并写评分标准。实验表明，训练评价能力需要与采用这些评价的执行奖励配合。本文沿真实合成任务讲清三种训练、最终验收、交互预算和关键负结果。"
 wide_content: true
@@ -21,6 +21,7 @@ tags:
 ---
 
 <link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
+<style>.page-paper-reading .prose .figure.reading-diagram img{width:min(100%,780px)}</style>
 
 <div class="paper-reading">
 
@@ -61,7 +62,7 @@ tags:
 
 <p><strong>每次优化只使用一种奖励，但执行阶段的输出也包括委派动作。</strong>Appendix B.2 明确区分：E 训练求解与委派 token；D 只训练委派 token；RT 只训练写 rubric 的 token。完整 SERA 按 16 : 2 : 2 的优化步数交替训练，这个比例决定阶段运行频率。</p>
 
-<figure class="figure reading-diagram"><a href="/lib/papers/sera/training-and-evaluation.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/training-and-evaluation.svg" width="600" height="1160" alt="SERA 执行、委派与评分标准训练的输入、奖励和 token 更新边界"></a><figcaption>根据 Figure 1、§3 和 Appendix B.2 重绘。执行阶段也训练委派输出；D 额外用叶节点覆盖率训练委派。RT 的评分调用与实际执行不进入它自己的优化样本。</figcaption></figure>
+<figure class="figure reading-diagram"><a href="/lib/papers/sera/training-and-evaluation.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/training-and-evaluation.svg" width="900" height="394" alt="SERA 执行、委派与评分标准训练的输入、奖励和 token 更新边界"></a><figcaption>根据 Figure 1、§3 和 Appendix B.2 重绘。执行阶段也训练委派输出；D 额外用叶节点覆盖率训练委派。RT 的评分调用与实际执行不进入它自己的优化样本。</figcaption></figure>
 
 <h3 id="执行阶段：固定评分标准，评估子任务结果">3.1 执行阶段：固定评分标准，评估子任务结果</h3>
 
@@ -99,7 +100,7 @@ tags:
 
 <div class="case"><h4>TextCraft：<code>textcraft_synth.train.0</code></h4><p>目标是 <code>Craft the following items: 3x a1_i5</code>。初始库存提供 raw_a1=71、raw_a9=27、raw_a4=48 等原料，目标有五层配方依赖。Agent 可查配方和库存，提示不提供标准计划。公开标准操作序列（gold trace）中有 22 次 craft；末级先备齐 <code>a7_i4=3</code>、<code>a3_i4_23=3</code>、<code>a9_i4=3</code>，再消费这些中间物，产出 3 个 <code>a1_i5</code>。</p><p>这段顺序依据公开参考轨迹整理，不是模型实测日志，也不是 22 轮模型调用。检查器只在显式 <code>finish()</code> 后验收，计算 <code>final_count - initial_count</code>。净新增至少 3 个 a1_i5 才 PASS，初始库存中已有的目标物不能冒充本次产出。若最后只产出 2 个，即使中间配方都做对，也判 FAIL；这是按检查规则推得的失败示例。</p></div>
 
-<figure class="figure reading-diagram"><a href="/lib/papers/sera/two-dish-real-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/two-dish-real-case.svg" width="600" height="1200" alt="TextWorld 公开两菜题的配方、共享预算、收集处理动作和程序验收规则"></a><figcaption>根据官方 Dataset 首条两菜题与 <code>composite_scorer.py</code> 整理。Figure 2 是另一道五菜示意；这里不是重画那道题，也不是模型执行日志。</figcaption></figure>
+<figure class="figure reading-diagram"><a href="/lib/papers/sera/two-dish-real-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/two-dish-real-case.svg" width="900" height="394" alt="TextWorld 公开两菜题的配方、共享预算、收集处理动作和程序验收规则"></a><figcaption>根据官方 Dataset 首条两菜题与 <code>composite_scorer.py</code> 整理。Figure 2 是另一道五菜示意；这里不是重画那道题，也不是模型执行日志。</figcaption></figure>
 
 <div class="case"><h4>TextWorld：<code>cookingworld_multidish_train_multi_dish_fork_join_medium_0000</code></h4><p>这道公开训练题 seed=850000，有 9 个地点、11 个干扰物，库存容量为 1，整题共享 96 次世界动作。dish_1 要 red apple、orange bell pepper 都 roasted + sliced（烤制并切片），olive oil 与 water 保持 raw + uncut（未处理、未切）；dish_2 同样处理 carrot、purple potato，salt 与 flour 保持原状。Agent 看到配方、当前位置、可见物体、合法动作和剩余预算，不直接看到未探索地点的完整状态。</p><p>执行时要寻找、收集并按配方处理食材，然后对每道菜 prepare 和 eat。各 Agent 的位置和历史独立，库存、食材状态、菜品和动作预算共享；普通委派不会复制独立世界，环境动作加锁后提交。<a href="https://github.com/OliverLeeXZ/SERA/blob/0443b190ccde59486904988e50893102df4563ab/Runtime/environments/textworld/composite_scorer.py#L14-L45">根任务检查器</a>要求每种食材都已收集、没有被删除、处理方式完全匹配，而且每道菜都已完成并吃掉。漏吃第二道菜或把应 roasted 的食材做成其他不可逆状态，根分都是 0。这是按公开规则说明失败，不冒充模型日志。</p></div>
 
@@ -119,7 +120,7 @@ tags:
 
 <p>外部监督和完整成本要分开看。Table 2 中 TextCraft verifier 调用从 550.94K 降到 257.96K；TextWorld judge 从 147.80K 降到 35.79K，输入/输出 token 从 633.80M/16.13M 降到 125.32M/4.27M。无 RT 的 rubric 奖励版本在 TextWorld 不用外部 judge，却只有 51.10%。Table 7 同样使用 2 × 8 H200：TextCraft 的 RAO/SERA 用时 29h36m/24h06m；TextWorld 为 13h08m/24h14m。外部标签更少，不等于总训练更便宜。</p>
 
-<figure class="figure reading-diagram"><a href="/lib/papers/sera/results-and-cost.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/results-and-cost.svg" width="600" height="960" alt="SERA 在 TextWorld 的奖励与 RT 对照、TextCraft 负结果和外部标签成本区别"></a><figcaption>根据 Tables 1、2、7 重绘。图中同时保留负结果：RT 在二元执行奖励下退步；TextCraft 加 D 略降；TextWorld 外部标签减少但训练用时增加。</figcaption></figure>
+<figure class="figure reading-diagram"><a href="/lib/papers/sera/results-and-cost.svg" target="_blank" rel="noopener"><img src="/lib/papers/sera/results-and-cost.svg" width="900" height="352" alt="SERA 在 TextWorld 的奖励与 RT 对照、TextCraft 负结果和外部标签成本区别"></a><figcaption>根据 Tables 1、2、7 重绘。图中同时保留负结果：RT 在二元执行奖励下退步；TextCraft 加 D 略降；TextWorld 外部标签减少但训练用时增加。</figcaption></figure>
 
 <h2 id="代码阅读与后续验证">5. Discussion：代码阅读与后续验证</h2>
 
@@ -143,6 +144,6 @@ tags:
 
 <div class="limit-grid"><div><b>模型范围</b><span>只测试 Qwen3-4B-Instruct-2507，尚不知道更大模型是否有同样增益。</span></div><div><b>任务范围</b><span>两个 benchmark 都是合成文字环境，代码库和网页任务尚未验证。</span></div><div><b>评价风险</b><span>共享权重仍可能造成评价漂移；评分输出不收梯度不能排除奖励漏洞。</span></div><div><b>拆解近似</b><span>叶节点等权，结构大小不一定等于真实贡献。</span></div><div><b>数据边界</b><span>TextCraft 共用验证与最终评测池，但不能据此直接判定泄漏。</span></div><div><b>复用边界</b><span>代码仓库根目录没有项目级 LICENSE；Hugging Face checkpoint 仓库单独保留 Apache-2.0。</span></div></div>
 
-<p class="source-note">2026-10-13 修订：重新核对 17 页全文与逐页渲染，补正 E 也训练委派 token 的边界，按公开程序核查根任务验收和测试时选择，并补三张正文专用大字图。证据范围包括 Figures 1、2 与 Tables 1 至 8；代码固定 revision <code>0443b190ccde59486904988e50893102df4563ab</code>，checkpoint 页面固定 revision <code>a5e3c1e141efd1cdf0988debec42ca315d5c752b</code>。本文核验源码与论文，未运行 GPU 训练或声称复现模型得分。</p>
+<p class="source-note">2026-10-13 修订：重新核对 17 页全文与逐页渲染，补正 E 也训练委派 token 的边界，按公开程序核查根任务验收和测试时选择，并用三张紧凑的关系、案例与对照图辅助阅读。证据范围包括 Figures 1、2 与 Tables 1 至 8；代码固定 revision <code>0443b190ccde59486904988e50893102df4563ab</code>，checkpoint 页面固定 revision <code>a5e3c1e141efd1cdf0988debec42ca315d5c752b</code>。本文核验源码与论文，未运行 GPU 训练或声称复现模型得分。</p>
 
 </div>

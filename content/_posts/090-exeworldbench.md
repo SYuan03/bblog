@@ -2,7 +2,7 @@
 title: "[2026-10-10] ExeWorldBench: Benchmarking Code-Based Executable 3D World Modeling"
 permalink: "/posts/论文解读/exeworldbench.html"
 date: "2026-10-15T15:00:00+08:00"
-updated: "2026-10-15T15:00:00+08:00"
+updated: "2026-10-18T16:00:00+08:00"
 cover: "/generated-covers/090-exeworldbench.webp"
 description: "让模型用 Blender 搭出真正靠机械作用运行的 3D 装置。本文沿公开的路口放行任务，讲清 273 道题的来源、模型能看到什么、动画怎样评分，以及代码能运行为什么仍可能得低分。"
 wide_content: true
@@ -33,7 +33,7 @@ tags:
 
 <p class="lead">ExeWorldBench 让模型写 Blender 程序，搭出能运动的三维机械装置：看一张图还原齿轮与连杆，接通多级小球装置，或者只根据文字设计一个放行机构。作者关心的是，模型能否把对机械结构的理解落实到可执行的程序里。装置中的后续运动应由碰撞、约束、重力等实际作用产生，不能给每个零件单独安排动画时间表。</p>
 
-<aside class="part0">
+<details class="part0"><summary>Part 0：Blender 背景与可运行代码片段（按需展开）</summary>
 <h3 id="part-0">Part 0：Blender 程序中的“运动”有两种来源</h3>
 
 <p>Blender 是三维建模、动画和渲染软件，Python 接口 <code>bpy</code> 可以创建物体、设置碰撞与关节、推进模拟并保存场景。这里的 <code>.py</code> 是搭建程序，<code>.blend</code> 是运行它后保存的 Blender 场景文件。论文的公开提示明确指定 <strong>Blender 5.2</strong>。</p>
@@ -65,7 +65,7 @@ scene.frame_end = 120
 ```
 
 <p class="source-note">基于 Blender 官方 <a href="https://docs.blender.org/api/current/bpy.types.RigidBodyObject.html">RigidBodyObject</a> 与 <a href="https://docs.blender.org/api/current/bpy.ops.rigidbody.html">rigidbody operators</a> 编写的背景示例；已检查 Python 语法，未在 Blender 5.2 中运行。它没有相机、渲染与完整任务实现，不代表作者公开了组件库。论文允许合理的初始驱动，但禁止用逐帧位置、定时器或隐藏的软件开关直接驱动下游零件。</p>
-</aside>
+</details>
 
 <aside class="keypoints"><ul>
 <li>公开数据共 <strong>273 道题</strong>：50 道单机构、100 道多级组合、63 道指定组件设计、60 道指定目标设计。</li>
@@ -139,7 +139,9 @@ scene.frame_end = 120
 
 <p>T3-1 从 T2 的组件库抽取 4–12 个组件，Astra 检查是否存在连贯顺序、所有组件能否参加同一条链，再保留可行集合。被测模型只拿到名称和定义，不拿到作者的实现代码。T3-2 则按 easy、medium、hard 各三分之一，让 Astra 按统一字段格式（schema）生成完整规格；Opus 5 核对规格是否一致、机械上可解、可构建有效参考解，最后人工复核。论文没有公布全部筛选失败样例、复核分歧或完整参考实现。</p>
 
+<details><summary>补充：组件出现频率原表</summary>
 <figure class="figure original narrow"><a href="/lib/papers/exeworldbench/table-5.png"><img src="/lib/papers/exeworldbench/table-5.png" width="968" height="864" alt="Table 5 原表：850次组件出现，斜坡256次，收集碗100次，末尾统计总数"></a><figcaption>Table 5 · 组件出现次数，不是独立任务数。Ramp 占 30.12%，Catch Bowl 占 11.76%；850 是组件使用总数。来源：Peng et al., v1, p.13，CC BY 4.0。</figcaption></figure>
+</details>
 
 <p>Table 5 也说明了数据分布：题目大量围绕斜坡、小球、骨牌、漏斗、跷跷板等装置。它适合检验机械组合，不能自动代表流体、柔性体或所有三维世界建模任务。公开 T1 动画来自已有资源，也应单独考虑模型是否接触过这些机制；当前公开版本没有给出足以量化污染程度的审计。</p>
 
@@ -176,11 +178,14 @@ scene.frame_end = 120
 
 <p>例如四级装置中，前两级顺利执行，第三级只得到部分传递，第四级自行按定时器启动。用于讲解的段分可以是 <code>[9, 8, 2, 0]</code>，ECM 为 <code>19 / 4 = 4.75</code>。这是本文构造的算术例子，不是任何模型的实测轨迹；其中第四段为 0 的原因是断链后独立启动，而不是它最后有没有动。</p>
 
+<details><summary>补充案例：12 个组件、2 个球怎样接力（Figure 8）</summary>
 <p>一个真实的 T3-1 例子是 <a href="https://huggingface.co/datasets/HelenPeng/ExeWorldBench/blob/c6dc85e412af91046b5a58d783324df7baf846f4/t3/task1/12_10/12_10.txt"><code>12_10</code></a>，同时列在论文附录：12 个组件、2 个球，包括 4 个斜坡（Ramp）、2 个 L 形滑槽（L-Shaped Chute），以及折返轨道、收集碗、挡板、五块骨牌组成的骨牌链、四叶拨轮和漏斗各一个。输入的列表顺序被打乱。两球都须参加同一条机械链，但可以由一个球推动机构，再释放另一个球接力，不要求同一个球走完全程。</p>
 
 <figure class="figure original portrait"><a href="/lib/papers/exeworldbench/figure-8.png"><img src="/lib/papers/exeworldbench/figure-8.png" width="886" height="1061" alt="Figure 8 原图：指定12个组件和2个球的任务，五种模型输出的机械装置与动画帧"></a><figcaption>Figure 8 · T3-1 的真实任务 <code>12_10</code>。每行是同一模型输出的四个时间点，不是四种设计。Codex 的 ECM 为 6.67，Astra API 为 6.50，GLM 为 0；完整输入见论文 pp.20–21 和公开任务文件。来源：Peng et al., v1, p.18，CC BY 4.0。</figcaption></figure>
 
 <p>Figure 8 能显示是否形成连贯装置，但没有发布逐段 judge 输出；不能从四个缩略帧中编造“第几块骨牌在第几帧失败”的日志。评分提示中的“如果移除 A，B 是否仍会动”也是辅助推理问题，T3-2 提示明确说不需要真实干预实验。它不是评价器真的移除了零件再运行一遍。</p>
+
+</details>
 
 <h3 id="case-053">3.5 真实任务 053：先开始接近，后取得通行权</h3>
 
@@ -264,21 +269,31 @@ print(f"Kimi T3-2 G2: {(49 / 60) * 22.20:.2f}%")
 
 <h3 id="t1-results">4.1 单个机构：有外形，不一定有正确约束</h3>
 
+<details><summary>展开 T1 全部模型与修复前后原表</summary>
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-1.png"><img src="/lib/papers/exeworldbench/table-1.png" width="1616" height="1016" alt="Table 1 原表：T1模型执行率、结构分和机械运动分，含修复前后两列"></a><figcaption>Table 1 · T1 主表，全部 50 道题为分母。E 是执行率；V、M 是 0–10 均值。下标 1/2 为修复前/后。来源：Peng et al., v1, p.7，CC BY 4.0。</figcaption></figure>
+</details>
 
 <p>Codex 的 M 为 6.32，Claude Code 为 5.68。Astra API 修复后执行率从 58% 升到 94%，M 从 3.14 升到 5.08；Kimi 则从 8% 升到 86%，M 只从 0.04 升到 0.80。Fable API 修复后 V=4.04、M=3.24，也说明结构呈现与运动表现有差距。</p>
 
+<details><summary>补充案例：单机构还原的原始对比</summary>
 <figure class="figure original portrait"><a href="/lib/papers/exeworldbench/figure-6.png"><img src="/lib/papers/exeworldbench/figure-6.png" width="888" height="957" alt="Figure 6 原图：齿轮与连杆参考动画及四种模型还原结果，可见不同的结构和动态约束错误"></a><figcaption>Figure 6 · T1 的机构还原案例。顶部为 reference；下方每行四个时刻。Kimi 的零件在后续帧中偏离机构，DeepSeek 的结构与目标相差较大；原图分别给 M=1、M=0。具体源代码与逐项判分未公开，不能从图片确定错误的代码原因。来源：Peng et al., v1, p.16，CC BY 4.0。</figcaption></figure>
+</details>
 
 <h3 id="composition-results">4.2 多级组合：每级都动，与每级都接上是两件事</h3>
 
+<details><summary>展开 T2 全部模型原表</summary>
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-2.png"><img src="/lib/papers/exeworldbench/table-2.png" width="1616" height="1016" alt="Table 2 原表：100道T2多级机械组合任务的执行率、结构分及ECM"></a><figcaption>Table 2 · T2 主表，全部 100 道题。Codex ECM=5.25；Claude Code ECM=4.08。来源：Peng et al., v1, p.7，CC BY 4.0。</figcaption></figure>
+</details>
 
 <p>T2 中，Kimi 修复后 79% 的代码能执行，但 ECM 仍为 0；Qwen 修复后执行率 62%，ECM 也为 0。Astra API 达到 91% 执行率、ECM=2.47。这里的低 ECM 可能同时包含组件自身动作错误、几何接触错误和断链后续零分，不能当成纯“因果推理准确率”。</p>
 
+<details><summary>补充案例：多级机械链的原始对比</summary>
 <figure class="figure original portrait"><a href="/lib/papers/exeworldbench/figure-7.png"><img src="/lib/papers/exeworldbench/figure-7.png" width="891" height="880" alt="Figure 7 原图：多级小球和骨牌装置的参考及模型输出，Astra API单例ECM高于Codex"></a><figcaption>Figure 7 · T2 代表例。Astra API 的 ECM=4.08，高于这道题 Codex 的 3.33；Qwen 与 Seed 的 ECM=0。整体平均领先不意味着每个案例领先。这是作者选择的可视化例，不提供逐段日志。来源：Peng et al., v1, p.17，CC BY 4.0。</figcaption></figure>
+</details>
 
+<details><summary>展开 T3-1 全部模型原表</summary>
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-3.png"><img src="/lib/papers/exeworldbench/table-3.png" width="1616" height="1016" alt="Table 3 原表：T3-1指定组件设计任务的模型执行率、结构分与ECM"></a><figcaption>Table 3 · T3-1 主表，全部 63 道题。指定组件不指定顺序或布局。来源：Peng et al., v1, p.8，CC BY 4.0。</figcaption></figure>
+</details>
 
 <p>指定组件但取消参考图之后，Codex 的 ECM=6.11，Claude Code=5.70；Astra API 修复后为 3.34，Fable API 为 2.75，其余 API 模型最高为 0.40。T3-1 的分数高于某些 T2 分数，不应解释成更难任务反而容易：两组题目、组件分布与参考约束都不同，它们不是同题逐步去提示的受控实验。</p>
 
@@ -288,7 +303,9 @@ print(f"Kimi T3-2 G2: {(49 / 60) * 22.20:.2f}%")
 
 <p>Codex 达到 G=90.14%、ECM=5.82；Claude Code 为 G=75.19%、ECM=5.17。Astra API 修复后执行率 91.67%，G=41.07%、ECM=2.55。Kimi 修复后执行率 81.67%，G=18.13%、ECM=0.63。这一结果支持“修对调用接口远不足以完成机械设计”，但不能量化 harness 本身贡献了多少，也不能把后续修复当成开源模型独立完成的成绩。</p>
 
+<details><summary>补充：初始、中途与最终条件的类别对比</summary>
 <figure class="figure original narrow"><a href="/lib/papers/exeworldbench/figure-5.png"><img src="/lib/papers/exeworldbench/figure-5.png" width="601" height="686" alt="Figure 5 原图：Goal Satisfaction及初始I、中间B、最终F满足率的雷达比较"></a><figcaption>Figure 5 · I / B / F 类别表现。API 模型一般更容易满足初始布置，较难满足中途行为和最终持续状态。各轴是分别计算的类别均值，不可直接平均成 G。来源：Peng et al., v1, p.15，CC BY 4.0。</figcaption></figure>
+</details>
 
 <p>对 053 来说，初始条件主要是把 A、B 放在正确区域外、静止，并设置 object_A 姿态；中途条件却要求同时处理提前接近、机械阻挡、完全离开后放行和禁止再进入。Figure 5 的类别差异与这个难度区别一致，但论文没有给出每类条件数量和类型充分匹配的控制实验。</p>
 
@@ -304,7 +321,9 @@ print(f"Kimi T3-2 G2: {(49 / 60) * 22.20:.2f}%")
 
 <p>大部分模型的 T1 运动表现有所提高，Astra API 是明显反例。这说明更多观察信息可以帮助一些模型，但还需要把观察落实为结构和约束。不能只保留正向提升，然后总结“补视频就解决了理解问题”。</p>
 
+<details><summary>展开 T2 加入运动参考的原图</summary>
 <figure class="figure original"><a href="/lib/papers/exeworldbench/figure-4.png"><img src="/lib/papers/exeworldbench/figure-4.png" width="1559" height="531" alt="Figure 4 原图：T2加入运动帧前后的V和ECM，大部分小幅提升但GLM和Astra略降"></a><figcaption>Figure 4 · T2 加入运动参考。Codex ECM 从 5.25 升到 5.66，Claude Code 从 4.08 升到 4.34；GLM 和 Astra API 略降。来源：Peng et al., v1, p.10，CC BY 4.0。</figcaption></figure>
+</details>
 
 <p>Figure 4 的无运动参考 V 值中，Astra API 为 3.86，DeepSeek 为 1.83，与主表的修复后 V 一致；Figures 3–4 可以据此与主表相应结果对照，但它们没有补齐每种输入设置的执行率、调用预算和重复运行统计。有限改善支持“观察到运动仍难实现机械关系”，还不足以将失败唯一归因于世界理解。</p>
 
@@ -312,6 +331,7 @@ print(f"Kimi T3-2 G2: {(49 / 60) * 22.20:.2f}%")
 
 <p><strong>Tables 6–9 只对能执行的 API 输出计算质量均值。</strong>它们用于区分运行失败和运行后质量，不是主榜单的新版本。随着修复救回更多困难案例，成功执行子集扩大，子集质量均值反而可能下降，这不与全题均值提高矛盾。</p>
 
+<details><summary>展开 Tables 6–9：仅成功执行题的质量均值</summary>
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-6.png"><img src="/lib/papers/exeworldbench/table-6.png" width="1616" height="832" alt="Table 6 原表：T1只对成功执行案例计算的结构和运动均值"></a><figcaption>Table 6 · T1，conditioned quality。Astra 的 M2=5.40，乘执行率 94% 可得到主表约 5.08。来源：Peng et al., v1, p.13，CC BY 4.0。</figcaption></figure>
 
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-7.png"><img src="/lib/papers/exeworldbench/table-7.png" width="1616" height="832" alt="Table 7 原表：T2只对成功执行案例计算的结构和ECM均值"></a><figcaption>Table 7 · T2，conditioned quality。Astra ECM2=2.71，仍远低于满分；即使排除运行失败，机械组合也未解决。来源：Peng et al., v1, p.14，CC BY 4.0。</figcaption></figure>
@@ -319,6 +339,8 @@ print(f"Kimi T3-2 G2: {(49 / 60) * 22.20:.2f}%")
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-8.png"><img src="/lib/papers/exeworldbench/table-8.png" width="1616" height="836" alt="Table 8 原表：T3-1只对成功执行案例计算的结构和ECM均值"></a><figcaption>Table 8 · T3-1，conditioned quality。Astra ECM2=3.90、Fable API=2.75；其他模型仍低。来源：Peng et al., v1, p.14，CC BY 4.0。</figcaption></figure>
 
 <figure class="figure original"><a href="/lib/papers/exeworldbench/table-9.png"><img src="/lib/papers/exeworldbench/table-9.png" width="1624" height="832" alt="Table 9 原表：T3-2只对成功执行案例计算的结构、ECM和目标满足率"></a><figcaption>Table 9 · T3-2，conditioned quality。Kimi G2=22.20%，49/60 的代码可执行，得到主表约 18.13%；不能只摘 22.20% 而省去分母。来源：Peng et al., v1, p.15，CC BY 4.0。</figcaption></figure>
+
+</details>
 
 <h2 id="discussion">5. Discussion：什么已经说明，什么还值得补实验</h2>
 
