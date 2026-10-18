@@ -23,7 +23,46 @@
         "problem",
         "method",
         "results",
+        "appendices",
+        "cases",
+        "evaluation",
         "limitations"
+      ]
+    },
+    {
+      "id": "arxiv-entry",
+      "kind": "paper",
+      "title": "First submission, source title and distribution license",
+      "url": "https://arxiv.org/abs/2607.21051v1",
+      "revision": "v1; accessed 2026-10-19",
+      "used_for": [
+        "title",
+        "date",
+        "permission boundary"
+      ]
+    },
+    {
+      "id": "tex",
+      "kind": "paper",
+      "title": "Author v1 TeX source archive",
+      "url": "https://arxiv.org/src/2607.21051v1",
+      "revision": "v1",
+      "used_for": [
+        "packing equations",
+        "table aggregation",
+        "game subsets",
+        "case excerpts",
+        "ColorButton"
+      ]
+    },
+    {
+      "id": "thirdparty-readme",
+      "kind": "code",
+      "title": "alphaXiv substitute replication README, not the author implementation",
+      "url": "https://github.com/alphaXiv/sample-efficient-learning-from-agent-experience",
+      "revision": "README blob 5f7d01290e28e9061debc42b1cd6cbd23b35b480",
+      "used_for": [
+        "public artifact boundary; README inspected only, different model and environment"
       ]
     }
   ],
@@ -39,42 +78,181 @@
         "end": 53
       }
     ],
-    "source_visuals_expected": 33,
+    "source_visuals_expected": 37,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-19",
       "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
-    },
-    "numbered_source_visuals_count": 32,
-    "additional_source_displays": 1
+      "scope": "Complete 2953-line extracted paper and all 53 individually rendered pages including references and A–C; previous article and12slides, revised article and14slides personally read. Author TeX checked for objective, settings, all main tables, selected cases and ColorButton. No author training/checker reproduction.",
+      "evidence": "tmp/collection-refresh-20261018/experience-evidence.md"
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "1. Motivation：如何利用试错之后才得到的证据"
+      "locator": "1. Motivation：让后来发现的知识改变早先的决策"
     },
     {
       "role": "related-work",
-      "locator": "2. Related Work：与旧轨迹微调和 on-policy 蒸馏的区别"
+      "locator": "2. Related Work：谁生成目标，谁重新执行"
     },
     {
       "role": "method",
-      "locator": "3. Method：经验收集、单步分支与样本打包"
+      "locator": "3. Method：先形成经验，再重写并打包决策"
     },
     {
       "role": "experiments",
-      "locator": "4. Experiments：训练内巩固、未见题泛化与预算"
+      "locator": "4. Experiments：先看判分，再分清效果与成本"
     },
     {
       "role": "future-work",
-      "locator": "5. Discussion：核验新目标和打包前文"
+      "locator": "5. Discussion：优先检查新目标与前文是否可信"
     },
     {
       "role": "summary",
-      "locator": "6. Conclusion：结论与复现边界"
+      "locator": "6. Conclusion：复用真实反馈，不把新目标当已验证轨迹"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "trial",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2;§4.1;C.1"
+        }
+      ],
+      "article_quote": "模型读问题、查仓库、改代码、跑测试，最后交出一次修复，称为一个 trial。"
+    },
+    {
+      "term": "decision / observation",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2;§3.3"
+        }
+      ],
+      "article_quote": "中间每次模型输出的分析与最终工具动作，叫一次 decision；工具执行后的结果叫 observation。"
+    },
+    {
+      "term": "teacher / student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.3;§4.1"
+        }
+      ],
+      "article_quote": "本文让 teacher（教师）多看整题经验，重新生成一次决策；student（学生）不看这份额外经验，学习教师的新决策。"
+    },
+    {
+      "term": "g(history)",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "作者先整理整题经验，记作 g(history) ，可能重写或总结记录，保留重要反馈。"
+    },
+    {
+      "term": "branch packing",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3;Eq.3–4"
+        }
+      ],
+      "article_quote": "作者把同一记录的多个分支合进一个序列，称为 branch packing： o₀, a′₀, a₀, o₁, a′₁, a₁, o₂… 。"
+    },
+    {
+      "term": "next-token prediction / forward KL",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2–3.3;§4.9"
+        }
+      ],
+      "article_quote": "默认由教师采样 token（模型处理的文字单位），学生提高这些 token 的预测概率，训练称为 next-token prediction（NTP）。"
+    },
+    {
+      "term": "epic",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "C.3 pp32–35"
+        }
+      ],
+      "article_quote": "第 6 次发现：query epic 用 !!update.value 过滤输入，null 被当成假值丢掉，没有触发新查询。这里 epic 是 RxJS 的事件处理管线。"
+    },
+    {
+      "term": "pass@1 / pass@10",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1;A.4;Tables1,9"
+        }
+      ],
+      "article_quote": "pass@1 对全部 749 题的单次结果取平均，主实验每题评测 10 次；pass@10 是 10 个独立候选里至少一个被接受的题数除以 749，不是十次通过率均值。"
+    },
+    {
+      "term": "ICL-normalized gain",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1;Tables1–3"
+        }
+      ],
+      "article_quote": "另一个指标是 ICL-normalized gain，即保留了多少“ICL 相对未训练模型的提升”： G=(S_method−S_zero)/(S_ICL−S_zero)×100% 。"
+    },
+    {
+      "term": "environment sample",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2;Figure1;B.1,B.4"
+        }
+      ],
+      "article_quote": "一次 environment sample 指完整 trial，不是一个工具调用。"
     }
   ],
   "coverage": [
@@ -87,18 +265,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§1–3; §4.2"
+          "locator": "§1–3;Table1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "让同一个起点的模型读取完整经验，在历史中的某个位置重新写下一步；这段新决策一到动作就停止，不生成动作之后的环境返回。"
+          "quote": "用真实旧反馈生成新决策，再训练不给额外经验的学生。"
+        },
+        {
+          "artifact": "article",
+          "quote": "在新动作结束、环境还没返回时停止"
         }
       ]
     },
     {
-      "id": "method-contract",
+      "id": "nearest-related-work",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -106,22 +288,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.2–3.3; Eq. 2–4"
+          "locator": "§5;§4.8"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "教师新写出的 decision 是训练目标，但不执行、不独立验证"
+          "quote": "最直接的比较是同一份经验上的 SFT：它模仿旧决策，EPD 学习教师读完经验后新写的决策。"
         },
         {
           "artifact": "article",
-          "quote": "默认方法训练教师新采样的决策，不在学生当前轨迹上做概率重评"
+          "quote": "本文默认数据来自固定教师，不属于这一模式"
         }
       ]
     },
     {
-      "id": "main-result",
+      "id": "task-provenance-and-persistence",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -129,45 +311,62 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1, 4"
+          "locator": "§4.1;A.7;C.1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "749 个软件任务中，未训练模型 5.3%、直接模仿旧记录 8.0%、新决策蒸馏 <strong>51.4% 单次尝试通过率（pass@1）</strong>"
+          "quote": "软件每题启动 8–12 个独立过程，每个最多 10 次 trial"
         },
         {
           "artifact": "article",
-          "quote": "494 个未见软件任务上的 pass@1 为 4.62% → 8.84%"
+          "quote": "只保留超过一次尝试才得到接受提交的过程"
+        },
+        {
+          "artifact": "article",
+          "quote": "同一过程里，模型保留以前的历史与工作树修改"
+        },
+        {
+          "artifact": "article",
+          "quote": "总量 45,301 次交互、61.7M token；总量不是一次模型输入"
         }
       ]
     },
     {
-      "id": "limitations",
-      "claim_type": "interpretation",
+      "id": "complete-training-iteration",
+      "claim_type": "author-claim",
       "source_ids": [
-        "paper"
+        "paper",
+        "tex"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.3; §4.6; Appendix C.1–C.3"
+          "locator": "§3.3;Eq3–4"
+        },
+        {
+          "source_id": "tex",
+          "locator": "§3.3;Eq3–4"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "历史最后一次被验收，不代表 从历史重新生成的每条教师目标都被验收 。"
+          "quote": "教师看到真实前文、这份额外经验，以及固定的深入推理要求，生成一次完整分析与动作"
         },
         {
-          "artifact": "deck",
-          "quote": "旧前文不是当前学生的 on-policy 状态"
+          "artifact": "article",
+          "quote": "学生只见训练前文，损失只算新教师输出"
+        },
+        {
+          "artifact": "article",
+          "quote": "额外经验和推理要求不进入学生输入"
         }
       ]
     },
     {
-      "id": "experience-provenance",
+      "id": "teacher-and-student-parameters",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -175,26 +374,54 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4.1; Appendix A.7; Tables 10–11"
+          "locator": "§3.1–3.3;§4.1,4.7"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "只保留 经过多于一次尝试才得到通过验收的代码提交（accepted commit） 的过程"
+          "quote": "两者从同一模型出发，蒸馏阶段教师固定，只更新学生"
         },
         {
           "artifact": "article",
-          "quote": "软件工作区保留前次修改，模型也看到以前历史。"
-        },
-        {
-          "artifact": "article",
-          "quote": "软件和游戏还使用不同初始 checkpoint。"
+          "quote": "软件和游戏用不同内部模型，名称未披露"
         }
       ]
     },
     {
-      "id": "packed-context-information-boundary",
+      "id": "packing-surrogate-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "tex"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3;Eq2–4"
+        },
+        {
+          "source_id": "tex",
+          "locator": "§3.3;Eq2–4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "o₁ 属于旧 a₀，不属于新 a′₀"
+        },
+        {
+          "artifact": "article",
+          "quote": "后面的前文还含更早的 a′"
+        },
+        {
+          "artifact": "article",
+          "quote": "不是 Eq. 2 中每个分支独立生成的严格实现"
+        }
+      ]
+    },
+    {
+      "id": "NTP-loss-and-reduction",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -202,49 +429,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.3; Eq. 3–4"
+          "locator": "Eq4;§4.9"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "o₁ 是旧动作 a₀ 的返回，不是新动作 a′₀ 的返回"
+          "quote": "只计算新分析与新动作的 token；旧决策和旧返回只作前文。"
         },
         {
           "artifact": "article",
-          "quote": "后一个分支的前文也含更早的 a′，因此它不是 Eq. 2 中每个分支完全独立的严格实现"
+          "quote": "实际批次按 token 还是序列平均，论文未披露"
         }
       ]
     },
     {
-      "id": "real-case-and-verdict",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix C.3; Tables 15–16; shown patch and acceptance logs"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "query epic 的初始条件 !!update.value 把 null 更新丢掉了"
-        },
-        {
-          "artifact": "article",
-          "quote": "十个 EPD/ICL 候选全部被接受，其他三种方法各 0/10。"
-        },
-        {
-          "artifact": "article",
-          "quote": "选中的 EPD 候选未能在本地环境完成整套浏览器测试。"
-        }
-      ]
-    },
-    {
-      "id": "metrics-and-aggregation",
+      "id": "loss-calculation",
       "claim_type": "reproduced-calculation",
       "source_ids": [
         "paper"
@@ -252,26 +452,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4.1; Table 1; Table 3; Table 9; Appendix A.7"
+          "locator": "Eq4;article-authored Node22 arithmetic"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "(51.4−5.3)/(76.4−5.3)=64.84%"
+          "quote": "−ln(0.5)−ln(0.25)≈2.07944"
         },
         {
           "artifact": "article",
-          "quote": "Table 1 的 G=93.4%、Table 3 的平均 G=90.1% 并不冲突，聚合顺序不同。"
-        },
-        {
-          "artifact": "article",
-          "quote": "游戏分数是 100 × 获得积分 / 该游戏最高积分"
+          "quote": "这是教学验算，不是实测概率"
         }
       ]
     },
     {
-      "id": "discriminating-ablations",
+      "id": "mapstore-real-case-and-trials",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -279,26 +475,358 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 2–3, 5–7; Appendix B.1"
+          "locator": "C.3 pp31–35;Table15"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Acorncourt 反过来，two-step 53.6 高于 one-step 34.9"
+          "quote": "打开再关闭高级过滤面板，最后点 x 清除空间过滤，表格却仍被原条件过滤"
         },
         {
           "artifact": "article",
-          "quote": "branch packing 把 4,096 个独立样本变成 128 个序列"
+          "quote": "第 5 次已经让组件明确发出 value: null 和 deactivated: true ，仍被拒绝"
         },
         {
           "artifact": "article",
-          "quote": "两题现象支持学生采不到重要动作的解释，不能推出“OPD 普遍失败”。"
+          "quote": "允许 geometry 更新继续进入查询流程"
         }
       ]
     },
     {
-      "id": "budget-scope-and-total-compute",
+      "id": "target-quality-counterexample",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "C.3.3–C.3.4 pp33–35;C.9–10"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "目标 2 和 3 却重提了早先被否决的改动位置或假设"
+        },
+        {
+          "artifact": "article",
+          "quote": "最后一次旧修复被接受，不代表每条新教师目标都验证过"
+        },
+        {
+          "artifact": "article",
+          "quote": "其改动位置不与每条教师目标逐一相同"
+        }
+      ]
+    },
+    {
+      "id": "case-judge-and-evidence-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "C.3.4 p35;Table16"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "禁用的已存 geometry 更新必须发出 UPDATE_QUERY ，且 reason=geometry"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有跑通本地整套浏览器测试"
+        },
+        {
+          "artifact": "article",
+          "quote": "ICL / EPD 各接受 10/10 个候选"
+        },
+        {
+          "artifact": "article",
+          "quote": "完整验收代码与构建过程未公开"
+        }
+      ]
+    },
+    {
+      "id": "guard-check-not-official-verifier",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "C.3 patch condition;article-authored Node22 snippet"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "运行环境 Node.js 22，不是原补丁或官方验收器"
+        },
+        {
+          "artifact": "article",
+          "quote": "不模拟 React、RxJS 或浏览器"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-denominators",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1;Tables1,9;C.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "pass@10 是 10 个独立候选里至少一个被接受的题数除以 749"
+        },
+        {
+          "artifact": "article",
+          "quote": "43.8 是平均归一化积分"
+        },
+        {
+          "artifact": "article",
+          "quote": "软件 10 次、游戏 16 次都是评测重复，不是训练种子数"
+        }
+      ]
+    },
+    {
+      "id": "gain-formula-and-aggregation",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1;Tables1,3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "(51.4−5.3)/(76.4−5.3)≈64.8%"
+        },
+        {
+          "artifact": "article",
+          "quote": "G 可为负或超过 100%"
+        },
+        {
+          "artifact": "article",
+          "quote": "Table 3 先算每题 G 再平均"
+        },
+        {
+          "artifact": "article",
+          "quote": "与主表先平均再算的 93.4% 不冲突"
+        }
+      ]
+    },
+    {
+      "id": "model-results-and-unseen-tasks",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables1,4,9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "未参与收集与训练的 494 道新题"
+        },
+        {
+          "artifact": "article",
+          "quote": "pass@5 为 20.39% →26.13%"
+        },
+        {
+          "artifact": "article",
+          "quote": "软件 pass@1 / pass@10"
+        },
+        {
+          "artifact": "article",
+          "quote": "51.4% / 80.9%"
+        }
+      ]
+    },
+    {
+      "id": "model-free-counterexample",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table2 pp6–7;A.5 p19"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Acorncourt 反向，34.9 < 53.6"
+        },
+        {
+          "artifact": "article",
+          "quote": "模型说 dance 不能执行却报加 10 分"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有统计环境模拟的错误率"
+        }
+      ]
+    },
+    {
+      "id": "packing-efficiency-counterexample",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table3 p7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "4,096 个样本合为 128 个序列"
+        },
+        {
+          "artifact": "article",
+          "quote": "训练步数 768 →64"
+        },
+        {
+          "artifact": "article",
+          "quote": "教师生成加学生训练的合计时间降低超过 10 倍"
+        },
+        {
+          "artifact": "article",
+          "quote": "Inhumane 却从 41.5 降到 36.6"
+        }
+      ]
+    },
+    {
+      "id": "teacher-student-sampling-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table5 p9;A.6 p20"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "比较只测两个单独训练、匹配计算量的游戏"
+        },
+        {
+          "artifact": "article",
+          "quote": "96.7% / 98.4%"
+        },
+        {
+          "artifact": "article",
+          "quote": "两题结果不能推出所有学生采样的蒸馏都失败"
+        }
+      ]
+    },
+    {
+      "id": "budget-charge-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2;Figure1;B.1 pp23–24;B.4 p29"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "最好 29.9 分出现在第 16 次更新、240 次执行"
+        },
+        {
+          "artifact": "article",
+          "quote": "完整运行到 448 次后为 26.0"
+        },
+        {
+          "artifact": "article",
+          "quote": "不是达到同分的最低样本成本"
+        }
+      ]
+    },
+    {
+      "id": "teacher-generation-compute",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure3 p10;61.7M corpus and2.79ratio"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "最大约 172M token 是本文用 61.7M×2.79 验算"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有新增环境执行，计算量明显不同"
+        }
+      ]
+    },
+    {
+      "id": "different-subsets-and-repetitions",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figures2–3;Table2–3;A.7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "持续学习六题用 Acorncourt 替换 Enter"
+        },
+        {
+          "artifact": "article",
+          "quote": "不是同一子集的直接分数比较"
+        },
+        {
+          "artifact": "article",
+          "quote": "如何统计多出的 turns 未说明"
+        }
+      ]
+    },
+    {
+      "id": "ColorButton-reward-gradient-boundary",
       "claim_type": "interpretation",
       "source_ids": [
         "paper"
@@ -306,40 +834,86 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figures 1, 3, 5, 8; §4.3 and §4.10"
+          "locator": "B.2 pp25–26;Figure7/Table12"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Figure 1 把 最好成绩与完整运行预算配对"
+          "quote": "选项数 2×3×3=18"
         },
         {
           "artifact": "article",
-          "quote": "最大约 172M 额外生成 token ，没有新增环境执行，仍有模型计算成本。"
+          "quote": "答案与组大小同时变了，不是单变量消融"
+        },
+        {
+          "artifact": "article",
+          "quote": "任务奖励损失的梯度也为零；KL 或其他辅助项仍可能有梯度"
         }
       ]
     },
     {
-      "id": "reproducibility-and-source-gaps",
-      "claim_type": "unknown",
+      "id": "selected-eight-cases",
+      "claim_type": "author-claim",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4.1; Appendix A–C; complete source artifact"
+          "locator": "C.2;C.4–11;Tables13–14,17–24"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "复现仍缺模型、749 题列表、试错记录、preprocessing prompt、完整优化设置、官方代码和外部 verifier。"
+          "quote": "EPD 接受 72/79 个有效候选"
         },
         {
           "artifact": "article",
-          "quote": "EPD 72/79 个有效候选被接受，不代表总体软件题成功率。"
+          "quote": "Auth0 只有九个有效 EPD 候选"
+        },
+        {
+          "artifact": "article",
+          "quote": "不能把 72/79 当作 749 题的总体通过率"
+        }
+      ]
+    },
+    {
+      "id": "public-artifact-and-permission-gaps",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "arxiv-entry",
+        "tex",
+        "thirdparty-readme"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "arXiv v1 entry/license;authorTeX archive;thirdparty README blob"
+        },
+        {
+          "source_id": "arxiv-entry",
+          "locator": "arXiv v1 entry/license;authorTeX archive;thirdparty README blob"
+        },
+        {
+          "source_id": "tex",
+          "locator": "arXiv v1 entry/license;authorTeX archive;thirdparty README blob"
+        },
+        {
+          "source_id": "thirdparty-readme",
+          "locator": "arXiv v1 entry/license;authorTeX archive;thirdparty README blob"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本文仅核查其 README，不把它的代码或结果当论文原实现"
+        },
+        {
+          "artifact": "article",
+          "quote": "arXiv nonexclusive-distribution 许可未授予通用转载权"
         }
       ]
     }
@@ -350,20 +924,24 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §4.3",
+      "source_locator": "p6 §4.2",
       "status": "redrawn",
-      "rationale": "环境完整trial预算和最好观察成绩重构到resultsSVG，强调RL点配完整运行而非到同分最小预算，log轴不直接复制。",
+      "rationale": "Best observed RL score paired with complete budget and environment-trial units independently reformatted; matched-score minimum-cost interpretation explicitly rejected.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Table 1、4、Figure 1、3 重绘"
+          "locator": "4.3 环境样本与模型计算分开记账"
+        },
+        {
+          "artifact": "deck",
+          "locator": "少跑环境，仍要多生成教师答案"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Figure 1 的事实或数值独立整理",
       "asset_paths": [
-        "/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg"
+        "/lib/papers/sample-efficient-learning-from-agent-experience/budget-compact.svg"
       ]
     },
     {
@@ -371,12 +949,12 @@
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2; §4.7",
+      "source_locator": "p8 §4.7",
       "status": "omitted",
-      "rationale": "持续五轮完整曲线未绘；正文/slide只给7.1→47与每轮4trial概要，不冒称复用了cycle/sample两坐标曲线。",
+      "rationale": "All five-cycle protocol, four trials per task and7.1→47.0 endpoints retained in supplement andslide13; full curve linked. Different checkpoint/game subset prevents direct comparison with43.8. No unlicensed curve copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -385,20 +963,24 @@
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3; §4.10",
+      "source_locator": "p10 §4.10",
       "status": "redrawn",
-      "rationale": "教师生成量相对61.7M经验与性能关系摘入成本SVG，最大2.79×约172M token，不以无新环境交互当免费训练。",
+      "rationale": "All five sequence/token-ratio/gain points retained in supplement; endpoint budget relation independently rearranged,172M explicitly recalculated rather than purported measuredGPUcost.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Table 1、4、Figure 1、3 重绘"
+          "locator": "4.3 环境样本与模型计算分开记账"
+        },
+        {
+          "artifact": "deck",
+          "locator": "少跑环境，仍要多生成教师答案"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-3 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Figure 3 的事实或数值独立整理",
       "asset_paths": [
-        "/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg"
+        "/lib/papers/sample-efficient-learning-from-agent-experience/budget-compact.svg"
       ]
     },
     {
@@ -406,12 +988,12 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4; Appendix B.2",
+      "source_locator": "p17 A.2",
       "status": "omitted",
-      "rationale": "学习率/epochs完整散点与checkpoint标记未呈现，正文未补未披露优化配置，也不把主表当LR充分控制。",
+      "rationale": "Low learning-rate/moreepochs gain andhigh-rate loss-vs-score reversal explained, reversed loss axis recorded. Curve linked rather than inventing digitized precision or reproducing unlicensedimage.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -420,12 +1002,12 @@
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5; Appendix B.4",
+      "source_locator": "p23 B.1",
       "status": "omitted",
-      "rationale": "GRPO完整非单调轨迹未绘，正文保留best29.9@240与final26@448的区别，缺失checkpoint不当观察到的中点。",
+      "rationale": "Peak29.9 at16updates/240executions and448fullbudget final26.0 preserved besidecostclaim; complete curve linked, prevents best-score/minimum-cost conflation.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -434,12 +1016,12 @@
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6; Appendix B.4",
+      "source_locator": "p24 B.1",
       "status": "omitted",
-      "rationale": "六题GRPO个别曲线未呈现，只讲总体非单调和不同题收益，不用平均提高抹去每题反例。",
+      "rationale": "Per-game GRPO curves linked; main six-game results and no-uniform-improvement limitation retained. Detailed curves secondary tocentralcase andsampleaccounting, no unlicensed copies.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -448,12 +1030,12 @@
       "kind": "figure",
       "label": "Figure 7",
       "source_id": "paper",
-      "source_locator": "Figure 7; Appendix B.5",
+      "source_locator": "p25 B.2",
       "status": "omitted",
-      "rationale": "ColorButton18序列与两种run图未重画，正文保留目标和group同时变化，不能把诊断说成单变量消融。",
+      "rationale": "Three-button18terminalsequences andnointermediatefeedback narrated withsamplingprobability formula; schematic linked. Ideal enumeration explicitly notactualtrainedmodel guarantee.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -462,12 +1044,12 @@
       "kind": "figure",
       "label": "Figure 8",
       "source_id": "paper",
-      "source_locator": "Figure 8; Appendix B.6",
+      "source_locator": "p29 B.4",
       "status": "omitted",
-      "rationale": "PPO375步整曲线未展示，正文只报17.74与504.9trial作预算边界，不伪称全部训练checkpoint已绘。",
+      "rationale": "PPO17.74 best/final375updates504.9trials/task and9.6×budget retained; fullcurve linked, no guessedintermediatecheckpoint values.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -476,20 +1058,25 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1; §4.2",
+      "source_locator": "p5 §4.1",
       "status": "redrawn",
-      "rationale": "软件749与六游戏主结果重排，ICLgain公式与训练内51.4对OOD8.84分开，显示10/16评测重复。",
+      "rationale": "All original values preserved in supplementalHTML table. Softwarepass1/game-score bars separated withgain formula/aggregation boundary; slide omits duplicatedcaption butbody retainsfullcomparison.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Table 1、4、Figure 1、3 重绘"
+          "locator": "4.1 一个补丁怎样通过"
+        },
+        {
+          "artifact": "deck",
+          "locator": "51.4% 软件通过率，43.8 游戏平均分"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Table 1 的事实或数值独立整理",
       "asset_paths": [
-        "/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg"
+        "/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg",
+        "/lib/papers/sample-efficient-learning-from-agent-experience/main-results-slide.svg"
       ]
     },
     {
@@ -497,18 +1084,22 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2; §4.4",
+      "source_locator": "pp6–7 §4.3",
       "status": "redrawn",
-      "rationale": "model-freeone/twostep对照重排deck，保留49.8/40.1和Acorncourt34.9/53.6反例，未预测observation的优势非普遍保证。",
+      "rationale": "One-step vs two-step49.8/40.1 andAcorncourt34.9/53.6 counterexample retained inindependentcompactslide table; no singlevariable claim acrossdifferentexperiments.",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "4.2 哪些对照真正支持方法"
+        },
+        {
           "artifact": "deck",
-          "locator": "one-step / two-step"
+          "locator": "去掉模拟返回和打包，各有得失"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Table 2 的事实或数值独立整理",
       "asset_paths": []
     },
     {
@@ -516,18 +1107,22 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3; §4.5",
+      "source_locator": "p7 §4.4",
       "status": "redrawn",
-      "rationale": "4096→128packing、768→64steps、总time>10×与Inhumane反降进入deck对照表，保留聚合不同的G值。",
+      "rationale": "4096→128instances,768→64steps,>10combinedtime andInhumane41.5→36.6 control preserved incompactslide table; per-taskG vsGofmacro distinction documented.",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "4.2 哪些对照真正支持方法"
+        },
+        {
           "artifact": "deck",
-          "locator": "独立样本 / branch packing"
+          "locator": "去掉模拟返回和打包，各有得失"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Table 3 的事实或数值独立整理",
       "asset_paths": []
     },
     {
@@ -535,39 +1130,45 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4; §4.6",
+      "source_locator": "p8 §4.6",
       "status": "redrawn",
-      "rationale": "494OOD总体pass1重绘与训练内隔离，正文保留278跨repo/216旧repo新task及pass5，不能拿51.4作泛化分。",
+      "rationale": "494/278/216 subsets andsixpass1cells independently reformatted inslide13; pass5overallandsubsetprimarylinks retained. Not51.4trainconsolidation.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Table 1、4、Figure 1、3 重绘"
+          "locator": "4.4 新任务提升更小，但确实另测了"
+        },
+        {
+          "artifact": "deck",
+          "locator": "494 道新任务：4.62% → 8.84%"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg"
-      ]
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Table 4 的事实或数值独立整理",
+      "asset_paths": []
     },
     {
       "id": "table-5",
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5; §4.8",
+      "source_locator": "p9 §4.8",
       "status": "redrawn",
-      "rationale": "两游戏匹配compute教师采样/学生reverseKL的G重排deck，96.7/98.4与9.1/.4不当所有OPD结论。",
+      "rationale": "Both games andbothsamplingGvalues retained incompactslidetable. Single-task/matchedcomputeboundary andnotgeneralOPDfailureexplicit.",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "4.2 哪些对照真正支持方法"
+        },
+        {
           "artifact": "deck",
-          "locator": "教师采样 / 学生 reverse KL"
+          "locator": "教师生成目标，可能补上学生采不到的行为"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Table 5 的事实或数值独立整理",
       "asset_paths": []
     },
     {
@@ -575,18 +1176,13 @@
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6; §4.9",
-      "status": "redrawn",
-      "rationale": "NTP/fullKL均分43.1/43.4与G84.2/82重排deck，保留没有明显full-distribution收益。",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "NTP / 全分布 KL"
-        }
-      ],
+      "source_locator": "p9 §4.9",
+      "status": "omitted",
+      "rationale": "Fullvocab43.4/G82vsNTP43.1/G84.2 retained in supplement/slide11; separatebranches16epochs noted. All individual task rows linked, not squeezed intoanothermainfigure.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-6 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "",
       "asset_paths": []
     },
     {
@@ -594,12 +1190,12 @@
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7; Appendix B.1",
+      "source_locator": "p16 A.1",
       "status": "omitted",
-      "rationale": "enhancedreasoning50.7→71.8没有整表绘，正文保留它是早期three-step不是默认one-step消融。",
+      "rationale": "Detective50.7→71.8 and4096teacherrollouts/3steps/1–5contexts retained in supplement; directdefaultone-stepablation claim rejected. Complete original linked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -608,12 +1204,12 @@
       "kind": "table",
       "label": "Table 8",
       "source_id": "paper",
-      "source_locator": "Table 8; Appendix B.3",
+      "source_locator": "p18 A.3",
       "status": "omitted",
-      "rationale": "frontierzero-shot参考排行榜未重绘，未披露训练模型与未知配置不能让排行榜取代方法对照。",
+      "rationale": "Six-gameEPD43.77 vsClaudeOpus4.543.76 inference-only reference reported with non-generalparity boundary; allmodelrows linked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -622,12 +1218,12 @@
       "kind": "table",
       "label": "Table 9",
       "source_id": "paper",
-      "source_locator": "Table 9; Appendix B.3",
+      "source_locator": "p18 A.4",
       "status": "omitted",
-      "rationale": "749任务pass10完整表未绘，正文分别给31.9/39.8/80.9/86.4及至少一次成功定义，未混为10次mean。",
+      "rationale": "Allpass10values31.9/86.4/39.8/80.9 retained withmain table in supplement andcorrecttask-levelatleastone denominator. Original linked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -636,12 +1232,12 @@
       "kind": "table",
       "label": "Table 10",
       "source_id": "paper",
-      "source_locator": "Table 10; Appendix A.7",
+      "source_locator": "p21 A.7",
       "status": "omitted",
-      "rationale": "每游戏经验length/trials全表未展示，只保留六题47trials/3672turns/502Ktokens，subsets不同不合并。",
+      "rationale": "Per-game/total47trials3672turns502ktokens and100-stepvs606/1212turn discrepancy retained. Differentfixedgame subsets distinguished; entirestatisticaltable linked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -650,18 +1246,13 @@
       "kind": "table",
       "label": "Table 11",
       "source_id": "paper",
-      "source_locator": "Table 11; Appendix A.7",
-      "status": "redrawn",
-      "rationale": "经验749题分布在deck流程重组为每题60.5turn/82.4K和全61.7M，强调整库不等于一次context。",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "同题反复尝试，保留多次尝试后成功的历史"
-        }
-      ],
+      "source_locator": "p21 A.7",
+      "status": "omitted",
+      "rationale": "749selectedrecords60.5turns/82.4Kmean45301/61.7Mtotal retained visible, selectionfilter/persistenttree stated. Max140/130K andfulltable linked rather thancorpus-ascontext claim.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-11 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "",
       "asset_paths": []
     },
     {
@@ -669,12 +1260,12 @@
       "kind": "table",
       "label": "Table 12",
       "source_id": "paper",
-      "source_locator": "Table 12; Appendix B.5",
+      "source_locator": "p26 B.2",
       "status": "omitted",
-      "rationale": "ColorButton两个观察run未列表，正文保留allzero仅消去任务reward项，KL等辅助gradient不一定零。",
+      "rationale": "Differentpasscodes+G16/G256 and60→100/0→0 retained inColorButtonsupplement, zero-advantage taskgradient boundary stated. Source linked, notsinglevariablecontrol.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -683,12 +1274,12 @@
       "kind": "table",
       "label": "Table 13",
       "source_id": "paper",
-      "source_locator": "Table 13; Appendix C.1",
+      "source_locator": "p31 C.2",
       "status": "omitted",
-      "rationale": "八案例project/language/trial数全表未绘，中心MapStore2保留六trial，其他case只点关键机制，非总体统计抽样。",
+      "rationale": "Eightselectedprojects andtrialcounts retained incompactportfolio; originalprojectlanguage/descriptivemetadata linked. Caseportfolio deliberatelynotgeneral prevalence.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -697,12 +1288,12 @@
       "kind": "table",
       "label": "Table 14",
       "source_id": "paper",
-      "source_locator": "Table 14; Appendix C.2",
+      "source_locator": "p31 C.2",
       "status": "omitted",
-      "rationale": "八案例acceptance全矩阵未绘，正文保留79/80与72/79有效分母及Auth0缺失一候选，不能强写80。",
+      "rationale": "All eightacceptancecounts includingAuth08/9ICL79/80EPD72/79 retained inportfolio/Conclusion; effectivecandidate denominator explained. Fullsource linked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -711,18 +1302,22 @@
       "kind": "table",
       "label": "Table 15",
       "source_id": "paper",
-      "source_locator": "Table 15; Appendix C.3",
+      "source_locator": "p32 C.3.2",
       "status": "redrawn",
-      "rationale": "六trial修复演变重绘，按钮/null/query三段因果和失败次序分清，后trial继承工作树非独立候选。",
+      "rationale": "Sixsequentialtrials/persistentworkingtree andnewchange-notfullpatch summarized aroundcompacteventpipeline. Trial5nullblocked/Trial6admitted relationship independentlydrawn, notofficialchecker.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 C.3、Tables 15–16 重绘"
+          "locator": "3.3 MapStore2：清除事件卡在哪一段"
+        },
+        {
+          "artifact": "deck",
+          "locator": "第 5 次发出了清除，第 6 次才刷新查询"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-15 重绘事实，未复制原版排版",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 Table 15 的事实或数值独立整理",
       "asset_paths": [
         "/lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg"
       ]
@@ -732,33 +1327,26 @@
       "kind": "table",
       "label": "Table 16",
       "source_id": "paper",
-      "source_locator": "Table 16; Appendix C.3",
-      "status": "redrawn",
-      "rationale": "MapStore2不同方法修复/acceptance重建在caseSVG与正文，10/10已接受与未完成localGUItests的证据分开。",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "据 C.3、Tables 15–16 重绘"
-        }
-      ],
+      "source_locator": "p35 C.3.4",
+      "status": "omitted",
+      "rationale": "Allfivecandidateacceptancecounts0/0/0/10/10 retained incaseverdict; training-task selection andunrunlocalGUIboundary explicit. Fulltablelinked.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-16 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg"
-      ]
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "",
+      "asset_paths": []
     },
     {
       "id": "table-17",
       "kind": "table",
       "label": "Table 17",
       "source_id": "paper",
-      "source_locator": "Table 17; Appendix C.4",
+      "source_locator": "p35 C.4.2",
       "status": "omitted",
-      "rationale": "linkedtooltip多trial演变未绘，正文选MapStore为主，不能把另一case的fixture混入主例。",
+      "rationale": "Billboard: Six sequential trials andrepresentation-awarelookup withAPI/linkedDOMabsence handling retained,selectedteacher2of4edits vsEPD4notcausalidentity; browser suite absent. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -767,12 +1355,12 @@
       "kind": "table",
       "label": "Table 18",
       "source_id": "paper",
-      "source_locator": "Table 18; Appendix C.5",
+      "source_locator": "p38 C.5.2",
       "status": "omitted",
-      "rationale": "Relay全修复演变未重绘，仅在结尾解释cache保留与active引用两条件，未补完整patch或checker。",
+      "rationale": "Relay: Two-set cache-vs-activeownership andexplicitGCverification retained, no fullReactunmountclaim. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -781,12 +1369,12 @@
       "kind": "table",
       "label": "Table 19",
       "source_id": "paper",
-      "source_locator": "Table 19; Appendix C.6",
+      "source_locator": "p40 C.6.2",
       "status": "omitted",
-      "rationale": "EdgeRuntimecookieheader读改写全表未展示，完整案例仍留原文，未编造cookieverdict。",
+      "rationale": "Auth0: Two-trialcombinedSetCookieparser+writeback retained withExpirescomma/49tests/8of9valid; heuristicnotuniversalstandard. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -795,12 +1383,12 @@
       "kind": "table",
       "label": "Table 20",
       "source_id": "paper",
-      "source_locator": "Table 20; Appendix C.7",
+      "source_locator": "p42 C.7.2",
       "status": "omitted",
-      "rationale": "GraphQLMesh多trial表未重绘，正文仅说明schema-time和配置两处协调，未补source-schema映射代码。",
+      "rationale": "GraphQL Mesh: Six-trial schematimingexistingroot/generatedname andthreeconfiguration surfaces retained,146pass1skip. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -809,12 +1397,12 @@
       "kind": "table",
       "label": "Table 21",
       "source_id": "paper",
-      "source_locator": "Table 21; Appendix C.8",
+      "source_locator": "p45 C.8.2",
       "status": "omitted",
-      "rationale": "GitHubCLIinteractive/headless修复全表未呈现，不借缺少完整验收包声称独立复现。",
+      "rationale": "GitHub CLI: Five-trial title/body/defaultandinteractiveMode&&stdinTTY/mergeAPIpropagation retained, notterminalalonepermission. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -823,12 +1411,12 @@
       "kind": "table",
       "label": "Table 22",
       "source_id": "paper",
-      "source_locator": "Table 22; Appendix C.9",
+      "source_locator": "p48 C.9.2",
       "status": "omitted",
-      "rationale": "Gauge文件去重与parser清理全表未绘，非中心case，未补未公开有效candidate。",
+      "rationale": "Gauge: Two-trial existingdictionarycleanup andsharedfilededup retained,teacherfirstdiagnosispartlymisstated rather thanidealized. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -837,12 +1425,12 @@
       "kind": "table",
       "label": "Table 23",
       "source_id": "paper",
-      "source_locator": "Table 23; Appendix C.10",
+      "source_locator": "p50 C.10.2",
       "status": "omitted",
-      "rationale": "Strapi演变表未展示，正文保留teacher修正已接受patch中的过宽URLschema，成功历史不代表新target都正确。",
+      "rationale": "Strapi: Four-trialbackendhelper/relativepathsandstrictuserURLvalidation distinction retained; acceptedoldpatchstillrelaxedinput,teacherlaterrefinement. Full progression table linked in source index; no unlicensedimage copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -851,91 +1439,228 @@
       "kind": "table",
       "label": "Table 24",
       "source_id": "paper",
-      "source_locator": "Table 24; Appendix C.11",
+      "source_locator": "p52 C.11",
       "status": "omitted",
-      "rationale": "八case行为对比表未逐列重绘，选中case刻意强对比和有效候选缺失在限制里说明，不当总体成功率。",
+      "rationale": "Selectedzeroshot/experience/EPDbehaviorcontrast retained acrosscentralcase andportfolio,EPD72/79notpopulationrate andpatchnotuniquecausalchain. Fullcomparisonlinked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
     {
-      "id": "unnumbered-branch-packing-display",
+      "id": "packing-display",
       "kind": "appendix-visual",
-      "label": "Unnumbered branch-packing sequence and loss display",
+      "label": "unnumbered branch-packing display",
       "source_id": "paper",
-      "source_locator": "§3.3, Eq. 3–4 (main-text display; no numbered Figure assigned)",
+      "source_locator": "p4 §3.3;Eq3–4",
       "status": "redrawn",
-      "rationale": "这组未编号时序公式直接解释a′新目标与a旧动作/o旧返回不同；按公式独立画关系，不错误绑定任一编号Figure。",
+      "rationale": "Actual sequence order/oldaction-to-oldobservation attribution independently diagrammed withblue-onlytargetloss. Earliernewtargets context andnotexactEq2boundary retained.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 §3.2–3.3、Eq. 2–4 重绘"
+          "locator": "3.1 教师读什么，学生学什么"
+        },
+        {
+          "artifact": "deck",
+          "locator": "旧返回属于旧动作，不能接到新动作上"
         }
       ],
+      "permission_status": "not-applicable",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 unnumbered branch-packing display 的事实或数值独立整理",
       "asset_paths": [
         "/lib/papers/sample-efficient-learning-from-agent-experience/branch-packing.svg"
+      ]
+    },
+    {
+      "id": "mapstore-components",
+      "kind": "appendix-visual",
+      "label": "unnumbered MapStore2 three-component relationship",
+      "source_id": "paper",
+      "source_locator": "p33 C.3.2",
+      "status": "redrawn",
+      "rationale": "Component reset→nulladmission→queryrefresh independently arranged beside realcase; threeanalysisstages notthreeofficialassertions.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "3.3 MapStore2：清除事件卡在哪一段"
+        },
+        {
+          "artifact": "deck",
+          "locator": "第 5 次发出了清除，第 6 次才刷新查询"
+        }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Independent facts diagram of unnumbered source math display, not original-image reuse.",
-      "credit": "据 §3.2–3.3、Eq. 2–4 重绘"
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "本文按 unnumbered MapStore2 three-component relationship 的事实或数值独立整理",
+      "asset_paths": [
+        "/lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg"
+      ]
+    },
+    {
+      "id": "worldmodel-error-boxes",
+      "kind": "appendix-visual",
+      "label": "A.5 predicted-observation examples",
+      "source_id": "paper",
+      "source_locator": "p19 A.5",
+      "status": "omitted",
+      "rationale": "Danceunsupportedbut+10andsingmisdirection retained asconcretechosenerror, notmeasuredfrequency. Completeboxeslinked.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "student-policy-boxes",
+      "kind": "appendix-visual",
+      "label": "A.6 student/teacher sampling behavior excerpts",
+      "source_id": "paper",
+      "source_locator": "p20 A.6",
+      "status": "omitted",
+      "rationale": "Teacher-vs-studentGcomparison andauthor-proposedmissingaction explanation retained; selectedwait/self-revisionboxeslinked rather thantreatingthem asfrequencycausalproof.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "matched-state-boxes",
+      "kind": "appendix-visual",
+      "label": "B.3 matched-game-state behavior boxes",
+      "source_id": "paper",
+      "source_locator": "pp27–28 B.3",
+      "status": "omitted",
+      "rationale": "SelectedEPD/GRPOsame-statebehavior linked in source index; sixgameaggregates/coredecisionmechanismkept without inferringallpolicybehaviors fromchosenexcerpts.",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "PDF only grants arXiv nonexclusive distribution, not verified reuse permission. Originals linked; redrawn relationships/numbers independently arranged without tracing original composition.",
+      "credit": "",
+      "asset_paths": []
     }
   ],
   "figures": [
     {
       "path": "/lib/papers/sample-efficient-learning-from-agent-experience/branch-packing.svg",
       "origin": "author-redrawn",
-      "source_visual_id": "unnumbered-branch-packing-display",
+      "source_visual_id": "packing-display",
       "source_id": "paper",
-      "source_locator": "§3.2–3.3; Eq. 2–4 unnumbered sequence display",
-      "credit": "据 §3.2–3.3、Eq. 2–4 重绘",
+      "source_locator": "§3.3 p4;Eq3–4",
+      "credit": "本文按原论文事实或数值独立整理，未复制原图排版",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "permission_basis": "Independent arrangement of facts/numbers; original English labels and all complete tables remain accessible in primary PDF; no original-image reuse claim."
     },
     {
       "path": "/lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg",
       "origin": "author-redrawn",
       "source_visual_id": "table-15",
       "source_id": "paper",
-      "source_locator": "Appendix C.3; Tables 15–16; shown source patch",
-      "credit": "据 C.3、Tables 15–16 重绘",
+      "source_locator": "C.3 pp31–35;Table15",
+      "credit": "本文按原论文事实或数值独立整理，未复制原图排版",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "permission_basis": "Independent arrangement of facts/numbers; original English labels and all complete tables remain accessible in primary PDF; no original-image reuse claim."
     },
     {
       "path": "/lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg",
       "origin": "author-redrawn",
       "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Tables 1, 4; Figures 1, 3",
-      "credit": "据 Table 1、4、Figure 1、3 重绘",
+      "source_locator": "Table1 p5",
+      "credit": "本文按原论文事实或数值独立整理，未复制原图排版",
+      "used_in": [
+        "article"
+      ],
+      "permission_basis": "Independent arrangement of facts/numbers; original English labels and all complete tables remain accessible in primary PDF; no original-image reuse claim."
+    },
+    {
+      "path": "/lib/papers/sample-efficient-learning-from-agent-experience/main-results-slide.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table1 p5",
+      "credit": "本文按原论文事实或数值独立整理，未复制原图排版",
+      "used_in": [
+        "deck"
+      ],
+      "permission_basis": "Independent arrangement of facts/numbers; original English labels and all complete tables remain accessible in primary PDF; no original-image reuse claim."
+    },
+    {
+      "path": "/lib/papers/sample-efficient-learning-from-agent-experience/budget-compact.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figures1,3,5,8 pp6,10,23,29",
+      "credit": "本文按原论文事实或数值独立整理，未复制原图排版",
       "used_in": [
         "article",
         "deck"
+      ],
+      "permission_basis": "Independent arrangement of facts/numbers; original English labels and all complete tables remain accessible in primary PDF; no original-image reuse claim."
+    },
+    {
+      "path": "/lib/papers/sample-efficient-learning-from-agent-experience/cover.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§1–3;Table1",
+      "credit": "本文独立绘制的事实封面，固定教师目标而非学生当前rollout",
+      "used_in": [
+        "article"
       ]
     }
   ],
   "qa": {
-    "status": "completed-current-artifacts; external-service-history-retained",
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
       "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 17,
-      "line_height": 1.78,
-      "mobile_body_font_px": 16.5,
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
       "figures_centered": true,
       "article_visuals_interleaved": true,
       "internal_scroll_for_tables_and_code": true,
       "page_horizontal_overflow": false,
       "numbered_sections": true,
-      "original_section_anchors_preserved": true
+      "original_section_anchors_preserved": true,
+      "default_reading": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "characters": 5645,
+          "height": 7328,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "characters": 5645,
+          "height": 7328,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "characters": 5645,
+          "height": 11112,
+          "width": 350
+        }
+      ]
     },
     "viewports": [
       {
@@ -964,10 +1689,9 @@
       "actors_disambiguated": true,
       "read_aloud_complete": true,
       "facts_rechecked_after_rewrite": true,
+      "date": "2026-10-19",
       "reviewer": "main agent",
-      "date": "2026-10-14",
-      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
-      "reader_reconstruction": "EPD generates new one-step teacher decisions at stored prefixes, not student-on-policy rescoring, without new environment execution or verification. Packed o0,a′0,a0,o1,a′1,a1,o2 uses old observations; later prefix includes prior new decisions. MapStore2 trial verifies old two-patch path and new targets revisit rejected hypotheses; 10/10 accepts are external, not full local suite. Recomputed (51.4−5.3)/(76.4−5.3)=64.84%; aggregate-first gap and per-task ablation gap kept distinct. PPO9.6x and game57.2x cover environment budgets, not full token cost; two-step and packing regressions retained."
+      "reader_reconstruction": "Persistent sequential six-trial MapStore2 repair; selected teacher1/4 supported,2/3revivefailedhypotheses. Fixedteacher only generatesnewdecision, noexecution; a0 causeso1, not a0prime. Onlynewtargets loss, NLL2.07944 calculated. Externalfocusedquerytestaccepted, completeGUI unrun. pass1/10/gameG units distinct; Acorncourt/packingInhumane negativecontrols,494OOD vs749trainconsolidation,RLpeak/fullbudget and172Mcompute separated. Node22 guard excerpt actuallyexecuted, notofficialverifier."
     },
     "interactions": {
       "buttons": true,
@@ -978,7 +1702,10 @@
       "standalone_return_to_article": true,
       "immersive_mode_exit": true,
       "usable_state_after_exit": true,
-      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+      "code_copy": true,
+      "image_fit_zoom_drag_and_focus_restore": true,
+      "mobile_vertical_and_horizontal_scroll": true,
+      "fullscreen_scope": "DOM Fullscreen API and nested iframe/focus Escape tested in isolated headlessChrome. Native macOS window fullscreen not tested."
     },
     "inspected_slides": [
       "opening",
@@ -986,70 +1713,268 @@
       "largest-table-or-code",
       "final"
     ],
-    "browser_mode": "isolated-headless",
-    "current_artifact_hashes": {
-      "article": "ba05f353007907124e9586d3de8d54c177be0609f4a02a9b32e5a69bc9aa050c",
-      "built_article": "445fc6134b8e325547c7e6fd50c9f1e2df0cc58ddd4bf3bf06d705aa04f7be9f",
-      "deck": "dfea80ccbc00210f15474f2e30175bf73ff8bd18ae42329764952152726a5e76",
-      "shared": [
-        {
-          "file": "dist/css/tide.css",
-          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
-        },
-        {
-          "file": "dist/js/tide.js",
-          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
-        },
-        {
-          "file": "dist/styles/paper-deep-dive-v2.css",
-          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
-        },
-        {
-          "file": "dist/lib/decks/paper-deck-v2.css",
-          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
-        },
-        {
-          "file": "dist/lib/decks/paper-deck-v2.js",
-          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
-        }
-      ]
-    },
     "browser_evidence": {
-      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-087/numbered-article-qa.json",
-      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-087/foundation-deck-qa.json",
-      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-087.json",
-      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
-      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
-      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
+      "layout": "output/playwright/old-paper-refresh-20261018/experience-layout.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/experience-interactions.json",
+      "mobile": "output/playwright/old-paper-refresh-20261018/experience-mobile-scroll.json",
+      "visual_scope": "All desktop/default mobile body contacts and14slidecomposition reviewed; fourbodyimages anddense5/6/7/9/12opened atactualinline width. Revisedslide9 opened afterfreshbuild; darkopening/figure inspected. Coverrender separatelychecked."
     },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/087-sample-efficient-learning-from-agent-experience.md",
+        "sha256": "47ff083ec5561d53398fb12423147cfd4cfa33cbaa12ada4b5a564261f13190c"
+      },
+      {
+        "file": "lib/decks/sample-efficient-learning-from-agent-experience-visual-guide.html",
+        "sha256": "1e36ac42f7b1d3fb6880099df93c229c8caefa58ef4b504d37f1e8c11ab93845"
+      },
+      {
+        "file": "dist/posts/论文解读/sample-efficient-learning-from-agent-experience.html",
+        "sha256": "c190de786508d0e27c6764276da75276fad1d2fab91e7f0c96a2d0e9c5c8614f"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-deep-dive-v2.css",
+        "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.css",
+        "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.js",
+        "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+        "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+        "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/branch-packing.svg",
+        "sha256": "afa130995f564f123e573107f5d810011dc1f2839ec3cc5616251d3ab1c36cc0"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg",
+        "sha256": "403024b9c25c7e0791ad051c32cea0cd4b63833a8de34222f1a150350548afc5"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg",
+        "sha256": "b6827d3dff872aa69dd551533714aba46dfae93e523fc7f617807052f001f9a7"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/main-results-slide.svg",
+        "sha256": "ada8808fa46cc522a7b32290468ea91ae3af3478bf791eaa93900deaaa394780"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/budget-compact.svg",
+        "sha256": "d7f8641fa202122dcfc3f0e2c8f6ca0999268a7a2a6ddd7252c7498eaeba64fe"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/cover.svg",
+        "sha256": "6975f542aee3d7fab88506ab463fa770afb2aa7d9429f5a0fb07ade426ca31c1"
+      }
+    ],
     "external_service_boundary": {
-      "historical_raw_page_errors": [
+      "current_raw_errors": [],
+      "comments": "Twikoo .tk-submit loaded inall3localviewports; live afterrelease checked separately.",
+      "history": "Previousrawerrors retained inqa_history_20261013/legacy_qa."
+    },
+    "licensing_boundary": "No broadreuse grant from arXivnonexclusive license or authorTeX; independentrelationships/numbers anddirectoriginalvisual links only. Thirdparty README isnotauthorcode orpermissionforPDF."
+  },
+  "qa_history_20261013": {
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true,
+      "default_reading": [
         {
           "viewport": {
             "width": 1600,
             "height": 1000
           },
-          "error": "0"
+          "characters": 5645,
+          "height": 7328,
+          "width": 900
         },
         {
           "viewport": {
             "width": 1512,
             "height": 982
           },
-          "error": "0"
+          "characters": 5645,
+          "height": 7328,
+          "width": 900
         },
         {
           "viewport": {
             "width": 390,
             "height": 844
           },
-          "error": "0"
+          "characters": 5645,
+          "height": 11112,
+          "width": 350
         }
-      ],
-      "figure_raw_errors": [],
-      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+      ]
     },
-    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "date": "2026-10-19",
+      "reviewer": "main agent",
+      "reader_reconstruction": "Persistent sequential six-trial MapStore2 repair; selected teacher1/4 supported,2/3revivefailedhypotheses. Fixedteacher only generatesnewdecision, noexecution; a0 causeso1, not a0prime. Onlynewtargets loss, NLL2.07944 calculated. Externalfocusedquerytestaccepted, completeGUI unrun. pass1/10/gameG units distinct; Acorncourt/packingInhumane negativecontrols,494OOD vs749trainconsolidation,RLpeak/fullbudget and172Mcompute separated. Node22 guard excerpt actuallyexecuted, notofficialverifier."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "code_copy": true,
+      "image_fit_zoom_drag_and_focus_restore": true,
+      "mobile_vertical_and_horizontal_scroll": true,
+      "fullscreen_scope": "DOM Fullscreen API and nested iframe/focus Escape tested in isolated headlessChrome. Native macOS window fullscreen not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/experience-layout.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/experience-interactions.json",
+      "mobile": "output/playwright/old-paper-refresh-20261018/experience-mobile-scroll.json",
+      "visual_scope": "All desktop/default mobile body contacts and14slidecomposition reviewed; fourbodyimages anddense5/6/7/9/12opened atactualinline width. Revisedslide9 opened afterfreshbuild; darkopening/figure inspected. Coverrender separatelychecked."
+    },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/087-sample-efficient-learning-from-agent-experience.md",
+        "sha256": "47ff083ec5561d53398fb12423147cfd4cfa33cbaa12ada4b5a564261f13190c"
+      },
+      {
+        "file": "lib/decks/sample-efficient-learning-from-agent-experience-visual-guide.html",
+        "sha256": "1e36ac42f7b1d3fb6880099df93c229c8caefa58ef4b504d37f1e8c11ab93845"
+      },
+      {
+        "file": "dist/posts/论文解读/sample-efficient-learning-from-agent-experience.html",
+        "sha256": "c190de786508d0e27c6764276da75276fad1d2fab91e7f0c96a2d0e9c5c8614f"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-deep-dive-v2.css",
+        "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.css",
+        "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.js",
+        "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+        "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+        "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/branch-packing.svg",
+        "sha256": "afa130995f564f123e573107f5d810011dc1f2839ec3cc5616251d3ab1c36cc0"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/mapstore-real-case.svg",
+        "sha256": "403024b9c25c7e0791ad051c32cea0cd4b63833a8de34222f1a150350548afc5"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/results-and-budget.svg",
+        "sha256": "b6827d3dff872aa69dd551533714aba46dfae93e523fc7f617807052f001f9a7"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/main-results-slide.svg",
+        "sha256": "ada8808fa46cc522a7b32290468ea91ae3af3478bf791eaa93900deaaa394780"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/budget-compact.svg",
+        "sha256": "d7f8641fa202122dcfc3f0e2c8f6ca0999268a7a2a6ddd7252c7498eaeba64fe"
+      },
+      {
+        "file": "lib/papers/sample-efficient-learning-from-agent-experience/cover.svg",
+        "sha256": "6975f542aee3d7fab88506ab463fa770afb2aa7d9429f5a0fb07ade426ca31c1"
+      }
+    ],
+    "external_service_boundary": {
+      "current_raw_errors": [],
+      "comments": "Twikoo .tk-submit loaded inall3localviewports; live afterrelease checked separately.",
+      "history": "Previousrawerrors retained inqa_history_20261013/legacy_qa."
+    },
+    "licensing_boundary": "No broadreuse grant from arXivnonexclusive license or authorTeX; independentrelationships/numbers anddirectoriginalvisual links only. Thirdparty README isnotauthorcode orpermissionforPDF."
   },
   "legacy_qa": {
     "reading_layout": {
@@ -1107,119 +2032,5 @@
       "largest-table-or-code",
       "final"
     ]
-  },
-  "terminology": [
-    {
-      "term": "decision",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1–3.3; Eq. 2–4"
-        }
-      ],
-      "article_quote": "这里一次 decision 是一整段模型输出，包含分析和最后的工具动作。"
-    },
-    {
-      "term": "observation",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1–3.3; Eq. 2–4"
-        }
-      ],
-      "article_quote": "执行工具后得到的结果叫 observation 。"
-    },
-    {
-      "term": "one-step branch",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Eq. 2"
-        }
-      ],
-      "article_quote": "论文从真实记录的前文处分叉，只重新生成一次 decision，称为 one-step branch 。"
-    },
-    {
-      "term": "in-context learning（ICL）",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2 and §4.1"
-        }
-      ],
-      "article_quote": "保留历史做任务称为 in-context learning（ICL） ：模型参数不变，只因为看到额外证据而改变行为。"
-    },
-    {
-      "term": "branch packing",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3; Eq. 3–4"
-        }
-      ],
-      "article_quote": "给每个动作边界单独生成样本，会反复处理相同的长前文。论文把多个分支放入一个序列，称为 branch packing"
-    },
-    {
-      "term": "epic",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix C.3; Tables 15–16"
-        }
-      ],
-      "article_quote": "这里的 epic 是 RxJS 处理动作事件的流水线 ，不是模型模块。"
-    },
-    {
-      "term": "ICL-normalized gain",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4.1; Table 1; Eq. G_ICL"
-        }
-      ],
-      "article_quote": "ICL-normalized gain 衡量某方法获得了多少 ICL 相对未训练模型的提升"
-    },
-    {
-      "term": "environment sample",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4.1; Figure 1; Appendix A.7"
-        }
-      ],
-      "article_quote": "一次 environment sample 指完整 trial，不是一个工具调用。"
-    }
-  ]
+  }
 }
