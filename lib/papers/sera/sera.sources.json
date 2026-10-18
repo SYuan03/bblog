@@ -107,40 +107,140 @@
     ],
     "source_visuals_expected": 11,
     "visual_inventory_complete": true,
-    "current_revision_review": {
-      "date": "2026-10-13",
-      "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
-    },
     "numbered_source_visuals_count": 10,
-    "additional_released_case_visuals": 1
+    "additional_released_case_visuals": 1,
+    "current_revision_review": {
+      "date": "2026-10-19",
+      "main_agent": "/root",
+      "scope": "Complete 1013-line primary reread and individually rendered17pages includingA–C. Fixed prompts/parser/actualE/D/RTworkflow/baselines/branchcommit/evaluation/generatedtaskrecords verified; actualPython3.12.14official-environment CPUreplay25/24actions,strictverdict andarithmetic. Currentarticle/all16slides personallyread. NoGPUtraining orreproductionofmodelaccuracies.",
+      "evidence": "tmp/collection-refresh-20261018/sera-evidence-20261019.md",
+      "replay": "tmp/collection-refresh-20261018/sera-replay-result-20261019.json"
+    }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "1. Motivation：递归任务缺少子目标验收标准"
+      "locator": "1. Motivation：根目标好验收，临时子目标难打分"
     },
     {
       "role": "related-work",
-      "locator": "2. Related Work：与 RAO 和已有 rubric 训练的区别"
+      "locator": "2. Related Work：把评价训练接到递归执行奖励上"
     },
     {
       "role": "method",
-      "locator": "3. Method：执行、委派和评分标准的交替训练"
+      "locator": "3. Method：一次委派，三种交替更新"
     },
     {
       "role": "experiments",
-      "locator": "4. Experiments：真实任务、成功率与关键负结果"
+      "locator": "4. Experiments：先看一题怎样验收，再看平均成绩"
     },
     {
       "role": "future-work",
-      "locator": "5. Discussion：代码阅读与后续验证"
+      "locator": "5. Discussion：先验证评价质量，再比较节省多少监督"
     },
     {
       "role": "summary",
-      "locator": "6. Conclusion：结论与测试时选择的边界"
+      "locator": "6. Conclusion：有效的是有成败依据、被执行训练采用的自评"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "policy",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1 Figure1"
+        }
+      ],
+      "article_quote": "各节点使用相同模型参数，论文称这个模型为 policy；每个节点仍有独立的模型调用和执行记录。"
+    },
+    {
+      "term": "rubric",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2 Eq1;Runtime/rubric/prompts.py"
+        }
+      ],
+      "article_quote": "负责评价的调用先写一组带权重的子任务评分条件，叫 rubric，再在任务结束后按条件评分。"
+    },
+    {
+      "term": "E / D / RT",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2–3.6 Table6"
+        }
+      ],
+      "article_quote": "论文把三阶段分别记为 E（执行）、D（委派）、RT（rubric 生成训练）。它们轮流更新同一组参数"
+    },
+    {
+      "term": "LOO",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.5 Eq4–6"
+        }
+      ],
+      "article_quote": "原始奖励还要减去其他样本均值，称为 LOO（leave-one-out）基线。"
+    },
+    {
+      "term": "CISPO",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.5 Eq7–8"
+        }
+      ],
+      "article_quote": "CISPO 用当前与采样时输出概率的比值加权并截断，更新被选中文字"
+    },
+    {
+      "term": "N=1",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.3;Evaluation/evaluation_common.py"
+        }
+      ],
+      "article_quote": "普通评测每题只跑一棵递归树（N=1），不写 rubric、不选候选。"
+    },
+    {
+      "term": "Disc",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table3;rubric_generation_discrimination/reward.py"
+        }
+      ],
+      "article_quote": "Disc 是鼓励候选分数更分散的奖励，不是二元辨别器；分数拉开不代表成功排在失败前。"
     }
   ],
   "coverage": [
@@ -153,17 +253,219 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Abstract; Sections 3.2-3.6"
+          "locator": "§3,4.1 Table1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "实验表明，训练评价能力需要与采用这些评价的执行奖励配合。"
+          "quote": "最终成败通常有程序判据，模型临时提出的子任务却未必有。"
         },
         {
           "artifact": "article",
-          "quote": "执行、委派、评价分别使用独立奖励，交替更新同一组参数。"
+          "quote": "这组对照支持“学评价与用评价要配合”。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2,4.1;Table1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "RAO（Recursive Agent Optimization）也训练递归 Agent"
+        },
+        {
+          "artifact": "article",
+          "quote": "这些前作没有全部作为实验基线。"
+        }
+      ]
+    },
+    {
+      "id": "complete-iteration-and-visibility",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2 Figure1;prompts.py andasync_pipeline.py @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "repo",
+          "locator": "§3.2 Figure1;prompts.py andasync_pipeline.py @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "不看子任务之后的轨迹和结果"
+        },
+        {
+          "artifact": "article",
+          "quote": "子 Agent 接收目标、执行上下文、观察和工具"
+        },
+        {
+          "artifact": "article",
+          "quote": "异步代码允许它与子 Agent 同时运行。"
+        }
+      ]
+    },
+    {
+      "id": "score-formula-and-parser-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2;Runtime/rubric/scoring.py parse_policy_score @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "repo",
+          "locator": "§3.2;Runtime/rubric/scoring.py parse_policy_score @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "s = g × Σ w_j c_j；g ∈ {0,1}，Σ w_j = 1，c_j ∈ [0,1]"
+        },
+        {
+          "artifact": "article",
+          "quote": "只返回 {\"final_score\":0.9} 也能通过解析。"
+        },
+        {
+          "artifact": "article",
+          "quote": "它不重新计算各项加权和。"
+        }
+      ]
+    },
+    {
+      "id": "RT-candidates-and-commit",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.4;counterfactual.py;rubric_generation_ranking/stage.py @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "repo",
+          "locator": "§3.4;counterfactual.py;rubric_generation_ranking/stage.py @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "固定代码总是提交第 0 条候选给父节点"
+        },
+        {
+          "artifact": "article",
+          "quote": "代码先剔除解析无效的分数，再检查有效候选是否含两种标签。"
+        },
+        {
+          "artifact": "article",
+          "quote": "写这份 rubric 的输出文字"
+        }
+      ]
+    },
+    {
+      "id": "ranking-arithmetic",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.4 Eq3;article-authoredCPU arithmetic"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "图中四项为 0/.1/.1/.5，平均 .175，rubric 生成动作的奖励是 −.175。"
+        }
+      ]
+    },
+    {
+      "id": "D-baselines-and-token-scope",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq2,4–8;leaf_credit.py/step_wise.py/sera_training/trainer.py @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "repo",
+          "locator": "Eq2,4–8;leaf_credit.py/step_wise.py/sera_training/trainer.py @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "父 Agent 后来补救成功，早先失败子任务也可能得到结构奖励"
+        },
+        {
+          "artifact": "article",
+          "quote": "E 的每个节点减去同题其他根树的 R 均值"
+        },
+        {
+          "artifact": "article",
+          "quote": "固定代码却把空树均值记为 0 纳入跨树基线"
+        }
+      ]
+    },
+    {
+      "id": "update-ratio-and-budget-scope",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables5–6;trainlaunch/configs;counterfactualsoftcap @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "repo",
+          "locator": "Tables5–6;trainlaunch/configs;counterfactualsoftcap @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "E:D:RT=16:2:2 是优化步数调度"
+        },
+        {
+          "artifact": "article",
+          "quote": "这与 RT 单个委派点 B=8 不同。"
+        },
+        {
+          "artifact": "article",
+          "quote": "它不是同时在线的硬上限。"
         }
       ]
     },
@@ -172,26 +474,35 @@
       "claim_type": "inspected-implementation",
       "source_ids": [
         "paper",
-        "repo"
+        "repo",
+        "dataset"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 4; Appendix C.2-C.3; Tables 5 and 8"
+          "locator": "§4;AppendixC.2–3;Dataset/generation andfixedsplits @0443b190ccde59486904988e50893102df4563ab"
         },
         {
           "source_id": "repo",
-          "locator": "Dataset/README.md; Dataset/generation/generate_textworld.py; Dataset/training and Dataset/eval manifests"
+          "locator": "§4;AppendixC.2–3;Dataset/generation andfixedsplits @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "§4;AppendixC.2–3;Dataset/generation andfixedsplits @0443b190ccde59486904988e50893102df4563ab"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "TextWorld 的训练、开发和测试题彼此独立。"
+          "quote": "作者生成两类文字环境：TextCraft-Synth 测多层配方合成"
         },
         {
           "artifact": "article",
-          "quote": "TextCraft 的 632 题同时用于验证和最终评测，默认关闭周期性验证。"
+          "quote": "TextWorld 训练 Medium/Hard/Extreme 为 900/150/450"
+        },
+        {
+          "artifact": "article",
+          "quote": "TextCraft 的 632 题同时用作验证和最终评测"
         }
       ]
     },
@@ -200,26 +511,31 @@
       "claim_type": "inspected-implementation",
       "source_ids": [
         "paper",
-        "repo"
+        "repo",
+        "dataset"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Appendix C.2-C.3"
+          "locator": "AppendixC;generation/cooking_tasks.py;composite_scorer.py;env.py @0443b190ccde59486904988e50893102df4563ab"
         },
         {
           "source_id": "repo",
-          "locator": "Dataset/generation/cooking_tasks.py; Runtime/vendor/platoon/textcraft/env.py:710-768; Runtime/environments/textworld/composite_scorer.py:14-45"
+          "locator": "AppendixC;generation/cooking_tasks.py;composite_scorer.py;env.py @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "AppendixC;generation/cooking_tasks.py;composite_scorer.py;env.py @0443b190ccde59486904988e50893102df4563ab"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "作者用生成程序固定每题的配方、状态和预算记录，根检查器也由环境程序定义，不是人工逐题给分。"
+          "quote": "题目、配方、初态和预算写入固定记录，根判据由程序定义，不是人工逐题给分。"
         },
         {
           "artifact": "article",
-          "quote": "TextWorld 的七个任务族分别强调"
+          "quote": "论文未报告人工逐题审核、一致性统计或基础模型污染分析。"
         }
       ]
     },
@@ -227,26 +543,127 @@
       "id": "public-vs-hidden-inputs",
       "claim_type": "inspected-implementation",
       "source_ids": [
-        "repo"
+        "repo",
+        "dataset"
       ],
       "source_locators": [
         {
           "source_id": "repo",
-          "locator": "Runtime/vendor/platoon/textcraft/agent.py:17-178; Runtime/vendor/platoon/textcraft/env.py:434-529"
+          "locator": "textworldprompts/observation;TaskSpec;TextCraftget_info @0443b190ccde59486904988e50893102df4563ab"
         },
         {
-          "source_id": "repo",
-          "locator": "Runtime/prompts/textworld_evaluation.py:35-256; Runtime/environments/textworld/composite_cooking.py:371-429"
+          "source_id": "dataset",
+          "locator": "textworldprompts/observation;TaskSpec;TextCraftget_info @0443b190ccde59486904988e50893102df4563ab"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "TextCraft 的配方可通过 get_info 查询，但标准计划和检查器状态不会进入提示。"
+          "quote": "模型看到“准备并吃掉两道菜”、完整处理要求、当前位置、可见物体和合法动作"
         },
         {
           "artifact": "article",
-          "quote": "TextWorld 会在任务描述中列出完整食材要求，却不会直接给出物体位置、共享世界的完整对象树，以及检查器读取的内部状态。"
+          "quote": "不直接读取所有物体的状态树"
+        },
+        {
+          "artifact": "article",
+          "quote": "Agent 自己用 get_info 查询配方，不读参考计划。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "repo",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "Publicfirsttrain taskseed850000;officialcomposite runtime/scorer;actualPython3.12.14replay @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "Publicfirsttrain taskseed850000;officialcomposite runtime/scorer;actualPython3.12.14replay @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "第 24 次：prepare dish_2"
+        },
+        {
+          "artifact": "article",
+          "quote": "第 25 次：eat dish_2"
+        },
+        {
+          "artifact": "article",
+          "quote": "八种食材全符合要求；第二道菜尚未吃掉"
+        },
+        {
+          "artifact": "article",
+          "quote": "两名 worker 顺序执行，验证的是环境和检查器"
+        }
+      ]
+    },
+    {
+      "id": "case-failure-status-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "composite_scorer.py andactual24/25replay @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "composite_scorer.py andactual24/25replay @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "说明还可继续操作，但不代表成功。"
+        },
+        {
+          "artifact": "article",
+          "quote": "这是状态验算，不是实际模型动作"
+        }
+      ]
+    },
+    {
+      "id": "TextCraft-case-and-budget-overwrite",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "textcraft_synth.train.0;env.py evaluate();Evaluationbuild/rollout @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "textcraft_synth.train.0;env.py evaluate();Evaluationbuild/rollout @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "final_count-initial_count ≥ required_count"
+        },
+        {
+          "artifact": "article",
+          "quote": "22 次 craft 不等于 22 轮模型输出"
+        },
+        {
+          "artifact": "article",
+          "quote": "覆盖成每节点 20 轮，并非另外还有 75 次全局工具限额"
         }
       ]
     },
@@ -260,49 +677,25 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Table 1 caption and rows; Table 5"
+          "locator": "Table1,5;finalreport andactualCPUarithmetic"
         },
         {
           "source_id": "repo",
-          "locator": "Evaluation/TextCraft/README.md: protocol and aggregation; Evaluation/TextWorld/README.md: protocol and aggregation"
+          "locator": "Table1,5;finalreport andactualCPUarithmetic"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "(99.09×147 + 97.81×213 + 78.92×136 + 6.13×136) / 632 = 74.314%"
+          "quote": "最终成功率 = 成功题数 / 全部题数"
         },
         {
           "artifact": "article",
-          "quote": "TextWorld 四档题数相同，均值为 65.0725%"
-        }
-      ]
-    },
-    {
-      "id": "checker-code-and-cases",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "repo",
-        "dataset"
-      ],
-      "source_locators": [
-        {
-          "source_id": "repo",
-          "locator": "Dataset/training/textcraft_synth_train.jsonl record textcraft_synth.train.0; Runtime/vendor/platoon/textcraft/env.py:710-768"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Dataset/training/textworld_train.jsonl first multi_dish_fork_join record; Runtime/environments/textworld/composite_scorer.py:14-45"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "净新增至少 3 个 a1_i5 才 PASS，初始库存中已有的目标物不能冒充本次产出。"
+          "quote": "(99.09×147+97.81×213+78.92×136+6.13×136)/632=74.314%"
         },
         {
           "artifact": "article",
-          "quote": "根任务检查器 要求每种食材都已收集、没有被删除、处理方式完全匹配，而且每道菜都已完成并吃掉。"
+          "quote": "报告的 ± 是三个种子的标准差，不是置信区间。"
         }
       ]
     },
@@ -310,41 +703,63 @@
       "id": "model-results",
       "claim_type": "author-claim",
       "source_ids": [
-        "paper",
-        "repo",
-        "checkpoints"
+        "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 4; Tables 1-7"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Training/configs/textcraft.yaml; Training/configs/textworld.yaml; Evaluation/TextCraft/README.md; Evaluation/TextWorld/README.md"
-        },
-        {
-          "source_id": "checkpoints",
-          "locator": "TextCraft-step250 and TextWorld-step400 subfolders"
+          "locator": "Table1;§4.1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Qwen3-4B-Instruct-2507，各方法用相同总优化步数，TextCraft 250 次、TextWorld 400 次"
+          "quote": "根、子各最多 20 轮模型输出，深度最多三"
         },
         {
           "artifact": "article",
-          "quote": "保留外部二元执行奖励、只加入 RT，51.93 降到 45.62"
+          "quote": "换为 rubric 奖励后，加 RT 从 51.10 升到 60.26"
         },
         {
           "artifact": "article",
-          "quote": "采用 rubric 执行奖励时，再加入 RT，51.10 升到 60.26。"
+          "quote": "完整 SERA 不是两环境都第一。"
         }
       ]
     },
     {
-      "id": "related-work-comparison",
+      "id": "strongest-counterexamples",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables1,3;discriminationreward @0443b190ccde59486904988e50893102df4563ab"
+        },
+        {
+          "source_id": "repo",
+          "locator": "Tables1,3;discriminationreward @0443b190ccde59486904988e50893102df4563ab"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "加 RT 从 51.93 降到 45.62"
+        },
+        {
+          "artifact": "article",
+          "quote": "TextCraft 加 D 反而下降 .53 点"
+        },
+        {
+          "artifact": "article",
+          "quote": "Rank 为 74.84，加 Disc 后只有 65.77"
+        }
+      ]
+    },
+    {
+      "id": "cost-and-label-denominators",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -352,56 +767,53 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Section 2; Table 6"
+          "locator": "Tables2,7"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "前作 RAO 让程序检查器（verifier）或模型评审（LLM judge）给树上每个节点二元标签。"
+          "quote": "外部评审更少，但总训练时间不一定更少。"
         },
         {
           "artifact": "article",
-          "quote": "RubricEM、ARCO、EvoRubrics 等工作同样学习 rubric；这里的区别是递归任务结构，以及执行、拆解、评价共用一个 policy。"
+          "quote": "147.80K→35.79K"
+        },
+        {
+          "artifact": "article",
+          "quote": "TextWorld 为 13h08/24h14"
         }
       ]
     },
     {
-      "id": "implementation-contract",
+      "id": "N2-selection-vs-ordinary-and-RT",
       "claim_type": "inspected-implementation",
       "source_ids": [
+        "paper",
         "repo"
       ],
       "source_locators": [
         {
-          "source_id": "repo",
-          "locator": "Runtime/rubric/prompts.py:157-260"
+          "source_id": "paper",
+          "locator": "§4.3 Table4;TestTimeScale/rubric_selector.py @0443b190ccde59486904988e50893102df4563ab"
         },
         {
           "source_id": "repo",
-          "locator": "Training/runtime/three_stage_train/counterfactual.py:25-214"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Training/runtime/rubric_generation_ranking/stage.py:29-312"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Training/sera_training/stage_kernel.py:1-109"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Training/runtime/rubric_subagent_reward/async_pipeline.py:77-138; Training/runtime/three_stage_train/stages/rubric_generation.py:273-329; Runtime/vendor/platoon/textcraft/agent.py"
+          "locator": "§4.3 Table4;TestTimeScale/rubric_selector.py @0443b190ccde59486904988e50893102df4563ab"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "执行子 Agent 拿到子目标和执行上下文，不拿到这份 rubric。"
+          "quote": "每次委派复制完整世界、跑两棵子树"
         },
         {
           "artifact": "article",
-          "quote": "真正约束是生成器看不到子结果，同一组评分始终使用同一份 rubric。"
+          "quote": "整题累计 fork 上限 32"
+        },
+        {
+          "artifact": "article",
+          "quote": "选首个成功候选，默认模型 kimi-k2.6"
         }
       ]
     },
@@ -410,166 +822,30 @@
       "claim_type": "interpretation",
       "source_ids": [
         "paper",
-        "repo",
-        "checkpoints"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Section 5 limitations; Tables 2, 5 and 7"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Dataset/README.md; repository root license audit; requirements.txt"
-        },
-        {
-          "source_id": "checkpoints",
-          "locator": "LICENSE and model card at revision a5e3c1e"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "只测试 Qwen3-4B-Instruct-2507，尚不知道更大模型是否有同样增益。"
-        },
-        {
-          "artifact": "article",
-          "quote": "代码仓库根目录没有项目级 LICENSE；Hugging Face checkpoint 仓库单独保留 Apache-2.0。"
-        },
-        {
-          "artifact": "article",
-          "quote": "外部标签更少，不等于总训练更便宜。"
-        }
-      ]
-    },
-    {
-      "id": "training-vs-evaluation",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "paper",
         "repo"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Sections 3.2-3.6; Tables 1 and 4"
+          "locator": "§5;AppendixB.3,C;fixedrelease"
         },
         {
           "source_id": "repo",
-          "locator": "Evaluation/TextCraft/README.md; Evaluation/TextWorld/README.md; TestTimeScale/README.md:17-37"
+          "locator": "§5;AppendixB.3,C;fixedrelease"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "主表测的是训练后模型的递归任务成功率，最终由程序判定，N=1 不生成或评分 rubric。"
+          "quote": "不是评分器准确率的独立测量。"
         },
         {
           "artifact": "article",
-          "quote": "额外 Table 4 才研究测试时选择"
-        }
-      ]
-    },
-    {
-      "id": "interaction-budget",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "paper",
-        "repo"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Table 5; Appendix C.3"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Runtime/vendor/platoon/envs/codeact/env.py:81-112; Evaluation/TextWorld/textworld_parallel/evaluator.py:181-348; Dataset/generation/generate_textworld.py; Evaluation READMEs single-agent protocol"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "论文没有报告每题平均模型调用或工具调用数，只能核实上限和计数方式。"
+          "quote": "它只测试 Qwen3-4B 和两个合成文字环境。"
         },
         {
           "artifact": "article",
-          "quote": "公开 single-agent baseline 不委派，根节点上限是 200 轮、深度 0"
-        }
-      ]
-    },
-    {
-      "id": "ranking-ablation",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Table 1: RAO + D, RAO + RT and SERA ablations; Table 3"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "采用 rubric 执行奖励时，再加入 RT，51.10 升到 60.26。"
-        },
-        {
-          "artifact": "article",
-          "quote": "再加分数分散奖励 Rank + Disc.，成绩降到 65.77。"
-        }
-      ]
-    },
-    {
-      "id": "selector-paper-code-difference",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "paper",
-        "repo"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Section 4.4; Table 4 Kimi-K3 rubric-scoring description"
-        },
-        {
-          "source_id": "repo",
-          "locator": "TestTimeScale/README.md:21-30; TestTimeScale/textworld_bestofn/rubric_selector.py:329-359; Scripts/TestTimeScaling/run_kimi.sh"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "实际调用外部二元子任务 judge，选第一个成功候选，不使用 rubric"
-        },
-        {
-          "artifact": "article",
-          "quote": "脚本默认模型为 kimi-k2.6 。"
-        }
-      ]
-    },
-    {
-      "id": "token-update-boundaries",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "paper",
-        "repo"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix B.2, Table 6; §3.2–3.6"
-        },
-        {
-          "source_id": "repo",
-          "locator": "Training/runtime/three_stage_train; rubric_generation_ranking/stage.py:29–63,163–255; leaf_credit.py @0443b190"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "E 训练求解与委派 token；D 只训练委派 token；RT 只训练写 rubric 的 token。"
+          "quote": "共享权重仍可能让评分随执行训练漂移"
         }
       ]
     }
@@ -580,18 +856,18 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1, p. 3; §3; Appendix B.2",
+      "source_locator": "p3 Figure1",
       "status": "redrawn",
-      "rationale": "三阶段输入/奖励/token边界独立重绘为正文纵向图，E求解+委派和RT只生成rubric明确，普通N1不调用rubric另标。",
+      "rationale": "Concrete sharedparameter/infoflow andE/D/RT tokenselection retained; originalmask diagram linked, nofuture-input orserializedtimeline inference.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Figure 1、§3 和 Appendix B.2 重绘"
+          "locator": "独立整理原 Figure 1"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Figure 1 的事实独立整理；原图精确页链接保留。",
       "asset_paths": [
         "/lib/papers/sera/training-and-evaluation.svg"
       ]
@@ -601,12 +877,12 @@
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2, p. 13; Appendix A",
+      "source_locator": "p13 Figure2",
       "status": "omitted",
-      "rationale": "五菜/误做甜点示意未复制；正文用独立公开两菜训练任务与checker，不错绑此图为该真实case，也不冒称模型实测。",
+      "rationale": "Original five-dish illustrative storylinked ininventory; dessertjuicefailure/parentrepair kept toexplainD. It isdistinct fromreleasedtwo-dish record andnotpresentedasmodel log.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
       "credit": "",
       "asset_paths": []
     },
@@ -615,18 +891,18 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1, p. 7; §4.2",
+      "source_locator": "p7 Table1",
       "status": "redrawn",
-      "rationale": "RAO/+D/+RT和SERA消融按原数重排到正文/deck/结果SVG，保留TextWorldRT反降与TextCraft加D-.53。",
+      "rationale": "Decisive fullrecursiveablationmeans/SD retained inbody andzero-baselinechart; fullsingleagent/difficulty originallinked.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Tables 1、2、7 重绘"
+          "locator": "完整递归消融及标准差见下表"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 1 的事实独立整理；原图精确页链接保留。",
       "asset_paths": [
         "/lib/papers/sera/results-and-cost.svg"
       ]
@@ -636,34 +912,37 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2, p. 7; §4.2",
+      "source_locator": "p7 Table2",
       "status": "redrawn",
-      "rationale": "外部verifier/judge调用量重排结果SVG，保留减少标签非减少所有token/GPU时间，无RTrubric低成功对照。",
+      "rationale": "Exactexternalcallsandinput/outputtokens retained withactual timecounterexample; allrows notdecorativelyredrawn.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Tables 1、2、7 重绘"
+          "locator": "TextWorld 外部 judge 调用 147.80K→35.79K"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/sera/results-and-cost.svg"
-      ]
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 2 的事实独立整理；原图精确页链接保留。",
+      "asset_paths": []
     },
     {
       "id": "table-3",
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3, p. 8; §4.3",
-      "status": "omitted",
-      "rationale": "完整generator/scorer/rank矩阵未重绘；正文保留globalrubric差、Rank+Disc65.77负结果，评分器准确率未单独测不夸大。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
+      "source_locator": "p8 Table3",
+      "status": "redrawn",
+      "rationale": "Allsix generator/scorer/RTnumericrows retained acrossmainnegative/supplement; fixedDiscchangesbothorder/spread andnotjudgeaccuracy.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "每子任务 policy 生成、policy 评分且无 RT"
+        }
+      ],
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 3 的事实独立整理；原图精确页链接保留。",
       "asset_paths": []
     },
     {
@@ -671,18 +950,18 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4, p. 9; §4.4",
+      "source_locator": "p9 Table4",
       "status": "redrawn",
-      "rationale": "N1/policyN2/KimiN2原数重排deck卡，明确ordinaryN1与fork选择不同，paper/codeKimi协议另列不融合。",
+      "rationale": "TrainedN1/N2selfandKimi/untrainedcontrols retained withwholeworldcommit andexplicitpaper/codeexternalprotocol difference.",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "外部标签更少；N=2 是额外计算，不是主表评测"
+          "artifact": "article",
+          "locator": "额外测试 N=2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 4 的事实独立整理；原图精确页链接保留。",
       "asset_paths": []
     },
     {
@@ -690,18 +969,18 @@
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5, p. 14; Appendix B.1",
+      "source_locator": "p14 Table5",
       "status": "redrawn",
-      "rationale": "root/child20轮、depth3、taskcounts与tokenbounds重排正文/deck表，singleagent200轮和共享世界预算按repo补充。",
+      "rationale": "Exacttrain/evalcounts,weighteddenominators,turnscope andpromptlimitdifference retained; fixedtrainingsteps do notmeanfixedcompute.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "普通递归评测设置"
+          "locator": "TextCraft 用 852 道 Medium 训练"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 5 的事实独立整理；原图精确页链接保留。",
       "asset_paths": []
     },
     {
@@ -709,77 +988,78 @@
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6, p. 15; Appendix B.2",
+      "source_locator": "p14 Table6",
       "status": "redrawn",
-      "rationale": "每阶段tokenmask、执行/D/RT16:2:2调度重绘纵图与deck，比例是steps非reward系数。",
+      "rationale": "Sixvariantschedule/correctnonrootrewards retained; E/D/RT actualtrainer tracednotgenericstagedefault.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Figure 1、§3 和 Appendix B.2 重绘"
+          "locator": "RAO 1:0:0、RAO+D 12:4:0"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-6 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/sera/training-and-evaluation.svg"
-      ]
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 6 的事实独立整理；原图精确页链接保留。",
+      "asset_paths": []
     },
     {
       "id": "table-7",
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7, p. 15; Appendix B.3",
+      "source_locator": "p15 Table7",
       "status": "redrawn",
-      "rationale": "相同16H200实际时间重排结果SVG，TextWorld13h08→24h14与标签减少并列，不能宣传总训练更便宜。",
+      "rationale": "ActualRAO/SERAhoursbothenvironments retained; AppendixB3mostaccurate/costclaimcontradictions notcopied.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Tables 1、2、7 重绘"
+          "locator": "RAO/SERA 的 TextCraft 用时 29h36/24h06"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-7 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/sera/results-and-cost.svg"
-      ]
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 7 的事实独立整理；原图精确页链接保留。",
+      "asset_paths": []
     },
     {
       "id": "table-8",
       "kind": "table",
       "label": "Table 8",
       "source_id": "paper",
-      "source_locator": "Table 8, p. 16; Appendix C.3",
-      "status": "omitted",
-      "rationale": "七任务族结构全表未绘，正文逐类解释并选真实forkjoin两菜实例，实例不冒充覆盖全部协调类型。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
-    },
-    {
-      "id": "released-two-dish-task-record",
-      "kind": "appendix-visual",
-      "label": "Released task record: two-dish fork-join training case",
-      "source_id": "dataset",
-      "source_locator": "Dataset/training/textworld_train.jsonl first multi_dish_fork_join_medium_0000, seed850000 @0443b190; Runtime/environments/textworld/composite_scorer.py:14–45",
+      "source_locator": "p16 Table8",
       "status": "redrawn",
-      "rationale": "正文case图直接依据公开任务记录与程序判据，非论文Figure2五菜图；将这个额外primary-source case可视化单列，避免source_visual_id错绑。",
+      "rationale": "Sevencoordinationfamilies andbudgetranges retained incompactprose; centralcaseclaims onlyforkjoin coverage.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据官方 Dataset 首条两菜题与 composite_scorer.py 整理。"
+          "locator": "七族分别需要：独立支路汇合"
         }
       ],
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 Table 8 的事实独立整理；原图精确页链接保留。",
+      "asset_paths": []
+    },
+    {
+      "id": "released-two-dish",
+      "kind": "appendix-visual",
+      "label": "公开首条两菜任务",
+      "source_id": "dataset",
+      "source_locator": "Dataset/training/textworld_multidish_train_1500_v9.json tasks[0] @0443b190ccde59486904988e50893102df4563ab",
+      "status": "redrawn",
+      "rationale": "Actualmetadata+officialCPUstate25/24actions,fullingredientandmealgates; independentdiagramnotpaperFigure2 ormodeltrace.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "根据官方首条两菜记录"
+        }
+      ],
+      "permission_status": "independent-factual-adaptation",
+      "permission_basis": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced.",
+      "credit": "根据 公开首条两菜任务 的事实独立整理；原图精确页链接保留。",
       "asset_paths": [
         "/lib/papers/sera/two-dish-real-case.svg"
-      ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent facts diagram from released task record and checker, not original-source image reuse.",
-      "credit": "根据官方 Dataset 首条两菜题与 composite_scorer.py 整理"
+      ]
     }
   ],
   "figures": [
@@ -788,21 +1068,34 @@
       "origin": "author-redrawn",
       "source_visual_id": "figure-1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §3; Appendix B.2 Table 6",
-      "credit": "根据 Figure 1、§3 和 Appendix B.2 重绘",
+      "source_locator": "p3 Figure1",
+      "credit": "根据 Figure 1 的事实独立整理；原图精确页链接保留。",
       "used_in": [
-        "article"
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/sera/ranking-worked.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§3.4 Eq3; article-authored fourcandidate arithmetic",
+      "credit": "按 Eq3 独立制作的教学算例；非模型轨迹。",
+      "used_in": [
+        "article",
+        "deck"
       ]
     },
     {
       "path": "/lib/papers/sera/two-dish-real-case.svg",
       "origin": "author-redrawn",
-      "source_visual_id": "released-two-dish-task-record",
+      "source_visual_id": "released-two-dish",
       "source_id": "dataset",
-      "source_locator": "Dataset/training/textworld_train.jsonl seed850000; composite_scorer.py:14–45 @0443b190",
-      "credit": "根据官方 Dataset 首条两菜题与 composite_scorer.py 整理",
+      "source_locator": "Dataset/training/textworld_multidish_train_1500_v9.json tasks[0] @0443b190ccde59486904988e50893102df4563ab",
+      "credit": "根据 公开首条两菜任务 的事实独立整理；原图精确页链接保留。",
       "used_in": [
-        "article"
+        "article",
+        "deck"
       ]
     },
     {
@@ -810,14 +1103,193 @@
       "origin": "author-redrawn",
       "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Tables 1, 2, 7; controls and same-hardware time",
-      "credit": "根据 Tables 1、2、7 重绘",
+      "source_locator": "p7 Table1",
+      "credit": "根据 Table 1 的事实独立整理；原图精确页链接保留。",
       "used_in": [
-        "article"
+        "article",
+        "deck"
       ]
     }
   ],
   "qa": {
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "original_section_anchors_preserved": true,
+      "default_reading": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "characters": 6091,
+          "height": 7685,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "characters": 6091,
+          "height": 7685,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "characters": 6091,
+          "height": 11725,
+          "width": 350
+        }
+      ]
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "date": "2026-10-19",
+      "reviewer": "main agent",
+      "reader_reconstruction": "Sharedmodelseparatecalls; frozenrubricfrompredelegateinfoandchilddoesnotseeit; modelreportedscorevsparser; E/D/RTactualmasks/LOObaselines; 8branchcommit0,hinge.175,rootleafreward; actual25/24officialCPUstatesstrict1/0; TextCraftnetnewfinish and20not75budget; finaldenominators/3seedSD/negativeRT/Disc/D; N2vsordinary/RT/cost andpublicprotocol mismatches."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "code_copy": true,
+      "image_fit_zoom_drag_and_focus_restore": true,
+      "mobile_vertical_and_horizontal_scroll": true,
+      "fullscreen_scope": "DOMFullscreenAPI/nestediframe/focusEscape inheadless; nativeMacwindowfullscreen nottested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/sera-layout-20261019.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/sera-interactions-20261019.json",
+      "mobile": "output/playwright/old-paper-refresh-20261018/sera-mobile-scroll-20261019.json",
+      "visual_scope": "Mainagentinspectedcompletebody/mobilescan and16embedded/standalonecontacts; dense3/4/6/8/13/14/16opened atnormaldisplay; allfourbodydiagrams inspectedafter900pxwidthfix. Codeblockcopyandscroller actuallyexercised."
+    },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/089-self-evaluating-recursive-agents.md",
+        "sha256": "435a194ecf9d22cb7f56a8ef908d37c6c56fc6f7a4a343cb595bbe3a53d93900"
+      },
+      {
+        "file": "lib/decks/sera-visual-guide.html",
+        "sha256": "a642da011d396ce4d6bfed96ebd39ece7e55c230fa1d021358e1d5f76cab169f"
+      },
+      {
+        "file": "dist/posts/论文解读/self-evaluating-recursive-agents.html",
+        "sha256": "2b64fe322ddb5b5de5e8afbecf7a474cc1985b7b42430300fcdc6891f0a45c6a"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-deep-dive-v2.css",
+        "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.css",
+        "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.js",
+        "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+        "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+        "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+      },
+      {
+        "file": "lib/papers/sera/training-and-evaluation.svg",
+        "sha256": "3eda2d7859acf20d72aa902c5952b001b55570c76f1630ebd088edf32e046022"
+      },
+      {
+        "file": "lib/papers/sera/ranking-worked.svg",
+        "sha256": "4e8fc8f7361fd28bf503df574473bfab4355df9576d729d1524a8929fb121a33"
+      },
+      {
+        "file": "lib/papers/sera/two-dish-real-case.svg",
+        "sha256": "d5f562747c071c82502825a172b493d0956264c1ed0d51884aebc4ac04512f85"
+      },
+      {
+        "file": "lib/papers/sera/results-and-cost.svg",
+        "sha256": "aa5c878940b767950812a340a58d9fd36afaf316f09d0be518d94b3a7998447f"
+      },
+      {
+        "file": "lib/papers/sera/cover.svg",
+        "sha256": "f3b5691abbca88f0122fcf11d38cde8a7bc6c42f5b1924cc00006f7e67ada7b2"
+      },
+      {
+        "file": "lib/papers/sera/replay-two-dish.py",
+        "sha256": "78279a4741b653e0a341a48086ad26b6d49327f406b823d5fac6e9713e7b0796"
+      }
+    ],
+    "external_service_boundary": {
+      "current_raw_errors": [],
+      "comments": "Twikoo .tk-submit loaded inall3localviewports; production verifiedafterrelease."
+    },
+    "permission_boundary": "arXiv2610.04902v1 abs-license nonexclusive-distrib/1.0; fixedrepo root no projectLICENSE. ModelApache2 andvendoredMIT do not licensepaper figures. Checkedprimaryentry/fixedtree; originalsl inked, independentfactrelationships nottraced."
+  },
+  "qa_history_previous": {
     "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
@@ -963,199 +1435,28 @@
       }
     }
   },
-  "revision_review": {
-    "date": "2026-10-09",
-    "scope": [
-      "rubric-hidden-from-child",
-      "training-N1-N2-separation",
-      "pre-delegation-information-not-wall-clock-order",
-      "RAO-plus-RT-negative-result",
-      "model-rounds-vs-world-actions",
-      "shared-parameter-reward-risk",
-      "paper-code-selector-mismatch"
-    ],
-    "gpu_reproduction": false
-  },
-  "legacy_qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 16.5,
-      "line_height": 1.75,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
+  "reading_history_previous": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 17,
+    "rendered_page_ranges": [
       {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
+        "start": 1,
+        "end": 17
       }
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
+    "source_visuals_expected": 11,
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
     },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ],
-    "revision_test_notes": {
-      "date": "2026-10-09",
-      "slide_count": 14,
-      "all_slides_each_viewport": true,
-      "article_h2_count": 6,
-      "article_scrolled_each_viewport": true,
-      "fullscreen_button_and_f_exit": true,
-      "focus_button_and_escape_exit": true,
-      "console": "Existing favicon.ico 404 only; no new article/deck errors.",
-      "screenshots": "ignored output/playwright/sera-fix"
-    }
-  },
-  "terminology": [
-    {
-      "term": "policy",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Abstract; §3.1"
-        }
-      ],
-      "article_quote": "作者用强化学习训练同一个 Qwen3-4B 模型，分别处理执行、委派和评价；论文将这组共享权重称为策略（policy）。"
-    },
-    {
-      "term": "rubric",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 1"
-        }
-      ],
-      "article_quote": "模型生成子任务评分标准（rubric），用真实成败训练这些标准，再按标准给子任务执行奖励。"
-    },
-    {
-      "term": "E / D / RT",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2–3.6; Appendix B.2 Table 6"
-        }
-      ],
-      "article_quote": "执行阶段（E）按节点完成情况训练求解和委派输出；委派阶段（D）再按成功任务树中不再委派的末端节点（叶节点）覆盖率训练委派；评分标准训练阶段（RT）检验 rubric 能否分清成功与失败。"
-    },
-    {
-      "term": "N=1",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4.1; Tables 1, 4; Evaluation READMEs"
-        }
-      ],
-      "article_quote": "主表的 N=1 指每道题只运行一棵递归执行树；模型直接拆任务、执行，最后由程序检查根任务是否完成。"
-    },
-    {
-      "term": "verifier / LLM judge",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§1–2; Table 6"
-        }
-      ],
-      "article_quote": "前作 RAO 让程序检查器（verifier）或模型评审（LLM judge）给树上每个节点二元标签。"
-    },
-    {
-      "term": "success_gate",
-      "kind": "metric",
-      "source_ids": [
-        "repo"
-      ],
-      "source_locators": [
-        {
-          "source_id": "repo",
-          "locator": "Runtime/rubric/prompts.py:157–260 @0443b190ccde59486904988e50893102df4563ab"
-        }
-      ],
-      "article_quote": "success_gate 规定完成子任务必须满足什么， failure_conditions 列出哪些失败会让整份评分归零。"
-    },
-    {
-      "term": "B=8 counterfactual branches",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.4; Training/runtime/three_stage_train/counterfactual.py @0443b190"
-        }
-      ],
-      "article_quote": "训练框架在同一个委派点复制环境，针对相同的子任务目标采样 B=8 条分支轨迹。"
-    },
-    {
-      "term": "leaf coverage reward",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3 Eq.2; Training/runtime/two_stage_rao_leaf/leaf_credit.py @0443b190"
-        }
-      ],
-      "article_quote": "一次委派的奖励是 root_success × subtree_leaves / all_tree_leaves 。"
-    }
-  ]
+    "numbered_source_visuals_count": 10,
+    "additional_released_case_visuals": 1
+  }
 }
