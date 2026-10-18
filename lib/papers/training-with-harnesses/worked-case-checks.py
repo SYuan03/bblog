@@ -45,11 +45,12 @@ def main():
     assert set_f1(with_harness, gold) == 0
     print("LawBench set-F1:", set_f1(standalone, gold), set_f1(with_harness, gold))
 
-    student, teacher = (0.8, 0.2), (0.2, 0.8)
+    student, teacher = (0.7, 0.3), (0.2, 0.8)
     divergence = kl(student, teacher)
-    assert isclose(divergence, 0.6 * log(4))
+    assert isclose(divergence, 0.5826853020432397)
     assert kl(teacher, teacher) == 0
     print("Illustrative KL(S || T):", round(divergence, 4))
+    print("Illustrative KL(T || S):", round(kl(teacher, student), 4))
 
 
 if __name__ == "__main__":

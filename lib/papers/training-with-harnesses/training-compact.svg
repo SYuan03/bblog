@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+<title id="title">OPHSD：同一份回答，两个评分输入</title><desc id="desc">当前模型只看原题采样回答 y；harness 另行调用当前模型生成计划或检索材料 C。当前模型与固定初始教师在相同回答前缀上计算概率，两边输入不同；仅更新当前模型。harness 最终答案不替换 y。</desc>
+<defs><style>text{font-family:Arial,"PingFang SC",sans-serif;fill:#24292f}.h{font-size:21px;font-weight:700}.b{font-size:17px}.s{font-size:15px;fill:#526274}.blue{fill:#245e99}.box{fill:#fff;stroke:#c9d5e0;stroke-width:1.5}.arrow{fill:none;stroke:#617184;stroke-width:1.7;marker-end:url(#a)}</style><marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#617184"/></marker></defs>
+<rect width="900" height="420" fill="#fff"/>
+<text x="24" y="35" class="h">同一份自己生成的回答 y，接到两种输入后面</text>
+<rect x="24" y="64" width="245" height="94" class="box"/><text x="42" y="94" class="h">① 直接作答</text><text x="42" y="121" class="b">当前模型 θ：原题 x → 回答 y</text><text x="42" y="146" class="s">y 是本次蒸馏共同使用的回答</text>
+<rect x="24" y="204" width="245" height="114" class="box"/><text x="42" y="234" class="h">② 另行运行 harness</text><text x="42" y="262" class="b">仍调用当前模型 θ</text><text x="42" y="289" class="b">组装计划 / 检索材料 C</text><text x="42" y="308" class="s">最终生成答案不替换 y</text>
+<path d="M269 108H330" class="arrow"/><path d="M269 262H330" class="arrow"/>
+<rect x="340" y="64" width="290" height="94" class="box"/><text x="358" y="94" class="h blue">student：原题 + y 的前缀</text><text x="358" y="121" class="b">计算下一 token 的分布 pS</text><text x="358" y="146" class="s">当前参数 θ，接收梯度</text>
+<rect x="340" y="204" width="290" height="114" class="box"/><text x="358" y="234" class="h">teacher：C + 同一前缀</text><text x="358" y="263" class="b">计算下一 token 的分布 pT</text><text x="358" y="291" class="s">固定初始参数 θ₀，不接收梯度</text>
+<path d="M630 108H669V186H690" class="arrow"/><path d="M630 262H669V224H690" class="arrow"/>
+<rect x="700" y="161" width="177" height="100" class="box"/><text x="718" y="192" class="h">③ 比较分布</text><text x="718" y="220" class="b">只更新 student</text><text x="718" y="245" class="s">下一轮重新生成 y、C</text>
+<path d="M24 350H876" stroke="#dce2e8"/><text x="24" y="379" class="b">动态的是 C，不是 teacher 权重。论文写 KL(pT ∥ pS)，发布代码默认 KL(pS ∥ pT)。</text><text x="24" y="406" class="s">根据 Figure 1、Eq. (3) 与 commit 20eaa0c 的实际消息和参数路径重绘；没有复制原图画面。</text>
+</svg>

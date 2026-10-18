@@ -1,123 +1,25 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Training with Harnesses · OPHSD 图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>
-.visual{display:flex;align-items:center;justify-content:center;min-height:0}.visual img{display:block;width:100%;height:565px;object-fit:contain}.visual.tall img{height:610px}.dense .table{font-size:16px}.dense .table th,.dense .table td{padding:9px 11px}.compact .card{padding:18px 20px}.compact .card p,.compact .card li{font-size:17px}.compact .card h3{font-size:21px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}.token{display:inline-block;margin:3px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 18px/1 monospace}.arrow{text-align:center;color:var(--blue);font-size:34px}.score{font:700 31px/1 Georgia,serif;color:var(--blue)}.caption{margin-top:10px;color:var(--muted);font-size:16px;line-height:1.4}.mini{font-size:16px!important}.formula{font-size:22px}
-</style></head><body><div class="viewport"><main class="stage" aria-label="OPHSD 论文图解">
-
-<section class="slide active">
-  <div class="meta"><span>01 · 先看核心方法</span><span>arXiv:2605.08741 · 2026-05-09</span></div>
-  <h1>用规划与检索提供的额外输入，训练模型独立答题</h1>
-  <p class="lead">当前模型（student）先独立作答；冻结的初始模型副本（teacher）多看外部控制程序（harness）整理的计划或样例，在相同回答上评估下一个文字单位（token）的概率。</p>
-  <div class="content"><div class="grid g4"><div class="card blue"><h3>84.62%</h3><p>原本仅 Plan-Solve 能解的题，训练后模型不挂 harness 也能解出</p></div><div class="card green"><h3>68.85</h3><p>固定训练终点、4 次运行的 LawBench F1</p></div><div class="card orange"><h3>3 × 10K</h3><p>公开训练子集：法律 / 化学 / 数学</p></div><div class="card red"><h3>2 处差异</h3><p>公开代码的数学任务输入与 KL 方向都和论文写法不同</p></div></div></div>
-  <div class="foot"><span>来源：Abstract；Figure 4；repository fixed-checkpoint summary；代码审计</span><span>1 / 16</span></div>
-</section>
-
-<section class="slide compact">
-  <div class="meta"><span>02 · 模型与流程的角色</span><span>先把名词对应到对象</span></div>
-  <h2>三种角色，只有当前模型的参数在更新</h2>
-  <p class="lead">同一份 Qwen3-8B 初始权重被放进不同的输入条件和更新角色。</p>
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>当前 student pθ</h3><p>只看原题写一份完整回答，训练只更新它。</p></div><div class="card orange"><h3>控制程序 Hθ</h3><p>调用当前模型、检索样例或生成解题计划（plan），最后组装 teacher 的输入文本。</p></div><div class="card green"><h3>冻结 teacher pθ̃</h3><p>初始 Qwen3-8B 的冻结副本；多看 harness 输入，判断下一个 token 的概率。</p></div><div class="card"><h3>On-policy rollout</h3><p>当前 student 此刻自己写出的回答。参数更新后，下一批回答也会改变；不经外部流程的回答简称 direct rollout。</p></div><div class="card"><h3>Terminal context C</h3><p>terminal 指流程末端，不是命令行；它是 harness 最终交给 teacher 的完整输入。</p></div><div class="card"><h3>Confirmer / challenger</h3><p>程序先生成初步标签（draft）。与它至少共享一个标签／没有共同标签的历史样例分为这两组，是数据行，不是 agent。</p></div></div></div>
-  <div class="foot"><span>来源：§3.1-3.3；Appendix A.1；official batch_builder and harness code</span><span>2 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>03 · 一次完整更新</span><span>一份回答，两种输入条件</span></div>
-  <h2>一次更新：直接回答、完整 harness，再用 KL 比较两份 token 概率</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/training-loop-redrawn.svg" alt="OPHSD 完整训练循环" width="1600" height="980"></div>
-  <div class="foot"><span>根据论文 Figure 1、Eq. 3 与 commit 20eaa0c 的 trainer / batch builder 重绘</span><span>3 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>04 · 评估同一份回答</span><span>同一回答上的概率比较</span></div>
-  <h2>Teacher 和 student 不是在比较两份答案</h2>
-  <p class="lead">两边都对 direct rollout 的同一位置给出“下一个 token 应该是什么”的概率。</p>
-  <div class="content"><div class="pair"><div class="card blue"><h3>Student 的输入</h3><p>原题 x + 回答中已经写出的文字</p><p><span class="token">先</span><span class="token">考虑</span><span class="token">两种</span><span class="token">罪名</span></p><p class="mini">没有检索样例、初步标签或解题计划。</p></div><div class="card green"><h3>Teacher 的输入</h3><p>额外输入 C + 同一段已写出的文字</p><p><span class="token">先</span><span class="token">考虑</span><span class="token">两种</span><span class="token">罪名</span></p><p class="mini">能看到解题计划或检索样例。</p></div></div><div class="formula" style="margin-top:22px">论文 Eq. 3：KL(pT || pS)　·　公开代码默认：KL(pS || pT)</div><p class="caption">KL 衡量两份概率分布的差异。左右顺序会改变优化性质；这是论文与公开代码的第二处差异。方框只是文字示意，不是实测 tokenizer 切分。</p></div>
-  <div class="foot"><span>来源：Eq. 3；Appendix A.2；losses.py；ophsd_trainer.yaml</span><span>4 / 16</span></div>
-</section>
-
-<section class="slide dense">
-  <div class="meta"><span>05 · 相邻方法的区别</span><span>差别落在监督信息</span></div>
-  <h2>OPHSD 改变了训练时额外输入的生产方式</h2>
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>训练样本从哪来</th><th>监督依据</th><th>部署保留什么</th></tr></thead><tbody><tr><td>监督微调 SFT</td><td>固定参考答案</td><td>模仿参考答案中的 token</td><td>由系统设计决定</td></tr><tr><td>组内奖励比较 GRPO</td><td>当前模型的一组回答</td><td>整份回答的奖励分数</td><td>由系统设计决定</td></tr><tr><td>同模型蒸馏 OPSD</td><td>当前模型的 direct rollout</td><td>Teacher 多看已验证的标准解</td><td>仅模型</td></tr><tr><td>CRISP</td><td>当前模型的 direct rollout</td><td>Teacher 多看“简洁作答”提示</td><td>仅模型</td></tr><tr><td>优化外部控制程序</td><td>取决于 harness</td><td>下游系统表现</td><td>模型 + 优化后的 harness</td></tr><tr><td class="ours">OPHSD</td><td class="ours">当前模型的 direct rollout</td><td class="ours">Teacher 多看 harness 组装的输入</td><td class="ours">目标是仅保留模型</td></tr></tbody></table></div><p class="caption">Teacher 独享、部署时拿掉的额外输入，论文称 privileged context。OPSD 使用现成标准解，OPHSD 用当前模型执行流程来整理它。</p></div>
-  <div class="foot"><span>来源：Table 1；§2.1-2.2；§3.1-3.2</span><span>5 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>06 · DRAFT-VERIFY</span><span>两次模型调用，三次检索</span></div>
-  <h2>5 个 confirmer / challenger 是数据行，不是 agent</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/draft-verify-redrawn.svg" alt="Draft-Verify 的真实调用流程" width="1600" height="940"></div>
-  <div class="foot"><span>来源：§3.3；Appendix A.1；lawbench/draft_verify.py；_memory_bank.py</span><span>6 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>07 · 真实分类案例</span><span>LawBench-3-3 · idx 44</span></div>
-  <h2>检索样例偏向“故意伤害罪”，正确标签被挤掉</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/lawbench-case-redrawn.svg" alt="LawBench 真实失败案例" width="1600" height="980"></div>
-  <div class="foot"><span>来源：Appendix B.1；Mode A set-F1 0.67，Mode B set-F1 0</span><span>7 / 16</span></div>
-</section>
-
-<section class="slide compact">
-  <div class="meta"><span>08 · PLAN-SOLVE</span><span>论文描述的训练协议</span></div>
-  <h2>先从完整标准解中提取解题步骤，再交给求解调用</h2>
-  <p class="lead">规划调用（planner）读取题目和完整标准解（reference solution）；求解调用（solver）只读取题目与提炼出的步骤草案（plan）。</p>
-  <div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>原题 x</strong><p>原始数学题</p></div><div class="step"><b>2</b><strong>标准解 y*</strong><p>只在训练期提供</p></div><div class="step"><b>3</b><strong>规划调用</strong><p>提炼步骤与易错点</p></div><div class="step"><b>4</b><strong>步骤草案 s</strong><p>附录实例也含具体计数</p></div><div class="step"><b>5</b><strong>Teacher 输入</strong><p>原题 + 步骤草案</p></div></div><div class="callout green" style="margin-top:24px"><p>验证 harness 自身时拿掉标准解，让模型自己先规划、再求解；两次调用都来自当前模型。</p></div></div>
-  <div class="foot"><span>来源：§3.3；Appendix A.1；论文定义 C[Hθ(x,z)] = (x,s)</span><span>8 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>09 · 公开实现的差异</span><span>论文协议 ≠ 当前公开代码路径</span></div>
-  <h2>公开训练代码没有把 solution 传给 planner</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/plan-solve-release-path.svg" alt="论文与公开实现的数学协议差异" width="1600" height="930"></div>
-  <div class="foot"><span>代码审计：prepare_deepmath_data.py；ophsd_trainer.py:1100-1117；plan_solve.py</span><span>9 / 16</span></div>
-</section>
-
-<section class="slide dense">
-  <div class="meta"><span>10 · 训练与评测设置</span><span>Qwen3-8B · 8×H100</span></div>
-  <h2>三组 10K 训练数据，三种不同指标</h2>
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>训练集</th><th>评测集</th><th>指标</th><th>Harness</th><th>更新次数</th></tr></thead><tbody><tr><td>CAIL-2018 10K</td><td>LawBench 3-3，215 个罪名</td><td>逐案件的集合 F1，再平均</td><td>Draft-Verify</td><td>300</td></tr><tr><td>USPTO-50K 10K</td><td>USPTO test，10 种反应类别</td><td>正确题数 / 总题数</td><td>Draft-Verify</td><td>300</td></tr><tr><td>DeepMath 10K</td><td>AIME24/25, 10% OlympiadBench, HMMT25</td><td>pass@8：每题 8 次至少一次成功</td><td>Plan-Solve</td><td>150</td></tr></tbody></table></div><p class="caption">数学 Avg 是四个评测集得分的等权平均，不按各自题数加权。</p><div class="grid g4" style="margin-top:22px"><div class="metric"><strong>64</strong><span>每批样本数</span></div><div class="metric"><strong>1e-6</strong><span>学习率</span></div><div class="metric"><strong>8192</strong><span>单次最大生成 token 数</span></div><div class="metric"><strong>4 次</strong><span>论文 v1 的数学实验运行</span></div></div></div>
-  <div class="foot"><span>来源：§4.1；Appendix A.2-A.3</span><span>10 / 16</span></div>
-</section>
-
-<section class="slide dense">
-  <div class="meta"><span>11 · 论文 v1 结果</span><span>每种方法取最佳 checkpoint（保存的模型权重）</span></div>
-  <h2>OPHSD 领先 OPSD；重新挂 harness 没有继续加分</h2>
-  <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>LawBench F1</th><th>USPTO 准确率</th><th>数学平均 pass@8</th></tr></thead><tbody><tr><td>GRPO</td><td>62.44</td><td>90.01</td><td>66.57</td></tr><tr><td>OPSD</td><td>64.25</td><td>88.01</td><td>66.68</td></tr><tr><td>CRISP</td><td>—</td><td>—</td><td>58.75</td></tr><tr><td>OPHSD + Harness</td><td>68.41</td><td>83.62</td><td>69.13</td></tr><tr><td class="ours">OPHSD</td><td class="ours">69.51</td><td class="ours">90.81</td><td class="ours">69.50</td></tr></tbody></table></div><div class="callout" style="margin-top:24px"><p>论文从训练曲线中选每种方法的最高评测分；这些值不能与仓库后来发布的固定终点均值混成一张表。</p></div></div>
-  <div class="foot"><span>来源：Tables 2 and 5；Appendix A.3</span><span>11 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>12 · 固定训练终点</span><span>仓库后续结果 · 4 次独立运行</span></div>
-  <h2>固定训练终点后仍领先，但绝对数字下降</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/results-protocol-redrawn.svg" alt="best checkpoint 与 fixed checkpoint 结果对比" width="1600" height="920"></div>
-  <div class="foot"><span>来源：Tables 2, 5；results/fixed_checkpoint_summary.csv</span><span>12 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>13 · 哪些题学会了</span><span>按训练前解题能力分组</span></div>
-  <h2>基础模型解不出、harness 能解的 156 道题</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/internalization-redrawn.svg" alt="四组数学题上的 internalization 分析" width="1600" height="880"></div>
-  <div class="foot"><span>根据 Figure 4 重绘；132/156 = 84.62%</span><span>13 / 16</span></div>
-</section>
-
-<section class="slide compact">
-  <div class="meta"><span>14 · 补充证据</span><span>这些分析各自回答什么</span></div>
-  <h2>论文还有三条证据，但都需要读清指标边界</h2>
-  <div class="content"><div class="grid g3"><div class="card blue"><h3>引用相似案例的比例</h3><p><span class="score">97.5% / 90.0%</span></p><p>GPT-4o 检查是否出现具体先例式表述。每个任务、方法和训练阶段只有 40 条；不验证“回忆的案例”是否真实。</p></div><div class="card green"><h3>难题组</h3><p><span class="score">+22.9 / +33.8 / +90.4</span></p><p>Math / LawBench / USPTO 的难题组增益。分组由基础模型的逐题表现定义，USPTO 没有中等难度组。</p></div><div class="card orange"><h3>训练成本</h3><p><span class="score">108.73M tokens</span></p><p>仓库固定训练终点的数学实验：OPHSD 76 GPU-hours（累计卡时）；GRPO 91；OPSD 28-29。OPHSD 比 OPSD 贵，但比 GRPO 少生成 token。</p></div></div><div class="callout red" style="margin-top:24px"><p>这些分析无法单独证明“所有提升都因为流程被写进模型”；plan、答案提示与额外模型调用没有被完整拆开。</p></div></div>
-  <div class="foot"><span>来源：Table 4；Figures 5-6；results/qwen3_8b_training_cost.csv</span><span>14 / 16</span></div>
-</section>
-
-<section class="slide">
-  <div class="meta"><span>15 · 对游戏代码训练的启发</span><span>能内化的边界</span></div>
-  <h2>可以学“如何利用执行”，不能预存未来执行结果</h2>
-  <div class="content visual"><img src="/lib/papers/training-with-harnesses/distillability-boundary.svg" alt="三类 harness 的可蒸馏边界" width="1600" height="850"></div>
-  <div class="foot"><span>根据 Appendix C 重绘；game query-to-code 部分是本文研究映射</span><span>15 / 16</span></div>
-</section>
-
-<section class="slide compact">
-  <div class="meta"><span>16 · 结论与缺口</span><span>兴趣程度 9 / 10</span></div>
-  <h2>方法骨架值得读，当前公开代码不能直接当作论文协议</h2>
-  <p class="lead">当前模型自己生成回答，冻结副本多看辅助输入；训练比较同一回答上每个位置的下一词概率。</p>
-  <div class="content"><div class="grid g2"><div class="card green"><h3>证据支持</h3><ul><li>两套 harness 下，不挂 harness 的 OPHSD 领先 OPSD / GRPO</li><li>132/156 道原本仅 harness 能解的题被 student 解出</li><li>真实 case 展示规划习惯，以及错误检索怎样干扰结果</li><li>仓库给出训练代码、harness、3×10K 数据与固定终点 CSV</li></ul></div><div class="card red"><h3>证据尚不支持</h3><ul><li>真实工具执行可以被模型参数替代</li><li>任意 harness 训练后都应拆掉</li><li>增益可完全归因于 plan / verify 流程</li><li>当前公开代码路径与论文协议等价</li></ul></div></div><div class="callout" style="margin-top:24px"><p>复现优先项：修复 solution 传递；确认 KL 方向；固定“最佳 checkpoint / 固定训练终点”口径；补答案提示、错误 context 和真实工具反馈的消融。</p></div></div>
-  <div class="foot"><span>主论文 + Appendix A-D + official repo @ 20eaa0c</span><span>16 / 16</span></div>
-</section>
-
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Training with Harnesses · 14 页论文图解</title>
+<link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2">
+<style>
+.content{gap:22px}.content p{margin:0;color:var(--text);font-size:28px;line-height:1.5}.slide .card h3{font-size:30px}.slide .card p,.slide .card li{font-size:28px}.slide .callout p{font-size:27px}.slide .table{font-size:27px}.slide .table th{font-size:24px}.slide .table th,.slide .table td{padding:15px 17px}.slide .table td:first-child{white-space:nowrap}.slide .step strong{font-size:29px}.slide .step p{font-size:26px}.slide .step{min-height:190px}.slide .step b{font-size:23px}.formula{font-size:30px}.foot{font-size:17px}.diagram{align-items:center;gap:18px}.diagram .deck-image-scroll{display:flex;width:100%;justify-content:center;min-height:0}.diagram .deck-image-scroll>img{width:min(100%,1350px);height:auto;max-height:460px;object-fit:contain;background:#fff}.diagram p{font-size:25px}.minor{font-size:24px!important}.actor-flow{display:grid;grid-template-columns:1fr 1fr;gap:22px}.actor-flow .card{min-height:140px}.context-strip{padding:18px 24px;border-block:1px solid var(--line);font-size:28px;line-height:1.5;color:var(--text)}.split-retrieval{display:grid;grid-template-columns:1fr 1fr;gap:22px}.split-retrieval strong{font-size:27px}.budget td:not(:first-child){font-family:Arial,sans-serif}.title-line{max-width:none}
+</style>
+<link rel="stylesheet" href="/lib/decks/paper-deck-mobile-reader.css?v=20261018-1">
+<script defer src="/lib/decks/paper-deck-mobile-reader.js?v=20261018-1"></script>
+<script defer>document.addEventListener('DOMContentLoaded',()=>{for(const w of document.querySelectorAll('.deck-image-scroll'))w.setAttribute('aria-label','论文解读图表；手机端可横向滚动');});</script>
+</head><body><div class="viewport"><main class="stage" aria-label="Training with Harnesses 论文图解">
+<section class="slide active"><div class="meta"><span>01 · 研究问题</span><span>arXiv:2605.08741v1 · 2026-05-09</span></div><h1>把“先比较、先规划”的收益训练进模型</h1><p class="lead">OPHSD：模型先只看原题作答；外部程序另行整理计划或检索材料，训练时再用它们评分。使用时直接回答原题。</p><div class="content"><div class="grid g3"><div class="metric"><strong>2 套流程</strong><span>分类：检索后复核<br>数学：先规划再求解</span></div><div class="metric"><strong>84.62%</strong><span>原本只有 harness 能解的 156 题<br>训练后直接模型通过约 132 题</span></div><div class="metric"><strong>66.89 ± 0.65</strong><span>8B 固定终点，四次运行<br>数学平均 pass@8</span></div></div><div class="callout"><p>pass@8 是八次尝试至少答对一次。论文没有 Claude Code／Codex 式完整工具交互实验，不能把结果扩展成“工具执行已进入参数”。</p></div></div><div class="foot"><span>来源：§3–4，Figure 4，官方固定终点 CSV；个人兴趣 9/10；图表许可未明确，本解读重排事实</span><span>1 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>02 · 最接近的对照</span><span>Table 1；Appendix A.2</span></div><h2>最接近 OPSD：改的是 teacher 多看到什么</h2><p class="lead">student 是当前作答模型；teacher 是同尺寸的固定初始副本，负责计算概率反馈。两者重评 student 自己写出的同一份回答。</p><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>训练对象</th><th>反馈来源</th></tr></thead><tbody><tr><td>SFT，监督微调</td><td>固定示范答案</td><td>模仿示范；不是本文实测 baseline</td></tr><tr><td>GRPO</td><td>当前模型的一组回答</td><td>比较各回答的最终奖励</td></tr><tr><td>OPSD</td><td>当前模型自己写的回答</td><td>teacher 多看标准标签或标准解</td></tr><tr class="ours"><td>OPHSD</td><td>当前模型自己写的回答</td><td>teacher 多看 harness 组装的材料</td></tr></tbody></table></div><div class="callout"><p>harness 是外部控制程序，安排检索和多次模型调用。Meta-Harness 等工作优化这个程序；本文优化模型权重，程序没有被搜索或学习。</p></div></div><div class="foot"><span>SDPO 用执行反馈、OEL 用过去经验；CRISP 用简洁指令并每 50 步同步 teacher。本文不实测前两项。</span><span>2 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>03 · 一次训练更新</span><span>Figure 1；Eq. (3)；batch_builder.py</span></div><h2>共用回答 token，不共用更新中的 teacher 权重</h2><p class="lead">token 是模型预测的文字单位。teacher 参数固定；变化的是 harness 每次生成的输入材料 C。</p><div class="content"><div class="flow" style="--n:3"><div class="step"><b>① 当前模型生成</b><strong>原题 x → 回答 y</strong><p>独立作答，不先用计划或检索改写 y。</p></div><div class="step"><b>② 另行运行 harness</b><strong>仍调用当前模型</strong><p>取最后一次模型调用的输入消息，作为 C。</p></div><div class="step"><b>③ 比较下一 token 分布</b><strong>只更新 student</strong><p>最终生成答案不替换 y；只要求其非空，未检查正确性。</p></div></div><div class="actor-flow"><div class="card blue"><h3>student：当前参数 θ</h3><p>看原题 x + y 的已有前缀，计算 pS，接收梯度。</p></div><div class="card green"><h3>teacher：固定初始参数 θ₀</h3><p>看材料 C + 相同前缀，计算 pT，不接收梯度。</p></div></div></div><div class="foot"><span>当前代码先 direct rollout，再 harness；teacher_prompt 动态组装，不是人工标注字段；默认任务分数只记录</span><span>3 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>04 · 分类流程</span><span>§3.3；draft_verify.py；_memory_bank.py</span></div><h2>confirmers / challengers 是检索数据行</h2><p class="lead">memory bank 保存之前的样例、真实标签和文本向量。按向量方向的相似度检索，不保证得到真正有用的证据。</p><div class="content"><div class="context-strip">先取最相似 5 条 → 当前模型生成 draft 标签 → 按标签分两组检索</div><div class="split-retrieval"><div class="card blue"><h3>confirmers，最多 5 条</h3><p>与 draft 至少共享一个真实标签。不是要求整个标签集合相等。</p></div><div class="card orange"><h3>challengers，最多 5 条</h3><p>与 draft 没有共同标签。“不同标签”不代表构成有效反例。</p></div></div><div class="context-strip">原题 + draft 标签 + 两组样例 → verify 调用 → teacher 使用这次输入</div><div class="callout"><p>正常两次生成、三次检索；表不足 10 条时只直接调用。当前批真实标签预测后才入表；测试默认 100 题一批，下一批能用先前测试题标签。</p></div></div><div class="foot"><span>公开代码 test bank 按批更新；训练跨 epoch 不清表且无 self-index 排除，不能保证重复训练题不检索自身</span><span>4 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>05 · 真实分类 case</span><span>LawBench 3-3，idx 44；Appendix B.1</span></div><h2>同一个模型，重新检索后从 2/3 变成 0</h2><div class="content diagram"><div class="deck-image-scroll"><img src="/lib/papers/training-with-harnesses/law-case-compact.svg" width="900" height="330" alt="LawBench直接回答命中正确标签但多报一项，重新接检索后仅输出错误罪名"></div><p>原题：餐馆互殴后，冠心病急性发作死亡，鼻骨轻伤。原始输入还含检方“故意伤害”指控；评测按数据标签判，不是复制指控或推导普遍法律裁定。</p></div><div class="foot"><span>按原始行、作者输出及公开 F1 程序重绘；F1=2|预测∩标准|/(预测数+标准数)，再逐案平均；未重跑模型</span><span>5 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>06 · 数学流程</span><span>§3.3 与 commit 20eaa0c 的真实传参</span></div><h2>论文与公开实现，不是同一套 Plan-Solve 输入</h2><div class="content diagram"><div class="deck-image-scroll"><img src="/lib/papers/training-with-harnesses/plan-compact.svg" width="900" height="300" alt="论文planner看标准解，公开代码却漏传solution并在solver给标准答案"></div><p>planner 是负责写计划的调用，solver 是随后求解的调用；都用当前模型。本文沿实际调用路径、以无模型调用的 CPU 测试核实发布实现，不能据此断言原论文内部也用了它。</p></div><div class="foot"><span>根据事实重新排版；prepare_deepmath_data.py → ophsd_trainer.py → plan_solve.py → trace.solve.messages</span><span>6 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>07 · 训练损失</span><span>Eq. (3)；losses.py:54–67</span></div><h2>整个词表 KL；公式方向必须直接核对</h2><div class="content"><div class="formula">发布代码：KL(pS ∥ pT)<br>= Σ<sub>词表 token v</sub> pS(v)·[log pS(v) − log pT(v)]</div><div class="grid g2"><div class="card blue"><h3>论文写出的方向</h3><p>KL(pT ∥ pS)，却称 reverse KL。代码另有 forward_kl 对应这个方向。</p></div><div class="card orange"><h3>教学数值，不是实测</h3><p>pS=(0.7,0.3)，pT=(0.2,0.8)：代码方向 0.5827；反向 0.5341。</p></div></div><div class="callout"><p>在相同回答前缀上比较全部下一 token 选项，仅 student 反向传播。代码每个小批次合并有效回答 token 求均值，默认不做奖励加权或 token 子采样。</p></div></div><div class="foot"><span>正文区分论文与实现；相同 token 序列不等于只比较采样到的单个 token；teacher 的梯度停止</span><span>7 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>08 · judge 与分母</span><span>公开 evaluator / reward；Appendix A.3</span></div><h2>三套分数各自算，数学八次不是一次准确率</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>任务</th><th>一题怎样判</th><th>怎样汇总</th></tr></thead><tbody><tr><td>LawBench</td><td>提取最终罪名集合；与标准集合算 F1</td><td>逐案 F1 平均，不是逐罪名平均</td></tr><tr><td>USPTO，10 类</td><td>提取类别编号，必须完全一致</td><td>正确题数 / 题数</td></tr><tr><td>数学四个评测</td><td>取最后 boxed 答案；标准化或数学等价。无 boxed 计 0</td><td>每题 8 次至少成功一次为 pass@8；四项等权平均</td></tr></tbody></table></div><div class="callout red"><p>发布默认 student 验证 8 次、harness 1 次，比较时必须统一。部分路径把所有 API 都失败的题从分母漏掉；重新评分要补齐每题与每次尝试。</p></div></div><div class="foot"><span>GPT-4o 只用于引用句式分析；LawBench 论文215类 / 发布提取器202 / 上游189，不能统称同一个 evaluator</span><span>8 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>09 · 真实数学 case</span><span>OlympiadBench idx 649；Appendix B.2</span></div><h2>乘法可交换，展开式仍有两个有序对</h2><div class="content diagram"><div class="deck-image-scroll"><img src="/lib/papers/training-with-harnesses/math-case-compact.svg" width="900" height="300" alt="f(f(x))十次系数的四项贡献0、2、10、28"></div><p>作者 plan 已含计数提醒和各项答案。step 80 harness 为 4/8；训练后直接 OPHSD 7/8，OPSD 0/8。最终答案 40 得 1、39 得 0，不验证推理；7/8 不等于 pass@8=87.5%。</p></div><div class="foot"><span>本文独立复算计数，未重跑模型；原完整计划与模型摘录在 PDF pp.16–17；单题观察不是机制独立消融</span><span>9 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>10 · 数学结果口径</span><span>Table 5 与 9 月固定终点 CSV</span></div><h2>最高分不能冒充固定训练终点</h2><div class="content diagram"><div class="deck-image-scroll"><img src="/lib/papers/training-with-harnesses/results-compact.svg" width="900" height="370" alt="论文best数学平均和固定step150数学平均，两套分别比较"></div><p>v1 在整个训练期间选最高评测分，数学平均四次运行。后续发布固定 step 150、四次运行 ± 标准差；两套结果不是同一表。</p></div><div class="foot"><span>根据 Table 5 与 results/fixed_checkpoint_summary.csv 数值重绘；8B 固定终点未发布全部数学分项</span><span>10 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>11 · 完整组合结果</span><span>Qwen3-8B；固定终点四次运行</span></div><h2>三项平均都领先，但不是每个数学集都赢</h2><div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方法</th><th>LawBench F1</th><th>USPTO accuracy</th><th>数学平均 pass@8</th></tr></thead><tbody><tr><td>GRPO</td><td>61.13±0.11</td><td>89.44±0.11</td><td>65.00±0.18</td></tr><tr><td>OPSD</td><td>64.01±0.12</td><td>87.31±0.42</td><td>62.75±0.05</td></tr><tr class="ours"><td>OPHSD</td><td>68.85±0.25</td><td>90.71±0.13</td><td>66.89±0.65</td></tr></tbody></table></div><div class="callout"><p>v1 单项反例：AIME24，OPHSD 79.17 &lt; GRPO 83.33；AIME25，OPHSD 61.67 &lt; OPSD 63.33。重新接 harness 的 v1 三项 68.41 / 83.62 / 69.13，没有继续提高。</p></div><p class="minor">后续 4B 也提升；主方法没有 SFT 对照，也没单独去掉 plan、答案或额外调用。</p></div><div class="foot"><span>文本 step300，数学 step150；± SD，四次独立运行；v1 分项与固定终点分开，完整对照在文章补充</span><span>11 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>12 · 更接近核心主张的证据</span><span>Figure 4；完整四组</span></div><h2>能吸收一部分收益，不代表旧能力全部保留</h2><div class="content diagram"><div class="deck-image-scroll"><img src="/lib/papers/training-with-harnesses/groups-compact.svg" width="900" height="310" alt="基础模型和harness的四组题，原都能解一组训练后只有98.10通过"></div><p>156 题的 84.62% 接近“原流程能解、训练后模型能解”的主张。但 316 题只保留 98.10%，与正文“strictly preserving”不符；也没有排除额外答案信息的贡献。</p></div><div class="foot"><span>按公布四舍五入比例回算约132、310、36题，未得到逐题输出；全部四组据 Figure4 重绘</span><span>12 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>13 · 成本与诊断</span><span>官方 cost CSV；Table 4 / Figures 5–6</span></div><h2>生成量约 32%，时间仍是 GRPO 的 83%</h2><div class="content"><div class="table-wrap"><table class="table budget"><thead><tr><th>数学150步，8×H100</th><th>生成 token 总量</th><th>墙钟小时</th><th>固定终点平均</th></tr></thead><tbody><tr><td>GRPO</td><td>340.22M</td><td>11.4</td><td>65.00</td></tr><tr class="ours"><td>OPHSD</td><td>108.73M</td><td>9.5</td><td>66.89</td></tr><tr><td>OPSD</td><td>29.48M</td><td>3.5</td><td>62.75</td></tr></tbody></table></div><div class="grid g2"><div class="card blue"><h3>引用句式不是知识真伪</h3><p>GPT-4o 的 cite-rate 检查是否引用旧案例。末期 97.5 / 90.0，没核案例是否真实。</p></div><div class="card orange"><h3>难题收益与简单题退化</h3><p>Hard 法律 / 化学分别 +33.8 / +90.4 点，Easy 约 −5 / −9 点。不能只看正向均值。</p></div></div></div><div class="foot"><span>作者运行测量，未独立重训；回答长度下降曲线不证明因果；精确时序点未发布，原 Figure5 直接链接</span><span>13 / 14</span></div></section>
+<section class="slide"><div class="meta"><span>14 · 结论与下一步</span><span>§5；Appendix C–D；公开范围</span></div><h2>值得借用训练结构，先补齐信息与预算对照</h2><div class="content"><div class="grid g2"><div class="card green"><h3>已有证据</h3><p>两套短流程、三领域；相同回答上概率反馈；代码可核消息、固定 teacher、KL 和 judge。</p></div><div class="card red"><h3>仍缺什么</h3><p>原评测切分、checkpoint、完整日志、逐题输出与独立组件消融；verl 未固定 commit。</p></div></div><div class="callout"><p>建议固定 teacher 和采样预算，对比标准解、计划摘要、独立计划、无关材料。游戏代码或执行反馈需要另做实验，本文没验证。</p></div><p class="minor">Appendix C：能学组织和比较步骤，不保证记住动态外部事实，也不能提前存下未来执行结果。原论文图表许可未明确，全部编号图表取舍见文章来源清单。</p></div><div class="foot"><span>原论文18页全部正文/附录已读；代码20eaa0c；<a href="https://arxiv.org/pdf/2605.08741v1">论文</a> · <a href="https://github.com/zzy1127/OPHSD-On-Policy-Harness-Self-Distillation">代码</a> · 本页建议为博客分析</span><span>14 / 14</span></div></section>
 </main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/training-with-harnesses.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>
