@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="310" viewBox="0 0 900 310" role="img" aria-labelledby="title desc">
+<title id="title">仅蒸馏训练的一次更新</title><desc id="desc">学生只看问题采样回答。教师多看一份正确解，在相同的学生前文上计算概率。训练程序比较概率更新学生，教师参数以0.001的EMA速率跟随。正确性检查用于选解和评测，不是训练奖励项。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="#286599"/></marker></defs>
+<rect width="900" height="310" fill="#fff"/>
+<g font-family="Arial, PingFang SC, sans-serif" fill="#222b35" font-size="17">
+<text x="16" y="27" font-size="20" font-weight="700">同一条学生回答，两种可见信息</text>
+<rect x="16" y="52" width="235" height="72" fill="#f2f6fa" stroke="#b9cad9"/>
+<text x="29" y="78" font-weight="700">student：只看问题 x</text><text x="29" y="105">每题采样 8 条回答 y</text>
+<rect x="297" y="52" width="272" height="72" fill="#fff" stroke="#b9cad9"/>
+<text x="311" y="78" font-weight="700">在自己的前文 y&lt;t 上</text><text x="311" y="105">计算下一 token 分布 pS</text>
+<path d="M251 88H289" stroke="#286599" fill="none" marker-end="url(#arrow)"/>
+<rect x="16" y="158" width="235" height="74" fill="#f4f8f5" stroke="#b9d1c2"/>
+<text x="29" y="185" font-weight="700">teacher：多看正确解 r</text><text x="29" y="213">仅在训练时可见的 PI</text>
+<rect x="297" y="158" width="272" height="74" fill="#fff" stroke="#b9d1c2"/>
+<text x="311" y="185" font-weight="700">在相同的学生前文 y&lt;t 上</text><text x="311" y="213">计算 pT，本次停止梯度</text>
+<path d="M251 195H289" stroke="#286599" fill="none" marker-end="url(#arrow)"/>
+<path d="M433 125V150" stroke="#286599" fill="none" marker-end="url(#arrow)"/><text x="445" y="144" font-size="14" fill="#526678">使用同一前文</text>
+<rect x="625" y="97" width="257" height="111" fill="#f6f7f9" stroke="#b9cad9"/>
+<text x="639" y="124" font-weight="700">JSD 比较两个概率分布</text><text x="639" y="154">逐 token 损失截断至 0.001</text><text x="639" y="184" font-weight="700">只沿 student 更新参数</text>
+<path d="M569 88H592V127H617M569 195H592V171H617" stroke="#286599" fill="none" marker-end="url(#arrow)"/>
+<text x="16" y="267">更新后：θT ← 0.999 θT + 0.001 θS（缓慢跟随的教师副本）</text>
+<text x="16" y="295" font-size="15" fill="#526678">正确性检查用于挑选参考解和评测；损失中不加入任务成败奖励。根据 §3–4、Appendix B 整理。</text>
+</g></svg>

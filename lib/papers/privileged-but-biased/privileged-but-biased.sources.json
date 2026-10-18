@@ -25,6 +25,30 @@
         "results",
         "limitations"
       ]
+    },
+    {
+      "id": "arxiv-entry",
+      "kind": "paper",
+      "title": "Specified arXiv v1 entry and reuse license",
+      "url": "https://arxiv.org/abs/2608.04794v1",
+      "revision": "v1; accessed 2026-10-18",
+      "used_for": [
+        "metadata",
+        "license"
+      ]
+    },
+    {
+      "id": "paper-source",
+      "kind": "paper",
+      "title": "Public TeX source package",
+      "url": "https://arxiv.org/src/2608.04794v1",
+      "revision": "v1; accessed 2026-10-18",
+      "used_for": [
+        "aggregation",
+        "source availability",
+        "figures",
+        "appendix definitions"
+      ]
     }
   ],
   "paper_reading": {
@@ -39,196 +63,157 @@
         "end": 24
       }
     ],
-    "source_visuals_expected": 13,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-18",
       "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
-    }
+      "scope": "Full continuous primary text and rendered-page reread finished, including all appendices, 13 numbered figures/tables and appendix listings. Source-table aggregation directly inspected in TeX; all current note and 15 slides reviewed; fresh three-viewport browser QA and all interactions verified.",
+      "evidence": "tmp/collection-refresh-20261018/privileged-evidence.md"
+    },
+    "source_visuals_expected": 28
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "1. Motivation：标准解为何未必是合适的训练目标"
+      "locator": "1. Motivation：预测参考解与学会解题的差别"
     },
     {
       "role": "related-work",
-      "locator": "2. Related Work：它与已有自蒸馏方法的关系"
+      "locator": "2. Related Work：概率模仿与正确性奖励"
     },
     {
       "role": "method",
-      "locator": "3. Method：训练与诊断如何进行"
+      "locator": "3. Method：训练一次，再测参考解偏好"
     },
     {
       "role": "experiments",
-      "locator": "4. Experiments：哪些下降，哪些没有"
+      "locator": "4. Experiments：实际成绩与诊断不能混成一个结论"
     },
     {
       "role": "future-work",
-      "locator": "5. Discussion：这项诊断可以怎样用于后续研究"
+      "locator": "5. Discussion：怎样检验教师是否认可不同正确实现"
     },
     {
       "role": "summary",
-      "locator": "6. Conclusion：应当保留的结论与未解决的问题"
+      "locator": "6. Conclusion：有用的诊断，以及不能推过头的结论"
     }
   ],
-  "coverage": [
+  "terminology": [
     {
-      "id": "central-claim",
-      "claim_type": "author-claim",
+      "term": "student",
+      "kind": "actor",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§1, §6.1; Figure 3"
+          "locator": "§3 Eq. 1; §4"
         }
       ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "“能预测一条正确解”与“能判断其他解是否正确”是两种能力。"
-        },
-        {
-          "artifact": "article",
-          "quote": "看过一条正确解，确实大幅提高了教师对 那条解 的预测概率；另一条正确解得到的提高很小。"
-        }
-      ]
+      "article_quote": "作答分支（student）只看问题，自己生成一份回答"
     },
     {
-      "id": "method-contract",
-      "claim_type": "author-claim",
+      "term": "teacher",
+      "kind": "model-call",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3–4; Table 7; Appendix E"
+          "locator": "§3 Eq. 1; §4"
         }
       ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "先让学生回答，再让看过正确解的教师评价同一回答；诊断时额外比较四种候选解。"
-        },
-        {
-          "artifact": "article",
-          "quote": "θT ← 0.999 θT + 0.001 θS"
-        }
-      ]
+      "article_quote": "评分分支（teacher）多看一份正确解，在 student 已写出的前文上计算下一 token 的概率。"
     },
     {
-      "id": "main-result",
-      "claim_type": "author-claim",
+      "term": "rollout",
+      "kind": "state",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1–2"
+          "locator": "§3; Appendix B"
         }
       ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "代码 instruct 的平均提升主要来自 MBPP+： 43.2→55.8 ，增加 12.6 点"
-        },
-        {
-          "artifact": "article",
-          "quote": "工具 instruct 的五项均上升。"
-        },
-        {
-          "artifact": "article",
-          "quote": "固定初始教师的 Table 2 对照中，think 数学平均 63.38→59.10 ，下降 4.28 点"
-        }
-      ]
+      "article_quote": "一次采样的完整回答叫 rollout，token 是模型预测的文字单位。"
     },
     {
-      "id": "limitations",
-      "claim_type": "interpretation",
+      "term": "privileged information（PI）",
+      "kind": "prompt-context",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§8; Table 1; Appendix artifact check"
+          "locator": "§3–4; Appendix A.2"
         }
       ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "§8 仍将研究界定为 observational（观察性分析），没有通过逐项干预证明每一环都是后续变化的独立原因。"
-        },
-        {
-          "artifact": "article",
-          "quote": "四条验证回答不是多种子训练复现"
-        }
-      ]
+      "article_quote": "只有 teacher 看到的额外训练信息，叫 privileged information（PI）。"
     },
     {
-      "id": "pi-bias-definition",
-      "claim_type": "author-claim",
+      "term": "Jensen-Shannon divergence（JSD）",
+      "kind": "loss",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§6.1 Eq. 2; Figure 3; Appendix E"
+          "locator": "§4; Appendix B Table 7"
         }
       ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "两分支都强制读取目标解已写出的前文"
-        },
-        {
-          "artifact": "article",
-          "quote": "这个分数衡量概率偏好，不衡量准确率，也不是条件互信息的数值估计。"
-        },
-        {
-          "artifact": "article",
-          "quote": "原参考解 0.5229 ，另一正确解 0.0202"
-        }
-      ]
+      "article_quote": "训练程序用 Jensen-Shannon divergence（JSD，衡量两种概率分布差异的数值）形成逐 token 损失"
     },
     {
-      "id": "real-case-and-annotation-provenance",
-      "claim_type": "reproduced-calculation",
+      "term": "EMA",
+      "kind": "operation",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figure 6; Appendix A.2, C, D.3–D.4"
+          "locator": "§4; Appendix B Table 7"
         }
       ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "正确解选自模型自己答对的尝试，未宣称全部由人工撰写。"
-        },
-        {
-          "artifact": "article",
-          "quote": "2 的指数可为 0 到 24，共 25 种 。"
-        },
-        {
-          "artifact": "article",
-          "quote": "Python 3.12 示例，不是作者公开的训练或评测代码。"
-        }
-      ]
+      "article_quote": "教师副本按 θT ← 0.999 θT + 0.001 θS 跟随学生。这种移动平均叫 EMA。"
     },
     {
-      "id": "on-path-vs-action-correctness",
-      "claim_type": "author-claim",
+      "term": "teacher forcing",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix E Eq. 3–4"
+        }
+      ],
+      "article_quote": "两分支都读取目标已经写出的前文，再给目标 token 打概率；这种强制给定目标文本的计算叫 teacher forcing。"
+    },
+    {
+      "term": "PI Bias Score",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.1 Eq. 2; Appendix E"
+        }
+      ],
+      "article_quote": "作者取教师减学生的平均 log 概率，称为 PI Bias Score"
+    },
+    {
+      "term": "on-path / off-path",
+      "kind": "state",
       "source_ids": [
         "paper"
       ],
@@ -238,20 +223,276 @@
           "locator": "§6.4; Figure 4e"
         }
       ],
+      "article_quote": "作者按学生接下来写出参考解的概率排列位置，最高四分之一叫 on-path，最低四分之一叫 off-path。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–6; Figure 3; Table 1"
+        }
+      ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "最高四分之一叫 on-path，最低四分之一叫 off-path。"
+          "quote": "能预测一条正确解，不等于能指导其他正确解。"
         },
         {
           "artifact": "article",
-          "quote": "这不是人工标注的“正确路径/错误路径”，也不是逐字相似度。"
+          "quote": "8 个领域／模式平均中，6 个下降"
         }
       ]
     },
     {
-      "id": "loss-mass-vs-gradient",
+      "id": "training-iteration",
       "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4; Eq. 1; Appendix B Table 7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "teacher 多看 PI，在每个学生前文上计算下一 token 分布 pT"
+        },
+        {
+          "artifact": "article",
+          "quote": "教师概率停止梯度，只有学生分支接受更新。"
+        }
+      ]
+    },
+    {
+      "id": "parameters-and-divergence",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4; Appendix B; Table 7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "JSD 混合系数 0.5、教师 EMA 速率 0.001、损失截断 0.001 是三件不同的事。"
+        }
+      ]
+    },
+    {
+      "id": "recipe-non-isolation",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.2; Tables 1–2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 1 与 Table 2 的差分不是“只改变教师”的单项消融"
+        }
+      ]
+    },
+    {
+      "id": "pi-provenance-and-fallback",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4; Appendix A.2; public TeX/source package"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "随机选一条正确尝试作为 teacher 的 PI"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文没有说明一题 8 条都答错时怎样处理，也没有说明会不会把正在训练的回答本身选作参考解。"
+        }
+      ]
+    },
+    {
+      "id": "real-case-and-verdict-boundary",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 6; Appendix C–D; article Python arithmetic check"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "k=2ᵃ·3¹²，a=0,…,24，共 25 种"
+        },
+        {
+          "artifact": "article",
+          "quote": "只核对 25 的算术，不冒充官方 judge 或训练复现。"
+        }
+      ]
+    },
+    {
+      "id": "diagnostic-full-prefix",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.1; Appendix E Eq. 3–4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "两分支都读取目标已经写出的前文，再给目标 token 打概率；这种强制给定目标文本的计算叫 teacher forcing。"
+        },
+        {
+          "artifact": "article",
+          "quote": "不是准确率，也不是互信息估计"
+        },
+        {
+          "artifact": "article",
+          "quote": "训练后两分支参数也不同，不能把差值全部理解为固定同一模型下的纯上下文效应。"
+        }
+      ]
+    },
+    {
+      "id": "aggregation-and-uncertainty",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "paper-source"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4; Tables 1–2; source SDPO_NeurIPS.tex macros sdavgT/sdavgI"
+        },
+        {
+          "source_id": "paper-source",
+          "locator": "§4; Tables 1–2; source SDPO_NeurIPS.tex macros sdavgT/sdavgI"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每题评测采样 4 份回答再平均"
+        },
+        {
+          "artifact": "article",
+          "quote": "各领域再对 benchmark 等权平均"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文未明确它是 SD 还是 SE"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文也未明确主表究竟取最终还是最佳 checkpoint。"
+        }
+      ]
+    },
+    {
+      "id": "positive-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1 Coding and Agentic blocks"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "代码 instruct 的提升主要来自 MBPP+ 的 43.2→55.8 （+12.6），另外 4 项下降；工具 instruct 五项都上升。"
+        }
+      ]
+    },
+    {
+      "id": "coding-prose-vs-table",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "paper-source"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.2 versus Table 1; source sdavg macros"
+        },
+        {
+          "source_id": "paper-source",
+          "locator": "§5.2 versus Table 1; source sdavg macros"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "(−0.30+0.94)/2=+0.32"
+        },
+        {
+          "artifact": "article",
+          "quote": "这个表内计算不支持那句话"
+        }
+      ]
+    },
+    {
+      "id": "loss-vs-correctness",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.2; Figure 4a–c"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "答对与答错组平均损失约 3.5×10⁻⁴、KL 约 0.03"
+        },
+        {
+          "artifact": "article",
+          "quote": "Figure 4c 的绝对 log 概率差是正确约 0.7、错误约 0.45。"
+        }
+      ]
+    },
+    {
+      "id": "token-loss-not-gradient",
+      "claim_type": "interpretation",
       "source_ids": [
         "paper"
       ],
@@ -268,12 +509,85 @@
         },
         {
           "artifact": "article",
-          "quote": "作者没有测出“55.38% 的参数梯度”。"
+          "quote": "它是每 token 平均，与 Figure 4d 的损失总量占比不同。"
+        },
+        {
+          "artifact": "article",
+          "quote": "±1 SEM（均值标准误）"
         }
       ]
     },
     {
-      "id": "reward-scope-and-source-gap",
+      "id": "on-path-not-correctness-label",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.4; Figure 4e"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这不是人工标注的正确／错误步骤"
+        },
+        {
+          "artifact": "article",
+          "quote": "两组 KL 分布分别延伸到约 0.08 和 0.31，是范围而非均值。"
+        }
+      ]
+    },
+    {
+      "id": "training-curve-counterexamples",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 2 BFCL length and MMLU entropy panels; §5.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "原图中 BFCL 回答长度上升，MMLU 的 entropy（下一 token 分布的不确定程度）近乎平稳。"
+        }
+      ]
+    },
+    {
+      "id": "hint-and-skill-ablation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 3–5; Appendix A.2; Appendix D"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "数学 think 平均分别是 58.25 / 59.92"
+        },
+        {
+          "artifact": "article",
+          "quote": "它改变训练样本，不是人为限制同一模型测试时思考长度。"
+        },
+        {
+          "artifact": "article",
+          "quote": "排除成功率 0 和 1。题目选自训练池"
+        }
+      ]
+    },
+    {
+      "id": "split-unknown",
       "claim_type": "unknown",
       "source_ids": [
         "paper"
@@ -281,17 +595,83 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4, §8; arXiv-source package check 2026-10-08"
+          "locator": "Appendix A.1; Table 6"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "没有测试它与可验证成败奖励联合训练是否有效。"
+          "quote": "BFCL 总共只有 100 个任务，却没有解释如何适用“300 个验证样本”的通用说明。"
+        }
+      ]
+    },
+    {
+      "id": "causal-boundary-and-reward",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§8 Limitations and reward-retaining-methods discussion"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它也没有通过逐项干预证明完整失效链。"
         },
         {
           "artifact": "article",
-          "quote": "公开 arXiv 源文件包只有论文与图片，未找到对应实验代码或官方仓库"
+          "quote": "没有训练多种子复现，未测试奖励联合训练"
+        }
+      ]
+    },
+    {
+      "id": "source-reproducibility-gap",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "paper-source"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4 supplementary claim; source tar and current author-linked page inspected 2026-10-18"
+        },
+        {
+          "source_id": "paper-source",
+          "locator": "§4 supplementary claim; source tar and current author-linked page inspected 2026-10-18"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "arXiv 源文件包只有论文和图片"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开页面没有实验仓库链接"
+        }
+      ]
+    },
+    {
+      "id": "weak-pi-target-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.1 and Appendix E Targets"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "换成 hint 或 skill 后，教师提示中没有完整解，PS* 也改为评分同题的一份正确解"
         }
       ]
     }
@@ -302,48 +682,71 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §4.1",
-      "status": "omitted",
-      "rationale": "SciKnowEvalBiology/Physics复现曲线未绘；正文保留原regime正面趋势，不能概括为所有任务自蒸馏失败。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.3 Figure 1",
+      "status": "reused",
+      "rationale": "保留原正面复现曲线，折叠在Motivation后，限制“全部失败”的解释。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Figure 1，CC BY-NC-SA 4.0；仅裁去图外正文"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Figure 1，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/figure-1.webp"
+      ]
     },
     {
       "id": "figure-2",
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2; §5",
-      "status": "omitted",
-      "rationale": "四领域loss/validation/entropy/length曲线未复制，分数正负SVG不冒称源曲线复用，BFCL曲线使用2×accuracy。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.6 Figure 2",
+      "status": "reused",
+      "rationale": "完整16面板折叠保留；PPT放大BFCL行，正文指出回答长度与统一叙事不一致。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Figure 2，CC BY-NC-SA 4.0；四行对应 QA、数学、代码、BFCL；BFCL 验证 score=2×accuracy"
+        },
+        {
+          "artifact": "deck",
+          "locator": "“损失降、回答变短”并非所有领域都成立"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Figure 2，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/figure-2.webp",
+        "/lib/papers/privileged-but-biased/figure-2-bfcl-detail.webp"
+      ]
     },
     {
       "id": "figure-3",
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3; §6.1; Appendix E",
-      "status": "redrawn",
-      "rationale": "数学四目标PIBias按原数字重排deck表，补目标前文teacherforcing，机制SVG再讲训练/四目标诊断不同。",
+      "source_locator": "p.8 Figure 3",
+      "status": "reused",
+      "rationale": "正文与PPT放完整原始偏好图，保留三域四目标真实数值和排序反例。",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Figure 3，CC BY-NC-SA 4.0"
+        },
+        {
           "artifact": "deck",
-          "locator": "原参考解的增益远高于另一正确解"
+          "locator": "看过的那条正确解得到明显更大增益"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-3 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Figure 3，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
       "asset_paths": [
-        "/lib/papers/privileged-but-biased/training-and-diagnosis.svg"
+        "/lib/papers/privileged-but-biased/figure-3.webp"
       ]
     },
     {
@@ -351,48 +754,89 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4; §6.2–6.4",
-      "status": "omitted",
-      "rationale": "loss/KL重叠、tokenloss占比、on/offpath尾部图未绘，正文保留数值和分母，不把尾部作均值或loss作梯度。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.9 Figure 4",
+      "status": "reused",
+      "rationale": "完整六面板保留；正文与PPT放大成功失败loss/KL，PPT单独展示on/offpath。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，Figure 4a–b 局部，CC BY-NC-SA 4.0"
+        },
+        {
+          "artifact": "deck",
+          "locator": "答对和答错的回答，可以有相近蒸馏损失"
+        },
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Figure 4，CC BY-NC-SA 4.0；全部面板保留"
+        },
+        {
+          "artifact": "deck",
+          "locator": "暂时不易接回参考解，也可能最终答对"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Figure 4，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/figure-4-loss-detail.webp",
+        "/lib/papers/privileged-but-biased/figure-4.webp",
+        "/lib/papers/privileged-but-biased/figure-4-path-detail.webp"
+      ]
     },
     {
       "id": "figure-5",
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5; §6.3",
-      "status": "omitted",
-      "rationale": "按类别token数归一平均loss图未绘，文字说明它排除数量多带来的假解释，未声称保留各类别完整柱图。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.10 Figure 5",
+      "status": "reused",
+      "rationale": "保留按类别token数归一原图及SEM定义，不混作损失总量或梯度占比。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Figure 5，CC BY-NC-SA 4.0；误差线为 ±1 SEM（均值标准误）"
+        },
+        {
+          "artifact": "deck",
+          "locator": "犹豫词和停用词的平均单 token 损失较高"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Figure 5，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/figure-5.webp"
+      ]
     },
     {
       "id": "figure-6",
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6; Appendix C–D",
-      "status": "redrawn",
-      "rationale": "重绘真实lcm题及whole/hint/skill材料，右侧25计数由文章补算，不伪称完整模型结果或官方checker。",
+      "source_locator": "p.18 Figure 6",
+      "status": "reused",
+      "rationale": "正文保留完整三种PI原图，并在主线和PPT放原Hint局部；25计数明确为本文补算。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "题目和三种教师输入来自 Figure 6、Appendix C–D"
+          "locator": "Harne et al.，Figure 6 的 Hint 局部，CC BY-NC-SA 4.0"
+        },
+        {
+          "artifact": "deck",
+          "locator": "同一题，完整解与短提示提供了不同信息"
+        },
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Figure 6，CC BY-NC-SA 4.0；仅裁去图外正文"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-6 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Figure 6，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
       "asset_paths": [
-        "/lib/papers/privileged-but-biased/lcm-real-case.svg"
+        "/lib/papers/privileged-but-biased/figure-6-hint-detail.webp",
+        "/lib/papers/privileged-but-biased/figure-6.webp"
       ]
     },
     {
@@ -400,20 +844,35 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1; §5",
-      "status": "redrawn",
-      "rationale": "重排think/instruct八领域变化并画正负证据，保留四条评测样本非训练seeds和领域等权分母。",
+      "source_locator": "p.7 Table 1",
+      "status": "reused",
+      "rationale": "完整原表折叠保留；下半局部及原表头放主线，代码与工具分开PPT，突出正面反例。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Table 1–2 重绘"
+          "locator": "Harne et al.，Table 1 原表头与 Coding／Agentic 行局部拼接，CC BY-NC-SA 4.0；不是完整表，全部所示数值保留"
+        },
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Table 1，CC BY-NC-SA 4.0；全部行保留"
+        },
+        {
+          "artifact": "deck",
+          "locator": "MBPP+ 的提升足以让 instruct 平均为正"
+        },
+        {
+          "artifact": "deck",
+          "locator": "instruct 五项都上升，think 五项都下降"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 1，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
       "asset_paths": [
-        "/lib/papers/privileged-but-biased/positive-and-negative.svg"
+        "/lib/papers/privileged-but-biased/table-1-code-tool-detail.webp",
+        "/lib/papers/privileged-but-biased/table-1.webp",
+        "/lib/papers/privileged-but-biased/table-1-coding-detail.webp",
+        "/lib/papers/privileged-but-biased/table-1-agentic-detail.webp"
       ]
     },
     {
@@ -421,20 +880,20 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2; OPSD recipe control",
-      "status": "redrawn",
-      "rationale": "固定初始teacher一条采样另一KL单列，数学-4.28不当作只改EMA的消融。",
+      "source_locator": "p.8 Table 2",
+      "status": "reused",
+      "rationale": "保留不同OPSDrecipe完整原表，不能当作EMA单项消融。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "固定初始教师的对照另列"
+          "locator": "Harne et al.，原论文 Table 2，CC BY-NC-SA 4.0；与 Table 1 是不同配方，不混合计算"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 2，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
       "asset_paths": [
-        "/lib/papers/privileged-but-biased/positive-and-negative.svg"
+        "/lib/papers/privileged-but-biased/table-2.webp"
       ]
     },
     {
@@ -442,126 +901,595 @@
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3; §7",
-      "status": "redrawn",
-      "rationale": "三种PI数学均值进入deck消融表，58.25/59.92仍低于63.38且提示是模型生成。",
+      "source_locator": "p.9 Table 3",
+      "status": "reused",
+      "rationale": "保留完整PI形式消融原表，主文说清模型生成提示的限制，PPT放大显示。",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Table 3，CC BY-NC-SA 4.0；完整解、Hint、Skill 三组全部行保留"
+        },
+        {
           "artifact": "deck",
-          "locator": "完整解 → 短提示 / 技巧卡"
+          "locator": "换成 hint 或 skill，没有恢复基线成绩"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 3，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/table-3.webp"
+      ]
     },
     {
       "id": "table-4",
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4; §7",
-      "status": "redrawn",
-      "rationale": "short/medium/long训练样本均值重排deck，改变训练数据不等于缩短同模型测试回答。",
+      "source_locator": "p.11 Table 4",
+      "status": "reused",
+      "rationale": "保留完整长度分组原表，折叠补充说明traintertiles，不冒称推理长度干预。",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "训练回答长度：短 / 中 / 长"
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Table 4，CC BY-NC-SA 4.0；全部长度档与结果保留"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 4，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/table-4.webp"
+      ]
     },
     {
       "id": "table-5",
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5; §7",
-      "status": "redrawn",
-      "rationale": "按base八次成功率定义难度和32B对照重排，easy只指选中训练集，规模仍限Qwen家族。",
+      "source_locator": "p.12 Table 5",
+      "status": "reused",
+      "rationale": "保留全部难度与规模原表，折叠说明排除0和1成功率以及32B变化。",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "原模型较易 / 中等 / 较难训练题"
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Table 5，CC BY-NC-SA 4.0；全部难度／规模结果保留"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 5，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/table-5.webp"
+      ]
     },
     {
       "id": "table-6",
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6; Appendix A.1",
-      "status": "omitted",
-      "rationale": "全训练/ID/transfer题表未绘，正文报四领域数据量和分母，未假设统一judge或人工正确解。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.17 Table 6",
+      "status": "reused",
+      "rationale": "保留数据来源和迁移原表，正文补充指出100题BFCL与通用300验证的缺口。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Harne et al.，原论文 Table 6，CC BY-NC-SA 4.0；裁去表外正文，全部行保留"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 6，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
+      "asset_paths": [
+        "/lib/papers/privileged-but-biased/table-6.webp"
+      ]
     },
     {
       "id": "table-7",
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7; Appendix B",
-      "status": "redrawn",
-      "rationale": "主训练EMA安排在机制SVG重建，top100、JSD系数.5与截断.001不同，全超参由正文说明。",
+      "source_locator": "p.19 Table 7",
+      "status": "reused",
+      "rationale": "保留完整训练配置原表，折叠说明JSD/EMA/clipping不同与32B域差异。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 §3–4、Appendix E 重绘"
+          "locator": "Harne et al.，原论文 Table 7，CC BY-NC-SA 4.0；全部配置行保留"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-7 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "credit": "Harne et al.，原论文 Table 7，CC BY-NC-SA 4.0；图表外裁剪和局部拼接已标明",
       "asset_paths": [
-        "/lib/papers/privileged-but-biased/training-and-diagnosis.svg"
+        "/lib/papers/privileged-but-biased/table-7.webp"
       ]
+    },
+    {
+      "id": "listing-1",
+      "kind": "appendix-visual",
+      "label": "Listing 1: Rendered skill-card fields",
+      "source_id": "paper",
+      "source_locator": "p.19 Appendix C–D Listing 1",
+      "status": "omitted",
+      "rationale": "五字段纯文本格式；正文解释通用技巧卡，避免把字段框再做装饰图。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-2",
+      "kind": "appendix-visual",
+      "label": "Listing 2: General reasoning and mathematics problem prompt",
+      "source_id": "paper",
+      "source_locator": "p.20 Appendix C–D Listing 2",
+      "status": "omitted",
+      "rationale": "简单boxed答案包装；不是机制原图，附录链接保留完整原文。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-3",
+      "kind": "appendix-visual",
+      "label": "Listing 3: Coding problem prompt",
+      "source_id": "paper",
+      "source_locator": "p.20 Appendix C–D Listing 3",
+      "status": "omitted",
+      "rationale": "Python1秒限制题目包装，非本文核心局部judge，完整字符串保留在附录源。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-4",
+      "kind": "appendix-visual",
+      "label": "Listing 4: MMLU-Pro multiple-choice prompt",
+      "source_id": "paper",
+      "source_locator": "p.20 Appendix C–D Listing 4",
+      "status": "omitted",
+      "rationale": "多选题包装含选项占位符，正文说明QA评测，未复制纯文字图片。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-5",
+      "kind": "appendix-visual",
+      "label": "Listing 5: GPQA prompt",
+      "source_id": "paper",
+      "source_locator": "p.20 Appendix C–D Listing 5",
+      "status": "omitted",
+      "rationale": "字母选择与boxed格式，非新增实验，原prompt可从附录直接核查。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-6",
+      "kind": "appendix-visual",
+      "label": "Listing 6: SciKnowEval system prompt",
+      "source_id": "paper",
+      "source_locator": "p.21 Appendix C–D Listing 6",
+      "status": "omitted",
+      "rationale": "reasoning/answer标记的模板，不作为核心图示；原字符串在附录D。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-7",
+      "kind": "appendix-visual",
+      "label": "Listing 7: Default reprompt template",
+      "source_id": "paper",
+      "source_locator": "p.21 Appendix C–D Listing 7",
+      "status": "omitted",
+      "rationale": "正文解释问题+PI+反馈的角色，完整默认纯文本模板不重复截图。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-8",
+      "kind": "appendix-visual",
+      "label": "Listing 8: Default solution section",
+      "source_id": "paper",
+      "source_locator": "p.21 Appendix C–D Listing 8",
+      "status": "omitted",
+      "rationale": "正文说明successful_previous_attempt来源和可见性，不把文件字段图像当流程证据。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-9",
+      "kind": "appendix-visual",
+      "label": "Listing 9: Default feedback section",
+      "source_id": "paper",
+      "source_locator": "p.21 Appendix C–D Listing 9",
+      "status": "omitted",
+      "rationale": "可选错误反馈模板，不表示每题都用反馈；本次主线围绕完整解PI。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-10",
+      "kind": "appendix-visual",
+      "label": "Listing 10: Default hint template",
+      "source_id": "paper",
+      "source_locator": "p.21 Appendix C–D Listing 10",
+      "status": "omitted",
+      "rationale": "提示标签已在case解释，完整原提示文本保留源链接，不重复占用正文。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-11",
+      "kind": "appendix-visual",
+      "label": "Listing 11: Mathematics reprompt and hint templates",
+      "source_id": "paper",
+      "source_locator": "p.22 Appendix C–D Listing 11",
+      "status": "omitted",
+      "rationale": "正文说明数学模板将hint标为correctsolution，并要求自己的方法；纯模板不截图。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-12",
+      "kind": "appendix-visual",
+      "label": "Listing 12: Multi-turn agentic reprompt and solution templates",
+      "source_id": "paper",
+      "source_locator": "p.22 Appendix C–D Listing 12",
+      "status": "omitted",
+      "rationale": "数学runningcase之外的agentic标签覆盖在附录链接，未假称官方执行judge。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-13",
+      "kind": "appendix-visual",
+      "label": "Listing 13: Hint generation prompt",
+      "source_id": "paper",
+      "source_locator": "p.22 Appendix C–D Listing 13",
+      "status": "omitted",
+      "rationale": "正文保留1–3句、禁止数值与独立生成模型的约束，完整prompt原文附录可查。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-14",
+      "kind": "appendix-visual",
+      "label": "Listing 14: Compressed-solution generation prompt",
+      "source_id": "paper",
+      "source_locator": "p.23 Appendix C–D Listing 14",
+      "status": "omitted",
+      "rationale": "附录披露压缩解但没有单独结果配置；正文明确此边界，不补造实验。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
+    },
+    {
+      "id": "listing-15",
+      "kind": "appendix-visual",
+      "label": "Listing 15: Skill derivation prompt",
+      "source_id": "paper",
+      "source_locator": "p.23 Appendix C–D Listing 15",
+      "status": "omitted",
+      "rationale": "正文说明按簇生成与250–400词，并保留与500词/token的单位冲突。",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "Plain-text listing, not reused as an image; complete source linked.",
+      "credit": ""
     }
   ],
   "figures": [
     {
-      "path": "/lib/papers/privileged-but-biased/training-and-diagnosis.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/privileged-but-biased/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p.3 Figure 1",
+      "credit": "Harne et al.，Figure 1 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.6 Figure 2",
+      "credit": "Harne et al.，Figure 2 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-2-bfcl-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.6 Figure 2",
+      "credit": "Harne et al.，Figure 2 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-3.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-3",
       "source_id": "paper",
-      "source_locator": "§3–4; Figure 3; Appendix B and E",
-      "credit": "根据 §3–4、Appendix E 重绘",
+      "source_locator": "p.8 Figure 3",
+      "credit": "Harne et al.，Figure 3 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
       "used_in": [
         "article",
         "deck"
       ]
     },
     {
-      "path": "/lib/papers/privileged-but-biased/lcm-real-case.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/privileged-but-biased/figure-4-loss-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.9 Figure 4",
+      "credit": "Harne et al.，Figure 4 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.9 Figure 4",
+      "credit": "Harne et al.，Figure 4 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-4-path-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.9 Figure 4",
+      "credit": "Harne et al.，Figure 4 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.10 Figure 5",
+      "credit": "Harne et al.，Figure 5 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/figure-6-hint-detail.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-6",
       "source_id": "paper",
-      "source_locator": "Figure 6; Appendix C–D; article arithmetic",
-      "credit": "题目和三种教师输入来自 Figure 6、Appendix C–D",
+      "source_locator": "p.18 Figure 6",
+      "credit": "Harne et al.，Figure 6 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
       "used_in": [
         "article",
         "deck"
       ]
     },
     {
-      "path": "/lib/papers/privileged-but-biased/positive-and-negative.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/privileged-but-biased/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p.18 Figure 6",
+      "credit": "Harne et al.，Figure 6 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-1-code-tool-detail.webp",
+      "origin": "paper-original",
       "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Tables 1–2, distinct recipes",
-      "credit": "根据 Table 1–2 重绘",
+      "source_locator": "p.7 Table 1",
+      "credit": "Harne et al.，Table 1 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.7 Table 1",
+      "credit": "Harne et al.，Table 1 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-1-coding-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.7 Table 1",
+      "credit": "Harne et al.，Table 1 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-1-agentic-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.7 Table 1",
+      "credit": "Harne et al.，Table 1 原图局部，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p.8 Table 2",
+      "credit": "Harne et al.，Table 2 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p.9 Table 3",
+      "credit": "Harne et al.，Table 3 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "p.11 Table 4",
+      "credit": "Harne et al.，Table 4 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-5",
+      "source_id": "paper",
+      "source_locator": "p.12 Table 5",
+      "credit": "Harne et al.，Table 5 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p.17 Table 6",
+      "credit": "Harne et al.，Table 6 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/table-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-7",
+      "source_id": "paper",
+      "source_locator": "p.19 Table 7",
+      "credit": "Harne et al.，Table 7 原图，CC BY-NC-SA 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Specified arXiv v1 entry https://arxiv.org/abs/2608.04794v1 explicitly links CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/, checked 2026-10-18. Noncommercial attributed blog reuse; cropped/reproduced images remain under that license. Outside prose removed; detail crops and original-header joins labelled.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/privileged-but-biased/training-compact.svg",
+      "origin": "generated",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locator": "§3–4; Appendix B, article supplementary diagram",
+      "credit": "本文根据 §3–4、Appendix B 补充的训练流程图",
       "used_in": [
         "article",
         "deck"
@@ -569,6 +1497,97 @@
     }
   ],
   "qa": {
+    "status": "completed-current-artifacts",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-18",
+      "reader_reconstruction": "Student8samples own answers; teacher receives own successful PI and same prefix; JSD stopped teacher+EMA. allwrong/selfrefunknown. Real lcm25 recomputed, officialjudgeunavailable. Forced-targetlogratio with targetprefix, notaccuracy. Centralcomparison rewardretained vsalone; strongest exceptions instruct+.94/+4.68, codingaggregate+.32 disagrees prose, BFCLlengthincreases. Fullcausalchain notvalidated."
+    },
+    "collection_revision": {
+      "date": "2026-10-18",
+      "language_and_length": "Paragraph-level rewrite, six numbered anchors preserved; unnecessary metric strip removed. Complete source tables and secondary diagnostics folded; central iteration, case, scoring, positive exceptions and uncertainties visible.",
+      "images": "All13 numbered original figures/tables restored with verified noncommercial/sharealike attribution; compact training supplement. Detailed figures avoid unreadable thumbnail-only slides.",
+      "default_visible_characters": 4722,
+      "default_reading_height_900px": 7972,
+      "screenshots_reviewed": "Main agent inspected desktop/mobile full-route contact sheets, all figure and slide compositions, dense originals at actual 900px and embedded size, dark header/navigation/body, updated slide3, and mobile bottom scroll snapshots."
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "overview_close_and_toggle": true,
+      "image_fit_and_focus_restore": true,
+      "code_copy": true,
+      "mobile_vertical_and_horizontal_wheel": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/privileged-layout.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/privileged-interactions.json",
+      "mobile_scroll": "output/playwright/old-paper-refresh-20261018/privileged-mobile-scroll.json",
+      "raw_errors": [],
+      "browser": "Isolated headless old-paper-refresh-20261018; DOM fullscreen tested, native window fullscreen not claimed"
+    },
+    "current_artifact_hashes": {
+      "content/_posts/084-privileged-but-biased.md": "70421f544f50cfae997bb602690e499ed1e7eee809fcff2ba80b320c38ce619e",
+      "lib/decks/privileged-but-biased-visual-guide.html": "c38776310404a76b8bd08d59e8890aaf127daef40f71608795aee59fb6bd2e5b",
+      "dist/posts/论文解读/privileged-but-biased.html": "501e69923a207eac7ff30e92d576dd714f8523766b0d58a4e61740a92ec92f4e",
+      "dist/lib/decks/privileged-but-biased-visual-guide.html": "c38776310404a76b8bd08d59e8890aaf127daef40f71608795aee59fb6bd2e5b",
+      "lib/decks/paper-deck-v2.css": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a",
+      "lib/decks/paper-deck-v2.js": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb",
+      "lib/decks/paper-deck-mobile-reader.css": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb",
+      "lib/decks/paper-deck-mobile-reader.js": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+    }
+  },
+  "qa_history_20261014": {
     "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
@@ -698,190 +1717,5 @@
       "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
     },
     "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
-  },
-  "legacy_qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 16.5,
-      "line_height": 1.75,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
-    ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  },
-  "terminology": [
-    {
-      "term": "PI Bias Score",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§6.1, Eq. 2; Figure 3; Appendix E target-prefix teacher-forcing definition"
-        }
-      ],
-      "article_quote": "作者固定学生回答的前文，分别接上四种目标：教师看到的正确解、同题另一条正确解、同题错误解、另一道题的正确解。"
-    },
-    {
-      "term": "student",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3–4"
-        }
-      ],
-      "article_quote": "直接回答问题、接受参数更新的分支叫 student（学生分支） 。"
-    },
-    {
-      "term": "teacher",
-      "kind": "model-call",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3–4"
-        }
-      ],
-      "article_quote": "训练时，另一个分支额外看到正确解，并给学生已经写出的回答逐位置打概率；这叫 teacher（教师分支） 。"
-    },
-    {
-      "term": "privileged information（PI）",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3–4; Appendix A.2 and D"
-        }
-      ],
-      "article_quote": "额外正确解就是 privileged information（PI，训练期特权信息） ，测试时学生看不到它。"
-    },
-    {
-      "term": "rollout",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3–4; Eq. 1"
-        }
-      ],
-      "article_quote": "模型一次生成的完整回答叫 rollout"
-    },
-    {
-      "term": "Jensen–Shannon divergence（JSD）",
-      "kind": "loss",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3; Eq. 1; Table 7"
-        }
-      ],
-      "article_quote": "作者用两个概率分布之间的 Jensen–Shannon divergence（JSD，一种衡量分布差异的数值）形成逐位置损失。"
-    },
-    {
-      "term": "EMA",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4; Table 7"
-        }
-      ],
-      "article_quote": "教师参数随后缓慢跟随学生： θT ← 0.999 θT + 0.001 θS 。这个移动平均叫 EMA"
-    },
-    {
-      "term": "teacher forcing",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix E"
-        }
-      ],
-      "article_quote": "两分支都强制读取目标解已写出的前文 ，再计算目标每个 token 的概率，最后取平均；这种给定目标文本的评分过程叫 teacher forcing。"
-    },
-    {
-      "term": "on-path / off-path",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§6.4; Figure 4e"
-        }
-      ],
-      "article_quote": "作者还按学生对参考解的预测概率排序：最高四分之一叫 on-path，最低四分之一叫 off-path。"
-    }
-  ]
+  }
 }
