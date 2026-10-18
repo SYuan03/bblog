@@ -59,6 +59,9 @@ dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-ro
  p,li,.lead{font-size:15px;line-height:1.8}.note,.small{font-size:13px}.content{flex:none;min-height:0;gap:16px}.source{font-size:11px;line-height:1.65;margin-top:18px;flex-wrap:wrap}
  .split,.split.figure-side,.split.case,.split.result,.columns{display:flex;flex-direction:column;gap:16px;align-items:stretch}
  .paper-image img,.paper-image[data-tall] img,.split.result .paper-image img,.split.case .paper-image img{max-height:none;width:100%}
+ .split.result .paper-image,.image-wide,.split.case .paper-image{overflow-x:auto;overscroll-behavior-x:contain}
+ .split.result .paper-image img,.image-wide img{width:780px;max-width:none;margin:0;height:auto}
+ .split.case .paper-image img{width:780px;max-width:none;margin:0;height:auto}
  .figure-side .paper-image{max-width:250px;margin:auto}.paper-image figcaption,.frame-hint{font-size:11px}
  .construction-panels,.construction-copy{grid-template-columns:1fr;gap:16px}.construction-panels .paper-image img{max-height:none;width:100%}.construction-copy p{font-size:14px;line-height:1.8}
  table,.compact,.score-table{font-size:13px;line-height:1.6}th,td,.compact th,.compact td{padding:7px 6px}.table-box{overflow-x:auto}.table-box table{min-width:530px}
@@ -78,7 +81,7 @@ dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-ro
 <section class="slide" data-title="核心问题" aria-label="第 1 页：核心问题">
 <p class="meta"><span>ExeWorldBench · Peng et al. · arXiv v1 · 2026-10-10</span><span>01 / 18</span></p>
 <h1>用代码搭出能工作的 3D 机械装置</h1>
-<p class="lead">一张机构图或一段目标描述，能否变成靠实际机械作用运行的 Blender 场景？</p>
+<p class="lead">给出机构图或目标描述，让模型用三维模拟软件 Blender 搭出靠机械作用运行的装置。</p>
 <div class="content">
 <button class="paper-image image-low" data-image="/lib/papers/exeworldbench/figure-9-detail-codex.png" data-caption="Figure 9 局部裁切：Codex 的 053 任务输出。V=7，ECM=5，G=100%。Peng et al., v1 p.19, CC BY 4.0。" aria-label="放大原文 Figure 9 的 Codex 行"><img src="/lib/papers/exeworldbench/figure-9-detail-codex.png" width="888" height="206" alt="原图裁切：A和B经过共享路口的四个动画时刻"></button>
 <div class="columns"><p>真实题目 <code>053</code>：B 先开始接近，A 先过路口；A 完全离开后，由机械机构放行 B。</p><p>这份输出的目标条件得 100%，机械执行只得 5 / 10。<strong>条件满足率不等于整题机械正确。</strong></p></div>
@@ -89,7 +92,7 @@ dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-ro
 <section class="slide" data-title="Blender 背景" hidden aria-label="第 2 页：Blender 背景">
 <p class="meta"><span>PART 0 · 运动从哪里来</span><span>02 / 18</span></p><h2>关键帧直接规定位置，刚体由物理引擎推进</h2>
 <div class="content split">
-<div class="text-stack"><p>Blender 的 Python 接口 <code>bpy</code> 创建几何、碰撞和关节。<code>.py</code> 是程序，<code>.blend</code> 是运行后保存的场景。</p><p>关键帧：指定物体在某一帧的位置。刚体模拟：设置质量、碰撞形状和约束，由重力、接触等决定后续运动。</p><p>任务允许合理初始驱动，禁止给下游零件安排独立的运动时间表。</p></div>
+<div class="text-stack"><p>Blender 的 Python 接口 <code>bpy</code> 创建几何、碰撞和关节。<code>.py</code> 是程序，<code>.blend</code> 是运行后保存的场景。</p><p>关键帧：指定物体在某一帧的位置。刚体模拟：设置质量、碰撞形状和约束，由重力、接触等决定后续运动。</p><p>适当的输入组件可以直接驱动，例如循环机构的输入轴。下游零件须靠机械连接或接触运动，不能各自按时间表启动。</p></div>
 <div><pre><code>import bpy
 
 # 教学片段：让现有球参与刚体模拟
@@ -206,7 +209,7 @@ bpy.context.scene.gravity = (0, 0, -9.81)</code></pre><p class="note">假设已�
 <section class="slide" data-title="053：原始结果" hidden aria-label="第 11 页：053 的原始结果">
 <p class="meta"><span>REAL CASE · 看原图，不编造未发布的判分日志</span><span>11 / 18</span></p><h2>G=100% 仍可能只有 ECM=5</h2>
 <div class="content split case">
-<div><button class="paper-image" data-image="/lib/papers/exeworldbench/figure-9.png" data-caption="Figure 9 完整原图。Codex: V7 ECM5 G100%；Astra API: V7 ECM7 G100%；DeepSeek: V3 ECM1 G28.60%；Qwen: V2 ECM0 G0%。Peng et al., v1 p.19, CC BY 4.0。" aria-label="放大完整Figure 9"><img src="/lib/papers/exeworldbench/figure-9.png" width="888" height="749" alt="Figure 9完整模型输出比较"></button><p class="frame-hint">Figure 9 原图 · 每行是同一输出的四个时刻</p></div>
+<div><button class="paper-image" data-image="/lib/papers/exeworldbench/figure-9.png" data-caption="Figure 9 完整原图。Codex: V7 ECM5 G100%；Astra API: V7 ECM7 G100%；DeepSeek: V3 ECM1 G28.60%；Qwen: V2 ECM0 G0%。Peng et al., v1 p.19, CC BY 4.0。" aria-label="放大完整Figure 9"><img src="/lib/papers/exeworldbench/figure-9.png" width="888" height="749" alt="Figure 9完整模型输出比较"></button><p class="frame-hint">Figure 9 原图 · 每行四个时刻 · 手机可横滑</p></div>
 <div class="text-stack"><p>V、ECM、G 独立评价。目标条件全部被判满足，也不强制机械分为 10。</p><p>原规格有 7 条 I、13 条 Rules、3 条 F。但 Rules 到评分 B 条目的逐项映射未公开。</p><p><strong>不能拿 23 当官方评分分母，反推 28.60% 通过了哪几条。</strong></p><p class="note">这是作者选择的代表结果，没有逐条 judge 输出或生成代码，不能把缩略图变成详细失败日志。</p></div>
 </div>
 <p class="source"><span>Figure 9；公开 task 053；eval/t3/prompt2_1.txt。</span><span>Judge 只使用可见证据</span></p>
@@ -225,8 +228,8 @@ bpy.context.scene.gravity = (0, 0, -9.81)</code></pre><p class="note">假设已�
 <section class="slide" data-title="多级组合结果" hidden aria-label="第 13 页：多级组合结果">
 <p class="meta"><span>RESULTS · 执行错误与机械错误分开看</span><span>13 / 18</span></p><h2>能运行的程序，仍可能接不通整条链</h2>
 <div class="content split result">
-<div><button class="paper-image" data-image="/lib/papers/exeworldbench/table-2.png" data-caption="Table 2 完整原表：T2，100题，全题均值。E执行率，V结构分，ECM机械动作与传递分。下标1/2修复前后。Peng et al., CC BY 4.0。" aria-label="放大原文Table 2"><img src="/lib/papers/exeworldbench/table-2.png" width="1616" height="1016" alt="Table 2原表T2执行率与机械分"></button><p class="frame-hint">Table 2 原表 · 点击看完整大图</p></div>
-<div class="text-stack"><p class="small">T2：Kimi 修复后 79% 可执行，ECM=0。Codex ECM=5.25，Claude Code=4.08。</p><p class="small">T1 也有差距：Kimi 执行率 8% → 86%，M 仅 0.04 → 0.80。</p><p class="small">T3-1：Codex ECM=6.11；Astra API 修复后=3.34。</p><p class="note">不同任务分布，不是同题受控去提示实验；跨 T1/T2/T3 比分数要谨慎。</p></div>
+<div><button class="paper-image" data-image="/lib/papers/exeworldbench/table-2.png" data-caption="Table 2 完整原表：T2，100题，全题均值。E执行率，V结构分，ECM机械动作与传递分。下标1/2修复前后。Peng et al., CC BY 4.0。" aria-label="放大原文Table 2"><img src="/lib/papers/exeworldbench/table-2.png" width="1616" height="1016" alt="Table 2原表T2执行率与机械分"></button><p class="frame-hint">Table 2 原表 · 点击放大 · 手机可横滑</p></div>
+<div class="text-stack"><p class="small">T2：Kimi 修复后 79% 可执行，ECM=0。Codex ECM=5.25，Claude Code=4.08。</p><p class="small">T1 的 Kimi 执行率 8% → 86%，M 仅 0.04 → 0.80。</p><p class="note">各设置题目不同，不能直接把 T2 与 T3-1 看作同题减少提示的受控实验。</p></div>
 </div>
 <p class="source"><span>主表 Tables 1–3；全题均值。单题 Figure 7 中 Astra API 的 ECM 高于 Codex。</span><span>平均领先不等于逐题领先</span></p>
 </section>
@@ -234,8 +237,8 @@ bpy.context.scene.gravity = (0, 0, -9.81)</code></pre><p class="note">假设已�
 <section class="slide" data-title="目标设计结果" hidden aria-label="第 14 页：目标设计结果">
 <p class="meta"><span>RESULTS · T3-2 · 60 道目标设计题</span><span>14 / 18</span></p><h2>Codex 的 90.14% 是条件满足率，机械分为 5.82</h2>
 <div class="content split result">
-<div><button class="paper-image" data-image="/lib/papers/exeworldbench/table-4.png" data-caption="Table 4 完整原表：T3-2，全60题。Codex G90.14% ECM5.82；Claude Code G75.19% ECM5.17；Astra API修复后G41.07% ECM2.55。Peng et al., CC BY 4.0。" aria-label="放大原文Table 4"><img src="/lib/papers/exeworldbench/table-4.png" width="1624" height="1012" alt="Table 4原表目标设计任务结果"></button><p class="frame-hint">Table 4 原表 · 点击放大</p></div>
-<div class="text-stack"><p class="small">Astra API 修复后 91.67% 能执行，G=41.07%，ECM=2.55。</p><p class="small">Kimi 修复后 81.67% 能执行，G=18.13%，ECM=0.63。</p><p class="small">初始位置容易满足；中途行为和最终持续状态更难。</p><p class="note">Harness 可多轮执行修改。当前实验没有分离基础模型、更多尝试、执行反馈与外部修复的贡献。</p></div>
+<div><button class="paper-image" data-image="/lib/papers/exeworldbench/table-4.png" data-caption="Table 4 完整原表：T3-2，全60题。Codex G90.14% ECM5.82；Claude Code G75.19% ECM5.17；Astra API修复后G41.07% ECM2.55。Peng et al., CC BY 4.0。" aria-label="放大原文Table 4"><img src="/lib/papers/exeworldbench/table-4.png" width="1624" height="1012" alt="Table 4原表目标设计任务结果"></button><p class="frame-hint">Table 4 原表 · 点击放大 · 手机可横滑</p></div>
+<div class="text-stack"><p class="small">Astra API 修复后 91.67% 能执行，G=41.07%，ECM=2.55。</p><p class="small">Kimi 为 81.67%、18.13%、0.63。</p><p class="note">当前实验没有分离基础模型、尝试次数、执行反馈与外部修复的贡献。</p></div>
 </div>
 <p class="source"><span>Table 4；I/B/F 类别结果见原 Figure 5，正文保留全部附录表。</span><span>无严格整题成功率</span></p>
 </section>
@@ -274,7 +277,7 @@ bpy.context.scene.gravity = (0, 0, -9.81)</code></pre><p class="note">假设已�
 <section class="slide" data-title="结论与阅读" hidden aria-label="第 18 页：结论与阅读">
 <p class="meta"><span>CONCLUSION · 博客作者兴趣程度 9 / 10</span><span>18 / 18</span></p><h2>读任务与判分细节，再理解榜单</h2>
 <div class="content">
-<div class="sequence"><section><h3>值得保留</h3><p>四种提示边界；053 的提前接近与机械放行；断链零分；主表与附录的不同分母。</p></section><section><h3>当前证据</h3><p>执行率能高，机械分仍很低。Harness 平均领先，但没有匹配预算或分离反馈贡献。</p></section><section><h3>仍缺材料</h3><p>批量执行程序、组件实现、每轮修复改动、Rules → B 映射、逐题分数与采样参数。</p></section></div>
+<div class="sequence"><section><h3>任务</h3><p>四种设置各给不同输入；053 要提前接近、机械放行。不能用定时动画替代机械传递。</p></section><section><h3>结果</h3><p>执行率能高，机械分仍很低。Harness 平均领先，但没有匹配预算或分离反馈贡献。</p></section><section><h3>复现缺口</h3><p>批量执行程序、组件实现、每轮修复改动、Rules → B 映射、逐题分数与采样参数。</p></section></div>
 <button class="paper-image image-low" data-image="/lib/papers/exeworldbench/figure-9-detail-codex.png" data-caption="Figure 9 Codex 行裁切。目标100%，ECM5。完整案例、图表和证据边界见正文。Peng et al., CC BY 4.0。" aria-label="放大结论中的原图"><img src="/lib/papers/exeworldbench/figure-9-detail-codex.png" width="888" height="206" alt="053的原文机械装置案例"></button>
 <p class="note">正文可独立阅读，含全部 9 张原图、9 张原表、公开提示细节与可运行的算术例子。图表点击可放大；底部“回文章”始终有效。</p>
 </div>
