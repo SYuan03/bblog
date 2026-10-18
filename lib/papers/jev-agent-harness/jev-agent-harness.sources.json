@@ -1,1 +1,2189 @@
-{"schema_version":3,"paper":{"title":"JevAgentHarness: Benchmarking, Deploying and Training Decision Models That Share Control with LLMs","kind":"benchmark","primary_source_ids":["paper","repo"],"earliest_arxiv_date":"2026-10-15","earliest_arxiv_timestamp_utc":"2026-10-15T07:27:08Z"},"artifacts":{"article":"content/_posts/091-jev-agent-harness.md","deck":"lib/decks/jev-agent-harness.html","embed_src":"/lib/decks/jev-agent-harness.html"},"sources":[{"id":"paper","kind":"paper","title":"JevAgentHarness: Benchmarking, Deploying and Training Decision Models That Share Control with LLMs","url":"https://arxiv.org/pdf/2610.21412v1","revision":"2610.21412v1","used_for":["complete paper, appendix, cases, metrics, negative experiments"]},{"id":"arxiv-entry","kind":"metadata","title":"v1 date and reuse license","url":"https://arxiv.org/abs/2610.21412v1","revision":"v1 published 2026-10-15","used_for":["title","date","CC BY-NC-SA4.0"]},{"id":"repo","kind":"code","title":"JevAgentHarness official code and follow-up experiments","url":"https://github.com/JevAgentHarness/JevAgentHarness/tree/f2932199e1ef1d9f089b51d39430c87be0f560b5","revision":"f2932199e1ef1d9f089b51d39430c87be0f560b5","used_for":["checker","data","threshold","OPD","GRPO","bench/PROTOCOL.md and README follow-up routing"]}],"paper_reading":{"main_agent_complete_read":true,"appendices_included":true,"extracted_text_reviewed":true,"rendered_pages_reviewed":true,"page_count":44,"rendered_page_ranges":[{"start":1,"end":44}],"source_visuals_expected":54,"visual_inventory_complete":true},"note_sections":[{"role":"problem","locator":"1. Motivation：答对下一步，不等于做成整件事"},{"role":"related-work","locator":"2. Related Work：重点是执行中的选项决策，不是完整代码蒸馏"},{"role":"method","locator":"3. Method / Protocol：选项、阈值、执行与答案键"},{"role":"experiments","locator":"4. Experiments：有效的是特定状态上的监督，不是普遍可靠的接管"},{"role":"future-work","locator":"5. Discussion：做 agentic OPD，最值得借鉴的是测试设计"},{"role":"summary","locator":"6. Conclusion：一篇值得读的决策系统论文，不是 OPD 成功范例"}],"terminology":[{"term":"harness","kind":"actor","article_quote":"组织模型调用、工具、历史记录和执行流程的外层软件，本文沿用 harness 。","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"§1–2"}]},{"term":"decision model","kind":"actor","article_quote":"作者将读取当前文字状态、对有限选项打分的小模型称为 decision model 。","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Section §2"}]},{"term":"defer","kind":"operation","article_quote":"本文用“交回大模型”解释 defer ：小模型最优选项的概率低于阈值，harness 不执行该选项，改请大模型决定。","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Section §2"}]},{"term":"Cascade","kind":"operation","article_quote":"论文主要使用 Cascade 模式，即先问小模型，再按阈值决定是否交回；自由文本参数始终需要大模型生成。","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Section §2"}]},{"term":"answer key","kind":"prompt-context","article_quote":"生成程序知道标准操作计划与真实世界状态，由此生成每一步可接受选项，作者称为 answer key （答案键）。","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Appendix B.3–B.4"}]},{"term":"non-inferiority","kind":"metric","article_quote":"作者将成功率下降不超过 3 个百分点作为 DecisionGym 等任务的 non-inferiority （非劣效）界限；τ²-bench 用 5 点。","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Appendix E"}]}],"coverage":[{"id":"central-claim","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"§1,7"}],"evidence":[{"artifact":"article","quote":"决策模型需要在真实执行过程里测，不能只用独立选择题排名。"}]},{"id":"task-provenance","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"B.2, D.10 / jevgym.py"}],"evidence":[{"artifact":"article","quote":"作者编写生成器创建客服世界：12 个客户，每人 2–4 个订单，10 类库存"}]},{"id":"annotation-and-check-construction","claim_type":"inspected-implementation","source_ids":["paper","repo"],"source_locators":[{"source_id":"paper","locator":"B.3–B.4 / jevgym.py"},{"source_id":"repo","locator":"B.3–B.4 / jevgym.py"}],"evidence":[{"artifact":"article","quote":"没有额外的人工 check.json 标注过程。"}]},{"id":"public-vs-hidden-inputs","claim_type":"inspected-implementation","source_ids":["paper","repo"],"source_locators":[{"source_id":"paper","locator":"B.3–B.4 / oracle_acceptable_tool_sets"},{"source_id":"repo","locator":"B.3–B.4 / oracle_acceptable_tool_sets"}],"evidence":[{"artifact":"article","quote":"答案键在模型答案记录后、复制的环境里计算，不进入被测提示"}]},{"id":"evaluation-formulas","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"§3 / Appendix E"}],"evidence":[{"artifact":"article","quote":"先算每题状态准确率，再对题平均"}]},{"id":"checker-code-and-cases","claim_type":"inspected-implementation","source_ids":["paper","repo"],"source_locators":[{"source_id":"paper","locator":"Table6 / jevgym.py _write_is_gold,_step,evaluate"},{"source_id":"repo","locator":"Table6 / jevgym.py _write_is_gold,_step,evaluate"}],"evidence":[{"artifact":"article","quote":"即使猜中了 ORD-4002，只要没先问清就取消，也判失败。"},{"artifact":"article","quote":"实际代码也检查这些行为。判分规则推得的失败例不冒充实测日志。"}]},{"id":"model-results","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Tables2,27–29"}],"evidence":[{"artifact":"article","quote":"共享 GPU 上却从 6.83 s 慢到 10.21 s。"}]},{"id":"related-work-comparison","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"§8 / Appendix H"}],"evidence":[{"artifact":"article","quote":"论文没有加入训练后的 RouteLLM 作为完整路由基线"}]},{"id":"limitations","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Table19 / Appendix D.6, E"}],"evidence":[{"artifact":"article","quote":"新规则会导致高置信度失败；影子校准无法覆盖接管后的全部状态"}]},{"id":"opd-negative","claim_type":"author-claim","source_ids":["paper"],"source_locators":[{"source_id":"paper","locator":"Table16 / D.2–D.4"}],"evidence":[{"artifact":"article","quote":"Qwen 路线的开发准确率在 SFT 后为 99.7%，OPD 后为 98.9%"}]}],"source_visuals":[{"id":"figure-1","kind":"figure","label":"Figure 1","source_id":"paper","source_locator":"p.1, Figure 1","status":"omitted","rationale":"开篇直觉由 Figure3 的完整控制权图替代，避免重复画相同大/小模型分工。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"figure-2","kind":"figure","label":"Figure 2","source_id":"paper","source_locator":"p.2, Figure 2","status":"reused","rationale":"Figure 2保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 2 · 工作总览。Stage 1 分别测试每种接管方式，Stage 2 冻结筛选出的组合并测新题。图画出了 SFT 与 GRPO，但不代表两阶段都贡献了收益。Zhu et al., v1"},{"artifact":"deck","locator":"分别测试，再冻结组合到新任务"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 2, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-2.png"]},{"id":"figure-3","kind":"figure","label":"Figure 3","source_id":"paper","source_locator":"p.3, Figure 3","status":"reused","rationale":"Figure 3保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 3 · 左边是接管位置，右边是控制权分配。Zhu et al., v1, p.3，CC BY-NC-SA 4.0。"},{"artifact":"deck","locator":"小模型能接管哪些决定，什么时候该交回？"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 3, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-3.png"]},{"id":"figure-4","kind":"figure","label":"Figure 4","source_id":"paper","source_locator":"p.6, Figure 4","status":"reused","rationale":"Figure 4保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 4 · 上图的 L1 成本—准确率与下图 BFCL 工具题列不是同一指标。下图 L3 在 shifted tasks 上让模型选所有工具，不使用置信阈值。Zhu et al., v1, "}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 4, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-4.png"]},{"id":"figure-5","kind":"figure","label":"Figure 5","source_id":"paper","source_locator":"p.7, Figure 5","status":"reused","rationale":"Figure 5保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 5 · v1 p.7，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 5, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-5.png"]},{"id":"figure-6","kind":"figure","label":"Figure 6","source_id":"paper","source_locator":"p.17, Figure 6","status":"omitted","rationale":"早期单轨迹由附录Figures11–12的完整实测替代，后者保留调用、参数、成本和成败。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"figure-7","kind":"figure","label":"Figure 7","source_id":"paper","source_locator":"p.19, Figure 7","status":"reused","rationale":"Figure 7保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 7 · 有限选项的问题才可直接打分，自由文本另交给大模型。Zhu et al., v1, p.19，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 7, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-7.png"]},{"id":"figure-8","kind":"figure","label":"Figure 8","source_id":"paper","source_locator":"p.25, Figure 8","status":"omitted","rationale":"工程模块结构不另展示；正文沿真实请求与官方代码说明接口，不把模块图当执行日志。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"figure-9","kind":"figure","label":"Figure 9","source_id":"paper","source_locator":"p.27, Figure 9","status":"omitted","rationale":"训练链已由Table16和三阶段正文重构；避免链图让读者误以为OPD保留或GRPO有收益。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"figure-10","kind":"figure","label":"Figure 10","source_id":"paper","source_locator":"p.34, Figure 10","status":"omitted","rationale":"完整八乘五模式结果矩阵不全部展示；正文解释五模式，保留有效Cascade与失败组合对照。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"figure-11","kind":"figure","label":"Figure 11","source_id":"paper","source_locator":"p.43, Figure 11","status":"reused","rationale":"Figure 11保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 11 · 实测日志。蓝色是 AgentDecision-4B 的选择，橙色是 Gemini 3.5 Flash 的文本或参数输出。作者按 seed 顺序选出“两边均成功且至少一次交回”的"},{"artifact":"deck","locator":"五次工具选择接管，仍有两次大模型调用"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 11, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-11.png"]},{"id":"figure-12","kind":"figure","label":"Figure 12","source_id":"paper","source_locator":"p.43, Figure 12","status":"reused","rationale":"Figure 12保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 12 · 两边均选所有工具、不使用阈值，大模型填参数。Jev 的首个不可撤销错误发生在必须追问的状态；右边 4B 先问。作者按 seed 选择的诊断案例。Zhu et al., v1, "},{"artifact":"deck","locator":"0.98 直接退款，仍是不可撤销错误"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 12, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-12.png"]},{"id":"figure-13","kind":"figure","label":"Figure 13","source_id":"paper","source_locator":"p.44, Figure 13","status":"reused","rationale":"Figure 13保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Figure 13 · 另做 ALFWorld SFT 的模型，不是客服模型直接转用。Zhu et al., v1, p.44，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 13, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/figure-13.png"]},{"id":"table-1","kind":"table","label":"Table 1","source_id":"paper","source_locator":"p.7, Table 1","status":"reused","rationale":"Table 1保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 1 · 主文的扩展任务结果，不同列分别是成功率、节省成本和时间。Zhu et al., v1, p.7，CC BY-NC-SA 4.0。"},{"artifact":"deck","locator":"省钱、提速和可靠性要分别核查"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 1, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-1.png"]},{"id":"table-2","kind":"table","label":"Table 2","source_id":"paper","source_locator":"p.7, Table 2","status":"reused","rationale":"Table 2保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 2 · v1 p.7，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 2, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-2.png"]},{"id":"table-3","kind":"table","label":"Table 3","source_id":"paper","source_locator":"p.8, Table 3","status":"omitted","rationale":"精简主表数值与Appendix Table39重叠，后者提供全部变化任务模型与执行条件。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-4","kind":"table","label":"Table 4","source_id":"paper","source_locator":"p.16, Table 4","status":"omitted","rationale":"40个实现组合由正文八位置五模式概括；不把实现覆盖误当全部完成效果验证。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-5","kind":"table","label":"Table 5","source_id":"paper","source_locator":"p.17, Table 5","status":"omitted","rationale":"所有套件size×attempts目录不逐项复刻；正文分别列所用L1/L2/L3、ALF及coding分母。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-6","kind":"table","label":"Table 6","source_id":"paper","source_locator":"p.19, Table 6","status":"reused","rationale":"Table 6保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 6 · 两道生成器开发题及答案键。它说明任务与标准步骤，不是模型执行日志。下面沿第一题解释判分。Zhu et al., v1, p.19，CC BY-NC-SA 4.0。"},{"artifact":"deck","locator":"生成器写世界和答案键，不是人工逐题标注"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 6, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-6.png"]},{"id":"table-7","kind":"table","label":"Table 7","source_id":"paper","source_locator":"p.25, Table 7","status":"omitted","rationale":"Guard细分误报表不展开；正文保留Guard不构成安全边界，主要案例聚焦实际不可撤销写错误。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-8","kind":"table","label":"Table 8","source_id":"paper","source_locator":"p.25, Table 8","status":"omitted","rationale":"state type分项由核心ask案例与Table39代表；未展示全部guard/stop状态矩阵。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-9","kind":"table","label":"Table 9","source_id":"paper","source_locator":"p.25, Table 9","status":"reused","rationale":"Table 9保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 9 · v1 p.25，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 9, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-9.png"]},{"id":"table-10","kind":"table","label":"Table 10","source_id":"paper","source_locator":"p.26, Table 10","status":"omitted","rationale":"单个最终200题组合在正文解释，主图选Table1与成本反例，避免重复成功点估计。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-11","kind":"table","label":"Table 11","source_id":"paper","source_locator":"p.26, Table 11","status":"omitted","rationale":"miniSWE两组完整routing分项不放图片；正文保留300题77.3→76.3与100题70→75边界。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-12","kind":"table","label":"Table 12","source_id":"paper","source_locator":"p.26, Table 12","status":"omitted","rationale":"SWEagent和pi路由完整表不另展示；Table1与正文保留任务数、退步和pi变慢。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-13","kind":"table","label":"Table 13","source_id":"paper","source_locator":"p.28, Table 13","status":"omitted","rationale":"角色状态清单不全部展示；正文明确coding hooks仅实现、路由实测、规划及完整代码蒸馏未覆盖。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-14","kind":"table","label":"Table 14","source_id":"paper","source_locator":"p.28, Table 14","status":"omitted","rationale":"小样本开发诊断不当主证据；正文利用Table16正式训练对照与实测退款失败说明状态差异。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-15","kind":"table","label":"Table 15","source_id":"paper","source_locator":"p.29, Table 15","status":"omitted","rationale":"获得模型的成本汇总不重复展示；正文保留SFT、OPD、GRPO与公共数据的成本和执行反转。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-16","kind":"table","label":"Table 16","source_id":"paper","source_locator":"p.30, Table 16","status":"reused","rationale":"Table 16保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 16 · 每个阶段的信号、成本与结果。recov. / off-plan 指之前已偏离标准计划的状态；Dev 的两条路线不是同一题集，不能横向对分数。Zhu et al., v1, p.3"},{"artifact":"deck","locator":"SFT 有效，OPD 没被保留"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 16, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-16.png"]},{"id":"table-17","kind":"table","label":"Table 17","source_id":"paper","source_locator":"p.30, Table 17","status":"reused","rationale":"Table 17保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 17 · v1 p.30，CC BY-NC-SA 4.0；每个配置一个 seed。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 17, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-17.png"]},{"id":"table-18","kind":"table","label":"Table 18","source_id":"paper","source_locator":"p.30, Table 18","status":"omitted","rationale":"0.8B评分头完整消融不展开；这不是正文主线，源码阅读路径仍给出评分实现。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-19","kind":"table","label":"Table 19","source_id":"paper","source_locator":"p.30, Table 19","status":"reused","rationale":"Table 19保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 19 · v1 p.30，CC BY-NC-SA 4.0；各段题数与设置不同，只在段内比较。"},{"artifact":"deck","locator":"新规则下，置信度没有及时交回控制权"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 19, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-19.png"]},{"id":"table-20","kind":"table","label":"Table 20","source_id":"paper","source_locator":"p.31, Table 20","status":"omitted","rationale":"跨ALF和tau状态准确率全矩阵不展示；正文限定ALF另训，而非客服模型直接迁移。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-21","kind":"table","label":"Table 21","source_id":"paper","source_locator":"p.31, Table 21","status":"omitted","rationale":"tau单独训练失败完整表未展示；正文保留tau的五点界限，未将其说成通用成功。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-22","kind":"table","label":"Table 22","source_id":"paper","source_locator":"p.32, Table 22","status":"omitted","rationale":"模板基线只保留97.5%与近满分答案键对照，凸显生成器套路，不复刻全部特征行。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-23","kind":"table","label":"Table 23","source_id":"paper","source_locator":"p.34, Table 23","status":"omitted","rationale":"外部工具许可目录不复刻；正文将本论文CC BY-NC-SA与本仓库MIT明确分开。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-24","kind":"table","label":"Table 24","source_id":"paper","source_locator":"p.35, Table 24","status":"omitted","rationale":"注册检验完整清单不复制；主要组合的检验失败和事先披露的探索边界在正文可见。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-25","kind":"table","label":"Table 25","source_id":"paper","source_locator":"p.35, Table 25","status":"omitted","rationale":"决策模型各自注册主对照不全展示；正文集中同任务成本与成功是否同时保留。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-26","kind":"table","label":"Table 26","source_id":"paper","source_locator":"p.36, Table 26","status":"omitted","rationale":"L1全部准确率校准延迟表不复制；正文明确3991决定与2091参数槽位分母不同。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-27","kind":"table","label":"Table 27","source_id":"paper","source_locator":"p.36, Table 27","status":"omitted","rationale":"Stage2每个零假设和p值不重复展示；正文明确97.2%组合非劣效失败和4B共享GPU变慢。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-28","kind":"table","label":"Table 28","source_id":"paper","source_locator":"p.37, Table 28","status":"omitted","rationale":"次要注册/描述检验表未展示；避免把描述趋势写成统计保证，正文给出检验界限。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-29","kind":"table","label":"Table 29","source_id":"paper","source_locator":"p.37, Table 29","status":"reused","rationale":"Table 29保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 29 · v1 p.37，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 29, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-29.png"]},{"id":"table-30","kind":"table","label":"Table 30","source_id":"paper","source_locator":"p.37, Table 30","status":"omitted","rationale":"跨复杂任务配对wins/losses表不另展示；正文保留ALF未见房间p=.175与重训不确定。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-31","kind":"table","label":"Table 31","source_id":"paper","source_locator":"p.38, Table 31","status":"omitted","rationale":"补充三层表与Figure4重叠，正文保留图并逐列解释其条件。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-32","kind":"table","label":"Table 32","source_id":"paper","source_locator":"p.38, Table 32","status":"omitted","rationale":"更多候选模型排名不全复制；Figure4和Table39已表达独立题/任务排名变化。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-33","kind":"table","label":"Table 33","source_id":"paper","source_locator":"p.39, Table 33","status":"omitted","rationale":"vLLM部署全部价格与GPU参数不展示；正文区别训练GPU-hours与推理价格，保留独占/共享GPU结果。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-34","kind":"table","label":"Table 34","source_id":"paper","source_locator":"p.39, Table 34","status":"omitted","rationale":"所有不可撤销错误类型频率不展示；Figure12完整退款错误与Table19批量失败为明确证据。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-35","kind":"table","label":"Table 35","source_id":"paper","source_locator":"p.39, Table 35","status":"omitted","rationale":"重复投票和精排消融不作为正文方法；不宣称二次询问普遍有效或替代训练。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-36","kind":"table","label":"Table 36","source_id":"paper","source_locator":"p.39, Table 36","status":"omitted","rationale":"另两个训练后开放模型全结果未展示；主线明确Qwen与StartLux是不同训练路线。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-37","kind":"table","label":"Table 37","source_id":"paper","source_locator":"p.40, Table 37","status":"omitted","rationale":"同骨干评分头与token读出对照不全展示；正文提供一次前向选项读出和52选项上限。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-38","kind":"table","label":"Table 38","source_id":"paper","source_locator":"p.40, Table 38","status":"omitted","rationale":"学习defer二级头不作为主方法；正文明确主要阈值及其变化任务失败，未宣称校准已解决。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]},{"id":"table-39","kind":"table","label":"Table 39","source_id":"paper","source_locator":"p.40, Table 39","status":"reused","rationale":"Table 39保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 39 · v1 p.40，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 39, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-39.png"]},{"id":"table-40","kind":"table","label":"Table 40","source_id":"paper","source_locator":"p.41, Table 40","status":"reused","rationale":"Table 40保留原始英文、条件与数值，置于对应机制、真实案例或实验说明旁；图片裁去外部正文，不重画数据。","placements":[{"artifact":"article","locator":"Table 40 · v1 p.41，CC BY-NC-SA 4.0。"}],"permission_status":"verified-allowed","permission_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 40, CC BY-NC-SA4.0","asset_paths":["/lib/papers/jev-agent-harness/table-40.png"]},{"id":"table-41","kind":"table","label":"Table 41","source_id":"paper","source_locator":"p.42, Table 41","status":"omitted","rationale":"更难coding探索表未展示；正文主coding结果及后来独立代理测试已分开，未推广为所有任务效果。","placements":[],"permission_status":"not-applicable","permission_basis":"","credit":"","asset_paths":[]}],"figures":[{"path":"/lib/papers/jev-agent-harness/figure-2.png","origin":"paper-original","source_visual_id":"figure-2","source_id":"paper","source_locator":"p.2, Figure 2","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 2, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/figure-3.png","origin":"paper-original","source_visual_id":"figure-3","source_id":"paper","source_locator":"p.3, Figure 3","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 3, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/figure-4.png","origin":"paper-original","source_visual_id":"figure-4","source_id":"paper","source_locator":"p.6, Figure 4","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 4, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/figure-5.png","origin":"paper-original","source_visual_id":"figure-5","source_id":"paper","source_locator":"p.7, Figure 5","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 5, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/figure-7.png","origin":"paper-original","source_visual_id":"figure-7","source_id":"paper","source_locator":"p.19, Figure 7","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 7, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/figure-11.png","origin":"paper-original","source_visual_id":"figure-11","source_id":"paper","source_locator":"p.43, Figure 11","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 11, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/figure-12.png","origin":"paper-original","source_visual_id":"figure-12","source_id":"paper","source_locator":"p.43, Figure 12","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 12, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/figure-13.png","origin":"paper-original","source_visual_id":"figure-13","source_id":"paper","source_locator":"p.44, Figure 13","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Figure 13, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/table-1.png","origin":"paper-original","source_visual_id":"table-1","source_id":"paper","source_locator":"p.7, Table 1","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 1, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/table-2.png","origin":"paper-original","source_visual_id":"table-2","source_id":"paper","source_locator":"p.7, Table 2","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 2, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/table-6.png","origin":"paper-original","source_visual_id":"table-6","source_id":"paper","source_locator":"p.19, Table 6","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 6, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/table-9.png","origin":"paper-original","source_visual_id":"table-9","source_id":"paper","source_locator":"p.25, Table 9","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 9, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/table-16.png","origin":"paper-original","source_visual_id":"table-16","source_id":"paper","source_locator":"p.30, Table 16","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 16, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/table-17.png","origin":"paper-original","source_visual_id":"table-17","source_id":"paper","source_locator":"p.30, Table 17","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 17, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/table-19.png","origin":"paper-original","source_visual_id":"table-19","source_id":"paper","source_locator":"p.30, Table 19","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 19, CC BY-NC-SA4.0","used_in":["article","deck"]},{"path":"/lib/papers/jev-agent-harness/table-29.png","origin":"paper-original","source_visual_id":"table-29","source_id":"paper","source_locator":"p.37, Table 29","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 29, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/table-39.png","origin":"paper-original","source_visual_id":"table-39","source_id":"paper","source_locator":"p.40, Table 39","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 39, CC BY-NC-SA4.0","used_in":["article"]},{"path":"/lib/papers/jev-agent-harness/table-40.png","origin":"paper-original","source_visual_id":"table-40","source_id":"paper","source_locator":"p.41, Table 40","license_status":"verified-allowed","license_basis":"arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops","credit":"Zhu et al., JevAgentHarness v1, Table 40, CC BY-NC-SA4.0","used_in":["article"]}],"qa":{"reading_layout":{"deck_first":true,"toc_h2_only":true,"surface":"neutral-light","body_font":"serif","body_font_px":16,"line_height":1.85,"figures_centered":true,"article_visuals_interleaved":true,"internal_scroll_for_tables_and_code":true,"page_horizontal_overflow":false},"viewports":[{"width":1600,"height":1000,"passed":true},{"width":1512,"height":982,"passed":true},{"width":390,"height":844,"passed":true}],"tested_surfaces":{"article_body":true,"embedded_deck":true,"standalone_deck":true},"language_review":{"technical_terms_contextualized":true,"actors_disambiguated":true,"read_aloud_complete":true,"facts_rechecked_after_rewrite":true},"interactions":{"buttons":true,"keyboard":true,"hash_navigation":true,"fullscreen":true,"escape":true,"standalone_return_to_article":true,"immersive_mode_exit":true,"usable_state_after_exit":true},"inspected_slides":["opening","densest","largest-table-or-code","final"],"current_review":{"date":"2026-10-18","browser":"isolated HeadlessChrome 154","native_window_tested":false,"scope":"Complete article and embedded/standalone deck checked.","reports":["tmp/jev-layout-qa.js","tmp/jev-interactions.cjs"],"external_requests":"No page errors in final layout checks. One local twikoo script request aborted during navigation in Jev interaction test; external live comments verification remains a separate release check.","source_sha256":{"article":"ae891667297db763274d16a3f73f1baa727eaaaffda86701949b38682296cdee","deck":"e8cb533a652970d8a8934fbdf6088f7d8a6894273bb66cc549698c9facbaafa0"}}}}
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "JevAgentHarness: Benchmarking, Deploying and Training Decision Models That Share Control with LLMs",
+    "kind": "benchmark",
+    "primary_source_ids": [
+      "paper",
+      "repo"
+    ],
+    "earliest_arxiv_date": "2026-10-15",
+    "earliest_arxiv_timestamp_utc": "2026-10-15T07:27:08Z"
+  },
+  "artifacts": {
+    "article": "content/_posts/091-jev-agent-harness.md",
+    "deck": "lib/decks/jev-agent-harness.html",
+    "embed_src": "/lib/decks/jev-agent-harness.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "JevAgentHarness: Benchmarking, Deploying and Training Decision Models That Share Control with LLMs",
+      "url": "https://arxiv.org/pdf/2610.21412v1",
+      "revision": "2610.21412v1",
+      "used_for": [
+        "complete paper, appendix, cases, metrics, negative experiments"
+      ]
+    },
+    {
+      "id": "arxiv-entry",
+      "kind": "metadata",
+      "title": "v1 date and reuse license",
+      "url": "https://arxiv.org/abs/2610.21412v1",
+      "revision": "v1 published 2026-10-15",
+      "used_for": [
+        "title",
+        "date",
+        "CC BY-NC-SA4.0"
+      ],
+      "current_availability_check": {
+        "date": "2026-10-19",
+        "result": "Fresh v1 entry title, earliest public date and CC BY-NC-SA 4.0 verified."
+      }
+    },
+    {
+      "id": "repo",
+      "kind": "code",
+      "title": "JevAgentHarness official code and follow-up experiments",
+      "url": "https://github.com/JevAgentHarness/JevAgentHarness/tree/f2932199e1ef1d9f089b51d39430c87be0f560b5",
+      "revision": "f2932199e1ef1d9f089b51d39430c87be0f560b5",
+      "used_for": [
+        "checker",
+        "data",
+        "threshold",
+        "OPD",
+        "GRPO",
+        "bench/PROTOCOL.md and README follow-up routing"
+      ],
+      "current_availability_check": {
+        "date": "2026-10-19",
+        "result": "Fresh GitHub latest still f2932199; fixed code downloaded. Three example/checker-audit result requests timed out, no affected-rate claim."
+      }
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 44,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 44
+      }
+    ],
+    "source_visuals_expected": 54,
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-19",
+      "main_agent": "/root",
+      "scope": "Main agent reread all 3503 extracted lines and all 44 individually rendered v1 pages including appendices A–I. Reread all 1099 lines of JevGym, actual SFT data/splits/loss, OPD visit/teacher/loss and GRPO reward/update; targeted controller, hard rules, collectors, calibration and 52-option serving read at fixed SHA. All prose and 18 slides rewritten and reviewed. CPU official-environment replay and article arithmetic only, no model score or GPU training reproduction.",
+      "evidence": "tmp/collection-refresh-20261018/jev-evidence-20261019.md",
+      "cpu_verifier": "tmp/collection-refresh-20261018/verify-jev-cases.py"
+    }
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：下一步答对，与整题成功是两种能力"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：与模型路由、工具训练分别差在哪"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method / Protocol：从一个选择，到一次完整验收"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：SFT 的增益很大，适用范围仍很窄"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：检查器与模型都要接受反例测试"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：保留训练收益，也保留它的边界"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1–2"
+        }
+      ],
+      "article_quote": "组织模型调用、工具、历史记录与执行流程的外层软件，这里称为 <strong>harness</strong>。"
+    },
+    {
+      "term": "decision model",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2, Decision models, p.3"
+        }
+      ],
+      "article_quote": "作者将读取当前文字状态、返回有限选项概率的模型称为 <strong>decision model</strong>。"
+    },
+    {
+      "term": "Jev",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2 / B.4 / Appendix E"
+        }
+      ],
+      "article_quote": "Jev 是通过 API 调用的闭源决策模型，本文固定版本 1.13，后面也用它作教师。"
+    },
+    {
+      "term": "gold_onehot",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix D / training/data.py"
+        },
+        {
+          "source_id": "repo",
+          "locator": "Appendix D / training/data.py"
+        }
+      ],
+      "article_quote": "代码中的 <code>gold_onehot</code> 把正确选项记为 1，其余记为 0；这里的 gold 来自生成器，不是人工标注。"
+    },
+    {
+      "term": "defer",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2 / B.4"
+        }
+      ],
+      "article_quote": "小模型最高概率低于阈值时，harness 不执行它的选项，改请大模型决定，这一步叫 <strong>defer</strong>。"
+    },
+    {
+      "term": "Cascade",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2 / B.4"
+        }
+      ],
+      "article_quote": "论文主要使用 <strong>Cascade</strong>：先问小模型，再按阈值执行或交回。"
+    },
+    {
+      "term": "shadow",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.3 / research/src/jevharness/bench/threshold_theory.py fit_calibration_arm"
+        },
+        {
+          "source_id": "repo",
+          "locator": "§2.3 / research/src/jevharness/bench/threshold_theory.py fit_calibration_arm"
+        }
+      ],
+      "article_quote": "作者让大模型单独执行 150 道校准题，同时问小模型但不执行其答案，称为 <strong>shadow</strong>。"
+    },
+    {
+      "term": "answer key",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.3–B.5 / research/src/jevharness/bench/suites/jevgym.py _plan, oracle_acceptable_tools"
+        },
+        {
+          "source_id": "repo",
+          "locator": "B.3–B.5 / research/src/jevharness/bench/suites/jevgym.py _plan, oracle_acceptable_tools"
+        }
+      ],
+      "article_quote": "生成器掌握完整世界与参考步骤，计算每一步可接受的动作，称为 <strong>answer key（生成程序计算出的可接受下一步）</strong>。"
+    },
+    {
+      "term": "off-plan",
+      "kind": "state",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "D.3–D.4 / research/data/train_v1/MANIFEST.json and training/data_v1.py label_rows"
+        },
+        {
+          "source_id": "repo",
+          "locator": "D.3–D.4 / research/data/train_v1/MANIFEST.json and training/data_v1.py label_rows"
+        }
+      ],
+      "article_quote": "其中 4,843 个（30.9%）出现在偏离参考步骤之后，作者叫 <strong>off-plan</strong>。偏离不必然是致命错误。"
+    },
+    {
+      "term": "non-inferiority",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix E"
+        }
+      ],
+      "article_quote": "<strong>non-inferiority（非劣效）</strong>检验能否排除超界的成功率下降：DecisionGym 界限 3 点，τ²-bench 5 点。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1,7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "一个选择会改变后面的状态，决策模型必须在执行中测。"
+        },
+        {
+          "artifact": "article",
+          "quote": "特定 Agent 状态上的 SFT 能得到便宜、准确的选项决策模型；可靠接管还要完整执行验证。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.2, D.10 / jevgym.py"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者编写生成器创建客服世界：12 个客户，每人 2–4 个订单，10 类库存"
+        },
+        {
+          "artifact": "article",
+          "quote": "训练与评测 seed、世界及参考计划不重复；3.3% 的状态出现次数与训练记录逐字重复"
+        },
+        {
+          "artifact": "article",
+          "quote": "SFT 数据包含 587 道任务的 15,694 个状态"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.3–B.4 / jevgym.py"
+        },
+        {
+          "source_id": "repo",
+          "locator": "B.3–B.4 / jevgym.py"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "生成器掌握完整世界与参考步骤，计算每一步可接受的动作"
+        },
+        {
+          "artifact": "article",
+          "quote": "这里没有人工逐题制作 <code>check.json</code>，成败由环境代码检查，不由聊天模型打分。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.3–B.4 / oracle_acceptable_tool_sets"
+        },
+        {
+          "source_id": "repo",
+          "locator": "B.3–B.4 / oracle_acceptable_tool_sets"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "被测模型只看请求、工具与已获得观察，不看 answer key 或隐藏世界。"
+        },
+        {
+          "artifact": "article",
+          "quote": "它在复制的环境里检查动作，且要求参数已经出现在请求或返回观察中。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3 / Appendix E"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每题 0/1，再求题目成功率"
+        },
+        {
+          "artifact": "article",
+          "quote": "题目平均为 75%，混算全部状态是 60%；论文用前者。"
+        },
+        {
+          "artifact": "article",
+          "quote": "先算每题状态准确率，再对题平均；已无法恢复的状态排除"
+        },
+        {
+          "artifact": "article",
+          "quote": "Table 26 的 2,091 参数槽位是另一种计数"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table6 / jevgym.py _write_is_gold,_step,evaluate"
+        },
+        {
+          "source_id": "repo",
+          "locator": "Table6 / jevgym.py _write_is_gold,_step,evaluate"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "没问就取消，即使猜中了 ORD-4002，也立即 FAIL。"
+        },
+        {
+          "artifact": "article",
+          "quote": "本文在官方环境中实际重放了这些行为，结果与 Table 6 一致"
+        },
+        {
+          "artifact": "article",
+          "quote": "def _write_is_gold(self, tool, args):"
+        },
+        {
+          "artifact": "article",
+          "quote": "assert env.evaluate(wrong)[\"success\"]"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables2,27–29"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "变化任务中，未训练 4B 的 L3 成功率 13.5%，SFT 后 96.0%，加 GRPO 仍 96.0%。"
+        },
+        {
+          "artifact": "article",
+          "quote": "训练后 4B Stage 2 组合 100% 对 99.4%，省 81.1%，共享 GPU 上反而从 6.83 s 慢到 10.21 s。"
+        },
+        {
+          "artifact": "article",
+          "quote": "mini-SWE-agent + DeepSeek 的 300 题成功 232→229"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§8 / Appendix H"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "未加入训练后的 RouteLLM 作为完整路由基线"
+        },
+        {
+          "artifact": "article",
+          "quote": "本篇 SFT 由多种策略收集数据，不全是当前学生自己产生。"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有使用最终代码作为特权信息，也没有蒸馏整段教师推理。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "D.4,D.6,D.10 / Appendix E / Table19"
+        },
+        {
+          "source_id": "repo",
+          "locator": "research/src/jevharness/bench/suites/jevgym.py 484,1026–1064; research/scripts/jevgym_checker_audit.py"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "主要训练只有一个 seed，多数实验每题执行一次。"
+        },
+        {
+          "artifact": "article",
+          "quote": "本文另外在官方开发 seed 605 做了两个对抗测试"
+        },
+        {
+          "artifact": "article",
+          "quote": "应答金额 1210.92，却输出 11210.92，仍 PASS。"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有看汇总或改预定规则；严格读者可将两项 v1 Stage 2 测试视为探索性。"
+        },
+        {
+          "artifact": "article",
+          "quote": "本轮下载其结果文件超时，因此不报受影响比例。"
+        }
+      ]
+    },
+    {
+      "id": "opd-negative",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table16 / D.2–D.4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Qwen 路线 SFT 后开发准确率 99.7%，OPD 后 98.9%"
+        },
+        {
+          "artifact": "article",
+          "quote": "off-plan 数据的证据也不一致"
+        },
+        {
+          "artifact": "article",
+          "quote": "保留的是 SFT v1 + GRPO 第 15 轮；OPD 被放弃。"
+        }
+      ]
+    },
+    {
+      "id": "calibration-fallback",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.3 / Appendix A,B"
+        },
+        {
+          "source_id": "repo",
+          "locator": "research/src/jevharness/bench/threshold_theory.py 606–705; research/results/calibration/tauhat_jev_shadow_cal_tool_select.json"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "150 题里，大模型没有执行错误决定，缺少“有错误”的比较组。代码因此使用默认 <code>V=$1</code>"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p.1, Figure 1",
+      "status": "omitted",
+      "rationale": "大/小模型分工直觉与 Figure3、Part0 重复，正文保留后者的八类位置/五种控制权，未单独使用开篇图。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 2",
+      "status": "reused",
+      "rationale": "保留三层测试、部署筛选和训练关系，放在 Motivation 并用于总览 slide，区分工程路径与有无增益。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 2 · 评测、部署与训练总览。SFT 和 GRPO 都在图中，但是否贡献收益，要看训练对照。Zhu et al., v1, p.2，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "分别测试，再冻结组合到新任务"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 2, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-2.png"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p.3, Figure 3",
+      "status": "reused",
+      "rationale": "保留原始八类决定/五种模式，正文与开场 deck 对照控制权，避免将所有模式统称替代。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 3 · 左边是决定位置，右边是接入方式。实现 8 × 5 种组合，不代表 40 种都完成了效果实验。Zhu et al., v1, p.3，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "把能列成选项的决定，交给小模型"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 3, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-3.png"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p.6, Figure 4",
+      "status": "reused",
+      "rationale": "完整图修正旧 crop 顶部被切的标签，正文区分全部独立题和工具子集；deck 用标明的下半排名裁切。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 4 · 上半是全部独立题，下半 L1 是 BFCL 工具题，不能混用。下半 L2 / L3 用变化任务，L3 不设接管阈值。Zhu et al., v1, p.6，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "独立题最好，不代表完整任务最好"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 4, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-4.png",
+        "/lib/papers/jev-agent-harness/figure-4-rank-detail.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p.7, Figure 5",
+      "status": "reused",
+      "rationale": "折叠保存单项模式成本与成功率，紧邻部署说明；主线只保留可接管和失败组合，不复制每一格。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 5 · 各模式单独测试，横轴费用不能替代纵轴成功率。Zhu et al., v1, p.7，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 5, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-5.png"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p.17, Figure 6",
+      "status": "omitted",
+      "rationale": "早期 Jev 轨迹被信息更完整的 Figure11/12 替代；后者区分参数、调用费用和严格失败，未展示这条早期记录。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p.19, Figure 7",
+      "status": "reused",
+      "rationale": "折叠补充类型化选项与自由文本区别，放在实际编码/52选项限制旁，避免接口名先于用途。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 7 · 类型化选项问题。自由文本不属于这类直接评分。Zhu et al., v1, p.19，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 7, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-7.png"
+      ]
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p.25, Figure 8",
+      "status": "omitted",
+      "rationale": "模块架构包含统一账本与harness hook，本文沿请求/参数调用及Table9解释接口限制，未展开模块实现图。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p.27, Figure 9",
+      "status": "omitted",
+      "rationale": "原图清楚标明OPD未保留；正文保留相同链条与Table16，并解释SFT/OPD/GRPO信号，没有另列重复链图。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p.34, Figure 10",
+      "status": "omitted",
+      "rationale": "完整八乘五探索矩阵未展开，Figure5和正文保留单项/组合差别与失败条件；不能把40实现当40有效结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 11",
+      "status": "reused",
+      "rationale": "真实Alice案例保留完整图和全部费用；deck按追问/执行分成标明裁切，保证嵌入尺寸的标签可读。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 11 · 蓝色是 4B 的选择，橙色是 Gemini 3.5 Flash 的输出。作者按 seed 选出“两边均成功且至少一次交回”的首题，不是平均或随机代表样本。Zhu et al., v1, p.43，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "工具获准，参数仍可能交回"
+        },
+        {
+          "artifact": "deck",
+          "locator": "查到订单后，完成发货与终态验收"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 11, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-11.png",
+        "/lib/papers/jev-agent-harness/figure-11-ask-detail.webp",
+        "/lib/papers/jev-agent-harness/figure-11-execute-detail.webp"
+      ]
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 12",
+      "status": "reused",
+      "rationale": "真实Mateo漏问退款失败与先问成功完整保留，deck只裁切错误发生点，主线明确无阈值和大模型填参数。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 12 · 两边都选所有工具，不设阈值；大模型填参数。作者按 seed 选出的诊断案例。Zhu et al., v1, p.43，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "0.98 的退款选择，立即造成 FAIL"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 12, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-12.png",
+        "/lib/papers/jev-agent-harness/figure-12-refund-detail.webp"
+      ]
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "p.44, Figure 13",
+      "status": "reused",
+      "rationale": "折叠保留另行训练的ALFWorld动作日志，紧邻环境结果，避免把它当客服模型直接迁移。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 13 · ALFWorld 单题动作记录；不是客服模型直接迁移。Zhu et al., v1, p.44，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 13, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/figure-13.png"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 1",
+      "status": "reused",
+      "rationale": "保留主文外部任务/新规则结果和n/成本/时间，位于coding路由说明旁，提醒不同设置不可拼接。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 1 · 主文扩展任务。客服规则、coding 路由与 ALFWorld 的训练及预算不同。Zhu et al., v1, p.7，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "代码仍由被路由的大模型生成"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 1, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-1.png"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 2",
+      "status": "reused",
+      "rationale": "保留阈值/组合/GPU设置的原数值，折叠在部署节，deck作为费用与变慢的主证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 2 · 不同设置分行列示，部署延迟与费用各自变化。Zhu et al., v1, p.7，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "省钱不一定变快，更不自动可靠"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 2, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-2.png"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 3",
+      "status": "omitted",
+      "rationale": "精简主表数值与Appendix Table39重叠，后者提供全部变化任务模型与执行条件。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p.16, Table 4",
+      "status": "omitted",
+      "rationale": "40个实现组合由正文八位置五模式概括；不把实现覆盖误当全部完成效果验证。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p.17, Table 5",
+      "status": "omitted",
+      "rationale": "所有套件size×attempts目录不逐项复刻；正文分别列所用L1/L2/L3、ALF及coding分母。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p.19, Table 6",
+      "status": "reused",
+      "rationale": "完整开发题原表置于judge说明，正文/CPU沿Lena上半重放，deck裁切上半；下半为独立Hard新规则。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 6 · 生成器开发题与参考步骤，不是模型日志。上半题用于下面的 CPU 重放；下半题是新规则。Zhu et al., v1, p.19，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "生成器同时创建世界与隐藏参考"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 6, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-6.png",
+        "/lib/papers/jev-agent-harness/table-6-lena-detail.webp"
+      ]
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 7",
+      "status": "omitted",
+      "rationale": "Guard细分误报表不展开；正文保留Guard不构成安全边界，主要案例聚焦实际不可撤销写错误。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 8",
+      "status": "omitted",
+      "rationale": "state type分项由核心ask案例与Table39代表；未展示全部guard/stop状态矩阵。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 9",
+      "status": "reused",
+      "rationale": "折叠保留Codex等接口实现和评测标志，直接限定主线对coding harness效果的结论。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 9 · 支持哪些接口，与哪些实验已评测分开列。Zhu et al., v1, p.25，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 9, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-9.png"
+      ]
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 10",
+      "status": "omitted",
+      "rationale": "200题共享/独占A10G的另一探索部署未展开；主线只保留500题Stage2和Table2后续配置，避免相似成本数字混合。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 11",
+      "status": "omitted",
+      "rationale": "100题mini-SWE开发/探索的分项路由表未单独使用；Table1完整保留300题DeepSeek和100题Gemini结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-12",
+      "kind": "table",
+      "label": "Table 12",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 12",
+      "status": "omitted",
+      "rationale": "SWEagent和pi路由完整表不另展示；Table1与正文保留任务数、退步和pi变慢。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-13",
+      "kind": "table",
+      "label": "Table 13",
+      "source_id": "paper",
+      "source_locator": "p.28, Table 13",
+      "status": "omitted",
+      "rationale": "角色状态清单不全部展示；正文明确coding hooks仅实现、路由实测、规划及完整代码蒸馏未覆盖。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-14",
+      "kind": "table",
+      "label": "Table 14",
+      "source_id": "paper",
+      "source_locator": "p.28, Table 14",
+      "status": "omitted",
+      "rationale": "小样本开发诊断不当主证据；正文利用Table16正式训练对照与实测退款失败说明状态差异。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-15",
+      "kind": "table",
+      "label": "Table 15",
+      "source_id": "paper",
+      "source_locator": "p.29, Table 15",
+      "status": "omitted",
+      "rationale": "获得模型的成本汇总不重复展示；正文保留SFT、OPD、GRPO与公共数据的成本和执行反转。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-16",
+      "kind": "table",
+      "label": "Table 16",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 16",
+      "status": "reused",
+      "rationale": "主线保留完整两条训练路径，deck只取标明第一轨裁切，说明OPD掉分与GRPO未增益。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 16 · 第一条路线 OPD 后开发准确率下降；GRPO 没增加准确率。两条路线的最后 Dev 列不是同一题集。Zhu et al., v1, p.30，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "教师选对才混概率，选错只用正确答案"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 16, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-16.png",
+        "/lib/papers/jev-agent-harness/table-16-qwen-detail.webp"
+      ]
+    },
+    {
+      "id": "table-17",
+      "kind": "table",
+      "label": "Table 17",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 17",
+      "status": "reused",
+      "rationale": "折叠保留gold/teacher/混合与off-plan消融，主线保留反对“软标签必需”和off-plan单因解释的证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 17 · 每个配置一个 seed；较少数据也意味着较少优化步数。Zhu et al., v1, p.30，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 17, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-17.png"
+      ]
+    },
+    {
+      "id": "table-18",
+      "kind": "table",
+      "label": "Table 18",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 18",
+      "status": "omitted",
+      "rationale": "0.8B评分头完整消融不展开；这不是正文主线，源码阅读路径仍给出评分实现。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-19",
+      "kind": "table",
+      "label": "Table 19",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 19",
+      "status": "reused",
+      "rationale": "折叠保留Hard各段200/100题、错误修改和重训结果；deck用标明前两组的裁切提高默认可读性，完整原表在正文，不把近似点估计称可靠。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 19 · 原部署与重训每段 200 题，阈值重拟合段 100 题，段内比较。Zhu et al., v1, p.30，CC BY-NC-SA 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "规则变了，4B 仍高置信度接管"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 19, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-19.png",
+        "/lib/papers/jev-agent-harness/table-19-hard-detail.webp"
+      ]
+    },
+    {
+      "id": "table-20",
+      "kind": "table",
+      "label": "Table 20",
+      "source_id": "paper",
+      "source_locator": "p.31, Table 20",
+      "status": "omitted",
+      "rationale": "ALF/τ²固定状态的分项准确率未展开；正文保留ALF另训及其完整任务分母，不能据此声称直接通用迁移。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-21",
+      "kind": "table",
+      "label": "Table 21",
+      "source_id": "paper",
+      "source_locator": "p.31, Table 21",
+      "status": "omitted",
+      "rationale": "另行τ²训练后的60任务转移退步未放在主线；这篇聚焦DecisionGym和coding，未将未展示结果声称已覆盖。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-22",
+      "kind": "table",
+      "label": "Table 22",
+      "source_id": "paper",
+      "source_locator": "p.32, Table 22",
+      "status": "omitted",
+      "rationale": "查表全部键消融未复制；保留训练拟合模板97.5%与测试拟合99.9%上界，两者可部署性不同。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-23",
+      "kind": "table",
+      "label": "Table 23",
+      "source_id": "paper",
+      "source_locator": "p.34, Table 23",
+      "status": "omitted",
+      "rationale": "外部工具许可目录不复刻；正文将本论文CC BY-NC-SA与本仓库MIT明确分开。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-24",
+      "kind": "table",
+      "label": "Table 24",
+      "source_id": "paper",
+      "source_locator": "p.35, Table 24",
+      "status": "omitted",
+      "rationale": "注册检验完整清单不复制；主要组合的检验失败和事先披露的探索边界在正文可见。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-25",
+      "kind": "table",
+      "label": "Table 25",
+      "source_id": "paper",
+      "source_locator": "p.35, Table 25",
+      "status": "omitted",
+      "rationale": "决策模型各自注册主对照不全展示；正文集中同任务成本与成功是否同时保留。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-26",
+      "kind": "table",
+      "label": "Table 26",
+      "source_id": "paper",
+      "source_locator": "p.36, Table 26",
+      "status": "omitted",
+      "rationale": "L1全部准确率校准延迟表不复制；正文明确3991决定与2091参数槽位分母不同。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-27",
+      "kind": "table",
+      "label": "Table 27",
+      "source_id": "paper",
+      "source_locator": "p.36, Table 27",
+      "status": "omitted",
+      "rationale": "Stage2每个零假设和p值不重复展示；正文明确97.2%组合非劣效失败和4B共享GPU变慢。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-28",
+      "kind": "table",
+      "label": "Table 28",
+      "source_id": "paper",
+      "source_locator": "p.37, Table 28",
+      "status": "omitted",
+      "rationale": "次要注册/描述检验表未展示；避免把描述趋势写成统计保证，正文给出检验界限。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-29",
+      "kind": "table",
+      "label": "Table 29",
+      "source_id": "paper",
+      "source_locator": "p.37, Table 29",
+      "status": "reused",
+      "rationale": "折叠保留接近满分时的部署和配对检验分母，避免仅从最大节省费用推断不损成功率。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 29 · 成功率接近满分时的完整部署条件与分母。Zhu et al., v1, p.37，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 29, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-29.png"
+      ]
+    },
+    {
+      "id": "table-30",
+      "kind": "table",
+      "label": "Table 30",
+      "source_id": "paper",
+      "source_locator": "p.37, Table 30",
+      "status": "omitted",
+      "rationale": "跨复杂任务配对wins/losses表不另展示；正文保留ALF未见房间p=.175与重训不确定。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-31",
+      "kind": "table",
+      "label": "Table 31",
+      "source_id": "paper",
+      "source_locator": "p.38, Table 31",
+      "status": "omitted",
+      "rationale": "补充三层表与Figure4重叠，正文保留图并逐列解释其条件。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-32",
+      "kind": "table",
+      "label": "Table 32",
+      "source_id": "paper",
+      "source_locator": "p.38, Table 32",
+      "status": "omitted",
+      "rationale": "更多候选模型排名不全复制；Figure4和Table39已表达独立题/任务排名变化。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-33",
+      "kind": "table",
+      "label": "Table 33",
+      "source_id": "paper",
+      "source_locator": "p.39, Table 33",
+      "status": "omitted",
+      "rationale": "vLLM部署全部价格与GPU参数不展示；正文区别训练GPU-hours与推理价格，保留独占/共享GPU结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-34",
+      "kind": "table",
+      "label": "Table 34",
+      "source_id": "paper",
+      "source_locator": "p.39, Table 34",
+      "status": "omitted",
+      "rationale": "所有不可撤销错误类型频率不展示；Figure12完整退款错误与Table19批量失败为明确证据。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-35",
+      "kind": "table",
+      "label": "Table 35",
+      "source_id": "paper",
+      "source_locator": "p.39, Table 35",
+      "status": "omitted",
+      "rationale": "重复投票和精排消融不作为正文方法；不宣称二次询问普遍有效或替代训练。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-36",
+      "kind": "table",
+      "label": "Table 36",
+      "source_id": "paper",
+      "source_locator": "p.39, Table 36",
+      "status": "omitted",
+      "rationale": "两种追加开放模型训练全表未展开；与Qwen/StartLux主路径区分，正文不声称只存在这两个训练模型。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-37",
+      "kind": "table",
+      "label": "Table 37",
+      "source_id": "paper",
+      "source_locator": "p.40, Table 37",
+      "status": "omitted",
+      "rationale": "同骨干评分头与token读出对照不全展示；正文提供一次前向选项读出和52选项上限。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-38",
+      "kind": "table",
+      "label": "Table 38",
+      "source_id": "paper",
+      "source_locator": "p.40, Table 38",
+      "status": "omitted",
+      "rationale": "学习defer二级头不作为主方法；正文明确主要阈值及其变化任务失败，未宣称校准已解决。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-39",
+      "kind": "table",
+      "label": "Table 39",
+      "source_id": "paper",
+      "source_locator": "p.40, Table 39",
+      "status": "reused",
+      "rationale": "折叠保留全模型Shift结果，标明1250状态/100题、L3 200题与27B首164题，支撑静态排名反转。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 39 · 变化题 L2 为 100 题、1,250 状态，L3 为 200 题；StartLux-27B 只完成首 164 题。Zhu et al., v1, p.40，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 39, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-39.png"
+      ]
+    },
+    {
+      "id": "table-40",
+      "kind": "table",
+      "label": "Table 40",
+      "source_id": "paper",
+      "source_locator": "p.41, Table 40",
+      "status": "reused",
+      "rationale": "折叠保留旧阈值Shift失败与错误接受计数，防止将有阈值部署与无阈值L3当同次实验。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 40 · v1 / 公共版本分别接受 62 / 22 次错误选择。Zhu et al., v1, p.41，CC BY-NC-SA 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 40, CC BY-NC-SA4.0",
+      "asset_paths": [
+        "/lib/papers/jev-agent-harness/table-40.png"
+      ]
+    },
+    {
+      "id": "table-41",
+      "kind": "table",
+      "label": "Table 41",
+      "source_id": "paper",
+      "source_locator": "p.42, Table 41",
+      "status": "omitted",
+      "rationale": "更难coding探索表未展示；正文主coding结果及后来独立代理测试已分开，未推广为所有任务效果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-2.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 2, CC BY-NC-SA4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-3.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p.3, Figure 3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 3, CC BY-NC-SA4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-4.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.6, Figure 4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 4, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-5.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.7, Figure 5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 5, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-7.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "p.19, Figure 7",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 7, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-11.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 11",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 11, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-12.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-12",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 12",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 12, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-13.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-13",
+      "source_id": "paper",
+      "source_locator": "p.44, Figure 13",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 13, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-1.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 1, CC BY-NC-SA4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-2.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 2, CC BY-NC-SA4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-6.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p.19, Table 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 6, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-9.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-9",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 9",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 9, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-16.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-16",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 16",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 16, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-17.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-17",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 17",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 17, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-19.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-19",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 19",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 19, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-29.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-29",
+      "source_id": "paper",
+      "source_locator": "p.37, Table 29",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 29, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-39.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-39",
+      "source_id": "paper",
+      "source_locator": "p.40, Table 39",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 39, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-40.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-40",
+      "source_id": "paper",
+      "source_locator": "p.41, Table 40",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 40, CC BY-NC-SA4.0",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-11-ask-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 11; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 11, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-11-execute-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 11; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 11, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-12-refund-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-12",
+      "source_id": "paper",
+      "source_locator": "p.43, Figure 12; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 12, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/figure-4-rank-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.6, Figure 4; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Figure 4, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-6-lena-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p.19, Table 6; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 6, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-16-qwen-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-16",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 16; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 16, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/jev-agent-harness/table-19-hard-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-19",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 19; labelled detail crop",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry CC BY-NC-SA4.0; noncommercial blog; attribution and same-license crops",
+      "credit": "Zhu et al., JevAgentHarness v1, Table 19, CC BY-NC-SA4.0; labelled detail crop",
+      "used_in": [
+        "deck"
+      ]
+    }
+  ],
+  "qa": {
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-task-owned-headless",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "original_section_anchors_preserved": true,
+      "default_reading": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "characters": 6992,
+          "height": 11255,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "characters": 6992,
+          "height": 11255,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "characters": 6992,
+          "height": 15087,
+          "width": 350
+        }
+      ]
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reader_reconstruction": "Alice tool vs parameter thresholds and 2/5 LLM calls; Lena source/query/ask/strict FAIL + PASS CPU replay; hidden copied answer key and canonical-distance upper bound; L2 task macro arithmetic; actual V fallback and replay-factor; distinct SFT/OPD/GRPO, gold-only and mixed off-plan controls; Shift vs Hard vs deployed Cascade; coding hooks vs proxy results; checker adversarial numeric/order blind spots."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "code_copy_exact": true,
+      "all_original_image_fit_clear_zoom_drag_close_and_focus": true,
+      "mobile_actual_vertical_and_horizontal_scroll": true,
+      "nested_exit_scope": "Headless DOM FullscreenAPI / image viewer / article focus; native macOS window fullscreen not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/jev-layout-20261019.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/jev-interactions-20261019.json",
+      "visual_review": "Main agent reviewed full body/18-slide contact scans plus individual actual-display article and dense slide screenshots; every original fit and all mobile footers checked.",
+      "native_window_tested": false
+    },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/091-jev-agent-harness.md",
+        "sha256": "869d9ec99af3a5d8b8e52d3de31038a2fc36364fbf9acc33d7453f77ad02a6d9"
+      },
+      {
+        "file": "lib/decks/jev-agent-harness.html",
+        "sha256": "8faf0534841a11eca8655ee36961c523d5356aec207930b74291df69d052c350"
+      },
+      {
+        "file": "dist/posts/论文解读/jev-agent-harness.html",
+        "sha256": "92e5b79b47932f90d74bb0aa43410c2c217a50454d4335c55f8f9a9f09930a2c"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "dist/styles/paper-deep-dive-v2.css",
+        "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-2.png",
+        "sha256": "8354cebaa37159b77f890e9dc95562ec316fc49ff4939a67198184ea35c4a53e"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-3.png",
+        "sha256": "33b276dd99e0dd1dee6ccbec04a7499767725ffc6bf482587c943a8743c6bdd5"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-4.png",
+        "sha256": "00a3903ed808a320db88a692a41108e8c6f3516d95d6340fa86b012a98395a78"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-5.png",
+        "sha256": "428dda9b71da87e3de3088f56c245ccbe9d4613c4d29d3d9ed7a214965b9ee05"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-7.png",
+        "sha256": "44e22fd42a49af7c58a809062e1067731b5c54bdf309b5e86288dfd69f7a5682"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-11.png",
+        "sha256": "a020888257a0d8a9779c9a18441773139bcc37f45373ca4c5b03336e27beddf1"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-12.png",
+        "sha256": "b9b8ac08dd1a5e1fa351aded79db9bd6438fe863a2f5c5538c61310b543a978f"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-13.png",
+        "sha256": "3693e7fdb651ce20e8f4d7aa34d58f33395ab0b3eeb42d2231066d2f0adf232b"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-1.png",
+        "sha256": "83d0d3a0e6ac1105433be1553b85e0a8250b8ce586bc2b9f2e456071c90eb9b8"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-2.png",
+        "sha256": "4b7b80bff5bae6c9d94479752c1ac9b2007334f7acdb4fb25f93e8d60746711b"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-6.png",
+        "sha256": "57f32747ee68381b91f1c38c9fbe4df8c3a9798c7a165971b6b8e0d96a1775c0"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-9.png",
+        "sha256": "1f0324ff9f361b2256f69c90d835633e246087befa03d12716bc53541c72acca"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-16.png",
+        "sha256": "2b271ba7356106d5d824c67640b3190e3175ca7c26ba19849801ff578a7912a4"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-17.png",
+        "sha256": "1572414c4eafec1ac3715469c0840521fa57f821a06ca6f80e6a8fc45ddf4549"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-19.png",
+        "sha256": "0b1edbebfcdb02afc78a3b0ee382a14ac3666b994485e9a9bc472755076f9eca"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-29.png",
+        "sha256": "96a9eeb321c7f8bd421f9f0144d16269a494ab98b568599aa0e2a96cdfff2190"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-39.png",
+        "sha256": "e1c4972d343dfac7bcb0d723cf9131639c40e48dc6550eba54c05bf40bdc6d60"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-40.png",
+        "sha256": "e51c70b629b586d66b411c9d4c5ddd96d247f1dfa0ba26ca07246e17b1502a5f"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-11-ask-detail.webp",
+        "sha256": "c5e6d4d566a2b747d2e7274413963e078615c02acaa2ea251246f3ff59119193"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-11-execute-detail.webp",
+        "sha256": "19fdb5bd8939c11dac245aac1dab49324dc01ad44614e81faf3c3e319d5f990f"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-12-refund-detail.webp",
+        "sha256": "c4070dc663ef611b2f0810d71b2c589d506acf5516ce673f6d25ed6e56d789cf"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/figure-4-rank-detail.webp",
+        "sha256": "343f5c29bf8f5a4e95e3f0fc9a573d9005a9b2648a4be90bd354f173cda9ff19"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-6-lena-detail.webp",
+        "sha256": "35d39705ddc63ba333c5419688513bb04347738f381891e2a8cc3b8cd8bca661"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-16-qwen-detail.webp",
+        "sha256": "c273a1f9f3b2936bda98e729bf080198ded6d5aaa7073414c6a2d5452d4983bd"
+      },
+      {
+        "file": "lib/papers/jev-agent-harness/table-19-hard-detail.webp",
+        "sha256": "4dee29ebc75cfb46969934ef6438fd357ad8726cadd357381b5a01fcecf9cc6c"
+      }
+    ],
+    "external_service_boundary": {
+      "raw_errors": [],
+      "comments": "Twikoo .tk-submit loaded in all three viewports; no comment submitted. Production verification is separate."
+    },
+    "limitations": [
+      "No GPU training, paid model inference or paper-score reproduction.",
+      "Checker-audit result files timed out; no affected-rate asserted.",
+      "Native OS window fullscreen not tested."
+    ]
+  },
+  "qa_history_previous": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "current_review": {
+      "date": "2026-10-18",
+      "browser": "isolated HeadlessChrome 154",
+      "native_window_tested": false,
+      "scope": "Complete article and embedded/standalone deck checked.",
+      "reports": [
+        "tmp/jev-layout-qa.js",
+        "tmp/jev-interactions.cjs"
+      ],
+      "external_requests": "No page errors in final layout checks. One local twikoo script request aborted during navigation in Jev interaction test; external live comments verification remains a separate release check.",
+      "source_sha256": {
+        "article": "ae891667297db763274d16a3f73f1baa727eaaaffda86701949b38682296cdee",
+        "deck": "e8cb533a652970d8a8934fbdf6088f7d8a6894273bb66cc549698c9facbaafa0"
+      }
+    }
+  },
+  "reading_history_previous": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 44,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 44
+      }
+    ],
+    "source_visuals_expected": 54,
+    "visual_inventory_complete": true
+  }
+}
