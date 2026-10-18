@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
+<title id="title">PS-OPSD 的离线提示和一次学生更新</title><desc id="desc">问题与正确参考解交给离线提取模型，缓存四字段提示。学生只看问题生成回答。固定教师额外看提示，对相同学生前文给出词表概率，比较概率只更新学生 LoRA。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10" fill="#245e99"/></marker></defs>
+<rect width="900" height="360" fill="#fff"/>
+<g font-family="Arial,PingFang SC,sans-serif" fill="#24292f" font-size="18">
+<text x="24" y="32" font-size="21" font-weight="700">离线准备一次；训练时只改变学生</text>
+<rect x="24" y="51" width="852" height="76" fill="#f4f7fa" stroke="#dce2e8"/>
+<text x="40" y="79">题目 + 正确参考解</text><text x="40" y="106" fill="#536171">OpenThoughts 数学子集</text>
+<text x="291" y="79">Qwen3.6-35B-A3B</text><text x="291" y="106" fill="#536171">离线提取，不参加训练更新</text>
+<text x="589" y="79" font-size="16">缓存 g：起点 / 目标 / 约束 / 步骤</text><text x="589" y="106" fill="#536171">只记录参考解用过的一条路径</text>
+<path d="M252 84H278" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/><path d="M557 84H577" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="24" y="166" width="240" height="136" fill="#fff" stroke="#dce2e8"/>
+<text x="40" y="194" font-weight="700">学生只看题目 q</text><text x="40" y="224">生成回答 y</text><text x="40" y="253">取相同前文 y&lt;t</text><text x="40" y="282" fill="#536171">前文可以含学生自己的错误</text>
+<rect x="322" y="160" width="322" height="64" fill="#eef4fa" stroke="#dce2e8"/>
+<text x="338" y="185" font-weight="700">固定教师：q + g + y&lt;t → pT</text><text x="338" y="211" fill="#536171">LoRA 关闭，无梯度，不生成新答案</text>
+<rect x="322" y="240" width="322" height="64" fill="#f4f7fa" stroke="#dce2e8"/>
+<text x="338" y="266" font-weight="700">学生评分：q + y&lt;t → pS</text><text x="338" y="292" fill="#536171">两分支在同一文字位置预测</text>
+<path d="M267 233H290V192H314" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/><path d="M290 233V272H314" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/><path d="M720 129V145H483V153" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="702" y="190" width="174" height="97" fill="#eef4fa" stroke="#dce2e8"/>
+<text x="717" y="218" font-weight="700">比较全词表概率</text><text x="717" y="246">逐位置损失平均</text><text x="717" y="274" font-weight="700">只更新学生 LoRA</text>
+<path d="M649 191H674V213H694" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/><path d="M649 272H674V256H694" fill="none" stroke="#245e99" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="24" y="337" fill="#536171">部署时：题目 → 训练后的学生 → 回答；没有参考解、提示、教师或提取模型。</text>
+</g></svg>
