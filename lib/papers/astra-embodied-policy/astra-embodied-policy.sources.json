@@ -1,0 +1,1812 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "GPT 6 Astra as an Embodied Policy",
+    "kind": "research",
+    "primary_source_ids": [
+      "report",
+      "code"
+    ],
+    "format": "web technical report; not a verified arXiv paper",
+    "authors": [
+      "Jiayi Su",
+      "Yixin Zheng",
+      "Mi Yan",
+      "Li Yi",
+      "Zhizheng Zhang",
+      "He Wang"
+    ],
+    "arxiv": {
+      "verified": false,
+      "date_prefix_used": false,
+      "reason": "No verified arXiv entry or v1 date; title preserved without invented date."
+    }
+  },
+  "artifacts": {
+    "article": "content/_posts/092-astra-embodied-policy.md",
+    "deck": "lib/decks/astra-embodied-policy.html",
+    "embed_src": "/lib/decks/astra-embodied-policy.html",
+    "cover": "content/generated-covers/092-astra-embodied-policy.webp",
+    "cover_source": "lib/papers/astra-embodied-policy/cover.svg",
+    "verifier": "lib/papers/astra-embodied-policy/verify_metrics.py",
+    "metric_subset": "lib/papers/astra-embodied-policy/selected-results.json"
+  },
+  "sources": [
+    {
+      "id": "report",
+      "kind": "paper",
+      "title": "GPT 6 Astra as an Embodied Policy — original web technical report",
+      "url": "https://anonymous-report-421.github.io/public-website/index.html?lang=en&view=1",
+      "revision": "6ead090465d3b0fb19e90eb70569689c19f73d00",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "behavior analyses",
+        "limitations",
+        "all visual inventory"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "GPT-as-Policy — official fixed integration and report source",
+      "url": "https://github.com/anonymous-report-421/GPT-as-Policy/tree/8f3d362b077d8efb77e2a7274d5b2c20e2243846",
+      "revision": "8f3d362b077d8efb77e2a7274d5b2c20e2243846",
+      "used_for": [
+        "action loop",
+        "gate",
+        "visibility",
+        "native benchmark integration",
+        "license scope",
+        "model runtime",
+        "protocol"
+      ]
+    },
+    {
+      "id": "results",
+      "kind": "dataset",
+      "title": "Public RoboDojo selected evaluation summaries",
+      "url": "https://github.com/anonymous-report-421/GPT-as-Policy/blob/8f3d362b077d8efb77e2a7274d5b2c20e2243846/public_results/data.json",
+      "revision": "8f3d362b077d8efb77e2a7274d5b2c20e2243846",
+      "used_for": [
+        "real case",
+        "raw aggregation",
+        "missing terminal outcomes",
+        "steps and token arithmetic"
+      ]
+    },
+    {
+      "id": "robolab",
+      "kind": "dataset",
+      "title": "RoboLab selected final slots and historical baseline selection",
+      "url": "https://github.com/anonymous-report-421/GPT-as-Policy/blob/8f3d362b077d8efb77e2a7274d5b2c20e2243846/report_web/robolab.json",
+      "revision": "8f3d362b077d8efb77e2a7274d5b2c20e2243846",
+      "used_for": [
+        "49/50 vs 46/50",
+        "retries",
+        "historical baseline conditions",
+        "decision-limit changes"
+      ]
+    },
+    {
+      "id": "native",
+      "kind": "checker",
+      "title": "RoboDojo — independent upstream task and native success/reward checker",
+      "url": "https://github.com/robodojo-benchmark/RoboDojo/tree/ee67a1468510da7624a089164402359f2afc72c8",
+      "revision": "ee67a1468510da7624a089164402359f2afc72c8",
+      "used_for": [
+        "instruction construction",
+        "exact basket geometry",
+        "home tolerances",
+        "10/40/100 score stages",
+        "checker blind spots"
+      ]
+    },
+    {
+      "id": "pi05",
+      "kind": "web",
+      "title": "π0.5 model introduction",
+      "url": "https://www.pi.website/blog/pi05",
+      "revision": "public page checked 2026-10-18",
+      "used_for": [
+        "VLA background only; reported checkpoint from code SOURCE.json"
+      ]
+    },
+    {
+      "id": "editorial",
+      "kind": "web",
+      "title": "Zhixiong — Astra embodied policy explainer (presentation reference only)",
+      "url": "https://rookiexiong7.github.io/blog/posts/astra-embodied-policy/",
+      "revision": "read 2026-10-18 after primary report and code",
+      "used_for": [
+        "section pacing",
+        "figure placement",
+        "audience bridging; not factual support"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 44,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 44
+      }
+    ],
+    "source_visuals_expected": 38,
+    "visual_inventory_complete": true,
+    "document_type": "Local browser print of fully expanded web report; NOT author-issued 44-page PDF.",
+    "local_reading_artifacts": {
+      "web_text": "tmp/astra-embodied-policy/report-en.md",
+      "browser_print": "tmp/astra-embodied-policy/report-web-print.pdf",
+      "rendered": "tmp/astra-embodied-policy/rendered/page-01.jpg ... page-44.jpg"
+    },
+    "included": "Abstract, all numbered report sections, folded skill/tool/controller explanations, behavioral analysis, citations, both metric toggles and RoboLab supplement; original videos inventoried but not all replayed.",
+    "visual_inventory_scope": "4 numbered Figures, 3 numbered Tables, 21 numbered behavior videos, 10 task-initial-state illustrations. Additional unnumbered gallery clips/historical featured clip excluded from report inventory; linked gallery contains them.",
+    "primary_code_read": "Both Dojo clients, gate, observations/session, prompt contexts, FK/IK, native task/reward code, RoboLab selection, licensing. No model API, robot, training or simulator experiments performed."
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：看懂任务以后，还要把动作做出来"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：比较的是运行时分工，没有新的训练算法"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：候选、审查、短段执行，再重新观察"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：RoboDojo 有收益，RoboLab 给出相反结果"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：更值得检验的是候选如何帮到下一步"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：配合有价值，前提与代价不能省略"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "Direct / Hybrid",
+      "kind": "actor",
+      "source_ids": [
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "Abstract; §2.1"
+        }
+      ],
+      "article_quote": "这份报告把 GPT 6 Astra 放进模拟机器人：每次看图、读取机械臂状态，再通过工具让机器人移动。作者比较两种用法：Astra 自己构造所有动作（Direct）；先让已有的机器人动作模型 π0.5 提出一段动作，再由 Astra 决定接受还是纠正（Hybrid）。研究问题是，理解目标和掌握操作技巧这两类能力，怎样配合才有用。"
+    },
+    {
+      "term": "policy / VLA",
+      "kind": "operation",
+      "source_ids": [
+        "report",
+        "pi05"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "§2.1 and task-control documentation"
+        }
+      ],
+      "article_quote": "机器人策略（policy）把当前观察变成下一段动作。能同时读图、读指令并输出机器人动作的模型通常称为 <a id=\"read-vla\" href=\"#basis-vla\">VLA（Vision-Language-Action）</a>。这里的输出是关节角、夹爪位置和开合命令，不是文字回答。抓取是否成功，还取决于碰撞、摩擦和物体是否随手抬起；“发出闭合命令”不等于“已经抓住”。"
+    },
+    {
+      "term": "action prior",
+      "kind": "state",
+      "source_ids": [
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "Abstract; Introduction learned sensorimotor priors"
+        }
+      ],
+      "article_quote": "π0.5 从机器人数据中学过抓取、搬运等动作模式，作者将这些已学到的习惯称为动作先验（action prior）。它也可能抓错目标，或者在上一步失败后继续下一步。Astra 可以显式检查目标和执行反馈，但每段都独立构造动作既慢，也不一定稳定。报告要检验的就是两者一起使用是否优于 Astra 独自控制。"
+    },
+    {
+      "term": "teacher / student",
+      "kind": "actor",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "robodojo client.py + SOURCE.json runtime model identities; no optimization step"
+        }
+      ],
+      "article_quote": "报告用 System 1 / System 2 类比“熟练动作”和“显式思考”，不是神经结构证明。源码里的 <code>teacher</code> 指 Astra，<code>student</code> 指 π0.5，<strong>两者在这里都没有做蒸馏训练</strong>。对 LLM / Agent 研究更直接的借鉴是怎样提供候选、反馈和受限执行工具。"
+    },
+    {
+      "term": "FK",
+      "kind": "operation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "robodojo_server/kinematics.py; action_edit_kinematics.py; client.py trajectory"
+        }
+      ],
+      "article_quote": "控制程序根据机器人几何计算每步对应的夹爪位置与朝向，即 <a id=\"read-fk\" href=\"#basis-kinematics\">FK（forward kinematics）</a>。这只计算机器人，不预演物体、碰撞或抓取结果。"
+    },
+    {
+      "term": "EEF",
+      "kind": "state",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "robodojo EEF interface, target payload and action_edit_kinematics.py"
+        }
+      ],
+      "article_quote": "夹爪这样的末端执行部件称为 <a id=\"read-eef\" href=\"#basis-eef\">EEF（end-effector）</a>。"
+    },
+    {
+      "term": "IK",
+      "kind": "operation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "robodojo local damped-least-squares controller + client.py step ACK loop"
+        }
+      ],
+      "article_quote": "控制程序验证范围并执行；<code>edit/eef</code> 用 <a id=\"read-ik\" href=\"#basis-kinematics\">IK（inverse kinematics）</a> 把夹爪目标转成关节目标。每个实际控制步后，根据测量状态重新计算局部 IK。"
+    },
+    {
+      "term": "execution_status / intent_status",
+      "kind": "state",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "gate_assessment.py lines 8–31, 33–64"
+        }
+      ],
+      "article_quote": "Astra 必须先报告两种状态：<code>execution_status</code> 说上一段是否进展、失败或仍不确定；<code>intent_status</code> 说下一段候选是否符合当前目标。例如物体没有随夹爪抬起是执行证据；尚未抓住就开始运往篮子，是下一步的前置条件有问题。候选的“意图”是从运动建议推断的，不是读取 π0.5 的内部思维。"
+    },
+    {
+      "term": "root point",
+      "kind": "state",
+      "source_ids": [
+        "native"
+      ],
+      "source_locators": [
+        {
+          "source_id": "native",
+          "locator": "env/reward_manager/func_parser.py is_A_in_B; classify task run_reward"
+        }
+      ],
+      "article_quote": "所核查的 RoboDojo 版本中，<code>run_reward()</code> 要求：三组物体全部在各自篮子范围内，物体参考点不高于篮子包围盒顶部 1 cm 以上，双臂归位。具体的“在篮内”检查是物体 <code>root point</code>（模型坐标系的参考点，不一定是重心）投影在篮子水平多边形内，且高于其底部；它不检查物体整个网格都在容器内部。归位容差是每个位置坐标偏差 ≤15 cm、朝向差 ≤20°。"
+    },
+    {
+      "term": "Score",
+      "kind": "metric",
+      "source_ids": [
+        "native",
+        "results"
+      ],
+      "source_locators": [
+        {
+          "source_id": "native",
+          "locator": "Task milestone reward manager; report Table 1; missing-score provenance"
+        }
+      ],
+      "article_quote": "记录里的 <code>Score</code> 是任务的部分完成分数，具体规则在下一小节。"
+    },
+    {
+      "term": "25 Hz",
+      "kind": "metric",
+      "source_ids": [
+        "report",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "§6.3 physical duration; simulator control contract"
+        }
+      ],
+      "article_quote": "所选运行记录 token 为 624,762,828 / 1,132,343,772，Hybrid 少 44.8%。这包含大量重复的缓存输入，不是账单金额，也不含全部早期重试。<a id=\"read-clock\" href=\"#basis-clock\">25 Hz 控制</a>意味着每控制步对应 0.04 s；Hybrid 平均物理运动 34.20 s、Direct 30.58 s，均排除模型思考的等待。失败早停也会缩短运动时间，不能据此判断谁端到端更快。"
+    },
+    {
+      "term": "native evaluation",
+      "kind": "operation",
+      "source_ids": [
+        "code",
+        "native"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "client.py native termination restriction; session.py simulation native checker"
+        },
+        {
+          "source_id": "native",
+          "locator": "task run_reward and reward manager verdict"
+        }
+      ],
+      "article_quote": "是否完成由模拟器自带的检查规则判定，报告称为 native evaluation（原生评测）。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "Abstract; §2.1; §3; §8"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Astra 的语义判断能否弥补机器人策略的错误，而机器人策略能否补上 Astra 的操作细节？"
+        }
+      ]
+    },
+    {
+      "id": "action-loop",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "hybrid_rollout/robodojo/robodojo_server/client.py prepare/trajectory/execute; gpt_only_client.py; action_edit_kinematics.py"
+        },
+        {
+          "source_id": "report",
+          "locator": "§2.1; Figure 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "选择 <code>student</code> 就原样执行候选前 <strong>1–15 步</strong>；选择 <code>edit</code> 就对候选夹爪轨迹加位移、旋转或开合修正，执行 <strong>1–5 步</strong>"
+        },
+        {
+          "artifact": "article",
+          "quote": "动作段结束才给 Astra 新观察；候选中没执行的部分丢弃，π0.5 从新状态重新生成。"
+        }
+      ]
+    },
+    {
+      "id": "gate-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "hybrid_rollout/robodojo/robodojo_server/gate_assessment.py validate_assessment lines 33–64"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Python 检查的是 Astra 填的字段与动作范围，不会独立证明它的语义判断正确"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "report",
+        "results"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "§2.2 Task Selection and Evaluation Protocol"
+        },
+        {
+          "source_id": "results",
+          "locator": "queries.tasks / case scenario seeds / provenance"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者把官方 π0.5 成功率的 0–72% 划为四个等宽区间，从低到高选 6、2、1、1 个任务。十项各跑五次，共 50 次；数字排列、装箱、叠衣服为 2 次标准加 3 次随机场景，其余为五次标准布局。Direct / Hybrid 对齐任务、场景及记录的 seeds（控制随机场景与策略采样的随机种子）；源码不保证完整物理状态逐位一致。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "native",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "native",
+          "locator": "task/RoboDojo/tasks/classify_objects_by_language.py gen_instruction, run_reward, reward_list_init"
+        },
+        {
+          "source_id": "code",
+          "locator": "RoboDojo SOURCE.json upstream native revision"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "指令与检查条件都由 benchmark 的 Python 任务代码生成或注册，未另行提供人工逐条标注的判定文件。"
+        },
+        {
+          "artifact": "article",
+          "quote": "任务与几何规则是程序编写的，报告未披露独立人工复核或标注一致性研究。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "client.py observation_keys/_observation + prepare; prompt_context.py; gate_assessment.py GATE_INSTRUCTION; frozen native_termination"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "执行 Agent 能看到图像、机器人测量、历史、任务说明与完成要求；不能查询隐藏物体真值、未来物理状态或评分来规划，也不能回滚。是否完成由模拟器自带的检查规则判定，报告称为 native evaluation（原生评测）。固定 RoboDojo 案例禁止模型提前宣告停止；基础设施中断与原生失败不是同一种记录。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "results",
+        "native"
+      ],
+      "source_locators": [
+        {
+          "source_id": "results",
+          "locator": "queries.cases; provenance.json score_missingness; article verify_metrics.py"
+        },
+        {
+          "source_id": "native",
+          "locator": "milestone values and terminal failure cap"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Hybrid 为 <code>100 × 31.30 / 50 = 62.60</code>；Direct 为 <code>100 × 18.15 / 48 = 37.8125</code>"
+        },
+        {
+          "artifact": "article",
+          "quote": "Direct 有两条未得到原生终态判定的记录：成功率按未成功计入 50 次，Score 则缺失，只用 48 次"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "native",
+        "results",
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "native",
+          "locator": "classify_objects_by_language.py run_reward/gen_instruction; func_parser.py is_A_in_B; reward_manager.py max tier per step and failed cap"
+        },
+        {
+          "source_id": "results",
+          "locator": "mix__/gpt__classify_objects_by_language__standard__g0__l0"
+        },
+        {
+          "source_id": "report",
+          "locator": "Video 1, Decision 29 / 33 / 47"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "所核查的 RoboDojo 版本中，<code>run_reward()</code> 要求：三组物体全部在各自篮子范围内，物体参考点不高于篮子包围盒顶部 1 cm 以上，双臂归位。具体的“在篮内”检查是物体 <code>root point</code>（模型坐标系的参考点，不一定是重心）投影在篮子水平多边形内，且高于其底部；它不检查物体整个网格都在容器内部。归位容差是每个位置坐标偏差 ≤15 cm、朝向差 ≤20°。"
+        },
+        {
+          "artifact": "article",
+          "quote": "最终 Hybrid 用 794/1,100 个控制步、73 个动作段，其中 130 步由 Astra 修正，原生结果为成功、Score=100。配对 Direct 用尽 1,100 步、220 段，失败、Score=40。公开视频覆盖了这段行为，公开摘要给出终态；未发布完整逐步 checker 结果，不能进一步断言 Direct 最后究竟哪组物体放错。"
+        },
+        {
+          "artifact": "article",
+          "quote": "视频中的 Decision 是 Astra 的决策序号，Control 是累计控制步。Decision 29 接受 π0.5：释放左篮中的绿色汽车并向上撤回。到 Decision 33 / Control 409，Astra 将手里木制玩具的候选方向修正到右侧红篮：左臂位移修正为 <code>(+4.5 cm, 0, +0.1 cm)</code>，维持闭合，执行 5 步。稍后 Decision 47 又接受 π0.5，接近剩下的木制狮子。这说明一次局部纠正怎样接回已有策略，而不是 Astra 接管整题。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "results",
+        "robolab",
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "results",
+          "locator": "Table 1 / public 100 selected cases; native completion and success fields"
+        },
+        {
+          "source_id": "robolab",
+          "locator": "models/tasks rates and successes"
+        },
+        {
+          "source_id": "report",
+          "locator": "Tables 1–3; Figure 3/4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "成功率 Hybrid 48%、Direct 26%；π0.5 公开参照为 15.67%，Score 24.43。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Direct 49/50、Hybrid 46/50；π0.5 和 Cosmos3-Nano-Policy 各 18/50，DreamZero 17/50。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "report",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "§1.1 Related Community Explorations; §2 control architecture"
+        },
+        {
+          "source_id": "code",
+          "locator": "Both clients share task context and EEF controller; no training code for this method"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "<strong>最接近的路线是通用模型直接控制机器人，以及通用模型调用已训练的动作策略。</strong>原报告的 Related Work 主要梳理社区探索，未给出全面的同条件算法对照。下面按控制方式比较，不跨项目比较成功率。"
+        },
+        {
+          "artifact": "article",
+          "quote": "本报告不是只分解任务、调用一次技能；Astra 在每段审查 π0.5 的具体运动建议"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "unknown",
+      "source_ids": [
+        "report",
+        "code",
+        "native",
+        "robolab"
+      ],
+      "source_locators": [
+        {
+          "source_id": "report",
+          "locator": "§5 failures; §7 scope; latency"
+        },
+        {
+          "source_id": "code",
+          "locator": "Different action horizons/interfaces; no fixed-factor ablation reported"
+        },
+        {
+          "source_id": "native",
+          "locator": "root-point-based containment, task home checks"
+        },
+        {
+          "source_id": "robolab",
+          "locator": "notes historical/retries and last two decision-limit changes"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "<strong>报告证明了一个组合系统在所选 RoboDojo 任务上更有效，还没有隔离出收益来自哪项设计。</strong>Direct / Hybrid 同时改变候选来源、动作接口和最长执行段；没有“相同段长、有无候选”的对照，不能把全部提升归于 Astra 的判断，或全部归于 π0.5 的先验。"
+        },
+        {
+          "artifact": "article",
+          "quote": "98% 应读作<strong>选定最终记录的描述性成绩</strong>"
+        },
+        {
+          "artifact": "article",
+          "quote": "它没有报告真实机器人部署的成功率或实时延迟实验。"
+        }
+      ]
+    },
+    {
+      "id": "usage-and-time",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "results",
+        "report"
+      ],
+      "source_locators": [
+        {
+          "source_id": "results",
+          "locator": "cases tokens/control steps/chunks; verified with Python stdlib"
+        },
+        {
+          "source_id": "report",
+          "locator": "Table 3 / §6.3 tokens include cached input, selected run scope"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "6,174 / 42,750 = 14.44%"
+        },
+        {
+          "artifact": "article",
+          "quote": "所选运行记录 token 为 624,762,828 / 1,132,343,772，Hybrid 少 44.8%。"
+        }
+      ]
+    },
+    {
+      "id": "robolab-selection",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "robolab",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "robolab",
+          "locator": "report_web/robolab.json notes lines 163–170; robolab-baselines.json selection"
+        },
+        {
+          "source_id": "code",
+          "locator": "report_baselines.py historical first-five ordering"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "更重要的是协议：Astra 两边包括保留的历史结果与授权重试，初始状态未严格对齐；最后两次 Direct 的 BlocksInBin 重试把决策上限从 180 改到 500（模拟器总步数与成功规则不变）。三个基线取 2026 年 6 月历史记录中每任务按顺序的前五次，包含失败，未核实与 Astra 使用相同任务版本和控制设置。因此 98% 应读作<strong>选定最终记录的描述性成绩</strong>，不能宣称一次尝试、同预算条件下达到 98%。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_locator": "Report opening wide Score ranking",
+      "rationale": "Retained in expanded RoboDojo supplement: duplicate wide presentation of Figure 3 data, avoiding repeated default evidence.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "报告开篇的宽版 Score 排名"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/figure-1.png"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_locator": "§2.1 Action Generation and Execution; closed-loop two-policy pipeline",
+      "rationale": "Complete original beside method; four original stage crops in slides 3–5 make the input, action proposal and short execution legible at embedded size.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原报告完整流程图"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2 右列阶段裁剪"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2 左列上部裁剪"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2 左列下部裁剪"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/figure-2.png",
+        "/lib/papers/astra-embodied-policy/figure-2-direct-input.png",
+        "/lib/papers/astra-embodied-policy/figure-2-direct-action.png",
+        "/lib/papers/astra-embodied-policy/figure-2-hybrid-proposal.png",
+        "/lib/papers/astra-embodied-policy/figure-2-hybrid-execution.png"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_locator": "§3 Results; Score and success-rate panels",
+      "rationale": "Full Score panel visible; full success-rate panel folded; top-three Score rows explicitly labeled detail crop on slide 9 and full original available in viewer.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Score 面板。Hybrid / Direct"
+        },
+        {
+          "artifact": "article",
+          "locator": "Success rate 面板，横轴"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 3 上部细节"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/figure-3-score.png",
+        "/lib/papers/astra-embodied-policy/figure-3-success.png",
+        "/lib/papers/astra-embodied-policy/figure-3-score-detail.png"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_locator": "§3.1 RoboLab; success rates on selected ten tasks",
+      "rationale": "Important counterexample kept visible beside RoboLab protocol; slide crop removes only empty 80px top margin, complete image retained in article/viewer.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "十任务各选五次最终记录"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 4 · Su et al. · MIT；官方 RoboLab selection"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/figure-4.png",
+        "/lib/papers/astra-embodied-policy/figure-4-tight.png"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_locator": "§3 Results; ten-task Score / success-rate interactive table",
+      "rationale": "Both original metrics included in folded supplement, with missing-score denominators and direct-favoring task highlighted in prose.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 1 · Score 原表"
+        },
+        {
+          "artifact": "article",
+          "locator": "Table 1 · Success rate 原表"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/table-1-score.png",
+        "/lib/papers/astra-embodied-policy/table-1-success.png"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_locator": "§3.1 RoboLab; ten-task success-rate table",
+      "rationale": "Full table retained folded after visible result chart and historical/retry caveats; does not distract from main argument.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 2 · 每个单元格同时给成功率与成功次数"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/table-2.png"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_locator": "§6.3 Execution and usage for selected RoboDojo runs",
+      "rationale": "Full control/time/token table folded; first three rows as marked original detail on slide 11, while formulas and budget boundaries remain visible.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 3 · 仅来自 RoboDojo"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 3 控制行裁剪"
+        }
+      ],
+      "source_id": "report",
+      "status": "reused",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，项目自有报告内容，MIT",
+      "asset_paths": [
+        "/lib/papers/astra-embodied-policy/table-3.png",
+        "/lib/papers/astra-embodied-policy/table-3-control-detail.png"
+      ]
+    },
+    {
+      "id": "video-1",
+      "kind": "appendix-visual",
+      "label": "Video 1 · 按语言分类：将动作重新对准目标物体",
+      "source_id": "report",
+      "source_locator": "Report behavior section grounding; video-selection.json #1 / clip__fe2857368ce87ec2ffdcd4ac__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows how a hybrid decision realigns semantic object/destination or grasp choice; prose explains Video 1 in detail and links original source. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__fe2857368ce87ec2ffdcd4ac__0.mp4",
+      "original_range_seconds": [
+        13.8,
+        20.52
+      ],
+      "video_sha256": "7a3d4d060aa54961bee0dcfe0b607a440014c2de7f002c9f7028c0445939593d"
+    },
+    {
+      "id": "video-2",
+      "kind": "appendix-visual",
+      "label": "Video 2 · 数字摆放：修正目标位置",
+      "source_id": "report",
+      "source_locator": "Report behavior section grounding; video-selection.json #2 / clip__6f1191749b24df72921e800d__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows how a hybrid decision realigns semantic object/destination or grasp choice; prose explains Video 1 in detail and links original source. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__6f1191749b24df72921e800d__0.mp4",
+      "original_range_seconds": [
+        1.52,
+        7.56
+      ],
+      "video_sha256": "a2e7d50147aca8095e1c248a1a4a44ec13968c54936dde23413879487b37cb06"
+    },
+    {
+      "id": "video-3",
+      "kind": "appendix-visual",
+      "label": "Video 3 · 物体分类：纠正目标选择",
+      "source_id": "report",
+      "source_locator": "Report behavior section grounding; video-selection.json #3 / clip__54ab2e9592bc1721a111b399__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows how a hybrid decision realigns semantic object/destination or grasp choice; prose explains Video 1 in detail and links original source. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__54ab2e9592bc1721a111b399__0.mp4",
+      "original_range_seconds": [
+        17.08,
+        44.04
+      ],
+      "video_sha256": "1bb2b88bfded9869f47e0e7766c20180aa54e2411cd003d4f0a61f5015e9cf71"
+    },
+    {
+      "id": "video-4",
+      "kind": "appendix-visual",
+      "label": "Video 4 · 折衣：修正抓取目标",
+      "source_id": "report",
+      "source_locator": "Report behavior section grounding; video-selection.json #4 / clip__0138af9ba9629776dbee7d6f__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows how a hybrid decision realigns semantic object/destination or grasp choice; prose explains Video 1 in detail and links original source. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__0138af9ba9629776dbee7d6f__0.mp4",
+      "original_range_seconds": [
+        0,
+        3.92
+      ],
+      "video_sha256": "efd5c67fd881dfae3be6eeab3a58580d5600943fcdcfcef285d0596e1750e83a"
+    },
+    {
+      "id": "video-5",
+      "kind": "appendix-visual",
+      "label": "Video 5 · 模仿排序：三维关系判断、拨动与后续搬运",
+      "source_id": "report",
+      "source_locator": "Report behavior section contact; video-selection.json #5 / imitate_sorting_sequence_a5_frames_493_1309",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows 3D approach or non-prehensile contact before hand-back; method and Discussion retain contact limits without portraying it as collision simulation. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/gallery.html"
+    },
+    {
+      "id": "video-6",
+      "kind": "appendix-visual",
+      "label": "Video 6 · 先拨动物体，再完成抓取",
+      "source_id": "report",
+      "source_locator": "Report behavior section contact; video-selection.json #6 / clip__182f98be14595fc71b02b377__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows 3D approach or non-prehensile contact before hand-back; method and Discussion retain contact limits without portraying it as collision simulation. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__182f98be14595fc71b02b377__0.mp4",
+      "original_range_seconds": [
+        23.36,
+        33.16
+      ],
+      "video_sha256": "2ba371337604a5ef4eb396a9a0224ac6e174443a8eba1f64e0683ee3c2373b94"
+    },
+    {
+      "id": "video-7",
+      "kind": "appendix-visual",
+      "label": "Video 7 · 将物体拨出，再交回 π0.5 抓取",
+      "source_id": "report",
+      "source_locator": "Report behavior section contact; video-selection.json #7 / clip__220a8ec7845d68ca73248879__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows 3D approach or non-prehensile contact before hand-back; method and Discussion retain contact limits without portraying it as collision simulation. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__220a8ec7845d68ca73248879__0.mp4",
+      "original_range_seconds": [
+        41.8,
+        59.16
+      ],
+      "video_sha256": "721d0de36a3c97194cad09f50b6bbc77150a2e7ddfca6cbd8cbc5267d2e3e229"
+    },
+    {
+      "id": "video-8",
+      "kind": "appendix-visual",
+      "label": "Video 8 · 调整接近方向与抓取姿态",
+      "source_id": "report",
+      "source_locator": "Report behavior section contact; video-selection.json #8 / clip__4288645ef90dc53de13376eb__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows 3D approach or non-prehensile contact before hand-back; method and Discussion retain contact limits without portraying it as collision simulation. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__4288645ef90dc53de13376eb__0.mp4",
+      "original_range_seconds": [
+        16.12,
+        33.64
+      ],
+      "video_sha256": "b4f02b61d861d41e0abe23f4e1104bba3c718ff3a0754492c6b46963c7a47f8a"
+    },
+    {
+      "id": "video-9",
+      "kind": "appendix-visual",
+      "label": "Video 9 · 数字摆放：发现未终止，重新检查与微调",
+      "source_id": "report",
+      "source_locator": "Report behavior section reasoning; video-selection.json #9 / clip__cbf8658bad76fd96fef01245__1",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows reinspection after non-termination; note distinguishes visual checking from hidden reward/ground-truth access. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__cbf8658bad76fd96fef01245__1.mp4",
+      "original_range_seconds": [
+        19.64,
+        28.72
+      ],
+      "video_sha256": "8802c5ffdcc55ab9496429b5caeb6045f6802e36b321bd6d8153bd224561641d"
+    },
+    {
+      "id": "video-10",
+      "kind": "appendix-visual",
+      "label": "Video 10 · 装箱：发现箱后遗漏，并调整物体姿态",
+      "source_id": "report",
+      "source_locator": "Report behavior section reasoning; video-selection.json #10 / clip__5436877e6101be2b23b24fc2__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows reinspection after non-termination; note distinguishes visual checking from hidden reward/ground-truth access. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__5436877e6101be2b23b24fc2__0.mp4",
+      "original_range_seconds": [
+        35.8,
+        51.32
+      ],
+      "video_sha256": "18a0a9a4edb4d321349fb9f3796f2dd3957918bc65d700bba8acafe7ea830e9c"
+    },
+    {
+      "id": "video-11",
+      "kind": "appendix-visual",
+      "label": "Video 11 · 数字摆放：根据终止反馈继续修正",
+      "source_id": "report",
+      "source_locator": "Report behavior section reasoning; video-selection.json #11 / clip__5f52fbae6ce02b95ed5346b2__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows reinspection after non-termination; note distinguishes visual checking from hidden reward/ground-truth access. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__5f52fbae6ce02b95ed5346b2__0.mp4",
+      "original_range_seconds": [
+        18.28,
+        40.6
+      ],
+      "video_sha256": "eded0467ea8b3a1896e13b5d006e0cf7765e9d39ff34853e690295e09169fb9b"
+    },
+    {
+      "id": "video-12",
+      "kind": "appendix-visual",
+      "label": "Video 12 · 搭塔：针对未满足的终态进行二次纠错",
+      "source_id": "report",
+      "source_locator": "Report behavior section reasoning; video-selection.json #12 / clip__b0b8456f0b4d549bc4d56cfe__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows reinspection after non-termination; note distinguishes visual checking from hidden reward/ground-truth access. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__b0b8456f0b4d549bc4d56cfe__0.mp4",
+      "original_range_seconds": [
+        27.4,
+        35.12
+      ],
+      "video_sha256": "6d5447238da6c5bd24b6fbd992db20c74d5df7462ca1ae7870430eb088ab9b9a"
+    },
+    {
+      "id": "video-13",
+      "kind": "appendix-visual",
+      "label": "Video 13 · 容器边缘净空不足，搬运时发生碰撞",
+      "source_id": "report",
+      "source_locator": "Report behavior section failures; video-selection.json #13 / clip__cb2554914fe8187ac98e9e45__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: provides a failure example; visible Discussion retains missed objects, rim collision and delayed within-segment feedback as unresolved limits. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__cb2554914fe8187ac98e9e45__0.mp4",
+      "original_range_seconds": [
+        47.44,
+        64.04
+      ],
+      "video_sha256": "e4a4f4a3315e660d990e1cc763c2d5283e4b625ca14c51d962cf177ef4e64a26"
+    },
+    {
+      "id": "video-14",
+      "kind": "appendix-visual",
+      "label": "Video 14 · 滑落发生在动作段内，纠错反馈滞后",
+      "source_id": "report",
+      "source_locator": "Report behavior section failures; video-selection.json #14 / clip__7ef164f7a8783f3af3eb9090__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: provides a failure example; visible Discussion retains missed objects, rim collision and delayed within-segment feedback as unresolved limits. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__7ef164f7a8783f3af3eb9090__0.mp4",
+      "original_range_seconds": [
+        17.96,
+        30.32
+      ],
+      "video_sha256": "33dd8e13d8f72dbb6c1e9959da0f0228762ebe0e52b893fa3c020a2a7cbfc830"
+    },
+    {
+      "id": "video-15",
+      "kind": "appendix-visual",
+      "label": "Video 15 · 复杂抓取反复失败，消耗剩余步数",
+      "source_id": "report",
+      "source_locator": "Report behavior section failures; video-selection.json #15 / clip__5b7eb4161fbb1a8e5851cf52__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: provides a failure example; visible Discussion retains missed objects, rim collision and delayed within-segment feedback as unresolved limits. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__5b7eb4161fbb1a8e5851cf52__0.mp4",
+      "original_range_seconds": [
+        18.8,
+        40.04
+      ],
+      "video_sha256": "96a27169cdaca680dbe52636982250364aa6da2805dc89c1a2e21cc6e4e8cae3"
+    },
+    {
+      "id": "video-16",
+      "kind": "appendix-visual",
+      "label": "Video 16 · 麻将操作错误未被及时识别",
+      "source_id": "report",
+      "source_locator": "Report behavior section failures; video-selection.json #16 / clip__bd5f4382adb568ed22dfca47__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: provides a failure example; visible Discussion retains missed objects, rim collision and delayed within-segment feedback as unresolved limits. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__bd5f4382adb568ed22dfca47__0.mp4",
+      "original_range_seconds": [
+        13.16,
+        24.04
+      ],
+      "video_sha256": "845e6ac55d8eed89308d3e4427f6c0226a013af7c63a64e7d1a03b904d37667c"
+    },
+    {
+      "id": "video-17",
+      "kind": "appendix-visual",
+      "label": "Video 17 · 零样本方案：尝试用机械臂把瓶子扫入桶中",
+      "source_id": "report",
+      "source_locator": "Report behavior section gpt-only; video-selection.json #17 / clip__b34c1a832bb5123d6eb6a6af__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows Direct action plans and stability issues; related-work and method distinguish constructing every action from accepting robot-policy candidates. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__b34c1a832bb5123d6eb6a6af__0.mp4",
+      "original_range_seconds": [
+        0.08,
+        28.04
+      ],
+      "video_sha256": "a186a2356952de5f82cf35c803a9b61dbda53c234c9e970e6cbd6db14abedc98"
+    },
+    {
+      "id": "video-18",
+      "kind": "appendix-visual",
+      "label": "Video 18 · 零样本方案：单手抓板，搭建不够稳定",
+      "source_id": "report",
+      "source_locator": "Report behavior section gpt-only; video-selection.json #18 / clip__71c12723687a550b770f36c0__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows Direct action plans and stability issues; related-work and method distinguish constructing every action from accepting robot-policy candidates. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__71c12723687a550b770f36c0__0.mp4",
+      "original_range_seconds": [
+        1.16,
+        11.16
+      ],
+      "video_sha256": "a22a8bde36988ee7aa09d572730e8dbe166a12cd2b52ee18d14252aee40adf82"
+    },
+    {
+      "id": "video-19",
+      "kind": "appendix-visual",
+      "label": "Video 19 · 零样本方案：单臂操作的稳定性问题",
+      "source_id": "report",
+      "source_locator": "Report behavior section gpt-only; video-selection.json #19 / clip__9e40a74ed6b0a356a421f53b__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows Direct action plans and stability issues; related-work and method distinguish constructing every action from accepting robot-policy candidates. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__9e40a74ed6b0a356a421f53b__0.mp4",
+      "original_range_seconds": [
+        4,
+        15.6
+      ],
+      "video_sha256": "52d44abf7ffc74a7c5cf250019043e173c3fd4556f229ddaf6df1c5273687591"
+    },
+    {
+      "id": "video-20",
+      "kind": "appendix-visual",
+      "label": "Video 20 · 本体信息未被有效利用，控制反复受阻",
+      "source_id": "report",
+      "source_locator": "Report behavior section direct-control; video-selection.json #20 / clip__faad002fd6c510f09db4c435__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows robot-state utilization or local recovery; foundations and method explain measured state and recomputed local IK. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__faad002fd6c510f09db4c435__0.mp4",
+      "original_range_seconds": [
+        0.08,
+        26.96
+      ],
+      "video_sha256": "5a42554ee72bfe334a5fa5271371359644f429aceb96174c2bc7792095913a32"
+    },
+    {
+      "id": "video-21",
+      "kind": "appendix-visual",
+      "label": "Video 21 · 数字摆放：理解控制反馈后的精彩恢复",
+      "source_id": "report",
+      "source_locator": "Report behavior section direct-control; video-selection.json #21 / clip__6ba3a538a3405206181aa6c6__0",
+      "status": "omitted",
+      "rationale": "Not locally embedded: shows robot-state utilization or local recovery; foundations and method explain measured state and recomputed local IK. Underlying simulator/benchmark media reuse rights not verified; official clip remains linked instead of redistributing footage or frames.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "THIRD_PARTY_NOTICES.md excludes benchmark assets/videos from blanket MIT grant.",
+      "credit": "Original recorded demonstration: Su et al.; upstream simulator asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/clips/clip__6ba3a538a3405206181aa6c6__0.mp4",
+      "original_range_seconds": [
+        18.4,
+        35.56
+      ],
+      "video_sha256": "a47220a3a46f654ffe4b38c833645910fd43166e77f8aefacd99234f7d20e97a"
+    },
+    {
+      "id": "initial-organize_table",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · organize_table",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=organize_table / media/tasks/organize_table.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 鼠标、键盘、摆件、闹钟和杂物散布在桌面。 Its task goal is 将指定物品放到各自位置，再打开抽屉收纳剩余杂物，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/organize_table.jpg"
+    },
+    {
+      "id": "initial-classify_objects_by_language",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · classify_objects_by_language",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=classify_objects_by_language / media/tasks/classify_objects_by_language.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 多个类别的物体混放，篮子的对应关系由当前指令给出。 Its task goal is 按照本条指令的类别—篮子映射放置全部物体，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/classify_objects_by_language.jpg"
+    },
+    {
+      "id": "initial-imitate_sorting_sequence",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · imitate_sorting_sequence",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=imitate_sorting_sequence / media/tasks/imitate_sorting_sequence.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 场景先提供一段物体排序示范。 Its task goal is 先观察并记住示范，再按照相同顺序放置相应物体，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/imitate_sorting_sequence.jpg"
+    },
+    {
+      "id": "initial-arrange_largest_number",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · arrange_largest_number",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=arrange_largest_number / media/tasks/arrange_largest_number.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 数字块散落在目标垫附近。 Its task goal is 从左到右组成最大的数字，校正朝向并放在目标垫上，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/arrange_largest_number.jpg"
+    },
+    {
+      "id": "initial-pack_objects_into_box",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · pack_objects_into_box",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=pack_objects_into_box / media/tasks/pack_objects_into_box.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 多个不同形状的物体分布在箱子周围。 Its task goal is 将所有物体装进箱中，并满足指令要求的朝向，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/pack_objects_into_box.jpg"
+    },
+    {
+      "id": "initial-classify_objects",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · classify_objects",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=classify_objects / media/tasks/classify_objects.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 多种物体与三个分类篮摆在桌面上。 Its task goal is 把全部物体按类别分入三个篮子，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/classify_objects.jpg"
+    },
+    {
+      "id": "initial-build_tower",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · build_tower",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=build_tower / media/tasks/build_tower.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 木块与木板尚未组成塔。 Its task goal is 按要求搭建有支撑的层叠结构，并在归位双臂后保持稳定。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/build_tower.jpg"
+    },
+    {
+      "id": "initial-make_kong",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · make_kong",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=make_kong / media/tasks/make_kong.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 手牌与弃牌区域已布置，等待任务中的弃牌。 Its task goal is 亮出匹配的牌并完成规定的杠牌操作序列，不扰动其他牌；此任务不是以双臂归位判定完成。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/make_kong.jpg"
+    },
+    {
+      "id": "initial-fold_clothes",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · fold_clothes",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=fold_clothes / media/tasks/fold_clothes.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 衣服在桌面展开，袖子和下摆尚未折叠。 Its task goal is 向内折袖子，再向上折下摆，形成符合要求的折叠形状，最后归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/fold_clothes.jpg"
+    },
+    {
+      "id": "initial-put_bottles_into_dustbin",
+      "kind": "appendix-visual",
+      "label": "Initial-state example · put_bottles_into_dustbin",
+      "source_id": "report",
+      "source_locator": "§2 task catalogue / queries.tasks.rows id=put_bottles_into_dustbin / media/tasks/put_bottles_into_dustbin.jpg",
+      "status": "omitted",
+      "rationale": "Task image depicts 桌面散放多个瓶子，旁边有垃圾桶。 Its task goal is 将所有瓶子放入垃圾桶，并归位双臂。 Not redistributed because benchmark rendering assets have unverified downstream media rights. Classification mapping is taught by a separate fact-based blog diagram, not traced or copied from this image.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "unknown",
+      "permission_basis": "Benchmark image assets excluded from root MIT documentation grant; no independent reuse license verified.",
+      "credit": "Su et al. task catalogue; RoboDojo underlying asset rights retained.",
+      "original_url": "https://anonymous-report-421.github.io/public-website/media/tasks/put_bottles_into_dustbin.jpg"
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-1.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "report",
+      "source_locator": "Report opening wide Score ranking",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-2.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "report",
+      "source_locator": "§2.1 Action Generation and Execution; closed-loop two-policy pipeline",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-2-direct-input.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "report",
+      "source_locator": "§2.1 Action Generation and Execution; closed-loop two-policy pipeline",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-2-direct-action.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "report",
+      "source_locator": "§2.1 Action Generation and Execution; closed-loop two-policy pipeline",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-2-hybrid-proposal.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "report",
+      "source_locator": "§2.1 Action Generation and Execution; closed-loop two-policy pipeline",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-2-hybrid-execution.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "report",
+      "source_locator": "§2.1 Action Generation and Execution; closed-loop two-policy pipeline",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-3-score.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "report",
+      "source_locator": "§3 Results; Score and success-rate panels",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-3-success.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "report",
+      "source_locator": "§3 Results; Score and success-rate panels",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-3-score-detail.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "report",
+      "source_locator": "§3 Results; Score and success-rate panels",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-4.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "report",
+      "source_locator": "§3.1 RoboLab; success rates on selected ten tasks",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/figure-4-tight.png",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "report",
+      "source_locator": "§3.1 RoboLab; success rates on selected ten tasks",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/table-1-score.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "report",
+      "source_locator": "§3 Results; ten-task Score / success-rate interactive table",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/table-1-success.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "report",
+      "source_locator": "§3 Results; ten-task Score / success-rate interactive table",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/table-2.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "report",
+      "source_locator": "§3.1 RoboLab; ten-task success-rate table",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/table-3.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "report",
+      "source_locator": "§6.3 Execution and usage for selected RoboDojo runs",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/table-3-control-detail.png",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "report",
+      "source_locator": "§6.3 Execution and usage for selected RoboDojo runs",
+      "license_status": "verified-allowed",
+      "license_basis": "Root LICENSE + THIRD_PARTY_NOTICES.md at 8f3d362b077d8efb77e2a7274d5b2c20e2243846 explicitly cover project-owned documentation; numerical charts and pipeline are authored report content. Third-party identification logos hidden. Original English/numbers retained; MIT notice reproduced in NOTICE.txt. Benchmark imagery/videos not relicensed or redistributed.",
+      "credit": "Su et al.，MIT",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/astra-embodied-policy/classification-case.svg",
+      "origin": "generated",
+      "source_id": "results",
+      "source_ids": [
+        "results",
+        "native"
+      ],
+      "source_locator": "classify_objects_by_language__standard__g0__l0; native task + geometry + scoring",
+      "credit": "本文补图 · 按公开指令、案例记录和原生 checker 绘制",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "description": "Blog-authored category/basket relationship and actual two-run results. Not a simulator screenshot, imitation of an initial-state rendering, or an unpublished model trace."
+    }
+  ],
+  "qa": {
+    "checked_at": "2026-10-18",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true,
+        "default_reading_height": 9241.015625,
+        "expanded_height": 14216,
+        "article_body_scrolled": true,
+        "all_12_slides_checked_embedded_and_standalone": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true,
+        "default_reading_height": 9241.015625,
+        "expanded_height": 14216,
+        "article_body_scrolled": true,
+        "all_12_slides_checked_embedded_and_standalone": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true,
+        "default_reading_height": 13159.6875,
+        "expanded_height": 16254,
+        "article_body_scrolled": true,
+        "all_12_slides_checked_embedded_and_standalone": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser": {
+      "mode": "isolated headless Chromium",
+      "session": "astra-embodied-headless",
+      "user_browser_used": false,
+      "native_window_fullscreen_tested": false,
+      "fullscreen_test_scope": "DOM Fullscreen API and keyboard/button exit; no native visible-window assertion"
+    },
+    "reading_length": {
+      "visible_main_chinese_characters": 4133,
+      "policy": "Complete secondary tables folded; central case, geometry judge, score denominator, Direct incompletes and RoboLab reverse result visible."
+    },
+    "evidence_directory": "output/playwright/astra-embodied/",
+    "console_errors": [],
+    "source_hashes": {
+      "content/_posts/092-astra-embodied-policy.md": "27e0600cee1e9127cf0f7186354b974c7afaf5295b77d6564bceb84e4627fbbd",
+      "lib/decks/astra-embodied-policy.html": "11cca7d92209fe914144c84be5b932b9f3034d6551662138ccbce5c964fa45de",
+      "lib/papers/astra-embodied-policy/article.css": "58fec6fbd03d818aadaafbb7a62ae1d4c4e17e52161fc4c72189458adf2a06b9"
+    },
+    "interaction_details": {
+      "code_copy_and_indentation": true,
+      "foundation_forward_and_return_links": 6,
+      "toc_navigation": true,
+      "dark_theme_switch_and_refresh": true,
+      "article_focus_button_escape_and_iframe_escape": true,
+      "nested_image_close_then_focus_escape": true,
+      "wide_and_tall_image_fit": true,
+      "image_clear_zoom_and_drag": true,
+      "trigger_focus_restored_and_scroll_unlocked": true,
+      "embedded_fullscreen_button_and_escape": true,
+      "standalone_return_after_hash_and_refresh": true,
+      "tests": "isolated headless UI; no native OS fullscreen claim"
+    },
+    "passed_build_check": "369 HTML pages, 92 posts; source/HTML text parity, local assets and 41 comment paths validated"
+  },
+  "unresolved": [
+    "No verified arXiv entry or original PDF: this is a web technical report; local 44-page print only.",
+    "Official HF dataset endpoint timed out during checking; claims grounded in pinned public repo/report, not inaccessible raw annotations.",
+    "Complete per-decision checker logs not released, so direct-final wrong object cannot be inferred from Score 40.",
+    "Two Direct cases have no native terminal verdict, distinct from 35 native failures; success summary counts them as non-success but Score excludes missing values.",
+    "RoboLab final slot selection includes historical results and retries, with two Direct 180→500 decision changes; comparisons are descriptive, not strict paired uniform-budget reruns.",
+    "Runtime code does not establish it produced every historical result under identical settings; protocol is labeled by fixed revision.",
+    "Benchmark media licenses not independently verified: videos and initial-state images linked, not locally reproduced.",
+    "No report evidence isolates candidate presence, action interface and execution length effects.",
+    "No robot experiment, paid model inference, new training or deployment beyond blog publication was performed."
+  ]
+}

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GPT 6 Astra as an Embodied Policy · 12 页图解</title>
+<link rel="icon" href="/MyImgs/icon1.svg">
+<style>
+:root{color-scheme:light;--ink:#20252a;--muted:#5e6872;--link:#1768d1;--line:#dfe4e9;--soft:#f6f8fa;--font:Georgia,"Times New Roman","Songti SC","Noto Serif CJK SC",serif}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:#f3f5f7;color:var(--ink);font-family:var(--font)}
+button,select{font:inherit}button,a,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link);outline-offset:3px}[hidden]{display:none!important}
+.viewport{height:calc(100% - 54px);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:6px}
+.canvas{width:1200px;height:675px;flex:none;position:relative;background:white;transform-origin:center;box-shadow:0 1px 8px #20252a0a}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:26px 36px 22px;gap:12px}
+.meta{margin:0;color:var(--muted);font-size:15px;line-height:1.45;display:flex;justify-content:space-between;gap:12px}
+h1,h2{font-size:32px;line-height:1.35;margin:0;font-weight:700}h1{font-size:35px}h3{font-size:23px;line-height:1.45;margin:0 0 8px}
+p,li{font-size:22px;line-height:1.65;margin:0}p+p{margin-top:12px}ul,ol{margin:4px 0;padding-left:26px}li+li{margin-top:12px}
+.lead{font-size:22px;line-height:1.55}.content{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.split.proposal{grid-template-columns:600px minmax(0,1fr)}
+.split.execution{grid-template-columns:650px minmax(0,1fr)}.split>*{min-width:0}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.columns>*{min-width:0}
+.text-stack{display:flex;flex-direction:column;gap:16px}.text-stack p+p{margin:0}
+.source{margin-top:auto;border-top:1px solid var(--line);padding-top:8px;color:var(--muted);font-size:15px;line-height:1.5;display:flex;justify-content:space-between;gap:14px}
+.source a{color:var(--muted)}.note{color:var(--muted);font-size:18px;line-height:1.6}.small{font-size:20px}
+.accent{color:var(--link)}.rule{border-block:1px solid var(--line);padding:14px 0}
+.paper-image{display:block;width:100%;border:0;padding:0;background:white;text-align:center}
+.paper-image img{display:block;max-width:100%;height:auto;margin:0 auto}
+.paper-image[data-image]{cursor:zoom-in}.image-wide img{width:100%;max-height:395px;object-fit:contain}
+.image-case img{width:100%;max-height:290px;object-fit:contain}.image-robolab img{width:100%;max-height:375px;object-fit:contain}
+.mobile-case{display:none}
+.proposal .paper-image img{width:600px;max-height:460px;object-fit:contain}.execution .paper-image img{width:650px;max-height:430px;object-fit:contain}
+.direct-panels{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.direct-panels .paper-image img{width:100%;max-height:320px;object-fit:contain}
+.direct-panels h3{font-size:20px;font-weight:400;color:var(--muted);margin-bottom:10px}
+.frame-hint{font-size:15px;line-height:1.5;color:var(--muted);text-align:left;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:21px;line-height:1.5}th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}th{background:var(--soft);font-weight:700}
+td:first-child{font-weight:700}.metric-table td{font-variant-numeric:tabular-nums}.metric-table{font-size:22px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.83em;background:var(--soft);padding:1px 4px}
+pre{margin:0;padding:16px 20px;background:var(--soft);border:1px solid var(--line);overflow:auto;font:18px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+pre code{background:none;padding:0;font:inherit}.formula{padding:13px 0;border-block:1px solid var(--line);font:21px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;border-block:1px solid var(--line);padding:20px 0}
+.flow>div{position:relative;padding-right:12px}.flow>div:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:8px;color:var(--muted)}
+.flow .label{display:block;font-size:23px;line-height:1.45}.flow .explain{display:block;font-size:20px;line-height:1.6;margin-top:10px;color:var(--muted)}
+.sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}.sequence section{border-top:2px solid var(--line);padding-top:12px}
+.sequence p{font-size:21px}.sequence h3{color:var(--link);font-size:24px}
+.result-compact{font-size:20px;line-height:1.6}.outcomes{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-block:1px solid var(--line);padding:14px 0}
+.outcomes strong{color:var(--link)}.outcomes p{font-size:23px}
+.controls{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 12px;border-top:1px solid var(--line);background:white}
+.control-group{display:flex;align-items:center;gap:8px;min-width:0}.controls button,.controls select,.controls a{min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:4px;background:white;color:var(--ink);font-size:14px;line-height:1.5;text-decoration:none}
+.controls a{color:var(--link);white-space:nowrap}.controls button:disabled{opacity:.35;cursor:default}.controls select{max-width:170px}
+.counter{font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.controls [data-fullscreen]{color:var(--link)}
+dialog{width:min(1250px,calc(100vw - 24px));height:min(96dvh,1050px);max-width:none;max-height:none;border:1px solid var(--line);border-radius:6px;padding:0;overflow:hidden;background:white;color:var(--ink)}
+dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:14px}
+.viewer-actions{display:flex;gap:6px}.viewer-actions button{background:white;border:1px solid var(--line);border-radius:4px;padding:7px 10px;font-size:14px;min-height:36px}
+.viewer-actions [data-view-close]{color:var(--link)}.viewer-body{overflow:auto;min-width:0;min-height:0;padding:12px;overscroll-behavior:contain}
+.viewer-body img{display:block;max-width:none;max-height:none;height:auto;margin:auto;user-select:none;-webkit-user-drag:none}
+.viewer-body[data-mode="clear"]{cursor:grab}.viewer-body[data-dragging]{cursor:grabbing}
+.viewer-caption{margin:0;padding:8px 12px;border-top:1px solid var(--line);font-size:13px;line-height:1.6;color:var(--muted);max-height:100px;overflow:auto}
+@media(max-width:640px){
+.viewport{padding:0;align-items:stretch}.canvas{width:100%;height:100%;transform:none!important;box-shadow:none}
+.slide{padding:15px 17px;gap:12px;overflow-y:auto;overscroll-behavior:contain}.meta{font-size:11px;gap:8px}.meta>span:last-child{white-space:nowrap;flex:none}
+h1,h2{font-size:22px;line-height:1.5}h3{font-size:17px}p,li,.lead{font-size:15px;line-height:1.8}.note,.small,.result-compact{font-size:13px}
+.content{flex:none;min-height:0;gap:16px}.source{font-size:11px;line-height:1.65;margin-top:18px;flex-wrap:wrap}
+.split,.split.proposal,.split.execution,.columns{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+.paper-image img,.image-wide img,.image-case img,.image-robolab img,.proposal .paper-image img,.execution .paper-image img{max-height:none;width:100%}
+.image-case{display:none}.mobile-case{display:grid;gap:7px;border-block:1px solid var(--line);padding:10px 0;font-size:14px;line-height:1.7}
+.mobile-case .mapping{display:grid;grid-template-columns:1fr 28px 1fr}.mobile-case .verdict{font-size:13px;color:var(--muted);margin-top:4px}
+.direct-panels{grid-template-columns:1fr;gap:16px}.direct-panels .paper-image img{max-height:none;width:100%}.direct-panels h3{font-size:14px}
+.frame-hint{font-size:11px}.table-box{overflow-x:auto}.table-box table{min-width:540px}table,.metric-table{font-size:13px;line-height:1.7}th,td{padding:7px}
+pre{font-size:12px;padding:12px;line-height:1.7}.formula{font-size:12px;padding:10px 0;overflow-x:auto;white-space:nowrap}
+.flow{grid-template-columns:1fr 1fr;gap:20px}.flow>div::after{display:none}.flow .label{font-size:16px}.flow .explain{font-size:13px;margin-top:5px}
+.sequence{grid-template-columns:1fr;gap:16px}.sequence h3{font-size:17px}.sequence p{font-size:14px}
+.outcomes{grid-template-columns:1fr;gap:12px}.outcomes p{font-size:15px}
+.controls{padding:6px 8px;gap:4px}.controls .control-group{gap:4px}.controls button,.controls a,.controls select{padding:7px 8px;font-size:12px}.controls select{max-width:72px}.counter{font-size:12px}
+.viewer-head{flex-wrap:wrap;font-size:12px}.viewer-actions{margin-left:auto}.viewer-caption{font-size:11px}
+}
+@media print{html,body{height:auto;background:white}.viewport{height:auto;padding:0;overflow:visible;display:block}.canvas{height:auto;width:1200px;transform:none!important;box-shadow:none}.slide{position:relative;display:flex!important;height:675px;break-after:page}.slide[hidden]{display:flex!important}.controls,dialog{display:none!important}@page{size:landscape;margin:8mm}}
+</style>
+</head>
+<body>
+<main class="viewport" aria-label="Astra 机器人控制图解"><div class="canvas" id="canvas">
+<section class="slide" data-title="核心问题" aria-label="第1页：核心问题">
+<p class="meta"><span>GPT 6 Astra as an Embodied Policy · Galbot</span><span>01 / 12</span></p>
+<h1>看懂“木制玩具进右篮”，怎样把它做成？</h1>
+<div class="content">
+<button class="paper-image image-case" data-image="/lib/papers/astra-embodied-policy/classification-case.svg" data-caption="本文补图：按真实分类任务、公开结果与 RoboDojo 程序判定绘制；不是模拟器截图。" aria-label="放大真实分类案例示意"><img src="/lib/papers/astra-embodied-policy/classification-case.svg" width="900" height="300" alt="汽车进左篮、手表进中篮、木制玩具进右篮，双臂归位；真实配对案例Hybrid成功、Direct失败"></button>
+<div class="mobile-case" aria-label="真实分类案例的类别与目标篮子"><div class="mapping"><span>汽车</span><span>→</span><span>左篮</span></div><div class="mapping"><span>手表</span><span>→</span><span>中篮</span></div><div class="mapping"><span>木制玩具</span><span>→</span><span>右篮</span></div><div class="verdict">最后双臂归位。真实配对记录：Hybrid 成功；Direct 失败。具体动作与判分见第 7–8 页。</div></div>
+<div class="columns"><p>Astra 每段自己构造机器人动作，称为 <strong>Direct</strong>。</p><p>动作模型 π0.5 先给建议，Astra 检查后接受或纠正，称为 <strong>Hybrid</strong>。</p></div>
+<p class="note">案例来自双机械臂模拟环境 RoboDojo。研究的是运行时配合，没有新训练或蒸馏；分类任务整体并非 Hybrid 更好。</p>
+</div>
+<p class="source"><span>报告 §1–2 · classify_objects_by_language / standard / g0 / l0</span><a href="https://anonymous-report-421.github.io/public-website/index.html?lang=en&amp;view=1">原始报告</a></p>
+</section>
+
+<section class="slide" data-title="机器人输入与动作" hidden aria-label="第2页：机器人输入与动作">
+<p class="meta"><span>Part 0 · 面向 LLM / VLM 读者</span><span>02 / 12</span></p>
+<h2>机器人输出的是动作，抓住没有要看实际反馈</h2>
+<div class="content">
+<div class="flow" aria-label="观察到动作再到新观察"><div><b class="label">看当前状态</b><span class="explain">三路 RGB + 双臂 14 维状态 + 指令与历史</span></div><div><b class="label">决定下一段</b><span class="explain">机器人策略 policy 把观察变成一小段动作</span></div><div><b class="label">执行目标</b><span class="explain">关节角，或夹爪的位置、朝向与开合</span></div><div><b class="label">再观察</b><span class="explain">物体是否随手抬起？是否掉落？再决定</span></div></div>
+<div class="columns"><p>π0.5 是 VLA（Vision-Language-Action）：读图与指令，输出动作。每臂 6 个关节 + 1 个开合值，两臂共 14 个数。</p><p>夹爪等末端执行部件叫 EEF（end-effector）。这里开合状态是<strong>最近的命令</strong>，不是测量的手指间距，更不能证明已抓住。</p></div>
+<p class="note">执行模型看不到隐藏物体真值、评分或未来物理状态。基础概念的详细说明在文章底部，可从正文跳转。</p>
+</div>
+<p class="source"><span>报告工具 / 控制说明 · 固定 client.py / gate_assessment.py</span><a href="/posts/论文解读/astra-embodied-policy.html#foundations" target="_top">基础补充</a></p>
+</section>
+
+<section class="slide" data-title="Direct" hidden aria-label="第3页：Direct">
+<p class="meta"><span>Method · Direct</span><span>03 / 12</span></p>
+<h2>Astra 自己构造目标，程序把目标转成关节运动</h2>
+<div class="content">
+<div class="direct-panels"><div><h3>① 当前观察 + 执行历史</h3><button class="paper-image" data-image="/lib/papers/astra-embodied-policy/figure-2-direct-input.png" data-caption="Figure 2 右列上部，按原图阶段拆分；完整 Figure 2 在正文。Su et al.，MIT。" aria-label="放大Direct输入原图"><img src="/lib/papers/astra-embodied-policy/figure-2-direct-input.png" width="720" height="385" alt="Figure2 Direct输入：图像、机器人状态、指令、历史、工具和笔记"></button></div>
+<div><h3>② Astra 生成目标 → 执行 → 新观察</h3><button class="paper-image" data-image="/lib/papers/astra-embodied-policy/figure-2-direct-action.png" data-caption="Figure 2 右列下部，按原图阶段拆分。Su et al.，MIT。" aria-label="放大Direct动作原图"><img src="/lib/papers/astra-embodied-policy/figure-2-direct-action.png" width="720" height="418" alt="Figure2 Direct动作：生成双臂夹爪位置、朝向、开合，执行1到5步，再观察"></button></div></div>
+<p class="small">每次执行 1–5 步。IK（inverse kinematics）根据希望夹爪到达的位置，求关节怎样改变；它不保证无碰撞、抓稳或物体不滑落。Direct <strong>不启动 π0.5</strong>。</p>
+</div>
+<p class="source"><span>Figure 2 右列阶段裁剪 · Su et al. · MIT</span><a href="/lib/papers/astra-embodied-policy/figure-2.png">完整原图</a></p>
+</section>
+
+<section class="slide" data-title="Hybrid候选" hidden aria-label="第4页：Hybrid候选">
+<p class="meta"><span>Method · Hybrid / 1</span><span>04 / 12</span></p>
+<h2>π0.5 提出 50 步，但 Astra 不会一次全部执行</h2>
+<div class="content"><div class="split proposal">
+<button class="paper-image" data-image="/lib/papers/astra-embodied-policy/figure-2-hybrid-proposal.png" data-caption="Figure 2 左列上部：输入、候选与审查，原文未翻译；Su et al.，MIT。" aria-label="放大Hybrid候选原图"><img src="/lib/papers/astra-embodied-policy/figure-2-hybrid-proposal.png" width="720" height="554" alt="Figure2 Hybrid先生成关节候选，再由Astra根据观察、状态、指令、历史与候选审查"></button>
+<div class="text-stack"><p>π0.5 提供 <strong>50×14</strong> 个绝对关节目标。一次输出的动作序列叫 action chunk（动作段）。</p><p>FK（forward kinematics）从关节角算夹爪的位置、朝向，提供可检查的候选轨迹。</p><p class="small">FK 只算机器人几何，<strong>没有预演物体、碰撞或抓取结果</strong>。</p></div>
+</div></div>
+<p class="source"><span>Figure 2 左列上部裁剪 · Su et al. · MIT；官方 client.py</span><a href="/lib/papers/astra-embodied-policy/figure-2.png">完整原图</a></p>
+</section>
+
+<section class="slide" data-title="Hybrid执行" hidden aria-label="第5页：Hybrid执行">
+<p class="meta"><span>Method · Hybrid / 2</span><span>05 / 12</span></p>
+<h2>接受或修正是二选一，没用完的候选丢弃</h2>
+<div class="content"><div class="split execution">
+<button class="paper-image" data-image="/lib/papers/astra-embodied-policy/figure-2-hybrid-execution.png" data-caption="Figure 2 左列下部：二选一、执行与重新观察；Su et al.，MIT。" aria-label="放大Hybrid执行原图"><img src="/lib/papers/astra-embodied-policy/figure-2-hybrid-execution.png" width="720" height="438" alt="Figure2 Hybrid接受候选1到15步或修正1到5步，再得到新观察"></button>
+<div class="text-stack"><p><code>student</code>：原样执行候选前 <strong>1–15 步</strong>。</p><p><code>edit</code>：在候选夹爪轨迹上加修正，执行 <strong>1–5 步</strong>。</p><p><code>eef</code>：给显式夹爪目标，执行 <strong>1–5 步</strong>。</p></div>
+</div><p class="small">修正每个实际控制步都用反馈重新求局部 IK；模型在整段结束才得到新观察。余下候选不缓存接着用，π0.5 从新状态重新提议。</p></div>
+<p class="source"><span>Figure 2 左列下部裁剪 · Su et al. · MIT；固定控制代码</span><a href="/lib/papers/astra-embodied-policy/figure-2.png">完整原图</a></p>
+</section>
+
+<section class="slide" data-title="修正规则" hidden aria-label="第6页：修正规则">
+<p class="meta"><span>Method · 什么允许修正</span><span>06 / 12</span></p>
+<h2>先判断上段失败没有，再判断下段目标对不对</h2>
+<div class="content">
+<div class="columns"><p><code>execution_status</code>：上一段是否失败？闭合以后物体没随手抬起，需要结合前后图像。</p><p><code>intent_status</code>：下一段是否选错子目标？没抓住就开始搬运，前置条件没有满足。</p></div>
+<pre><code># 根据官方 gate_assessment.py 简化改写，Python 3
+failure = assessment["execution_status"] == "failed"
+wrong_intent = assessment["intent_status"] == "misaligned"
+if response["mode"] in ("edit", "eef"):
+    if not (failure or wrong_intent):
+        raise ValueError("Takeover requires observed failure or wrong task intent")</code></pre>
+<p class="small">不确定或姿势“不好看”不够。失败也能接受合理重试。<strong>程序检查的是 Astra 填的状态，不独立验证判断是否正确。</strong></p>
+</div>
+<p class="source"><span>固定 gate_assessment.py · 状态来自模型，非隐藏真值</span><a href="https://github.com/anonymous-report-421/GPT-as-Policy/blob/8f3d362b077d8efb77e2a7274d5b2c20e2243846/hybrid_rollout/robodojo/robodojo_server/gate_assessment.py">官方代码</a></p>
+</section>
+
+<section class="slide" data-title="真实案例" hidden aria-label="第7页：真实案例">
+<p class="meta"><span>Case · Decision：决策序号 / Control：累计控制步</span><span>07 / 12</span></p>
+<h2>一段纠正以后，又把动作交回 π0.5</h2>
+<div class="content">
+<div class="sequence"><section><h3>Decision 29</h3><p>接受 π0.5：释放左篮里的绿色汽车，向上撤回。</p></section><section><h3>Decision 33 / Control 409</h3><p>手里拿着木制玩具。Astra 修正候选，让它往右红篮移动。</p><p><code>Δxyz=(+4.5,0,+0.1) cm</code><br>维持闭合，执行 5 步。</p></section><section><h3>Decision 47</h3><p>重新接受 π0.5，接近剩余的木制狮子。</p></section></div>
+<div class="outcomes"><p>Hybrid：794/1,100 步，73 段<br><strong>成功 · Score 100</strong></p><p>Direct：1,100/1,100 步，220 段<br><strong>失败 · Score 40</strong></p></div>
+<p class="note">实际动作见原片 Video 1；终态分数见公开摘要。逐步 checker 日志未公开，不能从 40 分推断 Direct 最后哪件物体放错。该任务整体 Hybrid 1/5，Direct 2/5。</p>
+</div>
+<p class="source"><span>原报告 Video 1 / 公开配对记录 · 视频资产只链接、不再分发</span><a href="https://anonymous-report-421.github.io/public-website/index.html?lang=en&amp;view=1#findings">看原片</a></p>
+</section>
+
+<section class="slide" data-title="程序判分" hidden aria-label="第8页：程序判分">
+<p class="meta"><span>Judge · RoboDojo 自带 Python 规则</span><span>08 / 12</span></p>
+<h2>放对类别、满足几何条件、双臂归位，才算成功</h2>
+<div class="content">
+<div class="columns"><div class="text-stack"><p>任务的 <code>gen_instruction()</code> 从场景类别生成指令，汽车→左、手表→中、木制玩具→右。</p><p>检查每个物体参考点在指定篮的水平范围内，高于篮底且不超过篮顶 +1 cm。</p><p class="small">由任务代码检查场景几何，不用 VLM 看图打分；参考点通过不等于整个网格都在篮内。</p></div>
+<div class="text-stack"><div class="table-box"><table class="metric-table"><tr><th>完成类别数</th><th>Score</th></tr><tr><td>任一类</td><td>10</td></tr><tr><td>任意两类</td><td>40</td></tr><tr><td>三类</td><td>100</td></tr></table></div><p class="small">阶段还要求松手、篮内无混类。每控制步最多晋一级；最终成功未通过，100 分退回 40。</p></div></div>
+<p class="small"><strong>成功还要求双臂归位：</strong>每个位置坐标偏差 ≤15 cm、朝向差 ≤20°。物体放对但未归位，仍失败。报告没有披露独立人工校验的一致性研究。</p>
+</div>
+<p class="source"><span>原生 checker revision ee67a146 · classify / func_parser / reward_manager</span><a href="https://github.com/robodojo-benchmark/RoboDojo/blob/ee67a1468510da7624a089164402359f2afc72c8/task/RoboDojo/tasks/classify_objects_by_language.py">原生任务代码</a></p>
+</section>
+
+<section class="slide" data-title="RoboDojo" hidden aria-label="第9页：RoboDojo">
+<p class="meta"><span>Experiments · 10 个所选任务 × 5 次</span><span>09 / 12</span></p>
+<h2>Hybrid 更好，但只代表这组偏向困难任务的结果</h2>
+<div class="content">
+<button class="paper-image image-wide" data-image="/lib/papers/astra-embodied-policy/figure-3-score.png" data-caption="默认显示 Figure 3 Score 面板上部三项的细节；放大可看完整原图，正文也保留全部。Su et al.，MIT。" aria-label="放大完整RoboDojo Score原图"><img src="/lib/papers/astra-embodied-policy/figure-3-score-detail.png" width="1520" height="405" alt="Figure3上部细节：Hybrid Score62.60，Galaxea G0.5公开参照38.26，Direct37.81"></button>
+<p class="result-compact">成功：<strong>Hybrid 24/50（48%） / Direct 13/50（26%）</strong>。Score：62.60 / 37.81；Direct 有两条无原生终态的记录，成功率按未成功计入 50 条，Score 仅用 <strong>48 条</strong>。</p>
+<p class="result-compact">任务按 π0.5 原成功率四档选 6/2/1/1 个，偏向低分段。π0.5 的 15.67% / 24.43 是重加权公开参照，没有同 seed 重跑。分类任务反而 Direct 更好，两边整理桌面均 0/5。</p>
+</div>
+<p class="source"><span>Figure 3 上部细节 · Su et al. · MIT；完整图表在正文</span><a href="/lib/papers/astra-embodied-policy/selected-results.json">公开指标摘录</a></p>
+</section>
+
+<section class="slide" data-title="RoboLab反例" hidden aria-label="第10页：RoboLab反例">
+<p class="meta"><span>Experiments · RoboLab / 单臂 Franka</span><span>10 / 12</span></p>
+<h2>换一套任务，Direct 比 Hybrid 好</h2>
+<div class="content">
+<button class="paper-image image-robolab" data-image="/lib/papers/astra-embodied-policy/figure-4.png" data-caption="Figure 4，只裁掉顶部无内容留白；完整图在正文。Su et al.，MIT。" aria-label="放大RoboLab原图"><img src="/lib/papers/astra-embodied-policy/figure-4-tight.png" width="1440" height="616" alt="Figure4：Direct49/50=98%，Hybrid46/50=92%，π0.5和Cosmos各36%，DreamZero34%"></button>
+<p class="result-compact"><strong>98% 是选定最终记录的描述性成绩：</strong>含历史结果与重试，最后两次 Direct 把决策上限 180→500；各方法没有严格配对相同状态与预算。</p>
+<p class="note">此处 π0.5 用机器人数据集 DROID 的训练权重，未在测试任务微调；RoboDojo 则微调过。“候选不适合任务”尚无对应因果消融。</p>
+</div>
+<p class="source"><span>Figure 4 · Su et al. · MIT；官方 RoboLab selection / notes / report_baselines.py</span><a href="/lib/papers/astra-embodied-policy/table-2.png">逐任务原表</a></p>
+</section>
+
+<section class="slide" data-title="用量与时间" hidden aria-label="第11页：用量与时间">
+<p class="meta"><span>Experiments · 仅 RoboDojo 各 50 条记录</span><span>11 / 12</span></p>
+<h2>14.4% 是修正控制步，不是模型只调用这么多</h2>
+<div class="content">
+<button class="paper-image image-wide" data-image="/lib/papers/astra-embodied-policy/table-3.png" data-caption="Table 3 的控制步、动作段、物理时间三行细节；点击看完整含 token 表。Su et al.，MIT。" aria-label="放大完整用量原表"><img src="/lib/papers/astra-embodied-policy/table-3-control-detail.png" width="1520" height="370" alt="Table3前三项：Hybrid42750步3776段34.20秒，Direct38221步7729段30.58秒"></button>
+<p class="small">Hybrid 修正 <strong>6,174/42,750=14.44%</strong> 控制步，但每段都经过 Astra 审查。记录 token 为 624.8M / 1.13B，少 44.8%，含缓存输入，不能等同账单。</p>
+<p class="small"><strong>25 Hz 是控制节拍：</strong>一步 0.04 s；15 步为 0.6 s，5 步为 0.2 s。模拟器停住等模型思考，这些秒数都不含等待，不证明实时运行。</p>
+</div>
+<p class="source"><span>Table 3 控制行裁剪 · Su et al. · MIT；本文 Python 3 算术核查</span><a href="/lib/papers/astra-embodied-policy/verify_metrics.py">离线核查脚本</a></p>
+</section>
+
+<section class="slide" data-title="结论与研究边界" hidden aria-label="第12页：结论与研究边界">
+<p class="meta"><span>Discussion / Conclusion</span><span>12 / 12</span></p>
+<h2>候选怎样帮到下一步，需要进一步隔离验证</h2>
+<div class="content">
+<div class="text-stack"><p><strong>已有动作策略给建议，通用模型检查执行与目标，必要时改一小段。</strong>这套系统在所选 RoboDojo 上提高成功率，也减少记录 token。</p>
+<p>目前同时改变了候选来源、动作接口和执行长度。没有同接口、同段长下的“有无候选”消融，不能把收益全部归于某一个部件。</p>
+<p>对 Agent 研究，可以固定观察频率、接口与段长，再改变候选质量，测真实修复、误改正确候选和实际等待时间。</p>
+<p class="note">没有训练 / OPD；没有真实机器人部署或实时延迟实验。RoboLab 是重要反例：候选加入后可能更差。原图、完整表格、代码依据与机器人基础见正文。</p></div>
+</div>
+<p class="source"><span>全文、原图与固定代码核查 · 未复现机器人实验</span><a href="/posts/论文解读/astra-embodied-policy.html" target="_top">读完整文章</a></p>
+</section>
+</div></main>
+<nav class="controls" aria-label="幻灯片导航">
+<div class="control-group"><button type="button" data-prev aria-label="上一页">←</button><button type="button" data-next aria-label="下一页">→</button><span class="counter" aria-live="polite" data-counter>1 / 12</span><select aria-label="跳转到幻灯片" data-select></select></div>
+<div class="control-group"><button type="button" data-fullscreen aria-pressed="false">全屏</button><a href="/posts/论文解读/astra-embodied-policy.html" target="_top" data-return>回文章</a></div>
+</nav>
+<dialog id="image-viewer" aria-label="原图与案例图详情">
+<header class="viewer-head"><span>图表详情 · 可滚动 / 拖动</span><div class="viewer-actions"><button type="button" data-view-fit>整图</button><button type="button" data-view-clear>清晰</button><button type="button" data-view-close>关闭</button></div></header>
+<div class="viewer-body" tabindex="0" aria-label="可滚动的图表" data-mode="fit"><img alt=""></div><p class="viewer-caption"></p>
+</dialog>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll(".slide")];
+  const canvas = document.querySelector("#canvas");
+  const viewport = document.querySelector(".viewport");
+  const prev = document.querySelector("[data-prev]");
+  const next = document.querySelector("[data-next]");
+  const counter = document.querySelector("[data-counter]");
+  const select = document.querySelector("[data-select]");
+  const fullscreen = document.querySelector("[data-fullscreen]");
+  const viewer = document.querySelector("#image-viewer");
+  const viewerBody = viewer.querySelector(".viewer-body");
+  const viewerImage = viewer.querySelector("img");
+  const caption = viewer.querySelector(".viewer-caption");
+  let index = 0, imageTrigger = null, imageMode = "fit", drag = null;
+  slides.forEach((slide, i) => select.add(new Option((i + 1) + " · " + slide.dataset.title, String(i))));
+  const fromHash = () => {
+    const match = location.hash.match(/^#(?:slide-)?(\d+)$/);
+    return match ? Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1)) : 0;
+  };
+  function show(i, updateHash = true) {
+    index = Math.min(slides.length - 1, Math.max(0, i));
+    slides.forEach((slide, n) => {
+      slide.hidden = n !== index;
+      slide.setAttribute("aria-hidden", String(n !== index));
+    });
+    counter.textContent = (index + 1) + " / " + slides.length;
+    select.value = String(index);
+    prev.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+    document.title = "Astra as an Embodied Policy · " + (index + 1) + "/" + slides.length + " · " + slides[index].dataset.title;
+    if (updateHash) history.replaceState(null, "", "#slide-" + (index + 1));
+    slides[index].scrollTop = 0;
+  }
+  function fitCanvas() {
+    if (innerWidth <= 640) { canvas.style.transform = "none"; return; }
+    const scale = Math.max(.1, Math.min((viewport.clientWidth - 12) / 1200, (viewport.clientHeight - 12) / 675));
+    canvas.style.transform = "scale(" + scale + ")";
+  }
+  async function toggleFullscreen() {
+    try {
+      if (viewer.open) viewer.close();
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      fullscreen.textContent = "全屏不可用";
+      fullscreen.setAttribute("aria-pressed", "false");
+    }
+  }
+  function fitImage() {
+    if (!viewer.open || !viewerImage.naturalWidth) return;
+    const availableWidth = Math.max(1, viewerBody.clientWidth - 24);
+    const availableHeight = Math.max(1, viewerBody.clientHeight - 24);
+    const width = imageMode === "clear" ? Math.max(availableWidth, viewerImage.naturalWidth) :
+      Math.min(availableWidth, availableHeight * viewerImage.naturalWidth / viewerImage.naturalHeight, viewerImage.naturalWidth);
+    viewerImage.style.width = width + "px";
+    viewerBody.dataset.mode = imageMode;
+    viewerBody.scrollTo(0, 0);
+  }
+  prev.addEventListener("click", () => show(index - 1));
+  next.addEventListener("click", () => show(index + 1));
+  select.addEventListener("change", () => show(Number(select.value)));
+  fullscreen.addEventListener("click", toggleFullscreen);
+  addEventListener("hashchange", () => show(fromHash(), false));
+  addEventListener("resize", () => { fitCanvas(); fitImage(); });
+  document.addEventListener("fullscreenchange", () => {
+    fullscreen.textContent = document.fullscreenElement ? "退出全屏" : "全屏";
+    fullscreen.setAttribute("aria-pressed", String(!!document.fullscreenElement));
+    fitCanvas(); fitImage();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.altKey || event.metaKey || event.ctrlKey || /^(SELECT|INPUT|TEXTAREA)$/.test(event.target.tagName)) return;
+    if (viewer.open) {
+      if (event.key === "Escape") { event.preventDefault(); viewer.close(); }
+      return;
+    }
+    if (event.key === " " && event.target.tagName === "BUTTON") return;
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    else if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    else if (event.key === "Home") { event.preventDefault(); show(0); }
+    else if (event.key === "End") { event.preventDefault(); show(slides.length - 1); }
+    else if (event.key.toLowerCase() === "f") { event.preventDefault(); toggleFullscreen(); }
+    else if (event.key === "Escape") {
+      if (document.fullscreenElement) { event.preventDefault(); document.exitFullscreen(); }
+      else if (window.parent !== window) window.parent.postMessage({type:"paper-deck-escape"}, location.origin);
+    }
+  });
+  document.querySelectorAll("[data-image]").forEach(button => button.addEventListener("click", () => {
+    imageTrigger = button;
+    imageMode = "fit";
+    viewerImage.src = button.dataset.image;
+    viewerImage.alt = button.querySelector("img").alt;
+    caption.textContent = button.dataset.caption;
+    viewer.showModal();
+    requestAnimationFrame(fitImage);
+  }));
+  viewerImage.addEventListener("load", fitImage);
+  viewer.querySelector("[data-view-fit]").addEventListener("click", () => { imageMode = "fit"; fitImage(); });
+  viewer.querySelector("[data-view-clear]").addEventListener("click", () => { imageMode = "clear"; fitImage(); });
+  viewer.querySelector("[data-view-close]").addEventListener("click", () => viewer.close());
+  viewer.addEventListener("close", () => { drag = null; delete viewerBody.dataset.dragging; imageTrigger?.focus(); });
+  viewer.addEventListener("click", event => { if (event.target === viewer) viewer.close(); });
+  viewerBody.addEventListener("pointerdown", event => {
+    if (event.pointerType !== "mouse" || imageMode !== "clear" || event.button !== 0) return;
+    drag = {x:event.clientX,y:event.clientY,left:viewerBody.scrollLeft,top:viewerBody.scrollTop};
+    viewerBody.setPointerCapture(event.pointerId);
+    viewerBody.dataset.dragging = "true";
+    event.preventDefault();
+  });
+  viewerBody.addEventListener("pointermove", event => {
+    if (!drag) return;
+    viewerBody.scrollLeft = drag.left - (event.clientX - drag.x);
+    viewerBody.scrollTop = drag.top - (event.clientY - drag.y);
+  });
+  const endDrag = () => { drag = null; delete viewerBody.dataset.dragging; };
+  viewerBody.addEventListener("pointerup", endDrag);
+  viewerBody.addEventListener("pointercancel", endDrag);
+  show(fromHash(), false);
+  fitCanvas();
+})();
+</script>
+</body>
+</html>
