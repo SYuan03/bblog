@@ -21,21 +21,81 @@
       "revision": "v1",
       "used_for": [
         "problem",
+        "related-work",
         "method",
+        "settings",
         "results",
+        "appendices",
+        "case",
         "limitations"
+      ]
+    },
+    {
+      "id": "entry",
+      "kind": "metadata",
+      "title": "Original title, v1 public date and PDF reuse permission",
+      "url": "https://arxiv.org/abs/2608.13040v1",
+      "revision": "v1; accessed 2026-10-19",
+      "used_for": [
+        "title",
+        "earliest public date 2026-08-13",
+        "CC BY 4.0"
+      ]
+    },
+    {
+      "id": "tex",
+      "kind": "paper",
+      "title": "Author v1 source archive and original vector figures",
+      "url": "https://arxiv.org/src/2608.13040v1",
+      "revision": "v1",
+      "used_for": [
+        "figure fidelity",
+        "table aggregation",
+        "equations",
+        "appendix crops"
       ]
     },
     {
       "id": "code",
       "kind": "code",
-      "title": "LOPD official repository",
-      "url": "https://github.com/bingreeky/LOPD",
+      "title": "LOPD official training implementation",
+      "url": "https://github.com/bingreeky/LOPD/tree/50c3d7f53f8b062153f23f3f9b56e949c888e071",
       "revision": "50c3d7f53f8b062153f23f3f9b56e949c888e071",
       "used_for": [
-        "implementation",
-        "artifact completeness",
-        "reproduction"
+        "gradients",
+        "retrieval",
+        "masks",
+        "normalization",
+        "agent",
+        "runner",
+        "EnvScaler reward",
+        "artifact gaps"
+      ]
+    },
+    {
+      "id": "upstream",
+      "kind": "code",
+      "title": "EnvScaler generation programs and real environment",
+      "url": "https://github.com/RUC-NLPIR/EnvScaler/tree/c2aa25b45c3185e80e9cb2b919227cc912445abc",
+      "revision": "c2aa25b45c3185e80e9cb2b919227cc912445abc",
+      "used_for": [
+        "task/checker construction",
+        "environment",
+        "MIT permission",
+        "real-case provenance"
+      ]
+    },
+    {
+      "id": "tasks",
+      "kind": "dataset",
+      "title": "EnvScaler released tasks and initial environment states",
+      "url": "https://github.com/RUC-NLPIR/EnvScaler/tree/c2aa25b45c3185e80e9cb2b919227cc912445abc/interact_with_env/envscaler_env/data",
+      "revision": "c2aa25b45c3185e80e9cb2b919227cc912445abc; task blob 600fdf6d033d185e78facd2ff0c98367177d1e41; environment blob 17222c8ebe5dd957ffe07db32708d7ec31061bbb",
+      "used_for": [
+        "env_174_rl-task_29",
+        "12 actual checks",
+        "env174 source and init_config",
+        "2550 task count"
       ]
     }
   ],
@@ -51,40 +111,153 @@
         "end": 20
       }
     ],
-    "source_visuals_expected": 12,
+    "source_visuals_expected": 20,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-19",
       "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+      "scope": "Complete 1356-line extracted primary and all20 individually rendered pages including appendices. Current article/all17slides personally read; author TeX, original figures, fixed training implementation, upstream generation,955line realenv,12 realchecks and actualCPUreplay inspected. NoGPUtraining ormodelscore reproduction.",
+      "evidence": "tmp/collection-refresh-20261018/lopd-evidence.md"
     }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "1. Motivation：成功经验该怎样表示"
+      "locator": "1. Motivation：成功经验应当怎样指导当前学生"
     },
     {
       "role": "related-work",
-      "locator": "2. Related Work：与文字蒸馏和部署用记忆的区别"
+      "locator": "2. Related Work：额外资料怎样产生，谁可以更新"
     },
     {
       "role": "method",
-      "locator": "3. Method：经验压缩、参数更新与防退化约束"
+      "locator": "3. Method：压缩经验，再重评学生自己的执行记录"
     },
     {
       "role": "experiments",
-      "locator": "4. Experiments：完成奖励、关键消融与成本口径"
+      "locator": "4. Experiments：真实判分、主结果与约束消融"
     },
     {
       "role": "future-work",
-      "locator": "5. Discussion：固定经验来源，隔离表示收益"
+      "locator": "5. Discussion：最需要隔离的是表示和资料的收益"
     },
     {
       "role": "summary",
-      "locator": "6. Conclusion：结论与公开代码的实现差异"
+      "locator": "6. Conclusion：可训练的教师输入值得研究，复现条件仍不完整"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "student / rollout",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1;Figure2"
+        }
+      ],
+      "article_quote": "接受训练、实际调用工具的模型叫 student（学生）；从开始到提交的一次完整交互叫 rollout。"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1,3.3;A.4"
+        }
+      ],
+      "article_quote": "teacher（教师）读取学生同一段前文，计算其回答中每个 token（模型处理的文字单位）的下一词概率，不再执行一套新动作。"
+    },
+    {
+      "term": "privileged context / latent tokens",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2;Eq1–7"
+        }
+      ],
+      "article_quote": "教师额外读取的训练资料叫 privileged context。本文把资料压成连续输入向量，称为 latent tokens；一个位置是一个向量，不是一个可读单词。"
+    },
+    {
+      "term": "composer / LoRA / QFormer",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2;A.1–A.3"
+        }
+      ],
+      "article_quote": "压缩模块叫 composer，包含编码器的 LoRA（附加的可训练小矩阵）和 QFormer（用查询向量读取编码结果的注意力模块）。"
+    },
+    {
+      "term": "cold start",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.3"
+        }
+      ],
+      "article_quote": "正式蒸馏前先做 cold start：只更新 composer，让固定主模型利用这些向量预测成功记录中的 assistant 输出。"
+    },
+    {
+      "term": "tail bucket",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq8–10;A.4"
+        }
+      ],
+      "article_quote": "取教师概率最高的 20 个词元，并把其余词表概率合成 tail bucket（一项剩余概率）。"
+    },
+    {
+      "term": "KL / forward / reverse",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3;B.1"
+        }
+      ],
+      "article_quote": "KL 衡量两份概率分布的差异；forward / reverse 表示用教师还是学生概率加权。"
+    },
+    {
+      "term": "pass@1",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table2;B.3"
+        }
+      ],
+      "article_quote": "代码 pass@1 是一次生成通过全部测试的题目比例，Avg 按题数加权。"
     }
   ],
   "coverage": [
@@ -97,22 +270,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§1–3; Figure 1; Algorithm 1"
+          "locator": "§1,3;Figures1–2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "同时训练学生和教师的 context 时，降低分布差异可以通过削弱教师实现 。"
+          "quote": "论文希望学习“教师应从经验里读取什么”"
         },
         {
           "artifact": "article",
-          "quote": "LOPD 用完整任务结果约束这种退化"
+          "quote": "为了缩小两分布的差异，模块可以让教师迎合学生，包括学生的错误行为"
         }
       ]
     },
     {
-      "id": "method-contract",
+      "id": "related-work-comparison",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -120,22 +293,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.1–3.3; Figure 2; Eq. 8–13"
+          "locator": "§2;B.1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "学生先真实执行，教师再用压缩后的成功经验重评同一条记录。"
+          "quote": "最接近的对照同样让学生先执行，区别在教师读到的资料及更新方式。"
         },
         {
           "artifact": "article",
-          "quote": "教师主模型固定，学生与压缩模块更新"
+          "quote": "教师、资料来源、KL 和辅助奖励并未全部对齐"
         }
       ]
     },
     {
-      "id": "main-result",
+      "id": "training-data-and-initialization",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -143,80 +316,53 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1–2; Figure 3"
+          "locator": "§3.2;A.1–A.3;Tables4–5"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "固定 cold-start composer 得 0.573；联合训练但 m=0 得 0.551，反而下降。m=0.05 得 0.637"
+          "quote": "作者只收训练集上的成功执行，保存任务、动作与精简返回"
         },
         {
           "artifact": "article",
-          "quote": "Qwen3-4B · LiveCodeBench"
+          "quote": "每条输出 32×d ，拼成 96×d"
         },
         {
           "artifact": "article",
-          "quote": "主表未报告多训练 seed 方差或置信区间，不足以把 +0.49、+0.55 这样的差异称为显著。"
+          "quote": "具体工具阈值、库大小未披露"
         }
       ]
     },
     {
-      "id": "limitations",
-      "claim_type": "interpretation",
+      "id": "complete-training-iteration",
+      "claim_type": "author-claim",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4.3; Table 1–2; Figure 6; Appendix B"
+          "locator": "§3;Eq8–13;Algorithm1;A.4"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "缺同样检索、同样资料和相同预算下的文字压缩对照。"
+          "quote": "学生仅看任务、工具说明与真实交互前文"
         },
         {
           "artifact": "article",
-          "quote": "主表未报告多训练 seed 方差或置信区间"
+          "quote": "固定初始教师在学生的每段前文上计算下一词分布"
         },
         {
           "artifact": "article",
-          "quote": "论文没有提供这些样本完整的模型输出和官方评分记录。"
+          "quote": "只训练 assistant 输出，用户与工具返回只作输入"
         }
       ]
     },
     {
-      "id": "code-audit",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "code"
-      ],
-      "source_locators": [
-        {
-          "source_id": "code",
-          "locator": "memory/bank.py:38–59 (MemoryBank.build_index), memory/bank.py:90–107 (self-retrieval filter); configs/training/lopd_qwen3_4b_envscaler.yaml; lopd/worker.py:38–49,90–116,236–307; envs/envscaler/runtime.py:43–64 @50c3d7f53f8b062153f23f3f9b56e949c888e071"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "MemoryBank.build_index() 只编码 instruction"
-        },
-        {
-          "artifact": "article",
-          "quote": "先教师评分、学生更新，再 composer 更新"
-        },
-        {
-          "artifact": "article",
-          "quote": "学生 loss 按全局 token 数；composer 按本地有效记录均值，β 统计按全局 token 数"
-        }
-      ]
-    },
-    {
-      "id": "teacher-gradient-and-margin-boundary",
+      "id": "teacher-gradient-and-update-order",
       "claim_type": "inspected-implementation",
       "source_ids": [
         "paper",
@@ -225,26 +371,54 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.3; Eq. 11–13; Appendix A.4"
+          "locator": "memory/serialization.py;memory/lora.py;lopd/teacher.py;worker.py @50c3d7f5"
         },
         {
           "source_id": "code",
-          "locator": "lopd/teacher.py:70–107,111–133; memory/serialization.py inject_latent_tokens_into_embeds; lopd/worker.py:236–289 @50c3d7f53f8b062153f23f3f9b56e949c888e071"
+          "locator": "memory/serialization.py;memory/lora.py;lopd/teacher.py;worker.py @50c3d7f5"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "把整次教师调用放进 torch.no_grad() 会切断 composer 的学习"
+          "quote": "固定版本先不记录教师梯度，准备学生评分并更新学生"
         },
         {
           "artifact": "article",
-          "quote": "结果约束直接训练的是 composer，学生通过 KL 接收改变后的教师分布"
+          "quote": "将整个教师前向放进 torch.no_grad() 会切断这一阶段的学习"
         }
       ]
     },
     {
-      "id": "real-case-retrieval-vs-verdict",
+      "id": "tail-normalization",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq8–10;lopd/distill.py andteacher.py @50c3d7f5"
+        },
+        {
+          "source_id": "code",
+          "locator": "Eq8–10;lopd/distill.py andteacher.py @50c3d7f5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "取 top-20 后没有把这 20 项重新归一化；剩余质量保留在 tail。"
+        },
+        {
+          "artifact": "article",
+          "quote": "两模型在相同 21 个事件上计算 reverse KL"
+        }
+      ]
+    },
+    {
+      "id": "outcome-margin-boundary",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -252,62 +426,290 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figure 6; §4.3"
+          "locator": "Eq11–13;Figure3;B.4"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "0.886 是检索相似度，不是成功率"
+          "quote": "整题奖励变为 A=2r−1"
         },
         {
           "artifact": "article",
-          "quote": "当前任务添加的是 PLAN-HI-03 ，保费 310.25；检索结果添加 BP-HEALTH-010 ，保费 210。"
+          "quote": "结果项直接更新 composer，学生通过 KL 接收改变后的教师分布"
         },
         {
           "artifact": "article",
-          "quote": "这些编号和数值不能照抄。"
+          "quote": "它没有逐词元正确标签，也没有执行教师来比较成功率"
         }
       ]
     },
     {
-      "id": "checker-and-metric-boundary",
+      "id": "loss-arithmetic",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq10–13;article-authored Python3 arithmetic"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "print(round(kl, 4), round(delta, 4))  # 0.0811, 0.4055"
+        },
+        {
+          "artifact": "article",
+          "quote": "一次更新后 β=.025，惩罚开始增加"
+        }
+      ]
+    },
+    {
+      "id": "implementation-reduction-and-failure",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "worker.py @50c3d7f5 student/composer/beta reductions"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "学生损失按全局 token 均值；composer 先本地每记录平均再跨进程平均"
+        },
+        {
+          "artifact": "article",
+          "quote": "正常 r=0 仍参与训练"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "upstream",
+        "tasks"
+      ],
+      "source_locators": [
+        {
+          "source_id": "upstream",
+          "locator": "ScenGenerator/task_check_util/gen_checklist.py,gen_check_func.py; EnvScalerREADME @c2aa25b4"
+        },
+        {
+          "source_id": "tasks",
+          "locator": "ScenGenerator/task_check_util/gen_checklist.py,gen_check_func.py; EnvScalerREADME @c2aa25b4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "ScenGenerator 用模型生成初态与任务，另生成逐字段清单和 Python 检查函数"
+        },
+        {
+          "artifact": "article",
+          "quote": "解析、语法检查失败最多重试五次"
+        },
+        {
+          "artifact": "article",
+          "quote": "代码没有证明每项都人工审核"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
       "claim_type": "inspected-implementation",
       "source_ids": [
         "code",
-        "paper"
+        "tasks"
       ],
       "source_locators": [
         {
           "source_id": "code",
-          "locator": "envs/envscaler/runtime.py:43–64, checklist_with_func evaluation and calculate_reward @50c3d7f53f8b062153f23f3f9b56e949c888e071"
+          "locator": "LOPD runtime/agent; env174 task/init_config/checklist @fixedsources"
         },
         {
-          "source_id": "paper",
-          "locator": "Appendix B.3; Table 5"
+          "source_id": "tasks",
+          "locator": "LOPD runtime/agent; env174 task/init_config/checklist @fixedsources"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "每条检查返回布尔值，失败、异常或非布尔结果不通过。"
+          "quote": "学生看到任务、工具说明和操作返回，不直接看到检查函数或原始数据库"
         },
         {
           "artifact": "article",
-          "quote": "通过检查数 ÷ 全部检查数 ，空清单为 0"
-        },
-        {
-          "artifact": "deck",
-          "quote": "不是 Figure 6 真实判分，任务检查包未公开。"
-        },
-        {
-          "artifact": "article",
-          "quote": "代码列的 pass@1 是一次生成通过全部测试的题目比例"
+          "quote": "检查器读取最终状态：新健康方案六项、牙科两项、员工操作四项，共 12 项"
         }
       ]
     },
     {
-      "id": "retrieval-and-pretraining-provenance",
+      "id": "checker-code-and-cases",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "code",
+        "upstream",
+        "tasks"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "env_174_rl-task_29; env174.py;LOPD runtime.calculate_reward;lopd-case-check.py CPU"
+        },
+        {
+          "source_id": "code",
+          "locator": "env_174_rl-task_29; env174.py;LOPD runtime.calculate_reward;lopd-case-check.py CPU"
+        },
+        {
+          "source_id": "upstream",
+          "locator": "env_174_rl-task_29; env174.py;LOPD runtime.calculate_reward;lopd-case-check.py CPU"
+        },
+        {
+          "source_id": "tasks",
+          "locator": "env_174_rl-task_29; env174.py;LOPD runtime.calculate_reward;lopd-case-check.py CPU"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "全完成得 12/12=1"
+        },
+        {
+          "artifact": "article",
+          "quote": "省去撤回 E1005 得 11/12=.9167"
+        },
+        {
+          "artifact": "article",
+          "quote": "实际名称检查会失败，不能把图里缩写当作可执行原参数"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code",
+        "tasks"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "EnvScaler runtime;Tables1–2,5;B.3"
+        },
+        {
+          "source_id": "code",
+          "locator": "EnvScaler runtime;Tables1–2,5;B.3"
+        },
+        {
+          "source_id": "tasks",
+          "locator": "EnvScaler runtime;Tables1–2,5;B.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每项必须返回布尔 True"
+        },
+        {
+          "artifact": "article",
+          "quote": "奖励是通过数除以 12，再四舍五入到四位"
+        },
+        {
+          "artifact": "article",
+          "quote": "EnvScaler 测试 200 个留出任务，先算各题的部分奖励，再取题均值×100"
+        }
+      ]
+    },
+    {
+      "id": "duplicate-check-and-strict-success",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "tasks"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "env174 checklist items1–2;Table1"
+        },
+        {
+          "source_id": "tasks",
+          "locator": "env174 checklist items1–2;Table1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "第一项“方案存在”还检查类型，第二项再次检查类型，实际重复计权。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文未另报这一主表的严格全完成比例"
+        }
+      ]
+    },
+    {
+      "id": "agent-forced-submit-and-budget",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "LOPD ReActAgent.step andrunner;CPU max8/seven toolcalls+submission"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "ReActAgent.step 会在最后允许步强制提交"
+        },
+        {
+          "artifact": "article",
+          "quote": "配置 30 步不是 30 次模型工具调用"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance-and-split-gap",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "tasks"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables4–5; released rl_scenario_metadata2550 vs2349+200"
+        },
+        {
+          "source_id": "tasks",
+          "locator": "Tables4–5; released rl_scenario_metadata2550 vs2349+200"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "上游有 2,550 条任务，而论文 2,349+200=2,549"
+        },
+        {
+          "artifact": "article",
+          "quote": "不能凭 Figure 6 就认定该例属于留出集"
+        }
+      ]
+    },
+    {
+      "id": "metric-denominators",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -315,34 +717,135 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.2; Appendix A.1–A.3"
+          "locator": "Tables1–2,5;B.3"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "评测任务及其记录不得入库。"
+          "quote": "BFCL-v3 四个子集各 200 题，Avg 是四项均值"
         },
         {
           "artifact": "article",
-          "quote": "论文没有给出工具任务的具体入库阈值和库大小。"
-        },
-        {
-          "artifact": "article",
-          "quote": "网络重复这个过程八轮，始终使用同一套注意力和前馈参数；八轮不是八套独立参数。"
+          "quote": "LiveCodeBench v5/v6 为 279/131 题，EvalPlus 两集为 164/378 题"
         }
       ]
     },
     {
-      "id": "generation-budget-vs-cost",
-      "claim_type": "interpretation",
+      "id": "model-results",
+      "claim_type": "author-claim",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figure 4; §4.3"
+          "locator": "Tables1–2;Table4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Qwen3-4B 在 EnvScaler 为 63.7，对 GRPO 61.8 高 1.9 点"
+        },
+        {
+          "artifact": "article",
+          "quote": "Qwen3-8B 为 66.4，对 Skill-SD 60.2 高 6.2 点"
+        },
+        {
+          "artifact": "article",
+          "quote": "主表没有多训练种子的方差或置信区间"
+        }
+      ]
+    },
+    {
+      "id": "discriminating-subtest-counterexamples",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Qwen3-4B / BFCL Base 为 32.5"
+        },
+        {
+          "artifact": "article",
+          "quote": "Long Ctx 为 26，低于 OPSD 的 29"
+        },
+        {
+          "artifact": "article",
+          "quote": "ACEBench M-Step 56.6 低于 GRPO 58.3"
+        }
+      ]
+    },
+    {
+      "id": "margin-ablation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure3;B.4;worker.py"
+        },
+        {
+          "source_id": "code",
+          "locator": "Figure3;B.4;worker.py"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "固定初始化 composer 得 .573；联合训练 m=0 得 .551，m=.05 得 .637"
+        },
+        {
+          "artifact": "article",
+          "quote": "m=0 取消正的最低差距，并不等于删掉全部奖励约束"
+        }
+      ]
+    },
+    {
+      "id": "capacity-and-behavior-counterexamples",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure5;Table3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每条 8 / 16 / 32 / 64 / 128 向量的分数为 56.5 / 56.3 / 63.7 / 60.6 / 62.9"
+        },
+        {
+          "artifact": "article",
+          "quote": "学生重复调用更多（5.25 对 4.49），每次调用奖励更低（.050 对 .053）"
+        }
+      ]
+    },
+    {
+      "id": "generation-cost-boundary",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure4;Tables1,4;B.4"
         }
       ],
       "evidence": [
@@ -356,30 +859,82 @@
         },
         {
           "artifact": "article",
-          "quote": "不能进一步写成训练成本降低 70%。"
+          "quote": "论文没给完整 GPU 小时、总 token 或端到端费用"
         }
       ]
     },
     {
-      "id": "arithmetic-vs-model-reproduction",
-      "claim_type": "reproduced-calculation",
+      "id": "representation-and-retrieval-isolation",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables1–2;Figure3;memory/bank.py/config @fixedrevision"
+        },
+        {
+          "source_id": "code",
+          "locator": "Tables1–2;Figure3;memory/bank.py/config @fixedrevision"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "下一组关键实验应使用完全相同的三条记录，只改变教师输入的表示。"
+        }
+      ]
+    },
+    {
+      "id": "public-artifact-gaps-and-code-difference",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "memory/bank.py build_index;README/configs/repo tree @50c3d7f5"
+        },
+        {
+          "source_id": "code",
+          "locator": "memory/bank.py build_index;README/configs/repo tree @50c3d7f5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "经验库、压缩模块权重、检索向量、精确训练/测试划分和完整日志仍缺"
+        },
+        {
+          "artifact": "article",
+          "quote": "MemoryBank.build_index() 只编码任务 instruction，论文却编码任务加路径"
+        }
+      ]
+    },
+    {
+      "id": "decoding-not-behavior-proof",
+      "claim_type": "author-claim",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Eq. 8–13; article-authored Python 3.12 example"
+          "locator": "Figure6;§4.3;A.5"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "在 top-2 加 tail 的三个事件上，KL≈0.0811"
+          "quote": "不可读不证明学会了算法或没有答案泄漏"
         },
         {
           "artifact": "article",
-          "quote": "它只核对公式，不复现训练。"
+          "quote": "论文未给两例的完整学生记录、概率与最终判分"
         }
       ]
     }
@@ -390,20 +945,20 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §1–3",
-      "status": "redrawn",
-      "rationale": "固定资料vs可学习context关系重构在开头比较及机制SVG，经验仅采用真实轨迹，不把illustratedtips当实测数据源。",
+      "source_locator": "p2 Figure1",
+      "status": "reused",
+      "rationale": "Original framework comparison next to motivation and opening slide; potential tips distinguished from actual success-record bank.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 §3、Figure 2、Algorithm 1 重绘"
+          "locator": "原 Figure 1"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "asset_paths": [
-        "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg"
+        "/lib/papers/latent-on-policy-self-distillation/figure-1.webp"
       ]
     },
     {
@@ -411,20 +966,22 @@
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2; §3.3",
-      "status": "redrawn",
-      "rationale": "实际studentrollout→检索→96向量→fixedteacher→top20+tail/KL梯度重绘，教师不执行新动作，fixed参数可传输入gradient。",
+      "source_locator": "p4 Figure2",
+      "status": "reused",
+      "rationale": "Complete teacher/student/gradient pipeline inbody; wide labelled stagecrops onslides3–4 restore embedded readability.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 §3、Figure 2、Algorithm 1 重绘"
+          "locator": "原 Figure 2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-2 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "asset_paths": [
-        "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg"
+        "/lib/papers/latent-on-policy-self-distillation/figure-2.webp",
+        "/lib/papers/latent-on-policy-self-distillation/figure-2-teacher-detail.webp",
+        "/lib/papers/latent-on-policy-self-distillation/figure-2-student-detail.webp"
       ]
     },
     {
@@ -432,20 +989,20 @@
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3; §4.3",
-      "status": "redrawn",
-      "rationale": "frozen.573/nomargin.551/m.05.637重绘并保留m.10/.20回降，直接检验composer迎合student退化。",
+      "source_locator": "p9 Figure3;B.4",
+      "status": "reused",
+      "rationale": "Decisive frozen/m0/positive-margin ablation visible nexttoclaim; nonzero chartbaseline andm0penalty caveat kept.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Figure 3、Table 3 重绘"
+          "locator": "原 Figure 3"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-3 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 3，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "asset_paths": [
-        "/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg"
+        "/lib/papers/latent-on-policy-self-distillation/figure-3.webp"
       ]
     },
     {
@@ -453,48 +1010,64 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4; §4.3",
-      "status": "omitted",
-      "rationale": "训练轨迹完整曲线未绘；deck卡片与正文只列320超对照/576终分/1600基线预算，区分20%与36%及完整成本。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p9 Figure4;B.4",
+      "status": "reused",
+      "rationale": "Entire learning curves nexttocostratios; thresholdpoints notearlystopping orGPUcost,baseline mismatchrecorded.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 Figure 4"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 4，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/figure-4.webp"
+      ]
     },
     {
       "id": "figure-5",
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Figure 5; §4.3",
-      "status": "omitted",
-      "rationale": "latent容量和retrievalcount全五面板未绘，正文保留32最好与64回降、检索非单调，不推越多越好。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p10 Figure5",
+      "status": "reused",
+      "rationale": "Allfive capacity/retrieval panels retained in supplement; negative/nonmonotonic pointsexplained inmainpath.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "完整原 Figure 5"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 5，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/figure-5.webp"
+      ]
     },
     {
       "id": "figure-6",
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Figure 6; §4.3",
-      "status": "redrawn",
-      "rationale": "insurance当前任务与rank2参考重绘，差别编号/保费及相似度.886非success明确，LMhead碎词不当计划或无泄漏证明。",
+      "source_locator": "p11 Figure6",
+      "status": "reused",
+      "rationale": "Complete agentic/coding cases andLMhead projections retained; body/currenttask-detail crops marked, matched sameupstreamcase executed independently.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Figure 6 重绘真实任务与 rank-2 检索结果"
+          "locator": "完整原 Figure 6"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-6 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 6，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "asset_paths": [
-        "/lib/papers/latent-on-policy-self-distillation/benefits-real-case.svg"
+        "/lib/papers/latent-on-policy-self-distillation/figure-6.webp",
+        "/lib/papers/latent-on-policy-self-distillation/figure-6-task-reference-detail.webp",
+        "/lib/papers/latent-on-policy-self-distillation/figure-6-current-task-detail.webp"
       ]
     },
     {
@@ -502,58 +1075,65 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1; §4.2",
-      "status": "redrawn",
-      "rationale": "tool三个benchmark及两Qwen模型汇总重排，保留partialreward与最强其他对照，分数小差不称显著。",
+      "source_locator": "p7 Table1",
+      "status": "reused",
+      "rationale": "Full two-model comparison preserved in supplement; Qwen4 block+headers visible andslide11; weakestsubtest controls nearby.",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "工具收益较明显，部分代码差异很小"
+          "artifact": "article",
+          "locator": "完整原 Table 1"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/table-1.webp",
+        "/lib/papers/latent-on-policy-self-distillation/table-1-qwen4-detail.webp"
+      ]
     },
     {
       "id": "table-2",
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2; §4.2",
-      "status": "redrawn",
-      "rationale": "代码两个任务集/两个模型汇总重排到deck表，按题数加权Avg不能直接均百分比，保留+.49/+.55小差。",
+      "source_locator": "p8 Table2",
+      "status": "reused",
+      "rationale": "Full codingtable retained; separatefull-model Qwen4/Olmo croppedblocks onslides12–13,notallsubtestwins orsignificance.",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "Qwen3-4B · LCB / EvalPlus"
+          "artifact": "article",
+          "locator": "完整原 Table 2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/table-2.webp",
+        "/lib/papers/latent-on-policy-self-distillation/table-2-qwen4-detail.webp",
+        "/lib/papers/latent-on-policy-self-distillation/table-2-olmo-detail.webp"
+      ]
     },
     {
       "id": "table-3",
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3; §4.3",
-      "status": "redrawn",
-      "rationale": "moreturns但fewercalls行为与Base+Composer保留负比较重绘到marginSVG，不能推学会唯一最优计划。",
+      "source_locator": "p9 Table3",
+      "status": "reused",
+      "rationale": "Complete behavioral comparison kept narrow withoutstretching; base+composer test-timevisibility andnegative repeatedcalls explained.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 Figure 3、Table 3 重绘"
+          "locator": "完整原 Table 3"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 3，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "asset_paths": [
-        "/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg"
+        "/lib/papers/latent-on-policy-self-distillation/table-3.webp"
       ]
     },
     {
@@ -561,95 +1141,897 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4; Appendix B.2",
-      "status": "omitted",
-      "rationale": "domain配置完整超参表未绘，正文说明32rollout/lr/temp与coldstart未知步数，paper配置不混入code不同normalization。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p19 B.2 Table4",
+      "status": "reused",
+      "rationale": "Complete domain-specific configuration in supplement; mainpath explainsrecords/step/token units,notfree initialization.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "完整原 Table 4"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 4，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/table-4.webp"
+      ]
     },
     {
       "id": "table-5",
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5; Appendix B.3",
-      "status": "redrawn",
-      "rationale": "各测试任务数重排deck评测表，工具30/20步与代码single-generation测试不同，thinking+sampling与指标分母先说明。",
+      "source_locator": "p19 B.3 Table5",
+      "status": "reused",
+      "rationale": "Complete evaluation budgets/counts/sampling in supplement; all actual denominatorsandweightedaggregates inmainprose.",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "63.7 是部分完成奖励，不是全题通过率"
+          "artifact": "article",
+          "locator": "完整原 Table 5"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 5，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/table-5.webp"
+      ]
     },
     {
       "id": "algorithm-1",
       "kind": "algorithm",
       "label": "Algorithm 1",
       "source_id": "paper",
-      "source_locator": "Algorithm 1; §3.3",
-      "status": "redrawn",
-      "rationale": "jointstudent/composer/dualbeta/anchor路线重绘流程图，fixedteacher允许梯度回input，学生detach的rewardconstraint不直接训student。",
+      "source_locator": "p6 Algorithm1",
+      "status": "reused",
+      "rationale": "Complete pseudocode inmethodsupplement; mainiteration explains21-eventreverseKL/realreward/inputgradient andcode-phase differences.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "据 §3、Figure 2、Algorithm 1 重绘"
+          "locator": "原 Algorithm 1"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 algorithm-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Algorithm 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "asset_paths": [
-        "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg"
+        "/lib/papers/latent-on-policy-self-distillation/algorithm-1.webp"
+      ]
+    },
+    {
+      "id": "appendix-bank",
+      "kind": "appendix-visual",
+      "label": "A.3 experience bank entry",
+      "source_id": "paper",
+      "source_locator": "p16 A.3",
+      "status": "reused",
+      "rationale": "Fullcompactrecord showsactions/returns belongtodifferenttask,notcurrentenvironmentexecution.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 A.3 经验条目"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.3 experience bank entry，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-bank.webp"
+      ]
+    },
+    {
+      "id": "appendix-agent-system",
+      "kind": "appendix-visual",
+      "label": "A.5 agentic system prompt",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "status": "reused",
+      "rationale": "Complete singletool andTaskCompletedinstruction,notrerewrittenChinese.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 A.5 工具任务系统提示"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 agentic system prompt，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-agent-system.webp"
+      ]
+    },
+    {
+      "id": "appendix-code-system",
+      "kind": "appendix-visual",
+      "label": "A.5 coding system prompt",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "status": "reused",
+      "rationale": "Completecodeprompt,HumanEval/MBPPexceptioncaptioned.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 A.5 代码系统提示"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 coding system prompt，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-code-system.webp"
+      ]
+    },
+    {
+      "id": "appendix-agent-framing",
+      "kind": "appendix-visual",
+      "label": "A.5 agent latent-context framing",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "status": "reused",
+      "rationale": "Fullbefore/aftermessages declareindependentreference andunchangedcurrentstate; temporalvisibilityexplained.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 A.5 工具向量提示"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 agent latent-context framing，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-agent-framing.webp"
+      ]
+    },
+    {
+      "id": "appendix-code-framing",
+      "kind": "appendix-visual",
+      "label": "A.5 code latent-context framing",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "status": "reused",
+      "rationale": "Fullcode before/after referencemessages retained.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 A.5 编程向量提示"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 code latent-context framing，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-code-framing.webp"
+      ]
+    },
+    {
+      "id": "appendix-sdft",
+      "kind": "appendix-visual",
+      "label": "B.1 SDFT demonstration format",
+      "source_id": "paper",
+      "source_locator": "p18 B.1",
+      "status": "reused",
+      "rationale": "Fullbaseline text-injection prompt nexttootherbaselineorigins.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 B.1 SDFT 文字示范"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 B.1 SDFT demonstration format，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-sdft.webp"
+      ]
+    },
+    {
+      "id": "appendix-opsd",
+      "kind": "appendix-visual",
+      "label": "B.1 OPSD GT format",
+      "source_id": "paper",
+      "source_locator": "p18 B.1",
+      "status": "reused",
+      "rationale": "Fullsame-taskreference injection retained; baselinestudent/teacher boundary notinferred fromname.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 B.1 OPSD 同题参考"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 B.1 OPSD GT format，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-opsd.webp"
+      ]
+    },
+    {
+      "id": "appendix-skill",
+      "kind": "appendix-visual",
+      "label": "B.1 Skill-SD skill format",
+      "source_id": "paper",
+      "source_locator": "p19 B.1",
+      "status": "reused",
+      "rationale": "Fullwhatworks/avoid/workflow format retained; nottreatedasLOPDactualbankentries.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 B.1 Skill-SD 总结"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 B.1 Skill-SD skill format，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "asset_paths": [
+        "/lib/papers/latent-on-policy-self-distillation/appendix-skill.webp"
       ]
     }
   ],
   "figures": [
     {
-      "path": "/lib/papers/latent-on-policy-self-distillation/experience-to-teacher.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/latent-on-policy-self-distillation/cover.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§1–3",
+      "credit": "本文独立绘制的事实封面",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p2 Figure1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-2.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-2",
       "source_id": "paper",
-      "source_locator": "Figure 2; Algorithm 1; §3; code @50c3d7f5",
-      "credit": "据 §3、Figure 2、Algorithm 1 重绘",
+      "source_locator": "p4 Figure2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "used_in": [
-        "article",
-        "deck"
+        "article"
       ]
     },
     {
-      "path": "/lib/papers/latent-on-policy-self-distillation/benefits-real-case.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/latent-on-policy-self-distillation/algorithm-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "algorithm-1",
+      "source_id": "paper",
+      "source_locator": "p6 Algorithm1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Algorithm 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-6-task-reference-detail.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-6",
       "source_id": "paper",
-      "source_locator": "Figure 6, env_174_rl-task_29 rank-2 retrieval",
-      "credit": "据 Figure 6 重绘真实任务与 rank-2 检索结果",
+      "source_locator": "p11 Figure6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 6，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/benefits-judge.svg",
+      "origin": "generated",
+      "source_id": "tasks",
+      "source_locator": "env_174_rl-task_29 checklistitems1–12;CPUsevenAPIcalls+omitwithdraw",
+      "credit": "本文按固定上游任务与 LOPD runtime 独立整理；实际CPU重放，不是论文学生日志",
       "used_in": [
         "article",
         "deck"
       ]
     },
     {
-      "path": "/lib/papers/latent-on-policy-self-distillation/margin-evidence.svg",
-      "origin": "author-redrawn",
-      "source_visual_id": "figure-3",
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-1-qwen4-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Figure 3; Table 3, joint-optimization and behavior",
-      "credit": "据 Figure 3、Table 3 重绘",
+      "source_locator": "p7 Table1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
       "used_in": [
         "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p9 Figure3;B.4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 3，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p7 Table1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 1，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p8 Table2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p9 Table3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 3，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p10 Figure5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 5，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p9 Figure4;B.4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 4，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p11 Figure6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 6，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-bank.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-bank",
+      "source_id": "paper",
+      "source_locator": "p16 A.3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.3 experience bank entry，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-agent-system.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-agent-system",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 agentic system prompt，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-code-system.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-code-system",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 coding system prompt，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-agent-framing.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-agent-framing",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 agent latent-context framing，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-code-framing.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-code-framing",
+      "source_id": "paper",
+      "source_locator": "p17 A.5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 A.5 code latent-context framing，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-sdft.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-sdft",
+      "source_id": "paper",
+      "source_locator": "p18 B.1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 B.1 SDFT demonstration format，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-opsd.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-opsd",
+      "source_id": "paper",
+      "source_locator": "p18 B.1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 B.1 OPSD GT format，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/appendix-skill.webp",
+      "origin": "paper-original",
+      "source_visual_id": "appendix-skill",
+      "source_id": "paper",
+      "source_locator": "p19 B.1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 B.1 Skill-SD skill format，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "p19 B.2 Table4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 4，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-5",
+      "source_id": "paper",
+      "source_locator": "p19 B.3 Table5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 5，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-2-teacher-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p4 Figure2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-2-student-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p4 Figure2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/figure-6-current-task-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p11 Figure6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Figure 6，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-2-qwen4-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p8 Table2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/latent-on-policy-self-distillation/table-2-olmo-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p8 Table2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission.",
+      "credit": "原 Table 2，Zhang et al.，CC BY 4.0；完整标签与数值保留，局部裁切另标明。",
+      "used_in": [
         "deck"
       ]
     }
   ],
   "qa": {
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true,
+      "default_reading": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "characters": 6314,
+          "height": 8953,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "characters": 6314,
+          "height": 8953,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "characters": 6314,
+          "height": 13258,
+          "width": 350
+        }
+      ]
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "date": "2026-10-19",
+      "reviewer": "main agent",
+      "reader_reconstruction": "Three32xd retrievedrecords form96xd fixedteacherinput; realstudentprefixes,21eventreverseKL,composer-onlydirectrewardmargin,studentupdatethencomposerstoredprobabilities. Exactenv174task/checkgeneratednotmanual,12actualboolchecksandrepeatweight,complete1/omitwithdraw.9167; actualReActforcedsubmit included. Weightedbenchmarkdenominators/m0!=nopunishment/nonmonotoniccapacity/totalcostboundary; index/split/publicgaps preserved. NoGPU/modelscore claim."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "code_copy": true,
+      "image_fit_zoom_drag_and_focus_restore": true,
+      "mobile_vertical_and_horizontal_scroll": true,
+      "fullscreen_scope": "DOMFullscreenAPI andnestediframe/focusEscape tested inisolatedheadlessChrome; nativeMacwindowfullscreen untested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/lopd-layout.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/lopd-interactions.json",
+      "mobile": "output/playwright/old-paper-refresh-20261018/lopd-mobile-scroll.json",
+      "visual_scope": "Mainagent inspectedcompletebody/17slidescontacts anddense3/4/8/11/12/13/14/16 atinlinewidth; completeFigures5/6andallappendixcrops inspected inline,notonlythumbnails. Darkheader/TOC andmobiledense8reviewed;portraitcrop no longeroversized onmobile."
+    },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/088-latent-on-policy-self-distillation.md",
+        "sha256": "ead1867ada3afe8e260cae362633f7b4276e008ad005ee231dc29f84c87ef7ba"
+      },
+      {
+        "file": "lib/decks/latent-on-policy-self-distillation-visual-guide.html",
+        "sha256": "8c031e3e568feee61187fc8683c8cfb1bacde18285a6cc6732e08775ec52b86d"
+      },
+      {
+        "file": "dist/posts/论文解读/latent-on-policy-self-distillation.html",
+        "sha256": "08ad2a94d0be3c61b5b764d22ccfba12f58443e793ca5c27e66d3b8d4aeb7823"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-deep-dive-v2.css",
+        "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.css",
+        "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.js",
+        "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+        "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+        "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/cover.svg",
+        "sha256": "d66182a7d6dab71648e2421723e11e02d286aaa8d6786501c78180525121cbf3"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-1.webp",
+        "sha256": "0b4919e20571c0abc5d0d0e0f74a31dff615359ca67cea74498d8e6c9dd3de26"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-2.webp",
+        "sha256": "a890549807c4f39537367c9c1af12fe1a0f406888a8efb91ecae84ecaa7e083a"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/algorithm-1.webp",
+        "sha256": "f687183a29bffc8ef43e51fc7204224e00f0640e958f2c8a96b27a87fecd3244"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-6-task-reference-detail.webp",
+        "sha256": "f4ba225a3d4f40fa6c01bf4b427112783e8dbddfd2811fc3890a708b57cdc798"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/benefits-judge.svg",
+        "sha256": "c54be6763ed36b43a21866f035092e702eaee5ee001459662c98e67db7d1ec70"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-1-qwen4-detail.webp",
+        "sha256": "8a8276d56b43193e6871eeb6b78e88941286d319a78278d7689de3f59fcbf2f9"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-3.webp",
+        "sha256": "20724519f6b2b1583eee4785fae79d313078d06d77de62d3a812c2726e5ab8fd"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-1.webp",
+        "sha256": "ca70138e2d14c170bb03f8ebc0c2c5467c6bf8800587146f063937e71ab13f58"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-2.webp",
+        "sha256": "144ab424d7e8cd3c0e22ee88c3c044ec1bcdaf8906785dd0a922ec1868d48d34"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-3.webp",
+        "sha256": "b32e8fe59e7d66e04fabed79d1450740229f20017df60865c922b0be7d3428c6"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-5.webp",
+        "sha256": "2317e42270a5db5d6e049c5ce95b2cb6e0340a0cef328246335236d4a3e65b9f"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-4.webp",
+        "sha256": "df291e910f7927bdde8d8385b86862f796d85e1f1f386de7ad5ce856ccede084"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-6.webp",
+        "sha256": "1cbdd8fab095874041f1b8fa8da09bdfa10301c98fb2854316d8cc06fc477091"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-bank.webp",
+        "sha256": "822b4f7f1cc49eefa305891be8573c4fe8fd9c0356de101e11e9759c7b01d8a1"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-agent-system.webp",
+        "sha256": "17c1051c3746b4056aa4818ad9415d53dbdeac2e135abb1a0e44bde0056c73dc"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-code-system.webp",
+        "sha256": "4238660413818c84b5877bd7ee3c99e03826d9eadb2178cd8ff25678d817a2b8"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-agent-framing.webp",
+        "sha256": "b6eb149c51138be7c7c7a9b0a9765f57bd3ba324a6ea02d54a2da82d7978fec8"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-code-framing.webp",
+        "sha256": "19c8b22e06c0fc262ae98f27abb27eaa91c25b26b18402cebdd31aeee6ad8ef3"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-sdft.webp",
+        "sha256": "db4ad56b9c40d3363f987ac8f2b94c3d5cfd8252d7d28e58b265615d52bb77ab"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-opsd.webp",
+        "sha256": "01c8ad0211cacad892364f27550f9afad00efa3ca759b7017a755c9dc2ece7b4"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/appendix-skill.webp",
+        "sha256": "32d0b189c9c60f0265839a5c869f064adc5515a238122c01fa1d73ebf3b60d47"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-4.webp",
+        "sha256": "d4842227b72b976b789fec0e13105eb17c888c0a2169d1cb9e3f04ae26fe843a"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-5.webp",
+        "sha256": "8fa7e9dafa1f7db9b3455b8af99c83c1dfc9fd90f011fad298095a667a557319"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-2-teacher-detail.webp",
+        "sha256": "aedf26d31d201d3b362a3e98b9e6c630dec8faabaea87e253624e5bb9d012ae4"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-2-student-detail.webp",
+        "sha256": "b5453bb0276914e79cb825eadb64408d7a54d97612559c1d5270321026c19d78"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/figure-6-current-task-detail.webp",
+        "sha256": "d74c0b5f292898b74f32ed794b2103ebb43fb3ade2020be0b80e4b5c953e8b0a"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-2-qwen4-detail.webp",
+        "sha256": "223edd3e4c25943e7471262cc1dd65862c8af1c6eb5739c73fda4bd29b8fec1e"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/table-2-olmo-detail.webp",
+        "sha256": "6f107f86aed8a6179cbee2a22095e1a2bbef8104cdd6431f81a6d1d3f711328a"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/replay-benefits-case.py",
+        "sha256": "008d9c0be8a3d7c092be0acd26270404e2bb1ce4c8e99b00a17d16e70688e17f"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/env174.py",
+        "sha256": "8a6fc1cf8d8a463b0eb41075856d44fc94a539f075a4f64cd96d993892bec735"
+      },
+      {
+        "file": "lib/papers/latent-on-policy-self-distillation/env174-task.json",
+        "sha256": "a691ced8d0c24f86e5ff1f06c75108ccf041b8e8ccadae1c927e87c149451258"
+      }
+    ],
+    "external_service_boundary": {
+      "current_raw_errors": [],
+      "comments": "Twikoo .tk-submit loaded inall3localviewports; productionorigin verifiedafterrelease,notcertifiedbylocalQA.",
+      "history": "Oldrawerrors retained inqa_history_20261014/legacy_qa."
+    },
+    "permission_boundary": "arXiv v1 entry abs-license explicitly links CC BY 4.0, accessed 2026-10-19; author v1 TeX archive and Figures 1–6 also inspected. Code Apache/MIT licenses were not used as PDF permission."
+  },
+  "qa_history_20261014": {
     "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
@@ -836,119 +2218,5 @@
       "largest-table-or-code",
       "final"
     ]
-  },
-  "terminology": [
-    {
-      "term": "rollout",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1–3.3; Algorithm 1"
-        }
-      ],
-      "article_quote": "学生先根据任务和真实交互历史写下一步操作，完整执行记录叫 rollout 。"
-    },
-    {
-      "term": "teacher",
-      "kind": "model-call",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1, §3.3; Figure 2"
-        }
-      ],
-      "article_quote": "教师读取相同的前文，给学生已经写出的每个位置重新计算“下一 token 的概率”"
-    },
-    {
-      "term": "privileged context",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1; Eq. 1–4"
-        }
-      ],
-      "article_quote": "教师额外看到的资料叫 privileged context ，只在训练时提供。"
-    },
-    {
-      "term": "latent tokens",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Eq. 5–7"
-        }
-      ],
-      "article_quote": "LOPD 不把资料写成普通提示词，而是生成可训练的输入向量，称为 latent tokens 。每个 latent token 是一个向量位置，不是一段可读词语；不要与前面用于生成文字的 token 混淆。"
-    },
-    {
-      "term": "composer",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Appendix A.1–A.3"
-        }
-      ],
-      "article_quote": "这组压缩模块称为 composer ，包含编码器 LoRA 和 QFormer；三条结果拼接后是 96×d 。"
-    },
-    {
-      "term": "cold start",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix A.3"
-        }
-      ],
-      "article_quote": "正式蒸馏前有 cold start ：先让固定教师在这些向量帮助下预测成功记录的 assistant token，只更新 composer。"
-    },
-    {
-      "term": "tail bucket",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3; Eq. 8–10; Appendix A.4"
-        }
-      ],
-      "article_quote": "按教师概率取 top-20，再把词表其余部分合成一个 tail bucket。学生和教师在相同的 21 个事件上计算 reverse KL"
-    },
-    {
-      "term": "latent memory",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.3"
-        }
-      ],
-      "article_quote": "另一条相关路线是 latent memory ：把历史信息保存在连续向量里，做任务时仍读取这些向量。"
-    }
-  ]
+  }
 }
