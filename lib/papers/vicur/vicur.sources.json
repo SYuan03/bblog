@@ -37,6 +37,40 @@
         "artifact completeness",
         "reproduction"
       ]
+    },
+    {
+      "id": "author-prompt",
+      "kind": "documentation",
+      "title": "Author explanation of two-stage cue construction",
+      "url": "https://github.com/tiankanghui/ViCuR/issues/1#issuecomment-4686972284",
+      "revision": "issuecomment-4686972284, inspected 2026-10-18",
+      "used_for": [
+        "offline construction",
+        "summary input boundary"
+      ]
+    },
+    {
+      "id": "author-data-link",
+      "kind": "documentation",
+      "title": "Author release of R/S data",
+      "url": "https://github.com/tiankanghui/ViCuR/issues/2#issuecomment-4911511562",
+      "revision": "issuecomment-4911511562, inspected 2026-10-18",
+      "used_for": [
+        "dataset provenance"
+      ]
+    },
+    {
+      "id": "data",
+      "kind": "dataset",
+      "title": "ViCuR R/S data, package data.md and Geometry3K train files",
+      "url": "https://zenodo.org/records/20363889",
+      "revision": "Zenodo revision 3; Geo3k S SHA256 55d439721f7eefb47f2b3219e0ab76041c0ecbc9c0f6b51b34b5a426d98e650d; R SHA256 169985e9ecc87d5116f680af37834e20b4fe2a90d8a8b01723f7517435c63fe9",
+      "used_for": [
+        "model identity",
+        "filtering",
+        "real training row0",
+        "theorem in S row2"
+      ]
     }
   ],
   "paper_reading": {
@@ -54,11 +88,12 @@
     "source_visuals_expected": 19,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-18",
       "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+      "complete_text_read": true,
+      "all_25_rendered_pages_reviewed": true,
+      "code_and_data_direct_inspection": true,
+      "notes": "Main agent reread complete text/appendices and all rendered pages. Independently inspected fixed source files, author comments, package data.md and selected CRC-checked Geometry3K rows; not every VisionR1 row and not a GPU training reproduction."
     }
   },
   "note_sections": [
@@ -87,6 +122,135 @@
       "locator": "6. Conclusion：结论与代码复现边界"
     }
   ],
+  "terminology": [
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "作答模型称为 student：只看图片和问题，先生成回答。"
+    },
+    {
+      "term": "teacher",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "评分模型称为 teacher：训练时多看一段提示，再计算"
+    },
+    {
+      "term": "visual cue",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1, Figure 8"
+        }
+      ],
+      "article_quote": "作者给 teacher 的额外文字称为 visual cue，例如“x 与 8 在同一条弦上”。"
+    },
+    {
+      "term": "GRPO",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1, Table 3"
+        }
+      ],
+      "article_quote": "另一项对照 GRPO 对同一道题生成多份回答，根据它们的相对奖励训练，不使用 teacher 的 token 概率。"
+    },
+    {
+      "term": "teacher_prompt",
+      "kind": "prompt-context",
+      "source_ids": [
+        "code",
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "rl_dataset.py:325–394; S train row0"
+        },
+        {
+          "source_id": "data",
+          "locator": "rl_dataset.py:325–394; S train row0"
+        }
+      ],
+      "article_quote": "训练程序读入图片、问题和预先准备的 <code>teacher_prompt</code>。这个字段是一整段 teacher 消息，不只是提示字符串。"
+    },
+    {
+      "term": "prefill",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; modeling_qwen3_vl.py:1867–1872"
+        },
+        {
+          "source_id": "code",
+          "locator": "§3.2; modeling_qwen3_vl.py:1867–1872"
+        }
+      ],
+      "article_quote": "一次处理整段输入的阶段叫 prefill。"
+    },
+    {
+      "term": "cross-attention",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 2; modeling_qwen3_vl.py:1577–1643"
+        },
+        {
+          "source_id": "code",
+          "locator": "Figure 2; modeling_qwen3_vl.py:1577–1643"
+        }
+      ],
+      "article_quote": "专用 cross-attention 分支按权重汇总，再把结果加回首 token"
+    },
+    {
+      "term": "Overall Avg.",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1"
+        }
+      ],
+      "article_quote": "Table 1 的 Overall Avg. 是 <strong>七项报告分数的等权平均</strong>"
+    }
+  ],
   "coverage": [
     {
       "id": "central-claim",
@@ -103,99 +267,132 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "训练时给负责评分的模型补充画面线索，让作答模型学会从原图找到正确关系。"
+          "quote": "teacher 的答案提示可能纠正文字，却没有让 student 学会辨认图片中的关系。"
+        }
+      ]
+    },
+    {
+      "id": "offline-cue-construction",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "author-prompt",
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "author-prompt",
+          "locator": "Displayed second-call user template: Ground Truth Answer + Full Solution, no question slot or image argument"
+        },
+        {
+          "source_id": "data",
+          "locator": "data.md:5–16; S row2 teacher_prompt"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "展示的 user 模板只有 <code>Ground Truth Answer</code>（标准答案）和 <code>Full Solution</code>（完整解答），没有单独的题目字段，也未展示图片输入。"
+        },
+        {
+          "artifact": "article",
+          "quote": "不检查生成解答是否正确</strong>，只保留正常结束的生成，排除超长、格式异常等情况。"
+        },
+        {
+          "artifact": "article",
+          "quote": "各 1,568 行；这不等于原始 Geometry3K 全量训练集。"
         }
       ]
     },
     {
       "id": "method-contract",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2–3.4; Eq. 6–8"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "student 先独立回答，teacher 再用视觉线索评估同一份回答，梯度只更新 student 及新增分支。"
-        },
-        {
-          "artifact": "article",
-          "quote": "新增分支随 student 的作答损失一起训练，没有额外的线索生成或文字匹配损失。"
-        }
-      ]
-    },
-    {
-      "id": "main-result",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Tables 1–2, 5"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "2B 的 (26.58+51.60+63.4+33.90+40.00+49.22+57.8)/7=46.07 可以直接复算。"
-        },
-        {
-          "artifact": "article",
-          "quote": "8B 提高 1.24，仍比未训练模型低 1.37。"
-        }
-      ]
-    },
-    {
-      "id": "limitations",
-      "claim_type": "interpretation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§6; Table 2; Table 5; Appendix D and F.1"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "§6 又称 8B Geometry3K 完整版低于提示版，与 Table 2 的 57.05>56.76 不一致"
-        },
-        {
-          "artifact": "article",
-          "quote": "它衡量提示格式复述，不能排除不含这个词的答案抄袭或错误捷径。"
-        }
-      ]
-    },
-    {
-      "id": "code-audit",
       "claim_type": "inspected-implementation",
       "source_ids": [
+        "paper",
+        "code",
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2–3.4, Eq.(6)–(8)"
+        },
+        {
+          "source_id": "code",
+          "locator": "rl_dataset.py:325–394; single_turn_agent_loop.py:63–162; teacher_manager.py:31–44; teacher_model.py:56–99"
+        },
+        {
+          "source_id": "data",
+          "locator": "S row0 teacher_prompt and prompt"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "teacher 多看 cue，再在相同回答 y 的每个前缀上计算下一个实际 token 的概率。"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开示例独立加载已保存的 teacher 权重，不随 student 同步更新。"
+        }
+      ]
+    },
+    {
+      "id": "branch-implementation",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
         "code"
       ],
       "source_locators": [
         {
+          "source_id": "paper",
+          "locator": "Figure 2; §3.2"
+        },
+        {
           "source_id": "code",
-          "locator": "vicur/modeling_qwen3_vl.py; vicur/qwen3_vl.py; run_qwen3_vl_example.sh @a244a244fc24a202bd720f7aac069bb8bd105b06"
+          "locator": "modeling_qwen3_vl.py:1577–1643, 1669–1687, 1825–1872, 1961–1988; qwen3_vl.py:2047–2097, 2214–2225"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "在 0、5、10…层注入；不是从第 5 层才第一次运行。"
+          "quote": "代码在第 <strong>0、5、10…层之后</strong>"
         },
         {
           "artifact": "article",
-          "quote": "示例默认是 Geometry3K 式 1,024／2,048 长度、100 epoch，而非主表的 Vision R1 设置"
+          "quote": "首 token 提供 query（Q，发起读取的向量），视觉向量提供 keys 和 values（K/V，用于计算权重及被汇总的内容）。"
+        },
+        {
+          "artifact": "article",
+          "quote": "常规使用缓存的逐 token 解码不再运行这段分支"
+        }
+      ]
+    },
+    {
+      "id": "actual-loss-and-aggregation",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3 explanatory sampled-token loss; Appendix F forward KL idealization"
+        },
+        {
+          "source_id": "code",
+          "locator": "distillation/losses.py:207–268, 341–349; ppo/core_algos.py:1168–1173, 1329–1361, 2164–2165"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "实际代码使用 k1 的对数概率差、停止梯度，以及带概率比和裁剪的策略损失；默认不使用任务奖励更新。"
+        },
+        {
+          "artifact": "article",
+          "quote": "默认 token-mean 汇总与论文解释式的逐回答平均不同。"
         }
       ]
     },
@@ -203,54 +400,95 @@
       "id": "real-case-and-verdict",
       "claim_type": "reproduced-calculation",
       "source_ids": [
-        "paper"
+        "paper",
+        "data",
+        "code"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figures 8, 10; Appendix E.1"
+          "locator": "Figure 8 Case1; Figures 10–11; Appendix E.1"
+        },
+        {
+          "source_id": "data",
+          "locator": "geo3k_train_S.parquet row0/index0, ground_truth=3"
+        },
+        {
+          "source_id": "code",
+          "locator": "geo3k.py:20–35; reward is not accuracy or main optimization target"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "把 4 与 x 配在一起，于是 4x=6×8 ，得到 x=12 。"
+          "quote": "这是训练样例上的作者单题观察，不是 held-out 泛化准确率"
         },
         {
           "artifact": "article",
-          "quote": "正确恢复配对，得到 4×6=x×8 ，因此 x=3 。"
+          "quote": "这里可以直接复算 <code>(4×6)/8=3</code>；单题分析用最终答案是否为 3 计数"
         },
         {
           "artifact": "article",
-          "quote": "三者正确次数分别是 5/10、7/10、10/10 。"
+          "quote": "作者重复同一题 10 次，base／OPSD／ViCuR 答对 <strong>5/10、7/10、10/10</strong>。"
         }
       ]
     },
     {
-      "id": "cue-origin-and-theory-boundary",
-      "claim_type": "unknown",
+      "id": "main-result",
+      "claim_type": "reproduced-calculation",
       "source_ids": [
         "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.1, §4; Appendix F.1; source artifact"
+          "locator": "Table 1; §4; Table 3"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "论文没有公开这批线索由谁、用什么模型和提示批量生成，不能声称它们全是人工标注。"
+          "quote": "(26.58+51.60+63.4+33.90+40.00+49.22+57.8)/7≈46.07"
         },
         {
           "artifact": "article",
-          "quote": "现实的外部模型或标注者会犯错、产生不同措辞，也可能掺入答案知识"
+          "quote": "8B 为 59.39，比 OPSD 高 1.24，但低于 base 60.76 和 GRPO 65.35。"
+        },
+        {
+          "artifact": "article",
+          "quote": "蒸馏每题生成一次，GRPO 五次，因此不是相同生成成本。"
         }
       ]
     },
     {
-      "id": "inference-latency-boundary",
+      "id": "component-ablation-and-counterexample",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2 final100 step average; Table 5 8B OPSD/MathVista geometry; §6 contradictory claim"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "独立训练 100 epoch，分数为最后 100 步准确率均值"
+        },
+        {
+          "artifact": "article",
+          "quote": "提示版为 87.03，完整方法为 85.77。"
+        },
+        {
+          "artifact": "article",
+          "quote": "与 Table 2 的 57.05>56.76 不一致。"
+        }
+      ]
+    },
+    {
+      "id": "hint-diagnostic-and-cost",
       "claim_type": "interpretation",
       "source_ids": [
         "paper"
@@ -258,17 +496,83 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 6–7; Appendix C"
+          "locator": "Tables 7–8, Figures 4/9/11; Appendix C–E"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "输入处理时间增加 4.3%–24.5%，但逐 token 生成阶段不再运行分支。"
+          "quote": "诊断只数输出中大小写不敏感的完整单词 Hint"
         },
         {
           "artifact": "article",
-          "quote": "不能凭“无额外解码操作”就宣称端到端一定更快。"
+          "quote": "无额外解码操作，不等于端到端更快。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Figure 1; Table 2 cue-only/branch-only"
+        },
+        {
+          "source_id": "code",
+          "locator": "Added projection matrices distinguish from original SinkTrack"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本文同时改了提示内容和模型结构，需要分别看两项的作用。"
+        },
+        {
+          "artifact": "article",
+          "quote": "原始 SinkTrack 复用模型已有注意力保存上下文；ViCuR 增加专用 cross-attention 参数读取视觉向量。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "code",
+        "data",
+        "author-prompt"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6; Tables 1/2/5"
+        },
+        {
+          "source_id": "code",
+          "locator": "README:95–108; initialized-student example placeholder; no linked trained checkpoint"
+        },
+        {
+          "source_id": "data",
+          "locator": "data.md no correctness verification; S row2 contains theorem"
+        },
+        {
+          "source_id": "author-prompt",
+          "locator": "No exact summary model/media execution arguments"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "完整数据生成脚本、结果运行记录和训练后 checkpoint 未找到，不能称为一键复现。"
+        },
+        {
+          "artifact": "article",
+          "quote": "这不足以证明整批提示都只含视觉事实"
         }
       ]
     }
@@ -280,19 +584,25 @@
       "label": "Figure 1",
       "source_id": "paper",
       "source_locator": "Figure 1; §3.1–3.3",
-      "status": "redrawn",
-      "rationale": "答案提示与视觉线索的教师输入区别在Q2比较表及机制SVG重构，明确部署仍有原图、新分支，不把recoverable当泄漏已消除。",
+      "status": "reused",
+      "rationale": "训练、部署的两种提示边界；完整图正文，上下两阶段局部用于连续幻灯片。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "ViCuR 同时改变 teacher 的提示和 student 的视觉读取结构。"
+          "locator": "原论文 Figure 1。图中“recoverable”是理想解释，不能代替对公开提示的质量检查，CC BY 4.0；仅裁去图表外正文。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "teacher 的答案提示，student 在部署时看不到"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 1, CC BY 4.0; original English preserved; detail crops labeled.",
       "asset_paths": [
-        "/lib/papers/vicur/training-mechanism.svg"
+        "/lib/papers/vicur/figure-1.webp",
+        "/lib/papers/vicur/figure-1-conventional-detail.webp",
+        "/lib/papers/vicur/figure-1-vicur-detail.webp"
       ]
     },
     {
@@ -301,19 +611,23 @@
       "label": "Figure 2",
       "source_id": "paper",
       "source_locator": "Figure 2; §3.2–3.4",
-      "status": "redrawn",
-      "rationale": "重绘首token query读取visual keys/values再加回首token，补零起始层号与训练/vLLM两端边界。",
+      "status": "reused",
+      "rationale": "新增 Q/K/V 视觉读取及首 token 残差，正文紧邻分支代码解释。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "每隔五层"
+          "locator": "原论文 Figure 2。Q 来自首 token，K/V 来自当前层全部 visual tokens，CC BY 4.0；仅裁去图表外正文。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "首 token 在 0、5、10…层之后读取视觉向量"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-2 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 2, CC BY 4.0; original English preserved; detail crops labeled.",
       "asset_paths": [
-        "/lib/papers/vicur/training-mechanism.svg"
+        "/lib/papers/vicur/figure-2.webp"
       ]
     },
     {
@@ -322,13 +636,20 @@
       "label": "Figure 3",
       "source_id": "paper",
       "source_locator": "Figure 3; §5.2",
-      "status": "omitted",
-      "rationale": "全回答与前后50%分段logprob训练曲线未绘，正文未将概率接近直接解释成最终准确率提高。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "主训练准确率和回答前后半概率差，补充保留概率接近不等于正确率的证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 3。较容易模仿 teacher 的概率，不一定意味着较高准确率，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 3, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-3.webp"
+      ]
     },
     {
       "id": "figure-4",
@@ -336,13 +657,20 @@
       "label": "Figure 4",
       "source_id": "paper",
       "source_locator": "Figure 4; Appendix D",
-      "status": "omitted",
-      "rationale": "OPSD各epoch完整Hint曲线未绘，只保留第五epoch实际完整词计数，避免诊断图冒充所有泄漏率。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "五 epoch Hint 复述曲线，补充保留而不当成全泄漏测量。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 4。统计完整单词 Hint，不是语义泄漏率，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 4, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-4.webp"
+      ]
     },
     {
       "id": "figure-5",
@@ -350,13 +678,20 @@
       "label": "Figure 5",
       "source_id": "paper",
       "source_locator": "Figure 5; Appendix B.2",
-      "status": "omitted",
-      "rationale": "更多teacher/student pair几何增量图未呈现；正文保留主2B/8B和强teacher对照，不把两点概括为任意规模可提升。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "四组 teacher/student Geometry3K 增益，完整坐标保留，不混入七项平均。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5。2B→8B 组合增益不是 Table 1 七项平均，别混用实验，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 5, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-5.webp"
+      ]
     },
     {
       "id": "figure-6",
@@ -364,13 +699,20 @@
       "label": "Figure 6",
       "source_id": "paper",
       "source_locator": "Figure 6; Appendix B.3",
-      "status": "omitted",
-      "rationale": "Geometry3K全rollout训练/test准确率与logprob差曲线未绘，避免以图代替未公开逐步数值。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "Geometry3K 训练/测试准确率与概率差完整曲线，补充展示。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 6。较低概率差不必然对应较高准确率，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 6, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-6.webp"
+      ]
     },
     {
       "id": "figure-7",
@@ -378,13 +720,20 @@
       "label": "Figure 7",
       "source_id": "paper",
       "source_locator": "Figure 7; Appendix B.3",
-      "status": "omitted",
-      "rationale": "四等分token曲线未展示，文章将实际sampledtokenloss与全词表理论KL分开，不声称完整分段机制诊断。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "回答四等分的概率差轨迹，完整补充，不改写为视觉 token 标注。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 7。四等分位置的趋势不等于标注了哪些 token 属于视觉推理，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 7, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-7.webp"
+      ]
     },
     {
       "id": "figure-8",
@@ -392,19 +741,24 @@
       "label": "Figure 8",
       "source_id": "paper",
       "source_locator": "Figure 8; Appendix D–E.1",
-      "status": "redrawn",
-      "rationale": "真实弦图的推理提示/视觉提示差别重绘，定理与线段关系区别明示，不把提示题面编成benchmark完整日志。",
+      "status": "reused",
+      "rationale": "真实相交弦主案例局部及完整等腰三角形提示对照均保留。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Figure 8、10 与附录 E.1 的真实 Geometry3K 案例重绘"
+          "locator": "原论文 Figure 8 的 Case 1 局部。红框给定理与乘积，蓝框描述 x/8 和 4/6 配对；完整图在补充，CC BY 4.0；仅裁去图表外正文。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "红框给求解规则，蓝框说清两段属于哪条弦"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-8 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 8, CC BY 4.0; original English preserved; detail crops labeled.",
       "asset_paths": [
-        "/lib/papers/vicur/chord-case.svg"
+        "/lib/papers/vicur/figure-8-chords-detail.webp",
+        "/lib/papers/vicur/figure-8.webp"
       ]
     },
     {
@@ -413,13 +767,20 @@
       "label": "Figure 9",
       "source_id": "paper",
       "source_locator": "Figure 9; Appendix D",
-      "status": "omitted",
-      "rationale": "OPD无提示基线的Hint低计数图未展示；仅说明explicitHint与答案复制不同，未用OPSD数据替代OPD统计。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "OPD 的 Hint 诊断曲线，补充区分无提示 OPD 与 OPSD 统计。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 9。无提示 OPD 与加 cue 的版本都较低，不能套用 OPSD 的统计，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 9, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-9.webp"
+      ]
     },
     {
       "id": "figure-10",
@@ -427,19 +788,24 @@
       "label": "Figure 10",
       "source_id": "paper",
       "source_locator": "Figure 10; Appendix E.1",
-      "status": "redrawn",
-      "rationale": "两真实案例概览选相交弦重绘、MathVista曲线用文字说明；保留估计数值是模型输出不是原曲线数据。",
+      "status": "reused",
+      "rationale": "两题概览完整保留；弦图局部用于开场，MathVista 的读图条件写在图注。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Figure 8、10 与附录 E.1 的真实 Geometry3K 案例重绘"
+          "locator": "原论文 Figure 10。MathVista 在 Pretrain Loss=1.80 比较 Acc，标准答案 RFT U13B；base／OPSD 选 LLaMA-2-70B。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "定理没用错，图里的线段配错了"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-10 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 10, CC BY 4.0; original English preserved; detail crops labeled.",
       "asset_paths": [
-        "/lib/papers/vicur/chord-case.svg"
+        "/lib/papers/vicur/figure-10.webp",
+        "/lib/papers/vicur/figure-10-chords-detail.webp"
       ]
     },
     {
@@ -448,13 +814,20 @@
       "label": "Figure 11",
       "source_id": "paper",
       "source_locator": "Figure 11; Appendix E.1",
-      "status": "omitted",
-      "rationale": "两题各层attentionheatmap未复制，颜色权重仅支持机制相容，不可给出锁定正确区域的因果保证。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "两题完整各层注意力热图，补充保留非因果解释。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 11。没有干预实验，不能证明某个亮区导致了正确答案，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Figure 11, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/figure-11.webp"
+      ]
     },
     {
       "id": "table-1",
@@ -462,19 +835,25 @@
       "label": "Table 1",
       "source_id": "paper",
       "source_locator": "Table 1; §4–5",
-      "status": "redrawn",
-      "rationale": "七项等权主平均重排，保留未训练和GRPO，防止只展示OPSD增量掩盖8B仍退化。",
+      "status": "reused",
+      "rationale": "完整七项所有2B/8B对照正文可放大；deck分开尺度保证可读。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Table 1 重绘，保留未训练与 GRPO 对照。"
+          "locator": "原论文 Table 1。保留全部对照；2B 的 DynaMath、MMMU、Video-MME 比 OPSD 略降，CC BY 4.0；仅裁去图表外正文。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "平均比 OPSD 高 1.19，但仍低于 GRPO"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 1, CC BY 4.0; original English preserved; detail crops labeled.",
       "asset_paths": [
-        "/lib/papers/vicur/main-evidence.svg"
+        "/lib/papers/vicur/table-1.webp",
+        "/lib/papers/vicur/table-1-2b-detail.webp",
+        "/lib/papers/vicur/table-1-8b-detail.webp"
       ]
     },
     {
@@ -483,18 +862,24 @@
       "label": "Table 2",
       "source_id": "paper",
       "source_locator": "Table 2; §5.2",
-      "status": "redrawn",
-      "rationale": "Geometry3K独立100epoch的四组消融重排在deck表，明确最后100步平均、8B分支额外仅0.29。",
+      "status": "reused",
+      "rationale": "四组组件消融主路径展示，明确独立100epoch及末100步均值。",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "原论文 Table 2。独立训练 100 epoch，分数为最后 100 步准确率均值，不是主表最终 checkpoint，CC BY 4.0；仅裁去图表外正文。"
+        },
+        {
           "artifact": "deck",
-          "locator": "最大的单项贡献来自换提示内容"
+          "locator": "提示贡献最大，新增分支并非总有收益"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 2, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-2.webp"
+      ]
     },
     {
       "id": "table-3",
@@ -502,13 +887,20 @@
       "label": "Table 3",
       "source_id": "paper",
       "source_locator": "Table 3; Appendix A.1",
-      "status": "omitted",
-      "rationale": "主VisionR1与Geometry3K配置未保留整表，仅逐项解释275步/batch/长度/生成次数，避免混用示例配置。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "完整训练配置补充保留，区分主VisionR1和Geometry3K。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 3。蒸馏 4 student + 4 teacher GPU，GRPO 8 student GPU，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 3, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-3.webp"
+      ]
     },
     {
       "id": "table-4",
@@ -516,13 +908,20 @@
       "label": "Table 4",
       "source_id": "paper",
       "source_locator": "Table 4; Appendix A.2",
-      "status": "omitted",
-      "rationale": "VLMEvalKit默认judge与温度/长度由文字说明，未展示完整参数表，不声称不同benchmark使用同一字符串judge。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "生成参数原表补充保留，不将其称为通用judge配置。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 4。温度 0.7、最大新生成 4,096 token 等生成配置，不等于 judge 的逐题实现，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 4, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-4.webp"
+      ]
     },
     {
       "id": "table-5",
@@ -530,13 +929,20 @@
       "label": "Table 5",
       "source_id": "paper",
       "source_locator": "Table 5; Appendix B.1",
-      "status": "omitted",
-      "rationale": "跨几何迁移表未整表绘，保留最区分性的8BMathVista87.03→85.77反例，防止“模块必然提高”结论。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "完整迁移消融补充，主路径指出8B提示版优于完整版反例。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 5。完整分支没有在所有迁移列超过提示版，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 5, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-5.webp"
+      ]
     },
     {
       "id": "table-6",
@@ -544,13 +950,20 @@
       "label": "Table 6",
       "source_id": "paper",
       "source_locator": "Table 6; Appendix C",
-      "status": "omitted",
-      "rationale": "总训练时间表未重绘，文章只报单机配置和推理成本，未用无decode额外操作宣称训练无成本。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "训练时间完整表补充，不推断零训练成本。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 6。2B 时间略增，8B 表中更短；不能证明固定输出内容下的结构速度优势，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 6, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-6.webp"
+      ]
     },
     {
       "id": "table-7",
@@ -558,13 +971,20 @@
       "label": "Table 7",
       "source_id": "paper",
       "source_locator": "Table 7; Appendix C",
-      "status": "omitted",
-      "rationale": "small/large完整prefill/decode/length/total列未重画，保留prefill4.3%–24.5%和端到端长度混杂。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "完整prefill/decode/length/total条件补充，主路径保留变慢的例子。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 7。单 H200，3 次预热后 10 次测量平均；小图 64 visual tokens，大图 1,782。回答长度不固定，CC BY 4.0；仅裁去图表外正文"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 7, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-7.webp"
+      ]
     },
     {
       "id": "table-8",
@@ -572,63 +992,362 @@
       "label": "Table 8",
       "source_id": "paper",
       "source_locator": "Table 8; Appendix D",
-      "status": "omitted",
-      "rationale": "各scale/epoch全部Hintsamples/occurrences未列，只给8B第五epoch核对诊断分母及局限。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "全部epoch/scale的Hint样本与次数补充，主路径准确描述代理指标。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 8。每格为 samples / occurrences，每 epoch 55 步，CC BY 4.0；仅裁去图表外正文。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian et al., Table 8, CC BY 4.0; original English preserved; detail crops labeled.",
+      "asset_paths": [
+        "/lib/papers/vicur/table-8.webp"
+      ]
     }
   ],
   "figures": [
     {
-      "path": "/lib/papers/vicur/training-mechanism.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/vicur/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1; §3.1–3.3",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 1，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-2.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-2",
       "source_id": "paper",
-      "source_locator": "Figure 1–2; §3.2–3.4; code @a244a244",
-      "credit": "按 §3.2–3.4 与固定版本代码重绘",
+      "source_locator": "Figure 2; §3.2–3.4",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 2，CC BY 4.0；完整或明确标注局部。",
       "used_in": [
         "article",
         "deck"
       ]
     },
     {
-      "path": "/lib/papers/vicur/chord-case.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/vicur/figure-8-chords-detail.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-8",
       "source_id": "paper",
-      "source_locator": "Figures 8, 10; Appendix E.1",
-      "credit": "根据 Figure 8、10 与附录 E.1 的真实 Geometry3K 案例重绘",
+      "source_locator": "Figure 8; Appendix D–E.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 8，CC BY 4.0；完整或明确标注局部。",
       "used_in": [
         "article",
         "deck"
       ]
     },
     {
-      "path": "/lib/papers/vicur/main-evidence.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/vicur/figure-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-8",
+      "source_id": "paper",
+      "source_locator": "Figure 8; Appendix D–E.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 8，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-10.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-10",
+      "source_id": "paper",
+      "source_locator": "Figure 10; Appendix E.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 10，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-11.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "Figure 11; Appendix E.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 11，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-1.webp",
+      "origin": "paper-original",
       "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Table 1, Overall Avg. across seven datasets",
-      "credit": "根据 Table 1 重绘，保留未训练与 GRPO 对照",
+      "source_locator": "Table 1; §4–5",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 1，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "Table 2; §5.2",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 2，CC BY 4.0；完整或明确标注局部。",
       "used_in": [
         "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-5",
+      "source_id": "paper",
+      "source_locator": "Table 5; Appendix B.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 5，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "Figure 4; Appendix D",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 4，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-8",
+      "source_id": "paper",
+      "source_locator": "Table 8; Appendix D",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 8，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "Figure 9; Appendix D",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 9，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "Table 6; Appendix C",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 6，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-7",
+      "source_id": "paper",
+      "source_locator": "Table 7; Appendix C",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 7，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "Table 3; Appendix A.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 3，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "Table 4; Appendix A.2",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 4，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "Figure 3; §5.2",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 3，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "Figure 5; Appendix B.2",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 5，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "Figure 6; Appendix B.3",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 6，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "Figure 7; Appendix B.3",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 7，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-10-chords-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-10",
+      "source_id": "paper",
+      "source_locator": "Figure 10; Appendix E.1",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 10，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-1-conventional-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1; §3.1–3.3",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 1，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/figure-1-vicur-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1; §3.1–3.3",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 figure 1，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-1-2b-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table 1; §4–5",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 1，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/vicur/table-1-8b-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table 1; §4–5",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2606.05718v1 has_license links http://creativecommons.org/licenses/by/4.0/, checked 2026-10-18; version matches local PDF; authors credited; crop removes surrounding prose only.",
+      "credit": "Kanghui Tian 等，原论文 table 1，CC BY 4.0；完整或明确标注局部。",
+      "used_in": [
         "deck"
       ]
     }
   ],
   "qa": {
-    "status": "completed-current-artifacts; external-service-history-retained",
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
       "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 17,
-      "line_height": 1.78,
-      "mobile_body_font_px": 16.5,
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
       "figures_centered": true,
       "article_visuals_interleaved": true,
       "internal_scroll_for_tables_and_code": true,
@@ -663,10 +1382,9 @@
       "actors_disambiguated": true,
       "read_aloud_complete": true,
       "facts_rechecked_after_rewrite": true,
+      "date": "2026-10-18",
       "reviewer": "main agent",
-      "date": "2026-10-14",
-      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
-      "reader_reconstruction": "Separate same-sized teacher scoring current student answer,visual cue from original image,first token at layers0,5,10 reads all visual tokens; division0.4/.2 log=.693; chord pairing4*6=x*8 gives3 vs4x=6*8 gives12. Full7-metric means,2B1.19/8B1.24 gains vs OPSD but below GRPO,8B transfer87.03->85.77 and source contradiction preserved."
+      "reader_reconstruction": "Offline answer/solution-assisted summary vs fixed teacher scoring same student response; residual after0/5/10 layers; sampled k1 detached policy/token mean; chord3 vs12 training example; seven-score mean vs GRPO; Table5 negative and Table2/§6 conflict retained."
     },
     "interactions": {
       "buttons": true,
@@ -677,7 +1395,14 @@
       "standalone_return_to_article": true,
       "immersive_mode_exit": true,
       "usable_state_after_exit": true,
-      "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+      "overview_toggle": true,
+      "thumbnail_selection": true,
+      "all_original_figure_fit": true,
+      "figure_close_escape_focus_restore": true,
+      "figure_drag": true,
+      "copy_code": true,
+      "mobile_internal_scrolling": true,
+      "fullscreen_scope": "DOM API and nested exits tested in headless Chrome; native macOS window fullscreen not tested."
     },
     "inspected_slides": [
       "opening",
@@ -685,11 +1410,49 @@
       "largest-table-or-code",
       "final"
     ],
-    "browser_mode": "isolated-headless",
+    "reading_length": [
+      {
+        "viewport": {
+          "width": 1600,
+          "height": 1000
+        },
+        "default_height_px": 7569,
+        "all_supplements_expanded_height_px": 15613,
+        "visible_characters_estimate": 5465,
+        "note": "Estimate includes metadata/captions; not strict Chinese word count."
+      },
+      {
+        "viewport": {
+          "width": 1512,
+          "height": 982
+        },
+        "default_height_px": 7569,
+        "all_supplements_expanded_height_px": 15613,
+        "visible_characters_estimate": 5465,
+        "note": "Estimate includes metadata/captions; not strict Chinese word count."
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "default_height_px": 10388,
+        "all_supplements_expanded_height_px": 16185,
+        "visible_characters_estimate": 5465,
+        "note": "Estimate includes metadata/captions; not strict Chinese word count."
+      }
+    ],
+    "browser_evidence": {
+      "layout": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/layout-qa-final-reader.json",
+      "interactions": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/interaction-qa-mobile-reader.json",
+      "mobile_scroll": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/mobile-scroll-final.json",
+      "screenshots": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/",
+      "raw_prior_failures": "interaction-qa-final failure was a mobile focus-layout reachability test issue; explicit deck-controls scroll fixed helper. No forced clicks. Earlier source and geometry reports retained."
+    },
     "current_artifact_hashes": {
-      "article": "4eed1597c2dd67b1e8487a3a30299d18c769fa90c69a49a7a04710ec8607ed94",
-      "built_article": "89a589f4ce46aebfd8f7a08c5c9a5693af3389c81fec9ebd8bb6b3277035b751",
-      "deck": "59d832341a516b6b1fb53899f87de6c36cbe5f1c7f20abc089fe7dd4c50c218d",
+      "article": "44d0cb64c50f36c66f8094db278cb42c887659ab8ffa9cdf000c7e469006eb01",
+      "built_article": "b690b3cad7a54db3dd16a8967b22ac728f476476184eebfd5559920165aa52d1",
+      "deck": "ea23acc88f1fa45a0e11ef4710dff63719b990ba46a7f5f9267336987d33a206",
       "shared": [
         {
           "file": "dist/css/tide.css",
@@ -710,216 +1473,323 @@
         {
           "file": "dist/lib/decks/paper-deck-v2.js",
           "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+          "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+          "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+        }
+      ],
+      "figures": [
+        {
+          "file": "/lib/papers/vicur/figure-1.webp",
+          "sha256": "9297986aa54c635fe06f29740ad1827445ad1763a35eab862c91a2b6386367fd"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-2.webp",
+          "sha256": "f68ec78b829641400f6227032c1dae30ab77014760a2ba941e4ccd4b42e8b93f"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-8-chords-detail.webp",
+          "sha256": "84c89000d61d20bee76230c19e4654737454fa1eea60177110e3e037d615eac3"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-8.webp",
+          "sha256": "1504c76a9a4b3421be0dda9e9844cdd9c5bb052f93ace4453f99857cd7b0c322"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-10.webp",
+          "sha256": "bbb723b740c8e696987bcfd5c660d4464539baccfa6478f162f6ffa352caad00"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-11.webp",
+          "sha256": "cdccdf9e7e0b5f6556d1b4a303842a7dd5d1c099cf4bcd0384f3e3075931c969"
+        },
+        {
+          "file": "/lib/papers/vicur/table-1.webp",
+          "sha256": "5803e8446ee35ecb41c204d4811c005d2fde820d8086857359ffdc112a1b4785"
+        },
+        {
+          "file": "/lib/papers/vicur/table-2.webp",
+          "sha256": "06d48fe8fda04fd57fba7a0bb114fd9f72b6bc0b0f320b59d7ba57dab595f033"
+        },
+        {
+          "file": "/lib/papers/vicur/table-5.webp",
+          "sha256": "a01dcb18904ec740f0b1c5fa77c3f447398953398c852c3168360ed13ace7901"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-4.webp",
+          "sha256": "7721d5782ca0609dbc68af2f1fd891d07b73fc7e3a59aa6735494b68062a9e22"
+        },
+        {
+          "file": "/lib/papers/vicur/table-8.webp",
+          "sha256": "54d711c6ceaf4028b3192a2597a48b0c00f4e7d5762e12a7859bd5691a5e884c"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-9.webp",
+          "sha256": "f28d238dc4054c937b6c66e0cddbba8c3cb02812f97f6ff35be8d3583e44d333"
+        },
+        {
+          "file": "/lib/papers/vicur/table-6.webp",
+          "sha256": "0daa4dfe4c54437f0a37288cd03e49ca3169054d038fc8fa35e58660e439cf0e"
+        },
+        {
+          "file": "/lib/papers/vicur/table-7.webp",
+          "sha256": "1b732d0716441f75fd8206f1241fa05b1842822f9418f0f2bd23acc9d9e3add3"
+        },
+        {
+          "file": "/lib/papers/vicur/table-3.webp",
+          "sha256": "fd39a6f0752b6165667e8a47f273ff68f280f24272d11aa5744000af03608e24"
+        },
+        {
+          "file": "/lib/papers/vicur/table-4.webp",
+          "sha256": "233d5a93f05085bc27d9fac49b3888891d16a970ea762d3ed194dab33c320b37"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-3.webp",
+          "sha256": "a26265cef8090e79a600ecb40385e9862f3ebd2a417e23d8503db9f9a0ccbdc9"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-5.webp",
+          "sha256": "3beb55fbea7addde1b5ae86558f41b149c6b7d95a5fff8139185ac719af8367b"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-6.webp",
+          "sha256": "cf4dd704522c80b36d279f87888cc6d746eb28b5637cbcfe4ecdc6731f971715"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-7.webp",
+          "sha256": "0830f9233e8f55cbc7b5300d84af6a63285249ebc6bd6d4bfb5ff199656b4f3a"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-10-chords-detail.webp",
+          "sha256": "5452f4afbb22c96c33981d56ec6be912bf24cea76102e5a63118fc77df4ff37c"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-1-conventional-detail.webp",
+          "sha256": "42669741872b381e36018fa6ce123fa2e30f06e483b59ec6938d745ff020eb5c"
+        },
+        {
+          "file": "/lib/papers/vicur/figure-1-vicur-detail.webp",
+          "sha256": "5e6357230dcaba0ca777d16eec86b84a86b21317cb3fa73fc4b5b5b7b18fa69d"
+        },
+        {
+          "file": "/lib/papers/vicur/table-1-2b-detail.webp",
+          "sha256": "626ae3699953e49036cab1e874d4f51492704f95167f82076ad43a55a29e2359"
+        },
+        {
+          "file": "/lib/papers/vicur/table-1-8b-detail.webp",
+          "sha256": "6e2a2b6edc9fa91b9e00a34db738f2516a9523c5e6e76f9dac3199c6af562463"
         }
       ]
     },
-    "browser_evidence": {
-      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-083/numbered-article-qa.json",
-      "deck": "output/playwright/games/current-2026-10-14T08-43-12-770Z-083/foundation-deck-qa.json",
-      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-083.json",
-      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
-      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
-      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction.",
-      "previous_failed_report": "output/playwright/games/current-2026-10-14T08-25-17-814Z-083/foundation-deck-qa.json (opening image touched footer; not counted as passed; fixed and verified in selected 08-43 batch)"
-    },
     "external_service_boundary": {
-      "historical_raw_page_errors": [
+      "raw_current_errors": [],
+      "automatic_comments_loaded": true,
+      "note": "Local build comments load automatically. Live production still requires verification after Git push. Historical external failures remain in raw workspace reports."
+    },
+    "collection_revision": {
+      "date": "2026-10-18",
+      "language_and_length": "Paragraph-level rewrite; core iteration, worked verdict and strongest counterexample kept visible. Secondary appendix visuals and implementation details folded; original English images preserved.",
+      "images": "All 19 numbered original figures/tables retained, with clearly labelled detail crops.",
+      "visual_scope": "Main agent inspected dense desktop panels individually and article-body contact sheets, mobile text/body views, dark header and original-image controls. Mobile deck now uses unscaled readable prose with internal original-image/table scrolling."
+    }
+  },
+  "legacy_qa": [
+    {
+      "reading_layout": {
+        "deck_first": true,
+        "toc_h2_only": true,
+        "surface": "neutral-light",
+        "body_font": "sans-serif",
+        "body_font_px": 16.5,
+        "line_height": 1.75,
+        "figures_centered": true,
+        "internal_scroll_for_tables_and_code": true,
+        "page_horizontal_overflow": false
+      },
+      "viewports": [
         {
-          "viewport": {
+          "width": 1600,
+          "height": 1000,
+          "passed": true
+        },
+        {
+          "width": 1512,
+          "height": 982,
+          "passed": true
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "passed": true
+        }
+      ],
+      "tested_surfaces": {
+        "article_body": true,
+        "embedded_deck": true,
+        "standalone_deck": true
+      },
+      "language_review": {
+        "technical_terms_contextualized": true,
+        "actors_disambiguated": true,
+        "read_aloud_complete": true,
+        "facts_rechecked_after_rewrite": true
+      },
+      "interactions": {
+        "buttons": true,
+        "keyboard": true,
+        "hash_navigation": true,
+        "fullscreen": true,
+        "escape": true,
+        "standalone_return_to_article": true,
+        "immersive_mode_exit": true,
+        "usable_state_after_exit": true
+      },
+      "inspected_slides": [
+        "opening",
+        "densest",
+        "largest-table-or-code",
+        "final"
+      ]
+    },
+    {
+      "date": "before 2026-10-18 full article/deck/source revision; not evidence of current artifacts",
+      "qa": {
+        "status": "completed-current-artifacts; external-service-history-retained",
+        "reading_layout": {
+          "deck_first": true,
+          "toc_h2_only": true,
+          "surface": "neutral-light",
+          "body_font": "sans-serif",
+          "body_font_px": 17,
+          "line_height": 1.78,
+          "mobile_body_font_px": 16.5,
+          "figures_centered": true,
+          "article_visuals_interleaved": true,
+          "internal_scroll_for_tables_and_code": true,
+          "page_horizontal_overflow": false,
+          "numbered_sections": true,
+          "original_section_anchors_preserved": true
+        },
+        "viewports": [
+          {
             "width": 1600,
-            "height": 1000
+            "height": 1000,
+            "passed": true
           },
-          "error": "0"
-        },
-        {
-          "viewport": {
+          {
             "width": 1512,
-            "height": 982
+            "height": 982,
+            "passed": true
           },
-          "error": "0"
-        },
-        {
-          "viewport": {
+          {
             "width": 390,
-            "height": 844
-          },
-          "error": "0"
-        }
-      ],
-      "figure_raw_errors": [],
-      "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
-    },
-    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
-  },
-  "legacy_qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 16.5,
-      "line_height": 1.75,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
+            "height": 844,
+            "passed": true
+          }
+        ],
+        "tested_surfaces": {
+          "article_body": true,
+          "embedded_deck": true,
+          "standalone_deck": true
+        },
+        "language_review": {
+          "technical_terms_contextualized": true,
+          "actors_disambiguated": true,
+          "read_aloud_complete": true,
+          "facts_rechecked_after_rewrite": true,
+          "reviewer": "main agent",
+          "date": "2026-10-14",
+          "evidence": "output/playwright/games/final-editorial-review-20261014.json",
+          "reader_reconstruction": "Separate same-sized teacher scoring current student answer,visual cue from original image,first token at layers0,5,10 reads all visual tokens; division0.4/.2 log=.693; chord pairing4*6=x*8 gives3 vs4x=6*8 gives12. Full7-metric means,2B1.19/8B1.24 gains vs OPSD but below GRPO,8B transfer87.03->85.77 and source contradiction preserved."
+        },
+        "interactions": {
+          "buttons": true,
+          "keyboard": true,
+          "hash_navigation": true,
+          "fullscreen": true,
+          "escape": true,
+          "standalone_return_to_article": true,
+          "immersive_mode_exit": true,
+          "usable_state_after_exit": true,
+          "fullscreen_scope": "DOM fullscreen API, rendered controls and nested exits exercised in isolated headless Chrome; native macOS/window fullscreen was not tested."
+        },
+        "inspected_slides": [
+          "opening",
+          "densest",
+          "largest-table-or-code",
+          "final"
+        ],
+        "browser_mode": "isolated-headless",
+        "current_artifact_hashes": {
+          "article": "4eed1597c2dd67b1e8487a3a30299d18c769fa90c69a49a7a04710ec8607ed94",
+          "built_article": "89a589f4ce46aebfd8f7a08c5c9a5693af3389c81fec9ebd8bb6b3277035b751",
+          "deck": "59d832341a516b6b1fb53899f87de6c36cbe5f1c7f20abc089fe7dd4c50c218d",
+          "shared": [
+            {
+              "file": "dist/css/tide.css",
+              "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+            },
+            {
+              "file": "dist/js/tide.js",
+              "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+            },
+            {
+              "file": "dist/styles/paper-deep-dive-v2.css",
+              "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+            },
+            {
+              "file": "dist/lib/decks/paper-deck-v2.css",
+              "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+            },
+            {
+              "file": "dist/lib/decks/paper-deck-v2.js",
+              "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+            }
+          ]
+        },
+        "browser_evidence": {
+          "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-083/numbered-article-qa.json",
+          "deck": "output/playwright/games/current-2026-10-14T08-43-12-770Z-083/foundation-deck-qa.json",
+          "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-083.json",
+          "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
+          "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
+          "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction.",
+          "previous_failed_report": "output/playwright/games/current-2026-10-14T08-25-17-814Z-083/foundation-deck-qa.json (opening image touched footer; not counted as passed; fixed and verified in selected 08-43 batch)"
+        },
+        "external_service_boundary": {
+          "historical_raw_page_errors": [
+            {
+              "viewport": {
+                "width": 1600,
+                "height": 1000
+              },
+              "error": "0"
+            },
+            {
+              "viewport": {
+                "width": 1512,
+                "height": 982
+              },
+              "error": "0"
+            },
+            {
+              "viewport": {
+                "width": 390,
+                "height": 844
+              },
+              "error": "0"
+            }
+          ],
+          "figure_raw_errors": [],
+          "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
+        },
+        "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
       }
-    ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  },
-  "terminology": [
-    {
-      "term": "student",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3; Figure 1"
-        }
-      ],
-      "article_quote": "训练中的作答模型称为 student。它只收到图片与问题，先生成一份回答"
-    },
-    {
-      "term": "teacher",
-      "kind": "model-call",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3; Eq. 5–8"
-        }
-      ],
-      "article_quote": "评分模型称为 teacher，多看一段训练时才提供的提示，再计算 student 已经写出的每个 token 的概率。"
-    },
-    {
-      "term": "visual cue",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1; Figure 8"
-        }
-      ],
-      "article_quote": "ViCuR 的提示描述原图中的关系，作者称它为 visual cue。"
-    },
-    {
-      "term": "on-policy distillation（OPD）",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3; Eq. 6–8"
-        }
-      ],
-      "article_quote": "这种在 student 自己生成的回答上训练的方法叫 on-policy distillation（OPD）；teacher 使用同尺寸模型时，本文沿用 OPSD 的名称。"
-    },
-    {
-      "term": "visual tokens",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 2"
-        }
-      ],
-      "article_quote": "图片先被编码成一组 visual tokens，即图片区域对应的向量。"
-    },
-    {
-      "term": "prefill",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 2"
-        }
-      ],
-      "article_quote": "处理整段输入的阶段叫 prefill。"
-    },
-    {
-      "term": "cross-attention",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 2"
-        }
-      ],
-      "article_quote": "cross-attention 为各区域计算权重，加权汇总后，再加回这个首 token 的向量。"
-    },
-    {
-      "term": "hidden state",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 2"
-        }
-      ],
-      "article_quote": "序列中第一个 <|im_start|> token 的 hidden state（内部向量）作为一个 query，读取当前层全部视觉向量作为 keys 与 values。"
     }
   ]
 }

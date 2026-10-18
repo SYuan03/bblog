@@ -43,11 +43,10 @@
     "source_visuals_expected": 4,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-18",
       "main_agent": "/root",
       "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+      "scope": "Complete 11-page text and every rendered page read by main agent. Four original visuals inspected. Current article and all 12 slides reviewed; current rebuilt desktop/mobile, dark-theme, image and nested-exit QA completed in isolated headless Chrome."
     }
   },
   "note_sections": [
@@ -92,7 +91,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "用当前代码的画面诊断提供教师信息，再沿画面到源码的对应关系分配训练权重。"
+          "quote": "值得保留的是“看自己的执行结果，再针对相关代码训练”这一步。"
         }
       ]
     },
@@ -111,11 +110,7 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "系统先检测画面中的缺陷区域，再查找画出该区域的代码语句。"
-        },
-        {
-          "artifact": "article",
-          "quote": "最终损失为 L_visual + β L_GRPO 。"
+          "quote": "先让 teacher 看懂这次错误，再增加相关代码的训练权重。"
         }
       ]
     },
@@ -170,17 +165,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§2.2; Eq. 1 and 5"
+          "locator": "§2.2 Eq.(2)–(3), current policy second forward and detach"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "两个分支共享当前参数 θ"
-        },
-        {
-          "artifact": "article",
-          "quote": "teacher 的概率表在本次损失中与梯度断开（detach），参数仍会随 student 更新而在下一轮改变。"
+          "quote": "teacher 的概率表在本次损失中与梯度断开（detach），但下一轮会使用更新后的参数。"
         }
       ]
     },
@@ -193,17 +184,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Figure 1; §2.3 Eq. 2–4"
+          "locator": "Figure 1; §2.3 Eq.(4)–(6)"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "画面位置与 α=3、IoU=0.5 由本文补充演算；不是作者超参数或真实模型执行记录。"
-        },
-        {
-          "artifact": "article",
-          "quote": "若设 α=3、某语句的区域与缺陷 IoU=0.5、严重性=1，则 resp=0.5，权重=2。"
+          "quote": "α=3、IoU=0.5 只是本文演算，不是作者超参数"
         }
       ]
     },
@@ -243,13 +230,32 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.3 training-efficiency paragraph"
+          "locator": "§3.5, Training efficiency paragraph"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
           "quote": "约 29% 指“达到 GRPO 完整训练成绩所需的生成及渲染预算”，不是全部训练成本节省 71%。"
+        }
+      ]
+    },
+    {
+      "id": "figure-text-weight-disagreement",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 1, p.2 versus Eq.(5), p.5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Figure 1 把部分语句权重标为 0.2、0.8、1.0，而正文 Eq. (5) 规定权重在 [1, α] 内。"
         }
       ]
     }
@@ -261,20 +267,24 @@
       "label": "Figure 1",
       "source_id": "paper",
       "source_locator": "Figure 1, p. 2; §2.1–2.5",
-      "status": "redrawn",
-      "rationale": "机制图重绘生成、渲染、缺陷诊断、共享参数教师与局部权重两条链；图例遮挡示意另画并标教学坐标，非原样例代码日志。",
+      "status": "reused",
+      "rationale": "完整原图用于方法流程；正文同时指出图中小于1的权重与Eq.(5)不一致，不采纳为实验值。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "按 §2.1–2.5 重绘"
+          "locator": "Haoyu Dong，原论文 Figure 1，CC BY 4.0；仅裁去图外正文。先看上排的生成、渲染、评分，再看下排代码权重和两项训练损失。图例遮挡是作者的机制示意，不是公开单"
+        },
+        {
+          "artifact": "deck",
+          "locator": "执行自己的代码，让 teacher 多看生成画面"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "credit": "Haoyu Dong，原论文 Figure 1，CC BY 4.0；裁去图表外正文",
       "asset_paths": [
-        "/lib/papers/visual-sdpo/training-and-localization.svg",
-        "/lib/papers/visual-sdpo/legend-weight-case.svg"
+        "/lib/papers/visual-sdpo/figure-1.webp",
+        "/lib/papers/visual-sdpo/figure-1-generation-detail.webp"
       ]
     },
     {
@@ -283,19 +293,23 @@
       "label": "Table 1",
       "source_id": "paper",
       "source_locator": "Table 1, p. 6; ChartMimic Direct Mimic",
-      "status": "redrawn",
-      "rationale": "重排base/OPSD/GRPO/Visual的Overall并保留Low/High均值和Exec独立分母，不把视觉分当程序功能成功率。",
+      "status": "reused",
+      "rationale": "保留全部对照、运行率与视觉分，解释运行率略低于GRPO以及Overall计算。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "ChartMimic Direct Mimic"
+          "locator": "Haoyu Dong，原论文 Table 1，CC BY 4.0；裁去表外正文。完整方法的 Overall 最高，但运行率 92.7% 略低于 GRPO 的 92.9%。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "视觉分提高，运行率仍略低于 GRPO"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "credit": "Haoyu Dong，原论文 Table 1，CC BY 4.0；裁去图表外正文",
       "asset_paths": [
-        "/lib/papers/visual-sdpo/results-and-controls.svg"
+        "/lib/papers/visual-sdpo/table-1.webp"
       ]
     },
     {
@@ -304,19 +318,23 @@
       "label": "Table 2",
       "source_id": "paper",
       "source_locator": "Table 2, p. 7; Design2Code",
-      "status": "redrawn",
-      "rationale": "五指标均值明确复算82.6，同表对照结果进入三领域SVG；不把CLIP或布局分当隐藏功能测试。",
+      "status": "reused",
+      "rationale": "保留五项完整原始分数，与主文的平均值和布局结果对应。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "(89.2+69.7+84.9+82.4+86.8)/5=82.6"
+          "locator": "Haoyu Dong，原论文 Table 2，CC BY 4.0；裁去表外正文。完整方法五项均超过 GRPO，区块匹配和位置的差距较大。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "完整组合提升五项，位置和区块改善较大"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "credit": "Haoyu Dong，原论文 Table 2，CC BY 4.0；裁去图表外正文",
       "asset_paths": [
-        "/lib/papers/visual-sdpo/results-and-controls.svg"
+        "/lib/papers/visual-sdpo/table-2.webp"
       ]
     },
     {
@@ -325,58 +343,443 @@
       "label": "Table 3",
       "source_id": "paper",
       "source_locator": "Table 3, p. 7; AeSlides held-out-decks evaluation",
-      "status": "redrawn",
-      "rationale": "保留60.7与GRPO58.2及无referencecode所以OPSD不适用，表未给四轴明细故不补造分量。",
+      "status": "reused",
+      "rationale": "完整原表折叠补充；正文仍保留60.7、GRPO58.2以及评分与缺失分量。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "表中报 60.7，但没有四项明细可复算"
+          "locator": "Haoyu Dong，原论文 Table 3，CC BY 4.0；裁去表外正文。没有标准源码，所以没有参考代码 OPSD 行；论文未给四项指标明细。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "credit": "Haoyu Dong，原论文 Table 3，CC BY 4.0；裁去图表外正文",
       "asset_paths": [
-        "/lib/papers/visual-sdpo/results-and-controls.svg"
+        "/lib/papers/visual-sdpo/table-3.webp"
       ]
     }
   ],
   "figures": [
     {
-      "path": "/lib/papers/visual-sdpo/training-and-localization.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/visual-sdpo/figure-1.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §2.1–2.5",
-      "credit": "按 §2.1–2.5 重绘",
+      "source_locator": "Figure 1, p. 2; §2.1–2.5",
+      "credit": "Haoyu Dong，原论文 Figure 1，CC BY 4.0；裁去图表外正文",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
       "used_in": [
         "article"
       ]
     },
     {
-      "path": "/lib/papers/visual-sdpo/legend-weight-case.svg",
-      "origin": "author-redrawn",
-      "source_visual_id": "figure-1",
-      "source_id": "paper",
-      "source_locator": "Figure 1; Eq. 2–4",
-      "credit": "遮挡类型来自 Figure 1。画面位置与 α=3、IoU=0.5 由本文补充演算",
-      "used_in": [
-        "article"
-      ]
-    },
-    {
-      "path": "/lib/papers/visual-sdpo/results-and-controls.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/visual-sdpo/table-1.webp",
+      "origin": "paper-original",
       "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Tables 1–3; missing α=1 control noted by article",
-      "credit": "根据 Tables 1–3 重绘",
+      "source_locator": "Table 1, p. 6; ChartMimic Direct Mimic",
+      "credit": "Haoyu Dong，原论文 Table 1，CC BY 4.0；裁去图表外正文",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/visual-sdpo/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "Table 2, p. 7; Design2Code",
+      "credit": "Haoyu Dong，原论文 Table 2，CC BY 4.0；裁去图表外正文",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/visual-sdpo/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "Table 3, p. 7; AeSlides held-out-decks evaluation",
+      "credit": "Haoyu Dong，原论文 Table 3，CC BY 4.0；裁去图表外正文",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
       "used_in": [
         "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/visual-sdpo/figure-1-generation-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1, p.2, upper-row detail crop; full original in article",
+      "credit": "Haoyu Dong，Figure 1 上排局部；完整原图保留在文章，CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv specified v1 entry https://arxiv.org/abs/2606.10334v1 links CC BY 4.0 https://creativecommons.org/licenses/by/4.0/; verified 2026-10-18. Crop removes surrounding text only.",
+      "used_in": [
+        "deck"
       ]
     }
   ],
   "qa": {
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-18",
+      "reader_reconstruction": "Student generates own code; teacher scores same prefixes with rendered feedback; map rendered regions to statements; compute w=2 at alpha3/IoU.5; current theta shared, detached teacher. Chart78.55 and Design82.6 reconstructed. Figure1 weights contradict Eq5; no uniform alpha1 control. Preserve failures and missing training config."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "overview_toggle": true,
+      "thumbnail_selection": true,
+      "all_original_figure_fit": true,
+      "figure_close_escape_focus_restore": true,
+      "figure_drag": true,
+      "copy_code": false,
+      "mobile_internal_scrolling": true,
+      "fullscreen_scope": "DOM API and nested exits tested in headless Chrome; native macOS window fullscreen not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "reading_length": [
+      {
+        "viewport": {
+          "width": 1600,
+          "height": 1000
+        },
+        "default_height_px": 5833,
+        "all_supplements_expanded_height_px": 6377,
+        "visible_characters_estimate": 3505,
+        "note": "Estimate includes metadata/captions; not strict Chinese word count."
+      },
+      {
+        "viewport": {
+          "width": 1512,
+          "height": 982
+        },
+        "default_height_px": 5833,
+        "all_supplements_expanded_height_px": 6377,
+        "visible_characters_estimate": 3505,
+        "note": "Estimate includes metadata/captions; not strict Chinese word count."
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "default_height_px": 7812,
+        "all_supplements_expanded_height_px": 8413,
+        "visible_characters_estimate": 3505,
+        "note": "Estimate includes metadata/captions; not strict Chinese word count."
+      }
+    ],
+    "browser_evidence": {
+      "layout": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/layout-qa-final-reader.json",
+      "interactions": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/interaction-qa-mobile-reader.json",
+      "mobile_scroll": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/mobile-scroll-final.json",
+      "screenshots": "/Users/chris/Documents/Codex/2026-09-21/bvab/output/playwright/old-paper-refresh-20261018/",
+      "raw_prior_failures": "interaction-qa-final failure was a mobile focus-layout reachability test issue; explicit deck-controls scroll fixed helper. No forced clicks. Earlier source and geometry reports retained."
+    },
+    "current_artifact_hashes": {
+      "article": "dd3e724c702003355b0a90dac01094197ec1a0c2842d2b39792c41811ea86493",
+      "built_article": "e6b82b78209e22ccfa709966c300afbacc0f699a1ccb40dafe55b22e672fb242",
+      "deck": "386f00c3d1db07eaaea3af4720b78c31fec7c65b4ad155fe3cbfe5adbe15d2f9",
+      "shared": [
+        {
+          "file": "dist/css/tide.css",
+          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+        },
+        {
+          "file": "dist/js/tide.js",
+          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+        },
+        {
+          "file": "dist/styles/paper-deep-dive-v2.css",
+          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.css",
+          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-v2.js",
+          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+          "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+        },
+        {
+          "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+          "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+        }
+      ],
+      "figures": [
+        {
+          "file": "/lib/papers/visual-sdpo/figure-1.webp",
+          "sha256": "432ce1e8504182107e996827c87b96177009bbf4ba4c5cd7b4b9ca54d11026d1"
+        },
+        {
+          "file": "/lib/papers/visual-sdpo/table-1.webp",
+          "sha256": "820fe85cf44b558420a24923c6ad7e3d4e60ae306c5b3f8d76740c5888c614dc"
+        },
+        {
+          "file": "/lib/papers/visual-sdpo/table-2.webp",
+          "sha256": "0ace13fdf1c38bd8fea88dff69f9693653bf47d7d34810071376dc13985eb996"
+        },
+        {
+          "file": "/lib/papers/visual-sdpo/table-3.webp",
+          "sha256": "4da8fa35aa6eb2323f0a4ba91d07f285f381026ff02247373ada8c07a71c281e"
+        },
+        {
+          "file": "/lib/papers/visual-sdpo/figure-1-generation-detail.webp",
+          "sha256": "d0ee6e5b9e44537e556777c758ea212f37df8bf93cdb37a2e1d582ac7f8a42ab"
+        }
+      ]
+    },
+    "external_service_boundary": {
+      "raw_current_errors": [],
+      "automatic_comments_loaded": true,
+      "note": "Local build comments load automatically. Live production still requires verification after Git push. Historical external failures remain in raw workspace reports."
+    },
+    "collection_revision": {
+      "date": "2026-10-18",
+      "language_and_length": "Paragraph-level rewrite; core iteration, worked verdict and strongest counterexample kept visible. Secondary appendix visuals and implementation details folded; original English images preserved.",
+      "images": "All four numbered originals retained.",
+      "visual_scope": "Main agent inspected dense desktop panels individually and article-body contact sheets, mobile text/body views, dark header and original-image controls. Mobile deck now uses unscaled readable prose with internal original-image/table scrolling."
+    }
+  },
+  "legacy_qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "sans-serif",
+      "body_font_px": 16.5,
+      "line_height": 1.75,
+      "figures_centered": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  },
+  "terminology": [
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.1; Figure 1"
+        }
+      ],
+      "article_quote": "作答分支（student）先按原始要求采样一串代码。"
+    },
+    {
+      "term": "renderer",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.1 and §2.3; Figure 1"
+        }
+      ],
+      "article_quote": "代码由渲染器（renderer）执行，得到图表、网页或幻灯片。"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.2; Figure 1"
+        }
+      ],
+      "article_quote": "评分分支（teacher）多看这份画面，在 student 已经写出的代码上计算下一 token 的概率"
+    },
+    {
+      "term": "privileged context",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.2 Eq.(2)"
+        }
+      ],
+      "article_quote": "只有 teacher 能看到的额外画面，论文称为 privileged context。"
+    },
+    {
+      "term": "detach",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.2 Eq.(2)–(3); §2.3 Eq.(6)"
+        }
+      ],
+      "article_quote": "teacher 的概率表在本次损失中与梯度断开（detach），但下一轮会使用更新后的参数。"
+    },
+    {
+      "term": "IoU",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.3; Eq.(4)"
+        }
+      ],
+      "article_quote": "IoU 是两个矩形交集面积除以并集面积，取值从 0 到 1"
+    },
+    {
+      "term": "s(t)",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.3; Eq.(5)–(6)"
+        }
+      ],
+      "article_quote": "s(t) 是包含 token t 的最小语句；α≥1 是权重上限。"
+    },
+    {
+      "term": "r_exec × r_vis",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.4; Eq.(7)–(8)"
+        }
+      ],
+      "article_quote": "整份代码奖励是 r = r_exec × r_vis ：r_exec 为运行成功的 0/1，r_vis 为各视觉条件的加权满足率，权重非负且和为 1。"
+    }
+  ],
+  "qa_history_20261014": {
     "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
@@ -506,176 +909,5 @@
       "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
     },
     "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
-  },
-  "legacy_qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 16.5,
-      "line_height": 1.75,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
-      {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
-      }
-    ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
-  },
-  "terminology": [
-    {
-      "term": "student",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.1; Figure 1"
-        }
-      ],
-      "article_quote": "作答分支（student）先按原始要求采样一串代码。"
-    },
-    {
-      "term": "renderer",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.1 and §2.3; Figure 1"
-        }
-      ],
-      "article_quote": "代码由渲染器（renderer）执行，得到图表、网页或幻灯片。"
-    },
-    {
-      "term": "teacher",
-      "kind": "model-call",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.2; Figure 1"
-        }
-      ],
-      "article_quote": "评分分支（teacher）随后多看画面和诊断信息，在作答分支已经写出的同一串文字上计算下一 token 的概率"
-    },
-    {
-      "term": "privileged context",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.2; Eq. 1"
-        }
-      ],
-      "article_quote": "额外画面只在训练时给评分分支，论文称它为 privileged context。"
-    },
-    {
-      "term": "detach",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.2; Eq. 1 and 5"
-        }
-      ],
-      "article_quote": "teacher 的概率表在本次损失中与梯度断开（detach），参数仍会随 student 更新而在下一轮改变。"
-    },
-    {
-      "term": "IoU",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.3; Eq. 2"
-        }
-      ],
-      "article_quote": "IoU 是两个矩形交集面积除以并集面积，取值 0–1"
-    },
-    {
-      "term": "s(t)",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.3; Eq. 3"
-        }
-      ],
-      "article_quote": "s(t) 是包含 token t 的最小语句；α≥1 是放大倍数上限。"
-    },
-    {
-      "term": "r_exec × r_vis",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§2.4; Eq. 6–7"
-        }
-      ],
-      "article_quote": "整份代码奖励是 r = r_exec × r_vis ：r_exec 为运行成功的 0/1，r_vis 为各视觉条件的加权满足率，权重非负且和为 1。"
-    }
-  ]
+  }
 }
