@@ -1,5 +1,6 @@
 # Original from RUC-NLPIR/EnvScaler @ c2aa25b45c3185e80e9cb2b919227cc912445abc
 # MIT License, Copyright (c) 2026 RUC-NLPIR. See EnvScaler-LICENSE.txt.
+# Only trailing whitespace normalized for this downloadable copy; behavior unchanged.
 from typing import Dict, List, TypedDict
 from datetime import datetime
 
@@ -71,7 +72,7 @@ class EmployeeBenefitsEnrollmentPortal:
             employee_id (str): Unique identifier for the employee.
 
         Returns:
-            dict: 
+            dict:
                 - If employee exists:
                     { "success": True, "data": EmployeeInfo }
                 - If employee does not exist:
@@ -148,7 +149,7 @@ class EmployeeBenefitsEnrollmentPortal:
             dict:
                 - On success: {"success": True, "data": str} (the eligibility_profile for the employee)
                 - On error: {"success": False, "error": str} ('Employee not found')
-    
+
         Constraints:
             - Employee must exist in self.employees.
         """
@@ -207,7 +208,7 @@ class EmployeeBenefitsEnrollmentPortal:
             employee_id (str): ID of the employee.
 
         Returns:
-            dict: 
+            dict:
               {
                 "success": True,
                 "data": List[BenefitPlanInfo]  # List of eligible benefit plans (may be empty)
@@ -540,12 +541,12 @@ class EmployeeBenefitsEnrollmentPortal:
     def withdraw_employee_plan_selection(self, employee_id: str) -> dict:
         """
         Removes/withdraws an employee's plan selection for the current active enrollment period (opts out).
-    
+
         Args:
             employee_id (str): The ID of the employee wishing to withdraw their selection.
-        
+
         Returns:
-            dict: 
+            dict:
                 On success:
                     {
                         "success": True,
@@ -556,7 +557,7 @@ class EmployeeBenefitsEnrollmentPortal:
                         "success": False,
                         "error": str  # Description of why withdrawal was not possible
                     }
-    
+
         Constraints:
             - There must be at least one active enrollment period.
             - The employee must exist.
@@ -588,7 +589,7 @@ class EmployeeBenefitsEnrollmentPortal:
         selection_id_to_remove = None
         for selection_id, selection in self.employee_plan_selections.items():
             if (
-                selection["employee_id"] == employee_id and 
+                selection["employee_id"] == employee_id and
                 selection["enrollment_period_id"] == period_id
             ):
                 selection_found = True
@@ -596,10 +597,10 @@ class EmployeeBenefitsEnrollmentPortal:
                 break
         if not selection_found:
             return { "success": False, "error": "No plan selection found to withdraw for this employee in the current enrollment period." }
-    
+
         # Remove the selection (withdraw)
         del self.employee_plan_selections[selection_id_to_remove]
-        return { 
+        return {
             "success": True,
             "message": "Employee plan selection withdrawn for current enrollment period."
         }
@@ -691,8 +692,8 @@ class EmployeeBenefitsEnrollmentPortal:
             return { "success": False, "error": "Enrollment period does not exist." }
 
         period["is_active"] = True
-        return { 
-            "success": True, 
+        return {
+            "success": True,
             "message": f"Enrollment period {enrollment_period_id} activated."
         }
 
@@ -704,7 +705,7 @@ class EmployeeBenefitsEnrollmentPortal:
             enrollment_period_id (str): The unique ID of the enrollment period to deactivate.
 
         Returns:
-            dict: 
+            dict:
                 {
                     "success": True,
                     "message": "Enrollment period <id> deactivated."
@@ -726,20 +727,20 @@ class EmployeeBenefitsEnrollmentPortal:
         ep = self.enrollment_periods.get(enrollment_period_id)
         if ep is None:
             return { "success": False, "error": "Enrollment period does not exist." }
-    
+
         if not ep["is_active"]:
             return { "success": True, "message": f"Enrollment period {enrollment_period_id} was already inactive." }
-    
+
         ep["is_active"] = False
         return { "success": True, "message": f"Enrollment period {enrollment_period_id} deactivated." }
 
     def add_benefit_plan(
-        self, 
-        plan_id: str, 
-        plan_type: str, 
-        name: str, 
-        coverage_details: str, 
-        premiums: float, 
+        self,
+        plan_id: str,
+        plan_type: str,
+        name: str,
+        coverage_details: str,
+        premiums: float,
         eligibility_criteria: str
     ) -> dict:
         """
@@ -754,7 +755,7 @@ class EmployeeBenefitsEnrollmentPortal:
             eligibility_criteria (str): Criteria for employee eligibility.
 
         Returns:
-            dict: 
+            dict:
                 - On success: {"success": True, "message": "Benefit plan added successfully."}
                 - On failure: {"success": False, "error": <reason>}
 
@@ -783,8 +784,8 @@ class EmployeeBenefitsEnrollmentPortal:
         return { "success": True, "message": "Benefit plan added successfully." }
 
     def update_benefit_plan(
-        self, 
-        plan_id: str, 
+        self,
+        plan_id: str,
         plan_type: str = None,
         name: str = None,
         coverage_details: str = None,
@@ -842,11 +843,11 @@ class EmployeeBenefitsEnrollmentPortal:
 
         if not updates:
             return { "success": False, "error": "No valid fields provided to update." }
-    
+
         # Apply updates
         for key, value in updates.items():
             plan[key] = value
-    
+
         return { "success": True, "message": f"Benefit plan '{plan_id}' updated successfully." }
 
     def remove_plan_from_employee_selection(
@@ -864,10 +865,10 @@ class EmployeeBenefitsEnrollmentPortal:
             plan_id (str): Plan ID to remove from selection.
 
         Returns:
-            dict: 
+            dict:
                 Success -> {"success": True, "message": "..."}
                 Failure -> {"success": False, "error": "..."}
-    
+
         Constraints:
             - Employees can only modify plans during an active enrollment period.
             - Selection must exist for specified employee, period, and plan.
@@ -878,7 +879,7 @@ class EmployeeBenefitsEnrollmentPortal:
             return { "success": False, "error": "Enrollment period does not exist." }
         if not period["is_active"]:
             return { "success": False, "error": "Enrollment period is not active; modifications are not allowed." }
-    
+
         # Find the selection record matching all three attributes
         selection_id_to_remove = None
         for selection_id, selection in self.employee_plan_selections.items():
@@ -890,7 +891,7 @@ class EmployeeBenefitsEnrollmentPortal:
 
         if not selection_id_to_remove:
             return { "success": False, "error": "No matching plan selection found for this employee in the specified period." }
-    
+
         del self.employee_plan_selections[selection_id_to_remove]
         return {
             "success": True,
