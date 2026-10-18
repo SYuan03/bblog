@@ -22,20 +22,85 @@
       "used_for": [
         "problem",
         "method",
+        "evaluation",
         "results",
+        "appendices",
         "limitations"
+      ]
+    },
+    {
+      "id": "arxiv-entry",
+      "kind": "paper",
+      "title": "v1 record, original title, earliest submission and arXiv license",
+      "url": "https://arxiv.org/abs/2608.05219v1",
+      "revision": "v1; accessed 2026-10-19",
+      "used_for": [
+        "title",
+        "date",
+        "license boundary"
       ]
     },
     {
       "id": "code",
       "kind": "code",
-      "title": "SMRC-SD official repository",
-      "url": "https://github.com/liujunzhuo/SMRC-SD",
+      "title": "SMRC-SD fixed algorithm implementation",
+      "url": "https://github.com/liujunzhuo/SMRC-SD/tree/f3e43bab78828d12ee7e2f717e041b70f43ad43f",
       "revision": "f3e43bab78828d12ee7e2f717e041b70f43ad43f",
       "used_for": [
-        "implementation",
-        "artifact completeness",
-        "reproduction"
+        "routing",
+        "state recovery",
+        "teacher gradient",
+        "K3 objective",
+        "reward wrapper",
+        "reference-file absence at this revision"
+      ]
+    },
+    {
+      "id": "data-release",
+      "kind": "dataset",
+      "title": "Author commit adding all four default reference files",
+      "url": "https://github.com/liujunzhuo/SMRC-SD/tree/0435026eb2a32eb68c2c888e2ca5e8e3a92c8e1f/examples/smrc_sd/data",
+      "revision": "0435026eb2a32eb68c2c888e2ca5e8e3a92c8e1f",
+      "used_for": [
+        "reference availability",
+        "complete validation-manifest check",
+        "partial complete-row inspection of large JSONL files"
+      ]
+    },
+    {
+      "id": "current-code",
+      "kind": "code",
+      "title": "Current repository tree: data retained, later 4B/FTRL/server additions distinct from v1",
+      "url": "https://github.com/liujunzhuo/SMRC-SD/tree/6fb24338b220b55eef3e101aadc0ea63882f0dc0",
+      "revision": "6fb24338b220b55eef3e101aadc0ea63882f0dc0",
+      "used_for": [
+        "current artifact status",
+        "version boundary"
+      ]
+    },
+    {
+      "id": "author-assets",
+      "kind": "code",
+      "title": "Author-published Figure 2 and Table 2 assets with repository Apache-2.0 license",
+      "url": "https://github.com/liujunzhuo/SMRC-SD/tree/f3e43bab78828d12ee7e2f717e041b70f43ad43f/assets",
+      "revision": "f3e43bab78828d12ee7e2f717e041b70f43ad43f",
+      "used_for": [
+        "original figure/table assets",
+        "limited reuse permission",
+        "hash-checked source blobs"
+      ]
+    },
+    {
+      "id": "webshop-judge",
+      "kind": "checker",
+      "title": "Bundled original WebShop goal score and binary reward wrapper",
+      "url": "https://github.com/liujunzhuo/SMRC-SD/blob/f3e43bab78828d12ee7e2f717e041b70f43ad43f/agent_system/environments/env_package/webshop/webshop/web_agent_site/engine/goal.py",
+      "revision": "f3e43bab78828d12ee7e2f717e041b70f43ad43f",
+      "used_for": [
+        "raw graded score",
+        "attribute and option matching",
+        "type score",
+        "binary full-success reward"
       ]
     }
   ],
@@ -54,11 +119,10 @@
     "source_visuals_expected": 26,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-19",
       "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed current complete primary text and rendered-page reading; this manifest-only child inspected current artifacts, primary captions and relevant sections to update evidence, not a substitute full read."
+      "scope": "Complete extracted text and 17 individually rendered pages, Appendices A–J, all previous prose and9slides, all revised prose and13slides personally read. Fixed algorithm and later data commits checked separately.",
+      "evidence": "tmp/collection-refresh-20261018/state-routing-evidence.md"
     }
   },
   "note_sections": [
@@ -68,23 +132,207 @@
     },
     {
       "role": "related-work",
-      "locator": "2. Related Work：与行为模仿、完整路径蒸馏的区别"
+      "locator": "2. Related Work：从挑监督信号，到检查参考前提"
     },
     {
       "role": "method",
-      "locator": "3. Method：状态匹配、教师提示与损失计算"
+      "locator": "3. Method：匹配实际状态，再重评学生回答"
     },
     {
       "role": "experiments",
-      "locator": "4. Experiments：成功率、消融与完整重放"
+      "locator": "4. Experiments：先区分任务判分与参考匹配"
     },
     {
       "role": "future-work",
-      "locator": "5. Discussion：多条参考与不完整状态"
+      "locator": "5. Discussion：领域规则怎样迁移到代码编辑"
     },
     {
       "role": "summary",
-      "locator": "6. Conclusion：结论与参考数据的复现缺口"
+      "locator": "6. Conclusion：有效的参考适用性对照，数据已补齐"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "student",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4; Figure2"
+        }
+      ],
+      "article_quote": "部署时自己操作环境、接受训练的模型叫 student（学生）"
+    },
+    {
+      "term": "rollout",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–5"
+        }
+      ],
+      "article_quote": "从初态到任务结束的一次完整交互叫 rollout。"
+    },
+    {
+      "term": "teacher",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4; AppendixA"
+        }
+      ],
+      "article_quote": "teacher（教师）使用 同一组当前参数 ，额外读取一份训练参考，对学生已写回答的每个 token（文字单位）计算概率，不另写动作。"
+    },
+    {
+      "term": "on-policy self-distillation（OPSD）",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3–4; AppendixA"
+        }
+      ],
+      "article_quote": "训练器在学生当前交互上比较两分支的概率，称为 on-policy self-distillation（OPSD）"
+    },
+    {
+      "term": "reference path",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4; AppendixC–D"
+        }
+      ],
+      "article_quote": "同题的一条参考动作序列叫 reference path"
+    },
+    {
+      "term": "state signature",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; AppendixD–E"
+        }
+      ],
+      "article_quote": "程序记录的位置、手中物体和相关任务进度叫 state signature。"
+    },
+    {
+      "term": "routing",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Eq15"
+        }
+      ],
+      "article_quote": "决定这一回合是否加入参考损失，叫 routing。"
+    },
+    {
+      "term": "abstain",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Eq15"
+        }
+      ],
+      "article_quote": "匹配失败时 abstain，即 这一回合参考损失为零 ，模型仍行动，GRPO 仍训练，也不把该动作自动标成错误。"
+    },
+    {
+      "term": "oracle traces",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixC–D"
+        }
+      ],
+      "article_quote": "这些购物记录叫 oracle traces：按已知目标构造的参考， 不保证官方购物评分达到 1"
+    },
+    {
+      "term": "K3",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixA; Eq4–9"
+        }
+      ],
+      "article_quote": "教师与学生对同一个采样 token 给概率，论文用它们的概率比估计分布差异，称为 K3"
+    },
+    {
+      "term": "Average@4",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.1;Table2caption"
+        }
+      ],
+      "article_quote": "ALFWorld 的 Average@4 = 成功执行次数 / 512"
+    },
+    {
+      "term": "Pass@4",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.1;Table2caption"
+        }
+      ],
+      "article_quote": "Pass@4 则是 128 题中至少一次成功的比例。"
+    },
+    {
+      "term": "Score / Acc",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.1;Table2; bundledgoal.py130–269/envs.py98–123"
+        }
+      ],
+      "article_quote": "Score 平均这个部分分数，Acc 只认终局 r=1"
     }
   ],
   "coverage": [
@@ -97,18 +345,18 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§1, §4; Figures 1–2"
+          "locator": "§1,4;Figures1–2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "先检查当前位置、手中物体和已完成步骤，再决定这一回合能否借助成功记录训练。"
+          "quote": "一条参考从它自己的初态能成功，不代表学生现在还能接上。"
         }
       ]
     },
     {
-      "id": "method-contract",
+      "id": "nearest-related-work",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -116,90 +364,13 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4.1–4.2; Eq. 15; Appendix A"
+          "locator": "§2–4"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "匹配成功才组合三个字段： 完整成功动作序列、实际当前状态的一行摘要、兼容的下一步动作 。"
-        },
-        {
-          "artifact": "article",
-          "quote": "分母包含未匹配回合的原回答 token。"
-        }
-      ]
-    },
-    {
-      "id": "main-result",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Tables 2–5"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "所有回合 + 普通完整路径 0.746 ；仅匹配回合 + 普通路径 0.836 ；所有回合都蒸馏、只对匹配回合增加状态提示 0.695 ；匹配回合 + 完整新提示 0.865 。"
-        },
-        {
-          "artifact": "article",
-          "quote": "Qwen2.5 WebShop 的成功率几乎不变"
-        }
-      ]
-    },
-    {
-      "id": "limitations",
-      "claim_type": "interpretation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Appendix J; Tables 14–17"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "这个 coverage 是“能提供候选的存档回合占比”，不是对所有正确动作的召回率。"
-        },
-        {
-          "artifact": "article",
-          "quote": "两组不是成对的同一批状态。"
-        },
-        {
-          "artifact": "article",
-          "quote": "“相同回合数” 不等于相同 token 数或梯度总量"
-        }
-      ]
-    },
-    {
-      "id": "code-audit",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "code"
-      ],
-      "source_locators": [
-        {
-          "source_id": "code",
-          "locator": "path_privileged_utils.py; dp_actor.py; examples/smrc_sd/data Git tree @f3e43bab78828d12ee7e2f717e041b70f43ad43f"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "另把原 response_mask 传作归一化掩码"
-        },
-        {
-          "artifact": "article",
-          "quote": "在该 commit 的 Git tree 中没有出现"
+          "quote": "最近的对照是 FullPath-SD：同一套奖励与概率监督，但教师每回合都看完整参考。"
         }
       ]
     },
@@ -212,22 +383,18 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§5.1; Appendix B–C"
+          "locator": "AppendixC p12"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "ALFWorld 的参考来自 TextWorld 的专家执行路径，每个训练游戏一条，经过完整执行成功检查，共 3,553 条。"
-        },
-        {
-          "artifact": "article",
-          "quote": "训练只用编号 500…6909 ，即 6,410 个目标 ；前 500 个留出"
+          "quote": "训练只用编号 500…6909 ，即 6,410 个"
         }
       ]
     },
     {
-      "id": "real-matched-cases",
+      "id": "complete-iteration",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -235,53 +402,26 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 12–13; Appendix E–F"
+          "locator": "§4;AppendixA,C–D"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "lettuce 3 已经在冰箱里"
+          "quote": "一次更新让学生对 16 个任务各交互 8 次，全部从正常初态开始。"
         },
         {
           "artifact": "article",
-          "quote": "给出 go to countertop 2"
+          "quote": "完整参考 + 实际状态的一行摘要 + 当前候选动作"
         },
         {
           "artifact": "article",
-          "quote": "当前颜色已经选了 blue 137 ，还缺尺码 9"
-        },
-        {
-          "artifact": "article",
-          "quote": "学生只看到普通页面与交互前文，不会直接收到这个训练专用候选。"
+          "quote": "不截短完整参考，不替换学生动作，也不把环境改成参考状态。"
         }
       ]
     },
     {
-      "id": "replay-audit-and-verdict",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Tables 6, 15–17; Appendix G"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "真正重置环境，执行学生原前文，到达那一状态后接上候选动作，再执行参考剩余动作，最后看 整题是否成功"
-        },
-        {
-          "artifact": "article",
-          "quote": "历史组为 792/800，状态组为 781/781。"
-        }
-      ]
-    },
-    {
-      "id": "teacher-gradient-and-loss",
+      "id": "teacher-gradient-and-scoring",
       "claim_type": "inspected-implementation",
       "source_ids": [
         "paper",
@@ -290,30 +430,26 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§4 Eq. 15; Appendix A"
+          "locator": "verl/trainer/ppo/path_privileged_ray_trainer.py173–226;verl/workers/actor/dp_actor.py519–570;AppendixA"
         },
         {
           "source_id": "code",
-          "locator": "dp_actor.py normalization; path_privileged_utils.py match_only @f3e43bab"
+          "locator": "verl/trainer/ppo/path_privileged_ray_trainer.py173–226;verl/workers/actor/dp_actor.py519–570;AppendixA"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "教师与学生同步到当前参数，教师侧只是停止梯度"
+          "quote": "对学生已写回答的每个 token（文字单位）计算概率，不另写动作"
         },
         {
           "artifact": "article",
-          "quote": "推理文字和动作文字都参与，不是只监督动作标签"
-        },
-        {
-          "artifact": "article",
-          "quote": "L_total = L_GRPO + 0.01 × L_SD"
+          "quote": "教师侧不接受梯度，下次更新后两分支的参数一起变化"
         }
       ]
     },
     {
-      "id": "metrics-checkpoints-and-budget",
+      "id": "routing-not-verdict",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -321,26 +457,18 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§5.1; Tables 2, 21–22"
+          "locator": "§4.1;Eq15;Tables11–13"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "Average@4 = 512 次执行中的成功次数 / 512"
-        },
-        {
-          "artifact": "article",
-          "quote": "v1 主表使用预先固定的这些 checkpoint，不按验证分数挑最好版本。"
-        },
-        {
-          "artifact": "article",
-          "quote": "每次更新，学生对 16 个任务各采样 8 次"
+          "quote": "模型仍行动，GRPO 仍训练，也不把该动作自动标成错误"
         }
       ]
     },
     {
-      "id": "probability-intervention-boundary",
+      "id": "webshop-case",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -348,17 +476,533 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Table 1; Tables 7–9; Appendix B"
+          "locator": "Table12 p13;AppendixD"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "固定 79 个游戏里的 1,200 个状态，每类 400 个"
+          "quote": "目标商品 B07S7HDC88 ，颜色 blue137 ，尺码 9"
         },
         {
           "artifact": "article",
-          "quote": "这些是 提示改变评分偏好的证据 ，不是证明每次新增蒸馏更新都会提高成功率。"
+          "quote": "若学生先选了 9，程序会给 click[blue137]"
+        }
+      ]
+    },
+    {
+      "id": "webshop-function-smoke",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "agent_system/webshop_state_utils.py:webshop_goal_progress_guidance;article-authoredCPUstates"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "直接运行固定版本的 webshop_goal_progress_guidance"
+        }
+      ]
+    },
+    {
+      "id": "case-evidence-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table12 p13;Table13 p15"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "未给这个输入的任务 ID、完整学生动作日志或最终得分"
+        },
+        {
+          "artifact": "article",
+          "quote": "这些是代表性审核记录，未公开完整单题前文。"
+        }
+      ]
+    },
+    {
+      "id": "alfworld-directional-prerequisites",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "verl/trainer/ppo/path_privileged_utils.py1410–1593,2090–2268,2550–2708,2957–3059,3092–3167"
+        },
+        {
+          "source_id": "code",
+          "locator": "verl/trainer/ppo/path_privileged_utils.py1410–1593,2090–2268,2550–2708,2957–3059,3092–3167"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "允许额外兼容进度，但不会把缺失前提当作已完成"
+        }
+      ]
+    },
+    {
+      "id": "observability-paper-code-discrepancy",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "agent_system/webshop_state_utils.py142–156;agent_system/environments/env_package/webshop/envs.py98–113"
+        },
+        {
+          "source_id": "code",
+          "locator": "agent_system/webshop_state_utils.py142–156;agent_system/environments/env_package/webshop/envs.py98–113"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公开 ALFWorld 实现符合这一路径"
+        },
+        {
+          "artifact": "article",
+          "quote": "capture_webshop_state 实际读取模拟器会话中的商品、选项和浏览器 URL"
+        }
+      ]
+    },
+    {
+      "id": "published-complete-reference-row",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "data-release"
+      ],
+      "source_locators": [
+        {
+          "source_id": "data-release",
+          "locator": "datarelease alfworld_verified_walkthrough_trajectories.jsonl:first complete row,trial_T20190909_070356_398456"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "任务 trial_T20190909_070356_398456"
+        },
+        {
+          "artifact": "article",
+          "quote": "success=true 和最后观察 You move the cloth 4 to the drawer 6."
+        },
+        {
+          "artifact": "article",
+          "quote": "它不是 SMRC-SD 学生的一次测试成绩。"
+        }
+      ]
+    },
+    {
+      "id": "K3-token-masks-denominator",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "verl/trainer/ppo/skillsd_utils.py:compute_sdl_loss/aggregate_sdl_per_token_loss;AppendixA"
+        },
+        {
+          "source_id": "code",
+          "locator": "verl/trainer/ppo/skillsd_utils.py:compute_sdl_loss/aggregate_sdl_per_token_loss;AppendixA"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "L_SD = Σ(匹配回合 × 非特殊 token × ρ × d) / 所有原回答 token 数"
+        },
+        {
+          "artifact": "article",
+          "quote": "推理和动作文字都参加，只去分词器特殊 token"
+        },
+        {
+          "artifact": "article",
+          "quote": "pT 和 pOld 停止梯度， ρ 对当前学生仍可求导"
+        }
+      ]
+    },
+    {
+      "id": "loss-calculation",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixA;unchangedpublicCPUlossfunction"
+        },
+        {
+          "source_id": "code",
+          "locator": "AppendixA;unchangedpublicCPUlossfunction"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "若误用“仅选中 token”的分母，就会翻倍"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-denominators",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.1;Table2caption"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Average@4 = 成功执行次数 / 512"
+        },
+        {
+          "artifact": "article",
+          "quote": "Pass@4 则是 128 题中至少一次成功的比例"
+        }
+      ]
+    },
+    {
+      "id": "webshop-judge-and-reward",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "webshop-judge",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "webshop-judge",
+          "locator": "bundledweb_agent_site/engine/goal.py130–269;env_package/webshop/envs.py98–123"
+        },
+        {
+          "source_id": "code",
+          "locator": "bundledweb_agent_site/engine/goal.py130–269;env_package/webshop/envs.py98–123"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "r = r_type × (匹配属性数 + 匹配选项数 + 价格是否合格) / (要求属性数 + 要求选项数 + 1)"
+        },
+        {
+          "artifact": "article",
+          "quote": "Score 平均这个部分分数，Acc 只认终局 r=1"
+        }
+      ]
+    },
+    {
+      "id": "worked-graded-failure",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "webshop-judge"
+      ],
+      "source_locators": [
+        {
+          "source_id": "webshop-judge",
+          "locator": "publicWebShopscoreformula;article-authorednotTable12"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "教学分数为 4/5=0.8 ，仍不是完整成功"
+        }
+      ]
+    },
+    {
+      "id": "model-results-and-task-counterexample",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table2 p6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "WebShop Acc 从 57.4% 到 69.3%"
+        },
+        {
+          "artifact": "article",
+          "quote": "WebShop Acc 只有 73.4% 到 73.6%"
+        },
+        {
+          "artifact": "article",
+          "quote": "Qwen3 Heat 为 FullPath 88.7%、SMRC 87.5%。"
+        }
+      ]
+    },
+    {
+      "id": "fixed-checkpoint-and-copied-baselines",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table2caption;Tables21–22 pp16–17"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Qwen3 ALFWorld 第 250 次更新，其他第 150 次"
+        },
+        {
+          "artifact": "article",
+          "quote": "† 是前人报告的数字，其余由论文作者本地运行"
+        },
+        {
+          "artifact": "article",
+          "quote": "最大回合数分别为 Qwen3 ALFWorld 30、Qwen2.5 ALFWorld 50、WebShop 15"
+        }
+      ]
+    },
+    {
+      "id": "factorial-and-component-controls",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables3–5 pp6–7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "只筛回合就由 74.6% 到 83.6%，完整提示再到 86.5%"
+        },
+        {
+          "artifact": "article",
+          "quote": "单加候选 82.0%、单加摘要 83.4%"
+        }
+      ]
+    },
+    {
+      "id": "same-turn-not-token-matched",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table4p7;Table14p15"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "回合数相同不等于 token 数或梯度总量相同"
+        }
+      ]
+    },
+    {
+      "id": "matching-and-executable-verdict",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table6p7;Tables15–17p15"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "重置环境，执行学生实际前文，接上候选和参考剩余动作"
+        },
+        {
+          "artifact": "article",
+          "quote": "历史组 792/800，状态组 781/781"
+        }
+      ]
+    },
+    {
+      "id": "replay-failure-and-recall-limit",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixE;Tables6,16–17"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Look 类 2 次、Pick Two 类 6 次"
+        }
+      ]
+    },
+    {
+      "id": "fixed-state-probability-diagnostic",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table1p3;Tables7–9pp11–12;AppendixB"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "差增量为 0.266，[0.206,0.328]"
+        }
+      ]
+    },
+    {
+      "id": "provider-cost-not-training-cost",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables18–19p16;AppendixF"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "平均 0.833 ms，p95 1.335 ms"
+        }
+      ]
+    },
+    {
+      "id": "latest-data-and-partial-download",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "data-release",
+        "current-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "oldcompleteGitTree;dataaddcommit0435026e;newcompleteGitTree6fb24338;fullval128blobc604b5828a736733b514bee3ac6efe2b4e36f134"
+        },
+        {
+          "source_id": "data-release",
+          "locator": "oldcompleteGitTree;dataaddcommit0435026e;newcompleteGitTree6fb24338;fullval128blobc604b5828a736733b514bee3ac6efe2b4e36f134"
+        },
+        {
+          "source_id": "current-code",
+          "locator": "oldcompleteGitTree;dataaddcommit0435026e;newcompleteGitTree6fb24338;fullval128blobc604b5828a736733b514bee3ac6efe2b4e36f134"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "旧代码版本 f3e43bab 缺少四份默认参考文件"
+        },
+        {
+          "artifact": "article",
+          "quote": "0435026e （2026-10-10）已补齐"
+        },
+        {
+          "artifact": "article",
+          "quote": "完整核对了 128 题清单的唯一 ID 和留出范围"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixJ;Tables2–6,14–17;releasedWebShopstatecapture"
+        },
+        {
+          "source_id": "code",
+          "locator": "AppendixJ;Tables2–6,14–17;releasedWebShopstatecapture"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "两个受控环境的小模型、单训练种子和手写状态规则"
+        },
+        {
+          "artifact": "article",
+          "quote": "测试时论文只移除参考、匹配器和教师额外提示， 环境工具仍在"
+        }
+      ]
+    },
+    {
+      "id": "asset-reuse-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "author-assets",
+        "arxiv-entry"
+      ],
+      "source_locators": [
+        {
+          "source_id": "author-assets",
+          "locator": "rootLICENSEApache2;READMEandassetsatfixedrevision;assetblobhashes verified"
+        },
+        {
+          "source_id": "arxiv-entry",
+          "locator": "rootLICENSEApache2;READMEandassetsatfixedrevision;assetblobhashes verified"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "仓库许可只用于作者单独发布的 Figure 2、Table 2 资产"
+        },
+        {
+          "artifact": "article",
+          "quote": "没有把它扩大为整份 PDF 的转载许可。"
         }
       ]
     }
@@ -369,12 +1013,12 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §1",
+      "source_locator": "p1 Figure1",
       "status": "omitted",
-      "rationale": "ProductA/ProductB/BacktoSearch示意未绘；正文用同论文真实生菜例先讲错位，不能把它当原Figure1购物路径。",
+      "rationale": "ProductA/ProductB mismatch schematic is explained in Motivation and linked. Probability arrows are illustrative; fixed-state Table1/B evidence kept separately. No verified reuse grant for this PDF image.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -383,20 +1027,30 @@
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Figure 2; §4; Appendix A",
-      "status": "redrawn",
-      "rationale": "状态匹配→三字段教师→同studenttoken评分→路由掩码与保留GRPO重绘，强调未用hiddenstate。",
+      "source_locator": "p4 Figure2;§4",
+      "status": "reused",
+      "rationale": "Full author-published pipeline retained in article; stage A and stage B details split into readable embedded slides. English labels/evidence preserved, losslessWebP and labelled crops.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Figure 2、Eq. 15 与 Appendix A 重绘"
+          "locator": "原 Figure 2。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原 Figure 2 · A 局部"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原 Figure 2 · B 上部局部"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 figure-2 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "credit": "原Figure 2，SMRC-SD作者仓库资产，Apache-2.0",
       "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/state-and-loss.svg"
+        "/lib/papers/state-matched-routing-contextualized-sd/figure-2-original.webp",
+        "/lib/papers/state-matched-routing-contextualized-sd/figure-2-matching-detail.webp",
+        "/lib/papers/state-matched-routing-contextualized-sd/figure-2-context-detail.webp"
       ]
     },
     {
@@ -404,12 +1058,12 @@
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "Figure 3; §5",
+      "source_locator": "p6 Figure3;§5",
       "status": "omitted",
-      "rationale": "训练Average@4和回答长度曲线未绘，正文保留固定250步而非选最好点，主结果矩阵不能冒称完整动态。",
+      "rationale": "Training curves linked in original; final fixed-checkpoint results and strongest factorial controls retained instead of extending visible note. No digitized point values invented or unverified PDF graphic copied.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -418,12 +1072,12 @@
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Figure 4; Appendix H",
+      "source_locator": "p16 Figure4;AppendixH",
       "status": "omitted",
-      "rationale": "teachercontext固定时两匹配器曲线未绘，正文使用审核与末端控制，避免把概率干预当训练曲线。",
+      "rationale": "Reference-helper size/coverage dynamics linked, secondary to same35712-state matching and executable-replay evidence explained in4.2. No unverified PDF image copied or curves guessed.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -432,12 +1086,12 @@
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1; §3; Appendix B",
+      "source_locator": "p3 Table1;§3",
       "status": "omitted",
-      "rationale": "固定状态提示干预矩阵未整表绘；正文只保留A–C与candidate偏好差及bootstrap边界，不把样本动作不同当错误。",
+      "rationale": "Fixed1200-state diagnostic summarized in collapsed supplement with79games,twofrozencorers,probabilityshift and CI boundaries; rawtable linked. Does not replace sampledpolicy task outcomes.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -446,39 +1100,55 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2; §5",
-      "status": "redrawn",
-      "rationale": "四模型/环境配对结果重排正文与deck表，保留†外部基线、Average/Pass及Acc/Score不同分母。",
+      "source_locator": "p6 Table2;§5",
+      "status": "reused",
+      "rationale": "Complete main table preserved including allrows,columns,daggers andcaption. Header+modelblocks used as labelled slide details; single-seed/fixed-checkpoint and Heat/Qwen2Webexceptions visible.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "Qwen2.5 · WebShop"
+          "locator": "完整原 Table 2"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原 Table 2 · Qwen3 局部"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原 Table 2 · Qwen2.5 局部"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-2 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "credit": "原Table 2，SMRC-SD作者仓库资产，Apache-2.0",
+      "asset_paths": [
+        "/lib/papers/state-matched-routing-contextualized-sd/table-2-original.webp",
+        "/lib/papers/state-matched-routing-contextualized-sd/table-2-qwen2-detail.webp",
+        "/lib/papers/state-matched-routing-contextualized-sd/table-2-qwen3-detail.webp"
+      ]
     },
     {
       "id": "table-3",
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3; §5.2",
+      "source_locator": "p6 Table3;§5",
       "status": "redrawn",
-      "rationale": "2×2路由与提示对照重绘，保留allturn加局部提示0.695反例，不能宣传提示单独使成绩更好。",
+      "rationale": "All four routing×context cells independently arranged as compact chart; allturn+matchednew/plainrest condition explicitly labelled; central interaction counterexample visible.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Table 3–5 重绘"
+          "locator": "4.1 最有区分力的对照：单加提示并不够"
+        },
+        {
+          "artifact": "deck",
+          "locator": "筛回合收益大，单加局部字段不够"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "本文按原Table 3公开事实独立整理，未复制原版图片",
       "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/routing-controls.svg"
+        "/lib/papers/state-matched-routing-contextualized-sd/routing-controls-compact.svg"
       ]
     },
     {
@@ -486,60 +1156,68 @@
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Table 4; §5.3",
+      "source_locator": "p7 Table4;§5",
       "status": "redrawn",
-      "rationale": "samecount随机回合与unmatched回合控制重绘，0.723/0.750不能等同正确状态筛选；token未匹配。",
+      "rationale": "Samecount random72.3 andunmatched75.0 retained aschartnotes beside factorial controls. Per-update count matching distinguished from pooledtoken/gradient matching.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Table 3–5 重绘"
+          "locator": "4.1 最有区分力的对照：单加提示并不够"
+        },
+        {
+          "artifact": "deck",
+          "locator": "筛回合收益大，单加局部字段不够"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/routing-controls.svg"
-      ]
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "本文按原Table 4公开事实独立整理，未复制原版图片",
+      "asset_paths": []
     },
     {
       "id": "table-5",
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Table 5; §5.3",
+      "source_locator": "p7 Table5;§5",
       "status": "redrawn",
-      "rationale": "匹配回合单加candidate或state分别0.820/0.834低于0.836，SVG保留三字段需组合的证据。",
+      "rationale": "All four matchedcontextcells83.6/82.0/83.4/86.5 independently charted; candidate-only/state-only counterexamples explained rather than praising every field.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Table 3–5 重绘"
+          "locator": "4.1 最有区分力的对照：单加提示并不够"
+        },
+        {
+          "artifact": "deck",
+          "locator": "筛回合收益大，单加局部字段不够"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-5 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/routing-controls.svg"
-      ]
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "本文按原Table 5公开事实独立整理，未复制原版图片",
+      "asset_paths": []
     },
     {
       "id": "table-6",
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Table 6; §5.4",
+      "source_locator": "p7 Table6;§5",
       "status": "redrawn",
-      "rationale": "同35,712回合coverage与独立分层suffixreplay重排deck三卡，保留coverage不是正确动作recall。",
+      "rationale": "Same35712coverage and independently sampled792/800 vs781/781 success reformatted in slide12 table; full replayverdict and sample boundary visible in note.",
       "placements": [
         {
+          "artifact": "article",
+          "locator": "历史组 792/800，状态组 781/781"
+        },
+        {
           "artifact": "deck",
-          "locator": "相同存档回合"
+          "locator": "独立分层抽样的完整重放"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-6 重绘事实，未复制原版排版",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "本文按原Table 6公开事实独立整理，未复制原版图片",
       "asset_paths": []
     },
     {
@@ -547,12 +1225,12 @@
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Table 7; Appendix B",
+      "source_locator": "p11 Table7;AppendixB",
       "status": "omitted",
-      "rationale": "1,200anchor三类及initial/GRPO250冻结scorer分布未整表绘，正文报400每类与79游戏，避免训练/诊断混用。",
+      "rationale": "Fixed-state classdefinitions/balanced3×400 summarized with pooled1200anchors in supplemental diagnostic; complete original linked. Full state-class matrix would interrupt central running case.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -561,12 +1239,12 @@
       "kind": "table",
       "label": "Table 8",
       "source_id": "paper",
-      "source_locator": "Table 8; Appendix B",
+      "source_locator": "p11 Table8;AppendixB",
       "status": "omitted",
-      "rationale": "matcheddivergentcandidate-minusstudent概率矩阵未绘，正文只保留0.266与区间、outcome不是actionlabel。",
+      "rationale": "Candidate-minus-student margin change .266 andCI kept; rawnegative-margin caveat prevents claimingteacheralready preferscandidate. Linkedtable preserves all frozen-scorer cells.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -575,12 +1253,12 @@
       "kind": "table",
       "label": "Table 9",
       "source_id": "paper",
-      "source_locator": "Table 9; Appendix B",
+      "source_locator": "p12 Table9;AppendixB",
       "status": "omitted",
-      "rationale": "FullPath对A/C的所有scorechange未绘，正文保留0.070与gamecluster区间，不误称额外训练提升。",
+      "rationale": "Matched/unmatched probabilityshiftgap.070 CI retained with gameclusterbootstrap boundary; complete original linked. Supplementaldiagnostic not treated as online-training result.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -589,33 +1267,26 @@
       "kind": "table",
       "label": "Table 10",
       "source_id": "paper",
-      "source_locator": "Table 10; Appendix C",
-      "status": "redrawn",
-      "rationale": "三字段teacheronlycontract重建在流程SVG及正文，普通student不会收到候选，完整路径未截短。",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "给教师的仍是完整路径"
-        }
-      ],
+      "source_locator": "p13 Table10;AppendixD",
+      "status": "omitted",
+      "rationale": "Teacher template threefields andsameclosinginstruction mechanism explained in3.1 andoriginalFigure2 stageB crop. Fullrawprompt linked rather than duplicating long instructions in note.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-10 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/state-and-loss.svg"
-      ]
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "",
+      "asset_paths": []
     },
     {
       "id": "table-11",
       "kind": "table",
       "label": "Table 11",
       "source_id": "paper",
-      "source_locator": "Table 11; Appendix F",
+      "source_locator": "p13 Table11;AppendixD",
       "status": "omitted",
-      "rationale": "31,296WebShopturn按页型coverage表未绘，正文解释ASIN/颜色/尺码匹配，不把ALFcoverage替代WebShop。",
+      "rationale": "WebShop31296same-archive matching coverage53.9% kept in supplement andexplicitly notALFcomplete-replay. Fullcategorycounts linked; no Webcandidate/suffixreplay claim invented.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -624,20 +1295,24 @@
       "kind": "table",
       "label": "Table 12",
       "source_id": "paper",
-      "source_locator": "Table 12; Appendix F",
+      "source_locator": "p13 Table12;AppendixD",
       "status": "redrawn",
-      "rationale": "B07S7HDC88、blue137已选、size9候选重绘，与示例教师可见/学生不可见边界一起呈现。",
+      "rationale": "ExactASIN B07S7HDC88/blue137/size9 reference andcurrentcandidate independently diagrammed, preservingfullsearch-and-clicksequence. Article-authoredrejectstates labelled, no taskID/log/finalscore invented.",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据 Table 12–13 重绘"
+          "locator": "3.2 购物案例：颜色、尺码可以换顺序"
+        },
+        {
+          "artifact": "deck",
+          "locator": "颜色已选，剩余候选是 click[9]"
         }
       ],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-12 重绘事实，未复制原版排版",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "本文按原Table 12公开事实独立整理，未复制原版图片",
       "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/real-state-cases.svg"
+        "/lib/papers/state-matched-routing-contextualized-sd/webshop-case-compact.svg"
       ]
     },
     {
@@ -645,33 +1320,26 @@
       "kind": "table",
       "label": "Table 13",
       "source_id": "paper",
-      "source_locator": "Table 13; Appendix G",
-      "status": "redrawn",
-      "rationale": "lettuce已入冰箱/forkclean/mugheated与位置拒绝的代表记录重绘，明示非完整逐步模型日志。",
-      "placements": [
-        {
-          "artifact": "article",
-          "locator": "根据 Table 12–13 重绘"
-        }
-      ],
+      "source_locator": "p15 Table13;AppendixE",
+      "status": "omitted",
+      "rationale": "Lettuce3alreadyplaced→countertop2,cleanfork/hotmug andlocationfridgevsdiningtable cases narrated in3.3. Fulltemplate linked, not falsely reconstructed as full studenttrajectory.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-13 重绘事实，未复制原版排版",
-      "asset_paths": [
-        "/lib/papers/state-matched-routing-contextualized-sd/real-state-cases.svg"
-      ]
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "",
+      "asset_paths": []
     },
     {
       "id": "table-14",
       "kind": "table",
       "label": "Table 14",
       "source_id": "paper",
-      "source_locator": "Table 14; Appendix G",
+      "source_locator": "p15 Table14;AppendixE",
       "status": "omitted",
-      "rationale": "选中turn/token两比例未整表重绘；正文以0.142/0.164证明samecount非tokenmatched，不拿相同回合数当相同gradient。",
+      "rationale": "Selectedtokenfraction14.2vs16.4 retained nextto samecountcontrol; explicitly no token/gradientmassmatching. Secondaryfulltable linked instead of another dominant figure.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -680,18 +1348,13 @@
       "kind": "table",
       "label": "Table 15",
       "source_id": "paper",
-      "source_locator": "Table 15; Appendix G",
-      "status": "redrawn",
-      "rationale": "相同回合history与state计数重排deck审核卡，15.4→20.2/98.8%交集保留，非actioncorrectness。",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "35,712 回合：历史覆盖 15.4%，状态覆盖 20.2%。"
-        }
-      ],
+      "source_locator": "p15 Table15;AppendixE",
+      "status": "omitted",
+      "rationale": "Samearchive intersection5428,sharedcandidate5395,new1775,removed68(inventory63) preserved in supplement. Fullcrosscounttable linked; counts notcalledcorrectactionrecall.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-15 重绘事实，未复制原版排版",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "",
       "asset_paths": []
     },
     {
@@ -699,12 +1362,12 @@
       "kind": "table",
       "label": "Table 16",
       "source_id": "paper",
-      "source_locator": "Table 16; Appendix H",
+      "source_locator": "p15 Table16;AppendixE",
       "status": "omitted",
-      "rationale": "teachercontext固定线上匹配消融final/last3表未绘，正文集中机制与真实replay，不冒称新规则全task皆有效。",
+      "rationale": "Wholecandidate+suffix executablejudge and792/800 vs781/781 preserved in4.2 andslide12; samplegroups independent, notpaired. Originaldetailedreplaytable linked.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -713,18 +1376,13 @@
       "kind": "table",
       "label": "Table 17",
       "source_id": "paper",
-      "source_locator": "Table 17; Appendix G",
-      "status": "redrawn",
-      "rationale": "family分层suffixreplay改为deck总体792/800与781/781，正文保留8失败Look/PickTwo，非pairedstates。",
-      "placements": [
-        {
-          "artifact": "deck",
-          "locator": "历史 792/800，状态 781/781。"
-        }
-      ],
+      "source_locator": "p15 Table17;AppendixE",
+      "status": "omitted",
+      "rationale": "Historical8failuresLook2/PickTwo6,allfirstactionsadmissible butsuffixfails retained visible. More detailedcategorycells linked; no perfectrecall inferred from matchedsample.",
+      "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "Facts independently reorganized in SVG/HTML; source-image reuse permission not claimed.",
-      "credit": "根据原论文 table-17 重绘事实，未复制原版排版",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
+      "credit": "",
       "asset_paths": []
     },
     {
@@ -732,12 +1390,12 @@
       "kind": "table",
       "label": "Table 18",
       "source_id": "paper",
-      "source_locator": "Table 18; Appendix I",
+      "source_locator": "p16 Table18;AppendixF",
       "status": "omitted",
-      "rationale": "单核CPU完整mean/median/p95/max未绘，正文报provider.833ms/p951.335ms与索引437.1ms，明确不是GPU训练成本。",
+      "rationale": "Single-coreprovidermean.833ms/p951.335ms/one-timeindex437.1ms retained in supplement, separatedfromGPUcost. Fullprofilingtable linked; no training-costclaim made.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -746,12 +1404,12 @@
       "kind": "table",
       "label": "Table 19",
       "source_id": "paper",
-      "source_locator": "Table 19; Appendix I",
+      "source_locator": "p16 Table19;AppendixF",
       "status": "omitted",
-      "rationale": "800固定state的context/fullprompttokens矩阵未绘，只保留+20.96token；不将block长度当全teacherprompt。",
+      "rationale": "Extra112.9/133.8tokens andwhole635.7/656.6 prompts retained withactualdelta20.96; originalallvariants linked. Not equivalentmodelcall/tokenbudget control.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -760,12 +1418,12 @@
       "kind": "table",
       "label": "Table 20",
       "source_id": "paper",
-      "source_locator": "Table 20; Appendix H",
+      "source_locator": "p16 Table20;AppendixG",
       "status": "omitted",
-      "rationale": "重复4gram、片段、invalidaction统计全表未展示，正文未用length变短直接证明task成功。",
+      "rationale": "Length/repetitiondiagnostic linked with explicitnotsemanticstrategydiversity warning in supplement; allvalues secondary to success/replay evidence andnotcopiedfromunlicensedimage.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -774,12 +1432,12 @@
       "kind": "table",
       "label": "Table 21",
       "source_id": "paper",
-      "source_locator": "Table 21; Appendix I",
+      "source_locator": "p16 Table21;AppendixI",
       "status": "omitted",
-      "rationale": "sharedtraining配置未整表绘，正文逐项batch/GPU/lr/temp/seed且区分referenceworker同步。",
+      "rationale": "4H800,seed0,lr1e-6,16×8batch,onePPOepoch andtrain/evaltemperatures retained in trainingparagraph; fullconfigurationmatrix linked. Oldmanifestappendixletter corrected.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     },
@@ -788,55 +1446,317 @@
       "kind": "table",
       "label": "Table 22",
       "source_id": "paper",
-      "source_locator": "Table 22; Appendix I",
+      "source_locator": "p17 Table22;AppendixI",
       "status": "omitted",
-      "rationale": "各模型/环境checkpoint/turn/prompt/response/cap矩阵未全绘，正文明确250/150、30/50/15回合边界。",
+      "rationale": "Fixed250/150updates and30/50/15turncaps retained visible; fullprompt/response/contextcaps linked. Fixedcheckpointnotvalidation-best, budgetunits notconflated.",
       "placements": [],
       "permission_status": "not-applicable",
-      "permission_basis": "",
+      "permission_basis": "PDF arXiv nonexclusive-distribution license not verified as image reuse permission; original linked. Redraws independently arrange factual relations/numbers without tracing original composition.",
       "credit": "",
       "asset_paths": []
     }
   ],
   "figures": [
     {
-      "path": "/lib/papers/state-matched-routing-contextualized-sd/state-and-loss.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/figure-2-original.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-2",
-      "source_id": "paper",
-      "source_locator": "Figure 2; Table 10; Eq. 15; Appendix A",
-      "credit": "根据 Figure 2、Eq. 15 与 Appendix A 重绘",
+      "source_id": "author-assets",
+      "source_locator": "p4Figure2;authorassetblobcdef024ba48903cfe8eaed3dee4bb7511629f3e6",
+      "credit": "SMRC-SD作者发布的原Figure 2资产；Apache-2.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "transformation": "Lossless WebP conversion of complete3331×1418 source; no evidence cropped.",
       "used_in": [
-        "article",
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/figure-2-matching-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "author-assets",
+      "source_locator": "p4Figure2 panelA",
+      "credit": "SMRC-SD作者发布的原Figure 2资产；Apache-2.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "transformation": "Labelled2167×982 panelA detail crop; complete original retained in note.",
+      "used_in": [
         "deck"
       ]
     },
     {
-      "path": "/lib/papers/state-matched-routing-contextualized-sd/real-state-cases.svg",
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/figure-2-context-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "author-assets",
+      "source_locator": "p4Figure2 panelB upper part",
+      "credit": "SMRC-SD作者发布的原Figure 2资产；Apache-2.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "transformation": "Labelled1117×656 teacher-context detail crop; complete original retained in note.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/table-2-original.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "author-assets",
+      "source_locator": "p6Table2;authorassetblobd83e5dfeb1eda75559d087addfffde4f37d5c0ec",
+      "credit": "SMRC-SD作者发布的原Table 2资产；Apache-2.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "transformation": "Lossless WebP of complete1717×861table including all numericalcontent andcaption.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/table-2-qwen2-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "author-assets",
+      "source_locator": "p6Table2 header+Qwen2.5block",
+      "credit": "SMRC-SD作者发布的原Table 2资产；Apache-2.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "transformation": "Labelled1575×395detail retains allcolumns andallmodelrows.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/table-2-qwen3-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "author-assets",
+      "source_locator": "p6Table2 originalheader+Qwen3block",
+      "credit": "SMRC-SD作者发布的原Table 2资产；Apache-2.0",
+      "license_status": "verified-allowed",
+      "license_basis": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+      "transformation": "Labelled1575×389detail assembled from originalheader andQwen3block; everycolumn/row/value preserved.",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/webshop-case-compact.svg",
       "origin": "author-redrawn",
       "source_visual_id": "table-12",
       "source_id": "paper",
-      "source_locator": "Tables 12–13, published representative matched-turn records",
-      "credit": "根据 Table 12–13 重绘",
+      "source_locator": "Table12 p13;publicwebshop_goal_progress_guidance",
+      "credit": "本文按 Table 12 和公开函数独立整理，拒绝例由本文补写",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "permission_basis": "Independent compact arrangement of numerical facts/actionrelationships; original composition not traced."
     },
     {
-      "path": "/lib/papers/state-matched-routing-contextualized-sd/routing-controls.svg",
+      "path": "/lib/papers/state-matched-routing-contextualized-sd/routing-controls-compact.svg",
       "origin": "author-redrawn",
       "source_visual_id": "table-3",
       "source_id": "paper",
-      "source_locator": "Tables 3–5 and Table 14 controls",
-      "credit": "根据 Table 3–5 重绘",
+      "source_locator": "Tables3–5 pp6–7;Table14p15",
+      "credit": "本文按 Table 3–5 数值独立整理，未复制原表排版",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "permission_basis": "Independent compact arrangement of numerical facts/actionrelationships; original composition not traced."
     }
   ],
   "qa": {
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-headless",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "numbered_sections": true,
+      "original_section_anchors_preserved": true,
+      "default_reading": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "characters": 5271,
+          "height": 7347,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "characters": 5271,
+          "height": 7347,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "characters": 5271,
+          "height": 11059,
+          "width": 350
+        }
+      ]
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "date": "2026-10-19",
+      "reviewer": "main agent",
+      "reader_reconstruction": "One16×8full-startiteration;samecurrentteacher scores studentsampledresponse;matchstate directionally/admissibly;onlySDroute gated,allGRPO/alloriginaltoken denominator. Table12blue137→click9;CPU sevenroutingbranches andK3 .15343 checked. RawWebShop .8 failsAcc,training10iff1. Factorial .695 andcomponent .820/.834 limitclaims;781/781independentmatchedsample notrecall. Laterdata added,completeval128 pluspartiallargerows notfulltraining reproduction."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "code_copy": true,
+      "image_fit_zoom_drag_and_focus_restore": true,
+      "mobile_vertical_and_horizontal_scroll": true,
+      "fullscreen_scope": "DOM Fullscreen API and nested focus/iframe Escape paths exercised headlessly. Native macOS window fullscreen not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "browser_evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/state-routing-layout.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/state-routing-interactions.json",
+      "mobile": "output/playwright/old-paper-refresh-20261018/state-routing-mobile-scroll.json",
+      "visual_scope": "Allarticle/slidecontactcomposition reviewed; dense slides3/4/7/9/10/11,allfourbodyimages andmobile original/case/control panels personally opened atnormaldisplay size; finalchangedslide7 reread afterfreshbuild."
+    },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/086-state-matched-routing-contextualized-sd.md",
+        "sha256": "dd6c9f7333502800580d1267c75115bf498ae2d2426ad9542beef44b071f7e15"
+      },
+      {
+        "file": "lib/decks/state-matched-routing-contextualized-sd-visual-guide.html",
+        "sha256": "def68f114d5306c5ea458fdc93f7053c046ce2e01cb556d55d10c6de4f0c3b4a"
+      },
+      {
+        "file": "dist/posts/论文解读/state-matched-routing-contextualized-sd.html",
+        "sha256": "763eaff51307af54a1808c1b8bfab602f266ede248c6c4703fb1c13cb96e552b"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-deep-dive-v2.css",
+        "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.css",
+        "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-v2.js",
+        "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.css",
+        "sha256": "55a8f61a6884f17cc95f829d5b5b87014db08eaff07336bd565f4eb6a408f8fb"
+      },
+      {
+        "file": "dist/lib/decks/paper-deck-mobile-reader.js",
+        "sha256": "b98a0d0631188e29163f4642c892a3c495178c6d527aaef145a48a32837237bb"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/figure-2-original.webp",
+        "sha256": "b9e0b83e9eaae65eb5b88f90ec30d3c488f686bdc7072c33863cb100d6b7fe30"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/figure-2-matching-detail.webp",
+        "sha256": "9437112103c2e1911def27d1c50e433ab95e917f479a99bbb87f4e32657eb1ba"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/figure-2-context-detail.webp",
+        "sha256": "cf8b46e916759cd4708b921aae371570cdabc21fac25544f2cd7c72d86266824"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/table-2-original.webp",
+        "sha256": "1b4a4db5b077948a0667fc7596919f6c890abd5982fa20bf6c232a406ba74aca"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/table-2-qwen2-detail.webp",
+        "sha256": "51740fc7f67fb17bcd430722531cfd5adfb603fefb0129a39b47e0ecb1e6722c"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/table-2-qwen3-detail.webp",
+        "sha256": "6293f448d5cda8d49245be29d70f676b28dbde166b4d9d68304bb61917867a02"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/webshop-case-compact.svg",
+        "sha256": "9ccb2cd5a41146fab305e684120137bd628270e9391ccfc948eda7687f6c88d9"
+      },
+      {
+        "file": "lib/papers/state-matched-routing-contextualized-sd/routing-controls-compact.svg",
+        "sha256": "8de9e3b00ce2365cd5fa8e8e644cacc01388cfc786cca7ecfadd6924dc0e0057"
+      }
+    ],
+    "external_service_boundary": {
+      "current_raw_errors": [],
+      "comments": "Automatic Twikoo .tk-submit detected in all3viewport localruns; live origin rechecked afterrelease. Historical errors retained inqa_history,not erased."
+    },
+    "licensing_boundary": "Author directly published assets/smrc_sd_overview.png and assets/table2.png under fixed repository root Apache-2.0 LICENSE; no root NOTICE or asset-specific restriction found. README displays these assets. Applies only to these author documentation assets, not all PDF visuals. Local full LICENSE provided.",
+    "notes": "Main agent re-read fullprimary beforedraft;manifestpass alone doesnotestablishcausalclarity. No sharedtheme mutation; unuseduserassets preserved."
+  },
+  "qa_history_20261014": {
     "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
@@ -1023,91 +1943,5 @@
       "largest-table-or-code",
       "final"
     ]
-  },
-  "terminology": [
-    {
-      "term": "reference path",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3–4; Appendix D–F"
-        }
-      ],
-      "article_quote": "下文的 reference path 指同一任务的一条成功动作序列"
-    },
-    {
-      "term": "state signature",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4.1; Appendix D–F"
-        }
-      ],
-      "article_quote": "state signature 指从普通动作、观察和参考序列中重建的位置、持有物体、物体属性等记录。它不是隐藏的模拟器状态。"
-    },
-    {
-      "term": "abstain",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4.1; Eq. 15"
-        }
-      ],
-      "article_quote": "abstain 指 这一回合不计算参考信息带来的蒸馏损失 ，不是让模型停止行动。"
-    },
-    {
-      "term": "teacher",
-      "kind": "model-call",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3–4; Appendix A"
-        }
-      ],
-      "article_quote": "教师是 同一组当前参数的评分分支 ：它多看训练专用提示，对学生已经写出的回答逐个文字单位（token）给概率；教师侧不反向传播，也不另写一条动作。"
-    },
-    {
-      "term": "state–reference mismatch",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§1; Figure 1"
-        }
-      ],
-      "article_quote": "论文把这种“参考路径和实际到达状态不兼容”叫 state–reference mismatch。"
-    },
-    {
-      "term": "Average@4",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§5.1; Table 2 caption"
-        }
-      ],
-      "article_quote": "Average@4 = 512 次执行中的成功次数 / 512"
-    }
-  ]
+  }
 }
