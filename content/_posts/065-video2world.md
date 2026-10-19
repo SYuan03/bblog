@@ -2,7 +2,7 @@
 title: "[2026-10-03] Video2World: Benchmarking Coding Agents for Interactive World Modeling from Embodied Videos"
 permalink: "/posts/论文解读/video2world.html"
 date: "2026-10-06T22:10:00+08:00"
-updated: "2026-10-13T12:00:00+08:00"
+updated: "2026-10-20T12:00:00+08:00"
 cover: "/lib/papers/video2world/cover.svg"
 description: "只给一段操作视频，Agent 要写出能在物理模拟器里完成同一任务的场景与控制代码。本文用立瓶子的完整案例说明输入、隐藏标注、执行状态、成功判据、评分公式与九套系统的结果。"
 wide_content: true
@@ -83,7 +83,7 @@ Video2World 的研究问题因此很具体：给 coding agent 一段视频，以
 
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/figure-1.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/figure-1.png" width="2024" height="1104" alt="Video2World 从视频输入到可执行 simulator package 的任务概览"></a>
-  <figcaption>原论文 Figure 1。输入既包括机器人示范，也包括第一/第三视角的人类示范；输出需要在目标机器人与模拟器中重建场景并完成相同任务。论文为 CC BY-SA 4.0，图像按同许可引用。</figcaption>
+  <figcaption>原论文 Figure 1。输入既包括机器人示范，也包括第一/第三视角的人类示范；输出需要在目标机器人与模拟器中重建场景并完成相同任务。Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 这个 benchmark 同时测“看起来像”和“真的能做”。只测任务成功，Agent 可以用极简几何体甚至取巧完成目标；只测几何，又无法判断世界是否可以交互。Video2World 用功能、静态几何和动态轨迹三组指标区分这些失败。
@@ -110,7 +110,7 @@ Video2World 的研究问题因此很具体：给 coding agent 一段视频，以
 
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/figure-2.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/figure-2.png" width="2020" height="999" alt="Video2World benchmark 的数据来源、构造、Agent 执行和评测总览"></a>
-  <figcaption>原论文 Figure 2。视频与 simulator profile（机器人和模拟器的目标配置）组成任务；Agent 反复构建并执行候选重建，隐藏 evaluator 再计算功能、几何和运动指标。</figcaption>
+  <figcaption>原论文 Figure 2。视频与 simulator profile（机器人和模拟器的目标配置）组成任务；Agent 反复构建并执行候选重建，隐藏 evaluator 再计算功能、几何和运动指标。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 <h2 id="协议：视频、人工参考与隐藏物理判定">3. Benchmark / Protocol：视频、人工参考与隐藏物理判定</h2>
@@ -136,7 +136,7 @@ Video2World 的研究问题因此很具体：给 coding agent 一段视频，以
 
 <figure class="figure source">
   <a href="/lib/papers/video2world/task-family-counts.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/task-family-counts.svg" width="468" height="500" alt="39 个 task families 的实例数量分布"></a>
-  <figcaption>原论文 Figure A1：39 个 task families（共用一套任务判定逻辑的类别）的完整清单，共计 222 个视频与目标配置组合。机械臂与机械手版本分开计数，但可以共享同一段原视频。</figcaption>
+  <figcaption>原论文 Figure A1：39 个 task families（共用一套任务判定逻辑的类别）的完整清单，共计 222 个视频与目标配置组合。机械臂与机械手版本分开计数，但可以共享同一段原视频。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 这些视频窗口不是 189 次彼此独立的采集：64 个家具片段来自 46 个原始 episode（一次完整录制），一些人类片段也共享较长的源录制。家具窗口按装配步骤设数量上限，排序时会使用参考执行结果和终态一致性；这是偏向可重建片段的筛选，不是随机抽样。失败的已选参考仍保留。
@@ -147,7 +147,7 @@ Video2World 的研究问题因此很具体：给 coding agent 一段视频，以
 
 <figure class="figure source">
   <a href="/lib/papers/video2world/annotation-example.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/annotation-example.png" width="1627" height="785" alt="Video2World 的视频和任务标注示例"></a>
-  <figcaption>原论文 Figure A2：HOI4D 的移瓶示范。上方帧与下方源位姿曲线标出拿起和松手；手绘轮廓只是视觉指引，不是分割标注，也不是标注软件界面的截图。</figcaption>
+  <figcaption>原论文 Figure A2：HOI4D 的移瓶示范。上方帧与下方源位姿曲线标出拿起和松手；手绘轮廓只是视觉指引，不是分割标注，也不是标注软件界面的截图。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 <h3 id="Agent-得到什么？">3.1 Agent 得到什么？</h3>
@@ -164,11 +164,6 @@ Video2World 的研究问题因此很具体：给 coding agent 一段视频，以
 - 按任务制定的成功条件与评测分数。
 
 <h3 id="最终交付的-package-有什么？">3.3 最终交付的 package 有什么？</h3>
-
-<figure class="figure wide">
-  <a href="/lib/papers/video2world/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/body-method.svg" width="1000" height="1010" alt="Video2World 公开输入、隐藏信息、提交包和 evaluator 流程"></a>
-  <figcaption>根据论文 Sections 3–5、附录 7–9 与官方 <code>docs/benchmark.md</code> 重绘。</figcaption>
-</figure>
 
 核心文件是 `protocol.json`、`actions.npy` 和 `scene.json` 或 `scene.xml`，另加本地 3D meshes、textures（纹理）、`source/` 与 `report.md`。某些机器人/模拟器配置还允许 `expected/obj_poses.npy`，但它只是 Agent 声明的预期物体轨迹，**不能直接驱动物体**。物体必须由 robot actuation（机器人控制）与 simulator physics 产生运动；否则任务 judge 和实际执行都不会认可。
 
@@ -194,17 +189,12 @@ Video2World 的研究问题因此很具体：给 coding agent 一段视频，以
 
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/worked-evaluation-example.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/worked-evaluation-example.png" width="1394" height="1139" alt="Video2World 直立瓶子案例的输入、重建和评测结果"></a>
-  <figcaption>原论文 Figure A3。上排是输入示范，中排是提交动作在重建场景中的执行；下方分别画出瓶子运动和示范时间轴上的平移误差。两排帧的时间并不相同。</figcaption>
+  <figcaption>原论文 Figure A3。上排是输入示范，中排是提交动作在重建场景中的执行；下方分别画出瓶子运动和示范时间轴上的平移误差。两排帧的时间并不相同。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 Agent 看到了视频帧拼图（contact sheet）、机器人与 TCP（tool center point，末端工具中心点）规范和提交格式。此处来自独立的 visual-refinement 实验：外部 controller（负责执行的控制程序）在两轮之间运行候选，将初始渲染、动作视频拼图、逆运动学误差和静止诊断交给 Agent；<strong>这个案例没有赋予 Agent 直接运行 simulator 的工具</strong>。相机标定、物体几何、参考轨迹、任务标注和分数仍隐藏，不能拿它冒充主榜所有系统完全相同的执行权限。最终程序包包含瓶子网格、桌面与背景几何、估计的相机和机器人位置，另有 **97×7 的控制数组**（`dt=0.2 s`）和 **83×7 的预期物体位姿**。预期位姿仍然只是声明；评测器从实际物理执行记录（physics rollout）中采集了 **97 个物体状态**。
 
 执行时间线说明了为什么不能只比较视频帧：0.4 秒抓住瓶子，2.6 秒开始移动，12.8 秒松手，19.2 秒才完成终态判定。运动轨迹误差只在 83 个示范时间戳上比较；示范结束后的 41 个执行状态不进入运动误差评分，但任务评分程序仍会用它们确认物体最后是否稳定。
-
-<figure class="figure wide">
-  <a href="/lib/papers/video2world/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/body-case.svg" width="1000" height="1115" alt="从瓶子视频、提交数组、实际执行状态到支撑直立松手静止判定的真实案例"></a>
-  <figcaption>根据 Figure A3、Appendix 8.4 与公开 <code>v2w/metrics/task.py</code> 重绘，整理实际执行与评分顺序。图中 FAIL 是按核对过的规则推演；本例官方 Task Success 为 1。</figcaption>
-</figure>
 
 <h3 id="立瓶子：成功判据与一个具体失败分支">3.6 立瓶子：成功判据与一个具体失败分支</h3>
 
@@ -248,11 +238,12 @@ success = geometry_ok and released and quiescent</code></pre></div>
 
 **Fable-5.1 的整体结果最好，GPT-6 Astra 的对象层几何误差更小，Claude Opus 5 的 Task Success 又高于 Astra；所有自动系统与人类辅助重建之间仍有明显距离。**
 
-<figure class="figure wide">
-  <a href="/lib/papers/video2world/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/body-results.svg" width="1000" height="1110" alt="Video2World 九个系统与人类辅助重建的 V2WScore 和任务成功率"></a>
-  <figcaption>根据论文 Table 2 重绘。复合分与任务成功分开列出；二者均先在类内平均，再对 39 个 task families 等权平均。</figcaption>
+<figure class="figure wide source">
+  <a href="/lib/papers/video2world/source-table-2.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/source-table-2.png" width="1804" height="764" alt="论文 Table 2：人类辅助参考与九套代码 Agent 的完整 Build、功能、几何、运动成绩"></a>
+  <figcaption>论文 Table 2 原表，保留全部模型和数值。V2WScore 与 Task Success 均对适用 task families 等权平均；HAR 使用额外来源信息，九个自动系统的模型和执行框架也不完全相同。Jinzhou Tang 等，<a href="https://arxiv.org/abs/2610.04432">原论文</a>，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。手机端点击可放大横向阅读。</figcaption>
 </figure>
 
+<details><summary>查看可复制的 Table 2 完整数值</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>Method</th><th>V2WScore</th><th>Build</th><th>Success</th><th>Progress</th><th>Scene CD</th><th>Shape CD</th><th>Size</th><th>T-APE</th><th>R-APE</th><th>T-RPE</th></tr></thead>
@@ -270,17 +261,18 @@ success = geometry_ok and released and quiescent</code></pre></div>
   </tbody>
 </table>
 </div>
+</details>
 
 这些列必须分开读。Fable-5.1 的 **V2WScore 48.52、Task Success 25.5% 和 Scene CD 5.35 cm** 都是自动系统第一。Astra 的 **Shape CD 0.69 cm、Size error 1.62 cm、R-APE 95.08° 和 T-RPE 6.19 cm** 最好，但 Task Success 只有 10.7%，低于 Opus 5 的 16.0%。所以它更像“物体形状和部分轨迹指标更准”，不能概括成“整个重建最准确”。
 
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/geometry-function.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/geometry-function.svg" width="396" height="126" alt="几何 fidelity 与 Task Success 的关系"></a>
-  <figcaption>原论文 Figure 4。系统层面 Shape CD 较低不保证 Task Success 更高；在每个模型和任务类别内，按几何误差由低到高分为四组时，误差较低组通常更容易成功，但仍有大量例外。</figcaption>
+  <figcaption>原论文 Figure 4。系统层面 Shape CD 较低不保证 Task Success 更高；在每个模型和任务类别内，按几何误差由低到高分为四组时，误差较低组通常更容易成功，但仍有大量例外。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/construction-cases.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/construction-cases.png" width="1590" height="838" alt="Video2World 多种 Agent 重建结果与失败模式"></a>
-  <figcaption>原论文 Figure A5 的两个 Astra 结果：取出记号笔只达到 39.4% 顶点在容器外，低于 95% 门槛；立瓶子则成功，但 Shape CD 与尺寸误差仍为 3.58 / 5.76 cm。功能完成和几何准确需要分开看。</figcaption>
+  <figcaption>原论文 Figure A5 的两个 Astra 结果：取出记号笔只达到 39.4% 顶点在容器外，低于 95% 门槛；立瓶子则成功，但 Shape CD 与尺寸误差仍为 3.58 / 5.76 cm。功能完成和几何准确需要分开看。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
 
 <h3 id="HAR-不是“只看同一段-RGB-的人类上限”">4.1 HAR 不是“只看同一段 RGB 的人类上限”</h3>
@@ -289,10 +281,12 @@ Human-assisted reconstruction（HAR，人类辅助重建）可以使用原始 CA
 
 HAR 的试验历史还表明它不是同预算的人类上限：家具批次记录 128 次试跑，覆盖 64 个实例；一批人类视频接触搜索覆盖 20/66 个机械臂/机械手配置，每配置 26–31 条记录，其他来源没有同样完整的总数。作者没有系统记录人工工时，不能从试跑时长推算。家具执行条件也不同：HAR 终态观察 10 秒，Agent executor 静置 1 秒，并有自己的有界抓取对齐或零件保持近似。相同评分定义不等于完全相同的执行条件。
 
+<details><summary>展开 HAR 来源和试验次数原图</summary>
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/har-source-disclosure.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/har-source-disclosure.svg" width="894" height="444" alt="HAR 各来源的结果与已记录的尝试次数"></a>
-  <figcaption>原论文 Figure A4。左侧报告最终选中的 reference execution；右侧只统计两组有完整试验记录的实验批次。未汇总的历史不是零次尝试，trial 数也不能换算成人工工时。</figcaption>
+  <figcaption>原论文 Figure A4。左侧报告最终选中的 reference execution；右侧只统计两组有完整试验记录的实验批次。未汇总的历史不是零次尝试，trial 数也不能换算成人工工时。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
+</details>
 
 <h3 id="成本、人工偏好与跨场景执行">4.2 成本、人工偏好与跨场景执行</h3>
 
@@ -306,15 +300,19 @@ HAR 的试验历史还表明它不是同预算的人类上限：家具批次记�
 
 论文还测试了 9 段原视频、3 个模型在新布局上的执行：分别平移物体或目标，在两个方向取 2、5、10、15、20 cm 五档，每模型 180 次，共 540 次。直接复用原控制成功 525/540（97.22%）；让 Agent 针对新位置调整动作后成功 536/540（99.26%）。调整时固定场景、物理参数与任务规则，每布局重新开上下文，最多 10 次执行或 10 分钟，最后清空状态重测。它修复了 15 个失败中的 13 个，同时破坏了 525 个原本成功中的 2 个；Gemini 的结果反而从 98.33% 降到 97.78%。这只覆盖<strong>初始重建已经成功、位移已由 HAR 验证可行</strong>的同九个任务，不能推成新任务泛化或策略训练收益。
 
+<details><summary>展开新布局复用实验原图</summary>
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/rq2-paper.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/rq2-paper.svg" width="522" height="198" alt="三种模型在 shifted layouts 上直接复用与 adaptation 的结果"></a>
-  <figcaption>原论文 Figure A6。每个模型在 9 段已成功重建的 source videos 上测试五档位移；0 cm 是原始 layout，阴影为按 source-video 配对 bootstrap 的 95% 区间。</figcaption>
+  <figcaption>原论文 Figure A6。每个模型在 9 段已成功重建的 source videos 上测试五档位移；0 cm 是原始 layout，阴影为按 source-video 配对 bootstrap 的 95% 区间。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
+</details>
 
+<details><summary>展开两个任务的九模型失败原因原图</summary>
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/case-nine-models.svg" target="_blank" rel="noopener"><img src="/lib/papers/video2world/case-nine-models.svg" width="805" height="450" alt="九模型在 bowl nesting 和 can lifting 两个案例中的 judge 结果"></a>
-  <figcaption>原论文 Figure A11。绿色是通过，灰色是任务条件未满足，红色是被 physical-validity checks（物理有效性检查）拒绝；它与页首演示中的 Figures A9-A10 配套，说明画面终态越过某个阈值仍不等于完整成功。</figcaption>
+  <figcaption>原论文 Figure A11。绿色是通过，灰色是任务条件未满足，红色是被 physical-validity checks（物理有效性检查）拒绝；它与页首演示中的 Figures A9-A10 配套，说明画面终态越过某个阈值仍不等于完整成功。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
+</details>
 
 <h2 id="下一步：先对齐分母，再区分感知与控制的失败">5. Discussion：先对齐分母，再区分感知与控制的失败</h2>
 
@@ -341,11 +339,13 @@ Table 2 的 Fable **25.5%** 是 39 类任务等权平均的 Task Success；Table
 
 我的判断是：Video2World 已经给出一套完整的评测框架。它把提交包、真实物理执行和任务专用评分器组合起来，比只看截图的世界生成评测更接近可用系统。结果也保留了重要的失败：大量 Agent 可以生成能加载的场景，却无法把对象稳定抓起、移动并放到正确状态。下一步应把失败分别归到视频测量、场景构建、robot retargeting（把示范动作转换到目标机器人上）、控制器生成、物理参数校准和 judge 设计，再在相同 harness 与相同预算下比较方法。
 
+<details><summary>展开同一示范在两种机器人上的案例原图</summary>
 <figure class="figure wide source">
   <a href="/lib/papers/video2world/case-native-final.png" target="_blank" rel="noopener"><img src="/lib/papers/video2world/case-native-final.png" width="982" height="1123" alt="Video2World 原生机器人视频重建案例"></a>
-  <figcaption>原论文 Figure A13：native robot example。论文附录还分别给出 pose、receiver、nine-bowl、nine-lift 与 egocentric cases；完整图组保留在页首演示中。</figcaption>
+  <figcaption>原论文 Figure A13：native robot example。论文附录还分别给出 pose、receiver、nine-bowl、nine-lift 与 egocentric cases；完整图组保留在页首演示中。 Jinzhou Tang 等，<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption>
 </figure>
+</details>
 
-<p class="source-note">主要来源：Video2World arXiv v1 全文与全部附录；官方仓库 revision <code>44b1760c52cc14e519aa88b5a91c374e09b81653</code>；官方 benchmark 文档、评分实现 <code>v2w/scoring.py</code>、配置 <code>v2w/config/score.json</code> 与 task judge <code>v2w/metrics/task.py</code>。论文图像依 CC BY-SA 4.0 引用，官方代码为 Apache-2.0。检查日期：2026-10-06。</p>
+<p class="source-note">主要来源：Video2World arXiv v1 全文与全部附录；官方仓库 revision <code>44b1760c52cc14e519aa88b5a91c374e09b81653</code>；官方 benchmark 文档、评分实现 <code>v2w/scoring.py</code>、配置 <code>v2w/config/score.json</code> 与 task judge <code>v2w/metrics/task.py</code>。论文图像依 CC BY-SA 4.0 引用，官方代码为 Apache-2.0。检查日期：2026-10-20。</p>
 
 </div>
