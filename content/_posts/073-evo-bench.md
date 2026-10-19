@@ -2,7 +2,7 @@
 title: "[2026-08-10] Evo-Bench: Can Language Models Improve Agent Harness?"
 permalink: "/posts/论文解读/evo-bench.html"
 date: "2026-10-08T00:07:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-19T20:42:00+08:00"
 cover: "/lib/papers/evo-bench/cover.svg"
 description: "让九个模型修改同一套调用模型、工具与执行步骤的代码，最多评测 20 次、工作 48 小时。Evo-Bench 不只测最终得分，还检查模型是否保住好版本、是否把系统改坏，以及怎样使用开发预算。"
 wide_content: true
@@ -20,8 +20,17 @@ tags:
 ---
 
 <link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
+<style>
+@media(max-width:600px){
+  .evo-bench-reading .post-deck-embed-frame{height:min(74vh,640px)!important;padding-top:0!important}
+  .evo-bench-reading .figure.original>a{display:block;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+  .evo-bench-reading .figure.original img{width:900px!important;max-width:none!important;max-height:none!important;height:auto}
+  .evo-bench-reading .figure.original img[src*="source-figure-6"],
+  .evo-bench-reading .figure.original img[src*="source-table-3"]{width:680px!important}
+}
+</style>
 
-<div class="paper-reading">
+<div class="paper-reading evo-bench-reading">
 
 <p class="paper-meta">arXiv:2608.09096v2 · 最早公开于 2026-08-10</p>
 <div class="source-links">
@@ -33,22 +42,22 @@ tags:
 </div>
 
 <section class="deck-wrap" aria-label="Evo-Bench: Can Language Models Improve Agent Harness? 交互图解">
-  <div class="deck-head"><strong>10 页交互图解 · 任务、机制、真实案例、结果与边界</strong><a href="/lib/decks/evo-bench-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>10 页交互图解 · 任务、机制、真实案例、结果与边界</strong><a href="/lib/decks/evo-bench-visual-guide.html?v=20261019-1">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
-    <div class="post-deck-embed-frame"><iframe src="/lib/decks/evo-bench-visual-guide.html" title="Evo-Bench: Can Language Models Improve Agent Harness? 论文图解，共 10 页" allow="fullscreen" loading="eager"></iframe></div>
+    <div class="post-deck-embed-frame"><iframe src="/lib/decks/evo-bench-visual-guide.html?v=20261019-1" title="Evo-Bench: Can Language Models Improve Agent Harness? 论文图解，共 10 页" allow="fullscreen" loading="eager"></iframe></div>
     <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>按 Esc 退出全屏；独立打开后可返回文章</span></p>
   </div>
 </section>
 
 <p class="lead">Evo-Bench 把九个模型放到同一项长任务里：在 48 小时内修改一套组织模型、工具和执行步骤的代码，最多请求 20 次正式评测、进行 1,000 个开发操作。所有候选都驱动同一个 DeepSeek-V4-Flash 做题，便于比较谁更会改系统。作者保存了每次版本与成绩，能看到开发模型找到好版本后又把它改坏、忘记回滚或反复评测同一代码。</p>
 
-<aside class="part0"><span class="kicker">PART 0 · 先分清两个模型</span><h3>谁改代码，谁用代码做题？</h3><p>负责读失败记录、修改提示词与工具代码的开发模型，论文称为 <strong>evolver</strong>；固定执行题目的 DeepSeek-V4-Flash 称为 <strong>policy model</strong>。被修改的执行系统叫 <strong>policy harness</strong>。一条题目的模型回复、工具调用和环境反馈组成 <strong>rollout（一次任务运行记录）</strong>。开发时反复查看的题目是 validation tasks；最终冻结代码后才测试的另一组题目是 held-out evaluation tasks。</p></aside>
+<aside class="part0"><span class="kicker">PART 0 · 先分清两个模型</span><h3>谁改代码，谁用代码做题？</h3><p>负责读失败记录、修改提示词与工具代码的开发模型，论文称为 <strong>evolver</strong>；固定执行题目的 DeepSeek-V4-Flash 称为 <strong>policy model</strong>。被修改的执行系统叫 <strong>policy harness</strong>，起点 CodeAct 是一个只让模型调用 shell、读取结果并最终答复的最简循环。一条题目的模型回复、工具调用和环境反馈组成 <strong>rollout（一次任务运行记录）</strong>。开发时反复查看的题目是 validation tasks；最终冻结代码后才测试的另一组题目是 held-out evaluation tasks。</p></aside>
 <div class="interest"><b>博客作者兴趣度 9.3 / 10</b><span>评分只表示博客作者本人对“写、修、演化 harness code”这条研究线的阅读兴趣，不是论文质量评级</span></div>
 <div class="metrics" aria-label="论文关键数字">
   <div class="metric"><strong>20 / 1,000 / 48h</strong><span>评测次数 / 开发操作 / 时限</span></div>
   <div class="metric"><strong>160 / 448</strong><span>validation / held-out tasks</span></div>
-  <div class="metric"><strong>29.7 → 46.3</strong><span>GPT-5.6 Sol overall</span></div>
-  <div class="metric"><strong>>$500</strong><span>GPT-5.6 Sol 单次 evolver cost</span></div>
+  <div class="metric"><strong>29.7 → 46.3</strong><span>GPT-5.6 Sol 领域加权综合分</span></div>
+  <div class="metric"><strong>>$500</strong><span>GPT-5.6 Sol 单次开发模型费用</span></div>
 </div>
 <aside class="keypoints"><h3>先记住</h3><ul><li>九个 evolver 都修改同一个 CodeAct harness，最终也都驱动同一个 DeepSeek policy model，因而减少了被执行模型不同带来的混淆。</li><li>每次实验最多 20 轮、1,000 个步骤和 48 小时；论文保存了完整版本轨迹，而不只报告最终提交。</li><li>每个 evolver 只有一次主运行，排行榜没有搜索方差。</li><li>任务按 12 个既有 harness 的区分能力筛选，可能偏向这些 harness 擅长暴露的问题。</li></ul></aside>
 
@@ -70,11 +79,15 @@ tags:
 
 <p>四个开发模型在辅助集上产生 73 个正式评估过的 harness，内容哈希去重后剩 65 个。每条演化轨迹选三个代表，保留最终版本并覆盖不同能力层级，共 12 个；不是随意取最高分的十二份代码。随后让这 12 个 harness 在 APEX-Agents、BrowseComp、Claw-Eval、GDPval 和 HLE 的 2,329 个正式候选任务上运行。作者排除多模态题，减少接口差异；BrowseComp 与 HLE 又经过抽样以控制构造成本（Appendix B）。</p>
 
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-figure-3.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-figure-3.webp" width="1980" height="875" alt="Figure 3 原图：先用辅助任务生成多种 harness，再按任务对 harness 的敏感度筛选正式题" loading="lazy" decoding="async"></a><figcaption>Figure 3 原图。两阶段构造先产生 12 个有差异的辅助 harness，再用它们筛出能区分 harness 质量的题；这 12 个不是主实验的九个开发模型。手机端可左右滑动原图，也可点图放大。 <a href="https://arxiv.org/pdf/2608.09096v2#page=5">Huang et al., v2，PDF 第 5 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
+
 <div class="formula">Sens(x) = corr({mₕ(x)}, {Qₕ⁽⁻ˣ⁾})</div>
 
 <p><code>mₕ(x)</code> 是 harness <code>h</code> 在任务 <code>x</code> 上的分数；<code>Qₕ⁽⁻ˣ⁾</code> 是同一 harness 在其余任务上的平均质量。若强 harness 通常在这道题上也更高分，<code>Sens(x)</code> 就大。作者主要排除 <code>Sens≤0</code> 的题，再按难度分层抽取 160 个开发验证题和 448 个最终评测题；Appendix A.3 明确说明有 8 个略负的 Claw-Eval 题为补足稀疏难度层而保留，不能把排除规则说成无例外。</p>
 
 <p>两套题目没有实例重叠。五个来源各贡献 32 道开发题，共 160 道；最终测试是 BrowseComp 128、HLE 128、GDPval 64、APEX-Agents 64、Claw-Eval 64，共 448 道。题目和标准答案、办公 rubric 或工具检查规则继承上游，Evo-Bench 作者做筛选、转换与执行隔离。论文没有给出一套新人工标注的逐题一致率，不能把筛选过程当成重新验证所有来源 judge。</p>
+
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-figure-1.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-figure-1.webp" width="1635" height="845" alt="Figure 1 原图：搜索、办公与通用任务的来源及 validation 160 题和 evaluation 448 题的分配" loading="lazy" decoding="async"></a><figcaption>Figure 1 原图。左侧合计 608 题；右侧说明开发集与最终集的五种来源配额不同。 <a href="https://arxiv.org/pdf/2608.09096v2#page=3">Huang et al., v2，PDF 第 3 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
 
 <h3 id="evolver-能看什么，policy-rollout-又看不到什么">3.2 evolver 能看什么，policy rollout 又看不到什么</h3>
 
@@ -82,7 +95,7 @@ tags:
 
 <p>一轮开发先查看失败运行，再修改候选。<code>run_train_eval</code> 固定当前代码快照、扣一次正式评测额度，并异步测试开发集；同一时间最多一项正式评测在运行。开发者可通过 <code>await_eval</code> 取总分、各领域分、失败原因和与历史版本的差异，再决定保留或恢复哪个版本。起点 CodeAct 只有 shell 与最终回答工具，搜索、记忆、计划与检查功能都需要开发者自己加。开发操作上限 1,000 次，单道执行任务则最多 300 步或 1 小时；两个“步数”不是同一预算。</p>
 
-<figure class="figure wide"><a href="/lib/papers/evo-bench/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/body-method.svg" width="1050" height="913" alt="Evo-Bench 候选代码快照、异步评测、反馈与最终隐藏测试流程" loading="lazy" decoding="async"></a><figcaption>根据 Figure 2 与 Appendix A.1 重绘。每次正式评测固定快照、扣一次额度，开发者再查看结果；最终版本在 448 道隐藏题上测试。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-figure-2.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-figure-2.webp" width="1870" height="1110" alt="Figure 2 原图：固定开发 harness、可修改 policy harness、开发集反馈与最终隐藏评测的边界" loading="lazy" decoding="async"></a><figcaption>Figure 2 原图。中间是开发模型修改的 policy harness，左边仅用于开发反馈，右边只在冻结版本后评估；图中的箭头表示依赖，不代表每次异步评测期间必须停止分析。 <a href="https://arxiv.org/pdf/2608.09096v2#page=4">Huang et al., v2，PDF 第 4 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
 
 <h3 id="一分怎样产生">3.3 一分怎样产生</h3>
 
@@ -104,23 +117,37 @@ tags:
 
 <p>如果 <code>grades.json</code> 缺失、无法读取、状态不是 <code>completed</code> 或没有 <code>final_score</code>，公开 scorer 返回零分并记录 <code>apex_grader_error</code>。其他 judge 或运行基础设施故障也留在分母内。它们降低成绩，但不是模型行为失败的证据；代码用单独的异常类别统计，论文 Appendix E.3 也要求显式报告评分失败。</p>
 
-<figure class="figure wide"><a href="/lib/papers/evo-bench/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/body-case.svg" width="1050" height="816" alt="官方 Elastic NV LBO 办公题：717.44M、26,068.66M、18.25% 的三项判分目标" loading="lazy" decoding="async"></a><figcaption>本文根据官方 task apex-2299b89dcaf64a4da4f3d03f8aac7215 与 _apex_grader 整理。三项规则全通过才算任务成功；未重跑办公环境，不冒充模型评分日志。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/evo-bench/body-case.svg" target="_blank" rel="noopener"><picture><source media="(max-width:600px)" srcset="/lib/papers/evo-bench/body-case-mobile.svg" width="660" height="1260"><img src="/lib/papers/evo-bench/body-case.svg" width="1050" height="816" alt="官方 Elastic NV LBO 办公题：修改成本假设，核对 717.44M、26,068.66M 与 18.25%，三项全过才成功" loading="lazy" decoding="async"></picture></a><figcaption>本文根据官方 task apex-2299b89dcaf64a4da4f3d03f8aac7215 与 _apex_grader 整理。手机图将相同规则排成纵向四步；未重跑办公环境，不冒充模型评分日志。</figcaption></figure>
 
 <h2 id="最终得分与开发失误">4. Experiments：最终得分与开发失误</h2>
 
 <p><strong>GPT-5.6 Sol 把最后提交的 Overall 从 CodeAct 的 29.7 提到 46.3，Claude Opus 4.8 得 45.8；两者仍低于人工组合 harness 的 47.5。</strong>提升主要来自 Search。Office 的起点已经是 38.4，多数模型只增加 0–3.3 分；General 的最好结果 59.4 则超过人工组合的 56.3。每个 evolver 只运行一次，榜单没有搜索方差。</p>
 
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-table-2.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-table-2.webp" width="1985" height="780" alt="Table 2 原表：九个开发模型、CodeAct 和人工组合 harness 在三个领域、Overall 与 AnytimeVal 上的完整成绩" loading="lazy" decoding="async"></a><figcaption>Table 2 原表。Overall 为领域 2:2:1 加权；AnytimeVal 是开发集的历轮最好分平均，不能和最终隐藏测试分混读。表中的绿色和红色数字是相对 CodeAct 的绝对分差。 <a href="https://arxiv.org/pdf/2608.09096v2#page=7">Huang et al., v2，PDF 第 7 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
+
+<details><summary>展开主表的可复制文字版</summary>
 <div class="table-wrap"><table><thead><tr><th>开发模型</th><th>Search</th><th>Office</th><th>General</th><th>Overall</th><th>AnytimeVal</th></tr></thead><tbody><tr><td>CodeAct 起点</td><td>11.7</td><td>38.4</td><td>48.4</td><td>29.7</td><td>不适用</td></tr><tr><td>人工领域组合</td><td>46.7</td><td>43.9</td><td>56.3</td><td>47.5</td><td>不适用</td></tr><tr><td>GPT-5.6 Sol</td><td>44.5</td><td>41.6</td><td>59.4</td><td>46.3</td><td>50.1</td></tr><tr><td>Claude Opus 4.8</td><td>46.5</td><td>39.7</td><td>56.3</td><td>45.8</td><td>51.4</td></tr><tr><td>GLM-5.2</td><td>45.4</td><td>39.2</td><td>48.4</td><td>43.5</td><td>51.0</td></tr><tr><td>Qwen3.7-Max</td><td>36.3</td><td>37.8</td><td>59.4</td><td>41.5</td><td>49.3</td></tr><tr><td>MiniMax M3</td><td>33.6</td><td>41.7</td><td>56.3</td><td>41.4</td><td>49.0</td></tr><tr><td>Qwen3.6-27B</td><td>34.8</td><td>38.8</td><td>50.0</td><td>39.4</td><td>46.9</td></tr><tr><td>DeepSeek V4 Pro</td><td>34.4</td><td>39.1</td><td>48.4</td><td>39.1</td><td>45.4</td></tr><tr><td>Kimi K2.7 Code</td><td>34.5</td><td>38.1</td><td>48.4</td><td>38.7</td><td>43.4</td></tr><tr><td>Gemma 4 31B</td><td>24.2</td><td>40.4</td><td>50.0</td><td>35.9</td><td>36.2</td></tr></tbody></table></div>
+</details>
 
 <p>人工组合分别使用 MiroFlow、Stirrup 与 Claw-Eval 原系统，并非单一通用程序。GPT-5.6 Sol 的 Figure 6 轨迹也主要增加按领域分流：Search 加网页工具和清理器；Office 将 APEX 的证据核算与 GDPval 的产物创建、重新打开、渲染检查分开。它曾添加严格文件完成检查，却使缺文件任务从 10 增到 13，随后回退。这里有具体工程改进，也有失败尝试，不应只概括成“模型发现了通用推理结构”。</p>
 
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-figure-6.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-figure-6.webp" width="915" height="845" alt="Figure 6 原图：GPT-5.6 Sol 实际开发过程中的领域路由、工具构造、失败回滚及冻结版本" loading="lazy" decoding="async"></a><figcaption>Figure 6 原图。它展示一位开发模型的具体修改轨迹，不代表其他模型也学到了相同架构；严格文件检查使缺文件数增多，随后被回退。 <a href="https://arxiv.org/pdf/2608.09096v2#page=9">Huang et al., v2，PDF 第 9 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
+
 <div class="case"><h3>好版本怎样丢失：Appendix D 的实际运行</h3><p><strong>Qwen3.6-27B</strong> 在第 10 次评测达到 49.7；随后把上下文与 verifier 修改混在一次提交里，第 15 次 verifier 崩溃，<strong>159/160 道题异常，分数掉到 0.3</strong>。修复后第 18 次回到 45.4，但它没有恢复第 10 次版本，剩余两次额度也没有使用。这里的 verifier 是候选 harness 自己增加的检查代码，不是固定评分程序。</p><p>DeepSeek-V4-Pro 第 3 次达到 46.5，后期只频繁改提示词、过滤条件与结束规则，最后两次还评测相同代码；最终第 15 次为 42.6。Kimi-K2.7-Code 则恢复到与第 13 次完全相同的代码，保住了 45.9，但后续局部修改没再带来收益。MiniMax M3 试图隐藏绕过内容扫描的行为；作者审计后把受影响任务置零，主表报告的是修正成绩，不是整次实验都记零。</p><p>这些是实际开发版本记录。它们证明系统异常、版本选择和预算管理会影响开发分；不能据此认定同样差距必然会出现在最终隐藏题上。</p></div>
+
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-figure-11.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-figure-11.webp" width="1980" height="1505" alt="Figure 11 原图：Qwen、DeepSeek 和 Kimi 各轮开发分，标出最佳、最终冻结及崩溃版本" loading="lazy" decoding="async"></a><figcaption>Figure 11 原图。Qwen 在 I15 崩溃后未恢复 I10；DeepSeek 冻结 I15 而非 I3；Kimi 在 I20 后恢复与 I13 字节相同的代码。 <a href="https://arxiv.org/pdf/2608.09096v2#page=21">Huang et al., v2，PDF 第 21 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
+
+<details><summary>展开 Table 6：轮数、开发步骤与最佳版本的完整对照</summary>
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-table-6.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-table-6.webp" width="2030" height="305" alt="Table 6 原表：Qwen、DeepSeek 和 Kimi 的正式评测轮数、开发步骤、原始运行记录读取次数及最佳到冻结版本" loading="lazy" decoding="async"></a><figcaption>Table 6 原表。Qwen 和 DeepSeek 都在额度未用完时冻结较差版本；Kimi 用完 20 次评测并恢复了最佳快照。 <a href="https://arxiv.org/pdf/2608.09096v2#page=21">Huang et al., v2，PDF 第 21 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
+</details>
 
 <p>成本也不在同一量级：GPT-5.6 Sol 的单次开发超过 500 美元，GLM 与 Qwen 低于约 40 美元。论文只计算开发模型的主调用、历史压缩和子 Agent 调用的 token 价格，不包括固定执行模型与评分模型的成本，所以这不是整个实验的总成本。</p>
 
 <p>Table 3 的换 policy 实验，是在 Qwen3.6-35B-A3B 或 GLM-5.2 下<strong>重新进行演化</strong>，不是直接搬运一份 DeepSeek 程序。前者的 Overall 起点 13.9，经两种 evolver 提到 27.9/29.2；后者起点 38.0，提到 42.7/48.4。然而 Qwen3.7-Max 在 GLM policy 下，General 从 73.4 降到 46.9。它支持“多个执行模型下仍能优化整体分”，不支持“同一程序可无损迁移”或“每个领域都提高”。</p>
 
-<figure class="figure wide"><a href="/lib/papers/evo-bench/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/body-results.svg" width="1050" height="640" alt="Evo-Bench 搜索、办公与通用工具分按 2、2、1 加权的计算" loading="lazy" decoding="async"></a><figcaption>根据 Table 2 数据与 metrics.py 重绘。GPT-5.6 Sol 的 (2×44.5+2×41.6+59.4)/5=46.32，四舍五入为 46.3；不是三个领域等权平均。</figcaption></figure>
+<details><summary>展开 Table 3：更换执行模型后重新演化的完整结果</summary>
+<figure class="figure original"><a href="/lib/papers/evo-bench/source-table-3.webp" target="_blank" rel="noopener"><img src="/lib/papers/evo-bench/source-table-3.webp" width="1005" height="730" alt="Table 3 原表：更换执行模型后重新演化的三组分领域与总体分数" loading="lazy" decoding="async"></a><figcaption>Table 3 原表。表中每组都以该 policy 的 CodeAct 起点重新演化，并非把同一份已冻结代码直接搬到其他模型。 <a href="https://arxiv.org/pdf/2608.09096v2#page=11">Huang et al., v2，PDF 第 11 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁去页边留白，保留原英文标签和数值。</figcaption></figure>
+</details>
 
 <h2 id="下一步应控制什么">5. Discussion：下一步应控制什么</h2>
 
@@ -129,6 +156,12 @@ tags:
 <h2 id="结论与复现边界">6. Conclusion：结论与复现边界</h2>
 
 <p><strong>Evo-Bench 的主要贡献是把长时间开发中的具体失误变成可观察证据。</strong>固定执行模型与保存版本，比只公布一个最终分更适合研究自动实验。最强模型最终仍低于人工组合 harness，且每个开发模型仅一次主运行，不能把小分差当成稳定排名。它对搜索任务最有效；办公提高较小，也提醒我们加工具并不自动解决复杂产物检查。</p>
+
+<details><summary>其余 10 项原论文图表：按 PDF 页码直达</summary>
+<p>正文选用 Figures 1、2、3、6、11 与 Tables 2、3、6；其余原图表仍可在 v2 PDF 中完整查看。</p>
+<p>主文：<a href="https://arxiv.org/pdf/2608.09096v2#page=9">Figure 4 · 各开发模型预算使用</a>、<a href="https://arxiv.org/pdf/2608.09096v2#page=9">Figure 5 · 开发费用与最终分</a>、<a href="https://arxiv.org/pdf/2608.09096v2#page=11">Figure 7 · 预算消融</a>；<a href="https://arxiv.org/pdf/2608.09096v2#page=5">Table 1 · 题目筛选统计</a>。</p>
+<p>附录：<a href="https://arxiv.org/pdf/2608.09096v2#page=17">Figure 8 · 最小 CodeAct 执行循环</a>、<a href="https://arxiv.org/pdf/2608.09096v2#page=17">Figure 9 · 任务难度与敏感度</a>、<a href="https://arxiv.org/pdf/2608.09096v2#page=18">Figure 10 · 辅助题分布</a>；<a href="https://arxiv.org/pdf/2608.09096v2#page=16">Table 4 · 开发 harness 组件</a>、<a href="https://arxiv.org/pdf/2608.09096v2#page=19">Table 5 · 模型配置</a>、<a href="https://arxiv.org/pdf/2608.09096v2#page=24">Table 7 · 判分接口</a>。</p>
+</details>
 
 <p class="source-note">主要来源：arXiv v2，Table 1、Table 2、Appendix A、C、D；官方固定仓库的 <code>benchmark/suites/evobench_validation.json</code>、<code>evobench/evaluation/scorer.py</code> 与 <code>metrics.py</code>。最早日期仍取 v1。APEX 失败例与主表加权平均为本文规则推导和复算，不是新模型运行。</p>
 
