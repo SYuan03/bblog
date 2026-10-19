@@ -2,7 +2,7 @@
 title: "[2026-08-03] Harness-R1: Learning to Edit Executable Runtime Harnesses from Agent Failure Trajectories"
 permalink: "/posts/论文解读/harness-r1.html"
 date: "2026-10-08T00:02:00+08:00"
-updated: "2026-10-14T12:00:00+08:00"
+updated: "2026-10-20T01:21:00+08:00"
 cover: "/lib/papers/harness-r1/cover.svg"
 description: "Harness-R1 训练一个 9B 模型读取失败记录、修改 Agent 的运行程序，再用实际重跑的成绩变化奖励补丁。重点是四个可修改位置、训练奖励与最终成功率的区别，以及补丁对未见任务是否仍有效。"
 wide_content: true
@@ -56,10 +56,12 @@ tags:
 <p><strong>论文训练模型完成“读失败记录、改运行代码、重跑验证”这件事。</strong>直接请一个强模型写补丁，有时能修好，也会把原来能完成的题改坏；固定规则又很难处理新出现的失败。Harness-R1 用单独的 Qwen3.5-9B 学习：当前失败是否可以靠外部代码修正，以及应在动作发出前还是环境反馈后介入。</p>
 <p>例如购物模型已经找对商品，却漏选颜色就点击购买。再次让模型思考整道题未必比在购买前检查“必需选项是否选好”更有效。反过来，把所有动作都按一个粗糙的任务阶段重写，也会破坏原本正确的决策。论文要训练工程师学会何时干预、干预到什么程度；补丁是否可执行只是最低要求，真正的训练信号来自安装后的任务结果。</p>
 
+<figure class="figure wide"><a href="/lib/papers/harness-r1/source-figure-1.svg" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/source-figure-1.svg" width="912" height="507" alt="论文 Figure 1：Self-Refine、四个固定强模型编辑器与 Harness-R1 在三个环境的奖励变化；红色菱形表示等权平均" loading="lazy" decoding="async"></a><figcaption>Shuai Shao 等，论文 Figure 1 原图（<a href="https://arxiv.org/pdf/2608.02276v1">PDF v1，第 2 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）。纵轴是环境奖励变化，不能与下文 Table 1 的完整任务成功率混用。</figcaption></figure>
+
 <h2 id="2-相关工作：搜索补丁、诊断补丁与训练工程师">2. Related Work：搜索补丁、诊断补丁与训练工程师</h2>
 
 <p><strong>它训练专门的补丁模型，用安装补丁后真实重跑的环境奖励差更新模型。</strong>Self-Harness 用同一个冻结模型提出并筛选自己的修改；HarnessFix 先把失败步骤对应到代码，再限定修复范围；直接监督微调（SFT）任务模型则更新做题模型本身。Harness-R1 保持做题模型不变，只训练另一个模型编辑四个预留调用位置。</p><p>所以主结果衡量的是“工程师修改运行程序后，冻结的任务模型提高多少”。任务模型先经过 SFT 后，另行训练的工程师还能继续提高分数，说明任务模型训练与外部程序修补可以叠加。WebShop 的训练奖励是连续匹配分，不能把它等同于最终完整任务成功率。</p>
-<div class="table-scroll"><table><thead><tr><th>相邻方法</th><th>谁提出修改</th><th>反馈实际更新什么</th><th>与本文的差别</th></tr></thead><tbody><tr><td>Meta-Harness / AHE</td><td>固定的 coding agent</td><td>候选程序、选择结果与历史记录</td><td>不靠补丁收益更新提出者的模型权重</td></tr><tr><td>Self-Harness / HarnessFix</td><td>固定模型提出或诊断局部修复</td><td>通过测试筛选、接受补丁</td><td>学到的产物主要是运行程序，编辑策略本身没有在线训练</td></tr><tr><td>HarnessX</td><td>符号化修改与组合组件</td><td>跨 harness 的 GRPO 更新做任务的模型</td><td>训练对象不同</td></tr><tr><td>Harness-R1</td><td>独立 9B engineer</td><td>同批任务重跑的奖励差更新 engineer</td><td>但编辑空间是四类预留 hooks，不是任意代码库维护</td></tr></tbody></table></div>
+<div class="table-scroll"><table><thead><tr><th>相邻方法</th><th>谁提出修改</th><th>反馈实际更新什么</th><th>与本文的差别</th></tr></thead><tbody><tr><td>Meta-Harness / AHE</td><td>固定的 coding agent</td><td>候选程序、选择结果与历史记录</td><td>不靠补丁收益更新提出者的模型权重</td></tr><tr><td>Self-Harness / HarnessFix</td><td>固定模型提出或诊断局部修复</td><td>通过测试筛选、接受补丁</td><td>学到的产物主要是运行程序，编辑策略本身没有在线训练</td></tr><tr><td>HarnessX</td><td>符号化修改与组合组件</td><td>用 GRPO（组内相对策略优化）更新做任务的模型</td><td>训练对象不同</td></tr><tr><td>Harness-R1</td><td>独立 9B engineer</td><td>同批任务重跑的奖励差更新 engineer</td><td>但编辑空间是四类预留 hooks，不是任意代码库维护</td></tr></tbody></table></div>
 
 <h2 id="3-方法：一包失败记录怎样变成一次训练更新">3. Method：一包失败记录怎样变成一次训练更新</h2>
 
@@ -82,13 +84,13 @@ tags:
 
 <p>这个奖励直接针对产生 failure packet 的同一 batch 优化，论文称为 <strong>transductive objective</strong>：模型可以利用这一批已发生的失败，训练目标没有单独要求另一批题也提高，也没有惩罚额外推理成本。</p>
 
-<figure class="figure wide"><a href="/lib/papers/harness-r1/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/body-method.svg" width="1050" height="1022" alt="Harness-R1 失败包、八个候选补丁、同批重跑及模型更新流程" loading="lazy" decoding="async"></a><figcaption>根据 Figure 2 与 Algorithm 1 重绘。工程师只写补丁；冻结的任务模型在完整批次重跑，环境奖励差用于更新工程师。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harness-r1/source-figure-2.png" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/source-figure-2.png" width="1015" height="485" alt="论文 Figure 2：失败轨迹交给可训练的 9B 工程师，补丁装入冻结任务 Agent 的四个运行位置，重跑后仅更新工程师" loading="lazy" decoding="async"></a><figcaption>Shuai Shao 等，论文 Figure 2 原图（<a href="https://arxiv.org/pdf/2608.02276v1">PDF v1，第 3 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）；去除原图空白边。图底的“Task Success (0/1)”是示意，WebShop 训练奖励实际使用连续分。</figcaption></figure>
 
 <h2 id="4-实验：购物案例、评分分母与未见任务迁移">4. Experiments：购物案例、评分分母与未见任务迁移</h2>
 
 <p><strong>训练奖励与主榜成功率不是同一个指标。</strong>主榜分别在 WebShop 500 题、ALFWorld 500 题、DBBench 300 题上算任务成功率，再对三项成功率等权平均；不是把 1,300 题混成一个平均值。WebShop 另外报告连续 Score。以原系统为例，<code>(31.2+40.6+61.0)/3≈44.3%</code>（Table 1）。Reflection 行允许两次尝试，其他行是单次成功率，不能直接按同预算排名。</p>
 
-<figure class="figure wide"><a href="/lib/papers/harness-r1/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/body-case.svg" width="1050" height="781" alt="WebShop batch 008：漏选 black brown 被拦截，单题奖励与批次奖励不同" loading="lazy" decoding="async"></a><figcaption>根据 Appendix H.1 与 Table H.1 重绘。单题 0.667→1.0；十题连续奖励均值 0.682→0.768，所以训练奖励为 0.086，不能换成成功率差 0.3。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harness-r1/source-table-h1.png" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/source-table-h1.png" width="1908" height="428" alt="论文 Table H.1：三个十题批次的成功数，WebShop 2 到 5、ALFWorld 1 到 6、DBBench 4 到 6" loading="lazy" decoding="async"></a><figcaption>Shuai Shao 等，论文 Table H.1 原表（<a href="https://arxiv.org/pdf/2608.02276v1">PDF v1，第 21 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）；仅裁切。这里列的是十题批次的完整成功数，下文另算 WebShop 的连续奖励差。</figcaption></figure>
 
 <div class="case"><h3>真实 WebShop 案例：先选颜色，再允许购买</h3><ol><li><strong>初始任务：</strong>购买价格低于 40 美元的 synthetic hairpiece（人造发片），颜色必须选择页面上的 <code>black brown</code>（黑棕色）选项。</li><li><strong>原始轨迹：</strong>target agent 找到合适商品，却没有选择颜色就执行 <code>Buy Now</code>（立即购买）；环境只给 0.667 的部分奖励。</li><li><strong>补丁：</strong>harness engineer 在 <code>on_before_action</code> 安装前述 guard。只要价格超预算，或任务要求的商品选项尚未选择，它就拦截购买动作。</li><li><strong>重跑：</strong>target agent 再次尝试提前购买，guard 返回提示；Agent 随后选择 black brown，再购买。</li><li><strong>结果：</strong>同一道题从 0.667 变成 1.0；同一十题批次的完整成功数从 2/10 增至 5/10，原先已成功的两题没有退化。</li></ol></div>
 
@@ -113,14 +115,15 @@ tags:
 
 <h3 id="主结果与稀疏失败迁移：用的是两种平均方式">4.1 主结果与稀疏失败迁移：用的是两种平均方式</h3>
 
-<p><strong>在三个训练环境上，vanilla Qwen3.5-9B 从 44.3% 提到 53.6%，增加 9.3 个百分点；target 先 SFT 后再修 harness，则从 59.2% 到 64.2%。</strong>监督训练工程师为 46.4%，最强一次性编辑器 GLM-5.2 为 48.8%。但 target 先 SFT 后，WebShop 连续 Score 从 71.5 降到 68.7，说明“平均成功率提高”不等于所有指标都提高。</p>
+<p><strong>在三个训练环境上，未经任务微调的 Qwen3.5-9B 从 44.3% 提到 53.6%，增加 9.3 个百分点；target 先 SFT 后再修 harness，则从 59.2% 到 64.2%。</strong>监督训练工程师为 46.4%，最强一次性编辑器 GLM-5.2 为 48.8%。但 target 先 SFT 后，WebShop 连续 Score 从 71.5 降到 68.7，说明“平均成功率提高”不等于所有指标都提高。</p>
+<figure class="figure wide"><a href="/lib/papers/harness-r1/source-table-1.png" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/source-table-1.png" width="1908" height="912" alt="论文 Table 1 原表：WebShop、ALFWorld、DBBench 各方法的分项成功率和三环境等权平均，另列 WebShop 连续 Score" loading="lazy" decoding="async"></a><figcaption>Shuai Shao 等，论文 Table 1 原表（<a href="https://arxiv.org/pdf/2608.02276v1">PDF v1，第 7 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）；仅裁切。Avg. 对三个环境的成功率等权平均；Reflection 是两次尝试，其余是一次。手机端可放大横向阅读。</figcaption></figure>
 <p>20 个未参与训练的 target 配置各提供自己的失败记录，工程师重新生成补丁，不是迁移一个固定补丁。各模型的三环境平均增益都为正，平均提升 7.06 个百分点；包含训练 target 的 21×3 个配对中有 56 个改善、4 个不变、3 个下降。</p>
 <p>未见任务实验采用另一种平均：每个环境只给相同的 10 条失败，生成一份环境专用补丁，评测其余 <code>490+490+290=1270</code> 题，按<strong>题数合并</strong>计算增益，不再三环境等权。三个证据种子的成功数分别为 <code>550→656</code>、<code>550→685</code>、<code>549→648</code>，所以 <code>(106+135+99)/3/1270×100≈8.92</code> 个百分点；±1.50 是三个种子增益的样本标准差，不是逐题标准误。</p>
 <p>公开 seed 20260720 中，ALFWorld 修好 102 条失败、改坏 59 条旧成功，净增加 43/490。这个结果支持平均迁移收益，不能说补丁保住了每一条旧能力。相同协议的 Qwen3.5-397B 与 DeepSeek-V4-Pro 平均变化分别为 −4.3±2.5、−0.4±3.6 个百分点。</p>
+<figure class="figure wide"><a href="/lib/papers/harness-r1/source-figure-4a.svg" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/source-figure-4a.svg" width="936" height="416" alt="论文 Figure 4a：只看未用于提案的 1270 道题，Harness-R1 平均增加 8.9 个百分点，两个强模型编辑器平均为负" loading="lazy" decoding="async"></a><figcaption>Shuai Shao 等，论文 Figure 4(a) 原图（<a href="https://arxiv.org/pdf/2608.02276v1">PDF v1，第 8 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）。横轴是 1,270 道未见题按题数合并的成功率变化；误差线是三个证据种子的样本标准差。</figcaption></figure>
 
 <p>固定补丁、分别关闭某个调用位置的消融中，移除动作前检查的平均成功率下降 3.9 个百分点，移除环境反馈后的状态记录与恢复提示下降 3.3 个百分点；不同环境的下降幅度并不一致，不能把它们相加成固定的组件排名。</p>
-
-<figure class="figure wide"><a href="/lib/papers/harness-r1/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/body-results.svg" width="1050" height="762" alt="Harness-R1 主结果、跨模型迁移和稀疏失败任务结果的不同分母" loading="lazy" decoding="async"></a><figcaption>根据 Table 1、Figure 4 与 Appendix E 重绘。主结果是三个环境的成功率等权平均；更换任务模型时重新生成补丁，不是把同一个固定补丁直接迁移。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harness-r1/source-figure-4b.svg" target="_blank" rel="noopener"><img src="/lib/papers/harness-r1/source-figure-4b.svg" width="965" height="624" alt="论文 Figure 4b：保留同一补丁依次关闭四个运行位置，动作前检查和反馈后恢复两项下降最多" loading="lazy" decoding="async"></a><figcaption>Shuai Shao 等，论文 Figure 4(b) 原图（<a href="https://arxiv.org/pdf/2608.02276v1">PDF v1，第 8 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）。这一图是固定补丁的三环境等权平均，与左图的 1,270 题合并平均分母不同；横轴从 44% 起，需看数值而非只看柱长。</figcaption></figure>
 
 <h2 id="5-后续问题：补丁能否保住未见任务和运行成本">5. Discussion：补丁能否保住未见任务和运行成本</h2>
 
@@ -130,6 +133,6 @@ tags:
 
 <p><strong>Harness-R1 把可执行补丁的实际后果变成工程师模型的训练信号。</strong>证据表明专门化工程师比通用模型一次性编辑更稳定；但同批奖励仍可能鼓励局部修补，尚不能证明它学会了普遍的软件维护能力。</p><div class="limit-grid"><div><b>可复用设计</b><span>无效、无改动补丁归零；任务模型冻结，奖励来自真实重跑。</span></div><div><b>主要限制</b><span>训练主要针对提供失败记录的同一批任务。</span></div><div><b>可靠结果</b><span>未见任务增益报告了三组证据种子的标准差。</span></div><div><b>适合读者</b><span>研究运行程序修补与模型、程序共同改进的读者。</span></div></div>
 
-<p class="source-note">主要来源：论文全文与附录、arXiv v1 元数据；代码或项目页于 2026-10-08 核验。固定来源状态：94f2e087f573e1b82fc9568bb634d4ae9a887e28。</p>
+<p class="source-note">主要来源：arXiv:2608.02276v1 全文与附录；2026-10-20 复读 22 页并核对原图、表格。官方代码固定版本：94f2e087f573e1b82fc9568bb634d4ae9a887e28。原图裁切范围见站内来源说明。</p>
 
 </div>
