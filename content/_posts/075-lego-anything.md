@@ -2,7 +2,7 @@
 title: "[2026-09-28] LEGO-Anything: Coding Agents for 3D Scene Reconstruction"
 permalink: "/posts/论文解读/lego-anything.html"
 date: "2026-10-08T13:10:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-19T16:55:00+08:00"
 cover: "/lib/papers/lego-anything/cover.svg"
 description: "给一张图片，让模型写 Blender 代码搭出整间房间或室外场景，再检查隐藏几何与重新渲染后的画面。LEGO-Anything 区分了文件能用、场景恢复正确，以及后续修改是否真的变好。"
 wide_content: true
@@ -85,6 +85,8 @@ LEGO-Anything 把任务写成：给定图片 <i>I</i> 和 Blender 环境 <i>E</i
 
 <div class="formula">P = π(I; E),　S = Exec<sub>E</sub>(P)</div>
 
+<figure class="figure original"><a href="/lib/papers/lego-anything/source-figure-1.webp" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/source-figure-1.webp" width="1419" height="636" alt="Figure 1 原图：单张悉尼歌剧院参考图、Blender 可执行场景及检测、分割、深度读出；下方展示 Agent 编码循环与三类评测。" loading="lazy" decoding="async"></a><figcaption>Figure 1 原图。单张参考图到可执行场景，以及同一场景的下游读出；它是任务示意，不代表论文已证明真实照片的定量重建质量。<a href="https://arxiv.org/pdf/2609.36380v1#page=2">Li et al., v1, PDF 第 2 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+
 Agent 会多轮构造场景。在第 <i>t</i> 步，它修改程序 <i>P</i><sub>t</sub>，执行后得到场景 <i>S</i><sub>t</sub> 和观察 <i>o</i><sub>t</sub>，再根据渲染与代码状态继续修改。最终提交是整条轨迹的最后一个程序，最后一步并不保证是最好的一步。
 
 <ul class="steps">
@@ -121,7 +123,7 @@ LEGO-Anything 没有提出新的三维预测网络。它让通用 Agent 写代�
 
 **作者从专业资产组装 104 个场景，再把真实几何、深度和实例 mask 留给隐藏评测器。**
 
-<figure class="figure wide"><a href="/lib/papers/lego-anything/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/body-method.svg" width="1050" height="913" alt="LEGO-Bench 从许可资产、模拟场景和人工检查构建输入图与隐藏几何真值" loading="lazy" decoding="async"></a><figcaption>根据 Figure 3、Table 2 与 Appendix D 重绘。作者用模拟器生成输入图及对应的几何、深度和对象 mask，并把后者留给评测器；人工检查负责构图与拍摄质量。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/lego-anything/source-figure-3.webp" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/source-figure-3.webp" width="1053" height="474" alt="Figure 3 原图：Fab 资产经过数据挖掘、场景提议、模拟器装配、物理检查与人工复核，返工后才进入基准。" loading="lazy" decoding="async"></a><figcaption>Figure 3 原图。Fab 资产经模拟器装配、程序检查与人工复核；流程中的重新制作和返工不能省略。隐藏几何与对象标注来自模拟器。<a href="https://arxiv.org/pdf/2609.36380v1#page=5">Li et al., v1, PDF 第 5 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
 
 <h3 id="从资产到-208-张输入图">3.1 从资产到 208 张输入图</h3>
 
@@ -149,6 +151,8 @@ LEGO-Anything 没有提出新的三维预测网络。它让通用 Agent 写代�
 
 <h3 id="四个分数怎样计算？">3.3 四个分数怎样计算？</h3>
 
+<figure class="figure original"><a href="/lib/papers/lego-anything/source-figure-18.webp" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/source-figure-18.webp" width="1422" height="729" alt="Figure 18 原图：Validity 检查交付文件；Reconstruction 用隐藏深度和对象 mask 比较可见表面；Appearance 用评测器重新渲染结果比较参考图。" loading="lazy" decoding="async"></a><figcaption>Figure 18 原图。Validity、可见表面 Reconstruction 与评测器重新渲染的 Appearance 各自检查什么；底部是总分公式。图中点云只是协议示意，不能代替未公开的 evaluator 实现。<a href="https://arxiv.org/pdf/2609.36380v1#page=26">Li et al., v1, PDF 第 26 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+
 Validity <i>V</i><sub>i</sub> 检查三个产物是否可用：<code>scene.blend</code> 必须可重新打开、至少包含一个 mesh 和当前渲染相机（active camera）；<code>scene.glb</code> 必须格式正确且非空；<code>final.png</code> 必须可解码且不是退化图像。主评测失败且未解决时，主表也记 <i>V</i><sub>i</sub>=0。超时并不会自动失败，只要它留下了合法产物；正常退出也不会自动通过。
 
 <p>Reconstruction <i>R</i><sub>i</sub> 只比较参考视角可见的对象表面。评测器用隐藏深度反投影出参考表面点，用候选场景的当前相机生成候选表面点，再按隐藏 instance mask 分给各对象。它不把候选额外平移、旋转或缩放到真值上，也不根据 Agent 的对象名做匹配。对参考点 <i>g</i>，容差是 τ(<i>g</i>)=0.05<i>z</i>(<i>g</i>)，其中 <i>z</i>(<i>g</i>) 是沿参考相机前向轴的深度。</p>
@@ -173,9 +177,13 @@ Appearance <i>A</i><sub>i</sub> 不使用 Agent 自己的 <code>final.png</code>
 
 <h3 id="分数与人的判断是否一致？">3.4 分数与人的判断是否一致？</h3>
 
+<p>作者让 6 人各判断 40 组场景对，每组观察 4 个局部区域。人和指标的 83.7% 是<strong>允许平局的兼容率</strong>，不表示指标在 83.7% 的场景上判对了唯一答案。</p>
+
+<details><summary>展开人工标注数量与平局规则</summary>
 Appendix E.5 另做了人工校准：6 位标注者各判断 40 组场景对，其中 20 组比较几何、20 组比较外观；每组标出 4 个对象或局部区域。总计是 <strong>240 次“标注者 × 场景对”记录、960 个局部判断，不是 960 个场景</strong>。几何题要求忽略颜色和灯光，比较形状、大小、姿态、位置与缺失表面；外观题只比较圈出的区域。
 
 论文报告的人工一致率 86.6% 是 <strong>compatibility agreement（允许平局的一致）</strong>：A 与 B 的直接冲突算不一致，Tie 与 A、Tie 与 B 都算兼容。它不是三分类标签完全相同的比例。人工票数相等时记为 Both OK；指标分差小于 0.05 时也记为 Both OK。在这一规则下，人和指标的兼容率为 83.7%，不能写成“指标判对了 83.7%”。后面的模型自评实验用另一套严格方向匹配规则，二者不能直接比较。
+</details>
 
 <h3 id="一个公开的实际运行结果">3.5 一个公开的实际运行结果</h3>
 
@@ -198,6 +206,12 @@ assert abs(overall - 0.558570875484059) < 1e-12
 <h2 id="主结果、复杂度与后期退化">4. Experiments：主结果、复杂度与后期退化</h2>
 
 **Agent 几乎都能生成合法文件，真正拉开差距的是几何和外观；室外、复杂场景与后期修改会进一步放大问题。**
+
+<figure class="figure original"><a href="/lib/papers/lego-anything/source-table-3.webp" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/source-table-3.webp" width="1419" height="621" alt="Table 3 原表：六个通用编码 Agent 及六个专用系统在室内、室外分区的 Validity、Reconstruction、Appearance、Overall 均值和标准差。" loading="lazy" decoding="async"></a><figcaption>Table 3 原表。六个通用编码 Agent 与专用系统的室内、室外结果，单位为百分比；括号内是三次运行的标准差。表较密，可点“图片详情”后选“清晰”并横向滚动。<a href="https://arxiv.org/pdf/2609.36380v1#page=6">Li et al., v1, PDF 第 6 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+
+<p>最强的 GPT-6-astra 室内 Overall 为 53.4±0.8，室外为 39.6±0.8。Gen3DSR 的室内 Reconstruction 为 65.4，高于 Astra 的 52.4，但主表 Appearance 为 0。文件有效性接近饱和也没有消除几何与外观的差距。</p>
+
+<details><summary>展开可复制的主表数值和基线说明</summary>
 
 <div class="table-scroll">
 <table>
@@ -226,13 +240,17 @@ assert abs(overall - 0.558570875484059) < 1e-12
 
 Gen3DSR 的室内 Reconstruction 达到 65.4，高于 Astra 的 52.4，但主表把 Appearance 记为 0；不能说 Astra 在几何上也超过全部专用系统。VIGA 禁用了外部资产生成；3D-RE-GEN 的 PLY 几何经过固定相机、公开相机内参与固定区域灯光转换成 Blender 场景。<strong>这里统一的是评分终点，不是工具、可见信息或推理预算</strong>，因此不能把整张表当作只替换模型的受控比较。
 
-<figure class="figure wide"><a href="/lib/papers/lego-anything/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/body-results.svg" width="1050" height="1029" alt="LEGO-Bench 六个模型的文件有效性、几何、外观与总分" loading="lazy" decoding="async"></a><figcaption>根据 Table 3 重绘，单位为百分比。文件有效性接近饱和，几何与外观仍有大差距；正文另列专用系统，不能只据这张图判断全部基线。</figcaption></figure>
+</details>
 
 复杂度分析把六个 GPT 配置合并：三个难度等级的 Validity 都约为 99.5%，Overall 从 Easy 24.6 降至 Medium 21.3、Hard 20.5。室外 Reconstruction 从 18.4 降至 12.7。增加对象没有阻止 Agent 交付文件，却让布局、遮挡和几何更难恢复。
 
-在固定的 42 道 Office 任务上，作者把模型的推理强度设置（reasoning effort）从 Low 提到 XHigh。GPT-6-astra 的 Overall 从 32.3 升至 61.8，Sol 从 21.3 升至 39.7，Luna 从 14.4 升至 21.2；GPT-5.6 没有稳定的单调提升。六个模型、四档强度、42 题共 1,008 个结果，每个组合只运行一次。基础设施失败后的重试保持配置不变，不是多跑后挑最好结果。图中的 95% bootstrap 区间通过重抽任务 10,000 次得到，衡量任务抽样的不确定性，不是同一任务重复运行的方差。
+另一组固定 42 道 Office 任务的实验中，把推理强度从 Low 提到 XHigh，使 GPT-6-astra 的 Overall 从 32.3 升到 61.8，Sol 从 21.3 升到 39.7，Luna 从 14.4 升到 21.2；GPT-5.6 没有稳定的单调提升。每个“模型 × 强度 × 任务”组合只运行一次。
+
+<details><summary>展开推理强度实验的重试、区间与配置差别</summary>
+六个模型、四档强度、42 题共 1,008 个结果。基础设施失败后的重试保持配置不变，不是多跑后挑最好结果。图中的 95% bootstrap 区间通过重抽任务 10,000 次得到，衡量任务抽样的不确定性，不是同一任务重复运行的方差。
 
 这是一组单独实验：Sol 与 Luna 的 High 结果重新生成，提示词不含主表额外的相机引导，不能直接复用主表。Luna 有 13 次非零退出，但留下合法产物，经重新评分后保留；共享机器的并发与磁盘负载又影响用时，因此墙钟时间不能直接当成受控的推理成本。
+</details>
 
 <h3 id="轨迹中的退化">4.1 轨迹中的退化</h3>
 
@@ -240,10 +258,13 @@ Gen3DSR 的室内 Reconstruction 达到 65.4，高于 Astra 的 52.4，但主表
 
 GPT-5.6-sol 有 29.6% 的更新令分数下降，最终结果比最佳中间状态低 3.2 个百分点。附录 Figure 12 给出同一个 House bedroom 案例：GPT-6-astra 在 step 2 的最佳 Q=(R+A)/2 为 33.90%，step 4 的最后结果跌到 4.35%；GPT-5.6-terra 则从 step 4 的 36.93% 跌到 step 19 的 2.10%。另外两条轨迹分别是 Sol 23.53→20.42、Luna 2.45→2.43。<strong>这个案例从四个模型共有任务中，按平均“最好到最后”的损失最大挑出，是严重失败展示，不是随机典型样本。</strong>图中能看到变暗或视角变化，但没有具体代码 diff，不能据此锁定是哪一步修改造成退化。
 
-<figure class="figure wide"><a href="/lib/papers/lego-anything/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/body-case.svg" width="1050" height="728" alt="LEGO-Anything House bedroom 的最佳中间版本与最后版本退化" loading="lazy" decoding="async"></a><figcaption>根据 Figure 12 与 Appendix B.2 重绘。步骤和得分来自原文；这是按退化严重程度选择的案例，未公开造成变化的代码 diff。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/lego-anything/source-figure-12.webp" target="_blank" rel="noopener"><img src="/lib/papers/lego-anything/source-figure-12.webp" width="1419" height="957" alt="Figure 12 原图：同一 House bedroom 任务中四个模型各自最佳中间版本和最后版本的渲染对照与 Q 分数。" loading="lazy" decoding="async"></a><figcaption>Figure 12 原图。同一个 House bedroom 任务的最佳与最终版本，Q=(R+A)/2；作者特意选了平均退化最严重的共有案例，不是随机样本。图像显示结果变化，未提供造成变化的代码 diff。<a href="https://arxiv.org/pdf/2609.36380v1#page=21">Li et al., v1, PDF 第 21 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
 
 <h3 id="Agent-能不能自己选出更好的版本？">4.2 Agent 能不能自己选出更好的版本？</h3>
 
+<p>作者拿 360 对中间版本让六个模型分别判断哪一个更好。原生成模型对几何改善方向的判断与指标一致率为 45.8%，其他模型为 45.4%；外观分别为 62.2% 和 63.9%。<strong>这组比较没有显示模型自评几何有稳定优势。</strong></p>
+
+<details><summary>展开版本配对、评审可见信息与计分规则</summary>
 每个生成模型从第 2、3 次主实验运行中，选 60 条不同、产物有效的轨迹，每条取一对中间版本。步数间隔 1–2、3–5、至少 6 的各选 20 对，并平衡环境、难度与运行编号；筛选不按分数差或模型偏好挑案例。总计 360 对，每对由六个模型评审，共 2,160 次主要判断；一次回答同时比较几何和外观，不是 4,320 次调用。
 
 评审模型只看参考图与两张候选渲染图，看不到生成模型身份、执行对话、隐藏深度、mask 或真实分数。检查程序要求判断与真实指标的方向<strong>严格一致</strong>，分差在 10⁻⁶ 内才算平局；回答“两个都不好”或调用最终失败都算错，60 对始终留在每个单元格的分母。另有 36 对交换左右顺序交给六个评审，增加 216 次审计；几何判断的交换顺序一致率为 69.4–100%，外观只有 61.1–83.3%。
@@ -251,6 +272,7 @@ GPT-5.6-sol 有 29.6% 的更新令分数下降，最终结果比最佳中间状�
 原生成模型评审自己作品叫 self-judgment，其他模型来评审叫 cross-model judgment。几何改善方向的一致率分别为 45.8% 和 45.4%；外观分别为 62.2% 和 63.9%。这是针对这些重建版本的指标方向判断，不是所有空间推理任务的能力测量；由于存在平局，也不宜把 50% 当成精确的随机基线。
 
 还有一处版本差异值得保留：公开的 <code>appendix_verified_evidence.json</code> 中，评审记录仍是 <strong>4 个生成模型、240 对、960 次判断</strong>；它不对应 v1 正文的六模型完整实验。本文六模型数字取自论文 Appendix F.3/Table 8，不把较早的 JSON 说成完整复现证据。
+</details>
 
 <h2 id="过程修正与场景下游用途">5. Discussion：过程修正与场景下游用途</h2>
 
@@ -291,9 +313,13 @@ LEGO-World 让 GPT-6-astra 在自然图片上重建场景，再固定场景，�
 
 <h3 id="可动部件：单独的探索实验">5.3 可动部件：单独的探索实验</h3>
 
+<p>抽屉和门的可执行运动结构（Articulation）不计入主表 Overall。作者补齐参考标注后，同一个固定 Office 场景的 14 个可评可动对象仍得 0；当前场景重建结果尚不能可靠恢复这些运动机制。</p>
+
+<details><summary>展开关节标注过程与辅助评分</summary>
 这里的 Articulation 指抽屉、门等部件的可执行运动结构，<strong>不计入主表 Overall</strong>。作者先用 P3-SAM 与 X-Part 提出部件和关节候选，程序检查结构与运动，再由人看完整对象、运动渲染及回到静止姿态的证据。15 轮审查后，443 个规范资产分成 368 个静态、75 个可动资产；历史清单的 597 条记录合并了重复版本，不能再当作 597 个不同资产。
 
 同一个固定 Office 场景的初步输出原来只有 2 个可评对象、12 个缺参考；补齐标注后，14 个可动对象都能评分，另加 12 个静态对照，结果仍为零。初步实验按命中的运动学条件计分；正式辅助协议则合并部件结构 F1、表面质量和关节 F1 的调和平均。两套分数公式不同，这组试验没有证明模型能恢复可靠的运动机制。
+</details>
 
 <h2 id="结论与仍待验证的边界">6. Conclusion：结论与仍待验证的边界</h2>
 
@@ -313,6 +339,15 @@ LEGO-World 让 GPT-6-astra 在自然图片上重建场景，再固定场景，�
 下一步可以分别控制初始化、几何证据和版本回退，报告最好中间版本到最终版本损失多少分、相机误差、逐对象 F1 与成本。同时加入真实照片和多解标注，区分“与模拟器真值不同”和“视觉上不成立”。LEGO-World 也应在同一批图片上同时评测检测、分割和深度，避免三个各有 100 图的任务被误读为同一组场景支持三项任务。
 
 现阶段最可靠的能力是有效场景交付，最薄弱的仍是几何、相机和外观忠实度；后期修改和自评尤其需要独立证据约束。
+
+<details><summary>其余 25 项原论文图表：工作流、消融、附录协议与完整场景</summary>
+<p>正文选用了最能解释任务、构造、评分、结果和失败案例的五项原图表。其他图表保留在原论文中，以下按 PDF 页码直达；其中部分数据和结论已在正文或图解中重排。</p>
+<p>工作流与实验：<a href="https://arxiv.org/pdf/2609.36380v1#page=4">Figure 2 · Agent 工作流</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=7">Figure 4 · 推理强度</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=8">Figure 5 · 时间曲线</a>、<a href="https://arxiv.org/pdf/2609.36380v1#page=8">Figure 6 · 自评矩阵</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=9">Figure 7 · 插件流程</a>、<a href="https://arxiv.org/pdf/2609.36380v1#page=9">Figure 8 · 插件增益</a>、<a href="https://arxiv.org/pdf/2609.36380v1#page=9">Figure 9 · 两个场景对照</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=19">Figure 10 · 成本代理</a>、<a href="https://arxiv.org/pdf/2609.36380v1#page=20">Figure 11 · 共有任务轨迹</a>。</p>
+<p>场景与评测细节：<a href="https://arxiv.org/pdf/2609.36380v1#page=22">Figure 13 · 六模型场景拼图</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=23">Figure 14 · 输入图</a>、<a href="https://arxiv.org/pdf/2609.36380v1#page=23">Figure 15 · 对象数量</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=24">Figure 16 · 对象尺寸</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=25">Figure 17 · 关节标注</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=27">Figure 19 · 指标敏感度</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=28">Figure 20 · 人工评分界面</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=29">Figure 21 · 默认提示词</a>。</p>
+<p>表格：<a href="https://arxiv.org/pdf/2609.36380v1#page=3">Table 1 · 相邻基准</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=5">Table 2 · 数据统计</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=7">Table 4 · 场景复杂度</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=10">Table 5 · 下游读出</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=20">Table 6 · Bird’s-Eye</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=24">Table 7 · 关节真值覆盖</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=30">Table 8 · 自评完整矩阵</a>；<a href="https://arxiv.org/pdf/2609.36380v1#page=32">Table 9 · 自然图片覆盖</a>。</p>
+</details>
+
+<p class="source-note">证据范围：arXiv:2609.36380v1 全 33 页正文和附录、Figure 1–21 与 Table 1–9；五张本地原图保留原英文标签、完整数值与图注，只裁切 PDF 页边留白。项目网站可复核公开结果文件与算术，研究仓库和 evaluator 源码仍不可获得。</p>
 
 <div class="paper-sources">
 <strong>主要来源</strong>

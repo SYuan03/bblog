@@ -6,6 +6,44 @@
   <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2">
   <style>
     .split{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center}.split.equal{grid-template-columns:1fr 1fr}.tight h2{font-size:42px;margin-top:20px}.tight .lead{font-size:21px}.tight .card{padding:17px 19px}.tight .card p,.tight .card li{font-size:17px}.tight .table{font-size:15px}.tight .table th,.tight .table td{padding:8px 10px}.scene{position:relative;height:450px;border:1px solid var(--line);background:#fff;overflow:hidden}.room-floor{position:absolute;left:80px;right:60px;bottom:48px;height:205px;border:2px solid #aeb8bc;transform:skewY(-8deg);background:#eef1ef}.obj{position:absolute;border:3px solid var(--blue);background:rgba(46,112,152,.13)}.obj.a{left:170px;bottom:145px;width:180px;height:100px}.obj.b{right:145px;bottom:112px;width:125px;height:155px;border-color:var(--orange);background:rgba(186,103,55,.13)}.obj.c{left:390px;bottom:90px;width:150px;height:72px;border-color:var(--green);background:rgba(49,126,106,.13)}.camera{position:absolute;left:42px;top:42px;color:var(--red);font:700 18px monospace}.ray{position:absolute;left:90px;top:84px;width:520px;border-top:2px dashed var(--red);transform:rotate(13deg);transform-origin:left}.codepane{padding:24px;background:#1d252b;color:#e9eef0;font:18px/1.55 monospace}.loop{display:grid;grid-template-columns:repeat(5,1fr);gap:34px;align-items:center}.loop .step{min-height:180px}.pill{display:inline-block;padding:5px 9px;border:1px solid var(--line);background:#fff;color:var(--text);font:700 15px monospace}.boundary{display:grid;grid-template-columns:1fr 120px 1fr;gap:18px;align-items:stretch}.wall{display:flex;align-items:center;justify-content:center;background:#25323a;color:#fff;font:700 18px/1.4 monospace;writing-mode:vertical-rl;letter-spacing:.08em}.metric-flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}.metric-flow .card{min-height:230px}.dots{display:grid;grid-template-columns:1fr 1fr;gap:22px}.cloud{position:relative;height:250px;border:1px solid var(--line);background:#fff}.pt{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--blue)}.pt.ref{background:var(--orange)}.legend{display:flex;gap:18px;color:var(--muted);font-size:15px}.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:50%}.matrix{display:grid;grid-template-columns:160px repeat(6,1fr);border:1px solid var(--line);background:#fff}.matrix div{padding:10px 7px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font:15px/1.2 monospace;text-align:center}.matrix .hd{background:#e9edef;font-weight:700}.matrix .low{background:#f4ded9;color:#8b3834}.matrix .mid{background:#f5ead8}.matrix .high{background:#dcece7;color:#236957}.tx{display:grid;grid-template-columns:repeat(4,1fr);gap:30px}.tx .step{min-height:230px}.world{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:center}.readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.readouts .card{min-height:160px}.note{font-size:15px;color:var(--muted);line-height:1.45}.barrow{grid-template-columns:220px 1fr 90px}.mini{font-size:16px;color:var(--muted);line-height:1.5}
+    .result-summary{display:grid;grid-template-columns:.85fr 1.15fr;gap:26px;align-items:stretch}.result-summary .metric{display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line);padding:28px 32px}.result-summary .metric strong{font-size:72px}.result-summary .metric span{font-size:25px}.result-detail{display:grid;grid-template-rows:1fr 1fr auto;gap:18px}.result-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}.result-pair .metric strong{font-size:58px}.result-note{padding:20px 24px;border-left:6px solid var(--orange);font-size:23px;line-height:1.45;background:#fff}.trajectory-view{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;align-items:stretch}.trajectory-stats{display:grid;gap:18px}.trajectory-stats .metric{display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}.trajectory-stats .metric strong{font-size:61px}.trajectory-stats .metric span{font-size:23px}.trajectory-view .codepane{padding:34px;font-size:29px;line-height:1.62}.trajectory-note{margin-top:20px;padding:18px 22px;border-left:6px solid var(--red);font-size:23px;line-height:1.45}
+    @media (max-width:600px){
+      .viewport{inset:0 0 54px;overflow:auto;overscroll-behavior:contain;background:#fff}
+      .stage{position:relative!important;left:0!important;top:0!important;width:100%!important;height:auto!important;min-height:100%;transform:none!important;overflow:visible;box-shadow:none}
+      .slide{position:relative;inset:auto;min-height:calc(100dvh - 54px);padding:18px 16px 26px}
+      .slide.active{display:flex}
+      .meta{gap:8px;padding-bottom:8px;font-size:10px;letter-spacing:0}
+      h1,h2,.tight h2{margin:17px 0 11px;font-size:23px;line-height:1.25}
+      h1{font-size:27px}
+      .lead,.tight .lead{margin-bottom:18px;font-size:15px;line-height:1.5}
+      .content{display:block;flex:1;min-width:0}
+      .grid,.flow,.loop,.split,.split.equal,.boundary,.tx,.world,.readouts{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+      .step,.tx .step,.loop .step{min-height:0;padding:12px 14px}
+      .step:not(:last-child)::after{display:none}
+      .step b{margin-bottom:4px;font-size:12px}
+      .step strong{margin:5px 0;font-size:17px}
+      .step p,.card p,.card li,.tight .card p,.tight .card li{font-size:15px;line-height:1.5}
+      .card,.tight .card{padding:13px 15px}.card h3{margin-bottom:6px;font-size:17px}
+      .metric{padding:13px}.metric strong{font-size:31px}.metric span{margin-top:5px;font-size:14px}
+      .result-summary,.result-pair,.trajectory-view,.trajectory-stats{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;gap:10px}.result-summary .metric,.trajectory-stats .metric{padding:13px}.result-summary .metric strong,.result-pair .metric strong,.trajectory-stats .metric strong{font-size:31px}.result-summary .metric span,.trajectory-stats .metric span{font-size:14px}.result-detail{grid-template-rows:auto;gap:10px}.result-note,.trajectory-note{padding:11px 13px;font-size:15px}.trajectory-view .codepane{display:block;font-size:14px;line-height:1.5}
+      .wall{min-height:34px;writing-mode:horizontal-tb;font-size:13px}
+      .scene{height:225px}.room-floor{left:20px;right:20px;bottom:25px;height:108px}
+      .obj.a{left:23%;bottom:68px;width:25%;height:55px}.obj.b{right:14%;bottom:58px;width:22%;height:82px}.obj.c{left:43%;bottom:41px;width:24%;height:37px}
+      .camera{left:17px;top:20px;font-size:13px}.ray{left:20px;top:47px;width:210px}
+      .codepane{padding:14px;font-size:14px;line-height:1.5;overflow-x:auto}
+      .barrow{grid-template-columns:minmax(0,1fr) auto;gap:7px;margin:10px 0;font-size:14px}
+      .barrow .track{grid-column:1/-1;grid-row:2;height:17px}
+      .formula{padding:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere;text-align:left}
+      .table-wrap{overflow-x:auto;overscroll-behavior-x:contain}.table,.tight .table{min-width:680px;font-size:14px}.table th,.table td,.tight .table th,.tight .table td{padding:7px 9px}.table th:first-child,.table td:first-child{white-space:nowrap}
+      .callout{padding:11px 13px;margin-top:10px}.callout p{font-size:15px}
+      .note,.mini{font-size:13px;line-height:1.5}
+      .foot{gap:10px;margin-top:18px;padding-top:8px;font-size:11px}
+      .nav{left:0;right:0;bottom:0;justify-content:center;gap:5px;padding:6px 3px}
+      .nav button,.nav a{min-width:40px;height:38px;line-height:36px}
+      .overview.open{padding:66px 12px 20px;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .overview-close{top:12px;right:12px}
+      .thumb .slide{position:absolute;min-height:900px;padding:54px 70px 52px}
+    }
   </style>
 </head>
 <body>
@@ -33,7 +71,7 @@
   <section class="slide tight">
     <div class="meta"><span>04 · BOUNDARY</span><span>neighboring tasks</span></div>
     <h2>任务的独特组合：单图输入、完整场景、可执行程序、隐藏 3D 真值</h2>
-    <div class="content"><table class="table"><thead><tr><th>方向</th><th>典型输出</th><th>本文额外要求</th></tr></thead><tbody><tr><td>单对象 Image-to-3D</td><td>单对象网格或资产</td><td>恢复房间、相机、多对象布局与外观</td></tr><tr><td>单图三维恢复</td><td>固定三维数据</td><td>交付可执行、可编辑 Blender 程序</td></tr><tr><td>VIGA / SEIG</td><td>视觉或 Blender 程序</td><td>用完整场景和隐藏的模拟器真值定量评测</td></tr><tr><td>3DCodeBench / P3D-Bench</td><td>支持图像的对象或部件代码</td><td>从单张参考图恢复完整场景，而非局部对象</td></tr><tr><td>WorldCoder-Bench</td><td>文本到交互三维世界</td><td>对参考图几何与外观的忠实度</td></tr></tbody></table></div>
+    <div class="content"><div class="table-wrap"><table class="table"><thead><tr><th>方向</th><th>典型输出</th><th>本文额外要求</th></tr></thead><tbody><tr><td>单对象 Image-to-3D</td><td>单对象网格或资产</td><td>恢复房间、相机、多对象布局与外观</td></tr><tr><td>单图三维恢复</td><td>固定三维数据</td><td>交付可执行、可编辑 Blender 程序</td></tr><tr><td>VIGA / SEIG</td><td>视觉或 Blender 程序</td><td>用完整场景和隐藏的模拟器真值定量评测</td></tr><tr><td>3DCodeBench / P3D-Bench</td><td>支持图像的对象或部件代码</td><td>从单张参考图恢复完整场景，而非局部对象</td></tr><tr><td>WorldCoder-Bench</td><td>文本到交互三维世界</td><td>对参考图几何与外观的忠实度</td></tr></tbody></table></div><p class="note" style="margin-top:12px">手机端可左右滑动表格，查看完整比较。</p></div>
     <div class="foot"><span>论文 Table 1、Sections 2 与 Appendix A</span><span>4 / 20</span></div>
   </section>
 
@@ -87,8 +125,15 @@
   <section class="slide tight">
     <div class="meta"><span>12 · MAIN RESULT</span><span>mean ± std over three runs</span></div>
     <h2>产物有效性接近饱和，几何与外观才拉开模型差距</h2>
-    <div class="content"><table class="table"><thead><tr><th>模型 + Codex</th><th>Indoor V</th><th>Indoor R</th><th>Indoor A</th><th>Indoor S</th><th>Outdoor V</th><th>Outdoor R</th><th>Outdoor A</th><th>Outdoor S</th></tr></thead><tbody><tr><td class="ours">GPT-6-astra</td><td>100.0</td><td>52.4</td><td>54.4</td><td class="ours">53.4</td><td>98.0</td><td>34.0</td><td>45.5</td><td class="ours">39.6</td></tr><tr><td>GPT-6-sol</td><td>99.4</td><td>22.2</td><td>42.5</td><td>32.3</td><td>99.7</td><td>19.8</td><td>28.7</td><td>24.2</td></tr><tr><td>GPT-6-luna</td><td>99.7</td><td>15.8</td><td>30.5</td><td>23.2</td><td>99.7</td><td>13.2</td><td>21.4</td><td>17.3</td></tr><tr><td>GPT-5.6-sol</td><td>97.8</td><td>9.8</td><td>19.8</td><td>14.8</td><td>98.7</td><td>12.8</td><td>17.7</td><td>15.3</td></tr><tr><td>GPT-5.6-terra</td><td>99.7</td><td>9.5</td><td>21.3</td><td>15.4</td><td>98.0</td><td>8.1</td><td>15.0</td><td>11.5</td></tr><tr><td>GPT-5.6-luna</td><td>99.1</td><td>10.2</td><td>18.0</td><td>14.1</td><td>97.0</td><td>7.8</td><td>16.6</td><td>12.1</td></tr></tbody></table><p class="note" style="margin-top:14px">数值为百分比；标准差见原论文 Table 3。所有模型的室外几何分（Reconstruction）都低于室内。</p></div>
-    <div class="foot"><span>Table 3；Gen3DSR 室内 R=65.4，高于 Astra，但 A=0；正文另列全部专用系统</span><span>12 / 20</span></div>
+    <div class="content result-summary">
+      <div class="metric"><strong>97–100%</strong><span>六个 GPT 配置在室内、室外的 Validity 范围；能交付文件，不等于场景正确。</span></div>
+      <div class="result-detail">
+        <div class="result-pair"><div class="metric"><strong>53.4</strong><span>GPT-6-astra · 室内 Overall；几何 R=52.4</span></div><div class="metric"><strong>39.6</strong><span>GPT-6-astra · 室外 Overall；几何 R=34.0</span></div></div>
+        <div class="result-pair"><div class="metric"><strong>65.4</strong><span>Gen3DSR · 室内几何 R，高于 Astra</span></div><div class="metric"><strong>0</strong><span>Gen3DSR · 室内 Appearance；主表原值</span></div></div>
+        <div class="result-note">这里比较的是完整系统。专用基线的工具与推理预算并未统一；完整均值和标准差见正文 Table 3 原表。</div>
+      </div>
+    </div>
+    <div class="foot"><span>论文 Table 3；分数单位均为百分比，三次运行的标准差见原表</span><span>12 / 20</span></div>
   </section>
 
   <section class="slide tight">
@@ -101,8 +146,14 @@
   <section class="slide tight">
     <div class="meta"><span>14 · TRAJECTORY</span><span>best checkpoint ≠ final checkpoint</span></div>
     <h2>最严重的共有案例：最好中间版本明显优于最后版本</h2>
-    <div class="content split"><div><div class="grid g2"><div class="metric"><strong>29.6%</strong><span>GPT-5.6-sol 的修改降低 Q</span></div><div class="metric"><strong>−3.2 pp</strong><span>最后版本低于最好中间版本（pp 为百分点）</span></div></div><div class="callout red" style="margin-top:22px"><p>Q=(R+A)/2。根据 Figure 12 的 House bedroom 案例重绘；具体代码 diff 与中间修改动作未公开。</p></div></div><div class="codepane">GPT-6-astra<br>  step 02  <span style="color:#72c9a7">最佳 Q = 33.90%</span><br>  step 04  <span style="color:#ef8e82">最终 Q = 4.35%</span><br><br>GPT-5.6-terra<br>  step 04  <span style="color:#72c9a7">最佳 Q = 36.93%</span><br>  step 19  <span style="color:#ef8e82">最终 Q = 2.10%</span></div></div>
-    <div class="foot"><span>Figure 5 / B.2；House bedroom 按四模型平均损失最大挑选，不是随机典型样本</span><span>14 / 20</span></div>
+    <div class="content">
+      <div class="trajectory-view">
+        <div class="trajectory-stats"><div class="metric"><strong>29.6%</strong><span>GPT-5.6-sol 的修改降低场景得分 Q</span></div><div class="metric"><strong>−3.2 pp</strong><span>该模型的最终版平均低于最好中间版；pp 为百分点</span></div></div>
+        <div class="codepane">GPT-6-astra<br>step 02 · <span style="color:#72c9a7">最佳 Q=33.90%</span><br>step 04 · <span style="color:#ef8e82">最终 Q=4.35%</span><br><br>GPT-5.6-terra<br>step 04 · <span style="color:#72c9a7">最佳 Q=36.93%</span><br>step 19 · <span style="color:#ef8e82">最终 Q=2.10%</span></div>
+      </div>
+      <div class="trajectory-note">Q=(R+A)/2。Figure 12 的 House bedroom 是四模型平均退化最大的共有案例；具体代码 diff 未公开。</div>
+    </div>
+    <div class="foot"><span>论文 Figure 12、Appendix B.2；严重失败展示，不是随机典型样本</span><span>14 / 20</span></div>
   </section>
 
   <section class="slide tight">
@@ -150,4 +201,5 @@
 <div class="overview" aria-label="页面总览"></div>
 <nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/lego-anything.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
 <script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script>
+<script>new MutationObserver(() => { document.querySelector('.viewport').scrollTop = 0; }).observe(document.querySelector('.counter'), { childList: true, characterData: true, subtree: true });</script>
 </body></html>
