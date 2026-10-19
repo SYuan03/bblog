@@ -2,7 +2,7 @@
 title: "[2026-09-18] RecreationWorld: Scalable and Verifiable Environments for Hybrid Computer-Use Agents"
 permalink: "/posts/论文解读/recreationworld.html"
 date: "2026-10-02T22:30:00+08:00"
-updated: "2026-10-14T16:00:00+08:00"
+updated: "2026-10-20T06:34:00+08:00"
 cover: "/generated-covers/060-recreationworld.webp"
 description: "Agent 一边操作原软件弄清行为，一边写代码复刻，再运行自己的版本检查差异。本文用 Logbert 固定日志案例说明任务与隐藏测试的来源、两种评分通道、五平台结果和训练迁移。"
 wide_content: true
@@ -30,6 +30,7 @@ html:not([data-theme="dark"]) body:has(.rw-reading){--paper:#fff;--paper-elevate
 .rw-reading .figure{width:100%;margin:27px 0}.rw-reading .figure img{display:block;width:auto;max-width:100%;max-height:820px;height:auto;margin-inline:auto;border:1px solid var(--line-local);background:#fff}.rw-reading .figure.wide img{width:100%;max-width:100%;margin-inline:auto;transform:none}.rw-reading .figure figcaption{max-width:760px;margin:8px auto 0;color:var(--soft);font-size:.82rem;line-height:1.55;text-align:left}.rw-reading .figure.source img{border:0}.rw-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.rw-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.rw-reading .note p{margin:.34em 0}.rw-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .88rem/1.7 var(--mono);overflow-x:auto}.rw-reading .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--line-local);list-style:none}.rw-reading .steps li{min-height:144px;padding:13px;background:var(--surface)}.rw-reading .steps b{display:block;margin-bottom:7px;color:var(--blue);font:750 .72rem/1.3 var(--sans)}.rw-reading .steps span{display:block;color:var(--soft);font-size:.76rem;line-height:1.5}.rw-reading .case{margin:25px 0;padding:20px;border-block:1px solid var(--line-local);background:color-mix(in srgb,var(--green) 4%,#fff)}.rw-reading .case h4{margin:0 0 8px;font-size:1.12rem}.rw-reading .case ol{padding-left:1.2rem}.rw-reading .case li{margin:.58rem 0}.rw-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.rw-reading .limit-grid>div{padding:17px;background:#fff}.rw-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.rw-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.article-shell-deck .article-header{width:100%;max-width:100%;min-width:0}.article-shell-deck .article-header h1{max-width:100%;font-size:clamp(1.75rem,7.5vw,2.25rem);overflow-wrap:anywhere;text-wrap:pretty}.article-shell-deck .article-deck,.article-shell-deck .article-deck>p,.rw-reading,.rw-reading .source-links{min-width:0}.article-shell-deck .article-deck>p,.rw-reading .source-links a{overflow-wrap:anywhere}.rw-reading .deck-wrap{max-width:100%;overflow:hidden}.rw-reading .metrics{grid-template-columns:1fr 1fr}.rw-reading .metric:nth-child(2){border-right:0}.rw-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.rw-reading .steps{grid-template-columns:1fr 1fr}.rw-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.rw-reading .figure.wide img{max-width:100%;margin-left:auto;transform:none}}
 @media(max-width:460px){.rw-reading .steps,.rw-reading .limit-grid{grid-template-columns:1fr}.rw-reading .part0,.rw-reading .case{padding:17px 15px}.rw-reading .deck-head,.rw-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.rw-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,1020px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -46,7 +47,7 @@ html:not([data-theme="dark"]) body:has(.rw-reading){--paper:#fff;--paper-elevate
   <div class="deck-head"><strong>15 页交互图解 · 任务、构造、隐藏评测、Logbert case、结果与局限</strong><a href="/lib/decks/recreationworld-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/recreationworld-visual-guide.html" title="RecreationWorld 论文图解，共 15 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>每页可上下滚动；使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
   </div>
 </section>
 
@@ -103,6 +104,7 @@ Figure 3 记录了两项中位数：每条 rollout 有 **282.5 次顶层工具�
 
 **它把五平台的任务、混合工具、基于原软件的检查，以及训练轨迹生产放在一起。** 每条相邻路线都覆盖其中一部分；区别应看具体输入与评分，不应只看“首次”之类标签。
 
+<details><summary>展开相邻工作：六条路线的输入与评测对象</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>Agent 接触什么</th><th>主要交付或评测</th><th>与 RecreationWorld 的关键差别</th></tr></thead>
@@ -116,6 +118,7 @@ Figure 3 记录了两项中位数：每条 rollout 有 **282.5 次顶层工具�
   </tbody>
 </table>
 </div>
+</details>
 
 相邻工作已经做过部分相同的事。APPFORGE、RealDevWorld、GUI-GENESIS 等已经覆盖根据原应用生成新应用或功能+视觉评测。RecreationWorld 更有说服力的贡献是：**同一套任务与交付规则横跨 Ubuntu、macOS、Windows、Android 与 Web，并且把 benchmark 和训练轨迹生产连接起来。**
 
@@ -125,9 +128,11 @@ Figure 3 记录了两项中位数：每条 rollout 有 **282.5 次顶层工具�
 
 RecreationBench 每个平台 50 个任务。三个桌面平台的发布清单记录上游仓库和版本；Android 选择未声明联网权限、核心状态保存在本机的应用；Web 包含 44 个合成站点与 6 个公开网站。作者按功能领域、界面框架、语言、规模和可测性筛选，排除构建不稳定、启动后被更新对话框挡住或依赖在线服务的应用。公开仓库提供 250 个任务清单、五平台执行程序、统一结果格式和评测代码；完整冻结任务包通过项目链接在 Hugging Face / ModelScope 分发。
 
+这些原软件来自不同项目，保留各自的上游许可；<a href="https://arxiv.org/pdf/2609.22000v2#page=27">Appendix A.2 的 Table 7</a>逐平台列出许可分布。benchmark 公开不意味着其中所有软件都按同一许可证开放。
+
 <figure class="figure wide">
-  <a href="/lib/papers/recreationworld/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/recreationworld/body-method.svg" width="1000" height="950" alt="RecreationBench 的 Agent 可见输入、可启动提交和隐藏检查边界"></a>
-  <figcaption>根据论文 Sections 2.1、4.1、4.2、4.5 与 Appendix C.6 重绘。Agent 拿到运行中的原软件和完整开发环境；隐藏测试与参考结果不给 Agent。</figcaption>
+  <a href="/lib/papers/recreationworld/body-method.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/recreationworld/body-method-mobile.svg" width="360" height="454"><img src="/lib/papers/recreationworld/body-method.svg" width="900" height="334" alt="RecreationBench 中 Agent 可见的原软件和开发工具、交付物与隐藏评测的边界"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2609.22000v2#page=3">论文 Sections 2.1、4.1、4.2、4.5 与 Appendix C.6</a>重绘。Agent 可操作原软件并自查交付物；测试和参考结果在提交后独立评测。</figcaption>
 </figure>
 
 <h3 id="Benchmark-构造和提交评测是两条流程">3.1 Benchmark 构造和提交评测是两条流程</h3>
@@ -153,8 +158,8 @@ Web 还做两类筛选。作者先在多种模型的重建版本上运行检查�
 **这条检查要验证日志统计，不只是看到一个饼图。** 作者提供十条日志，负责回放测试的执行程序（runner）打开它并进入 Statistic 页面，再检查精确百分比与对应图形。
 
 <figure class="figure wide">
-  <a href="/lib/papers/recreationworld/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/recreationworld/body-case.svg" width="1000" height="1110" alt="Logbert 固定日志、界面动作、精确百分比检查和视觉检查的实际顺序"></a>
-  <figcaption>根据论文 Figure 8、Appendix C.5 与公开测试清单重绘。浅色 FAIL 分支是根据公开断言推演的说明，不是某个模型的真实日志。</figcaption>
+  <a href="/lib/papers/recreationworld/body-case.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/recreationworld/body-case-mobile.svg" width="360" height="536"><img src="/lib/papers/recreationworld/body-case.svg" width="900" height="370" alt="Logbert 固定十条日志经界面操作后接受程序与视觉两条检查，旧值残留会让程序检查失败"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2609.22000v2#page=10">论文 Figure 8 与 Appendix C.5</a>、公开任务清单重绘。图中多出旧值 17% 的 FAIL 分支是按断言推演，不是某个模型的真实日志。</figcaption>
 </figure>
 
 <div class="case">
@@ -171,6 +176,7 @@ Web 还做两类筛选。作者先在多种模型的重建版本上运行检查�
 
 下面是根据 Figure 8 与 Appendix C.5 测试摘录改写的 Python 3 说明代码，运行时只需要标准库。它示范精确文字检查，不是完整隐藏 test bundle，也没有执行 GUI 或视觉评分。
 
+<details><summary>展开示例代码：三个百分比与旧值检查</summary>
 <div class="code-scroll"><pre><code>def check_statistic_labels(labels):
     observed = sorted(v.strip() for v in labels if v and v.strip())
     assert observed == ["20%", "30%", "50%"]
@@ -179,6 +185,7 @@ Web 还做两类筛选。作者先在多种模型的重建版本上运行检查�
 &#35; PASS: ["50%", "30%", "20%"]
 &#35; FAIL: ["50%", "30%", "20%", "17%"]  &#35; stale UI state remains
 </code></pre></div>
+</details>
 
 <h3 id="不同平台的分数怎样汇总">3.3 不同平台的分数怎样汇总</h3>
 
@@ -194,6 +201,7 @@ Web 还做两类筛选。作者先在多种模型的重建版本上运行检查�
 
 公开仓库的 `src/recreation_bench/result.py` 是读取统一结果的 schema，不是重新计算平台总分的第二套评分器。它保留 Android 的应用平均与 Web 的原生加权结果，不用原始计数覆盖这些分数。`task_score=None` 表示没有得到评分，实际零分仍是 `0.0`。原始计数访问器 `EvalCounts.rate` 会优先读 `passed/total`，但它不能证明全榜都按断言简单平均。
 
+<details><summary>展开公开结果 schema 的代码摘录</summary>
 <div class="code-scroll"><pre><code>&#35; Adapted from src/recreation_bench/result.py in the official MIT repository
 @property
 def graded(self) -&gt; bool:
@@ -204,14 +212,15 @@ def prog_pass_rate(self):
         return self.eval_prog / self.eval_prog_n
     return self.programmatic.rate if self.programmatic else None
 </code></pre></div>
+</details>
 
 <h2 id="实验结果：复刻程度、工具成本与训练迁移">4. Experiments：复刻程度、工具成本与训练迁移</h2>
 
 **平均部分检查做得不错，不等于整个应用复刻完成。** 工具配置的成本实验和轨迹训练实验分别支持继续探索，但需要保留它们各自的控制边界。
 
 <figure class="figure wide">
-  <a href="/lib/papers/recreationworld/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/recreationworld/body-results.svg" width="1000" height="825" alt="RecreationBench 三个领先模型的 Prog、VLM、overall 与严格完成率"></a>
-  <figcaption>根据论文 Table 3 重绘。GPT-6 Astra 的 overall 为 58.06，但 Prog=100% 的 task 只占 2.8%；这两个数字回答的是不同问题。</figcaption>
+  <a href="/lib/papers/recreationworld/body-results.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/recreationworld/body-results-mobile.svg" width="360" height="412"><img src="/lib/papers/recreationworld/body-results.svg" width="900" height="326" alt="RecreationBench 三个领先模型的 Prog、VLM、Overall 分数和 Astra 的严格程序检查通过率"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2609.22000v2#page=11">论文 Table 3</a>重绘。GPT-6 Astra 的 Overall 为 58.06，但 Prog=100% 的任务仅占 2.8%；两者的分母和含义不同。</figcaption>
 </figure>
 
 十个模型中，GPT-6 Astra 以 Prog 58.19、VLM 57.92、overall 58.06 排第一；Claude Opus 5 是 45.99 / 42.34 / 44.16；GPT-5.6 Sol 是 40.63 / 43.49 / 42.06。Astra 与 Sol 使用 Codex 0.145.0，其他模型使用 Claude Code；各模型的上下文与输出上限并不相同，最长执行时间都是 20 小时，每个任务只运行一次。这是完整 Agent 配置的比较，不能把分差全算在模型权重上。2.8% 仅要求 Prog 满分，没有同时要求 VLM 满分。
@@ -222,6 +231,7 @@ def prog_pass_rate(self):
 
 主榜使用 **direct MCP**：每次点击、按键或观察都作为单独工具调用返回模型。Windows 配对实验则让 Claude Opus 4.8 在保持变量的 Node.js 执行环境中，用 JavaScript SDK 批量操作工具、写循环，只返回有用观察。前者与后者的区别是工具怎么组织执行，模型权重没有重新训练。下表的 token 是模型处理的文本单位，输入与输出分别计数。
 
+<details><summary>展开 Windows 配对实验的分数、调用量与成本</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>比较项</th><th>Direct MCP</th><th>Programmable SDK</th><th>变化</th></tr></thead>
@@ -237,6 +247,7 @@ def prog_pass_rate(self):
   </tbody>
 </table>
 </div>
+</details>
 
 效率统计只覆盖两种配置都没有终端错误、用量记录完整的 39 对；质量分覆盖全部 50 个 Windows 应用中评分有效的配对任务。每个任务/配置只执行一次，而且 driver 版本、给模型的操作说明、交互式运行环境、SDK、上下文返回方式一起变化，所以证据只支持“这一整套配置观察到更低开销”，不能把全部差值归因于持续保留变量的运行环境。成本使用公开 API 单价估算，假定 90% 的输入按缓存读取收费，不是账单，也不包含工具运行与基础设施开销。
 
