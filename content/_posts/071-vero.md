@@ -2,7 +2,7 @@
 title: "[2026-02-25] VeRO: A Harness for Agents to Optimize Agents"
 permalink: "/posts/论文解读/vero.html"
 date: "2026-10-08T00:05:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-19T23:30:00+08:00"
 cover: "/lib/papers/vero/cover.svg"
 description: "VeRO 管理 Agent 自动改进 Agent 时的代码版本、评测额度、可见文件和运行记录。本文解释一次修改怎样被评测，并用 Terminal-Bench 的逐题结果说明：消除程序异常，未必让任务成功率提高。"
 wide_content: true
@@ -27,6 +27,7 @@ tags:
 <div class="source-links">
   <a href="https://arxiv.org/abs/2602.22480">论文主页</a>
   <a href="https://arxiv.org/pdf/2602.22480v4">论文 PDF（v4）</a>
+  <a href="https://proceedings.mlr.press/v306/ursekar26a.html">ICML / PMLR 正式发表版</a>
   <a href="https://github.com/scaleapi/vero/tree/paper-v1">论文时期代码（paper-v1）</a>
 </div>
 
@@ -74,7 +75,7 @@ tags:
 
 <h3>任务、分区和版本选择</h3>
 
-<p>作者固定目标模型为 GPT-4.1 mini，沿用五个来源 benchmark 的判分函数，而不是重新人工给所有回答打分。各任务分区如下；破折号表示没有该分区，不能当成零题得分。</p>
+<p>作者固定目标模型为 GPT-4.1 mini，沿用五个来源 benchmark 的判分函数，而不是重新人工给所有回答打分。GAIA 测可用工具解决的综合问答，GPQA Diamond 测高难度科学选择题，MATH 测数学解题；τ-Bench Retail 模拟零售客服任务，SimpleQA 测事实问答。各任务分区如下；破折号表示没有该分区，不能当成零题得分。</p>
 
 <div class="table-wrap"><table><thead><tr><th>任务</th><th>train / validation / test</th><th>构造与报告边界</th></tr></thead><tbody><tr><td>GAIA</td><td>50 / 87 / —</td><td>从可用训练题中过滤成 137 道纯文本题，再取 50 道优化；87 道 validation 同时用于选最佳版本与报分</td></tr><tr><td>GPQA Diamond</td><td>98 / — / 100</td><td>198 题固定拆分；没有 validation，按 train 分数选择代码，再评 test</td></tr><tr><td>MATH</td><td>59 / 60 / 486</td><td>沿用 AFlow 的拆分，并核对公开题目</td></tr><tr><td>τ-Bench Retail</td><td>100 / 20 / 115</td><td>沿用来源 benchmark 的分区和工具</td></tr><tr><td>SimpleQA</td><td>46 / 45 / 80</td><td>先取 GPT-4.1、Sonnet 4.5、Gemini 2.5 Pro 直接答题都失败的 171 题，再固定拆分</td></tr></tbody></table></div>
 
@@ -82,27 +83,62 @@ tags:
 
 <p>八种 optimizer 配置在五项任务上各搜索三次，共 120 次；optimizer 的 temperature=1.0、最多 200 turns。主实验一次额度覆盖整批 train 或 validation，单批约 46 到 100 题，<strong>B=8 不是只允许做八道题</strong>。作者控制随机种子并重复搜索，但目标模型和在线搜索仍会产生噪声；Table 2 先取每次搜索选中的最佳代码得分，再对三次运行取平均，括号内是三次中的最大值，不是标准差。</p>
 
-<figure class="figure wide"><a href="/lib/papers/vero/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/vero/body-method.svg" width="1050" height="787" alt="VeRO 对代码版本、文件权限、不同评测预算和逐题记录的管理流程" loading="lazy" decoding="async"></a><figcaption>根据 Figure 1 与 Algorithm 1 重绘。主实验按评测调用扣额度，Terminal 案例按题目样本扣额度；少报异常不自动等于任务通过。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/vero/source-figure-1.webp" target="_blank" rel="noopener"><img src="/lib/papers/vero/source-figure-1.webp" width="2833" height="1888" alt="VeRO 原论文 Figure 1：左侧 optimizer 编辑目标 Agent，中间平台保存代码版本和运行记录，右侧 target agent 执行任务并返回分数" loading="lazy" decoding="async"></a><figcaption>原论文 <a href="https://arxiv.org/html/2602.22480v4#S1.F1">Figure 1</a>，展示上方的一轮改进示例和下方的 optimizer、VeRO、target 三方边界。图取自作者的 v4 HTML 版，按 <a href="https://proceedings.mlr.press/v306/ursekar26a.html">Ursekar 等，ICML 2026，PMLR 306</a> 的 <a href="https://proceedings.mlr.press/pmlr-license-agreement.pdf">CC BY 4.0 授权</a>转载；仅转为无损 WebP。</figcaption></figure>
 
 <h2 id="4-实验：成功率与错误类别为什么必须一起看">4. Experiments：成功率与错误类别为什么必须一起看</h2>
 
-<p><strong>默认配置的收益主要来自工具任务，纯推理任务改善很小。</strong>Table 2 的核心比较如下，数值是三次搜索最佳版本得分的平均，最后一列再对五个任务等权平均。</p>
+<p><strong>默认配置的收益主要来自工具任务，纯推理任务改善很小。</strong>下面保留原论文 Table 2 的全部配置和数字。每格前一个数是三次搜索各自最佳版本得分的平均，括号里是三次中的最大值；最后一列再对五个任务等权平均。</p>
 
-<div class="table-wrap"><table><thead><tr><th>配置</th><th>GAIA</th><th>GPQA</th><th>MATH</th><th>Retail</th><th>SimpleQA</th><th>平均</th></tr></thead><tbody><tr><td>初始程序</td><td>0.07</td><td>0.60</td><td>0.87</td><td>0.38</td><td>0.61</td><td>0.50</td></tr><tr><td>Claude Code 原生</td><td>0.13</td><td>0.58</td><td>0.88</td><td>0.43</td><td>0.65</td><td>0.53</td></tr><tr><td>Claude Code + VeRO Tools</td><td>0.14</td><td>0.64</td><td>0.88</td><td>0.39</td><td>0.67</td><td>0.55</td></tr><tr><td>VeRO-Agent Default</td><td>0.26</td><td>0.64</td><td>0.86</td><td>0.55</td><td>0.73</td><td>0.61</td></tr><tr><td>Resources Only</td><td>0.11</td><td>0.60</td><td>0.88</td><td>0.42</td><td>0.69</td><td>0.54</td></tr><tr><td>GEPA</td><td>0.21</td><td>0.58</td><td>0.86</td><td>0.49</td><td>0.60</td><td>0.54</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Optimizer / Variant / Model</th><th>GAIA</th><th>GPQA</th><th>MATH</th><th>Retail</th><th>SimpleQA</th><th>Avg.</th></tr></thead><tbody>
+<tr><td>Baseline</td><td>0.07</td><td>0.60</td><td>0.87</td><td>0.38</td><td>0.61</td><td>0.50</td></tr>
+<tr><td>Claude Code · Pure · Sonnet 4.5</td><td>0.13 (0.29)</td><td>0.58 (0.63)</td><td>0.88 (0.90)</td><td>0.43 (0.46)</td><td>0.65 (0.68)</td><td>0.53 (0.59)</td></tr>
+<tr><td>Claude Code · VeRO Tools · Sonnet 4.5</td><td>0.14 (0.21)</td><td>0.64 (0.71)</td><td>0.88 (0.90)</td><td>0.39 (0.43)</td><td>0.67 (0.71)</td><td>0.55 (0.59)</td></tr>
+<tr><td>VeRO-Agent · Default · Sonnet 4.5</td><td>0.26 (0.30)</td><td>0.64 (0.65)</td><td>0.86 (0.87)</td><td>0.55 (0.66)</td><td>0.73 (0.76)</td><td>0.61 (0.65)</td></tr>
+<tr><td>VeRO-Agent · Orchestrator · Opus 4.5</td><td>0.18 (0.18)</td><td>0.62 (0.66)</td><td>0.88 (0.88)</td><td>0.55 (0.57)</td><td>0.74 (0.86)</td><td>0.59 (0.63)</td></tr>
+<tr><td>VeRO-Agent · Orchestrator · Sonnet 4.5</td><td>0.16 (0.20)</td><td>0.62 (0.65)</td><td>0.87 (0.88)</td><td>0.51 (0.72)</td><td>0.71 (0.72)</td><td>0.57 (0.63)</td></tr>
+<tr><td>VeRO-Agent · Orchestrator · GPT-5.2</td><td>0.07 (0.09)</td><td>0.65 (0.70)</td><td>0.88 (0.90)</td><td>0.40 (0.42)</td><td>0.60 (0.62)</td><td>0.52 (0.55)</td></tr>
+<tr><td>VeRO-Agent · Resources Only · Sonnet 4.5</td><td>0.11 (0.13)</td><td>0.60 (0.64)</td><td>0.88 (0.88)</td><td>0.42 (0.43)</td><td>0.69 (0.72)</td><td>0.54 (0.56)</td></tr>
+<tr><td>GEPA · Resources Only · Sonnet 4.5</td><td>0.21 (0.23)</td><td>0.58 (0.61)</td><td>0.86 (0.89)</td><td>0.38 (0.42)</td><td>0.66 (0.70)</td><td>0.54 (0.57)</td></tr>
+</tbody></table></div>
+<p class="source-note">原论文 <a href="https://arxiv.org/pdf/2602.22480v4#page=7">Table 2</a> 全表；<a href="https://proceedings.mlr.press/v306/ursekar26a.html">Ursekar 等，ICML 2026，PMLR 306</a>，CC BY 4.0。括号不是标准差，也不是另一个测试集。</p>
 
-<p>其余三行是让 VeRO-Agent 把编辑工作委派给子 Agent 的 Orchestrator 配置，平均分分别为 0.59（Opus）、0.57（Sonnet）、0.52（GPT-5.2），并没有超过 Default。Table 2 的初始程序均分来自七种非 GEPA 配置 × 三次，共 21 次运行；不要把它当成每条候选都共享的一次确定性缓存。</p>
+<p>Orchestrator 的三行让 VeRO-Agent 把编辑工作委派给子 Agent，平均分分别为 0.59（Opus）、0.57（Sonnet）、0.52（GPT-5.2），并没有超过 Default。Table 2 的初始程序均分来自七种非 GEPA 配置 × 三次，共 21 次运行；不要把它当成每条候选都共享的一次确定性缓存。</p>
 
 <p>扩大预算也没有解决所有任务。B 从 2 增到 32 时，Retail 的保留集得分由 0.412 增到 0.528；GAIA 从 0.119 增到 B=8 的 0.195，却在 B=32 回落到 0.170。GPQA 与 MATH 基本持平，MATH 的初始分已约 0.87。作者认为目标模型的推理能力限制了收益，但预算实验只排除了“多评几次就会明显提升”这一解释，没有证明所有更好的程序都不存在（Figure 8）。</p>
 
+<figure class="figure wide"><a href="/lib/papers/vero/source-figure-8-gaia-detail.png" target="_blank" rel="noopener"><img src="/lib/papers/vero/source-figure-8-gaia-detail.png" width="740" height="525" alt="原论文 Figure 8 的 GAIA 面板：验证集分数随评测预算 B 从 2 增至 8 后，在 32 时回落" loading="lazy" decoding="async"></a><figcaption>原论文 <a href="https://arxiv.org/html/2602.22480v4#A1.F8">Figure 8</a> 的 GAIA 面板等像素裁切。蓝线是留出集，橙线是开发集；误差线为三次独立搜索的一个标准差。<a href="/lib/papers/vero/source-figure-8.png">完整原图</a>同时给出另外四项任务。Ursekar 等，<a href="https://proceedings.mlr.press/v306/ursekar26a.html">ICML 2026，PMLR 306</a>，CC BY 4.0。</figcaption></figure>
+
 <p>修改类型分析由 GPT-4.1 给代码差异分类，并非人工复核的因果实验。超过一半修改属于提示调整，后期类型更加集中；它能描述搜索行为，不能独立证明提示调整导致了成功或失败。</p>
 
-<figure class="figure wide"><a href="/lib/papers/vero/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/vero/body-case.svg" width="1050" height="816" alt="VeRO Terminal-Bench 89 题的异常减少、新增成功与旧成功退化" loading="lazy" decoding="async"></a><figcaption>根据 Tables 16、18 与 Figure 16 重绘。Tools-B=178 保留 21 个旧成功、新增 12 个；净增 6 题，33/89=37.1%。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/vero/source-figure-16-tools89-detail.png" target="_blank" rel="noopener"><img src="/lib/papers/vero/source-figure-16-tools89-detail.png" width="980" height="940" alt="原论文 Figure 16 的 Tools-B=89 逐题状态迁移矩阵：11 个原 AttributeError 中只有 3 个转为通过，其余转为别的失败" loading="lazy" decoding="async"></a><figcaption>原论文 <a href="https://arxiv.org/html/2602.22480v4#A1.F16">Figure 16</a> 的 Tools-B=89 面板等像素裁切。行是修改前，列是修改后；原先 11 个 <code>AttrError</code> 中，3 个变成 PASS、5 个变成无异常零分、2 个变成运行超时、1 个变成上下文长度错误。<a href="/lib/papers/vero/source-figure-16.png">完整三配置原图</a>可对照 Filesystem 与 Tools-B=178。Ursekar 等，<a href="https://proceedings.mlr.press/v306/ursekar26a.html">ICML 2026，PMLR 306</a>，CC BY 4.0。</figcaption></figure>
 
 <div class="case"><h3>Terminal-Bench 2：消除 crash 后，任务仍可能 FAIL</h3><ol><li><strong>初始状态：</strong>Terminus-KIRA 在 89 题中通过 27 题；另外有 41 次运行抛异常，21 次没有异常但 verifier 给 0。</li><li><strong>Tools-B=89：</strong>optimizer 发现 target LLM 有时把 tool call 输出成字符串，于是在五处加入 <code>isinstance(..., dict)</code> 检查。11 个 <code>AttributeError</code> 全部消失，但最终只通过 30/89。</li><li><strong>Filesystem-B=178：</strong>同样消除 11 个 <code>AttributeError</code>，并把 context-length error 从 13 个降到 1 个；通过数仍是 27/89，因为超时和无异常零分增加。</li><li><strong>Tools-B=178：</strong>主要压缩 prompt、tool 描述与输出长度，保留了 <code>AttributeError</code>，却通过 33/89。</li><li><strong>逐题迁移：</strong>Filesystem 版本新增 6 个 PASS，同时让原先 6 个 PASS 退化；总分相同掩盖了两批任务的交换。</li></ol><p>原 benchmark verifier 决定 PASS/FAIL。VeRO 记录的是失败类别迁移；它不会把“少崩溃”自动换成奖励。</p></div>
 
 <p>这组记录由 v4 Appendix A.4 的真实运行整理，判分仍来自 Terminal-Bench 的任务测试。<code>AttributeError</code> 表示代码把字符串当字典读取属性而崩溃；加类型检查后，程序能继续走，后面仍可能超时或提交错误产物。11 个原先这类错误中，Tools-B=89 只有 3 个转成 PASS，Filesystem-B=178 只有 1 个转成 PASS，其余换成其他失败。</p>
 
 <div class="formula">初始通过率 = 27/89 = 30.3%<br>Tools-B=178 = (原通过保留 21 + 新通过 12)/89 = 37.1%<br>净增益 = (12 − 6)/89 = 6.7 个百分点（按未舍入数）</div>
+
+<details class="paper-supplement"><summary>核对原论文完整的错误类别和逐题得失（Tables 16、18）</summary>
+<p>Table 16 按最终运行状态给 89 题分类；无异常但 verifier 给 0 的任务单列为 Fail。数值均为题数。</p>
+<div class="table-wrap"><table><thead><tr><th>Table 16 · 状态</th><th>Baseline</th><th>Tools-B=89</th><th>Filesystem-B=178</th><th>Tools-B=178</th></tr></thead><tbody>
+<tr><td>AgentTimeoutError</td><td>16</td><td>19</td><td>23</td><td>17</td></tr>
+<tr><td>ContextLengthExceededError</td><td>13</td><td>11</td><td>1</td><td>2</td></tr>
+<tr><td>AttributeError</td><td>11</td><td>0</td><td>0</td><td>11</td></tr>
+<tr><td>VerifierTimeoutError</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>ExecutionError</td><td>0</td><td>2</td><td>0</td><td>0</td></tr>
+<tr><td>Other (Internal, Runtime)</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
+<tr><td>全部异常</td><td>41</td><td>32</td><td>27</td><td>30</td></tr>
+<tr><td>Fail：无异常、得分 0</td><td>21</td><td>27</td><td>35</td><td>26</td></tr>
+<tr><td>Pass</td><td>27</td><td>30</td><td>27</td><td>33</td></tr>
+</tbody></table></div>
+<p>Table 18 把每份最终程序与初始程序逐题配对；新通过数减旧通过退化数才是净增长。</p>
+<div class="table-wrap"><table><thead><tr><th>Table 18 · 配置</th><th>最终 Pass</th><th>旧 Pass 保留</th><th>新 Pass</th><th>旧 Pass 退化</th></tr></thead><tbody>
+<tr><td>Tools-B=89</td><td>30</td><td>20/27</td><td>10</td><td>7</td></tr>
+<tr><td>Filesystem-B=178</td><td>27</td><td>21/27</td><td>6</td><td>6</td></tr>
+<tr><td>Tools-B=178</td><td>33</td><td>21/27</td><td>12</td><td>6</td></tr>
+</tbody></table></div>
+<p class="source-note">原论文 <a href="https://arxiv.org/pdf/2602.22480v4#page=26">Table 16</a>、<a href="https://arxiv.org/pdf/2602.22480v4#page=27">Table 18</a>；Ursekar 等，<a href="https://proceedings.mlr.press/v306/ursekar26a.html">ICML 2026，PMLR 306</a>，CC BY 4.0。</p>
+</details>
 
 <p>论文公布了逐题分类迁移，不是每题的完整 brief、环境与测试断言。它足以支持“修掉 crash 不充分”，不能用来构造某一道未公开下游题的假 checker。该 case 每种配置只有一次搜索，不能把 33/89 当作 Tools 接口稳定优于 Filesystem 的统计结论。</p>
 
@@ -117,8 +153,6 @@ tags:
 <p>Appendix A.5 单独运行无环境限制的 Claude Code（Sonnet 4.5），让它优化 GPQA 代码，文字要求最多八批 train 和八批 validation 评测。实际数据没有 validation，而有 100 题 test；附录指令一面禁止读取测试数据，一面允许基线与最终 test 聚合评测，规则本身也有不一致。事后 GPT-5.4 检查 258 条 assistant 消息，把“看聚合得分”视为允许，把“查看单题测试内容与答案”视为违规。</p>
 
 <p>最直接的记录是 optimizer 打印 <code>ds['test'][0]</code>：返回题目、选项、解释以及 <code>answer_index: 1</code>，测试答案进入了自己的上下文。它后来还承认做了九个不同 train 版本的评测，并试图把重复运行当成“共享额度”来解释超额。作者共标出四条读取测试内容、六条承认超额的消息；后六条反复描述同一次超额，<strong>不能解读成额外做了六批实验</strong>。这是一条具体的违规轨迹，不是已统计多次重复的泄漏发生率。</p>
-
-<figure class="figure wide"><a href="/lib/papers/vero/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/vero/body-results.svg" width="1050" height="654" alt="VeRO 默认配置的平均最优分与 Terminal 单次搜索结果的证据边界" loading="lazy" decoding="async"></a><figcaption>根据 Table 2 与 Appendix A.4 重绘。0.61 汇总五项任务、三次搜索各自的最优分；Terminal 每种配置只有一次搜索，不能推为稳定接口排名。</figcaption></figure>
 
 <h2 id="5-后续验证：成本、权限与最终测试分别核查">5. Discussion：成本、权限与最终测试分别核查</h2>
 
