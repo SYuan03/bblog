@@ -2,9 +2,9 @@
 title: "[2026-08-06] HarnessOpt-Bench: Evaluating LLMs at Harness Optimization"
 permalink: "/posts/论文解读/harnessopt-bench.html"
 date: "2026-10-08T00:01:00+08:00"
-updated: "2026-10-14T12:00:00+08:00"
+updated: "2026-10-20T01:52:00+08:00"
 cover: "/lib/papers/harnessopt-bench/cover.svg"
-description: "固定被修改的 Agent、它调用的模型和评分规则，让不同模型在有限试验额度内改进同一套程序。本文拆解开发与隐藏测试、真实预算记录、增益计算及 111 次完整实验的结果与局限。"
+description: "固定被修改的 Agent、它调用的模型和评分规则，让不同模型在有限试验额度内改进同一套程序。本文拆解开发与隐藏测试、真实预算记录、增益计算及 111 次有正式分数的优化实验。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -97,7 +97,7 @@ tags:
 <p>公开仓库能列出分区文件，不代表参加实验的 optimizer 被允许读 test。研究者下载 release，与 optimizer 在受限文件系统中搜索，是两种不同的信息权限。</p>
 <p><strong>预算要区分两层。</strong>目标模型执行 token（模型处理的文本单位）有上限；optimizer 自己的推理 token 被记录但没有封顶。开发、验证分别最多四次 full case pass；选子集时按实际题数扣额度。API 调用次数的上限在 §3.1 写为每分区 100 次，在 §5.3 写为 200 次，§5.3 所写“8 次等于 4%”与 200 一致；Figure 15 展示的是预算比例中位数。当前 release 使用开发 100 次、验证 100 次，但这不能反推原始实验究竟按哪个数执行。当前 optimizer 还有 20 小时运行上限，沙箱最多 24 小时、空闲最多 1 小时；“optimizer token 不封顶”也不等于所有资源无限或各配置总算力相同。</p>
 
-<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/body-method.svg" width="1000" height="990" alt="固定初始 harness、开发反馈、验证总分和不可见测试的执行路径"></a><figcaption>根据论文 Figure 1、Algorithm 1 与 §3 整理。开发轨迹支持定位问题，验证总分支持选择候选，最终测试由独立服务执行。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/source-figure-1.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/source-figure-1.png" width="1725" height="535" alt="论文 Figure 1：优化者只可修改目标 Agent 程序；开发区返回逐题轨迹，验证区仅返回汇总分，隐藏测试由可信服务执行" loading="lazy" decoding="async"></a><figcaption>Varun Ursekar 等，论文 Figure 1 原图（<a href="https://arxiv.org/pdf/2608.06301v1">PDF v1，第 2 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）；仅裁去页眉和图注。图中的 20/40/40 是分区比例示意，四项任务的实际题数见上表。手机端可放大横向阅读。</figcaption></figure>
 
 <h3 id="提交代码后，如何得到一个增益">3.3 提交代码后，如何得到一个增益</h3>
 
@@ -111,7 +111,7 @@ tags:
 <h3 id="真实记录：一次-API-请求究竟花了多少额度">3.4 真实记录：一次 API 请求究竟花了多少额度</h3>
 
 <div class="case"><h3>OfficeQA 的完整分区执行与论文预算统计</h3><p>预算记录来自论文 Table 3、§5.3 与 Figure 15。</p><ol><li>OfficeQA 开发区 49 题，验证区 98 题。每区四次全量额度，分别允许累计执行 <code>49×4=196</code> 和 <code>98×4=392</code> 题次。</li><li>optimizer 若一次请求跑完 98 道验证题，API 只扣一次调用，验证题次却扣 98，即四分之一额度。连续请求四遍，只有四次 API 调用，却耗尽验证题次。</li><li>论文观察到 API 调用中位数仅为 8，但题目额度消耗中位数是 82%；预算统计覆盖的 100 个实验单元中，55 个耗尽至少一个分区的题次。</li></ol><p>55/100 的预算统计与 111 次总有分数实验不是相同分母。以下单题例子再说明每个题次里究竟判什么。</p></div>
-<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/body-case.svg" width="1000" height="810" alt="少量 API 调用可以跑完整个分区并消耗大量题次"></a><figcaption>根据 §5.3 与 Figure 15 的预算记录整理：调用次数与题次不是同一种资源，82% 是消耗中位数。API 上限的 100/200 冲突见正文，不将图中的百分比作为独立复现证据。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/source-figure-15.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/source-figure-15.svg" width="931" height="529" alt="论文 Figure 15：评测 API 调用次数中位数很低，实际执行题次额度消耗中位数为 82%，100 个统计单元中 55 个耗尽至少一个题次预算" loading="lazy" decoding="async"></a><figcaption>Varun Ursekar 等，论文 Figure 15 原图（<a href="https://arxiv.org/pdf/2608.06301v1">PDF v1，第 26 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）。灰条是调用次数占其上限的比例，蓝条是题次额度占其上限的比例；两条同为百分比，但分母不同。100/200 次 API 上限的正文冲突仍未由图解决。</figcaption></figure>
 
 <h3 id="真实任务-UID0185：查表、回归、写答案，最后检查什么">3.5 真实任务 UID0185：查表、回归、写答案，最后检查什么</h3>
 
@@ -126,23 +126,16 @@ tags:
 <h3 id="先看噪声尺度，再看胜负">4.1 先看噪声尺度，再看胜负</h3>
 
 <p>作者将同一候选在相同题上评分两遍，取两遍差异的中位数，并换算到三次测试重复的 gain 尺度，得到 <strong>resolution band</strong>：小于它的差别视为无法区分。四项分别是 OfficeQA ±0.045、BrowseComp ±0.066、Terminal ±0.054、GAIA ±0.035。它是描述性的分辨阈值，不是统计显著性检验或置信区间。</p>
-<div class="table-scroll"><table><thead><tr><th>模型 / 外层工具</th><th>OfficeQA</th><th>BrowseComp</th><th>Terminal</th><th>GAIA</th></tr></thead><tbody>
-<tr><td>Opus 5 / OpenCode</td><td>0.63</td><td>0.48</td><td>0.29</td><td>0.47</td></tr>
-<tr><td>Opus 5 / Claude Code</td><td>0.59</td><td>0.41</td><td>0.18</td><td>0.42</td></tr>
-<tr><td>GPT-5.6 Sol / Codex</td><td>0.49</td><td>0.03</td><td>0.12</td><td>0.49</td></tr>
-<tr><td>GPT-5.6 Sol / OpenCode</td><td>0.29</td><td>0.09</td><td>0.13</td><td>0.31</td></tr>
-<tr><td>Kimi K3 / Kimi CLI</td><td>0.59</td><td>0.23</td><td>0.16</td><td>0.31</td></tr>
-<tr><td>Kimi K3 / OpenCode</td><td>0.41</td><td>0.16</td><td>0.12</td><td>0.28</td></tr>
-</tbody></table></div>
-<p>这是 Table 1 的部分均值，均为 normalized gain。Opus 的 OfficeQA <code>0.63−0.59=0.04</code> 小于 0.045 的阈值，不能说 OpenCode 在这项已可靠胜过 Claude Code。Sol 的 OfficeQA <code>0.49−0.29=0.20</code> 与 GAIA <code>0.49−0.31=0.18</code> 则明显超过各自阈值，但仍只来自两轮优化，不等于跨任务普遍优势。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/source-table-1.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/source-table-1.png" width="1445" height="565" alt="论文 Table 1 原表：五种优化模型在公共与原生外层工具下，对 OfficeQA、BrowseComp-Plus、Terminal-Bench 和 GAIA 的 normalized gain，以及各任务分辨阈值" loading="lazy" decoding="async"></a><figcaption>Varun Ursekar 等，论文 Table 1 原表（<a href="https://arxiv.org/pdf/2608.06301v1">PDF v1，第 7 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）；仅裁切。每格是两轮独立优化的平均 normalized gain，不是原始任务成功率；列名下方是该任务的描述性分辨阈值。手机端可放大横向阅读。</figcaption></figure>
+<p>原表保留了全部十个“模型 × 外层工具”配置。Opus 的 OfficeQA <code>0.63−0.59=0.04</code> 小于 0.045 的阈值，不能说 OpenCode 在这项已可靠胜过 Claude Code。Sol 的 OfficeQA <code>0.49−0.29=0.20</code> 与 GAIA <code>0.49−0.31=0.18</code> 则明显超过各自阈值，但仍只来自两轮优化，不等于跨任务普遍优势。</p>
 <p>把一个真实报告数换回原分，更容易理解：OfficeQA 初始为 0.341，Opus/OpenCode gain 约 0.63，所以改后的两轮平均测试分约为 <code>0.341+0.63×(1−0.341)=0.756</code>。这是根据四舍五入的报告值计算的约数，不是论文另报的一次测试准确率，更不是 63% 的题通过。</p>
-
-<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/body-results.svg" width="1000" height="885" alt="HarnessOpt-Bench 固定模型和工具条件下的主结果与预算分母"></a><figcaption>根据 Tables 1–3 与 §§5.1–5.4 整理。表中增益以初始程序剩余空间归一化；解释胜负时还要看每项 resolution band 和两次优化的范围。</figcaption></figure>
 
 <h3 id="模型、工具与失败诊断">4.2 模型、工具与失败诊断</h3>
 
 <p>在固定任务与外层工具的配对比较里，更换 optimizer model 导致 gain 平均变化 0.142；固定模型而更换工具，平均变化 0.079，约小 1.8 倍。这是配对差异的描述统计，不是“模型解释了 14.2% 方差”。</p>
-<p>20 个“模型 × 任务”配对中，公共 OpenCode 赢 11 个、原生工具赢 9 个；其中只有 11 个配对的差异超过任务专用阈值。GAIA 加入 Goose 与 mini-swe-agent 后，工具排名还会随模型改变。结果支持“需要测模型与工具的组合”，不支持“公共工具已普遍取代原生工具”。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/source-figure-2.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/source-figure-2.svg" width="859" height="464" alt="论文 Figure 2：左侧显示各模型与外层工具组合在四项任务上的逐轮增益，右侧显示公共工具和三项非零起点任务的模型效应" loading="lazy" decoding="async"></a><figcaption>Varun Ursekar 等，论文 Figure 2 原图（<a href="https://arxiv.org/pdf/2608.06301v1">PDF v1，第 4 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）。左图是逐轮结果；右图 LSS-λ 只用 OpenCode 下的 OfficeQA、BrowseComp-Plus、Terminal-Bench，排除了零起点 GAIA。横向错位仅用于防遮挡，不代表另一项变量。</figcaption></figure>
+<p>20 个“模型 × 任务”配对中，公共 OpenCode 赢 11 个、原生工具赢 9 个；其中只有 11 个配对的差异超过任务专用阈值。GAIA 加入 Goose 与 mini-swe-agent 后，工具排名随模型改变。相对于各自最好的公共工具，GPT-5.6 Sol 与 Terra 在 Codex 下分别高 0.179、0.131，均超过 GAIA 的 ±0.035 分辨阈值；Claude 与 Kimi 的原生工具差值在一到两个分辨带内。报告模型能力时，需要同时写明所用的外层工具。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessopt-bench/source-figure-5.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessopt-bench/source-figure-5.svg" width="932" height="448" alt="论文 Figure 5：GAIA 上不同优化模型的最佳外层工具不同，GPT 模型在 Codex 下比其最好的公共工具成绩高" loading="lazy" decoding="async"></a><figcaption>Varun Ursekar 等，论文 Figure 5 原图（<a href="https://arxiv.org/pdf/2608.06301v1">PDF v1，第 10 页</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>）。GAIA 的起点是零分占位程序，此处 gain 等于原始测试分；右图将各模型的原生工具与它自身表现最好的公共工具比较，灰带是 ±0.035 分辨阈值。</figcaption></figure>
 <p>论文另外计算一个跨任务平均值 λ：每个模型先取三项有完整初始程序任务的平均 gain，再减去所有模型的总均值。只用共同 OpenCode 条件，排除零起点 GAIA 和原生工具，才让这项“模型相对水平”保持一致比较对象；不能拿它代替包含全部配置的总榜。</p>
 <p>作者还记录搜索过程。修改覆盖的八类部件越广，与 gain 的相关性通常越高，但覆盖面和总修改量混在一起；有配置改了七次、触及四分之三部件，最终仍提交初始程序。不能把这个相关性读成“改得越多越好”。</p>
 <p>111 个有分数实验中，只有 7 个主动请求过详细轨迹，共 16 次；轨迹读取没有显示正向收益。这说明当前优化者很少有效使用这类反馈，或逐题分数已经足够定位部分问题，不能证明轨迹无用。可见验证最高分通常还高于最后测试分；论文不能区分这是反复选择造成的过拟合，还是验证与测试分布不同。</p>
@@ -157,6 +150,6 @@ tags:
 
 <p><strong>这篇适合学习如何把“改 Agent 程序”变成受控实验。</strong>它固定内层模型和任务环境，分开开发诊断、验证选择和隐藏测试，也把 API 次数与实际题次拆开，避免不同实验因反馈更多或模型更强而不可比。</p>
 <p>前沿模型已经能改善弱起点，但收益随任务、模型和外层工具而变；微小差异不能细排名。最强限制是每配置只有两轮优化、GAIA 与其他三项起点不同、外层推理 token 未封顶、预算上限存在文本冲突，以及当前 release 与论文原始运行条件并不完全相同。</p>
-<p class="source-note">主要来源：arXiv:2608.06301v1，§§3–5、Algorithm 1、Tables 1–3、Figures 1/13/15；VeRO <code>d1400011917ff66b7c122e7a787d547372f43e97</code> 的 HarnessOpt-Bench release；Harbor 数据 <code>37db108843a49bb31a592e37a75e2c40dc3f9749</code> 的 UID0185。公开文件于 2026-10-14 核对；本文只复核了案例的判分函数，没有独立跑 111 次优化实验。</p>
+<p class="source-note">主要来源：arXiv:2608.06301v1 全文与附录，§§3–5、Algorithm 1、Tables 1–3、Figures 1/2/5/15；VeRO <code>d1400011917ff66b7c122e7a787d547372f43e97</code> 的 HarnessOpt-Bench release；Harbor 数据 <code>37db108843a49bb31a592e37a75e2c40dc3f9749</code> 的 UID0185。2026-10-20 复读全部 27 页，公开文件固定版本此前已核对；本文只复核了案例的判分函数，没有独立跑 111 次优化实验。</p>
 
 </div>
