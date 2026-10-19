@@ -2,7 +2,7 @@
 title: "[2026-09-03] EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness?"
 permalink: "/posts/论文解读/evoharnessbench.html"
 date: "2026-10-08T00:08:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-19T18:24:00+08:00"
 cover: "/lib/papers/evoharnessbench/cover.svg"
 description: "平台逐阶段加入新工具、操作指南或专门处理某类任务的 Agent，旧题和评分规则不变。EvoHarnessBench 检查系统能否用好新增能力，以及选择越来越多时会不会连原来会做的题也做错。"
 wide_content: true
@@ -20,8 +20,9 @@ tags:
 ---
 
 <link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
+<style>@media(max-width:600px){.evoharness-reading .post-deck-embed-frame{height:min(74vh,640px)!important;padding-top:0!important}}</style>
 
-<div class="paper-reading">
+<div class="paper-reading evoharness-reading">
 
 <p class="paper-meta">arXiv:2609.04280v3 · 最早公开于 2026-09-03</p>
 <div class="source-links">
@@ -32,9 +33,9 @@ tags:
 </div>
 
 <section class="deck-wrap" aria-label="EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness? 交互图解">
-  <div class="deck-head"><strong>10 页交互图解 · 任务、机制、真实案例、结果与边界</strong><a href="/lib/decks/evoharnessbench-visual-guide.html">大屏阅读 ↗</a></div>
+  <div class="deck-head"><strong>10 页交互图解 · 任务、机制、真实案例、结果与边界</strong><a href="/lib/decks/evoharnessbench-visual-guide.html?v=20261019-2">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
-    <div class="post-deck-embed-frame"><iframe src="/lib/decks/evoharnessbench-visual-guide.html" title="EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness? 论文图解，共 10 页" allow="fullscreen" loading="eager"></iframe></div>
+    <div class="post-deck-embed-frame"><iframe src="/lib/decks/evoharnessbench-visual-guide.html?v=20261019-2" title="EvoHarnessBench: Can Your Agents Keep Pace with an Evolving Harness? 论文图解，共 10 页" allow="fullscreen" loading="eager"></iframe></div>
     <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>按 Esc 退出全屏；独立打开后可返回文章</span></p>
   </div>
 </section>
@@ -55,6 +56,8 @@ tags:
 
 <p><strong>旧工具还在，不代表模型会继续选对它们。</strong>系统原本只需要在几个工具或专用 Agent 中选择，目录扩张后可能漏选必要能力、被相似名称干扰，或沿用不适合当前目录的旧记忆。论文称这种原题不变、模型不变，却因为平台变大而掉分的现象为 <strong>harness-induced forgetting</strong>。它不同于模型参数训练后遗忘：甚至每阶段全新实例、不保存记忆的系统也可能发生。</p>
 
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-figure-1.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-figure-1.webp" width="1617" height="821" alt="Figure 1 原图：逐阶段扩大的 harness、只测目录扩张的 deployment 设置，以及保存经验的 self-evolving adaptation 设置。" loading="lazy" decoding="async"></a><figcaption>Figure 1 原图。A 是平台加能力、旧题重测；B 只测目录扩张，C 允许系统保留适应内容。B 中图注的 12.1%、13.8%、46.4% 与后文 Table 8 不一致，本文不把两组数字混用。<a href="https://arxiv.org/pdf/2609.04280v3#page=2">Ke et al., v3, PDF 第 2 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。本站裁切页边留白，保留原英文标签。</figcaption></figure>
+
 <h2 id="与静态工具评测和持续学习的区别">2. Related Work：与静态工具评测和持续学习的区别</h2>
 
 <p><strong>被测系统要适应平台新加入的能力，benchmark 不要求它自己扩展外部平台。</strong>τ-bench、SkillsBench 等主要使用固定工具或技能；AgentCL、ContinualBench 把变化放在任务序列，通常固定 harness；CMRBench 更接近，但扩张的是可路由的模型池。EvoHarnessBench 把工具、skills 和专用 Agent 池的扩张分别控制。</p><p>它与自动 harness coding 的关系是长期部署检验：自动写出的执行系统即使今天高分，明天加入几十个工具后仍可能退化。Meta-Harness 是其中一个可以更新代码的适应方法，而不是全 benchmark 的任务定义。不同方法也可以只更新记忆或提示词。</p>
@@ -73,7 +76,7 @@ tags:
 
 <p>另有一组 <strong>skill-learning 消融</strong>：系统从适应题轨迹和检查反馈中生成自己的指南，作者提取的 reference skills 只用于安排阶段和计算重合率，不直接交给系统。v3 Appendix C 的“隐藏 reference skills”描述与 §3.3 的“提供可检索指南库”没有把两种设置交代一致；本文分别说明主表的指南使用实验和 Appendix J.2 的指南生成实验，不把它们合成同一种输入条件。</p>
 
-<figure class="figure wide"><a href="/lib/papers/evoharnessbench/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/body-method.svg" width="1050" height="913" alt="EvoHarnessBench 任务能力关联、阶段释放、可选适应和旧题复测流程" loading="lazy" decoding="async"></a><figcaption>根据 Figure E.1 与 §3 重绘。任务在所标记能力首次同时具备的阶段加入；后续题目和检查不变，只扩大能力目录。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-figure-e1.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-figure-e1.webp" width="1667" height="1134" alt="Figure E.1 原图：能力标注、按频率分批、累计目录、任务最早可执行阶段，以及 tools、skills、agents 各自的标注来源。" loading="lazy" decoding="async"></a><figcaption>Figure E.1 原图。上半部是从任务能力集合到阶段分配的四步；下半部分开画出三条轴的标注来源。图中文字较密，可打开图片详情查看。<a href="https://arxiv.org/pdf/2609.04280v3#page=25">Ke et al., v3, PDF 第 25 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。本站裁切页边留白，保留原英文标签。</figcaption></figure>
 
 <h3 id="一道题在各阶段怎样得到分数">3.2 一道题在各阶段怎样得到分数</h3>
 
@@ -95,12 +98,13 @@ tags:
 
 <p>执行用户是 Thomas Green（<code>user_id=1</code>），不是客户 Thomas Bailey。Agent 得到任务、业务政策和当前工具目录，要通过 <code>list_users</code>、<code>find_contact_by_portal_user</code>、<code>find_account</code>、<code>search_cases</code>、<code>find_product</code>、<code>retrieve_knowledge</code> 查出这些关系，再用 <code>update_case</code> 与 <code>link_case_knowledge</code> 修改状态。公开工具轴阶段 1 为它标记 8 个相关工具，但实际提供 25 个累计工具。<strong>下面的 SQL 是评测端检查代码，不是授予 Agent 的数据库直写工具。</strong></p>
 
-<figure class="figure wide"><a href="/lib/papers/evoharnessbench/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/body-case.svg" width="1050" height="860" alt="Thomas Bailey 工单 101 的真实初始状态、产品和知识关联，以及两个 SQL 检查的通过条件" loading="lazy" decoding="async"></a><figcaption>根据公开 HF 工具任务与 EOG seed 整理。初始状态是 new；最终检查要求 in_progress 和 used_as=applied。图中的失败结果按 SQL 推导，不是模型逐步日志。</figcaption></figure>
+<figure class="figure wide"><picture><source media="(max-width: 600px)" srcset="/lib/papers/evoharnessbench/body-case-mobile.svg"><img src="/lib/papers/evoharnessbench/body-case.svg" width="1050" height="860" alt="Thomas Bailey 工单 101 的初始状态、工具修改、两条 SQL 检查及失败条件" loading="lazy" decoding="async"></picture><figcaption>根据公开 HF 工具任务与 EOG seed 整理。初始状态是 new；最终检查要求 in_progress 和 used_as=applied。图中的失败结果按 SQL 推导，不是模型逐步日志。</figcaption></figure>
 
 <p>任务有两条 <code>database_state</code> 检查，各自要求 <code>COUNT(*) == 1</code>。第一条把工单、客户、公司和产品连接起来，要求姓名、Initech、目标产品、<code>phone</code> 和 <code>in_progress</code> 同时匹配。第二条还要求知识文章与同一工单关联，产品相同、标题含产品名，并且 <strong><code>used_as='applied'</code></strong>。后者表示“用过指南但问题还没解决”；写成 <code>resolution</code> 会失败。任务的第二条自然语言描述误写了“as a resolution”，实际 SQL 检查的是 <code>applied</code>，本文以执行条件解释判分。</p>
 
-<p>下面保留第二条 SQL 的全部条件，来源为公开任务的 <code>validation_config.query</code>，只整理了换行：</p>
+<p>第二条 SQL 来自公开任务的 <code>validation_config.query</code>。下面保留全部条件，只整理了换行；默认折叠，便于先读判分逻辑。</p>
 
+<details><summary>展开实际 SQL：工单与知识关联的第二条检查</summary>
 <div class="code-scroll"><pre><code class="language-sql">SELECT COUNT(*) AS cnt
 FROM case_knowledge ck
 JOIN knowledge k ON k.knowledge_id = ck.knowledge_id
@@ -118,6 +122,7 @@ WHERE u.first_name = 'Thomas'
   AND p.name       = 'Docker Enterprise Variant 15'
   AND ck.used_as   = 'applied'
   AND k.title LIKE '%Docker Enterprise Variant 15%';</code></pre></div>
+</details>
 
 <p>EOG 的 <code>VerifierEngine</code> 在 Agent 执行后通过评测端 <code>/api/sql-runner</code> 查询当前数据库，从单行单列结果取出数值，再按 <code>equals</code> 比较。这里没有让语言模型判断“回答看起来对不对”。两条检查都过才算任务成功；只过第一条为部分完成。若产品改成 35、状态改成 <code>in_progress</code>，但知识关联写成 <code>resolution</code>，则两条检查分别返回 1、0；若状态仍为 <code>new</code>，两条都返回 0。这些是基于公开条件的推导，本文没有运行 hosted 环境。</p>
 
@@ -133,17 +138,27 @@ WHERE u.first_name = 'Thomas'
 
 <p>上表为 v3 Tables 2、4、6 的任务成功率（%），主表控制底层模型为 GPT-5；主表的 ± 项虽已报告，正文没有完整交代统一的重复次数和统计定义，因此这里不把它擅自称为标准误或显著性。主表的题数标题也与 Appendix C 的全构造题数不同，例如 agents 主表 ALE 写 63 题，构造统计是 104 个保留测试任务；不能把两个分母直接互换。未在可比预算内完成的 G-Memory、DeLM ALE 实验标为缺失，不按 0 分算。</p>
 
+<details><summary>展开 Table 2、Table 6 原表与 Claude Code 对照</summary>
+<p>下列原表保留模型、部分分、时间、token 和未完成实验的标记。点击图片可放大；移动端可在图片详情中横向查看。</p>
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-table-2.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-table-2.webp" width="1664" height="958" alt="Table 2 原表：工具轴 EOG 和 ALE 中参考条件、完整累计目录、记忆、提示和代码适应方法的 Pass、Score、时间与 token。" loading="lazy" decoding="async"></a><figcaption>Table 2 原表，tools 轴。逐题工具行是不同输入条件的参考，其他行为完整累计目录；± 的统计定义不能从表格单独确认。<a href="https://arxiv.org/pdf/2609.04280v3#page=7">Ke et al., v3, PDF 第 7 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-table-6.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-table-6.webp" width="1664" height="781" alt="Table 6 原表：专用 Agent 轴 EOG 和 ALE 各方法的 Pass、Score、时间与 token；破折号表示未在可比计算预算内完成。" loading="lazy" decoding="async"></a><figcaption>Table 6 原表，agents 轴。破折号表示未在可比计算预算内完成，不是 0 分。<a href="https://arxiv.org/pdf/2609.04280v3#page=10">Ke et al., v3, PDF 第 10 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption></figure>
 <p><strong>Claude Code 的结果应在它自己的两种目录之间比较。</strong>它使用 Sonnet 4.6 和原生 harness，不能用绝对分数声称比受控 GPT-5 系统更强。Appendix H 中，skills 的 EOG 成功率为 29.3%→30.2%、ALE 为 13.2%→13.2%；agents 为 EOG 11.0%→10.6%、ALE 16.9%→15.3%。这是另一套系统的内部对照。</p>
+</details>
 
 <h3 id="哪些消融区分了“目录太大”和“适应方式不合适”">4.1 哪些消融区分了“目录太大”和“适应方式不合适”</h3>
 
 <p>评测始终用完整累计目录，只在适应阶段改可见范围。MemToolAgent 在 EOG tools 中，把适应阶段缩为逐题工具，成功率 38.6%→39.1%，适应时间 23.9→17.9 小时；从一开始就给最终完整目录则为 37.9%、28.6 小时。GEPA 的 skills 消融却是成功率 24.1%→23.0%，同时部分分 61.0→63.1、时间 4.1→2.9 小时：效率和部分分提高，不等于严格成功率提高。Meta-Harness 的 agents 消融中，逐题目录为 19.4%，从开头保持最终完整目录为 20.3%，都高于逐阶段扩大目录的 18.5%。对这一轴，目录变化本身比单纯“候选多”更值得关注。</p>
 
+<details><summary>展开记忆内容与 skill 调用的次要消融</summary>
 <p>记忆的收益同样依赖它用在哪里。EOG tools 中，Reasoning Bank 的概要记忆为 36.9%，加上显式工具信息反而降到 30.3%；保留成功轨迹和只保留失败轨迹都为 34.4%。而指南学习实验中，直接一次生成指南为 11.5%，低于空指南的 16.9%；从真实执行轨迹生成为 20.0%，批量教师反馈为 22.1%。这些对照支持“经验怎样提取、怎样使用会影响成绩”，不支持“记得越多就越好”。Table J.1 的工具导向 MemToolAgent 甚至降到 4.4%，但这是额外消融，不是上表主设置的 19.6%。</p>
-
 <p>Figure J.1 的调用比例也要看分母：GPT-5.5 的 task-specific Codex 打开约 82% 的逐题指南；task-specific GEPA 在完整阶段库中打开约 31%，两者库的范围不同。Claude Code 的 15% 按文件读取次数计，未记录完整 skill 名称，不能把这三个百分比当成同口径的检索召回率。</p>
+</details>
 
 <p>Figure 7 把“找对了谁”和“有没有找齐”分开：已调用专用 Agent 中约 90% 是相关的，论文称为 <strong>selection precision</strong>；必需专用 Agent 被调用的比例从不适应的 79% 最高升到 89%，称为 <strong>recall</strong>。在后来仍成功的旧题中，约 13% 改变了委派对象；后来失败的旧题中约 25% 改变了委派对象。论文发现更多情况是漏掉原本必要的 Agent，而非一味加入无关的新 Agent。即使找齐，整体成功率仍低，故结果传递与协调也不能省略。</p>
+
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-figure-7.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-figure-7.webp" width="838" height="311" alt="Figure 7 原图：专用 Agent 选择的 precision、recall、exact match，以及找齐全部必需 Agent 后的任务通过率。" loading="lazy" decoding="async"></a><figcaption>Figure 7 原图。左图的选择质量不等于任务成功：右图橙柱显示全部必需 Agent 都叫齐后，任务仍常失败。<a href="https://arxiv.org/pdf/2609.04280v3#page=11">Ke et al., v3, PDF 第 11 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption></figure>
+
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-figure-8.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-figure-8.webp" width="838" height="348" alt="Figure 8 原图：保住的旧题与后来忘掉的旧题中，委派专用 Agent 变化和新增非必需 Agent 调用的比例。" loading="lazy" decoding="async"></a><figcaption>Figure 8 原图。后来失败的旧题更常改变委派对象；右图单列新增非必需 Agent，不能把所有失败都解释成“误叫了新 Agent”。<a href="https://arxiv.org/pdf/2609.04280v3#page=11">Ke et al., v3, PDF 第 11 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption></figure>
 
 <p>Appendix K.1 给了更直接的结果：<strong>即使所有必需专用 Agent 都叫到了，仍有 78% 至 86% 的执行失败</strong>。GEPA 适应后，新加入的必需 Agent 调用率由约 71%→81%；Meta-Harness 在适应前已约 81%，适应后几乎不变。因此两者成绩提高的路径不同，不能都归因于“更会找新 Agent”。</p>
 
@@ -151,7 +166,7 @@ WHERE u.first_name = 'Thomas'
 
 <p>v3 自身还有数值冲突：Figure 1 caption 仍写三个轴下降 12.1%、13.8%、46.4%，后面的轴内结果和 Table 8 则总结为 −5.3%、−4.0%、−34.7%。本文采用有对应轴内分析的后者，同时保留这一不一致；未经原始矩阵核查，不能宣称前者只是排版笔误。</p>
 
-<figure class="figure wide"><a href="/lib/papers/evoharnessbench/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/body-results.svg" width="1050" height="828" alt="EvoHarnessBench 三条能力扩张轴的相对 BWT 与委派质量" loading="lazy" decoding="async"></a><figcaption>根据 Table 8 与 Figures 7、8 重绘。−34.7% 保留原文的 relative BWT 单位，不是 −34.7 个百分点；附录绝对公式没有给出该相对量的归一化分母。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/evoharnessbench/source-table-8.webp" target="_blank" rel="noopener"><img src="/lib/papers/evoharnessbench/source-table-8.webp" width="1664" height="357" alt="Table 8 原表：tools、skills、agents 三轴的目录扩张影响、最差遗忘、最佳适应增益、最有利适应上下文与瓶颈。" loading="lazy" decoding="async"></a><figcaption>Table 8 原表。−34.7% 是作者标注的相对 BWT；Appendix D 的绝对差公式没有给出它的归一化分母。<a href="https://arxiv.org/pdf/2609.04280v3#page=12">Ke et al., v3, PDF 第 12 页</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>。</figcaption></figure>
 
 <h2 id="对长期部署评测的启发">5. Discussion：对长期部署评测的启发</h2>
 
@@ -162,6 +177,14 @@ WHERE u.first_name = 'Thomas'
 <h2 id="结论与尚缺的证据">6. Conclusion：结论与尚缺的证据</h2>
 
 <p><strong>能力目录增长本身就可能破坏已有表现，持续适应也不保证新旧题同时变好。</strong>论文把三种扩张拆开，并用重复测试旧题暴露这种问题，适合作为动态部署压力测试。当前边界是平台只加不删、不改接口；现实里的 API 改版、工具撤回与权限变化没有覆盖。skills 的近似关联、原文中部分输入设置与数值的不一致，以及未交代的相对指标归一化，都需要在引用结论时保留。</p>
+
+<details><summary>其余 29 项原论文图表：按 PDF 页码直达</summary>
+<p>正文选用 Figure 1、Figure E.1、Figure 7、Figure 8、Tables 2、6、8；其余图表在原论文保留完整版本，下面按 v3 PDF 页码索引。</p>
+<p>主文图：<a href="https://arxiv.org/pdf/2609.04280v3#page=6">Figure 2 · 真实与模拟的目录增长</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=7">Figure 3 · tools 轴 FWT/BWT</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=9">Figure 4 · skills 轴 FWT/BWT</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=9">Figure 5 · 指南实际调用</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=10">Figure 6 · agents 轴 FWT/BWT</a>。</p>
+<p>附录图：<a href="https://arxiv.org/pdf/2609.04280v3#page=24">Figure D.1 · 逐阶段分数矩阵</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=29">Figure I.1 · 相对 BWT</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=30">Figure I.2 · Agent 记忆消融</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=31">Figure J.1 · 指南调用</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=32">Figure J.2 · 指南重叠与得分</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=32">Figure J.3 · 指南重叠轨迹</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=33">Figure K.1 · Agent 调用</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=33">Figure K.2 · 新 Agent 采用</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=34">Figure K.3 · 选择质量</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=34">Figure K.4 · 路由变化</a>。</p>
+<p>主文表：<a href="https://arxiv.org/pdf/2609.04280v3#page=3">Table 1 · 相邻工作</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=8">Table 3 · 工具适应目录</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=8">Table 4 · skills 主结果</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=9">Table 5 · 指南适应目录</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=11">Table 7 · Agent 适应目录</a>。</p>
+<p>附录表：<a href="https://arxiv.org/pdf/2609.04280v3#page=20">Table C.1 · 工具阶段统计</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=21">Table C.2 · skills 阶段统计</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=21">Table C.3 · Agent 阶段统计</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=22">Table C.4 · 独立演化序列</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=28">Table H.1 · Claude Code 对照</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=28">Table I.1 · 工具记忆</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=29">Table I.2 · 记忆内容</a>；<a href="https://arxiv.org/pdf/2609.04280v3#page=30">Table J.1 · 工具经验用于指南</a>、<a href="https://arxiv.org/pdf/2609.04280v3#page=31">Table J.2 · 指南生成</a>。</p>
+</details>
 
 <p class="source-note">主要来源：arXiv v3 全文与附录；公开 HF 工具任务 revision 6c2c2d9af15b12b678940ad4e23f976cdb85b150，skills revision 1ba40009f2b23cd4490ca6eaac6fb6697fe32c62，agents revision aa6f72430745d05e1082aedb06926d18e84c2b72；EOG revision 271f2c357f763376997dfd16807fcde2474ae41b 的 gym_dbs.zip 与 benchmark/verifier.py。读取了任务、seed、SQL 和逐题汇总，未运行 hosted 环境。BWT 算例与案例失败结果为规则推导。</p>
 
