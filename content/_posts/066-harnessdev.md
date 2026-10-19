@@ -2,7 +2,7 @@
 title: "[2026-09-01] HarnessDev: Can LLMs Create and Evolve Their Own Agent Harness?"
 permalink: "/posts/论文解读/harnessdev.html"
 date: "2026-10-08T00:00:00+08:00"
-updated: "2026-10-13T12:00:00+08:00"
+updated: "2026-10-20T12:00:00+08:00"
 cover: "/lib/papers/harnessdev/cover.svg"
 description: "模型先编写一套能调用工具、修改文件和检查结果的 Agent 程序，再根据执行反馈继续改进。本文说明开发与隐藏评测的边界、真实失败案例、跨模型迁移，以及 2,207 个下游实例上的结果。"
 wide_content: true
@@ -54,6 +54,7 @@ tags:
 
 <p><strong>固定 harness 的评测，不能回答模型是否会开发 harness。</strong>普通 Agent benchmark 给定工具和调用流程，然后看模型完成多少题。现实中的开发者还必须决定：如何保留历史，工具报错后怎么办，什么时候检查结果，模型说“完成”后是否应该马上退出。</p>
 <p>这不是无关紧要的配置。论文引用的 Terminal-Bench 2.1 结果中，同一个 GPT-5 在 Terminus 2 下通过率是 35.2%，在 Codex CLI 下是 49.6%。这里没有训练模型权重，差别来自外部运行程序。HarnessDev 因而把这段程序本身变成评测对象。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessdev/source-figure-1.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/source-figure-1.svg" width="1152" height="389" alt="论文 Figure 1：从弱初始代码创建可运行 harness，再基于反馈修改并冻结评测"></a><figcaption>论文 Figure 1 原图。左侧普通 benchmark 固定 harness，右侧 HarnessDev 让 creator 创建并继续修改它。Yuhao Wu 等，<a href="https://arxiv.org/abs/2609.01437">原论文</a>，<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</figcaption></figure>
 <p>与普通软件修复相比，难处还在于反馈不直接。某次结束检查可能帮助一个模型，却干扰另一个模型；开发题上的高分也可能来自偶然成功。论文同时测任务成绩、执行 token（模型处理的文本单位）、未见任务上的表现和换 executor 后的变化，避免只凭“程序能启动”判断它已经成熟。</p>
 
 <h2 id="相邻工作：创建、修复与演化不是同一道题">2. Related Work：创建、修复与演化不是同一道题</h2>
@@ -76,6 +77,7 @@ tags:
 <p>作者沿用五个公开 benchmark 的任务和原生评分规则，没有另起一批人工编写的下游题：SWE-bench Pro 公共分区 731 题，Terminal-Bench 2.1 为 89 题，MLE-bench 为 75 个竞赛，EQ-Bench3 为 46 题，BrowseComp 为 1,266 题。总计 <code>731+89+75+46+1266=2207</code>，覆盖四个领域；软件修复和终端操作同属 Code 领域。</p>
 <p>作者额外提供的是 harness 开发合同、弱初始代码和 1–3 个开发案例。附录 C/E 展示了接口与系统提示词，但没有公开全部任务专用提示、完整检查文件或逐题原始记录；开发案例怎样筛选、是否由多人独立复核，也没有单独报告。</p>
 <p>初始代码只保证 <code>python -m harness</code> 能接收任务与模型配置，执行基础文件或进程操作，并保存日志。它最多做一次不执行任务的模型调用，然后返回 <code>partial</code>。真正的多轮工具调用、历史压缩、失败恢复、持久状态和结果检查，都要由 creator 实现。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessdev/source-figure-2.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/source-figure-2.png" width="1888" height="696" alt="论文 Figure 2：固定输入合同、只提供被动工具的弱初始代码和公开开发反馈"></a><figcaption>论文 Figure 2 原图。中间的弱初始代码只读取输入、可选地测试模型连通性并写审计文件；右侧开发反馈与隐藏评测隔离。Yuhao Wu 等，<a href="https://arxiv.org/abs/2609.01437">原论文</a>，<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</figcaption></figure>
 <p>Creator 可以保留、替换或删除初始代码，但必须保留调用入口和产物要求。<code>result.json</code> 是 harness 写出的状态与文件路径记录，<code>trajectory.jsonl</code> 是逐步行动和观测日志；这些文件来自作者规定的输出格式，<strong>不是隐藏测试，也不由被测程序给自己评分</strong>。</p>
 
 <h3 id="一次正式运行的完整路径">3.2 一次正式运行的完整路径</h3>
@@ -84,11 +86,11 @@ tags:
 <p>创建阶段的隐藏题与成绩不回传给 creator。演化阶段的指定反馈题可以返回任务分数、运行诊断和原始文件路径，但标准答案、隐藏测试与评分器内部实现仍不可查看。<code>score=null</code> 表示还没有判定，不能算成失败；没有启动或没有完成的基础设施诊断，也不能作为正式成功或失败记录。</p>
 <p>预算也要按角色区分。附录 B.1 给 MLE-bench 的每个下游任务配置一张 A800 80GB GPU、14 个 CPU 核和 227 GiB 内存，限 500 步、36,000 秒；其中 34,200 秒给生成的 Agent，1,800 秒留给外部 grader，数据准备不计时。演化阶段的每道 SWE/Terminal 题限 500 步、7,200 秒。<strong>这些是 executor 做一道题的限制，不是 creator 修改整套程序的总时限。</strong>附录 E.2 对 creator 使用正式评测次数限制，没有设置总等待时限，但设有长期无活动的结束规则。</p>
 
-<figure class="figure wide"><a href="/lib/papers/harnessdev/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/body-method.svg" width="1000" height="990" alt="HarnessDev 的创建、冻结执行、反馈修改和最终保留集评测路径"></a><figcaption>根据论文 Figure 1、Figure 3 与 §§3.2–3.4 整理的机制图。创建者修改程序，执行者使用冻结版本做题，评分程序检查实际交付物。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harnessdev/source-figure-3.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/source-figure-3.png" width="1888" height="568" alt="论文 Figure 3：creator 实现执行、工具、上下文、状态、生命周期和验证，按领域输出评分程序可读的产物"></a><figcaption>论文 Figure 3 原图。<code>result.json</code> 等文件记录执行过程；右侧的补丁、竞赛提交、正文或答案才是各领域评分程序读取的产物。Yuhao Wu 等，<a href="https://arxiv.org/abs/2609.01437">原论文</a>，<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</figcaption></figure>
 
 <h3 id="真实案例：写出了文件或补丁，为什么仍可能失败">3.3 真实案例：写出了文件或补丁，为什么仍可能失败</h3>
 
-<div class="case"><h3>附录 F/G 的公开开发记录：检查调用成功与任务成功要分开</h3><p>这些是论文作者公布的开发案例记录，不是本文编造的测试，也不代表隐藏测试全集。完整任务 prompt（任务提示词）和逐项隐藏 assertion（必须满足的检查条件）没有发布。</p><ol><li><strong>GPT-5.5 的本地检查：</strong>executor 创建了文件，但非 Git 目录里的 <code>patch.diff</code> 为空。早期 harness 因为空补丁而报告 <code>partial</code>。Creator 修正文件路径记录后，模型创建内容为 <code>OK</code> 的 <code>result.txt</code>，日志中有两次模型调用、两次工具调用和一次写文件，状态变成 <code>success</code>。这只证明普通文件产物能被正确保存。</li><li><strong>Opus 的正式 SWE 开发题：</strong>初始状态是一份 Ansible 仓库。Executor 找到 shebang（脚本首行指定解释器的声明）相关逻辑，修改源文件和更新记录 changelog，并跑了 pytest 测试与 import 导入检查。记录为 38 步、19 次 Bash 调用、约 5.9K 字符的非空补丁，但原 SWE grader（评分程序）给 <code>0.0</code>。公开文本没有说明具体哪条隐藏 assertion 失败，不能据此补写实际 checker（检查程序）。</li><li><strong>Terminal 的正反记录：</strong>GPT 的开发运行 <code>dev-20260804-190052</code> 创建、编译 <code>/app/gpt2.c</code>，等待官方 verifier 完成后得到 <code>1.0</code>。Opus 的另一开发运行也写出了这个文件，执行了 94 步和 81 次 Bash 调用，但 verifier 给 <code>0.0</code>。文件存在不是 PASS 条件，最终程序行为才是。</li></ol><p>GPT 在通过的 Terminal 运行启动后，又扩展了重复命令的去重规则。容器没有加载这次新修改，因此 <strong>1.0 验证的是启动时快照，不能归因于最后这行修改</strong>。完整原始代码和测试未公开，以上是可核对的论文运行记录，不是本文独立复现。</p></div>
+<div class="case"><h4>真实开发题：同样写出 <code>/app/gpt2.c</code>，为什么分数不同</h4><p>论文附录 F/G 保留了两次 Terminal 开发运行。能确认的任务目标是编写并编译 <code>/app/gpt2.c</code>；完整任务 prompt（任务提示词）和逐项隐藏 assertion（必须满足的检查条件）没有发布，因此不能还原 verifier 的具体测试步骤。</p><ol><li>GPT-5.5 的运行 <code>dev-20260804-190052</code> 创建、编译 <code>/app/gpt2.c</code>，等待官方 verifier 完成后得到 <code>1.0</code>。通过发生在外部 verifier 检查最终环境之后。</li><li>Opus 的另一开发运行也写出了该文件，执行了 94 步和 81 次 Bash 调用，但 verifier 给 <code>0.0</code>。公开记录没有指出哪条隐藏检查失败；文件存在和编译动作都不能单独构成 PASS 条件。</li></ol><p>GPT 在通过的运行启动后，又修改了重复命令的去重规则。运行中的容器使用启动时冻结的旧代码，所以 <strong>1.0 不能归因于这次后续修改</strong>。这两条是作者公开的运行记录，不是本文独立重跑。</p><details><summary>另两条记录：本地文件检查与 SWE 补丁</summary><p>GPT-5.5 的本地检查先暴露了产物记录缺陷：模型在非 Git 目录创建了文件，<code>patch.diff</code> 仍为空，harness 因而报告 <code>partial</code>。修正文件路径记录后，模型创建内容为 <code>OK</code> 的 <code>result.txt</code>，日志显示两次模型调用、两次工具调用和一次写文件，状态变为 <code>success</code>。这只验证了普通文件的交付路径。</p><p>Opus 的正式 SWE 开发题从 Ansible 仓库开始。Executor 找到 shebang（脚本首行指定解释器的声明）相关逻辑，修改源文件和 changelog，并执行 pytest 与 import 检查；记录有 38 步、19 次 Bash 调用和约 5.9K 字符的非空补丁，原 SWE grader 仍给 <code>0.0</code>。具体失败的隐藏 assertion 未公开。</p></details></div>
 
 <h3 id="演化：同一份代码必须完成两套正式评测">3.4 演化：同一份代码必须完成两套正式评测</h3>
 
@@ -109,14 +111,14 @@ tags:
 <h3 id="创建结果与运行时审计">4.1 创建结果与运行时审计</h3>
 
 <p>自用模型下，Opus 的四项均分最高，为 67.8，低于人工工程参考 86.2。后者是不同 harness–model 系统的参考，不是同一 executor 的配对控制：软件、终端和搜索带星号，是没有在本实验重跑的外部结果；MLE 与写作有本实验运行值。不能把差距全部归因于生成 harness，也不能把写作超过参考解释为超过人类。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessdev/source-table-3.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/source-table-3.png" width="1888" height="484" alt="论文 Table 3：六种 creator 的自用模型成绩、执行 token 与各领域人工系统参考"></a><figcaption>论文 Table 3 原表。每格是三份独立 harness 的 <code>avg@3</code>；<code>tok.</code> 为每份程序的平均执行 token（百万），<code>Avg.</code> 不含 MLE-bench。星号是未在本实验重跑的外部参考。Yuhao Wu 等，<a href="https://arxiv.org/abs/2609.01437">原论文</a>，<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</figcaption></figure>
 <p>18 份 Code harness 都有执行循环，共增加 17,111 行代码。作者没有止于检查类名：在 26,679 条任务轨迹中审计 108 个组件实例，72 个有完整运行证据，18 个只有部分证据，18 个完全没触发，未触发项全属状态或记忆功能。11 份代码定义了 State 类，却只有一份暴露保存接口、一份实现周期检查点；正式轨迹里没有任何保存检查点的事件记录（checkpoint event）。</p>
-<figure class="figure wide"><a href="/lib/papers/harnessdev/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/body-results.svg" width="1000" height="880" alt="HarnessDev 中 108 个组件实例的真实执行证据"></a><figcaption>根据论文 §4.2 的执行审计整理：72/108 有完整证据、18/108 部分触发、18/108 未触发。代码里声明了功能，不代表任务中使用了它。</figcaption></figure>
 
 <h3 id="换执行模型后的退化，不要误读成单份程序成绩">4.2 换执行模型后的退化，不要误读成单份程序成绩</h3>
 
 <p>保持已创建代码不变、统一换 Gemini 后，Opus 的 SWE <code>avg@3</code> 从 69.3 降到 33.0。这里是三份程序的平均，不是某一份 harness 的两次成绩。Table 4 特别标注：第三份程序完全退化；事后去掉它，剩余均分为 49.1。后者只是敏感性分析，不能取代预先规定的 33.0。</p>
 <p>论文把硬编码的 120 步限制列为退化机制之一。Search harness 中，换模型后的重复查询率从 10.1% 变成 88.2%，也说明去重、审阅和退出策略依赖原模型的行为。只证明接口兼容，不代表控制策略已经迁移。</p>
-<figure class="figure wide"><a href="/lib/papers/harnessdev/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/body-case.svg" width="1000" height="835" alt="Opus 创建的三份程序在自用与固定 Gemini 执行模型下的 SWE 平均成绩"></a><figcaption>根据 Table 3、Table 4 与 Figure 6 的跨 executor 结果整理。69.3→33.0 都是三份独立创建程序的 avg@3；33.0 包含一个完全退化的副本，删去后均分为 49.1。这不是逐题测试记录。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/harnessdev/source-figure-6.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/source-figure-6.png" width="1888" height="1288" alt="论文 Figure 6：五项任务中六种 creator 生成程序在自用模型与固定 Gemini 模型下的成绩变化"></a><figcaption>论文 Figure 6 原图。实心点是自用模型，空心点是同一批生成程序改用固定 Gemini 执行；标签为后者减前者的百分点。SWE-Pro 的 Opus 69.3→33.0 是三份程序均值，包含一份完全退化的副本。Yuhao Wu 等，<a href="https://arxiv.org/abs/2609.01437">原论文</a>，<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</figcaption></figure>
 
 <h3 id="一条完整演化记录：诊断、修改、重评、选择">4.3 一条完整演化记录：诊断、修改、重评、选择</h3>
 
@@ -129,6 +131,7 @@ tags:
 </tbody></table></div>
 <p>模型最后选 T3，不是因为它的平均分最高：T1 高约 0.06 个百分点，三版通过的总题数都相同。它选择较平衡、检查覆盖较完整的版本，并拒绝用七次剩余额度反复采样碰运气。这是有诊断过程的改进记录，但每个版本只是一条演化轨迹，不能把微小分差当成可靠因果效果。</p>
 <p>全体结果更谨慎：自用模型的五条轨迹在 630 题上提高 1.43–4.44 个百分点，平均 +3.11；换成固定 Gemini 后，只有 Opus 仍提高，GPT-5.5 反而从 42.22 降到 31.90。64 次正式相邻修改中，反馈与保留集变化方向一致的只有 <strong>34/64=53.1%</strong>，最终所选版本是保留集最好版本的只有 2/9。可见分数适合指导局部搜索，不足以保证选对最终版本。</p>
+<figure class="figure wide"><a href="/lib/papers/harnessdev/source-table-6.png" target="_blank" rel="noopener"><img src="/lib/papers/harnessdev/source-table-6.png" width="1292" height="796" alt="论文 Table 6：五条自用和四条固定 Gemini 演化轨迹的反馈集与 630 题保留集成绩"></a><figcaption>论文 Table 6 原表。<code>Feedback pair</code> 是 100 道 SWE 与 89 道 Terminal 的通过率等权平均；<code>Held-out-630</code> 只含未回传的 SWE 题。固定 Gemini 下，GPT-5.5 行的反馈提高 2.4 点，保留集却下降 10.32 点。Yuhao Wu 等，<a href="https://arxiv.org/abs/2609.01437">原论文</a>，<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</figcaption></figure>
 <p>单个版本重跑时，两项均分可波动约 ±4.75 个百分点。64 次修改中，27 次表面上涨仍落在重复运行的波动范围内，只有两次有超出该范围的明确正向证据。这不是说其他改动都无效，而是现有重复次数不足以把这些小幅上涨归因于代码。</p>
 
 <h2 id="下一步：哪些实验能分清真实改进与偶然高分">5. Discussion：哪些实验能分清真实改进与偶然高分</h2>
