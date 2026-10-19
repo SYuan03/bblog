@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>π-Distill 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>
 .dual{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.dual .arrow{text-align:center;color:var(--blue);font-size:42px}.stack{display:grid;gap:14px}.tiny{font-size:16px!important}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}.tight .card p,.tight .card li{font-size:18px}.code{font-size:18px}.pill{display:inline-block;margin:4px;padding:7px 10px;border:1px solid var(--line);background:#fff;font:600 15px monospace}.scoreline{display:grid;grid-template-columns:260px 1fr 90px;gap:16px;align-items:center;margin:13px 0;font-size:18px}
+.stage>.slide{inset:auto;left:0;top:0;width:1230px;height:692px;padding:42px 54px 40px;transform:scale(1.3);transform-origin:top left}
 </style></head><body><div class="viewport"><main class="stage" aria-label="π-Distill 论文图解"><section class="slide active">
   <div class="meta"><span>01 · QUESTION</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
 <h1>π-Distill：只有成功操作，也能训练不看记录的模型</h1><p class="lead">训练时额外给模型成功操作记录，叫特权信息（PI）；同一模型分别用带 PI 与不带 PI 的输入，同时学习利用参考和独立行动。</p><div class="content"><div class="grid g4"><div class="card blue"><h3>300/500</h3><p>Retail任务有PI（训练期参考）</p></div><div class="card"><h3>44.1 ±2.16%</h3><p>Qwen3-8B，Travel</p></div><div class="card"><h3>17/21</h3><p>非零KL约束更优的设置</p></div><div class="card"><h3>8.5/10</h3><p>个人兴趣程度</p></div></div><div class="callout"><p>17/21不是去掉环境奖励的消融。π-Distill由teacher采样；OPSD对照由student采样。</p></div></div>
@@ -18,13 +19,13 @@
 </section>
 <section class="slide">
   <div class="meta"><span>04 · DATA</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-<h2>真实取消订单：状态从 pending 变 cancelled</h2><div class="content"><div class="case-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div class="card"><h3>1 · 邮箱查用户</h3><p>amelia.wilson1598@example.com → find_user_id_by_email → amelia_wilson_4614。</p></div><div class="card"><h3>2 · 读取订单</h3><p>get_order_details("#W3062096")：pending，三件商品合计463.43美元。</p></div><div class="card"><h3>3 · 明确确认</h3><p>确认订单、原因ordered by mistake、PayPal退款；用户回复Yes。</p></div><div class="card blue"><h3>4 · 执行取消</h3><p>cancel_pending_order：返回cancelled、退款463.43及cancel_reason；再告知5–7工作日。</p></div></div><div class="callout"><p>来源Appendix H.3真实成功记录。只口头答“取消”而不调用工具，状态不会改；这是规则推导失败，不是另一条观测日志。</p></div></div>
+<h2>真实取消订单：状态从 pending 变 cancelled</h2><div class="content"><div class="case-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div class="card"><h3>1 · 邮箱查用户</h3><p>amelia.wilson1598@example.com → find_user_id_by_email → amelia_wilson_4614。</p></div><div class="card"><h3>2 · 读取订单</h3><p>get_order_details("#W3062096")：pending，三件商品合计463.43美元。</p></div><div class="card"><h3>3 · 明确确认</h3><p>确认订单、原因ordered by mistake、PayPal退款；用户回复Yes。</p></div><div class="card blue"><h3>4 · 执行取消</h3><p>cancel_pending_order：返回cancelled、退款463.43及cancel_reason；再告知5–7工作日。</p></div></div><div class="callout"><p>Appendix H.3 是真实成功记录。公开分支重放：执行取消，数据库哈希匹配参考动作；只口头回答则不匹配。确认规则仍须从对话检查。</p></div></div>
 <div class="foot"><span>v3AppendixH.3真实成功取消记录</span><span>4 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>05 · SETTING</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-<h2>一次 teacher 采样怎样同时训练两种输入？</h2><div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>teacher尝试</strong><p>同一模型输入s+PI，与环境交互获得新轨迹o。</p></div><div class="step"><b>2</b><strong>环境判分</strong><p>实际完成情况给R；不是历史记录直接重放。</p></div><div class="step"><b>3</b><strong>teacher目标</strong><p>提高R，减去βKL(teacher‖stopgrad(student))。</p></div><div class="step"><b>4</b><strong>student目标</strong><p>从teacher轨迹学习，用概率比值校正并减KL约束。</p></div><div class="step"><b>5</b><strong>共享更新</strong><p>用α混合目标；α=.5先从0升到.5，持续15 epochs。</p></div></div><div class="callout"><p>2×H100、3种子；Retail batch64，但SFT+RL为128；Travel batch45。RL/OPSD长度上限35K，其他25K。</p></div></div>
-<div class="foot"><span>v3Eqs2–4与Table2；未公开训练代码</span><span>5 / 12</span></div>
+<h2>一次 teacher 采样怎样同时训练两种输入？</h2><div class="content"><div class="flow" style="--n:5"><div class="step"><b>1</b><strong>teacher尝试</strong><p>同一模型输入s+PI，与环境交互获得新轨迹o。</p></div><div class="step"><b>2</b><strong>环境判分</strong><p>实际完成情况给R；不是历史记录直接重放。</p></div><div class="step"><b>3</b><strong>teacher目标</strong><p>提高环境奖励 R，同时用 KL 限制两种输入的概率差距。</p></div><div class="step"><b>4</b><strong>student目标</strong><p>从teacher轨迹学习，用概率比值校正并减KL约束。</p></div><div class="step"><b>5</b><strong>共享更新</strong><p>用α混合目标；α=.5先从0升到.5，持续15 epochs。</p></div></div><div class="callout"><p>2×H100、3种子；Retail batch64，但SFT+RL为128；Travel batch45。RL/OPSD长度上限35K，其他25K。</p></div></div>
+<div class="foot"><span>v3 Eqs. 2–4 与 Table 2；公开分支未绑定 Table 1 实验</span><span>5 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>06 · RESULT</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
@@ -38,16 +39,16 @@
 </section>
 <section class="slide">
   <div class="meta"><span>08 · GAME CODE</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-<h2>有用的参考信息，不一定能传给不看信息的输入</h2><div class="content"><div class="grid g3"><div class="card"><h3>当场帮助</h3><p>带PI的teacher成绩提升多少？先测是否真的会利用参考。</p></div><div class="card blue"><h3>训练传递</h3><p>训练后student不看PI时提升多少？检查概率差距与α。</p></div><div class="card"><h3>复现缺口</h3><p>无官方训练代码；修改后的judge、trace过滤与KL估计无法逐行复核。</p></div></div><div class="callout"><p>游戏代码可将构建/测试记录作训练期参考，但属于后续建议；本文并未测完整游戏项目生成。</p></div></div>
-<div class="foot"><span>v3§7条件分析；代码未公开</span><span>8 / 12</span></div>
+<h2>有用的参考信息，不一定能传给不看信息的输入</h2><div class="content"><div class="grid g3"><div class="card"><h3>当场帮助</h3><p>带PI的teacher成绩提升多少？先测是否真的会利用参考。</p></div><div class="card blue"><h3>训练传递</h3><p>训练后student不看PI时提升多少？检查概率差距与α。</p></div><div class="card"><h3>复现缺口</h3><p>公开分支可查部分代码，但README称正式发布待批准；未给与Table1绑定的运行版本。</p></div></div><div class="callout"><p>游戏代码可将构建/测试记录作训练期参考，但属于后续建议；本文并未测完整游戏项目生成。</p></div></div>
+<div class="foot"><span>v3 §7 条件分析；公开分支未绑定 Table 1 实验</span><span>8 / 12</span></div>
 </section>
 <section class="slide">
   <div class="meta"><span>09 · VERDICT</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-<h2>共享参数、采样来源与概率约束，构成这篇的算法区别</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>值得借</h3><p>比较teacher采样与student采样，检验teacher如何学会用PI，以及能力怎样在无PI条件下保留。</p></div><div class="card"><h3>不能沿用的简化</h3><p>冻结teacher的OPSD不是这里π-Distill；环境返回不是工具列表PI；17/21不是去奖励消融。</p></div></div><div class="callout"><p>实验模型最大为 8B，PI 只来自一个强模型，没有官方训练仓库；这些限制与主结果一起保留。</p></div></div>
+<h2>共享参数、采样来源与概率约束，构成这篇的算法区别</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>值得借</h3><p>比较teacher采样与student采样，检验teacher如何学会用PI，以及能力怎样在无PI条件下保留。</p></div><div class="card"><h3>不能沿用的简化</h3><p>冻结teacher的OPSD不是这里π-Distill；环境返回不是工具列表PI；17/21不是去奖励消融。</p></div></div><div class="callout"><p>实验模型最大为8B，PI只来自一个强模型；公开分支未绑定Table1配置，结论仍以论文结果为准。</p></div></div>
 <div class="foot"><span>本文总结与公开证据边界</span><span>9 / 12</span></div>
 </section><section class="slide">
 <div class="meta"><span>10 · IMPLEMENTATION</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
-<h2>正文目标、算法伪代码与实现说明并不完全一致</h2><div class="content"><div class="grid g2"><div class="card"><h3>π-Distill</h3><p>Eq. 2：teacher 对不带 PI 的 student，加 stop-gradient。E.1：序列 KL 合入奖励。</p><p>Algorithm 1 却写带 PI 的 reference，没有明确上述对应关系。</p></div><div class="card blue"><h3>OPSD</h3><p>E.1：直接对 KL 估计反向传播。Algorithm 2 却将 KL 合入奖励，再算组内优势。</p><p>没有官方实现，无法替作者确定实际执行分支。</p></div></div><div class="callout"><p>长度惩罚仅对成功轨迹，按每轮回答计算：≤2,000 tokens 不扣，之后增加；整条平均最低 −0.3。不是总长超过15K就扣。</p></div></div><div class="foot"><span>v3 Appendix C、E.1–E.3</span><span>10 / 12</span></div></section>
+<h2>正文目标、算法伪代码与实现说明并不完全一致</h2><div class="content"><div class="grid g2"><div class="card"><h3>π-Distill</h3><p>Eq. 2：teacher 对不带 PI 的 student，加 stop-gradient。E.1：序列 KL 合入奖励。</p><p>Algorithm 1 却写带 PI 的 reference，没有明确上述对应关系。</p></div><div class="card blue"><h3>OPSD</h3><p>E.1：直接对 KL 估计反向传播。Algorithm 2 却将 KL 合入奖励，再算组内优势。</p><p>公开分支未标注Table1实验版本，不能替作者确定实际执行分支。</p></div></div><div class="callout"><p>长度惩罚仅对成功轨迹，按每轮回答计算：≤2,000 tokens 不扣，之后增加；整条平均最低 −0.3。不是总长超过15K就扣。</p></div></div><div class="foot"><span>v3 Appendix C、E.1–E.3</span><span>10 / 12</span></div></section>
 <section class="slide">
 <div class="meta"><span>11 · NEGATIVE CONTROLS</span><span>arXiv:2602.04942 · 2026-02-04</span></div>
 <h2>8B 的成功不能外推到 4B 与 R1</h2><div class="content"><div class="grid g3"><div class="card blue"><h3>Qwen3-8B</h3><p>GEM 搜索任务：OPSD 与部分 π-Distill 优于 SFT+CoT+RL。</p></div><div class="card"><h3>Qwen3-4B</h3><p>GEM 上 OPSD 明显下降，带 CoT 的 SFT+RL 最强；Retail OPSD23.1% &lt; 基线23.3%。</p></div><div class="card"><h3>R1-8B</h3><p>先用 CoT 做SFT。OPSD Retail14.5% &lt;16.3%，Airline2% &lt;7.33%。GEM未超过Base。</p></div></div><div class="callout"><p>GEM 用 Retail 最佳单个版本，非每个搜索数据集重挑。图中 ± 是标准误，主 Table 1 是标准差。</p></div></div><div class="foot"><span>v3 Table 1、Figure 4，保留退化对照</span><span>11 / 12</span></div></section>
