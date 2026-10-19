@@ -6,7 +6,8 @@
     "primary_source_ids": [
       "paper",
       "paper-pdf",
-      "official-artifact"
+      "official-artifact",
+      "paper-html"
     ],
     "arxiv_id": "2606.06324",
     "version": "v2",
@@ -57,6 +58,17 @@
         "implementation",
         "checker-boundary"
       ]
+    },
+    {
+      "id": "paper-html",
+      "kind": "paper",
+      "title": "HarnessFix arXiv v2 HTML and original figures",
+      "url": "https://arxiv.org/html/2606.06324v2",
+      "revision": "arXiv 2606.06324v2",
+      "used_for": [
+        "original-figures",
+        "figure-3-amount"
+      ]
     }
   ],
   "paper_reading": {
@@ -73,7 +85,7 @@
     ],
     "source_visuals_expected": 11,
     "visual_inventory_complete": true,
-    "review_round": "2026-10-13 collection revision",
+    "review_round": "2026-10-20 original-visual and amount verification",
     "status": "main-agent-full-text-and-all-rendered-pages-reviewed",
     "inventory_note": "Current numbered inventory checked against complete extracted text and all rendered pages, including appendices.",
     "local_sources": {
@@ -83,7 +95,7 @@
     },
     "current_review": {
       "reviewer": "main agent",
-      "date": "2026-10-14",
+      "date": "2026-10-20",
       "text_lines_reviewed": "1-839",
       "primary_text": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2606.06324/paper.txt",
       "rendered_page_ranges": [
@@ -94,7 +106,7 @@
       ],
       "rendered_review_location": "/Users/chris/Documents/Codex/2026-09-21/bvab/tmp/pdfs/collection-primary-068-076/2606.06324/main-reread",
       "pdf_sha256": "22e024954f854474819800533ba8a0371eed4688c7b7b554f97d3cd9311f3866",
-      "changes": "Full v2 read; public corpus classification and annotation agreement; 80 blind human diagnosis labels; limited-regression code defaults and cost-only reporting; three-run means; offline-token boundary; figure/prose amount conflict."
+      "changes": "Rechecked all 13 pages and full extracted text; Figure 3 amount is 117.6 while §III-A excerpt is 54.0. Replaced body diagrams with original licensed paper visuals and a complete Table VI crop."
     }
   },
   "note_sections": [
@@ -204,11 +216,15 @@
       "evidence": [
         {
           "artifact": "article",
-          "quote": "S4 发出的支付请求包含 <code>amount=54.0</code> 和说明，却没有 <code>user_email</code>。"
+          "quote": "Figure 3 的 S4 支付请求包含 <code>amount=117.6</code> 和说明，却没有 <code>user_email</code>。"
         },
         {
           "artifact": "article",
           "quote": "没有完整 task ID、所有收款人记录或修补后的逐条运行日志；不能写成“这道题已实测拿到 1 分”。"
+        },
+        {
+          "artifact": "article",
+          "quote": "§III-A 的结构化请求摘录写 <code>54.0</code>，Figure 3 原图写 <code>117.6</code>。"
         }
       ]
     },
@@ -241,64 +257,67 @@
       "id": "visual-1",
       "kind": "figure",
       "label": "Figure 1",
-      "source_id": "paper-pdf",
+      "source_id": "paper-html",
       "source_locator": "Figure 1",
-      "status": "omitted",
-      "rationale": "七层 harness 缺陷的分布图未复制；正文以付款请求缺邮箱的实际错误说明层级只是定位词汇，不能用分类名替代根因。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "No source image reused.",
-      "credit": "",
-      "asset_paths": []
+      "status": "reused",
+      "rationale": "Figure 1 原图在动机段同时展示 57,780 条记录中 45.3% 相关，以及相关记录的七层分布；避免将两个分母混淆。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "左侧分母是 57,780 条开发记录"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "credit": "Mengzhuo Chen 等，论文 Figure 1 原图",
+      "asset_paths": [
+        "/lib/papers/harnessfix/source-figure-1.png"
+      ]
     },
     {
       "id": "visual-2",
       "kind": "figure",
       "label": "Figure 2",
-      "source_id": "paper-pdf",
+      "source_id": "paper-html",
       "source_locator": "Figure 2",
-      "status": "redrawn",
-      "rationale": "整理、诊断、限定补丁与真实回归验收改为顺序图，明确每个角色产出的证据。",
+      "status": "reused",
+      "rationale": "Figure 2 原图保留四阶段与角色、产物、接受/拒绝分支；正文按两段裁切以保证实际列宽下可读，并可展开整图。",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "先保留运行事实，再诊断，再允许修改"
-        },
-        {
           "artifact": "article",
-          "locator": "根据 Figure 2 重绘。每一步先保留输入、输出和实际状态，再对应到可改代码；修复模型不能改变题目数据或评分答案。"
+          "locator": "论文 Figure 2 原图局部，Stage 1–2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
-      "credit": "根据原论文 Figure 2 重绘",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "credit": "Mengzhuo Chen 等，论文 Figure 2 原图及局部",
       "asset_paths": [
-        "/lib/papers/harnessfix/body-method.svg"
+        "/lib/papers/harnessfix/source-figure-2-stages-1-2.png",
+        "/lib/papers/harnessfix/source-figure-2-stages-3-4.png",
+        "/lib/papers/harnessfix/source-figure-2.png"
       ]
     },
     {
       "id": "visual-3",
       "kind": "figure",
       "label": "Figure 3",
-      "source_id": "paper-pdf",
+      "source_id": "paper-html",
       "source_locator": "Figure 3",
-      "status": "redrawn",
-      "rationale": "支付请求缺少 user_email、错误掩盖、未产生 PaymentRequest 的链条用金额 54.0 贯穿。",
+      "status": "reused",
+      "rationale": "Figure 3 原图保留 117.6、缺失 user_email、吞掉错误与 3→0 的评测结果；正文分成可读局部并提供整图，明确其与 §III-A 54.0 不一致。",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "AppWorld 请求示例：调用正常返回，却未创建付款请求"
-        },
-        {
           "artifact": "article",
-          "locator": "根据 Figure 3 与 §III-A 重绘，54.0 沿用后者的请求摘录。付款请求缺少必填邮箱，记录未增加；这只是说明案例，未公布修补后单题得分。"
+          "locator": "论文 Figure 3 原图局部，S3–S5"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
-      "credit": "根据原论文 Figure 3 重绘",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "credit": "Mengzhuo Chen 等，论文 Figure 3 原图及局部",
       "asset_paths": [
-        "/lib/papers/harnessfix/body-case.svg"
+        "/lib/papers/harnessfix/source-figure-3-steps-3-5.png",
+        "/lib/papers/harnessfix/source-figure-3-steps-6-result.png",
+        "/lib/papers/harnessfix/source-figure-3.png"
       ]
     },
     {
@@ -377,23 +396,19 @@
       "label": "Table VI",
       "source_id": "paper-pdf",
       "source_locator": "Table VI",
-      "status": "redrawn",
-      "rationale": "GAIA 完整 61.7 与 prompt-only、去诊断、去限定操作、去回归验收的结果单独比较。",
+      "status": "reused",
+      "rationale": "Table VI 原表完整保留四个 benchmark 的起点、四项消融与完整系统分数，避免只展示 GAIA 一列。",
       "placements": [
         {
-          "artifact": "deck",
-          "locator": "GAIA 消融：诊断与验收都有贡献"
-        },
-        {
           "artifact": "article",
-          "locator": "根据 Table VI 重绘。完整系统 61.7% 高于只修提示词的 50.6%；诊断与验收都参与收益，不能归给单一模块。"
+          "locator": "论文 Table VI 原表"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Underlying facts and relationships redrawn in editable HTML/CSS; no source pixels reused.",
-      "credit": "根据原论文 Table VI 重绘",
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "credit": "Mengzhuo Chen 等，论文 Table VI 原表",
       "asset_paths": [
-        "/lib/papers/harnessfix/body-results.svg"
+        "/lib/papers/harnessfix/source-table-vi.png"
       ]
     },
     {
@@ -427,47 +442,120 @@
   ],
   "figures": [
     {
-      "path": "/lib/papers/harnessfix/body-method.svg",
-      "origin": "author-redrawn",
-      "credit": "根据 Figure 2 重绘。每一步先保留输入、输出和实际状态，再对应到可改代码；修复模型不能改变题目数据或评分答案。",
+      "path": "/lib/papers/harnessfix/source-figure-1.png",
+      "origin": "paper-original",
+      "source_visual_id": "visual-1",
+      "source_id": "paper-html",
+      "source_locator": "Figure 1",
+      "credit": "Mengzhuo Chen 等，论文 Figure 1 原图",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
       "used_in": [
         "article"
       ],
-      "placement": "method",
+      "placement": "complete original"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-figure-2-stages-1-2.png",
+      "origin": "paper-original",
       "source_visual_id": "visual-2",
-      "source_id": "paper-pdf",
+      "source_id": "paper-html",
       "source_locator": "Figure 2",
-      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
-    },
-    {
-      "path": "/lib/papers/harnessfix/body-case.svg",
-      "origin": "author-redrawn",
-      "credit": "根据 Figure 3 重绘。54.0 的请求缺少必填邮箱，付款请求记录未增加；论文只展示说明案例，未公布修补后单题得分。",
+      "credit": "Mengzhuo Chen 等，论文 Figure 2 原图及局部",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
       "used_in": [
         "article"
       ],
-      "placement": "case",
+      "placement": "detail crop"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-figure-2-stages-3-4.png",
+      "origin": "paper-original",
+      "source_visual_id": "visual-2",
+      "source_id": "paper-html",
+      "source_locator": "Figure 2",
+      "credit": "Mengzhuo Chen 等，论文 Figure 2 原图及局部",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "used_in": [
+        "article"
+      ],
+      "placement": "detail crop"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-figure-2.png",
+      "origin": "paper-original",
+      "source_visual_id": "visual-2",
+      "source_id": "paper-html",
+      "source_locator": "Figure 2",
+      "credit": "Mengzhuo Chen 等，论文 Figure 2 原图及局部",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "used_in": [
+        "article"
+      ],
+      "placement": "complete original"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-figure-3-steps-3-5.png",
+      "origin": "paper-original",
       "source_visual_id": "visual-3",
-      "source_id": "paper-pdf",
+      "source_id": "paper-html",
       "source_locator": "Figure 3",
-      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
-    },
-    {
-      "path": "/lib/papers/harnessfix/body-results.svg",
-      "origin": "author-redrawn",
-      "credit": "根据 Table VI 重绘。完整系统 61.7% 高于只修提示词的 50.6%；诊断与验收都参与收益，不能归给单一模块。",
+      "credit": "Mengzhuo Chen 等，论文 Figure 3 原图及局部",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
       "used_in": [
         "article"
       ],
-      "placement": "results",
+      "placement": "detail crop"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-figure-3-steps-6-result.png",
+      "origin": "paper-original",
+      "source_visual_id": "visual-3",
+      "source_id": "paper-html",
+      "source_locator": "Figure 3",
+      "credit": "Mengzhuo Chen 等，论文 Figure 3 原图及局部",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "used_in": [
+        "article"
+      ],
+      "placement": "detail crop"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-figure-3.png",
+      "origin": "paper-original",
+      "source_visual_id": "visual-3",
+      "source_id": "paper-html",
+      "source_locator": "Figure 3",
+      "credit": "Mengzhuo Chen 等，论文 Figure 3 原图及局部",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "used_in": [
+        "article"
+      ],
+      "placement": "complete original"
+    },
+    {
+      "path": "/lib/papers/harnessfix/source-table-vi.png",
+      "origin": "paper-original",
       "source_visual_id": "visual-9",
       "source_id": "paper-pdf",
       "source_locator": "Table VI",
-      "generation": "Article-native editable SVG; two-column process, readable labels and compact data table. Not a deck screenshot or paper-pixel crop."
+      "credit": "Mengzhuo Chen 等，论文 Table VI 原表",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv:2606.06324v2 rights link resolves to Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); exact author, figure/table, and license cited beside image.",
+      "used_in": [
+        "article"
+      ],
+      "placement": "complete original"
     }
   ],
   "qa": {
-    "status": "completed-current-artifacts; external-service-history-retained",
+    "status": "current-revision-local-browser-and-source-audit-complete; production-verification-pending",
     "reading_layout": {
       "deck_first": true,
       "toc_h2_only": true,
@@ -511,9 +599,9 @@
       "read_aloud_complete": true,
       "facts_rechecked_after_rewrite": true,
       "reviewer": "main agent",
-      "date": "2026-10-14",
-      "evidence": "output/playwright/games/final-editorial-review-20261014.json",
-      "reader_reconstruction": "Complete current note and all 10 slides read. Traced diagnosis packets, task-visible data, controlled revision and held-out gate; gate permits lost tasks and does not gate cost. Preserved payment 54.0 text versus 17.6 figure conflict and unsuccessful user_email absence, no invented single PASS. Rechecked 30 repos, 57,780/26,174 survey pools, 80 annotated diagnoses and agreement not accuracy, 85 versus 55 steps, four GPT mini gains, offline cost scope and GAIA ablations."
+      "date": "2026-10-20",
+      "evidence": "work/qa070/qa-output.txt and screenshots in the continuation workspace",
+      "reader_reconstruction": "Figure 3 original shows 117.6 while §III-A shows 54.0; both are stated separately. The case traces the missing user_email, swallowed API error, premature completion, and expected three versus observed zero requests. No repaired single-case PASS is claimed. Full text and all 13 rendered pages, original-image placement, and current built article were reviewed."
     },
     "interactions": {
       "buttons": true,
@@ -533,41 +621,6 @@
       "final"
     ],
     "browser_mode": "isolated-headless",
-    "current_artifact_hashes": {
-      "article": "34c2e7b4032024e554e3a83d3b14e264c6d6a2a12477fc617ebd35341a634105",
-      "built_article": "e6dff3e494e1d05834382759e2db56bcc731d0a4034cf4320d4f8b1025b7392d",
-      "deck": "2924cb741d5d123b635a4901245d337d882dc7f97abad66924f4a77b80905cce",
-      "shared": [
-        {
-          "file": "dist/css/tide.css",
-          "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
-        },
-        {
-          "file": "dist/js/tide.js",
-          "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
-        },
-        {
-          "file": "dist/styles/paper-deep-dive-v2.css",
-          "sha256": "848f62f4d536105b1ccb5c98f6b5147722d295c2145ce0ffb820c6c7fdbb1caa"
-        },
-        {
-          "file": "dist/lib/decks/paper-deck-v2.css",
-          "sha256": "1bc71b566573d73a63b45c2ecd90b5031c01bee9c35d98117d96bbb50f3d801a"
-        },
-        {
-          "file": "dist/lib/decks/paper-deck-v2.js",
-          "sha256": "086249e98cace31ab2010e45f8cda0d95e6c130b10c335a05cc80deaa6941fcb"
-        }
-      ]
-    },
-    "browser_evidence": {
-      "article": "output/playwright/games/numbered-2026-10-14T09-17-37-419Z-070/numbered-article-qa.json",
-      "deck": "output/playwright/games/current-2026-10-14T04-02-49-112Z-070/foundation-deck-qa.json",
-      "figure_dialog": "output/playwright/games/figure-dialog-2026-10-14T05-42-22-105Z-070.json",
-      "reading_theme_regression": "output/playwright/games/reading-regression-20261014-final.json",
-      "figure_scope": "All 44 figure dialogs tested for wide/tall fit, zoom, internal XY scroll, drag, close/Escape, focus trap/restoration and nested focus exit. This earlier batch precedes heading-only changes; current shared dialog JS/CSS hashes match.",
-      "visual_scope": "Main agent inspected rendered screenshots in collection QA; extra enlarged dense slides for 082/083/088 read individually. 083 opening reread after max-height correction."
-    },
     "external_service_boundary": {
       "historical_raw_page_errors": [
         {
@@ -581,7 +634,26 @@
       "figure_raw_errors": [],
       "note": "Original opaque/numeric browser errors and localhost Twikoo request/CORS failures preserved. Layout/deck passes do not certify external comments; production-origin automatic loading is checked after release."
     },
-    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
+    "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Current note, slide, image enlargement, theme, mobile horizontal scroll, comment form, and deck interactions were checked in an isolated headless browser against the rebuilt output. Raw reports/screenshots retained in the continuation workspace; no native-window fullscreen certification.",
+    "current_revision_verification": {
+      "date": "2026-10-20",
+      "article_source_sha256": "c67ae49eab5153d4cc66ca4215550a1645d15e28ee87a4be05cefbfff6cdb28b",
+      "built_article_sha256": "8a02660ba318f71f3e1fc003ad4ed58fc5c4162edf09bf2d2902c2d8883f91e5",
+      "deck_source_sha256": "965336438acc550e391764c64ec82a866eeae4fe7a7c7e3598dfe9bf11290765",
+      "source_image_sha256": {
+        "figure_1": "48a6c60b58c55c58f31381b096ba022e32374794ebf39151e287e573d75231e0",
+        "figure_2": "f5e1cdc96f79ce0567c263da95eeaa8fd13e6e1ee1870e05f759ea00eb34677d",
+        "figure_3": "a2c465b343029d2d00cfe1f0caec894ab45ad0280a1702f5a93a031c731ad843",
+        "table_vi": "8894852a2a80d9bca1a0a3283c75bf77274ef052a42066dc58dd41d71d05b1fa"
+      },
+      "viewports": ["1600x1000", "1512x982", "390x844"],
+      "mobile_clear_size_horizontal_scroll_pixels": 432,
+      "dark_theme_persisted_after_reload": true,
+      "comments_form_loaded": true,
+      "known_local_error": "favicon.ico returned 404; no article or figure asset failed",
+      "screenshots": "work/qa070/",
+      "native_window_fullscreen_tested": false
+    }
   },
   "legacy_reading_record": {
     "record_preserved_from_schema_version": 2,
@@ -858,26 +930,18 @@
     }
   ],
   "revision_record": {
-    "round": "2026-10-13",
-    "editor": "revise_harness_search_benchmarks",
-    "state": "local-revision-pending-main-paper-read-and-final-browser-review",
-    "primary_read_required_by": "paper-deep-dive-blog SKILL.md",
+    "round": "2026-10-20",
+    "editor": "main-agent-original-visual-reread",
+    "state": "local-revision-pending-current-browser-review",
     "completed": [
-      "Causal method/evaluation walkthrough revised",
-      "Real-case sources and missing-artifact boundaries retained",
-      "Metric denominators, sampling and selection conditions corrected",
-      "Terminology first-use ledger recorded",
-      "Three source-credited body visuals rebuilt",
-      "All numbered source visuals carried forward with placements or explicit omissions",
-      "Deck screenshot body visuals replaced with article-native SVG layouts; old WebP retained."
+      "Full v2 text and all 13 rendered paper pages rechecked",
+      "Figure 3 amount discrepancy corrected against original image and prose excerpt",
+      "Original licensed Figures 1–3 and Table VI placed beside the claims they support",
+      "Complete figures retained with readable detail crops and source attribution"
     ],
     "pending": [
-      "Main agent full paper and appendix text reread",
-      "Main agent every rendered paper page reread",
-      "Verify complete visual inventory against rendered pages",
-      "Freshly rebuilt full article plus embedded/standalone deck QA at three viewports and all exit paths"
-    ],
-    "code_audit_status": "Fixed-revision findings preserved; no full training or benchmark rerun claimed."
+      "Build, strict source audit, three-viewport browser QA, commit, push, production verification"
+    ]
   },
   "qa_history": [
     {
