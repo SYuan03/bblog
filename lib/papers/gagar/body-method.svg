@@ -1,27 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="900" viewBox="0 0 1000 900" role="img" aria-labelledby="title desc">
-<title id="title">GAGAR：测试判成功，再按代码质量重新分配成功权重</title>
-<desc id="desc">同题十六次尝试完成后，测试判成功失败，固定判分模型比较成功代码的质量，再修改训练权重。无上限公式恢复正权重总量，有上限实现有例外。</desc>
-<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:33px;font-weight:750}.head{font-size:28px;font-weight:700}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}</style>
-<rect width="1000" height="900" fill="#fff"/>
-<text x="40" y="53" class="title">测试判成功，代码质量决定成功尝试的训练权重</text>
-<rect x="40" y="90" width="920" height="175" fill="#f7f8f8" stroke="#ccd4d9"/>
-<text x="64" y="133" class="head">1 · 同一道编程题，生成 16 次完整尝试</text>
-<text x="64" y="175" class="body">测试将尝试分成成功与失败，保留两者并存的组。</text>
-<text x="64" y="216" class="body">成功实现也可能精准修复、绕过问题，或者大范围重写。</text>
-<text x="64" y="251" class="small">该组尝试完成后才开始检查；其他任务组可继续生成。</text>
-<path d="M500 281v28m0 0-8-10m8 10 8-10" stroke="#647584" stroke-width="3" fill="none"/>
-<rect x="40" y="328" width="920" height="230" fill="#f1f5f8" stroke="#c4d3dd"/>
-<text x="64" y="371" class="head" fill="#245f87">2 · 固定判分 Agent，比较成功代码</text>
-<text x="64" y="413" class="body">MiMo-V2.6-Pro 固定为 RL 前版本，不随训练更新。</text>
-<text x="64" y="454" class="body">它看任务、仓库、尝试记录、代码改动与测试结果。</text>
-<text x="64" y="495" class="body">检查方案、准确性、改动范围、副作用与代码约定。</text>
-<text x="64" y="535" class="body">质量系数：T1 为 1 / 0.9；T2 为 0.85…0.4；T3 为 0.2。</text>
-<path d="M500 574v28m0 0-8-10m8 10 8-10" stroke="#647584" stroke-width="3" fill="none"/>
-<rect x="40" y="621" width="920" height="176" fill="#f2f6f4" stroke="#c6d8cf"/>
-<text x="64" y="664" class="head" fill="#356954">3 · 在成功尝试间重新分配正训练权重</text>
-<text x="64" y="706" class="body">先乘质量系数，再重缩放；保留质量比例。</text>
-<text x="64" y="747" class="body">无上限公式恢复正权重总量；触发 λ 上限时不能保证。</text>
-<text x="64" y="783" class="small">训练模型使用新的 advantage；判分 Agent 自身不训练。</text>
-<text x="40" y="849" class="small">根据 §§3.1–3.4 与 Equations 2–4 重绘。</text>
-<text x="40" y="881" class="small">判分提示词、执行轨迹与训练实现未公开，不能复原真实判分案例。</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="310" viewBox="0 0 900 310" role="img" aria-labelledby="title desc">
+<title id="title">GAGAR 的测试、组内判分和优势重分配</title>
+<desc id="desc">一题十六次尝试先由测试标记成功失败；固定判分 Agent 检查全部轨迹，但只给成功实现排序；质量系数调整正优势。</desc>
+<g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,sans-serif">
+<rect width="900" height="310" fill="#fff"/>
+<text x="18" y="34" font-size="21" font-weight="700" fill="#24313a">同题尝试组 → 仓库级判分 → 重新分配成功样本的训练权重</text>
+<text x="18" y="59" font-size="14" font-weight="400" fill="#53636d">测试给正确性；grader 给通过测试的代码排相对质量。</text>
+<rect x="18" y="78" width="268" height="181" rx="6" fill="#f6f8fa" stroke="#ccd6db"/>
+<text x="35" y="110" font-size="18" font-weight="700" fill="#24313a">1 · 生成并验证</text>
+<text x="35" y="143" font-size="15.5" font-weight="400" fill="#24313a">policy 对一题生成 16 条完整轨迹。</text>
+<text x="35" y="172" font-size="15.5" font-weight="400" fill="#24313a">可执行测试标记通过 / 失败。</text>
+<text x="35" y="201" font-size="15.5" font-weight="400" fill="#24313a">只保留成功与失败并存的组。</text>
+<text x="35" y="234" font-size="14" font-weight="400" fill="#53636d">失败轨迹仍可供 grader 调查。</text>
+<rect x="316" y="78" width="268" height="181" rx="6" fill="#f1f5f8" stroke="#bfd2de"/>
+<text x="333" y="110" font-size="18" font-weight="700" fill="#24313a">2 · 调查成功实现</text>
+<text x="333" y="143" font-size="15.5" font-weight="400" fill="#24313a">固定的 MiMo-V2.6-Pro grader</text>
+<text x="333" y="172" font-size="15.5" font-weight="400" fill="#24313a">读仓库、轨迹、补丁与测试；</text>
+<text x="333" y="201" font-size="15.5" font-weight="400" fill="#24313a">必要时运行针对性检查。</text>
+<text x="333" y="234" font-size="14" font-weight="400" fill="#53636d">只给通过测试者排 T1 / T2 / T3。</text>
+<rect x="614" y="78" width="268" height="181" rx="6" fill="#f1f7f3" stroke="#bed5c5"/>
+<text x="631" y="110" font-size="18" font-weight="700" fill="#24313a">3 · 调整正优势</text>
+<text x="631" y="143" font-size="15.5" font-weight="400" fill="#24313a">成功样本先乘质量系数 f，</text>
+<text x="631" y="172" font-size="15.5" font-weight="400" fill="#24313a">再共同乘 λ；优者分得更多。</text>
+<text x="631" y="201" font-size="15.5" font-weight="400" fill="#24313a">序列优势用于 policy 更新。</text>
+<text x="631" y="234" font-size="14" font-weight="400" fill="#53636d">λ 触发上限时还会重新居中。</text>
+<path d="M293 169H309m-6-6 6 6-6 6" fill="none" stroke="#71818b" stroke-width="2.2"/>
+<path d="M591 169H607m-6-6 6 6-6 6" fill="none" stroke="#71818b" stroke-width="2.2"/>
+<text x="18" y="291" font-size="14" font-weight="400" fill="#53636d">据论文 Figure 1、第 3 节与附录 A.2 重绘；在线 grader 保持固定。</text>
+</g>
 </svg>

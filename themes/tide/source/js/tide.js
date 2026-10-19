@@ -824,7 +824,8 @@
         figure.insertBefore(button, figure.querySelector('figcaption'));
         button.addEventListener('click', () => openFigure(sourceImage, figure, button));
         const link = sourceImage.closest('a');
-        if (link && sameOriginHref(link.href) === source) {
+        // A <picture> may select a mobile source while its link still points to the img fallback.
+        if (link && (sameOriginHref(link.href) === source || sameOriginHref(link.href) === sameOriginHref(sourceImage.src))) {
           link.setAttribute('aria-haspopup', 'dialog');
           link.setAttribute('aria-label', `放大查看：${sourceImage.alt || '正文图片'}`);
           link.addEventListener('click', (event) => {

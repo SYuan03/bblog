@@ -2,7 +2,7 @@
 title: "[2026-09-26] Groupwise Agentic Grading and Advantage Redistribution for Code Agent RL"
 permalink: "/posts/论文解读/gagar.html"
 date: "2026-10-06T09:30:00+08:00"
-updated: "2026-10-14T08:00:00+08:00"
+updated: "2026-10-20T05:30:00+08:00"
 cover: "/lib/papers/gagar/cover.svg"
 description: "GAGAR 如何比较多次通过测试的代码修改质量，再重新分配训练权重；拆解判分 Agent、计算公式、训练结果、带上限的实现与未公开证据。"
 wide_content: true
@@ -33,11 +33,11 @@ tags:
   <div class="deck-head"><strong>12 页交互图解 · 判分方法、训练权重、实验结果与证据边界</strong><a href="/lib/decks/gagar-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/gagar-visual-guide.html" title="GAGAR 论文图解，共 12 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可点左下角返回文章</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机建议横屏后全屏阅读；独立打开后可点左下角返回文章</span></p>
   </div>
 </section>
 
-<p class="lead">GAGAR 处理的是代码 Agent 强化学习里的一个具体问题。这里的代码 Agent 是能读取代码仓库、修改文件并运行工具的模型系统。同一道任务让它尝试 16 次，其中若有多次都通过测试，普通的 0/1 奖励会给这些成功尝试完全相同的训练权重。论文增加一个能主动检查代码的判分 Agent，让它同时查看代码仓库、完整执行过程、最终代码改动与测试输出，再把一部分训练权重从质量较差的成功实现转给更好的实现。</p>
+<p class="lead">同一道编程任务尝试 16 次，可能有多份代码都通过测试，却只有一份改得精准。普通的 0/1 奖励会给这些成功尝试相同的训练权重。GAGAR 让一个能检查仓库和执行记录的判分 Agent 比较它们，再把部分权重转给质量更好的实现。</p>
 
 <aside class="part0">
 <span class="kicker">PART 0 · 阅读准备</span>
@@ -54,18 +54,10 @@ tags:
 
 <div class="interest"><b>博客作者兴趣度 8.5 / 10</b><span>评分只表示博客作者本人兴趣程度；主题与代码 Agent、强化学习运行框架和自动判分直接相关</span></div>
 
-<div class="metrics" aria-label="论文关键数字">
-  <div class="metric"><strong>16</strong><span>每道任务生成 16 次完整尝试</span></div>
-  <div class="metric"><strong>62.2%</strong><span>DeepSWE 第 28 步的三次采样平均通过率</span></div>
-  <div class="metric"><strong>-15.6%</strong><span>第 28 步平均交互轮数</span></div>
-  <div class="metric"><strong>30 个任务</strong><span>独立质量审计样本量</span></div>
-</div>
-
 <aside class="keypoints">
-  <h3>先记住四个结论</h3>
+  <h3>先记住三个结论</h3>
   <ul>
     <li><strong>GAGAR 不替代可执行测试。</strong>测试先判断成功或失败，判分 Agent 只比较已经通过测试的候选实现。</li>
-    <li><strong>方法会重新分配成功样本的正训练权重。</strong>质量较差的成功样本让出一部分权重，再按质量比例分给其他成功样本。</li>
     <li><strong>最可比的结果来自两种方法都完成的第 28 个训练步骤。</strong>DeepSWE 的 <code>avg@3</code> 为 62.2% 对 50.2%，同时交互轮数和总 token 数（模型处理的文本单位）更少。</li>
     <li><strong>公开证据还不足以独立复核判分过程。</strong>论文没有发布判分提示词、训练任务、真实评分记录或实现代码。</li>
   </ul>
@@ -81,8 +73,8 @@ tags:
 GAGAR 要求 **grader（判分 Agent）** 比较同一任务中已经通过测试的候选实现。这样的比较比逐份独立打分多了一层上下文：判分 Agent 能看到不同 Agent 如何理解同一个缺陷，哪些改动是必要的，哪些只是掩盖症状。失败轨迹也会放进同一个工作区，帮助它识别已经试过但无效的路线，不过失败样本不参加质量排序。
 
 <figure class="figure wide">
-  <a href="/lib/papers/gagar/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/gagar/body-method.svg" width="1000" height="900" alt="GAGAR 从同题尝试组、判分 Agent 到训练权重重新分配的流程"></a>
-  <figcaption>根据论文图 1 与第 3.1-3.3 节重绘。图中最后一项特意标出：实现中的 λ 上限触发时，正文给出的精确守恒性质不再全部成立。</figcaption>
+  <a href="/lib/papers/gagar/body-method.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/gagar/body-method-mobile.svg" width="360" height="498"><img src="/lib/papers/gagar/body-method.svg" width="900" height="310" alt="测试选出成功实现；固定判分 Agent 查看代码与执行证据；质量排序改变成功轨迹的训练权重"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2609.32577v1#page=4">论文 Figure 1</a> 与第 3 节重绘；未复用原图像素。无上限公式恢复正权重总量，触发实现中的 λ 上限时则未必成立。</figcaption>
 </figure>
 
 <h2 id="相邻工作：从单个评分到成功实现之间的比较">2. Related Work：从单个评分到成功实现之间的比较</h2>
@@ -125,13 +117,15 @@ GAGAR 要求 **grader（判分 Agent）** 比较同一任务中已经通过测�
 
 <div class="formula">Wᵢ = 0.30s_app + 0.25s_prec + 0.20s_min + 0.15s_side + 0.10s_style</div>
 
+<details><summary>附录 Table 2：五项标准具体看什么</summary><div class="table-scroll"><table><thead><tr><th>标准与权重</th><th>质量较高的信号</th><th>质量较低的信号</th></tr></thead><tbody><tr><td>方案合理性 · 0.30</td><td>修复根因，策略合适</td><td>只绕过症状，策略根本有误</td></tr><tr><td>实现准确性 · 0.25</td><td>改对位置，覆盖完整行为</td><td>零散特判，多余的回退逻辑</td></tr><tr><td>改动精简 · 0.20</td><td>必要且限定在任务范围内</td><td>无关重构，多余分支</td></tr><tr><td>避免副作用 · 0.15</td><td>周边行为和公开接口稳定</td><td>改动无关行为，引入核心路径风险</td></tr><tr><td>遵循仓库约定 · 0.10</td><td>复用现有抽象，风格一致</td><td>临时机制，风格或注释不一致</td></tr></tbody></table></div><p>对应<a href="https://arxiv.org/pdf/2609.32577v1#page=14">论文 Table 2</a>，依据原表重新排版并翻译，未复用原图像素。</p></details>
+
 档位按附录 A.1 的固定规则产生。先判 T3：确认有未经要求的重写、只针对测试的特殊处理、方案合理性得 1 分，或改动精简与避免副作用两项都不超过 2 分。剩余候选若每项至少 4 分，且没有严重过程问题或未解决回归，就进 T1；其他进 T2。
 
 W 只给初始顺序，不是用一个总分阈值直接切档。grader 可以凭任务证据修正档内排序，无法区分就并列。T1 排名第一的并列组都取质量系数 1，其余组取 0.9；T2 按并列组排名从 0.85 线性降至 0.4，只有一组时为 0.85；T3 统一为 0.2。系数按并列组序号计算，不按前面已有多少候选计算。负面判断必须指向代码位置、轨迹事件或执行结果。
 
-<figure class="figure wide"><a href="/lib/papers/gagar/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/gagar/body-case.svg" width="1000" height="900" alt="GAGAR 用四次尝试演示质量系数和 λ 上限怎样改变 advantage"></a><figcaption>本文根据论文公式写出的解释性例子，不是公开训练日志。质量系数先作用于成功权重，再重缩放；未经重新居中的单纯降权，会改变正负权重平衡。</figcaption></figure>
-
 <h3 id="一个明确标注的公式构造例子">3.1 一个明确标注的公式构造例子</h3>
+
+<figure class="figure wide"><a href="/lib/papers/gagar/body-case.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/gagar/body-case-mobile.svg" width="360" height="514"><img src="/lib/papers/gagar/body-case.svg" width="900" height="304" alt="四条构造轨迹在初始、无上限重分配、上限居中后三种情况下的正负优势值"></picture></a><figcaption>根据<a href="https://arxiv.org/pdf/2609.32577v1#page=6">论文公式 2</a> 和 <a href="https://arxiv.org/pdf/2609.32577v1#page=15">附录公式 7</a>构造并复算；这不是真实训练日志。条形长度只表示成功样本的正权重。</figcaption></figure>
 
 <div class="case">
 <h4>这个例子只解释公式，不是论文公开的真实训练样本</h4>
@@ -172,8 +166,8 @@ W 只给初始顺序，不是用一个总分阈值直接切档。grader 可以�
 主要对照从同一个强化学习前的监督微调（SFT）模型存档出发。每个训练批次包含 128 道任务，每题生成 16 次完整尝试。评测使用 DeepSWE v1.1 与 SWE-bench Pro，每题独立生成 3 次；`avg@3` 指这三次结果的平均通过率。只用二元奖励的基线在第 28 步因性能快速下降而停止，因此公平的共同训练区间只到第 28 步。
 
 <figure class="figure wide">
-  <a href="/lib/papers/gagar/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/gagar/body-results.svg" width="1000" height="785" alt="GAGAR 在 DeepSWE step 28 的结果与 30 task 质量审计"></a>
-  <figcaption>根据论文图 2-3 重绘。62.2 与 50.2 是图表显示值，直接相减为 12.0 个百分点；论文正文写 12.1 个百分点，可能使用未四舍五入的内部数值。</figcaption>
+  <a href="/lib/papers/gagar/body-results.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/gagar/body-results-mobile.svg" width="360" height="320"><img src="/lib/papers/gagar/body-results.svg" width="900" height="300" alt="DeepSWE 在共同训练的第 28 步，二元奖励 50.2%，只降权 56.2%，完整 GAGAR 62.2%"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2609.32577v1#page=8">论文 Figure 2</a> 和 <a href="https://arxiv.org/pdf/2609.32577v1#page=10">Figure 4</a>绘制共同训练步数的通过率；“只降权”属于另一组消融。62.2 与 50.2 的显示值相差 12.0 个百分点，论文正文写 12.1。</figcaption>
 </figure>
 
 <div class="table-scroll">
@@ -189,9 +183,13 @@ W 只给初始顺序，不是用一个总分阈值直接切档。grader 可以�
 
 只降低差样本权重、不重新分配的消融实验在第 28 步得到 56.2%，低于完整方法的 62.2%；平均交互轮数为 143.5 对 111.6，总 token 数为 236.0k 对 172.9k。这个对照支持该次训练中“不要直接丢掉正权重”的设计，但没有比较所有会重新居中的奖励变换，也没有多随机种子。
 
-另一个结果是对 30 个随机 DeepSWE 任务进行质量审计。这次审计改用 Claude Opus 5，区别于线上固定 Pro grader。每个任务各放入两种方法最多三次尝试，包括失败；候选匿名并随机排序。它共同查看执行轨迹、代码改动与测试结果。在两组都训练到的最后一个模型存档上，GAGAR 按评分表加权后的质量分为 4.03，对照为 3.70；平均胜率 69.8% 只计算通过测试的候选，并列拆分后组内排名第一的比例为 65.0%。不能把胜率的成功子集分母套到整个审计上。样本量较小，而且判分者仍是大语言模型（LLM），不能把它等同于真实工程师的代码审查。
+<details><summary>补充训练曲线：Figure 2 与 Figure 4 的其他读数</summary><p>SWE-bench Pro 在第 28 步的平均交互轮数为 58.4→54.6（减少 6.5%），平均 token 长度为 79.9k→68.6k（减少 14.1%）。继续训练的 GAGAR 在 DeepSWE 第 44 步达到 63.4%，在 SWE-bench Pro 第 52 步达到 62.5%；这两个时点不能与第 28 步停止的二元基线当作同预算比较。</p><p>在 Figure 4 的另一次“只降权”消融中，策略熵从第 1 步的 0.359 增到第 30 步的 0.905，完整方法为 0.358→0.513；训练轨迹平均 token 长度分别从 47.1k→114.1k、46.5k→69.9k。前 30 步的平均策略梯度损失为 0.0304 对 0.0021。这些曲线与该次消融的不稳定表现同时出现，不能直接证明熵变化是原因。</p></details>
+
+另一个结果是对 30 个随机 DeepSWE 任务进行质量审计（<a href="https://arxiv.org/pdf/2609.32577v1#page=9">论文 Figure 3</a>）。这次审计改用 Claude Opus 5，区别于线上固定 Pro grader。每个任务各放入两种方法最多三次尝试，包括失败；候选匿名并随机排序。它共同查看执行轨迹、代码改动与测试结果。在两组都训练到的最后一个模型存档上，GAGAR 按评分表加权后的质量分为 4.03，对照为 3.70；平均胜率 69.8% 只计算通过测试的候选，并列拆分后组内排名第一的比例为 65.0%。最高质量档 T1 的候选比例从 25.4% 升到 34.3%。不能把胜率的成功子集分母套到整个审计上。样本量较小，而且判分者仍是大语言模型（LLM），不能把它等同于真实工程师的代码审查。
 
 另外，混合任务训练的最终 Flash 在 DeepSWE / SWE-Pro 得到 67.9 / 60.9，Pro 为 71.9 / 62.7。但它们与外部前沿模型或代码专用对照不是同预算、同训练数据实验，不能把这些最终差距都算作 GAGAR 的贡献。二元基线的最高 58.5 出现在第 20 步，后面降到第 28 步停止；后续 GAGAR 第 44/52 步的成绩也不应与停止的基线当成共同训练步比较。
+
+<details><summary>论文 Table 1：最终混合任务模型与外部模型的全部分数</summary><div class="table-scroll"><table><thead><tr><th>模型</th><th>DeepSWE v1.1</th><th>SWE-bench Pro</th></tr></thead><tbody><tr><td>Kimi K3</td><td>69.0%</td><td>63.3%</td></tr><tr><td>GPT-5.6 Sol</td><td>73.0%</td><td>60.5%</td></tr><tr><td>Claude Opus 5</td><td>74.0%</td><td>79.9%</td></tr><tr><td>MiMo-V2.6-Flash</td><td>67.9%</td><td>60.9%</td></tr><tr><td>MiMo-V2.6-Pro</td><td>71.9%</td><td>62.7%</td></tr></tbody></table></div><p>按<a href="https://arxiv.org/pdf/2609.32577v1#page=11">论文 Table 1</a>转录。该表不是只改变 GAGAR 的受控实验。</p></details>
 
 <h2 id="下一步：判分稳定性与真实开发成本">5. Discussion：判分稳定性与真实开发成本</h2>
 
@@ -207,15 +205,10 @@ W 只给初始顺序，不是用一个总分阈值直接切档。grader 可以�
 
 **方法抓住了代码 Agent 强化学习中真实存在的盲点，受控实验也给出一致信号；公开证据尚不足以判断判分 Agent 能否可靠识别好代码。**
 
-<div class="limit-grid">
-  <div><b>论文已经支持</b><span>从同一个 MiMo-V2.6-Flash 监督微调（SFT）模型存档出发并比较相同训练步数时，GAGAR 的 DeepSWE 通过率更高，执行轨迹更短；未经重居中的只降权消融也明显更不稳定，但未排除其他奖励变换。</span></div>
-  <div><b>论文没有支持</b><span>没有多随机种子、置信区间或人工代码审查研究，也没有公开判分提示词、训练任务、真实案例或实现。</span></div>
-  <div><b>不要误读</b><span>第 44/52 步的继续训练结果只能说明 GAGAR 还能继续优化，不能与第 28 步停止的基线当成同预算比较。</span></div>
-  <div><b>可复用的设计</b><span>保留可执行测试作为正确性门槛，在成功样本内部增加质量偏好，并避免未经重新居中的简单降权丢掉正信号；带上限分支的原正权重总量仍可能改变。</span></div>
-</div>
+同一起点、同一步数的 Flash 实验支持 GAGAR 在 DeepSWE 上提高通过率并缩短轨迹。“只降权”消融也更差，但它没有测试重新居中的其他奖励变换。论文没有多随机种子、置信区间或人工代码审查，也未公开判分记录；因此，方法能否稳定识别可合并的好代码仍待验证。
 
 如果研究目标是 Claude Code、Codex 一类完整的软件 Agent 运行框架（harness），这篇值得读。它提供了一种把“能读取整个代码仓库的审查”接进强化学习的方法。复现门槛目前很高；接下来的研究需要公开判分 Agent 的输入和判据，并测量排序稳定性以及它与人工代码审查的一致程度。
 
-<p class="source-note">主要来源：论文 v1 第 1-5 节、附录 A、图 1-4、表 1-2。公开材料检查日期：2026-10-06。未发现官方代码仓库、判分提示词、训练任务或逐组评分记录。</p>
+<p class="source-note">主要来源：论文 v1 第 1-5 节、附录 A、图 1-4、表 1-2。论文与 arXiv 条目复核日期：2026-10-20。论文未给出官方代码仓库、判分提示词、训练任务或逐组评分记录。</p>
 
 </div>
