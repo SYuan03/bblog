@@ -2,7 +2,7 @@
 title: "[2026-08-31] Learning Where Outcomes Change: Credit-Addressable Reasoning for Multimodal Geometry"
 permalink: "/posts/论文解读/learning-where-outcomes-change.html"
 date: "2026-10-02T18:30:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T07:22:00+08:00"
 cover: "/generated-covers/059-learning-where-outcomes-change.webp"
 description: "把几何解题过程写成带标签的步骤，固定某一步以前的内容，再从这里生成不同完整解法，用最终分数差训练后半段。结合等腰三角形真实案例，说明数据来源、评分、更新范围与实验限制。"
 wide_content: true
@@ -29,9 +29,11 @@ html:not([data-theme="dark"]) body:has(.car-reading){--paper:#fff;--paper-elevat
 .car-reading .keypoints{margin:0 0 36px;padding:18px 22px;border-left:5px solid var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.car-reading .keypoints h3{margin:0 0 8px;font-size:1rem}.car-reading .keypoints ul{margin:0;padding-left:1.2rem}.car-reading .keypoints li{margin:.42rem 0}.car-reading .part0{margin:32px 0 42px;padding:20px 22px;border-top:4px solid var(--violet);background:var(--surface)}.car-reading .part0 h3{margin:0 0 11px;font-size:1.3rem}.car-reading .kicker{display:block;margin-bottom:6px;color:var(--violet);font:800 .7rem/1 var(--mono);letter-spacing:.1em}
 .car-reading h2{margin-top:3.55rem}.car-reading h3{margin-top:2.1rem}.car-reading h4{margin-top:1.7rem}.car-reading strong{font-weight:750}.car-reading .table-scroll,.car-reading .code-scroll{width:100%;margin:21px 0;overflow-x:auto;-webkit-overflow-scrolling:touch}.car-reading .table-scroll table{display:table;width:100%;min-width:760px;margin:0;border-collapse:collapse;font:400 .85rem/1.52 var(--sans)}.car-reading th,.car-reading td{padding:9px 10px;border:1px solid var(--line-local);text-align:left;vertical-align:top}.car-reading th{background:color-mix(in srgb,var(--blue) 7%,var(--surface))}.car-reading td:first-child{font-weight:650}.car-reading .code-scroll pre{min-width:720px;margin:0;padding:17px 18px;overflow:visible;border:1px solid var(--line-local);background:#1f252c;color:#e9edf1;font:400 .8rem/1.62 var(--mono);white-space:pre}.car-reading code{font-size:.92em}
 .car-reading .figure{width:100%;margin:27px 0}.car-reading .figure img{display:block;width:auto;max-width:100%;max-height:820px;height:auto;margin-inline:auto;border:1px solid var(--line-local);background:#fff}.car-reading .figure.wide img{width:100%;max-width:100%;margin-inline:auto;transform:none}.car-reading .figure figcaption{max-width:740px;margin:8px auto 0;color:var(--soft);font-size:.82rem;line-height:1.55;text-align:left}
+.page-paper-reading .prose .car-reading .figure.reading-diagram img{width:100%;max-width:100%}
 .car-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.car-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.car-reading .note p{margin:.34em 0}.car-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .88rem/1.7 var(--mono);overflow-x:auto}.car-reading .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:22px 0;padding:0;background:var(--line-local);list-style:none}.car-reading .steps li{min-height:150px;padding:13px;background:var(--surface)}.car-reading .steps b{display:block;margin-bottom:7px;color:var(--blue);font:750 .72rem/1.3 var(--sans)}.car-reading .steps span{display:block;color:var(--soft);font-size:.76rem;line-height:1.5}.car-reading .case{margin:25px 0;padding:20px;border-block:1px solid var(--line-local);background:color-mix(in srgb,var(--green) 4%,#fff)}.car-reading .case h4{margin:0 0 8px;font-size:1.12rem}.car-reading .case ol{padding-left:1.2rem}.car-reading .case li{margin:.58rem 0}.car-reading .verdict{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;background:var(--line-local)}.car-reading .verdict>div{padding:13px 15px;background:#fff;font-size:.86rem;line-height:1.55}.car-reading .verdict strong{display:block;margin-bottom:4px}.car-reading .verdict .pass strong{color:var(--green)}.car-reading .verdict .fail strong{color:var(--red)}.car-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.car-reading .limit-grid>div{padding:17px;background:#fff}.car-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.car-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.article-shell-deck .article-header{width:100%;max-width:100%;min-width:0}.article-shell-deck .article-header h1{max-width:100%;font-size:clamp(1.85rem,8vw,2.34rem);overflow-wrap:anywhere;text-wrap:pretty}.article-shell-deck .article-deck,.article-shell-deck .article-deck>p,.car-reading,.car-reading .source-links{min-width:0}.article-shell-deck .article-deck>p,.car-reading .source-links a{overflow-wrap:anywhere}.car-reading .deck-wrap{max-width:100%;overflow:hidden}.car-reading .metrics{grid-template-columns:1fr 1fr}.car-reading .metric:nth-child(2){border-right:0}.car-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.car-reading .steps{grid-template-columns:1fr 1fr}.car-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.car-reading .figure.wide img{max-width:100%;margin-left:auto;transform:none}}
 @media(max-width:460px){.car-reading .steps,.car-reading .verdict,.car-reading .limit-grid{grid-template-columns:1fr}.car-reading .part0,.car-reading .case{padding:17px 15px}.car-reading .deck-head,.car-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.car-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,1000px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -48,7 +50,7 @@ html:not([data-theme="dark"]) body:has(.car-reading){--paper:#fff;--paper-elevat
   <div class="deck-head"><strong>18 页交互图解 · 格式、分支训练、几何案例、评分与结果</strong><a href="/lib/decks/credit-addressable-reasoning-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/credit-addressable-reasoning-visual-guide.html" title="Learning Where Outcomes Change 论文图解，共 18 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>每页可上下滚动；使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
   </div>
 </section>
 
@@ -108,6 +110,7 @@ Event 是一个完整、带类型标签的推理或操作步骤。Prefix 是这�
 
 **最清楚的比较方式，是同时看“推理用什么结构”和“训练在哪里比较替代方案”。CE-GRPO 的特点是两者共用 Code-CoT event。**
 
+<details><summary>展开相邻方法：推理表示与训练信号的对照</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>推理表示</th><th>得分或监督分配位置</th><th>与本文的边界</th></tr></thead>
@@ -120,6 +123,7 @@ Event 是一个完整、带类型标签的推理或操作步骤。Prefix 是这�
   </tbody>
 </table>
 </div>
+</details>
 
 上表按论文相关工作区分方法；主实验比较的是作者在同一 Code-CoT 格式下适配的基线，并非这些方法原论文的全部设置。例如 Table 12 的 GRPO-MA 使用固定的离线分支，**没有 thought-level credit（给每条中间推理单独分配相对得分）**；SRPO 使用离线 self-reset 版本。DPO、GPO 只更新 1.95% 的 LoRA 参数，CE-GRPO 更新完整策略。公开仓库没有这些适配代码，不能把主表写成对各方法完整实现的最终排名。
 
@@ -127,7 +131,7 @@ Event 是一个完整、带类型标签的推理或操作步骤。Prefix 是这�
 
 **一次 Code-CoT 回答包含识图代码、计划、若干推理／操作步骤和最终答案。** Parser（格式解析程序）按标签找步骤边界，checker（检查程序）按代码与行号核验操作；结构必须由模型生成，不是把原图直接替换成一份标准答案代码。
 
-<figure class="figure reading-diagram"><a href="/lib/papers/credit-addressable-reasoning/reading-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/credit-addressable-reasoning/reading-method.svg" alt="根据原论文 Figure 3、Sections 4.1 至 4.4 重绘；正文纵向阅读图" width="600" height="1344"></a><figcaption>根据原论文 Figure 3、Sections 4.1 至 4.4 重绘。</figcaption></figure>
+<figure class="figure wide reading-diagram"><a href="/lib/papers/credit-addressable-reasoning/reading-method.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/credit-addressable-reasoning/reading-method-mobile.svg" width="360" height="531"><img src="/lib/papers/credit-addressable-reasoning/reading-method.svg" alt="Code-CoT 生成带标签的步骤后，CE-GRPO 固定步骤前文并比较四条完整后续" width="900" height="354"></picture></a><figcaption>根据<a href="https://arxiv.org/pdf/2608.30457#page=4">原论文 Figure 3、Sections 4.1 至 4.4</a>重绘；示例 reward 是按公开公式构造，并非模型轨迹。</figcaption></figure>
 
 <details class="reading-evidence"><summary>横向总览（可打开原尺寸）</summary>
 <figure class="figure wide">
@@ -158,12 +162,14 @@ SFT 数据来自八个几何数据集。作者先按问题文字和图像去除�
 
 最终保留 18,302 条记录，全部检查结构、代码执行、引用行号与复制内容是否一致、操作是否合法和答案是否正确。论文没有报告人工复核、抽检比例或合成模型之间的一致率。这些程序过滤不能保证原图中的每个事实都被正确转成代码。
 
+<details><summary>展开八个来源数据集的保留样本数</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>来源</th><th>保留样本</th><th>来源</th><th>保留样本</th></tr></thead>
   <tbody><tr><td>MultiMath-Geo</td><td>4,974</td><td>FormalGeo7K</td><td>1,931</td></tr><tr><td>UniGeo</td><td>2,313</td><td>GeoAux</td><td>240</td></tr><tr><td>Geo170K</td><td>816</td><td>GeoSym127K</td><td>1,183</td></tr><tr><td>MultiMath-300K</td><td>4,227</td><td>PGPS9K</td><td>2,618</td></tr></tbody>
 </table>
 </div>
+</details>
 
 强化学习任务池是 11,450 道去重后的原始问题，不带预先合成的 Code-CoT 记录；当前模型必须在线生成识图代码、步骤和答案。它由 GeoSym127K 的 hard/expert、未用于 SFT 的 PGPS9K 训练样本，以及一个较小的 GeoQA 子集组成。
 
@@ -205,7 +211,7 @@ SFT 数据来自八个几何数据集。作者先按问题文字和图像去除�
 
 <h3 id="3-7-真实三角形案例：对称性被用错位置">3.7 真实三角形案例：对称性被用错位置</h3>
 
-<figure class="figure reading-diagram"><a href="/lib/papers/credit-addressable-reasoning/reading-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/credit-addressable-reasoning/reading-case.svg" alt="根据原论文 Figure 5 和 Appendix C.1 重绘；坐标算式由公开题设推导；正文纵向阅读图" width="600" height="1469"></a><figcaption>根据原论文 Figure 5 和 Appendix C.1 重绘；坐标算式由公开题设推导。</figcaption></figure>
+<figure class="figure wide reading-diagram"><a href="/lib/papers/credit-addressable-reasoning/reading-case.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/credit-addressable-reasoning/reading-case-mobile.svg" width="360" height="533"><img src="/lib/papers/credit-addressable-reasoning/reading-case.svg" alt="等腰三角形中 D 不在中点；错误地把 AD 当高得到 12，保留 D 的位置得到 3√17" width="900" height="364"></picture></a><figcaption>根据<a href="https://arxiv.org/pdf/2608.30457#page=16">原论文 Figure 5 和 Appendix C.1</a>重绘；图中坐标算式由公开题设推导。论文的 R=−1 还取决于未公开的检查与惩罚。</figcaption></figure>
 
 <details class="reading-evidence"><summary>横向总览（可打开原尺寸）</summary>
 <figure class="figure wide">
@@ -232,6 +238,7 @@ SFT 数据来自八个几何数据集。作者先按问题文字和图像去除�
 
 下面这段是依据论文公开公式写的说明性伪代码，不是官方实现。官方仓库目前没有训练代码。
 
+<details><summary>展开 CE-GRPO 四条后续的说明性伪代码</summary>
 <div class="code-scroll"><pre><code>&#35; explanatory pseudocode, adapted from Equations 5-7
 def ce_group(image, question, prefix, policy, reward, group_size=4):
     futures = [
@@ -244,9 +251,11 @@ def ce_group(image, question, prefix, policy, reward, group_size=4):
     return [(future, advantage) for future, advantage in zip(futures, advantages)]
 &#35; prefix tokens are context only; policy loss starts at each regenerated future
 </code></pre></div>
+</details>
 
 如果想验证这道题的几何关系，可以直接运行下面的 Python 3 + Matplotlib 示例。代码由本文根据公开题设编写，不来自作者未公开的评测任务或验收实现。
 
+<details><summary>展开 Python 3 + Matplotlib 几何验证示例</summary>
 <div class="code-scroll"><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 A = np.array([0.0, 12.0])
@@ -260,6 +269,7 @@ print(np.linalg.norm(A-D))                       &#35; 12.369..., = 3*sqrt(17)
 plt.axis("equal")
 plt.show()
 </code></pre></div>
+</details>
 
 <h2 id="九套测试、主要结果与计算预算">4. Experiments：九套测试、主要结果与计算预算</h2>
 
@@ -277,7 +287,7 @@ plt.show()
 
 <h3 id="4-2-长依赖题收益较大，常规题并非都提高">4.2 长依赖题收益较大，常规题并非都提高</h3>
 
-<figure class="figure reading-diagram"><a href="/lib/papers/credit-addressable-reasoning/reading-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/credit-addressable-reasoning/reading-results.svg" alt="根据原论文 Table 2 重绘；正文纵向阅读图" width="600" height="1198"></a><figcaption>根据原论文 Table 2 重绘。</figcaption></figure>
+<figure class="figure wide reading-diagram"><a href="/lib/papers/credit-addressable-reasoning/reading-results.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/credit-addressable-reasoning/reading-results-mobile.svg" width="360" height="406"><img src="/lib/papers/credit-addressable-reasoning/reading-results.svg" alt="CE-GRPO 九项平均比整条回答级 GRPO 高 3.43 个百分点，但两项任务下降" width="900" height="320"></picture></a><figcaption>根据<a href="https://arxiv.org/pdf/2608.30457#page=6">原论文 Table 2</a>重绘；增益由表内 CE-GRPO 与 trajectory-level GRPO 数值复算。</figcaption></figure>
 
 <details class="reading-evidence"><summary>横向总览（可打开原尺寸）</summary>
 <figure class="figure wide">

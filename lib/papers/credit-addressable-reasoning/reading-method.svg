@@ -1,31 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1344" viewBox="0 0 600 1344" role="img" aria-labelledby="title desc"><title id="title">固定同一前文，让完整后续彼此比较</title><desc id="desc">根据 Figure 3、§4.1–4.4 重绘 四个reward数值是公式说明例</desc><rect width="600" height="1344" fill="#fff"/><style>text{font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}.title{font-size:32px;font-weight:750}.label{font-size:28px;font-weight:750}.main{font-size:28px}.small{font-size:24px}.value{font-size:32px;font-weight:750}</style><text x="24" y="66" class="title" fill="#20252d" text-anchor="start">固定同一前文，</text>
-<text x="24" y="108" class="title" fill="#20252d" text-anchor="start">让完整后续彼此比较</text>
-<text x="24" y="152" class="small" fill="#596575" text-anchor="start">根据 Figure 3、§4.1–4.4 重绘</text>
-<text x="24" y="190" class="small" fill="#596575" text-anchor="start">四个reward数值是公式说明例</text>
-<path d="M24 200H576" stroke="#d7dee7" stroke-width="2"/>
-<rect x="24" y="223" width="552" height="192" fill="#f5f7fa" stroke="#d7dee7" stroke-width="2"/>
-<text x="43" y="262" class="label" fill="#365f85" text-anchor="start">1 · 训练前采集起点</text>
-<text x="43" y="306" class="main" fill="#20252d" text-anchor="start">初始 SFT 模型先写完整 Code-CoT。</text>
-<text x="43" y="345" class="main" fill="#20252d" text-anchor="start">选择完整步骤，截掉它与后续。</text>
-<text x="43" y="384" class="main" fill="#20252d" text-anchor="start">得到固定前缀，供 RL 继续生成。</text>
-<path d="M300 440v20m-8-8 8 8 8-8" fill="none" stroke="#365f85" stroke-width="3"/>
-<rect x="24" y="476" width="552" height="192" fill="#f5f7fa" stroke="#d7dee7" stroke-width="2"/>
-<text x="43" y="515" class="label" fill="#365f85" text-anchor="start">2 · 保留它之前的所有内容</text>
-<text x="43" y="559" class="main" fill="#20252d" text-anchor="start">原图、问题、已有前文作条件。</text>
-<text x="43" y="598" class="main" fill="#20252d" text-anchor="start">从这条步骤开始生成四条后续，</text>
-<text x="43" y="637" class="main" fill="#20252d" text-anchor="start">每条一直写到最终答案。</text>
-<path d="M300 693v20m-8-8 8 8 8-8" fill="none" stroke="#365f85" stroke-width="3"/>
-<rect x="24" y="729" width="552" height="192" fill="#f5f7fa" stroke="#d7dee7" stroke-width="2"/>
-<text x="43" y="768" class="label" fill="#365f85" text-anchor="start">3 · 对每条完整后续评分</text>
-<text x="43" y="812" class="main" fill="#20252d" text-anchor="start">答案正确性+操作有效率−惩罚。</text>
-<text x="43" y="851" class="main" fill="#20252d" text-anchor="start">例：[1.3, 1.3, 0.3, 0.3]。</text>
-<text x="43" y="890" class="main" fill="#20252d" text-anchor="start">组均值0.8，标准差0.5。</text>
-<path d="M300 946v20m-8-8 8 8 8-8" fill="none" stroke="#365f85" stroke-width="3"/>
-<rect x="24" y="982" width="552" height="192" fill="#f5f7fa" stroke="#d7dee7" stroke-width="2"/>
-<text x="43" y="1021" class="label" fill="#365f85" text-anchor="start">4 · 更新哪一段token？</text>
-<text x="43" y="1065" class="main" fill="#20252d" text-anchor="start">优势约[+1,+1,−1,−1]。</text>
-<text x="43" y="1104" class="main" fill="#20252d" text-anchor="start">重写步骤及全部后续接受优势；</text>
-<text x="43" y="1143" class="main" fill="#20252d" text-anchor="start">共享前文不进训练loss。</text>
-<text x="24" y="1234" class="small" fill="#596575" text-anchor="start">四条同分时，没有组内更新信号。</text>
-<text x="24" y="1272" class="small" fill="#596575" text-anchor="start">训练所用3,270个prefix在RL前固定，</text>
-<text x="24" y="1310" class="small" fill="#596575" text-anchor="start">不是训练中持续刷新。</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="354" viewBox="0 0 900 354" role="img" aria-labelledby="title desc">
+<title id="title">CE-GRPO 从完整步骤边界重采后续</title>
+<desc id="desc">先让模型学会生成带标签的 Code-CoT 回答，再固定步骤前文，从同一位置生成四条完整后续并比较最终得分；前文不进入这组损失。</desc>
+<g font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">
+<rect x="0.5" y="0.5" width="899" height="353" fill="#fff" stroke="#cbd6de" stroke-width="1"/>
+<text x="28" y="42" font-size="25" font-weight="760" fill="#25313b" text-anchor="start">固定同一前文，比较四条完整后续</text>
+<text x="28" y="69" font-size="15.5" font-weight="400" fill="#536270" text-anchor="start">完整 event 的标签给出分支边界；同类步骤熵帮助选择位置。</text>
+<rect x="28" y="91" width="257" height="168" fill="#f4f8fb" stroke="#cbd6de" stroke-width="1"/>
+<rect x="28" y="91" width="4" height="168" fill="#245f93" stroke="none" stroke-width="1"/>
+<text x="44" y="122" font-size="18" font-weight="700" fill="#25313b" text-anchor="start">1 · 生成 Code-CoT</text>
+<text x="44" y="150" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">原图 + 问题 → 识图代码、计划</text>
+<text x="44" y="172" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">再写 think / action，直到答案</text>
+<text x="44" y="194" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">SFT 学会这种输出格式</text>
+<rect x="299" y="91" width="272" height="168" fill="#f7f8fb" stroke="#cbd6de" stroke-width="1"/>
+<rect x="299" y="91" width="4" height="168" fill="#245f93" stroke="none" stroke-width="1"/>
+<text x="315" y="122" font-size="18" font-weight="700" fill="#25313b" text-anchor="start">2 · 选步骤，冻结前文</text>
+<text x="315" y="150" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">解析完整 event 的起点</text>
+<text x="315" y="172" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">同类型熵排序；保留随机探索</text>
+<text x="315" y="194" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">3,270 个 prefix 在 RL 前固定</text>
+<rect x="585" y="91" width="287" height="168" fill="#f3faf7" stroke="#cbd6de" stroke-width="1"/>
+<rect x="585" y="91" width="4" height="168" fill="#267564" stroke="none" stroke-width="1"/>
+<text x="601" y="122" font-size="18" font-weight="700" fill="#25313b" text-anchor="start">3 · 重采到最终答案</text>
+<text x="601" y="150" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">同一 prefix 生成 4 条后续</text>
+<text x="601" y="172" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">每条重写候选步骤与后面内容</text>
+<text x="601" y="194" font-size="14.8" font-weight="400" fill="#536270" text-anchor="start">最终 reward 在组内相对比较</text>
+<text x="292" y="186" font-size="20" font-weight="700" fill="#245f93" text-anchor="middle">→</text>
+<text x="578" y="186" font-size="20" font-weight="700" fill="#267564" text-anchor="middle">→</text>
+<rect x="28" y="276" width="844" height="53" fill="#f5f9fc" stroke="#cbd6de" stroke-width="1"/>
+<text x="42" y="298" font-size="15" font-weight="700" fill="#245f93" text-anchor="start">例：[1.3, 1.3, 0.3, 0.3] → 相对优势约 [+1, +1, −1, −1]</text>
+<text x="42" y="319" font-size="14.3" font-weight="400" fill="#536270" text-anchor="start">只给重采步骤和全部后续算损失；共享前文作为输入，不在这组中更新。</text>
+</g>
+</svg>
