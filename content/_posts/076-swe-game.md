@@ -2,7 +2,7 @@
 title: "[2026-09-27] SWE-Game: Can Coding Agents Build the Games We Want?"
 permalink: "/posts/论文解读/swe-game.html"
 date: "2026-10-08T13:26:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-19T16:33:00+08:00"
 cover: "/lib/papers/swe-game/cover.svg"
 description: "41 个可运行 Godot 参考游戏派生出 247 道开发、补全、修复与移植题。SWE-Game 用预定动作试玩，再检查状态变化和无输入对照；本文沿 Beacon Relay 的拾取、计时、送达过程解释判分。"
 wide_content: true
@@ -21,6 +21,7 @@ tags:
 ---
 
 <link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
+<style>.page-paper-reading .prose .figure.portrait-original img{max-width:540px}@media(max-width:640px){.page-paper-reading .prose .paper-reading .deck-wrap .post-deck-embed-frame{height:460px;padding-top:0}.page-paper-reading .prose .figure.dense-original>a{display:block;overflow-x:auto;overscroll-behavior-x:contain}.page-paper-reading .prose .figure.dense-original>a>img{width:850px;max-width:none;max-height:none;height:auto}.page-paper-reading .prose .figure.portrait-original img{max-width:100%}}</style>
 
 <div class="paper-reading">
 
@@ -35,9 +36,11 @@ tags:
   <div class="deck-head"><strong>14 页交互图解 · 题目、模型、harness、真实 case 与评分链</strong><a href="/lib/decks/swe-game-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/swe-game-visual-guide.html" title="SWE-Game 论文图解，共 14 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>按 Esc 退出全屏；独立打开后可返回文章</span></p>
+    <p class="post-deck-embed-note"><span>按钮或 ← → 翻页；手机可在图解内上下滚动</span><span>F 进入或退出全屏，Esc 退出；独立打开后可返回文章</span></p>
   </div>
 </section>
+
+<p class="source-note">原论文页面标明 <a href="https://arxiv.org/abs/2609.33678v3">CC BY 4.0 许可</a>。本站从 v3 PDF 裁切 15 项原图表，保留英文标注、数值和图注；正文先放评测全貌、Beacon Relay、主结果与人工校准，其余原图表在文末折叠。手机上可左右滑动密集原图，或点“放大查看”阅读全幅。</p>
 
 <p class="lead">SWE-Game 让评测器亲自操作游戏，再从引擎状态判断指定机制是否真的发生。41 个可运行参考游戏被拆成 247 道题，覆盖从短描述开发完整游戏、照设计文档实现、补全初始工程、修 bug，以及把 Godot 游戏迁移到 Unity。能够启动、画面相似与玩法正确分别评价，不把它们混成一次主观试玩。</p>
 
@@ -110,7 +113,7 @@ tags:
 
 <p>通用契约只把 <code>gb_player</code> 设为必需组，其他组是否必需由具体任务决定。候选的 <code>numeric</code> 把标准数值项映射到实际属性名，<code>device_ids</code> 标识具体对象；登记 <code>timer</code> 并不等于已经实现计时，probe 还会检查它是否随真实玩法变化。Unity 用 <code>GBEntity</code> 标记对象，并通过 <code>GBTelemetry</code>/<code>GBObservableState</code> 读取状态，不复制 Godot 节点名。</p>
 
-<figure class="figure wide"><a href="/lib/papers/swe-game/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/body-case.svg" width="1050" height="816" alt="Beacon Relay 的拾取、携带倒计时、踩敌人加时与信标存入" loading="lazy" decoding="async"></a><figcaption>根据 Figure 6 与 Appendix B.2 的真实 GDD 重绘。拾取启动 fuse，踩敌人加 2.5 秒，送达 beacon 才提高进度；不是自造隐藏路线。</figcaption></figure>
+<figure class="figure original portrait-original"><a href="/lib/papers/swe-game/source-figure-6.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-figure-6.webp" width="684" height="873" alt="Figure 6：Beacon Relay 的参考画面及三套候选的功能、视觉贡献；截图没有给出单条 fuse 或送达断言的日志。" loading="lazy" decoding="async"></a><figcaption>Figure 6 原图 · Beacon Relay 的参考画面及三套候选的功能、视觉贡献；截图没有给出单条 fuse 或送达断言的日志。 <a href="https://arxiv.org/pdf/2609.33678v3#page=23">Chen et al., v3, PDF 第 23 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
 
 <div class="case"><h4>Beacon Relay：简述允许自由设计，完整 GDD 固定运送机制</h4><p>Brief-to-Game 只要求第三人称 3D 穿越与信标接力，失败可恢复、终点明确；路线、移动手感、信标规则由 Agent 设计，<strong>不能把下面的 cell/fuse 机制反过来当作简述题的硬要求</strong>。完整 GDD 则要求三关、11 个 <strong>cells（待运送的能量单元）</strong>、三类敌人、七类移动装置、每关一个生命补给，以及三格护盾。玩家捡到 cell 后，<strong>fuse（携带期限倒计时）</strong> 按关卡从 13、12 或 11 秒开始，颜色由绿变黄再变红。携带时踩中敌人可增加 2.5 秒，侧面接触会损失护盾；只有送入 <strong>beacon（信标接收点）</strong> 才增加进度。完整流程在固定 60 Hz 下约 6 至 9 分钟。</p><p>Skeleton 只给占位三关、结束场景、玩家接口和 <code>progress/health/timer</code> 绑定要求；Repair 给能启动但行为错误的完整项目及症状；Porting 给 Godot 源码和锁定的 Unity 6000.3.23f1 工程。它们共享参考游戏，但不同模式的输入和硬性要求不能混用。</p></div>
 
@@ -134,7 +137,7 @@ tags:
   <li>评测器录制游戏，再由视觉模型按 41 份游戏专属 <strong>rubric（逐项评分规则）</strong> 的 658 个条目评分。四组为玩法呈现、内容组成、引导与反馈、画面呈现，权重分别是 0.10、0.18、0.27、0.45；只在适用组中重新归一化。每项先打 0–1 的实现程度，触发缺陷上限后再组内平均，不能靠其他好看画面抵消关键缺陷。</li>
 </ol>
 
-<figure class="figure wide"><a href="/lib/papers/swe-game/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/body-method.svg" width="1050" height="913" alt="SWE-Game 参考输入路线、状态探针与同长度无输入对照的判分流程" loading="lazy" decoding="async"></a><figcaption>根据 Figure 2 与 §3.4、Appendix H 重绘。输入必须造成目标状态变化；若无输入也达标，该路线记零。具体题目的断言代码未公开。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-figure-2.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-figure-2.webp" width="1206" height="924" alt="Figure 2：基准全貌：输入材料、Agent 开发过程、评测器与五类任务；功能检查和视觉评分分别负责不同证据。" loading="lazy" decoding="async"></a><figcaption>Figure 2 原图 · 基准全貌：输入材料、Agent 开发过程、评测器与五类任务；功能检查和视觉评分分别负责不同证据。 <a href="https://arxiv.org/pdf/2609.33678v3#page=3">Chen et al., v3, PDF 第 3 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
 
 <p>Appendix H.6 的视觉请求还有一个实际运行覆盖规则：基础提示把没有观察到的内容记为 unknown，但覆盖规则要求所有适用项给数值，完全没有可见满足证据时可给 0。<strong>视觉分并不总能区分“没实现”与“没拍到”</strong>，也不能认证隐藏碰撞、音频或精确输入时延。judge 必须引用候选帧和对应条款；参考图、资产预览以及画面内文字不能自行证明候选正确。</p>
 
@@ -163,6 +166,8 @@ tags:
 <tr><td>Minimax M3</td><td>30.47</td><td>42.58</td><td>35.69</td><td>27.36</td><td>49.62</td></tr>
 </tbody></table></div>
 
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-3.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-3.webp" width="1206" height="1461" alt="Table 3：六套模型加各自框架在五种任务模式的完整组件分数和总分；各列均为 0–100。" loading="lazy" decoding="async"></a><figcaption>Table 3 原图 · 六套模型加各自框架在五种任务模式的完整组件分数和总分；各列均为 0–100。 <a href="https://arxiv.org/pdf/2609.33678v3#page=8">Chen et al., v3, PDF 第 8 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+
 <p>各列是不同规则下的 0–100 分，修复高分不能解读为“从头做游戏成功率更高”。所有模型 GDD 分都高于 Brief，但输入与评分权重一起改变，不能当成只加一份 GDD 的单变量消融。</p>
 
 <div class="table-scroll"><table>
@@ -186,7 +191,7 @@ tags:
 
 <p>视觉侧在 200 段录像上与人工评分的 <strong>Spearman ρ=0.829</strong>，表示排序的一致程度；平均绝对误差 MAE 为 0.103，同一录像重复评分的标准差为 0.034。论文没有披露人工标注者数量、一致率，也没有命名视觉 judge 的具体模型。自动检查还有 41 条正确行为被拒绝、43 条缺陷被接受，因此 92.59% 支持在这批样例上优于视频判断，不代表所有机制都可靠。</p>
 
-<figure class="figure wide"><a href="/lib/papers/swe-game/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/body-results.svg" width="1050" height="672" alt="SWE-Game 五种任务模式的组件分数和最佳配置对照" loading="lazy" decoding="async"></a><figcaption>根据 Table 3 重绘。三类从头构建任务的最佳总分仍低于 60；修复与移植另用各自计分规则，不能混成同一种成功率。</figcaption></figure>
+<figure class="figure original portrait-original"><a href="/lib/papers/swe-game/source-table-5.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-5.webp" width="612" height="666" alt="Table 5：人工校准：执行检查与视频 VLM 的正确接受、缺陷检出及 balanced accuracy，另列视觉评分一致性。" loading="lazy" decoding="async"></a><figcaption>Table 5 原图 · 人工校准：执行检查与视频 VLM 的正确接受、缺陷检出及 balanced accuracy，另列视觉评分一致性。 <a href="https://arxiv.org/pdf/2609.33678v3#page=9">Chen et al., v3, PDF 第 9 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
 
 <h2 id="对游戏开发系统的改进方向">5. Discussion：对游戏开发系统的改进方向</h2>
 
@@ -204,10 +209,25 @@ tags:
 
 <p><strong>这篇把“我们想要的游戏”拆成可执行的玩家动作、可观察状态和独立视觉证据。</strong>VLM 检查外观与呈现；玩法正确性则由引擎状态检查、参考输入重放和同长度无输入对照验证。这个分工比单一“像不像、能不能玩”的总评更容易定位问题。</p>
 
-<div class="limit-grid"><div><b>任务规模</b><span>41 个中小型 Godot reference games，尚未覆盖大型项目和长期协作。</span></div><div><b>配置混杂</b><span>六个模型各配自己的 Agent framework 和 tools，缺少同 harness 对照。</span></div><div><b>复现缺口</b><span>截至 2026-10-08，论文未链接公开 benchmark、checker 或完整结果仓库。</span></div><div><b>统计边界</b><span>主榜未报告重复运行和方差；人工标注者数量与 agreement 未披露。</span></div></div>
+<div class="limit-grid"><div><b>任务规模</b><span>41 个中小型 Godot reference games，尚未覆盖大型项目和长期协作。</span></div><div><b>配置混杂</b><span>六个模型各配自己的 Agent framework 和 tools，缺少同 harness 对照。</span></div><div><b>复现缺口</b><span>截至 2026-10-19，arXiv 论文主页和 HTML 全文仍未链接任务包、checker 或完整结果仓库。</span></div><div><b>统计边界</b><span>主榜未报告重复运行和方差；人工标注者数量与 agreement 未披露。</span></div></div>
 
 <p>当前最强配置已经很会搭出可运行、可演示、结构合格的游戏项目，但三类从头构建任务仍没有一个总分达到 60。指定玩法没有完整实现、要求的内容有所遗漏，是主要失分来源。SWE-Game 给出了一套值得继续验证的评测方向，也留下了足以影响排名解释的公开性与实验控制问题。</p>
 
-<p class="source-note">证据范围：本文依据 arXiv:2609.33678v3 的 28 页正文、附录、全部 Figure 1–6 与 Table 1–9，以及 arXiv v1 日期元数据。2026-10-08 检查论文页面和公开搜索时，没有找到作者链接的正式 benchmark/checker repository；一个同名的公开 task catalogue 属于另一套任务，未作为本文证据。</p>
+<details><summary>其余 11 项原论文图表：参考游戏、任务合同、资源与评分细节</summary>
+<p>保留原英文标注与完整数值。较密的表在手机上可横向滚动，点击图片可放大；每张图均链接到 PDF 原页。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-figure-1.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-figure-1.webp" width="1206" height="411" alt="Figure 1：从参考游戏、资产和试玩到五类任务及候选游戏的总览；图中的候选画面是定性示例。" loading="lazy" decoding="async"></a><figcaption>Figure 1 原图 · 从参考游戏、资产和试玩到五类任务及候选游戏的总览；图中的候选画面是定性示例。 <a href="https://arxiv.org/pdf/2609.33678v3#page=1">Chen et al., v3, PDF 第 1 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-figure-3.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-figure-3.webp" width="1206" height="651" alt="Figure 3：41 个参考游戏的脚本、场景、参考视频和素材规模分布。" loading="lazy" decoding="async"></a><figcaption>Figure 3 原图 · 41 个参考游戏的脚本、场景、参考视频和素材规模分布。 <a href="https://arxiv.org/pdf/2609.33678v3#page=5">Chen et al., v3, PDF 第 5 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-figure-4.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-figure-4.webp" width="1206" height="525" alt="Figure 4：六套模型与各自运行框架的资源、得分和已归类问题比例；点位不是统一预算比较。" loading="lazy" decoding="async"></a><figcaption>Figure 4 原图 · 六套模型与各自运行框架的资源、得分和已归类问题比例；点位不是统一预算比较。 <a href="https://arxiv.org/pdf/2609.33678v3#page=7">Chen et al., v3, PDF 第 7 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original portrait-original"><a href="/lib/papers/swe-game/source-figure-5.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-figure-5.webp" width="684" height="918" alt="Figure 5：Pixel Platformer 的参考画面及三套候选的定性对照与分项贡献。" loading="lazy" decoding="async"></a><figcaption>Figure 5 原图 · Pixel Platformer 的参考画面及三套候选的定性对照与分项贡献。 <a href="https://arxiv.org/pdf/2609.33678v3#page=23">Chen et al., v3, PDF 第 23 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-1.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-1.webp" width="1206" height="591" alt="Table 1：游戏开发基准的运行环境、输入、任务和评测证据对照。" loading="lazy" decoding="async"></a><figcaption>Table 1 原图 · 游戏开发基准的运行环境、输入、任务和评测证据对照。 <a href="https://arxiv.org/pdf/2609.33678v3#page=5">Chen et al., v3, PDF 第 5 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-2.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-2.webp" width="1206" height="468" alt="Table 2：五种任务模式各自给 Agent 的材料、必须交付的产物和评测组件。" loading="lazy" decoding="async"></a><figcaption>Table 2 原图 · 五种任务模式各自给 Agent 的材料、必须交付的产物和评测组件。 <a href="https://arxiv.org/pdf/2609.33678v3#page=6">Chen et al., v3, PDF 第 6 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-4.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-4.webp" width="783" height="414" alt="Table 4：Brief-to-Game 中有无参考视频的原始消融；这张表给的是视觉评分项，不是完整任务总分。" loading="lazy" decoding="async"></a><figcaption>Table 4 原图 · Brief-to-Game 中有无参考视频的原始消融；这张表给的是视觉评分项，不是完整任务总分。 <a href="https://arxiv.org/pdf/2609.33678v3#page=9">Chen et al., v3, PDF 第 9 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-6.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-6.webp" width="1206" height="1260" alt="Table 6：41 个 2D/3D 参考游戏的逐项目录、类别、玩法与规模。" loading="lazy" decoding="async"></a><figcaption>Table 6 原图 · 41 个 2D/3D 参考游戏的逐项目录、类别、玩法与规模。 <a href="https://arxiv.org/pdf/2609.33678v3#page=13">Chen et al., v3, PDF 第 13 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-7.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-7.webp" width="1206" height="723" alt="Table 7：Godot 和 Unity 如何把实体、动作、实时状态与场景映射到同一评测接口。" loading="lazy" decoding="async"></a><figcaption>Table 7 原图 · Godot 和 Unity 如何把实体、动作、实时状态与场景映射到同一评测接口。 <a href="https://arxiv.org/pdf/2609.33678v3#page=20">Chen et al., v3, PDF 第 20 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-8.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-8.webp" width="1206" height="957" alt="Table 8：五种任务模式分别检查哪些组件与行为，修复题强调恢复与保留。" loading="lazy" decoding="async"></a><figcaption>Table 8 原图 · 五种任务模式分别检查哪些组件与行为，修复题强调恢复与保留。 <a href="https://arxiv.org/pdf/2609.33678v3#page=21">Chen et al., v3, PDF 第 21 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/swe-game/source-table-9.webp" target="_blank" rel="noopener"><img src="/lib/papers/swe-game/source-table-9.webp" width="1206" height="549" alt="Table 9：构建和移植模式的最终权重；修复模式在每道题中乘四项因子。" loading="lazy" decoding="async"></a><figcaption>Table 9 原图 · 构建和移植模式的最终权重；修复模式在每道题中乘四项因子。 <a href="https://arxiv.org/pdf/2609.33678v3#page=21">Chen et al., v3, PDF 第 21 页</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本站仅裁切页边留白。</figcaption></figure>
+</details>
+
+<p class="source-note">证据范围：本文依据 arXiv:2609.33678v3 的 28 页正文、附录、全部 Figure 1–6 与 Table 1–9，以及 arXiv v1 日期元数据。2026-10-19 复查 arXiv 主页和 HTML 全文时仍未见作者链接正式任务包、checker 或完整结果仓库；文中的 FAIL 轨迹明确是按公开规则推导的示例，不是模型运行日志。</p>
 
 </div>

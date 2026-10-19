@@ -7,6 +7,39 @@
   <link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2">
   <style>
     .mini{color:var(--muted);font-size:16px;line-height:1.45}.tag{display:inline-block;margin:0 7px 7px 0;padding:7px 10px;border:1px solid var(--line);background:#fff;color:var(--text);font:600 15px/1.1 monospace}.stack{display:grid;gap:12px}.row{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:start;padding:14px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row strong{font-size:20px}.row p{margin:0;color:var(--text);font-size:18px;line-height:1.45}.io{display:grid;grid-template-columns:1fr 74px 1fr;gap:18px;align-items:center}.io .arrow{text-align:center;color:var(--blue);font-size:42px}.lane{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.node{min-height:152px;padding:18px;border:1px solid var(--line);background:#fff}.node b{display:block;color:var(--blue);font-size:16px}.node strong{display:block;margin:9px 0;font-size:20px}.node p{margin:0;color:var(--text);font-size:16px;line-height:1.4}.splitline{display:grid;grid-template-columns:1fr 1fr;gap:26px}.score{display:grid;grid-template-columns:250px 1fr 84px;gap:15px;align-items:center;margin:14px 0;font-size:18px}.score .track{height:30px}.badge{padding:20px;border:2px solid var(--blue);background:#fff;text-align:center}.badge strong{display:block;color:var(--blue);font:600 44px/1 Georgia,serif}.badge span{display:block;margin-top:10px;color:var(--text);font-size:17px}.unknown{border-color:var(--orange);background:#fffaf4}.tight .card p,.tight .card li{font-size:18px;line-height:1.42}.compact .table{font-size:16px}.compact .table th,.compact .table td{padding:9px 10px}
+    @media (max-width:600px){
+      .viewport{inset:0 0 54px;overflow:auto;overscroll-behavior:contain;background:#fff}
+      .stage{position:relative!important;left:0!important;top:0!important;width:100%!important;height:auto!important;min-height:100%;transform:none!important;overflow:visible;box-shadow:none}
+      .slide{position:relative;inset:auto;min-height:calc(100dvh - 54px);padding:18px 16px 26px}
+      .slide.active{display:flex}
+      .meta{gap:8px;padding-bottom:8px;font-size:10px;letter-spacing:0}
+      h1,h2{margin:17px 0 11px;line-height:1.25}
+      h1{font-size:27px}h2{font-size:23px}
+      .lead{margin-bottom:18px;font-size:15px;line-height:1.5}
+      .content{display:block;flex:1}
+      .grid,.flow,.io,.lane,.splitline{display:grid;grid-template-columns:1fr;gap:10px}
+      .io .arrow{font-size:25px;line-height:1}
+      .step,.node{min-height:0;padding:12px 14px}
+      .step:not(:last-child)::after{display:none}
+      .step b,.node b{margin-bottom:4px;font-size:12px}
+      .step strong,.node strong{margin:5px 0;font-size:17px}
+      .step p,.node p,.card p,.card li,.row p{font-size:15px;line-height:1.5}
+      .card{padding:13px 15px}.card h3{margin-bottom:6px;font-size:17px}
+      .row{grid-template-columns:1fr;gap:4px;padding:10px 0}.row strong{font-size:16px}
+      .metric{padding:13px}.metric strong{font-size:31px}.metric span{margin-top:5px;font-size:14px}
+      .badge{padding:10px}.badge strong{font-size:27px}.badge span{margin-top:5px;font-size:13px}
+      .score{grid-template-columns:minmax(0,1fr) 70px;gap:7px;margin:12px 0;font-size:15px}
+      .score .track{grid-column:1/-1;grid-row:2;height:18px}
+      .formula{padding:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere;text-align:left}
+      .table-wrap{overflow-x:auto;overscroll-behavior-x:contain}.table{min-width:620px}
+      .callout{padding:11px 13px;margin-top:10px}.callout p{font-size:15px}
+      .foot{gap:10px;margin-top:18px;padding-top:8px;font-size:11px}
+      .nav{left:0;right:0;bottom:0;justify-content:center;gap:5px;padding:6px 3px}
+      .nav button,.nav a{min-width:40px;height:38px;line-height:36px}
+      .overview.open{padding:66px 12px 20px;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .overview-close{top:12px;right:12px}
+      .thumb .slide{position:absolute;min-height:900px;padding:54px 70px 52px}
+    }
   </style>
 </head>
 <body>
@@ -142,7 +175,7 @@
   <div class="content"><div class="grid g2">
     <div class="card green"><h3>证据支持</h3><ul><li>执行检查验证玩法逻辑，多模态模型检查视觉表现</li><li>无输入对照排除自动成功</li><li>需求遗漏和玩法逻辑错误是主要失败来源</li><li>公开语义接口允许候选采用不同内部结构</li></ul></div>
     <div class="card red"><h3>仍不能确定</h3><ul><li>六个 Agent 框架、工具与预算分别造成的影响</li><li>主榜重复运行与方差</li><li>人工标注协议和视觉评分模型身份</li><li>逐题检查代码对外部复现者是否可用</li></ul></div>
-  </div><div class="callout"><p>截至 2026-10-08，论文未链接正式 benchmark/checker repository。最可信的结论是评测设计方向，而不是把 Table 3 当成纯模型排行榜。</p></div></div>
+  </div><div class="callout"><p>截至 2026-10-19，arXiv 论文主页和 HTML 全文未链接正式任务包、逐题 checker 或完整结果仓库。Table 3 仍混合了模型与各自运行框架的差异。</p></div></div>
   <div class="foot"><span>SWE-Game: Can Coding Agents Build the Games We Want?</span><span>14 / 14</span></div>
 </section>
 
@@ -150,5 +183,6 @@
 <div class="overview" aria-label="页面总览"></div>
 <nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/swe-game.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav>
 <script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script>
+<script>new MutationObserver(() => { document.querySelector('.viewport').scrollTop = 0; }).observe(document.querySelector('.counter'), { childList: true, characterData: true, subtree: true });</script>
 </body>
 </html>
