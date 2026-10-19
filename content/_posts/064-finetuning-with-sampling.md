@@ -2,7 +2,7 @@
 title: "[2026-10-01] Finetuning with Sampling: SFT Learns Better Than You Think"
 permalink: "/posts/论文解读/finetuning-with-sampling.html"
 date: "2026-10-06T10:30:00+08:00"
-updated: "2026-10-14T08:00:00+08:00"
+updated: "2026-10-20T12:00:00+08:00"
 cover: "/lib/papers/finetuning-with-sampling/cover.svg"
 description: "别人写出的正确解答未必适合学生模型直接学习。Sampling SFT 先让目标模型重写答案，再做普通监督训练。本文分开讲理论采样与公开贪心实现，用真实配平案例核对正确性与结果。"
 wide_content: true
@@ -39,7 +39,7 @@ tags:
   </div>
 </section>
 
-<p class="lead">Qwen2.5-3B 直接拿专家答案做监督微调（SFT，用固定问题/回答训练）后，MATH(3,4,5) 同分布测试准确率从 0.315 降到 0.243。论文把问题指向训练数据与基础模型生成分布的距离，并在训练前多次切开、重写专家答案的后缀，只保留基础模型更容易生成的版本。训练阶段仍是普通 SFT。理论部分用 Metropolis-Hastings（MH，一种按接受概率在候选之间移动的采样算法）推导，公开代码只接受平均对数概率提高的候选，采用贪心近似；这里的分数是各 token 对数概率的平均，不是整段回答概率。</p>
+<p class="lead">同一组数学题上，Qwen2.5-3B 直接学习专家答案后，准确率从 0.315 降到 0.243。作者让基础模型先改写专家解答，再做监督微调（SFT：用固定题目与答案训练模型）。论文推导的是按接受概率采样的算法；公开代码只保留基础模型评分更高的改写。这两个算法的保证不能混用。</p>
 
 <aside class="part0">
 <span class="kicker">PART 0 · 阅读准备</span>
@@ -61,17 +61,6 @@ tags:
   <div class="metric"><strong>0.567</strong><span>Sampling SFT 再接 GRPO 后的数学新任务均分</span></div>
 </div>
 
-<aside class="keypoints">
-  <h3>先记住四个结论</h3>
-  <ul>
-    <li><strong>论文改的是训练数据分布。</strong>训练阶段仍使用标准的 SFT 交叉熵损失，即提高目标回答中每个 token 的生成概率。</li>
-    <li><strong>理想目标是基础模型在“答案保持等价”集合上的条件分布。</strong>这样可以同时利用专家答案提供的信息和学生模型自己的表达习惯。</li>
-    <li><strong>公开代码不是完整的 Metropolis-Hastings 采样。</strong>它只接受平均对数概率更高的候选改写，没有计算正反向提议概率之比，也不会随机接受概率下降的候选。</li>
-    <li><strong>结果并非所有任务都第一。</strong>Sampling SFT 在 Qwen 化学和数学任务上很强，但在医疗任务和 Olmo 化学任务上的新任务准确率低于 OPSD（用当前模型生成数据，再训练同一模型的自蒸馏基线）。</li>
-  </ul>
-</aside>
-
-
 <h2 id="动机：正确答案也可能不适合学生直接学习">1. Motivation：正确答案也可能不适合学生直接学习</h2>
 
 **正确数据仍可能不适合当前模型学习，因为它的 token 序列离当前模型的生成分布太远。**
@@ -81,14 +70,17 @@ tags:
 作者保留 SFT，但先用基础模型重写数据。专家解答仍放在生成提示词里，作为模型平时看不到的额外信息；新生成的后缀则来自基础模型。因此候选回答可以保留答案内容，同时更接近待训练模型自己的表达分布。
 
 <figure class="figure wide">
-  <a href="/lib/papers/finetuning-with-sampling/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/body-method.svg" width="1000" height="960" alt="从其他策略提供的专家解题记录到 Sampling SFT 训练数据的流程"></a>
-  <figcaption>根据论文图 2、算法 1 与公开 <code>boost_sci.py</code> 重绘。图中区分了论文推导的 MH 采样与公开代码实际采用的“概率只升不降”规则。</figcaption>
+  <a href="/lib/papers/finetuning-with-sampling/source-figure-1.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-figure-1.png" width="1604" height="812" alt="论文 Figure 1：Qwen 化学任务与旧能力保持的原始比较图"></a>
+  <figcaption>原论文 Figure 1：Qwen2.5-7B-Instruct 的化学准确率与旧能力保持。左图的 MMLU、AMC 是单项结果，右图的旧能力保持率以基础模型为分母；不能把这些数值直接套到下文的数学实验。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption>
 </figure>
 
 <h2 id="相邻工作：改损失、在线训练与先改数据">2. Related Work：改损失、在线训练与先改数据</h2>
 
 **这篇论文在训练前改写数据，让样本更接近待训练模型自己的分布。**
 
+GRPO 和自蒸馏用当前模型生成训练信号；重要性加权与 KL 约束方法改训练损失。Sampling SFT 仍用普通交叉熵，差别发生在训练开始前。下面的表保留了各方法取得专家信息的位置。
+
+<details><summary>展开六种方法的输入与训练差别</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>方法</th><th>专家信息怎样进入</th><th>改变什么</th><th>困难任务的限制</th></tr></thead>
@@ -102,18 +94,24 @@ tags:
   </tbody>
 </table>
 </div>
+</details>
 
 把 **MCMC（马尔可夫链蒙特卡洛）** 用于语言模型并非这篇论文首次提出。已有工作用 MCMC 让采样分布偏向外部奖励，或偏向更集中的推理分布；这里从别的策略提供的专家数据出发，改写后的结果用于继续微调，而不是只改善推理时生成的样本。
 
 <h2 id="方法：目标分布、理论采样与公开近似">3. Method：目标分布、理论采样与公开近似</h2>
 
-**论文给出一个严格的目标分布和 Metropolis-Hastings（MH）推导，实验代码采用更激进的近似。两者必须分开讲。**
+**论文给出一个严格的目标分布和 Metropolis-Hastings（MH，一种按接受概率在候选答案间移动的采样算法）推导；实验代码采用更激进的近似。**
 
 固定一个问题，并令 `C` 表示所有与专家轨迹信息等价的回答。理想目标是：
 
 <div class="formula">p_C(x) ∝ p_base(x) · 1[x ∈ C]</div>
 
 也就是把基础模型的分布限制在正确集合 `C` 内。第 4.2 节先讨论以专家轨迹为初始状态的理想链；具体算法 1 则把专家轨迹放入生成上下文，从空前缀逐块扩展回答。每次更新随机选择切分点，把当前前缀、原题和完整专家解答一起交给基础模型，让它重写后缀。理论接受概率还应考虑从旧回答提议新回答、以及反过来提议旧回答的概率。
+
+<figure class="figure wide">
+  <a href="/lib/papers/finetuning-with-sampling/source-figure-2.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-figure-2.png" width="1212" height="496" alt="论文 Figure 2：从专家数据分布逐步接近基础模型分布的概念示意"></a>
+  <figcaption>原论文 Figure 2 是目标分布的示意图，不是测得的概率密度。它说明作者想把专家数据分布推向基础模型附近，同时保持答案约束；具体怎样切分、生成和接受候选，仍要看 Algorithm 1 与公开代码。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption>
+</figure>
 
 <h3 id="一次公开实现的更新，模型看到什么">3.1 一次公开实现的更新，模型看到什么</h3>
 
@@ -143,7 +141,9 @@ Algorithm 1 把专家轨迹作为 proposal 的输入，按块扩展当前答案�
 
 附录 Eq. 9 给出的理论生成量是 `T²N / (4B)`。代入上述参数得到 `1,856² × 10 / (4 × 32) = 269,120`，也就是每条轨迹约 26.9 万个生成 token。它是一次性数据改写的量级估算，不含完整的打分前向计算、失败重试、GPU 吞吐或美元成本。换一个基础模型后，目标分布也随之改变，数据原则上需要重新采样。
 
-<figure class="figure wide"><a href="/lib/papers/finetuning-with-sampling/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/body-case.svg" width="1000" height="880" alt="Finetuning with Sampling 保留解法内容、由基础模型重新组织后缀的附录案例"></a><figcaption>根据论文 Appendix A 与公开 boost_sci.py 整理的真实输入/输出例子。两版保留配平结果；公开实现使用平均对数概率上升的贪心接受，不是完整 MH。论文没有逐轮接受日志。</figcaption></figure>
+<details><summary>展开原论文 Algorithm 1 的完整步骤与接受公式</summary>
+<figure class="figure wide"><a href="/lib/papers/finetuning-with-sampling/source-algorithm-1.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-algorithm-1.png" width="1612" height="1524" alt="原论文 Algorithm 1 完整伪代码"></a><figcaption>原论文 Algorithm 1 的完整版本，包含正反向提议概率与随机接受步骤；公开贪心实现没有完整执行这一步。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
 
 <h3 id="真实案例：附录-A-的化学方程式">3.4 真实案例：附录 A 的化学方程式</h3>
 
@@ -158,6 +158,10 @@ Algorithm 1 把专家轨迹作为 proposal 的输入，按块扩展当前答案�
   <li><strong>公开结果：</strong>原回答与改写回答都给 <code>3 CO₂ + 3 H₂O → C₃H₆O₃ + 3 O₂</code>，系数为 <code>(3,3,1,3)</code>。左边 C/H/O 为 3/6/9，右边也是 3/6/9。论文没有给逐轮候选的概率或接受日志，不能把上面的步骤冒充实测过程。</li>
 </ol>
 </div>
+
+<details><summary>展开附录 A 的配平题原文与两版完整答案</summary>
+<figure class="figure wide"><a href="/lib/papers/finetuning-with-sampling/source-appendix-a-chemistry.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-appendix-a-chemistry.png" width="1600" height="1356" alt="论文 Appendix A：化学配平题、专家原解答和模型改写解答"></a><figcaption>原论文 Appendix A 的 Olmo 化学案例。图中只给原答与最终改写，没有逐轮候选及其接受概率。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
 
 这里有一个实际评分边界：把系数全乘二，<code>(6,6,2,6)</code> 仍满足原子守恒，却不等于参考的 <code>(3,3,1,3)</code>，官方这条比较规则会判失败。若改变反应物顺序也会失败，因为题目要求保留顺序。这些是按已发布检查器推得的反例，不是实测模型日志。
 
@@ -184,21 +188,15 @@ assert atom_counts((3, 3, 1, 2))[0] != atom_counts((3, 3, 1, 2))[1]
 **Sampling SFT 在 Qwen 数学新任务上得到 0.534，超过 GRPO 的 0.457 和 UFT 的 0.452；再接 GRPO 后达到 0.567。**
 
 <figure class="figure wide">
-  <a href="/lib/papers/finetuning-with-sampling/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/body-results.svg" width="1000" height="800" alt="普通 SFT、Sampling SFT、GRPO 和 UFT 在 Qwen2.5-3B 数学实验中的结果"></a>
-  <figcaption>根据论文 Table 1 重绘。所有数值都是 single-shot accuracy，即每题只用一次回答计算准确率；论文没有提供多随机种子结果或误差条。</figcaption>
+  <div style="max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch"><a href="/lib/papers/finetuning-with-sampling/source-table-1.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-table-1.png" width="1588" height="956" style="width:780px;max-width:none;height:auto" alt="原论文 Table 1：Qwen 化学、数学、医疗任务的全部模型与准确率"></a></div>
+  <figcaption>原论文 Table 1，保留化学、数学和医疗任务的全部模型及数值。三块表的新任务、旧能力列不同，不能把数学均分 0.534 当成 MATH 单项。数值为每题单次回答准确率，论文未给多随机种子误差；手机端可左右滑动或放大阅读。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption>
 </figure>
 
-<div class="table-scroll">
-<table>
-  <thead><tr><th>实验</th><th>Sampling SFT</th><th>最相关基线</th><th>怎么读</th></tr></thead>
-  <tbody>
-    <tr><td>Qwen2.5-7B 化学</td><td>66.0</td><td>SFT 61.8；简单 Rewrite SFT 61.3；OPSD 61.8</td><td>新任务准确率高 4.2 个百分点；旧能力平均分 58.6，接近基础模型的 59.7。</td></tr>
-    <tr><td>Qwen2.5-3B 数学平均分</td><td>0.534</td><td>GRPO 0.457；UFT 0.452</td><td>Sampling SFT 高 0.077 / 0.082；再接 GRPO 可到 0.567。</td></tr>
-    <tr><td>Qwen2.5-7B 医疗</td><td>45.8</td><td>OPSD 46.6</td><td>新任务准确率低 0.8；旧能力平均分 51.6，高于 OPSD 的 50.1。</td></tr>
-    <tr><td>Olmo-3-7B 化学</td><td>58.3</td><td>OPSD 59.7</td><td>新任务准确率低 1.4；旧能力平均分 61.7，为表中最高。</td></tr>
-  </tbody>
-</table>
-</div>
+Table 1 也保留了反例：Qwen 医疗新任务上，Sampling SFT 的 45.8% 低于 OPSD 的 46.6%；附录 Table 2 的 Olmo 化学同样是 58.3% 对 59.7%。Olmo 的旧能力均分则为 61.7%，高于该表其他方法。这些比较的模型、任务和判分方式不同，不能合并成一个“全面胜出”的结论。
+
+<details><summary>展开原论文 Table 2：Olmo 化学任务全部数值</summary>
+<figure class="figure wide"><div style="max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch"><a href="/lib/papers/finetuning-with-sampling/source-table-2.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-table-2.png" width="1588" height="300" style="width:780px;max-width:none;height:auto" alt="原论文 Table 2：Olmo 化学任务全部模型及旧能力结果"></a></div><figcaption>原论文 Table 2，Olmo-3-7B-Instruct 化学测试和五项旧能力准确率。手机端可左右滑动或放大阅读。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
 
 在 MATH(3,4,5) 这个与训练题同分布的测试集上，Base 是 0.315，普通 SFT 降到 0.243，Sampling SFT 则达到 0.495。数学新任务平均分 <code>0.534</code> 等权汇总 MATH(3,4,5)、AMC、MATH500 和 GSM8K；它不是单个测试集的准确率。
 
@@ -210,9 +208,26 @@ assert atom_counts((3, 3, 1, 2))[0] != atom_counts((3, 3, 1, 2))[1]
 
 一个支持作者机制解释的对照实验是跨模型数据错配：用 Olmo 改写的数据训练 Qwen，化学准确率只有 57.33%，低于普通 SFT 的 61.8%；把 Qwen 改写数据与原始数据各混一半，得到 62.14%，落在普通 SFT 与完整 Qwen Sampling SFT 之间。这说明效果依赖数据与目标基础模型的匹配，单纯把专家答案写得更流畅解释不了这组差异。
 
+论文 Figure 3 还显示，改写后的化学和数学答案在各自基础模型下有更高的平均 token 对数概率。它验证了数据确实向模型较熟悉的表达移动；正确性则要另看附录 C.1 的约 94%–96%，不能由概率直方图推出。
+
+<details><summary>展开 Figure 3：原答案与改写答案的模型概率分布</summary>
+<figure class="figure wide"><a href="/lib/papers/finetuning-with-sampling/source-figure-3.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-figure-3.png" width="1592" height="824" alt="原论文 Figure 3：化学和数学数据改写前后的平均 token 对数概率直方图"></a><figcaption>原论文 Figure 3，纵轴是样本数量，横轴为各回答长度平均后的 token 对数概率；两组任务使用各自的基础模型。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
+
 论文调过 SFT 的学习率、batch 和 epoch：学习率取 <code>{5e−5,1e−5,5e−6}</code>，batch 取 <code>{16,32,64}</code>，化学与数学 epoch 取 <code>{1,2}</code>，医疗扩到 <code>{1,2,4,6}</code>。OPSD 按引用工作调参，RL 使用 UFT 的默认设置。它没有说明每个最终结果的全部选定参数与独立选择集，也没有给出多随机种子、置信区间或同成本对照；主表的 single-shot 只表示每题用一次回答，不代表所有训练方法同预算。
 
 Figure 4 另做了 Olmo 化学的 pass@k：每题生成 k 次，只要有一次正确就算通过，最大检查到 <code>k=64</code>。Sampling SFT 在已测范围内保持高于起点的曲线，支持它扩大了可解题目范围；“64 次里一次没对”仍不能证明基础模型对该题的成功概率严格为零。医疗的 0.8 个百分点差距还依赖上述模型判分，不宜过度解读。
+
+<figure class="figure wide">
+  <a href="/lib/papers/finetuning-with-sampling/source-figure-4.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-figure-4.png" width="1084" height="664" alt="原论文 Figure 4：Olmo 化学题在一到六十四次采样下的 pass@k 准确率"></a>
+  <figcaption>原论文 Figure 4。横轴是每题采样次数 <code>k</code>，纵轴是至少一次答对的题目比例；它与 Table 2 的单次回答准确率是两种指标。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption>
+</figure>
+
+Figure 5 在 Qwen 化学任务上测试 0、2、4、6、8、10 次候选更新：估计的 KL 距离逐点下降，准确率总体上升，却在 4 到 8 步之间回落。这个观察支持继续测试采样计算量，不能当成公开贪心规则具有理论单调保证的证据。
+
+<details><summary>展开 Figure 5：更新次数、KL 距离与准确率</summary>
+<figure class="figure wide"><a href="/lib/papers/finetuning-with-sampling/source-figure-5.png" target="_blank" rel="noopener"><img src="/lib/papers/finetuning-with-sampling/source-figure-5.png" width="1020" height="656" alt="原论文 Figure 5：候选更新次数与估计 KL 距离、化学准确率"></a><figcaption>原论文 Figure 5。左轴为估计的 KL（nats），右轴为化学准确率；准确率并非每个点都单调上升。Aayush Karan 等，<a href="https://arxiv.org/pdf/2610.02140v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
 
 <h2 id="下一步：固定成本比较严格采样与简单重写">5. Discussion：固定成本比较严格采样与简单重写</h2>
 
@@ -228,15 +243,8 @@ Figure 4 另做了 Olmo 化学的 pass@k：每题生成 k 次，只要有一次�
 
 **先改造训练数据再做 SFT 值得继续研究；实验显示它能改善新任务准确率与旧能力保留之间的折中，但“MCMC 保证”与公开算法之间仍有明显缺口。**
 
-<div class="limit-grid">
-  <div><b>论文已经支持</b><span>对 Qwen 化学与数学任务，使用改写数据的 SFT 明显优于普通 SFT，并在主要旧能力评测上遗忘更少。</span></div>
-  <div><b>负结果</b><span>医疗任务与 Olmo 化学任务的新任务准确率没有超过 OPSD，因此方法不应描述成全面优于同策略学习。</span></div>
-  <div><b>实现边界</b><span>代码使用只接受平均对数概率上升候选的贪心规则；理论 MH 关于稳定分布的结论不能直接转移。改写后的数据也没有做到 100% 正确。</span></div>
-  <div><b>最可复用的想法</b><span>在不改 SFT 损失函数的前提下，用目标学生模型重写专家轨迹，让监督数据更接近学生模型自己的分布。</span></div>
-</div>
+最可复用的操作是让目标学生模型参与生成自己的训练答案：专家解答约束内容，学生模型重写表达，随后仍做普通 SFT。Qwen 化学和数学结果说明这条路可行；医疗与 Olmo 化学的负结果限制了适用范围。公开数据约 94%–96% 正确，代码也没有执行完整 MH 接受规则。我的判断是，下一步必须在相同生成预算下对照严格 MH、现有贪心实现和简单多次改写，才能说清增益来自哪里。
 
-这篇论文适合研究后训练、蒸馏与数据筛选的读者。我的判断是：想法比当前实证更成熟。它给出了一个清楚的问题表述，也展示了几组有说服力的结果；下一步若能把理论目标、近似采样器与公开数据逐项对齐，研究价值会更扎实。
-
-<p class="source-note">主要来源：论文 v1 全文与附录、官方仓库版本 aa7080885f114fdc5d141f19c09f53008a1c061e。代码检查日期：2026-10-07。仓库未发布改写后的数据集、训练模型存档、实际接受轨迹或医疗任务的数据生成流程。</p>
+<p class="source-note">主要来源：论文 v1 全文与附录、官方仓库版本 aa7080885f114fdc5d141f19c09f53008a1c061e。论文原图按 arXiv 标注的 CC BY 4.0 引用，许可于 2026-10-20 核实；代码检查日期：2026-10-07。仓库未发布改写后的数据集、训练模型存档、实际接受轨迹或医疗任务的数据生成流程。</p>
 
 </div>
