@@ -1,34 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1040" viewBox="0 0 1000 1040" role="img" aria-labelledby="title desc">
-  <title id="title">ASTRA-RL-1k 第 0 行：行李加购任务与公开支付实现的冲突</title>
-  <desc id="desc">用户请求从一件增加到三件行李。模型可见九项工具说明，但看不到 Python 模拟实现与四个目标答案。前三个目标可以返回，公开支付工具无法稳定复现目标交易字符串。</desc>
-  <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#20262b}.title{font-size:33px;font-weight:750}.head{font-size:28px;font-weight:700}.body{font-size:25px;fill:#46545d}.small{font-size:23px;fill:#56646d}.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:22px;fill:#35424b}</style>
-  <rect width="1000" height="1040" fill="#fff"/>
-  <text x="40" y="53" class="title">真实公开样本：加购行李的前三步能跑通，支付对不上</text>
-  <rect x="40" y="83" width="920" height="238" fill="#f1f5f8" stroke="#c4d3dd"/>
-  <text x="64" y="126" class="head" fill="#245f87">模型可见：用户请求 + 9 项工具说明</text>
-  <text x="64" y="167" class="body">Amit Kumar · Bengaluru City ↔ Chennai Central</text>
-  <text x="64" y="205" class="body">9 月 20 / 23 日；1 件 → 3 件行李；先报费用，再钱包支付。</text>
-  <text x="64" y="244" class="body">9 项说明只有 8 个名称：支付工具重名，另有 4 个无关工具。</text>
-  <text x="64" y="289" class="head" fill="#245f87">模型不可见：Python 模拟实现 + 目标答案字典</text>
-  <text x="40" y="367" class="head">隐藏环境声明的四个目标</text>
-  <rect x="40" y="391" width="920" height="335" fill="#f7f8f8" stroke="#ccd4d9"/>
-  <g class="body">
-    <text x="64" y="432">1 · 找预订　reservation_finder</text>
-    <text x="64" y="511">2 · 查额度　baggage_allowance_retriever</text>
-    <text x="64" y="590">3 · 算费用　baggage_fee_calculator</text>
-    <text x="64" y="669">4 · 支付　payment_processor</text>
-  </g>
-  <g class="code">
-    <text x="86" y="467">Reservation ID: RES987654</text>
-    <text x="86" y="546">Current baggage allowance: 1 bag</text>
-    <text x="86" y="625">Extra charge: ₹600</text>
-    <text x="86" y="704">Payment successful. Transaction ID: TXN123456789</text>
-  </g>
-  <rect x="40" y="757" width="920" height="202" fill="#fbf2f1" stroke="#d4b5b2"/>
-  <text x="64" y="800" class="head" fill="#85413b">审计公开实现：最后一个目标无法稳定复现</text>
-  <text x="64" y="841" class="body">按名称索引的 tool_dict 只保留一个 payment_processor。</text>
-  <text x="64" y="881" class="body">支付返回 “Charge processed successfully ...”，</text>
-  <text x="64" y="921" class="body">交易编号通常随机生成，不保证匹配目标的 TXN123456789。</text>
-  <text x="40" y="1002" class="small">根据 ASTRA-RL-1k 第 0 行重绘，revision dbc70e26。</text>
-  <text x="40" y="1031" class="small">这是该公开样本的实现问题，不据此推断全部 6,596 个环境。</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="366" viewBox="0 0 900 366" role="img" aria-labelledby="title desc">
+<title id="title">ASTRA 公开行李样本的目标与模拟工具观察</title>
+<desc id="desc">公开样本的四个隐藏目标中，前三个在特定输入下可以命中；支付目标与按名称注册的工具返回不匹配。</desc>
+<g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Noto Sans CJK SC,sans-serif">
+<rect width="900" height="366" fill="#fff"/>
+<text x="20" y="35" font-size="22" font-weight="700" fill="#24313a">公开行李样本：前三项目标可命中，支付对不上</text>
+<rect x="20" y="56" width="860" height="54" rx="6" fill="#f1f6fa" stroke="#cdd8de"/>
+<text x="35" y="78" font-size="15" font-weight="400" fill="#24313a">Agent 可见：Amit Kumar 的行李加购请求、9 项工具说明及调用返回</text>
+<text x="35" y="99" font-size="14" font-weight="400" fill="#52636d">评分端另存四个目标答案；请求未给年份，预订实现要求 2024 年。</text>
+<rect x="20" y="127" width="860" height="36" rx="0" fill="#edf3f6" stroke="#edf3f6"/>
+<text x="35" y="151" font-size="14.5" font-weight="700" fill="#24313a">步骤 / 工具</text>
+<text x="300" y="151" font-size="14.5" font-weight="700" fill="#24313a">隐藏目标中的关键值</text>
+<text x="625" y="151" font-size="14.5" font-weight="700" fill="#24313a">已检查实现的结果</text>
+<rect x="20" y="163" width="860" height="41" rx="0" fill="#fafbfc" stroke="#e0e6e9"/>
+<text x="35" y="189" font-size="15" font-weight="400" fill="#24313a">1 找预订</text>
+<text x="300" y="189" font-size="15" font-weight="600" fill="#315f82">RES987654</text>
+<text x="625" y="189" font-size="14.5" font-weight="600" fill="#276b58">命中，需设 2024 年</text>
+<rect x="20" y="204" width="860" height="41" rx="0" fill="#fff" stroke="#e0e6e9"/>
+<text x="35" y="230" font-size="15" font-weight="400" fill="#24313a">2 查额度</text>
+<text x="300" y="230" font-size="15" font-weight="600" fill="#315f82">1 bag</text>
+<text x="625" y="230" font-size="14.5" font-weight="600" fill="#276b58">命中</text>
+<rect x="20" y="245" width="860" height="41" rx="0" fill="#fafbfc" stroke="#e0e6e9"/>
+<text x="35" y="271" font-size="15" font-weight="400" fill="#24313a">3 算费用</text>
+<text x="300" y="271" font-size="15" font-weight="600" fill="#315f82">₹600</text>
+<text x="625" y="271" font-size="14.5" font-weight="600" fill="#276b58">命中</text>
+<rect x="20" y="286" width="860" height="41" rx="0" fill="#fff" stroke="#e0e6e9"/>
+<text x="35" y="312" font-size="15" font-weight="400" fill="#24313a">4 支付</text>
+<text x="300" y="312" font-size="15" font-weight="600" fill="#315f82">TXN123456789</text>
+<text x="625" y="312" font-size="14.5" font-weight="600" fill="#9b403b">未命中：重名覆盖、随机编号</text>
+<rect x="20" y="337" width="860" height="22" rx="2" fill="#fff4f2" stroke="#efcdca"/>
+<text x="31" y="353" font-size="13.5" font-weight="600" fill="#9b403b">条件计算：若四次调用只命中前三项，F1 ≈ 0.75；这不是公开的 policy 实测得分。</text>
+</g>
 </svg>

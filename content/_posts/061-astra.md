@@ -2,7 +2,7 @@
 title: "[2026-01-29] ASTRA: Automated Synthesis of agentic Trajectories and Reinforcement Arenas"
 permalink: "/posts/论文解读/astra.html"
 date: "2026-10-05T16:30:00+08:00"
-updated: "2026-10-14T08:00:00+08:00"
+updated: "2026-10-20T05:55:00+08:00"
 cover: "/generated-covers/061-astra.webp"
 description: "ASTRA 先生成工具调用示范，再把多步问答写成可执行的模拟工具，用模型自己的执行结果继续训练。本文分开解释数据构造、环境检查、训练奖励、行李加购真实样本及公开代码与论文的差异。"
 wide_content: true
@@ -97,8 +97,8 @@ SFT 能让模型模仿固定示范，但不会针对它当下的错误给反馈�
 2. 按多步问答的依赖关系生成每条样本的 Python 环境，再做多轮 online RL。
 
 <figure class="figure wide">
-  <a href="/lib/papers/astra/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/astra/body-method.svg" width="1000" height="940" alt="ASTRA 从工具文档生成固定示范，从多步问答生成固定环境，最终训练调用工具的模型"></a>
-  <figcaption>根据论文 Sections 2-3 与 Figures 2-4 重绘。SFT 从 MCP 工具文档出发；RL 从带依赖关系的问答出发。两边分别提供示范与环境，最终在训练阶段汇合。</figcaption>
+  <a href="/lib/papers/astra/body-method.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/astra/body-method-mobile.svg" width="360" height="445"><img src="/lib/papers/astra/body-method.svg" width="900" height="316" alt="ASTRA 从工具文档生成 SFT 示范，从多步问答生成 RL 环境，两种材料依次训练同一个模型"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2601.21558v2#page=3">论文 Sections 2–3 与 Figures 2–4</a>重绘。两条流程分别提供固定示范与可执行环境，最后在模型训练中衔接。</figcaption>
 </figure>
 
 SFT 使用事先生成的完整示范，RL 则让当前模型在固定工具上重新做任务，按结果更新。论文用 static tool topology 指工具之间可能连续调用的关系，用 semantic topology 指答案之间的依赖关系。两种图组织不同材料，并不代表 SFT 只学“怎么调用”、RL 只学“何时调用”；阶段效果仍要看后面的分项实验。
@@ -107,6 +107,7 @@ SFT 使用事先生成的完整示范，RL 则让当前模型在固定工具上�
 
 **它的组合点是两阶段训练，不是首次使用工具图或 GRPO。** GRPO 按同一道题的多次尝试的相对奖励更新模型。工具图组织可能连续调用的接口，问答依赖图组织完成任务所需的中间事实；它们服务于不同数据流程。
 
+<details><summary>相邻工作对照：四条路线的输入、产物与 ASTRA 的位置</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>代表工作</th><th>主要解决什么</th><th>ASTRA 的位置</th></tr></thead>
@@ -118,6 +119,7 @@ SFT 使用事先生成的完整示范，RL 则让当前模型在固定工具上�
   </tbody>
 </table>
 </div>
+</details>
 
 论文对较早的多轮工具训练的一个重要批评是：有的方法虽然先生成多轮数据，训练时却把它拆成独立单步样本，模型难以学习“读完上一条工具返回，再决定下一步”。ASTRA 保留整段模型与工具的交互，并允许在线执行最长 32 轮。
 
@@ -146,8 +148,9 @@ SFT 使用事先生成的完整示范，RL 则让当前模型在固定工具上�
 
 <h3 id="示范筛选：七项评分不能代替环境验证">3.1 示范筛选：七项评分不能代替环境验证</h3>
 
-评分分成七个维度，最后取算术平均：
+示范评分分成七个维度，最后取算术平均，覆盖对请求与工具返回的理解、调用成功率、调用是否必要，以及最终回答是否忠实于工具结果。
 
+<details><summary>七项示范评分的具体维度</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>维度</th><th>看哪一段</th><th>判断内容</th></tr></thead>
@@ -162,6 +165,7 @@ SFT 使用事先生成的完整示范，RL 则让当前模型在固定工具上�
   </tbody>
 </table>
 </div>
+</details>
 
 这里有一个论文正文没强调、但公开实现值得注意的细节：评分请求抛异常，或返回对象没有 `score` 字段时，代码会写入 **1.0**。
 
@@ -221,8 +225,8 @@ if call_ans["status"] == "Success":
 <h3 id="真实样本：四个行李加购目标如何变成奖励">3.5 真实样本：四个行李加购目标如何变成奖励</h3>
 
 <figure class="figure wide">
-  <a href="/lib/papers/astra/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/astra/body-case.svg" width="1000" height="1040" alt="ASTRA-RL-1k 行李加购样本的可见工具、四个隐藏目标与支付返回不一致"></a>
-  <figcaption>根据 Hugging Face <code>ASTRA-RL-1k</code> train row 0 重绘，revision <code>dbc70e26</code>。绿色路径是数据声明的目标；红色分支是我核对公开 <code>tool_schema</code> 与 <code>tool_dict</code> 后发现的不一致。</figcaption>
+  <a href="/lib/papers/astra/body-case.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/astra/body-case-mobile.svg" width="360" height="562"><img src="/lib/papers/astra/body-case.svg" width="900" height="366" alt="公开行李样本四个隐藏目标与已检查工具实现的观察：前三项条件命中，支付目标不匹配"></picture></a>
+  <figcaption>根据 Hugging Face <a href="https://huggingface.co/datasets/Emperorizzis/ASTRA-RL-1k"><code>ASTRA-RL-1k</code></a> train row 0 重绘，revision <code>dbc70e26</code>。图中“命中”来自指定输入的本地核对，不是公开的 policy 运行记录或完整 RL 得分。</figcaption>
 </figure>
 
 <div class="case">
@@ -237,8 +241,9 @@ if call_ans["status"] == "Success":
 
 我对这四个已检查的模拟函数做了本地调用核对，前三项返回值包含目标，支付项不包含。这个核对有两处需要明说：预订函数只在代码写死的 <code>2024-09-20</code> / <code>2024-09-23</code> 上返回该预订，我按这个分支选了年份；支付调用中的钱包编号也是为测试函数填的输入，不是模型从公开执行日志中取得的结果。前三个目标命中，验证的是这些已知输入下的模拟分支。
 
-下面是公开预订实现的条件摘录（Python；省略返回值与其他参数检查），能直接看到年份从哪里来：
+公开预订实现把去返程日期写成了 2024 年。下面保留条件摘录（Python；省略返回值与其他参数检查）：
 
+<details><summary>查看预订函数对 2024 年日期的条件检查</summary>
 <div class="code-scroll"><pre><code>if (passenger_name == "Amit Kumar" and
     origin == "Bengaluru City" and
     destination == "Chennai Central" and
@@ -248,6 +253,7 @@ if call_ans["status"] == "Success":
     # 该分支返回 Reservation ID: RES987654
     ...
 </code></pre></div>
+</details>
 
 **这里没有复现官方 RL 得分，也没有一条真实 policy 的完整执行日志。** 若奖励按上述字符串命中数计算、且四次调用仅命中前三项，代入公式才得到约 0.75；公开仓库缺少完整 RL 奖励实现，不能把这个条件计算写成样本实测分数。论文 Appendix A.2 的股票与轮胎示例也只展示推理文本，未给出实际工具调用、返回值与评分日志。
 
@@ -257,13 +263,15 @@ if call_ans["status"] == "Success":
 
 SFT 用已生成的完整示范做训练。进入 RL 后，每个样本的 Python 工具与目标答案固定；当前 policy 接收请求和工具 schema，生成多次完整调用记录。环境执行调用，奖励程序比较已解决的子目标与调用数。训练只更新 policy 参数，不在每步重新训练工具或问答生成器。
 
-SFT 从 Qwen3-14B 和 Qwen3-32B 开始，各遍历示范数据 2 次（2 epochs），每批 32 条，最大序列长度 20k tokens（token 是模型处理的文本单位），不把多条短记录拼接训练；学习率分别为 `5e-6` 与 `2e-6`。用余弦学习率调度，前 5% 步骤预热。长序列分摊到设备处理的 Context Parallelism，14B 设置 CP=2，32B 设置 CP=4。
+<details><summary>训练设置：SFT 与 RL 的批次、长度和学习率</summary>
+<p>SFT 从 Qwen3-14B 和 Qwen3-32B 开始，各遍历示范数据 2 次（2 epochs），每批 32 条，最大序列长度 20k tokens（token 是模型处理的文本单位），不把多条短记录拼接训练；学习率分别为 <code>5e-6</code> 与 <code>2e-6</code>。用余弦学习率调度，前 5% 步骤预热。长序列分摊到设备处理的 Context Parallelism，14B 设置 CP=2，32B 设置 CP=4。</p>
 
-RL 使用 GRPO，batch size 与 mini-batch size 都是 256，学习率 `2e-6`；输入上限 25,600 tokens，回答上限 49,152 tokens，论文对 user 与 assistant 各写了最多 32 轮。作者去掉 KL 正则（限制回答分布偏离起点的项）与熵奖励（鼓励生成多样性的项），在整个 batch 的 token 上取平均损失。
+<p>RL 使用 GRPO，batch size 与 mini-batch size 都是 256，学习率 <code>2e-6</code>；输入上限 25,600 tokens，回答上限 49,152 tokens，论文对 user 与 assistant 各写了最多 32 轮。作者去掉 KL 正则（限制回答分布偏离起点的项）与熵奖励（鼓励生成多样性的项），在整个 batch 的 token 上取平均损失。</p>
+</details>
 
 同一道题的一组执行记录如果奖励完全相同，GRPO 没有组内好坏对比，学习信号为零。**Adaptive Batch Filling** 是筛选并凑足这种有效训练组的操作：只保留奖励标准差高于阈值的组，多余记录缓存在下一步使用。它改变训练 batch 的组成，不改变环境如何判定目标。
 
-<h2 id="实验：奖励之外，模型在真实评测上学到了什么">4. Experiments：奖励之外，模型在真实评测上学到了什么</h2>
+<h2 id="实验：奖励之外，模型在真实评测上学到了什么">4. Experiments：外部评测的增益来自哪个阶段</h2>
 
 **最终 RL 在三项工具使用评测上都提高，但部分离线训练子项会先退化。** 下面比较固定基座、SFT 后和最终 RL，避免把合成数据内部奖励当成外部能力。
 
@@ -280,8 +288,8 @@ RL 使用 GRPO，batch size 与 mini-batch size 都是 256，学习率 `2e-6`；
 </div>
 
 <figure class="figure wide">
-  <a href="/lib/papers/astra/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/astra/body-results.svg" width="1000" height="860" alt="ASTRA 14B 与 32B 从基座到监督微调再到强化学习的三项工具评测变化"></a>
-  <figcaption>根据论文 Table 2 重绘。三列分别是基座、SFT 与 RL；右列按显示值计算阶段增量。数字保留各评测自己的尺度，不混成一个统一总分。</figcaption>
+  <a href="/lib/papers/astra/body-results.svg" target="_blank" rel="noopener"><picture><source media="(max-width: 600px)" srcset="/lib/papers/astra/body-results-mobile.svg" width="360" height="540"><img src="/lib/papers/astra/body-results.svg" width="900" height="326" alt="ASTRA 14B 和 32B 在三项工具评测的基座、SFT、RL 成绩及各阶段增量"></picture></a>
+  <figcaption>根据<a href="https://arxiv.org/pdf/2601.21558v2#page=15">论文 Table 2</a>重绘。阶段增量按表中显示值相减，单位为各评测自己的百分点；不同评测没有合成一个总分。</figcaption>
 </figure>
 
 表中的 temperature、top-p、top-k 是回答采样参数；top-k=-1 表示不限制候选数。论文 Table 1 与 Table 2 的基座成绩不完全相同：14B 的 τ² 为 46.05 对 44.55，32B 的 BFCL 为 49.63 对 47.88，没有解释为何变化。下文只用 Table 2 的同组基座做阶段比较，不能把两张表的更高值混用。
