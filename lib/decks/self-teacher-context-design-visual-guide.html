@@ -1,15 +1,226 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>What Should a Self-Teacher See? 论文图解</title><link rel="stylesheet" href="/lib/decks/paper-deck-v2.css?v=20261014-2"><style>.diagram{width:100%;max-height:515px;object-fit:contain}.compact .table{font-size:19px}.compact .table th,.compact .table td{padding:15px}.stack{display:grid;gap:20px}.card p+p{margin-top:15px}.formula{font-size:23px}.quote{font-size:21px;line-height:1.55;color:var(--text)}.diagram-small{max-height:430px}.g3 .card p{font-size:21px}</style></head><body><div class="viewport"><main class="stage" aria-label="What Should a Self-Teacher See? 论文图解">
-<section class="slide active"><div class="meta"><span>01 · 研究问题</span><span>arXiv:2609.25623v2 · 最早 2026-09-22</span></div><h1>teacher 看完整解答，<br>未必最有利于 student 学习</h1><p class="lead">student 只看题目并自己作答；同一基础模型的冻结 teacher 额外看资料，指导 student 接着怎样写。</p><div class="content"><div class="grid g3"><div class="card blue"><h3>只换 teacher 的资料</h3><p>完整解答、具体策略、一般方向、题型、最终答案。</p></div><div class="card green"><h3>4B / 8B：中间提示更好</h3><p>逐测试集最高分均值相对完整解答 +1.39 / +1.57 个百分点。</p></div><div class="card orange"><h3>没有通用冠军</h3><p>1.7B 仍偏完整解答；固定检查点、迁移任务会改变排序。</p></div></div></div><div class="foot"><span>§1、Table 1；主表最高分不等于固定终点分数</span><span>1 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>02 · 真实公开数据</span><span>sample_id＝1 · olympiads</span></div><h2>从这道指数比较题，理解五种资料</h2><div class="content"><img class="diagram" src="/lib/papers/self-teacher-context-design/exponent-real-case.svg" alt="统一指数为1003，底数5小于8小于9，r小于p小于q，选D；五种提示保留不同信息" width="1000" height="486"></div><div class="foot"><span>附录 B.1、公开 JSONL 原题；展示参考推导，不声称这是 student 的实际轨迹</span><span>2 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>03 · 提示的具体内容</span><span>L2 / L3 / L4 是模型离线生成的</span></div><h2>“抽象程度”实际改变了什么信息？</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>资料</th><th>真实题的提示内容</th><th>没有提供什么</th></tr></thead><tbody><tr><td>L1 完整解答</td><td>8¹⁰⁰³、9¹⁰⁰³、5¹⁰⁰³ → r＜p＜q → D</td><td>没有隐藏推导和答案</td></tr><tr><td>L2 strategy</td><td>用 power of a power rule，统一成指数最大公约数，再比较底数</td><td>不直接给 8、9、5 和 D</td></tr><tr><td>L3 framing</td><td>改写成统一形式，比较时只剩一个变化量</td><td>不指定幂的乘方规则</td></tr><tr><td>L4 category</td><td>初等代数：不同底数与指数的幂的排序</td><td>不告诉怎么解</td></tr><tr><td>L5 答案</td><td>D</td><td>不给推导</td></tr></tbody></table></div><div class="callout"><p>它们不是把原解答截成五段；L5 是只给结果的另一种对照。原始英文提示及其中文解释见正文。</p></div></div><div class="foot"><span>§3、B.1；原始 L1 的 “same base” 措辞有误，等式实际上统一指数</span><span>3 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>04 · 两个阶段</span><span>资料生成模型 ≠ 在线 teacher</span></div><h2>离线生成资料，在线重评 student 回答</h2><div class="content"><img class="diagram" src="/lib/papers/self-teacher-context-design/training-and-context.svg" alt="离线生成资料与在线 OPSD 的角色、输入、概率计算、更新边界" width="1000" height="480"></div><div class="foot"><span>§3、A.1、B.1；在线 teacher 是初始基础模型，LoRA 关闭</span><span>4 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>05 · 一次训练</span><span>回答来自当前 student：on-policy</span></div><h2>teacher 没有生成新答案来替换 student</h2><div class="content"><div class="flow" style="--n:4"><div class="step"><b>1 · 作答</b><strong>student 只看题目</strong><p>当前参数生成最多 1,024 tokens，得到自己的回答。</p></div><div class="step"><b>2 · 重评</b><strong>对齐同一前文</strong><p>两模型在每个回答位置计算完整词表概率；teacher 多看资料。</p></div><div class="step"><b>3 · 比较</b><strong>概率产生损失</strong><p>题面和 padding 不计入；只有回答位置参与训练。</p></div><div class="step"><b>4 · 更新</b><strong>只改 student LoRA</strong><p>teacher 保持初始模型。下一轮 student 用新参数重新作答。</p></div></div><div class="callout green"><p>按位置定义概率不意味着逐字发起独立调用：实现对整段回答做批量计算。推理时不给参考资料。</p></div></div><div class="foot"><span>§3、A.1；data_collator.py、opsd_trainer.py</span><span>5 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>06 · 代码中的损失</span><span>只设上限，不是双侧截断</span></div><h2>先限制每个词表项，再求和</h2><div class="content"><div class="formula">u(v)＝q(v)·[log q(v)−log p(v)]<br>每位置损失＝Σᵥ min{u(v), τ}<br>最后对有效回答位置平均</div><div class="grid g2"><div class="card blue"><h3>q：teacher；p：student</h3><p>不截断时是 teacher→student 的 forward KL，比较完整概率表。</p></div><div class="card orange"><h3>代码：clamp(max=token_clip)</h3><p>先截正贡献，负贡献不设下限。求和可为负，不能称精确 KL，也不是把整项 KL 截断。</p></div></div></div><div class="foot"><span>A.1 Eq. 7–9；opsd_trainer.py:455–487 @76ba7f2；没有额外 GRPO 奖励</span><span>6 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>07 · 训练与评测</span><span>同规模内五组一致，跨规模配置有差别</span></div><h2>短训练回答，长评测回答</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>环节</th><th>实际设置</th></tr></thead><tbody><tr><td>数据与更新</td><td>29,434 题；8×H200；200 次更新；每 25 步保存；LoRA 64/128；LR 5e-6</td></tr><tr><td>生成</td><td>训练最多 1,024 tokens，T=1.1、top-p=.95、top-k=20；概率损失仍用完整词表</td></tr><tr><td>规模差别</td><td>1.7B / 4B / 8B 的有效 batch 为 64 / 32 / 32，损失上限 .05 / .05 / .06</td></tr><tr><td>模板</td><td>训练 student：non-thinking；teacher 计算概率：thinking；最终评测：thinking</td></tr><tr><td>数学评测</td><td>每题 12 次；最多 38,912 tokens；Avg@12＝正确总数÷(题数×12)</td></tr></tbody></table></div><div class="callout"><p>一题 12 次里 9 次正确：Avg@12 贡献 75%，Pass@12 才是 100%。9/12 是指标说明，不是论文实测记录。</p></div></div><div class="foot"><span>Tables 4、A.2；不要把训练上限当作评测上限</span><span>7 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>08 · 主结果</span><span>Table 1 · seed 42 · Avg@12 %</span></div><h2>4B 和 8B 的最高分偏向中间提示</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>规模</th><th>L1 完整</th><th>L2 策略</th><th>L3 方向</th><th>L4 题型</th><th>L5 答案</th></tr></thead><tbody><tr><td>1.7B</td><td class="ours">43.89</td><td>40.83</td><td>42.78</td><td>43.61</td><td>42.13</td></tr><tr><td>4B</td><td>63.43</td><td>64.07</td><td class="ours">64.81</td><td>64.63</td><td>63.61</td></tr><tr><td>8B</td><td>66.67</td><td class="ours">68.24</td><td>66.85</td><td>67.22</td><td>66.76</td></tr></tbody></table></div><div class="grid g2"><div class="card blue"><h3>主表逐测试集选最高</h3><p>AIME24、AIME25、HMMT25 各从八个检查点取最高，再平均，可能来自三个不同模型。</p></div><div class="card orange"><h3>三种子只复现 L1、L3、L4</h3><p>4B/8B 平均差值为正，不等于每个种子都提高；8B L4 固定终点只有 1/3 种子提高。</p></div></div></div><div class="foot"><span>Tables 1、3；± 是样本标准差，不是置信区间</span><span>8 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>09 · 检查点选择</span><span>同样数据，不同问题</span></div><h2>换成一个检查点，4B 的冠军会变</h2><div class="content"><img class="diagram" src="/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg" alt="逐测试集最高分L3赢；共同检查点L4赢；固定第200步L2与L4并列" width="1000" height="472"></div><div class="foot"><span>Table 14；8B 固定第 200 步 L3 相对 L1 只有 +0.09，不是主表的 +1.57</span><span>9 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>10 · 真实迁移失败</span><span>ZebraLogic lgp-test-4x6-25 · 8B</span></div><h2>自查很多次，仍可能重复错误的条件</h2><p class="lead">四栋房子、六类属性；摄影与海滩之间隔两栋房子，位置差应为 3。评分要求整个答案表正确。</p><div class="content"><div class="grid g2"><div class="card green"><h3>L3：整表正确</h3><p>第一次就写 beach＝photography±3，四栋房子只剩两种端点安排，随后推导完成。</p><p>轨迹 33,912 字符，正常结束。</p></div><div class="card red"><h3>L1：整表错误</h3><p>误读距离为 2，接受摄影在第 2 栋、海滩在第 4 栋。自查沿用误读，最后猜 mountain / cruise 的排列。</p><p>轨迹 67,938 字符，正常结束，自查更多。</p></div></div><div class="callout"><p>来自论文预选的反差案例，只说明这一例的失败。完整题表和逐题轨迹未在固定公开版本释放，本文不补造。</p></div></div><div class="foot"><span>D.1；C-Eval 也有负结果：L1 至 L4 在任何规模都未超过 Base</span><span>10 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>11 · 最关键的控制</span><span>不是没有措辞控制，也不是完全拆清所有因素</span></div><h2>统一外壳后仍有优势，长度与泄漏仍未完全控制</h2><div class="content compact"><div class="table-wrap"><table class="table"><thead><tr><th>控制</th><th>发现</th><th>边界</th></tr></thead><tbody><tr><td>统一外壳，Table 20</td><td>4B 的 L2 / L3 / L4 均高于 L1</td><td>仍同时改变资料长度与语义</td></tr><tr><td>前 10%＋答案</td><td>63.89，低于 L3 64.81</td><td>不等长，也不具有同样答案可见性</td></tr><tr><td>回答上限翻倍</td><td>中间提示的最高分优势保留</td><td>L2 固定终点 62.59→58.61</td></tr><tr><td>混合与选择提示</td><td>若干终点较好，没有最高分超过最佳固定提示</td><td>动态选择带来额外计算，尚非更优主方法</td></tr></tbody></table></div><div class="callout"><p>模型审查的等价答案泄漏：L2 17/1200、L3 4/1200、L4 1/1200。它是模型审查，不是人类标注，也不是零泄漏保证。</p></div></div><div class="foot"><span>Tables 7、13、14、20–22；提示减少 16.9–37.1 倍不等于总训练成本同比减少</span><span>11 / 12</span></div></section>
-<section class="slide"><div class="meta"><span>12 · 结论与复现</span><span>个人兴趣程度 9.5/10</span></div><h2>资料设计值得比较，不能预设“越抽象越好”</h2><div class="content"><div class="grid g2"><div class="card blue"><h3>论文支持</h3><p>完整解答不是默认最优。中间提示的效果依赖模型、任务和停止位置。应并报固定终点、种子波动与最近的控制。</p><p>游戏代码可以作为新资料来源，但本文没有游戏实验。</p></div><div class="card orange"><h3>固定代码的公开范围</h3><p>数据、提示生成、trainer、启动配置与紧凑 CSV 已公开；检查点、完整日志、逐题生成与审查注释未公开。</p><p>仓库 PDF 比 arXiv 更新，本解读数值统一采用 arXiv v2。</p></div></div><div class="callout green"><p>先读 OPSD 的训练过程，再读本篇 Table 3、14、20，分别约束种子、检查点和措辞对结论的影响。</p></div></div><div class="foot"><span>完整 33 页与附录；代码 @76ba7f2346fb7f2c965e4160989fbc701db6f1e6；未运行 GPU 训练</span><span>12 / 12</span></div></section>
-</main></div><div class="overview" aria-label="页面总览"></div><nav class="nav" aria-label="幻灯片控制"><a href="/posts/论文解读/self-teacher-context-design.html" title="返回文章">↩</a><button data-prev aria-label="上一页">←</button><span class="counter"></span><button data-next aria-label="下一页">→</button><button data-overview aria-label="总览">O</button><button data-fullscreen aria-label="全屏">F</button></nav><script src="/lib/decks/paper-deck-v2.js?v=20261014-2"></script></body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>What Should a Self-Teacher See? · 16 页论文图解</title>
+<link rel="icon" href="/MyImgs/icon1.svg">
+<style>
+:root{color-scheme:light;--ink:#1b1f23;--muted:#5c6773;--link:#1768d1;--border:#e3e7ee;--soft:#f7f8fa;--font:Georgia,"Times New Roman","Songti SC","Noto Serif CJK SC",serif}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:#f3f5f7;color:var(--ink);font-family:var(--font)}
+button,select{font:inherit}button,a,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link);outline-offset:3px}[hidden]{display:none!important}
+.viewport{height:calc(100% - 54px);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:6px}
+.canvas{width:1200px;height:675px;flex:none;position:relative;background:white;transform-origin:center;box-shadow:0 1px 8px #1b1f230a}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:26px 36px 22px;gap:12px}
+.meta{margin:0;color:var(--muted);font:400 15px/1.45 var(--font);display:flex;justify-content:space-between;gap:12px}
+h1,h2{font-size:32px;line-height:1.35;margin:0;font-weight:700;letter-spacing:0}h1{font-size:36px}h3{font-size:23px;line-height:1.45;margin:0 0 10px}
+p,li{font-size:21px;line-height:1.7;margin:0}p+p{margin-top:10px}ul,ol{margin:4px 0;padding-left:26px}li+li{margin-top:10px}
+.lead{font-size:22px;line-height:1.6}.content{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.split.figure-side{grid-template-columns:340px minmax(0,1fr)}
+.split.result{grid-template-columns:780px minmax(0,1fr);gap:24px}.split.case{grid-template-columns:590px minmax(0,1fr);gap:26px}
+.split>*,.columns>*{min-width:0}.columns{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.text-stack{display:flex;flex-direction:column;gap:14px}.text-stack p+p{margin:0}
+.source{margin-top:auto;border-top:1px solid var(--border);padding-top:9px;color:var(--muted);font-size:15px;line-height:1.5;display:flex;justify-content:space-between;gap:14px}
+.source a{color:var(--muted)}.note{color:var(--muted);font-size:18px;line-height:1.65}.small{font-size:19px}
+.accent{color:var(--link)}.rule{border-block:1px solid var(--border);padding:16px 0}.paper-image{display:block;width:100%;border:0;padding:0;background:white;text-align:center}
+.paper-image img{display:block;max-width:100%;width:auto;height:auto;max-height:440px;margin:0 auto}
+.paper-image[data-tall] img{max-height:480px}.paper-image figcaption{font-size:16px;line-height:1.6;color:var(--muted);margin-top:6px;text-align:left}
+.image-wide img{width:100%;max-height:390px;object-fit:contain}.image-low img{width:100%;max-height:250px;object-fit:contain}
+.split.result .paper-image img{max-height:476px;width:100%;object-fit:contain}.split.case .paper-image img{max-height:470px}
+.figure-side .paper-image img{max-height:465px}.frame-hint{font-size:15px;color:var(--muted);line-height:1.5;text-align:center;margin-top:6px}
+.construction-panels{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.construction-panels .paper-image img{max-height:342px;max-width:100%}
+.construction-copy{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.construction-copy p{font-size:19px;line-height:1.6}
+table{width:100%;border-collapse:collapse;font-size:20px;line-height:1.6}th,td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid var(--border)}th{background:var(--soft);font-weight:700}td:first-child{font-weight:700}
+.compact th,.compact td{padding:9px 12px}.compact{font-size:19px}.score-table{font-size:22px}.score-table th,.score-table td{padding:10px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85em;background:var(--soft);padding:1px 4px}
+pre{margin:0;padding:16px 20px;background:var(--soft);border:1px solid var(--border);overflow:auto;font:18px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+pre code{background:none;padding:0;font:inherit}.formula{padding:14px 18px;border-block:1px solid var(--border);font:21px/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mechanism{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:22px 0;border-block:1px solid var(--border)}
+.mechanism>div{position:relative;padding-right:12px}.mechanism>div:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:6px;color:var(--muted)}
+.mechanism .value{display:block;font:700 30px/1.5 var(--font);color:var(--link)}.mechanism .label{display:block;font-size:21px;line-height:1.55}
+.mechanism .explain{display:block;font-size:18px;color:var(--muted);line-height:1.6;margin-top:7px}
+.sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.sequence section{border-top:2px solid var(--border);padding-top:12px}.sequence p{font-size:20px}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-block:1px solid var(--border);padding:20px 0}
+.timeline div{font-size:19px;line-height:1.6}.timeline b{display:block;color:var(--link);font-size:21px;margin-bottom:6px}
+.controls{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 12px;border-top:1px solid var(--border);background:white}
+.control-group{display:flex;align-items:center;gap:8px;min-width:0}.controls button,.controls select,.controls a{min-height:36px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);font-size:14px;line-height:1.5;text-decoration:none}
+.controls a{color:var(--link);white-space:nowrap}.controls button:disabled{opacity:.35;cursor:default}.controls select{max-width:170px}
+.counter{font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.controls [data-fullscreen]{color:var(--link)}
+dialog{width:min(1250px,calc(100vw - 24px));height:min(96dvh,1050px);max-width:none;max-height:none;border:1px solid var(--border);border-radius:6px;padding:0;overflow:hidden;background:white;color:var(--ink)}
+dialog::backdrop{background:#17202bcc}dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-bottom:1px solid var(--border);font-size:14px}
+.viewer-actions{display:flex;gap:6px}.viewer-actions button{background:white;border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-size:14px;min-height:36px}.viewer-actions [data-view-close]{color:var(--link)}
+.viewer-body{overflow:auto;min-width:0;min-height:0;padding:12px;overscroll-behavior:contain}.viewer-body img{display:block;max-width:none;max-height:none;height:auto;margin:auto}
+.viewer-caption{margin:0;padding:8px 12px;border-top:1px solid var(--border);font-size:13px;line-height:1.6;color:var(--muted);max-height:100px;overflow:auto}
+@media(max-width:640px){
+ .viewport{padding:0;align-items:stretch}.canvas{width:100%;height:100%;transform:none!important;box-shadow:none}
+ .slide{padding:15px 17px;gap:12px;overflow-y:auto;overscroll-behavior:contain}.meta{font-size:11px;gap:8px}.meta>span:last-child{white-space:nowrap;flex:none}h1,h2{font-size:22px;line-height:1.5}h3{font-size:17px}
+ p,li,.lead{font-size:15px;line-height:1.8}.note,.small{font-size:13px}.content{flex:none;min-height:0;gap:16px}.source{font-size:11px;line-height:1.65;margin-top:18px;flex-wrap:wrap}
+ .split,.split.figure-side,.split.case,.split.result,.columns{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+ .paper-image img,.paper-image[data-tall] img,.split.result .paper-image img,.split.case .paper-image img{max-height:none;width:100%}
+ .figure-side .paper-image{max-width:250px;margin:auto}.paper-image figcaption,.frame-hint{font-size:11px}
+ .construction-panels,.construction-copy{grid-template-columns:1fr;gap:16px}.construction-panels .paper-image img{max-height:none;width:100%}.construction-copy p{font-size:14px;line-height:1.8}
+ table,.compact,.score-table{font-size:13px;line-height:1.6}th,td,.compact th,.compact td{padding:7px 6px}.table-box{overflow-x:auto}.table-box table{min-width:530px}
+ pre{font-size:12px;padding:12px;line-height:1.7}.formula{font-size:12px;padding:10px 0;overflow-x:auto;white-space:nowrap}
+ .mechanism{grid-template-columns:1fr 1fr;gap:16px}.mechanism .value{font-size:22px}.mechanism .label{font-size:15px}.mechanism .explain{font-size:13px}.mechanism>div::after{display:none}
+ .timeline{grid-template-columns:1fr;gap:12px;padding:14px 0}.timeline div{font-size:14px}.timeline b{font-size:15px;margin-bottom:3px}
+ .sequence{grid-template-columns:1fr;gap:16px}.sequence p{font-size:14px}
+ .controls{padding:6px 8px;gap:4px}.controls .control-group{gap:4px}.controls button,.controls a,.controls select{padding:7px 8px;font-size:12px}.controls select{max-width:72px}.counter{font-size:12px}
+ .viewer-head{flex-wrap:wrap;font-size:12px}.viewer-actions{margin-left:auto}.viewer-caption{font-size:11px}
+}
+@media print{html,body{height:auto;background:white}.viewport{height:auto;padding:0;overflow:visible;display:block}.canvas{height:auto;width:1200px;transform:none!important;box-shadow:none}.slide{position:relative;display:flex!important;height:675px;break-after:page}.slide[hidden]{display:flex!important}.controls,dialog{display:none!important}@page{size:landscape;margin:8mm}}
+.paper-image.rank-image img{width:620px;max-height:450px}.paper-image.deploy-image img{width:610px;max-height:335px}.paper-image.hard-image img{width:550px;max-height:415px}.paper-image.coding-image img{width:100%;max-height:375px;object-fit:contain}
+@media(max-width:640px){.paper-image.image-wide,.paper-image.image-low,.paper-image.coding-image{overflow-x:auto;overscroll-behavior-x:contain}.paper-image.image-wide img,.paper-image.image-low img,.paper-image.coding-image img{width:800px;max-width:none;max-height:none;height:auto}.paper-image.rank-image,.paper-image.hard-image,.paper-image.deploy-image{overflow-x:auto;overscroll-behavior-x:contain}.paper-image.rank-image img{width:600px;max-width:none;max-height:none}.paper-image.hard-image img,.paper-image.deploy-image img{width:600px;max-width:none;max-height:none}}
+
+.split.teacher{grid-template-columns:350px minmax(0,1fr);gap:40px}.split.teacher .paper-image img{max-height:460px;width:auto}
+.overview-image img{width:100%;max-height:355px;object-fit:contain}.math-image img{width:100%;max-height:330px;object-fit:contain}
+.category-image img{width:100%;max-height:140px;object-fit:contain}.result-image img{width:100%;max-height:270px;object-fit:contain}
+.seed-image img{width:100%;max-height:280px;object-fit:contain}.redistribution-image img{width:100%;max-height:260px;object-fit:contain}
+.control-image img{width:100%;max-height:290px;object-fit:contain}.audit-image img{width:100%;max-height:260px;object-fit:contain}
+blockquote{margin:0;padding:16px 20px;border-left:3px solid var(--link);background:var(--soft);font-size:21px;line-height:1.65}
+.house-line{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:12px 0}.house-line>span{border-block:1px solid var(--border);padding:14px 4px;text-align:center;font-size:20px;line-height:1.6}.house-line b{font-weight:normal;color:var(--link)}
+@media(max-width:640px){.split.teacher{display:flex;flex-direction:column;gap:16px}.split.teacher .paper-image{width:260px;margin:auto}.split.teacher .paper-image img{width:100%;max-height:none}blockquote{font-size:14px;padding:10px}.house-line{gap:5px}.house-line>span{font-size:11px;padding:8px 0}.house-line b{font-size:10px}.result-image,.seed-image,.math-image,.audit-image,.control-image,.overview-image,.category-image,.redistribution-image{overflow-x:auto;overscroll-behavior-x:contain}.result-image img,.seed-image img,.math-image img,.audit-image img,.control-image img,.overview-image img,.category-image img,.redistribution-image img{width:760px;max-width:none;max-height:none}}
+
+</style>
+</head>
+<body>
+<main class="viewport" aria-label="论文演示"><div class="canvas" id="canvas">
+<section class="slide" data-title="核心问题" aria-label="第1页：核心问题"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>1 / 16</span></p><h2>教师应该多看多少参考资料？</h2><div class="content"><p class="lead">学生只看题目，冻结教师多看资料。完整解答不总是最有用的指导。</p><button class="paper-image overview-image" data-image="/lib/papers/self-teacher-context-design/figure-1.webp" data-caption="Figure 1：离线资料、训练与模型规模的关系 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Figure 1：离线资料、训练与模型规模的关系"><img src="/lib/papers/self-teacher-context-design/figure-1.webp" alt="Figure 1：离线资料、训练与模型规模的关系"></button><p class="small">4B / 8B 最好的方法、方向或题型提示 +1.39 / +1.57 点；按各数学测试分别取最高分。1.7B 仍偏完整解答。</p></div><p class="source"><span>Figure 1 / Table 1；分数分别取训练期间各测试最高值</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="训练基础" hidden aria-label="第2页：训练基础"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>2 / 16</span></p><h2>同一段前文，两张下一步概率表</h2><div class="content"><div class="split teacher"><div><button class="paper-image " data-image="/lib/papers/self-teacher-context-design/figure-1-training-detail.webp" data-caption="Figure 1 中间训练路径裁切；完整图在正文 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Figure 1 中间训练路径裁切；完整图在正文"><img src="/lib/papers/self-teacher-context-design/figure-1-training-detail.webp" alt="Figure 1 中间训练路径裁切；完整图在正文"></button></div><div class="text-stack"><p>学生用当前参数作答。教师在同一段已写前文（prefix）上给概率。</p><p>只给教师的额外资料叫 privileged context；这个训练过程叫 On-Policy Self-Distillation（OPSD）。</p><p>学生只更新 LoRA 低秩参数，教师关闭 LoRA，始终保留初始基础模型。</p><p class="note">教师不另写答案，资料不进入学生输入。数学上逐位置定义，代码整段批量计算。</p></div></div></div><p class="source"><span>§3.2 / A.1；固定 trainer 639–776</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="Related Work" hidden aria-label="第3页：Related Work"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>3 / 16</span></p><h2>比较信息形式，沿用 OPSD 训练</h2><div class="content"><div class="table-box"><table class="compact"><thead><tr><th>工作</th><th>教师看到什么</th><th>这里改变什么</th></tr></thead><tbody><tr><td>OPSD</td><td>完整参考解答</td><td>改成方法、方向、类别或答案</td></tr><tr><td>ATESD</td><td>不同长度参考前缀＋答案</td><td>语义重写且不提供具体步骤</td></tr><tr><td>Shrestha / Tessier</td><td>教师更新方式与参考类型</td><td>相邻三档资料，跨规模、停止规则</td></tr><tr><td>PS-OPSD</td><td>解题状态的转换及路径</td><td>中间资料省去显式执行步骤</td></tr></tbody></table></div><p class="note">需要既有参考解答。主配置另用大模型离线生成资料；没有验证无答案学习或多轮工具 Agent。</p></div><p class="source"><span>§2；资料设计与新优化算法要分开</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="离线生成" hidden aria-label="第4页：离线生成"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>4 / 16</span></p><h2>每题三次调用：L4 → L3 → L2</h2><div class="content"><div class="split teacher"><div><button class="paper-image " data-image="/lib/papers/self-teacher-context-design/figure-1-compiler-detail.webp" data-caption="Figure 1 左侧离线生成资料裁切；完整图在正文 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Figure 1 左侧离线生成资料裁切；完整图在正文"><img src="/lib/papers/self-teacher-context-design/figure-1-compiler-detail.webp" alt="Figure 1 左侧离线生成资料裁切；完整图在正文"></button></div><div class="text-stack"><p>29,434 题来自 OPSD / OpenThoughts 数学池。L1 是既有解答，L5 是答案字段。</p><p>Qwen3.5-397B-A17B 先给类别 L4，再给方向 L3，最后给方法 L2；每步均看题目与解答，后步还看已生成的粗资料。</p><p class="small">解答截到4,000字符，temperature .3，上限512 tokens（文本单位）。生成后跨学生规模复用。</p><p class="note">不是人工标注。8B 对照同时换模型与解码方式，不能只归因于参数量。</p></div></div></div><p class="source"><span>Appendix B.1 / data README / generator fixed 76ba7f2</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="真实训练题" hidden aria-label="第5页：真实训练题"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>5 / 16</span></p><h2>L1 给步骤和结果，L5 只给结果</h2><div class="content"><button class="paper-image math-image" data-image="/lib/papers/self-teacher-context-design/appendix-math-l1-detail.webp" data-caption="Appendix B.1：真实题目与 L1 解答裁切 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Appendix B.1：真实题目与 L1 解答裁切"><img src="/lib/papers/self-teacher-context-design/appendix-math-l1-detail.webp" alt="Appendix B.1：真实题目与 L1 解答裁切"></button><p>指数最大公约数1003，改写底数8、9、5，得到 r＜p＜q，答案D。L5只有D。</p><p class="note">原文“same base”措辞有误，等式实际统一指数。公开 sample_id=1 / olympiads；未公开这题的完整学生轨迹。</p></div><p class="source"><span>Appendix B.1 pp15–16 / released aligned JSONL</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="三种中间资料" hidden aria-label="第6页：三种中间资料"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>6 / 16</span></p><h2>L2 指定规则，L3 给方向，L4 给类别</h2><div class="content"><button class="paper-image image-low" data-image="/lib/papers/self-teacher-context-design/appendix-math-l2-l3-detail.webp" data-caption="Appendix B.1：L2 与 L3 原文裁切 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Appendix B.1：L2 与 L3 原文裁切"><img src="/lib/papers/self-teacher-context-design/appendix-math-l2-l3-detail.webp" alt="Appendix B.1：L2 与 L3 原文裁切"></button><button class="paper-image category-image" data-image="/lib/papers/self-teacher-context-design/appendix-math-case-b.webp" data-caption="Appendix B.1：L4 与 L5 原文 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Appendix B.1：L4 与 L5 原文"><img src="/lib/papers/self-teacher-context-design/appendix-math-case-b.webp" alt="Appendix B.1：L4 与 L5 原文"></button><p class="small">L2：幂的乘方＋指数最大公约数；L3：改写成共同形式、只留一个变化量；L4：幂的排序题。</p><p class="note">分别生成的文字，不是从同一解答逐段截短。L5 不在由细到粗的方法层级里。</p></div><p class="source"><span>Appendix B.1；英语保留，中文不额外添答案</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="一次更新" hidden aria-label="第7页：一次更新"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>7 / 16</span></p><h2>教师分支怎样变成学生参数更新</h2><div class="content"><div class="sequence"><section><h3>1 · 学生作答</h3><p>题目 x → 最多1,024 tokens 的回答 y。当前 LoRA 参数决定新回答。</p></section><section><h3>2 · 固定前文打分</h3><p>学生：x＋y 的前文。教师：题目＋选定资料＋相同前文。比较完整词表。</p></section><section><h3>3 · 只更新学生</h3><p>题面和补齐长度的占位项不计损失。教师不更新，下轮学生重新作答。</p></section></div><div class="formula">L = Σ有效位置 Σ词表项 min{q(v) · log[q(v)/p(v)], τ} / 有效位置数</div><p class="note">q 是教师、p 是学生概率；未归一化分数（logits）先除以1.1，再转为概率。训练学生不启用单独思考段；教师评分与评测用thinking模板；主配置不先生成教师推理。</p></div><p class="source"><span>A.1 / fixed trainer 395–492,1301–1475</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="损失代码" hidden aria-label="第8页：损失代码"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>8 / 16</span></p><h2>先截词表项，再求和；负值可能出现</h2><div class="content"><div class="columns"><div><pre><code>jsd = F.kl_div(student_log_probs,
+    teacher_log_probs,
+    reduction="none", log_target=True)
+jsd = jsd.clamp(max=token_clip)
+mask = labels != -100
+jsd = jsd[mask]
+loss = jsd.sum() / mask.sum()</code></pre></div><div class="text-stack"><p>自拟 q=(.9,.1)，p=(.1,.9)。普通KL（用教师概率加权的分布差异）＝1.7578。</p><p>词表贡献1.9775 / −.2197；τ=.05后求和是 <strong>−.1697</strong>。</p><p class="note">本文实际跑公开函数，非模型概率。代码合并本地 batch 有效 token 平均，长回答权重更大；不是每回答等权。</p></div></div></div><p class="source"><span>A.1 / trainer455–490；PyTorch2.8 CPU核验</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="主结果" hidden aria-label="第9页：主结果"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>9 / 16</span></p><h2>数学最高分：中间提示在 4B / 8B 领先</h2><div class="content"><button class="paper-image result-image" data-image="/lib/papers/self-teacher-context-design/table-1-4b-detail.webp" data-caption="Table 1：原表标题行＋完整 4B 模型块裁切 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Table 1：原表标题行＋完整 4B 模型块裁切"><img src="/lib/papers/self-teacher-context-design/table-1-4b-detail.webp" alt="Table 1：原表标题行＋完整 4B 模型块裁切"></button><p>4B / L3：64.81 对 L1 的63.43，+1.39点。8B / L2：68.24 对66.67，+1.57点。</p><p>1.7B / L1最高43.89；L4为43.61。L5在4B / 8B与L1相差不到.2点。</p><p class="note">每项测试30题×12次；Avg@12＝正确回答数/360。与“12次有一次对”的Pass@12不同。</p></div><p class="source"><span>Table1；seed42；完整三规模原表在正文</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="读分与波动" hidden aria-label="第10页：读分与波动"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>10 / 16</span></p><h2>三个最高分，可能出自三个模型</h2><div class="content"><button class="paper-image seed-image" data-image="/lib/papers/self-teacher-context-design/table-3.webp" data-caption="Table 3：按相同种子计算差值，四种停止规则 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Table 3：按相同种子计算差值，四种停止规则"><img src="/lib/papers/self-teacher-context-design/table-3.webp" alt="Table 3：按相同种子计算差值，四种停止规则"></button><p class="small">4B / L3的三项峰值来自第100、50、125步。第200步8B / L3只比L1高.09点。</p><p class="small">三种子终点：4B / L3 +1.67±.73（3/3）；8B / L4 +.22±1.05（1/3）。±是样本标准差，不是置信区间。</p><p class="note">三种子仅覆盖L1 / L3 / L4。Table14与CSV的一条最好步数记载不同，正文注明，未擅自判为并列。</p></div><p class="source"><span>Tables3,14–16 / compact CSV；不得把峰值当终点</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="真实逻辑题" hidden aria-label="第11页：真实逻辑题"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>11 / 16</span></p><h2>两栋房子在中间，位置差是 3</h2><div class="content"><blockquote>There are two houses between the photography enthusiast and the person who loves beach vacations.</blockquote><div class="house-line" aria-label="四栋房子：摄影在1，海滩在4，中间是2和3"><span>1<br><b>photography</b></span><span>2<br>中间房子</span><span>3<br>中间房子</span><span>4<br><b>beach</b></span></div><p>真实题 lgp-test-4x6-25：四栋房子×六类属性，15条线索；标准表摄影在1、海滩在4。</p><p>L3首次理解距离3，整表PASS、33,912字符。L1误读距离2，摄影在2、海滩在4，还反复自查，整表FAIL、67,938字符。</p><p class="note">这是论文部分记录＋上游标准表核验，完整模型输出未公开。房子序列为本文说明，不是模型截图。</p></div><p class="source"><span>D.2 pp29–31 / upstream data fixed 0a473f5a；指纹匹配</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="判分" hidden aria-label="第12页：判分"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>12 / 16</span></p><h2>23 / 24 格正确，整题仍然 FAIL</h2><div class="content"><div class="table-box"><table class="score-table"><thead><tr><th>实际评分测试</th><th>单格</th><th>整题</th></tr></thead><tbody><tr><td>标准表</td><td>24/24＝100%</td><td>PASS</td></tr><tr><td>改错或漏一个标准格</td><td>23/24＝95.83%</td><td>FAIL</td></tr><tr><td>标准表＋无关房子 / 属性</td><td>24/24＝100%</td><td>PASS</td></tr></tbody></table></div><p>作者公开 scorer：取最后完整 solution JSON，逐标准格比较，缺失算错。去首尾空白、忽略大小写，列表取第一项。</p><p class="note">本文运行该函数，非论文模型输出。评分不独立执行线索，也不评价推理。完整题池1,000行指纹与作者记录一致。</p></div><p class="source"><span>fixed eval/evaluate_zebralogic.py 34–71；CPU实际运行</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="全题收益" hidden aria-label="第13页：全题收益"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>13 / 16</span></p><h2>救回 48 题，但也丢了 31 题</h2><div class="content"><button class="paper-image redistribution-image" data-image="/lib/papers/self-teacher-context-design/figure-8.webp" data-caption="Figure 8：ZebraLogic题目救回与退步 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Figure 8：ZebraLogic题目救回与退步"><img src="/lib/papers/self-teacher-context-design/figure-8.webp" alt="Figure 8：ZebraLogic题目救回与退步"></button><p>8B / L3：48/136道原来不会的题被救回；31/864道原来会的题丢失，净17/1,000＝+1.70点。</p><p>1.7B：救回63，丢70，净−7。不能只报“救回35.3%”。</p><p class="note">固定第200步，主配置单seed。单例揭示一种失败，不能解释全部最高分收益；C-Eval的L1–L4也均未超过Base。</p></div><p class="source"><span>Figure8 / Table11；收益与损失必须共用总分母</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="控制实验" hidden aria-label="第14页：控制实验"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>14 / 16</span></p><h2>统一外壳仍有优势，长度尚未控制完</h2><div class="content"><button class="paper-image control-image" data-image="/lib/papers/self-teacher-context-design/figure-11.webp" data-caption="Figure 11：提示外壳与混合控制 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Figure 11：提示外壳与混合控制"><img src="/lib/papers/self-teacher-context-design/figure-11.webp" alt="Figure 11：提示外壳与混合控制"></button><p class="small">统一教师外壳：L2 / L3 / L4均高于L1，冠军改变。前10%解答＋答案：既不等长，又看到答案。</p><p class="small">回答上限翻倍，峰值趋势保留，L2终点却62.59→58.61。没有选择策略赢过最佳固定资料峰值，部分终点更好。</p><p class="note">39特征学习选择器与按数据行套外壳是两件事；学习选择实现未公开。</p></div><p class="source"><span>Tables12–14,20–22 / AppendixE</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="资料审查" hidden aria-label="第15页：资料审查"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>15 / 16</span></p><h2>不直接写答案，也可能泄漏等价答案</h2><div class="content"><button class="paper-image audit-image" data-image="/lib/papers/self-teacher-context-design/table-7.webp" data-caption="Table 7：同一个模型做提示A/B和第三次裁决 · Tian et al., arXiv v2, CC BY 4.0" aria-label="放大：Table 7：同一个模型做提示A/B和第三次裁决"><img src="/lib/papers/self-teacher-context-design/table-7.webp" alt="Table 7：同一个模型做提示A/B和第三次裁决"></button><p>审查每生成器1,200题。主L2 / L3 / L4等价泄漏17 / 4 / 1；8B为50 / 31 / 2。这项审查不代表人工标注一致性。</p><p class="small">资料657.3→38.9/25.2/17.7 tokens，完整教师输入只短约3.7–4.1倍，未算离线生成或反向传播成本。</p><p class="note">初始化未截断的分布差异最大不等于训练最好；这项诊断与实际截断损失不同。</p></div><p class="source"><span>Tables6–8 / Figure2；成本、泄漏和损失分开</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+<section class="slide" data-title="结论" hidden aria-label="第16页：结论"><p class="meta"><span>Self-Teacher Context · Tian et al. · 2026-09-22</span><span>16 / 16</span></p><h2>将完整解答当基线，比较它的用途</h2><div class="content"><div class="text-stack"><p><strong>中间资料在4B / 8B上有平均收益，不能推出越抽象越好。</strong></p><p>读分要看同一个模型、固定终点与种子；逻辑题要看最终表，不能只看自查次数。</p><p>代码给资料、训练分支与评测器，但没有checkpoint、全日志、逐题生成、审查标注和学习选择器。</p><p class="note">以arXiv v2为数值依据，仓库PDF是另一个更新手稿。本文未做GPU训练。参考代码作为教师资料是应用设想，论文未验证游戏代码生成。</p></div></div><p class="source"><span>完整33页v2 / fixed public release76ba7f2；兴趣9.5/10</span><a href="https://arxiv.org/pdf/2609.25623v2">论文 PDF</a></p></section>
+</div></main>
+<nav class="controls" aria-label="幻灯片导航">
+<div class="control-group"><button type="button" data-prev aria-label="上一页">←</button><button type="button" data-next aria-label="下一页">→</button><span class="counter" aria-live="polite" data-counter>1 / 16</span><select aria-label="跳转到幻灯片" data-select></select></div>
+<div class="control-group"><button type="button" data-fullscreen aria-pressed="false">全屏</button><a href="/posts/论文解读/self-teacher-context-design.html" target="_top" data-return>回文章</a></div>
+</nav>
+<dialog id="image-viewer" aria-label="原论文图表详情">
+<header class="viewer-head"><span>原论文图表</span><div class="viewer-actions"><button type="button" data-view-fit>整图</button><button type="button" data-view-clear>清晰</button><button type="button" data-view-close>关闭</button></div></header>
+<div class="viewer-body" tabindex="0" aria-label="可滚动的图表"><img alt=""></div><p class="viewer-caption"></p>
+</dialog>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll(".slide")];
+  const canvas = document.querySelector("#canvas");
+  const viewport = document.querySelector(".viewport");
+  const prev = document.querySelector("[data-prev]");
+  const next = document.querySelector("[data-next]");
+  const counter = document.querySelector("[data-counter]");
+  const select = document.querySelector("[data-select]");
+  const fullscreen = document.querySelector("[data-fullscreen]");
+  const viewer = document.querySelector("#image-viewer");
+  const viewerBody = viewer.querySelector(".viewer-body");
+  const viewerImage = viewer.querySelector("img");
+  const caption = viewer.querySelector(".viewer-caption");
+  let index = 0;
+  let imageTrigger = null;
+  let imageMode = "fit";
+  slides.forEach((slide, i) => select.add(new Option((i + 1) + " · " + slide.dataset.title, String(i))));
+  const fromHash = () => {
+    const match = location.hash.match(/^#(?:slide-)?(\d+)$/);
+    return match ? Math.min(slides.length - 1, Math.max(0, Number(match[1]) - 1)) : 0;
+  };
+  function show(i, updateHash = true) {
+    index = Math.min(slides.length - 1, Math.max(0, i));
+    slides.forEach((slide, n) => {
+      slide.hidden = n !== index;
+      slide.setAttribute("aria-hidden", String(n !== index));
+    });
+    counter.textContent = (index + 1) + " / " + slides.length;
+    select.value = String(index);
+    prev.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+    document.title = "Self-Teacher Context · " + (index + 1) + "/" + slides.length + " · " + slides[index].dataset.title;
+    if (updateHash) history.replaceState(null, "", "#slide-" + (index + 1));
+    slides[index].scrollTop = 0;
+  }
+  function fitCanvas() {
+    if (innerWidth <= 640) { canvas.style.transform = "none"; return; }
+    const scale = Math.max(.1, Math.min((viewport.clientWidth - 12) / 1200, (viewport.clientHeight - 12) / 675));
+    canvas.style.transform = "scale(" + scale + ")";
+  }
+  async function toggleFullscreen() {
+    try {
+      if (viewer.open) viewer.close();
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      fullscreen.textContent = "此处全屏不可用";
+    }
+  }
+  function fitImage() {
+    if (!viewer.open || !viewerImage.naturalWidth) return;
+    const availableWidth = Math.max(1, viewerBody.clientWidth - 24);
+    const availableHeight = Math.max(1, viewerBody.clientHeight - 24);
+    const width = imageMode === "clear" ? Math.max(availableWidth, viewerImage.naturalWidth) :
+      Math.min(availableWidth, availableHeight * viewerImage.naturalWidth / viewerImage.naturalHeight, viewerImage.naturalWidth);
+    viewerImage.style.width = width + "px";
+    viewerBody.scrollTo(0, 0);
+  }
+  prev.addEventListener("click", () => show(index - 1));
+  next.addEventListener("click", () => show(index + 1));
+  select.addEventListener("change", () => show(Number(select.value)));
+  fullscreen.addEventListener("click", toggleFullscreen);
+  addEventListener("hashchange", () => show(fromHash(), false));
+  addEventListener("resize", () => { fitCanvas(); fitImage(); });
+  document.addEventListener("fullscreenchange", () => {
+    fullscreen.textContent = document.fullscreenElement ? "退出全屏" : "全屏";
+    fullscreen.setAttribute("aria-pressed", String(!!document.fullscreenElement));
+    fitCanvas();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.altKey || event.metaKey || event.ctrlKey || /^(SELECT|INPUT|TEXTAREA)$/.test(event.target.tagName)) return;
+    if (viewer.open) {
+      if (event.key === "Escape") { event.preventDefault(); viewer.close(); }
+      return;
+    }
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    else if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    else if (event.key === "Home") { event.preventDefault(); show(0); }
+    else if (event.key === "End") { event.preventDefault(); show(slides.length - 1); }
+    else if (event.key.toLowerCase() === "f") { event.preventDefault(); toggleFullscreen(); }
+    else if (event.key === "Escape") {
+      if (document.fullscreenElement) { event.preventDefault(); document.exitFullscreen(); }
+      else if (window.parent !== window) { window.parent.postMessage({type:"paper-deck-escape"}, location.origin); }
+    }
+  });
+  document.querySelectorAll("[data-image]").forEach(button => button.addEventListener("click", () => {
+    imageTrigger = button;
+    imageMode = "fit";
+    viewerImage.src = button.dataset.image;
+    viewerImage.alt = button.querySelector("img").alt;
+    caption.textContent = button.dataset.caption;
+    viewer.showModal();
+    requestAnimationFrame(fitImage);
+  }));
+  viewerImage.addEventListener("load", fitImage);
+  viewer.querySelector("[data-view-fit]").addEventListener("click", () => { imageMode = "fit"; fitImage(); });
+  viewer.querySelector("[data-view-clear]").addEventListener("click", () => { imageMode = "clear"; fitImage(); });
+  viewer.querySelector("[data-view-close]").addEventListener("click", () => viewer.close());
+  viewer.addEventListener("close", () => imageTrigger?.focus());
+  viewer.addEventListener("click", event => { if (event.target === viewer) viewer.close(); });
+  show(fromHash(), false);
+  fitCanvas();
+})();
+</script>
+</body>
+</html>

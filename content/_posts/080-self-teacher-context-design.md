@@ -2,14 +2,15 @@
 title: "[2026-09-22] What Should a Self-Teacher See? Privileged Context Design for On-Policy Self-Distillation"
 permalink: "/posts/论文解读/self-teacher-context-design.html"
 date: "2026-10-08T18:30:00+08:00"
-updated: "2026-10-13T18:00:00+08:00"
+updated: "2026-10-19T17:00:00+08:00"
 cover: "/lib/papers/self-teacher-context-design/cover.svg"
-description: "训练时已经有参考解答，应该全部交给负责指导的模型，还是只给解题方法或题型？本文用一条公开数学题讲清五种提示、训练代码和评测，再区分最高分、固定检查点与跨随机种子的结果。"
+description: "已有参考解答时，指导学生的模型应该看完整推导、具体方法、思考方向，还是只看答案？沿公开数学题、真实逻辑题与可运行评分代码，解释五组训练、结果选择和有效性边界。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
 hide_post_cover: true
-deck_pages: 12
+deck_pages: 16
+paper_style: editorial
 categories:
   - "论文解读"
 tags:
@@ -19,159 +20,220 @@ tags:
   - "Code Audit"
 ---
 
-<link rel="stylesheet" href="/styles/paper-deep-dive-v2.css?v=10">
-
 <div class="paper-reading">
+<style>
+@media(max-width:640px){body.page-paper-reading.page-paper-editorial .prose .figure.dense-original>a{display:block;overflow-x:auto;overscroll-behavior-x:contain}body.page-paper-reading.page-paper-editorial .prose .figure.dense-original>a>img{width:850px;max-width:none;height:auto}}
+</style>
 
-<p class="paper-meta">Kanghui Tian, Siyuan Liu, Tianxiang Jiang, et al. · arXiv:2609.25623v2 · 最早公开于 2026-09-22</p>
-<div class="source-links"><a href="https://arxiv.org/abs/2609.25623">论文主页</a><a href="https://arxiv.org/pdf/2609.25623v2">本次解读的 v2 PDF</a><a href="https://github.com/tiankanghui/Self-Teacher-Context-Design">官方代码与数据</a></div>
-
-<section class="deck-wrap" aria-label="Context Design 交互图解">
-  <div class="deck-head"><strong>12 页交互图解 · 一道真题、一次训练、三种读分方式</strong><a href="/lib/decks/self-teacher-context-design-visual-guide.html">大屏阅读 ↗</a></div>
-  <div class="post-deck-embed"><div class="post-deck-embed-frame"><iframe src="/lib/decks/self-teacher-context-design-visual-guide.html" title="Context Design 论文图解，共 12 页" allow="fullscreen" loading="eager"></iframe></div><p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>按 Esc 退出全屏；独立打开后可返回文章</span></p></div>
+<section class="deck-wrap" aria-label="Self-Teacher Context 论文图解">
+<div class="deck-head"><strong>16 页图解 · 五种资料、一次更新与真实判分</strong><a href="/lib/decks/self-teacher-context-design-visual-guide.html">独立阅读 ↗</a></div>
+<div class="post-deck-embed"><div class="post-deck-embed-frame"><iframe src="/lib/decks/self-teacher-context-design-visual-guide.html" title="Self-Teacher Context 论文图解，共 16 页" allow="fullscreen" loading="eager"></iframe></div><p class="post-deck-embed-note"><span>按钮或方向键翻页 · F 全屏 · Esc 退出</span><span>正文原图可放大；密集图表在手机上可横滑</span></p></div>
 </section>
 
-<p class="lead">训练时有一份参考解答，模型自己作答时却没有。作者让同一个基础模型承担两个角色：<strong>student 只看题目，先写自己的回答；teacher 额外看参考资料，判断 student 接下来该怎样写。</strong>论文比较的是 teacher 该看多少资料。完整解答没有一直赢，只给方法、思考方向或题型有时更好，但结果取决于模型规模、任务和选用哪个训练检查点。</p>
+<p class="paper-meta">Tian et al. · arXiv:2609.25623v2 · 最早公开于 2026-09-22</p>
+<div class="source-links"><a href="https://arxiv.org/abs/2609.25623">论文主页</a><a href="https://arxiv.org/pdf/2609.25623v2">本次解读的 33 页 v2</a><a href="https://github.com/tiankanghui/Self-Teacher-Context-Design/tree/76ba7f2346fb7f2c965e4160989fbc701db6f1e6">固定版本代码与数据</a></div>
 
-<aside class="part0"><span class="kicker">PART 0 · 理解两个模型角色</span><h3>teacher 不另写一份答案，而是在 student 已写的前文上给出下一步概率</h3><p>本文的 <strong>On-Policy Self-Distillation（OPSD）</strong> 指：student 每轮用当前参数生成回答，再由同一基础模型的冻结版本指导这份回答。这里的 on-policy 强调回答来自正在训练的 student；self-distillation 强调 teacher 和 student 从同一基础模型出发，不要求另一个更强模型提供这轮推理轨迹。</p><p>只给 teacher 的额外参考资料叫 <strong>privileged context</strong>。例如 student 已写出“先比较指数”，teacher 就在“题目＋额外资料＋这句前文”下计算下一 token 的概率。token 是模型处理的文本单位，可能是字、词片段或符号；已写出的前文叫 prefix。teacher 的概率不会直接变成 student 的可见输入，训练只用它调整 student。本文 teacher 关闭 LoRA、保持初始基础模型不变；LoRA 是 student 实际更新的低秩参数，不能把这里的 teacher 误读成每轮同步更新的副本。</p></aside>
+<p class="lead">训练时已经有参考解答，学生作答时却只能看题目。作者让同一基础模型的冻结版本多看一份资料，用它指导正在训练的学生。论文比较这份资料应该包含多少信息：完整推导没有一直赢，只给方法、思考方向或题型有时更好；结论随模型规模、任务和选取的训练时刻变化。</p>
 
-<div class="metrics" aria-label="Context Design 关键数字"><div class="metric"><strong>29,434</strong><span>每题都有五种提示的公开训练行</span></div><div class="metric"><strong>+1.39</strong><span>4B 的最佳中间提示相对完整解答，逐测试集最高分均值</span></div><div class="metric"><strong>+1.57</strong><span>8B 的同一比较，单位均为百分点</span></div><div class="metric"><strong>9.5/10</strong><span>博客作者个人兴趣程度</span></div></div>
+<aside class="part0"><h3 id="part-0">Part 0：教师指导的是学生正在写的回答</h3>
+<p>学生每轮用当前参数作答，再由同一基础模型的冻结版本提供下一步概率，这个训练过程叫 <strong>On-Policy Self-Distillation（OPSD）</strong>。只给负责指导的教师、不给正在作答的学生的额外资料，论文称为 <strong>privileged context</strong>。</p>
+<p>学生已经写出的前文叫 <strong>prefix</strong>；教师必须在同一段前文上给概率。例如学生写到“先比较指数”，教师读取“题目＋资料＋这句前文”，计算接下来各文本单位的概率，文本单位称为 token。教师不会把新答案塞回学生输入，训练程序用两份概率的差异更新学生。学生实际更新的是加在基础模型上的低秩参数 <strong>LoRA</strong>；教师关闭它，保留初始基础模型。</p></aside>
 
-<aside class="keypoints"><h3>本文的三个结论</h3><ul><li>五种提示按同一道题对齐。方法、思考方向和题型由模型离线生成，不能称为人工标注。</li><li>4B、8B 的中间提示平均有优势；1.7B 仍偏向完整解答。不存在一档对所有模型和任务都最好的提示。</li><li>主表可混合三个不同训练检查点的最高分。换成同一个检查点或固定训练终点，优势大小与冠军都会变化。</li></ul></aside>
+<aside class="keypoints"><ul>
+<li>29,434 道训练题按五种资料对齐。完整解答来自既有数据，中间三种提示由模型离线生成，学生训练时始终看不到它们。</li>
+<li>4B、8B 最好的中间提示相对完整解答提高 <strong>1.39 / 1.57 个百分点</strong>，但这是分别取各数学测试最高分的均值，可能不对应一个模型。</li>
+<li>三个训练随机种子支持平均收益，不支持通用冠军：8B 题型提示在固定终点仅 1/3 个种子提高；1.7B 平均更依赖完整解答。</li>
+</ul></aside>
+<p class="source-note">与博客作者本人的兴趣相关程度：9.5 / 10。原图表来自 Tian et al., arXiv v2，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>；保留英文与数值，裁切另标。本文实际运行数据、算术、损失与评分函数的 CPU 检查，未运行 GPU 训练或复现模型成绩。</p>
 
-<h2 id="研究问题：教师应该多看哪种解题材料">1. Motivation：教师应该多看哪种解题材料</h2>
+<h2 id="研究问题：教师应该多看哪种解题材料">1. Motivation：完整解答是否最适合指导学生</h2>
+<p><strong>参考解答的详细程度，与它能否指导学生当前思路，是两件事。</strong>完整解答同时给出答案、具体路径和措辞。学生可能正在走另一条路，教师却更偏向参考路径；过粗的提示又可能不足以帮助教师判断下一步。这是作者提出的解释，实验主要检验训练后的能力，尚未直接证明哪种影响造成收益。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-1.webp"><img src="/lib/papers/self-teacher-context-design/figure-1.webp" width="1700" height="720" alt="Figure 1：离线生成不同资料，冻结教师在学生相同前文上打分，再比较不同规模的训练结果"></a><figcaption>Figure 1 · 左边生成资料，中间才是训练，右边是数学测试最高分相对 L1 的差值。教师与离线资料生成模型不是同一个角色。Tian et al., v2, p.2，CC BY 4.0。</figcaption></figure>
+<p>同一规模内，作者固定学生提示、数据、冻结教师和训练配置，每次实验只选一种教师资料。各组训练后参数不同，重新生成的回答也不同；相同的是每轮中教师与学生评估的前文，不能说五组训练始终使用同一批回答。</p>
 
-<p><strong>已经有完整解答，不代表把它全部交给 teacher 就最有利于 student 学习。</strong>完整解答同时给出最终答案、具体解法和原作者的措辞。teacher 看完以后可能更偏向参考解答的写法，而 student 当前写出的前文可能走的是另一条路。只给“怎么考虑这道题”，则可能留下让 student 自己完成推导的空间。提示太粗又可能不足以指导下一步。</p>
+<h2 id="与已有自蒸馏方法的区别">2. Related Work：从给多少参考解答，到给什么信息</h2>
+<p><strong>本文研究教师资料的形式，训练方法沿用 OPSD。</strong>论文 §2 的相邻工作可以按“教师多看到什么”比较；任务和评测不同，不直接横比分数。</p>
+<div class="table-scroll"><table><thead><tr><th>路线</th><th>教师可见资料 / 监督</th><th>本篇差别</th></tr></thead><tbody>
+<tr><td>OPD / OPSD</td><td>更强教师，或同一基础模型加完整解答，在学生新生成前文上提供概率</td><td>固定初始教师，只替换资料；不增加新的优化器</td></tr>
+<tr><td>ATESD</td><td>改变参考推理前缀长度，保留最终答案</td><td>三档语义改写不提供具体推导与最终答案；另设答案提示</td></tr>
+<tr><td>Shrestha &amp; Tessier</td><td>比较教师更新方式、参考类型，也包含抽象方法提示</td><td>训练三个相邻粒度，在三种规模和多种停止规则下比较</td></tr>
+<tr><td>Armandpour et al.</td><td>用梯度方向的一致程度估计资料用途，不完整训练每个配置</td><td>以实际训练后成绩为主；初始化概率差异仅作诊断</td></tr>
+<tr><td>PS-OPSD</td><td>将解答整理为问题状态之间的转换及所选路径</td><td>L2 至 L4 删除显式解题步骤，保留方法、方向或类别</td></tr>
+</tbody></table></div>
+<p>“不需要更强的在线教师”仍以<strong>已经有参考解答</strong>为前提。主实验还用大模型离线生成提示。它没有证明只拿无答案题目就能训练，也没有验证多轮工具 Agent 或游戏代码生成。</p>
 
-<p>这是论文的动机，不是已经证明的因果解释。作者通过五组训练来回答更具体的问题：在同一模型规模内，固定 student 提示、冻结 teacher、训练数据和训练方法，只改变 teacher 读到的资料，最终能力会怎样变化？不同组都采用相同的生成流程，但训练后参数不同，实际生成的回答当然不会完全相同。不能把它说成“五组始终训练同一批回答”。</p>
+<h2 id="方法：五类教师提示与一次训练更新">3. Method：资料怎样生成，又怎样进训练</h2>
+<p><strong>先离线生成五种资料，训练时只选一种交给冻结教师。</strong>先用真实训练题看清资料差别，再走一轮更新。</p>
 
-<p>论文把参考资料分成完整解答、具体策略、一般思考方向、题型和最终答案五种。它们是不同的信息包，不是把原文从长到短截成五段；“只给答案”也不在从详细解法到粗略方法的同一条层级上。</p>
-
-<h2 id="与已有自蒸馏方法的区别">2. Related Work：与已有自蒸馏方法的区别</h2>
-
-<p><strong>本文把“teacher 看到什么”作为主要实验变量，训练方法本身沿用 OPSD。</strong>它不提出新的奖励、轨迹搜索或工具系统。最直接的基线是把完整参考解答交给冻结 teacher 的 OPSD。相关方法则扩展了参考资料的来源或表示。</p>
-
-<div class="table-scroll"><table><thead><tr><th>工作</th><th>teacher 的额外输入</th><th>指导什么</th><th>与本文的边界</th></tr></thead><tbody><tr><td><a href="/posts/论文解读/self-distilled-reasoner.html">OPSD</a></td><td>经过验证的完整解答</td><td>student 自己生成的回答</td><td>本文的 L1 直接保留这个起点</td></tr><tr><td><a href="/posts/论文解读/on-policy-context-distillation.html">OPCD</a></td><td>任务提示、经验总结等训练期资料</td><td>不给这些资料的模型</td><td>扩展资料类型；本文针对同题解答比较不同详细程度</td></tr><tr><td><a href="/posts/论文解读/problem-space-guided-opsd.html">PS-OPSD</a></td><td>状态、目标、约束、可执行变化四项描述</td><td>student 的当前回答</td><td>重新组织问题描述；本文主要改变资料的抽象程度</td></tr><tr><td>本文</td><td>同题对齐的 L1、L2、L3、L4、L5</td><td>同一种 OPSD 训练中的当前回答</td><td>比较资料、模型规模、任务与训练检查点之间的关系</td></tr></tbody></table></div>
-
-<p>比较表用于说明各工作的研究范围，不是这些方法在统一数据和算力下的排行榜。本文的主要实测对照是五种提示。后文也会检查它们是否同时改变了提示长度、答案可见性，以及衔接指令的措辞。</p>
-
-<h2 id="方法：五类教师提示与一次训练更新">3. Method：五类教师提示与一次训练更新</h2>
-
-<p><strong>先离线生成每题的五种资料，再让 student 作答，冻结 teacher 重评这份回答，最后只更新 student 的 LoRA。</strong>离线资料生成和在线训练是两件事。下面用仓库中一条真实训练行讲清楚它们怎样连接。</p>
-
-<figure class="figure"><a href="/lib/papers/self-teacher-context-design/training-and-context.svg" target="_blank" rel="noopener"><img src="/lib/papers/self-teacher-context-design/training-and-context.svg" width="1000" height="480" alt="离线生成五种参考资料；在线 student 只看题目，冻结 teacher 看同题资料和 student 前文，并且只更新 student"></a><figcaption>按论文 §3、附录 A.1/B.1 与公开代码重绘。离线生成资料用较强模型，在线 teacher 则是 student 的初始基础模型；这两个角色不能混为一谈。</figcaption></figure>
-
-<h3>公开训练行：比较三个巨大的幂</h3>
-
-<p><code>data/privileged_contexts_l1_l5.jsonl</code> 的 <code>sample_id=1</code> 来自 <code>olympiads</code>，与附录 B.1 的例题一致：令 p＝2<sup>3009</sup>、q＝3<sup>2006</sup>、r＝5<sup>1003</sup>，在五个选项中判断大小关系。正确选项是 D：r＜p＜q。它是一条公开训练样本，不是本文主测试集中的逐模型输出日志。</p>
-
-<figure class="figure"><a href="/lib/papers/self-teacher-context-design/exponent-real-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/self-teacher-context-design/exponent-real-case.svg" width="1000" height="486" alt="真实指数比较题：2的3009次方等于8的1003次方，3的2006次方等于9的1003次方，故5小于8小于9，选D；五种资料分别保留不同信息"></a><figcaption>根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘。图中的计算是这道题的参考推导，不是声称 student 实际生成了这些步骤。</figcaption></figure>
-
-<div class="table-scroll"><table><thead><tr><th>资料</th><th>这一行实际提供什么</th><th>teacher 可以从中直接知道什么</th></tr></thead><tbody><tr><td>L1：完整解答</td><td>把 p、q、r 改写成 8<sup>1003</sup>、9<sup>1003</sup>、5<sup>1003</sup>，比较底数，得到 r＜p＜q 和 D</td><td>整个解法与最终答案</td></tr><tr><td>L2：strategy</td><td>“Apply the power of a power rule to rewrite each term with a common exponent equal to the greatest common divisor of the original exponents, enabling direct comparison of the resulting bases.”</td><td>具体策略：用幂的乘方规则，把指数统一成原指数的最大公约数，再比较底数；没有给出计算后的 8、9、5 或 D</td></tr><tr><td>L3：framing</td><td>“Reframe the terms into a common representational form so that comparison depends on a single varying attribute.”</td><td>一般方向：把几个量改写成统一形式，只留一个变化量用于比较；没有指定幂的乘方规则</td></tr><tr><td>L4：category</td><td>“Elementary algebra: ordering of exponential terms with different bases and exponents.”</td><td>题型：初等代数中不同底数与指数的幂的排序</td></tr><tr><td>L5：最终答案</td><td><code>D</code></td><td>结果，不提供推导</td></tr></tbody></table></div>
-
-<p>这里保留 L2、L3、L4 的原始英文，再解释它们做什么，避免中文改写后不知不觉多给信息。原始 L1 有一处措辞写成 “same base”，但展示的计算实际上是统一<strong>指数</strong>，不是统一底数。这个文字瑕疵不影响随后正确的等式，但公开参考资料也需要核查，不能默认每句话都准确。</p>
-
-<p>下面是为本文写的 Python 3.12 检查，不是论文的评测器。它只验证这条参考题的算术，避免直接构造几千位的大整数。</p>
+<h3 id="math-case">3.1 一道公开数学题的五种资料</h3>
+<p>公开 JSONL 的 <code>sample_id=1</code>、<code>source=olympiads</code>，与 Appendix B.1 同题：给定 p＝2<sup>3009</sup>、q＝3<sup>2006</sup>、r＝5<sup>1003</sup>，选出它们的大小顺序。答案 D 是 r＜p＜q。题面与参考解答来自 OPSD 使用的 OpenThoughts 数学池，不是作者为解读编的例子。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-math-case-a.webp"><img src="/lib/papers/self-teacher-context-design/appendix-math-case-a.webp" width="1624" height="946" alt="Appendix B.1：真实题目、完整解答L1、具体策略L2与思考方向L3"></a><figcaption>Appendix B.1 原文第一部分 · L1 给出指数 1003、底数 8/9/5 和答案 D；L2 只说明用幂的乘方规则与指数最大公约数，L3 只提出改写成统一形式。Tian et al., v2, p.15，CC BY 4.0。</figcaption></figure>
+<p>L4 原文是“Elementary algebra: ordering of exponential terms with different bases and exponents.”，只给题型；L5 只有 <code>D</code>。L2 / L3 / L4 是分别生成的文字，不能理解成把 L1 从长到短截几段。L5 又是保留结果、删除路径的单独对照。</p>
+<p>这题的计算只需求指数的最大公约数 gcd(3009,2006,1003)＝1003，把三项改成 8<sup>1003</sup>、9<sup>1003</sup>、5<sup>1003</sup>，比较底数。L1 首句却写“same base”，实际统一的是<strong>指数</strong>。原文保留了这个措辞瑕疵，不能照译成“相同底数”。</p>
+<details><summary>补充：L4 / L5 原图、逐字资料与可运行算术检查</summary>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/appendix-math-case-b.webp"><img src="/lib/papers/self-teacher-context-design/appendix-math-case-b.webp" width="1624" height="301" alt="Appendix B.1：L4题型与L5答案原文"></a><figcaption>Appendix B.1 续 · L4 无方法与答案，L5 只给答案。Tian et al., v2, p.16，CC BY 4.0。</figcaption></figure>
+<p>L2：“Apply the power-of-a-power rule to rewrite each term with a common exponent equal to the greatest common divisor of the original exponents, enabling direct comparison of the resulting bases.” L3：“Reframe the terms into a common representational form so that comparison depends on a single varying attribute.” 前者指定可使用的规则，后者没有指定该规则。英文按论文保留，中文解释不额外给教师加信息。</p>
+<p>以下是本文写的 Python 3.12 算术检查，已实际运行；不是模型输出，也不是论文 benchmark 的评分器。</p>
 
 ```python
 from math import gcd
 
-exponents = (3009, 2006, 1003)
-common = gcd(*exponents)
-rewritten_bases = [
-    base ** (exp // common)
-    for base, exp in zip((2, 3, 5), exponents)
-]
-assert common == 1003
-assert rewritten_bases == [8, 9, 5]
-assert rewritten_bases[2] < rewritten_bases[0] < rewritten_bases[1]
+common = gcd(3009, 2006, 1003)
+bases = [b ** (e // common) for b, e in zip((2, 3, 5), (3009, 2006, 1003))]
+assert common == 1003 and bases == [8, 9, 5]
+assert bases[2] < bases[0] < bases[1]
 print("D: r < p < q")
 ```
+</details>
 
-<h3>29,434 行来自哪里，谁生成摘要</h3>
+<h3 id="data-construction">3.2 29,434 行资料的来源与生成</h3>
+<p>每行保留题面、来源和 L1 至 L5。L1 沿用参考解答；L5 提取答案，对七条证明类样本做代码规则覆盖。<strong>L2 至 L4 由 Qwen3.5-397B-A17B 离线生成，不是人工标注。</strong>作者称它为 compiler，这里指生成提示的模型流程。</p>
+<p>每题分三次调用，顺序 L4→L3→L2：都能看题目和截到 4,000 字符的参考解答，后一步再看已生成的粗粒度资料。主配置 temperature 0.3、上限 512 tokens，提示禁止最终答案和实际推导。资料生成后跨学生规模复用，训练期间不重新总结每轮回答。</p>
+<details><summary>补充：生成规则、教师提示外壳与原文训练配置</summary>
+<p>L4 只许“领域：对象类别”；L3 只许一个可迁移的思考方向，不能命名方法或串联操作；L2 必须指定方法，但不能代入本题数值和执行推导。典型长度是软要求，传输错误或空结果最多重试三次，不因长度重试。Qwen3-8B 对照启用 thinking、temperature 0.6、上限 8,192 tokens，因此同时改变了模型与解码方式。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-generation-a.webp"><img src="/lib/papers/self-teacher-context-design/appendix-generation-a.webp" width="1624" height="917" alt="Appendix B.1：L4与L3的原文生成规则"></a><figcaption>Appendix B.1 · L4 / L3 生成约束。Tian et al., v2, p.16，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-generation-b.webp"><img src="/lib/papers/self-teacher-context-design/appendix-generation-b.webp" width="1624" height="399" alt="Appendix B.1：L2具体方法的生成规则"></a><figcaption>Appendix B.1 · L2 生成约束。Tian et al., v2, p.17，CC BY 4.0。</figcaption></figure>
+<p>把题目、资料和“如何使用资料”的指令拼成教师输入的提示外壳，作者称为 <strong>bridge</strong>。主实验的标签、分隔符和衔接句随 L1 至 L5 变化；统一外壳的控制在 §5 单独说明。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-interfaces.webp"><img src="/lib/papers/self-teacher-context-design/appendix-interfaces.webp" width="1624" height="490" alt="Appendix B.2：教师与学生的输入模板"></a><figcaption>Appendix B.2 · 学生输入没有 hint。Tian et al., v2, p.17，CC BY 4.0。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/table-5.webp"><img src="/lib/papers/self-teacher-context-design/table-5.webp" width="1033" height="284" alt="Table 5：五种教师资料的标签与分隔符"></a><figcaption>Table 5 · 标签和分隔符。Tian et al., v2, p.17，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-transitions.webp"><img src="/lib/papers/self-teacher-context-design/appendix-transitions.webp" width="1624" height="1232" alt="Appendix B.2：五种教师衔接指令原文"></a><figcaption>Appendix B.2 · 五种衔接句。固定代码的 L1 使用“derive the same final answer”，此 v2 印为“arrive at the correct final answer”；这里只分别报告，不断言哪段产生论文结果。Tian et al., v2, p.18，CC BY 4.0。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/table-4.webp"><img src="/lib/papers/self-teacher-context-design/table-4.webp" width="1176" height="631" alt="Table 4：三种模型规模的完整训练配置"></a><figcaption>Table 4 · 同一规模内各资料条件一致；跨规模 batch 和贡献上限不同。Tian et al., v2, p.14，CC BY 4.0。</figcaption></figure>
+</details>
 
-<p>每行都保留同一道题的标识、来源、题面与 L1 至 L5。基础题面和参考解答来自 OPSD 使用的 OpenThoughts 数学数据；L1 沿用参考解答，L5 取答案字段，并对七条证明类样本做代码规则覆盖。这不等于作者人工重写了所有提示。</p>
+<h3 id="training-update">3.3 一轮更新：相同前文，两张概率表</h3>
+<ol>
+<li>学生只看题面，按当前 LoRA 参数生成最多 1,024 tokens 的回答。例如它选择直接比较指数，可能尚未按参考解答改写。</li>
+<li>训练程序将这份回答分别接在学生提示和教师提示后。学生启用 LoRA；教师关闭 LoRA，在“题目＋选定资料＋同一前文”下给概率。实现对整段回答做批量计算，不是每个字发一个 API 请求。</li>
+<li>程序比较有效回答位置的完整词表概率，题面和为补齐长度添加的占位项（padding）不计入。<strong>教师不生成替代答案，资料不进入学生输入。</strong></li>
+<li>只更新学生 LoRA，下一轮学生重新作答。评测与部署也只给题目，没有教师资料。</li>
+</ol>
+<p>令 q(v) 是教师对词表项 v 的概率，p(v) 是学生概率。两边先把未归一化的输出分数（logits）除以 1.1 再归一化；训练损失为：</p>
+<div class="formula">L＝Σ<sub>有效位置 t</sub>Σ<sub>词表项 v</sub> min{q<sub>t</sub>(v)·log[q<sub>t</sub>(v)/p<sub>t</sub>(v)], τ} ÷ 有效回答位置数。</div>
+<p>没有 min 时，词表求和是教师到学生的 forward KL，即用教师概率加权来衡量两份概率分布的差异。这里<strong>先截每个词表项的正贡献，再求和</strong>，不是截整项 KL；负贡献不截，总和可以为负。公开实现在本地 batch 内合并有效 token 取平均，长回答权重更大，不能说每条回答等权。</p>
+<details><summary>补充：实际代码、负值计算与聊天模板</summary>
+<p>固定仓库 <code>opsd/opsd_trainer.py:455–490</code> 的 β＝0 分支摘录如下。运行环境 Python 3.9 / PyTorch 2.8，本文用完整函数实际核验，未运行模型。变量 jsd 是函数中的名称，不代表这里使用默认 β＝0.5 的 JSD。</p>
 
-<p><strong>L2、L3、L4 由 Qwen3.5-397B-A17B 离线生成。</strong>作者把生成资料的程序称为 compiler，这里它是一个模型提示流程，不是编译游戏代码的编译器。顺序为 L4→L3→L2：L4 看题目和参考解答；L3 再看 L4；L2 再看 L4、L3。参考解答先按字符截到 4,000 字符，主生成配置为 temperature 0.3、最多 512 tokens。上一步错误可能被下一步继承。</p>
+```python
+jsd = F.kl_div(student_log_probs, teacher_log_probs,
+               reduction="none", log_target=True)
+jsd = jsd.clamp(max=token_clip)
+mask = labels != -100
+jsd = jsd[mask]
+loss = jsd.sum() / mask.sum()
+```
 
-<p>作者还用 Qwen3-8B 重新生成三种摘要进行对照。该配置启用 thinking，temperature 0.6、最多 8,192 tokens。因此这项比较同时换了生成模型和解码配置，不能只解释为“编写提示的模型规模不重要”。</p>
+<p>自拟 q＝(0.9,0.1)、p＝(0.1,0.9)，贡献为 1.9775 和 −0.2197，普通 KL 是 1.7578。设 τ＝0.05，截后 0.05−0.2197＝−0.1697。这个例子验证计算方式，不是测得的模型概率；上限 τ 与梯度范数上限 0.1 也不同。</p>
+<p>三种规模均训练 200 步、8×H200、每 25 步存模型，LoRA rank/alpha＝64/128、学习率 5e-6；1.7B / 4B / 8B 有效 batch 为 64/32/32，τ 为 0.05/0.05/0.06。top-p 0.95、top-k 20 只限制生成，损失仍看完整词表。</p>
+<p>学生训练生成用不启用单独思考段的 non-thinking 聊天模板，教师打分和最终评测用启用思考段的 thinking 模板。教师的模板标记不同，不意味着先生成一段新推理再评分；主配置没有开启另生成教师推理的 reason_first 分支。代码内还有更新教师参数的其他分支，都不属于本文主实验。</p>
+</details>
 
-<h3>student 的回答怎样成为训练信号</h3>
+<h2 id="实验：评测口径、种子波动与错误案例">4. Experiments：最高分、固定终点与真实错误</h2>
+<p><strong>4B、8B 有平均收益，最好的资料和收益大小却依赖读分规则。</strong>先说明一份回答的判分和总分分母，再看结果。</p>
 
-<ol><li>训练程序取一行题面，并选定这组实验的提示类型。student 只读取题面，按当前参数生成最多 1,024 tokens 的回答。</li><li>对于回答的每个有效位置，student 在“题目＋自身前文”下给出整个词表的下一 token 概率；teacher 则在“题目＋这题所选资料＋同一前文”下给出概率。数学上按位置定义，实现中对整段回答批量计算，不是每个字都重新发起一次独立调用。</li><li>teacher 不采样一条新答案来替换 student 回答。训练程序比较两份概率，只在回答的有效位置计算损失；题面和补齐长度用的 padding 不计入。</li><li>反向传播只更新 student 的 LoRA。teacher 始终关闭 LoRA，因此保持初始基础模型。下一轮 student 用更新后的参数重新作答，推理部署时不提供参考资料。</li></ol>
+<h3 id="metrics">4.1 数学正确率与模型选择</h3>
+<p>AIME24、AIME25、HMMT25 各 30 题，每题采样 12 次，temperature 1.0、回答上限 38,912 tokens。公开评测先取最终答案，再用 <code>math_verify</code> 比对，提取失败计错。<strong>Avg@12＝正确回答数÷(30×12)</strong>；不是 12 次只要中一次就算对的 Pass@12。自拟一题 9/12 次正确，前者是 75%，后者是 100%。</p>
+<p>主表为三项测试分别取第 25、50……200 步八个 checkpoint（保存的模型）中的最高分，再平均。比如 4B / L3 的三项最高分分别来自第 100、50、125 步，均值 64.81 <strong>不代表某一个模型同时做到</strong>。Base 则是未训练模型一次评测，不做这类选择。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-1.webp"><img src="/lib/papers/self-teacher-context-design/table-1.webp" width="1652" height="753" alt="Table 1：三种规模、五种资料和未训练模型的数学测试最高分"></a><figcaption>Table 1 · seed 42，分别取各测试集最高 Avg@12。4B 最好为 L3，8B 为 L2，1.7B 为 L1；数值差按未四舍五入值计算。Tian et al., v2, p.6，CC BY 4.0。</figcaption></figure>
+<p>4B 的 L3 相对 L1 是 64.81 对 63.43，提高 1.39 点；8B 的 L2 是 68.24 对 66.67，提高 1.57 点。1.7B 仍是完整解答最好。只给答案的 L5 在 4B / 8B 与 L1 相差不到 0.2 点，完整推导并非这两组成绩的必要条件。</p>
+<p>固定第 200 步，4B 主实验的 L2 / L4 为 62.59、L1 为 60.93；8B 的 L3 对 L1 仅 65.37−65.28＝0.09 点。三个训练随机种子只覆盖 L1 / L3 / L4：4B L3 终点差为 <strong>+1.67±0.73，3/3 提高</strong>；8B L4 为 +0.22±1.05，仅 1/3 提高。± 是种子间样本标准差，不是置信区间。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-3.webp"><img src="/lib/papers/self-teacher-context-design/table-3.webp" width="1652" height="414" alt="Table 3：四种checkpoint汇总规则下，相同种子的L3与L4相对L1差值"></a><figcaption>Table 3 · 括号是三个种子中差值严格为正的数量。中间提示的平均方向比具体冠军稳定。Tian et al., v2, p.7，CC BY 4.0。</figcaption></figure>
+<details><summary>补充：所有种子、训练曲线与一处步数记载差异</summary>
+<p>“Best common”每组取一个三测试均值最高的 checkpoint；“All-ckpt. mean”平均八个时刻；“Step 200”固定终点。4B 主配置的共同 checkpoint 最好变成 L4（64.63），L3 为 63.24。L2 / L5、迁移和多数控制仍只有一个训练 seed。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-14.webp"><img src="/lib/papers/self-teacher-context-design/table-14.webp" width="1222" height="301" alt="Table 14：训练回答上限1024与2048的不同读分结果"></a><figcaption>Table 14 · 最高分、共同 checkpoint 与终点。Tian et al., v2, p.23，CC BY 4.0。</figcaption></figure>
+<p>此表把 4B / L2 / seed 42 的共同最高分 63.43 记为第 125 步，公开 <code>id_run_summary.csv</code> 记为第 50 步。分数一致、步数不同；没有完整逐 checkpoint 日志，不能断言是并列最优。本文不依赖这条步数作结论。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-15.webp"><img src="/lib/papers/self-teacher-context-design/table-15.webp" width="1176" height="1264" alt="Table 15：三个随机种子的绝对成绩"></a><figcaption>Table 15 · 完整三种子结果。Tian et al., v2, p.24，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-16.webp"><img src="/lib/papers/self-teacher-context-design/table-16.webp" width="1652" height="473" alt="Table 16：各测试最高分对应的模型保存步数"></a><figcaption>Table 16 · 每项测试选中的步数。Tian et al., v2, p.25，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-5.webp"><img src="/lib/papers/self-teacher-context-design/figure-5.webp" width="1700" height="565" alt="Figure 5：不同教师资料下的训练损失曲线"></a><figcaption>Figure 5 · 各组教师目标、学生生成都不同，纵轴不能用于判定“哪种资料教得最好”。Tian et al., v2, p.25，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-6.webp"><img src="/lib/papers/self-teacher-context-design/figure-6.webp" width="1700" height="1356" alt="Figure 6：三种规模、三项数学测试随checkpoint变化的完整曲线"></a><figcaption>Figure 6 · 最高分与终点经常不同；虚线是第 200 步。Tian et al., v2, p.26，CC BY 4.0。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/table-17.webp"><img src="/lib/papers/self-teacher-context-design/table-17.webp" width="624" height="196" alt="Table 17：各组最高分与第200步成绩差距"></a><figcaption>Table 17 · 最高分与终点之差。Tian et al., v2, p.26，CC BY 4.0。</figcaption></figure>
+</details>
 
-<p>如果不截断，比较项是 teacher 到 student 的 forward KL：对每个词表项 v，计算 q(v)·[log q(v)−log p(v)] 后求和。q 是 teacher 的概率，p 是 student 的概率。它比较的是整张概率表，而不只奖励已采样出的那个 token。</p>
+<h3 id="zebra-case">4.2 真实逻辑题：把“隔两栋房子”读成距离 2</h3>
+<p>Appendix D.2 选的 <code>lgp-test-4x6-25</code> 是 ZebraLogic 四栋房子、六类属性的真实题。学生看题面、15 条线索与输出 JSON 的格式，不看标准表，也不看训练时的资料。上游完整 1,000 题指纹与作者数据记录一致。关键线索原文：“There are two houses between the photography enthusiast and the person who loves beach vacations.”</p>
+<p>“中间隔两栋”要求位置差为 3，四栋房子只剩端点 1 和 4。标准表的 photography（摄影爱好）在 1、beach（海滩度假）在 4。8B / L3 第一次就写出 beach＝photography±3，后续按其他线索完成整表，论文记录 PASS，回答长 33,912 字符。</p>
+<p>8B / L1 误读成距离 2，接受 photography 在 2、beach 在 4，最后还称所有线索满足。它没确定 mountain（山地度假）/ cruise（邮轮度假）应放在哪两个格子，直接凭“题目应该唯一”挑一种，整表 FAIL；回答长 67,938 字符。更多自查没有修正最初误读。<strong>两份完整生成未公开，不能补造 L1 最终的全部格子。</strong></p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-zebra-case.webp"><img src="/lib/papers/self-teacher-context-design/appendix-zebra-case.webp" width="1624" height="182" alt="Appendix D.2：L1在两个未解决的度假格子间直接猜测的原文摘录"></a><figcaption>Appendix D.2 · 作者公开的失败回答摘录，保留原文。样例按成功反差预选，不是随机代表题。Tian et al., v2, p.31，CC BY 4.0。</figcaption></figure>
+<p>作者的公开评分器先从回答取最后一个含 <code>solution</code> 的完整 JSON，再逐格对照标准表。<strong>整题 PASS＝24/24 个标准格都正确</strong>；单格准确率另算。本文实际调用该函数：将标准表故意改错一个格，返回 23/24＝95.83% 单格正确率，但整题 FAIL。这是评分测试，不是论文模型日志。</p>
+<details><summary>补充：标准表、公开评分代码与实际测试</summary>
+<p><a href="https://huggingface.co/datasets/WildEval/ZebraLogic/viewer/grid_mode/test">上游完整题面与标准表</a>（数据版本 <code>0a473f5a0054835754ed156d5a79c6ce27178bb1</code>）。以下保留用于核验的事实值；不将整套数据作为本博客的再发布附件。数据集许可未核实，论文的 CC BY 不等于数据集许可。</p>
+<div class="table-scroll"><table><thead><tr><th>House</th><th>Name</th><th>Hobby</th><th>BookGenre</th><th>Vacation</th><th>MusicGenre</th><th>Education</th></tr></thead><tbody>
+<tr><td>1</td><td>Eric</td><td>photography</td><td>mystery</td><td>mountain</td><td>pop</td><td>high school</td></tr>
+<tr><td>2</td><td>Arnold</td><td>painting</td><td>fantasy</td><td>cruise</td><td>classical</td><td>bachelor</td></tr>
+<tr><td>3</td><td>Alice</td><td>cooking</td><td>science fiction</td><td>city</td><td>jazz</td><td>master</td></tr>
+<tr><td>4</td><td>Peter</td><td>gardening</td><td>romance</td><td>beach</td><td>rock</td><td>associate</td></tr>
+</tbody></table></div>
+<p>固定 <code>eval/evaluate_zebralogic.py:60–71</code> 的评分摘录如下；已运行于 Python 3.12。它是本篇作者发布的 benchmark 评测实现，不冒充 ZebraLogic 上游原始 evaluator。</p>
 
-<div class="formula">每位置损失＝Σ<sub>v</sub> min{q(v)·[log q(v)−log p(v)], τ}；再对有效回答位置取平均。</div>
+```python
+def score_solution(prediction, gold):
+    correct_cells = 0
+    total_cells = 0
+    for house, attributes in gold.items():
+        predicted_house = prediction.get(house, {}) if isinstance(prediction, dict) else {}
+        if not isinstance(predicted_house, dict):
+            predicted_house = {}
+        for attribute, gold_value in attributes.items():
+            total_cells += 1
+            predicted_value = predicted_house.get(attribute)
+            correct_cells += int(normalize_cell(predicted_value) == normalize_cell(gold_value))
+    return correct_cells, total_cells, correct_cells == total_cells
+```
 
-<p><strong>公开代码先对每个“位置×词表项”的贡献设上限，再对词表求和。</strong><code>jsd.clamp(max=token_clip)</code> 只设上限，不设负方向的下限。它既不是把整项 KL 截断，也不是双侧 <code>clamp(-c, c)</code>。某些词表贡献为负，先截掉大的正贡献后，总和可能为负；不能把它当作始终非负的精确 KL。论文附录 A.1 也明确了这个区别。本文没有另加 GRPO 奖励项。</p>
+<p><code>normalize_cell</code> 去首尾空白、忽略大小写，列表取第一项。漏格算错，额外属性或房子不扣分；这些行为都实际核验。评分路径比较标准格，不独立执行 15 条线索，也不检查推理是否成立。提取失败返回零个正确格，分母仍保留。</p>
+<div class="table-scroll"><table><thead><tr><th>本文构造的评分测试</th><th>正确格</th><th>整题</th></tr></thead><tbody><tr><td>原标准表</td><td>24/24</td><td>PASS</td></tr><tr><td>改错或漏掉一个标准格</td><td>23/24</td><td>FAIL</td></tr><tr><td>标准表再加无关房子 / 属性</td><td>24/24</td><td>PASS</td></tr></tbody></table></div>
+</details>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-8.webp"><img src="/lib/papers/self-teacher-context-design/figure-8.webp" width="1700" height="419" alt="Figure 8：不同规模中间提示救回与丢失的ZebraLogic题目数"></a><figcaption>Figure 8 · 救回题与丢失题必须一起算。8B 救回 48，但原来会做的题丢了 31，净增 17；1.7B 净丢 7。Tian et al., v2, p.29，CC BY 4.0。</figcaption></figure>
+<p>8B / L3 相对 L1：救回 48/136 道原先不会的题，同时丢失 31/864 道原先会的题，总提升 (48−31)/1,000＝1.70 点，不是 35.3%。单个案例说明一种失败方式，不能证明主表最高分全部来自更好的条件理解。</p>
 
-<div class="table-scroll"><table><thead><tr><th>设置</th><th>1.7B</th><th>4B</th><th>8B</th></tr></thead><tbody><tr><td>基础模型</td><td>Qwen3-1.7B</td><td>Qwen3-4B</td><td>Qwen3-8B</td></tr><tr><td>有效 batch，单位为题</td><td>64</td><td>32</td><td>32</td></tr><tr><td>词表贡献上限 τ</td><td>0.05</td><td>0.05</td><td>0.06</td></tr><tr><td>其余共享设置</td><td colspan="3">8×H200；200 次更新；每 25 步存检查点；学习率 5e-6；LoRA rank/alpha＝64/128；梯度范数上限 0.1；生成与概率计算的 temperature 均为 1.1</td></tr><tr><td>生成范围</td><td colspan="3">最多 1,024 tokens；top-p 0.95、top-k 20 只限制生成，损失使用完整词表</td></tr><tr><td>聊天模板</td><td colspan="3">student 训练生成用 non-thinking；teacher 概率计算用 thinking；最终评测也启用 thinking</td></tr></tbody></table></div>
+<h3 id="transfer">4.3 迁移：没有一档资料通吃</h3>
+<p>固定第 200 步测四项迁移：MT-AIME 的 30 题七语言翻译，各语言 Avg@12 等权平均；GPQA-Diamond 198 题每题十次，分母 1,980；AutoLogi-EN 1,575 题每题一次，由题目附带程序检查；ZebraLogic 1,000 题每题一次，主指标整表正确率。每个规模都有三种不同资料赢得这四项测试。</p>
+<p>负结果是 C-Eval 中文知识测试：52 学科均值中，<strong>L1 至 L4 在任何规模都没超过 Base</strong>，答案提取失败也计错；只有 4B / L5 略高 0.07 点。数学训练没有普遍提高通用知识。</p>
+<details><summary>补充：迁移全表、难度分组与行为分析原图</summary>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-2.webp"><img src="/lib/papers/self-teacher-context-design/table-2.webp" width="1652" height="358" alt="Table 2：各迁移任务的最好资料与相对L1差值"></a><figcaption>Table 2 · 四项迁移的赢家。Tian et al., v2, p.6，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-9.webp"><img src="/lib/papers/self-teacher-context-design/table-9.webp" width="1652" height="820" alt="Table 9：三种规模的完整迁移成绩"></a><figcaption>Table 9 · 固定第 200 步，不为迁移重新选模型。Tian et al., v2, p.21，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-10.webp"><img src="/lib/papers/self-teacher-context-design/table-10.webp" width="1652" height="820" alt="Table 10：ZebraLogic整题、单格与困难大表子集成绩"></a><figcaption>Table 10 · 单格正确不等于整题成功。Tian et al., v2, p.22，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-11.webp"><img src="/lib/papers/self-teacher-context-design/table-11.webp" width="1652" height="820" alt="Table 11：C-Eval通用知识成绩和提取失败率"></a><figcaption>Table 11 · C-Eval 的 32,768-token 上限；提取失败计错。Tian et al., v2, p.22，CC BY 4.0。</figcaption></figure>
+<p>AutoLogi 将回答解析成数据，再运行每题的输入检查与全部约束，超时 / 异常 / 无法提取都算错。GPQA 用冻结选项顺序、提取最终标签；迁移采样通常 temperature 0.6、top-p 0.95、top-k 20、上限 32,768 tokens。它们各自的程序与分母不同，不能把分数简单相加。</p>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/figure-3.webp"><img src="/lib/papers/self-teacher-context-design/figure-3.webp" width="1700" height="1542" alt="Figure 3：按L1成功率分组后，不同规模任务上的准确率变化"></a><figcaption>Figure 3 · 不同题难度的收益和损失。Tian et al., v2, p.9，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-18.webp"><img src="/lib/papers/self-teacher-context-design/table-18.webp" width="1652" height="441" alt="Table 18：难度分组的完整收益损失"></a><figcaption>Table 18 · 用 L1 自己的成绩分组，存在向均值回归的影响，不能全归因于能力转移。Tian et al., v2, p.29，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-9.webp"><img src="/lib/papers/self-teacher-context-design/figure-9.webp" width="1700" height="676" alt="Figure 9：MT-AIME逐次正确率与至少一次正确覆盖率的变化"></a><figcaption>Figure 9 · 横轴 Pass@12 覆盖率变化，纵轴 Avg@12 变化，两者可不同向。Tian et al., v2, p.30，CC BY 4.0。</figcaption></figure>
+<p>行为分析另外请模型标注“是否自查、回溯、纠错”，不是 benchmark 正确性判分。30 道 AIME24、60 道 GPQA 每条件至多四条有效回答，长轨迹保留首尾，实际有效标注 5,997/6,000。4B / 8B 的中间提示并未一致增加回溯或纠错；合并三个规模的图不能代替分规模结论。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-19.webp"><img src="/lib/papers/self-teacher-context-design/table-19.webp" width="1652" height="473" alt="Table 19：各规模AIME24的模型标注行为比例"></a><figcaption>Table 19 · 行为比例与实际正确率使用的样本数不同。Tian et al., v2, p.30，CC BY 4.0。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/figure-10.webp"><img src="/lib/papers/self-teacher-context-design/figure-10.webp" width="1700" height="1738" alt="Figure 10：跨规模合并的模型标注行为差值与按问题重复抽样的区间"></a><figcaption>Figure 10 · 区间按问题重采样，不是三个训练种子的波动。Tian et al., v2, p.30，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-judge-a.webp"><img src="/lib/papers/self-teacher-context-design/appendix-judge-a.webp" width="1624" height="522" alt="Appendix D.2：行为标注模型的字段与定义"></a><figcaption>Appendix D.2 · 行为 judge 的提示第一部分。Tian et al., v2, p.28，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-judge-b.webp"><img src="/lib/papers/self-teacher-context-design/appendix-judge-b.webp" width="1624" height="186" alt="Appendix D.2：行为标注规则续"></a><figcaption>Appendix D.2 · 行为 judge 的续页。Tian et al., v2, p.29，CC BY 4.0。</figcaption></figure>
+</details>
 
-<p>同一规模内五组设置一致，但跨规模的有效 batch 和截断上限不同。模型规模与提示效果存在关联，不能据此把所有差别都归因于参数量。</p>
+<h2 id="控制实验与下一步验证">5. Discussion：哪些解释已有支持，哪些仍缺控制</h2>
+<p><strong>中间资料的平均优势有支持，语义、长度和答案可见性尚未完全分开。</strong>最有用的控制是统一教师提示外壳：4B 的 L2 / L3 / L4 最高分均值 64.54/63.98/65.28，L1 是 62.96。优势保留，但冠军从 L3 变 L4，说明外壳不是全部原因，也确实影响结果。</p>
+<p>直接截参考解答前 10% 再加答案是 63.89，低于 L3 的 64.81；这组既不等长，又可见最终答案，不能单独证明语义比长度更重要。训练回答上限翻倍到 2,048 后，最高分趋势保留，L2 固定终点却从 62.59 降到 58.61。最高潜力与停止时刻仍要分开。</p>
+<p>资料变短也不能按比例宣称训练变便宜：L1 平均 657.3 hint tokens，L2 / L3 / L4 为 38.9/25.2/17.7；加题目和外壳后的教师输入 835→225.5/212.7/203.3，只短约 3.7 至 4.1 倍。参考解答、离线生成与训练反向传播的成本未计入这个比值。</p>
+<details><summary>补充：控制原表、泄漏审查、初始化 KL 与按题选择</summary>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-11.webp"><img src="/lib/papers/self-teacher-context-design/figure-11.webp" width="1700" height="577" alt="Figure 11：统一教师外壳与混合提示的完整控制"></a><figcaption>Figure 11 · 中间提示对 L1 的优势保留，具体赢家仍变。Tian et al., v2, p.33，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-20.webp"><img src="/lib/papers/self-teacher-context-design/table-20.webp" width="1652" height="473" alt="Table 20：统一外壳和混合提示成绩"></a><figcaption>Table 20 · 每题只分配一种提示，不拼接全部资料。Tian et al., v2, p.31，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-shared-bridge.webp"><img src="/lib/papers/self-teacher-context-design/appendix-shared-bridge.webp" width="1624" height="319" alt="Appendix E：所有资料共用的教师输入外壳"></a><figcaption>Appendix E · 统一教师外壳。Tian et al., v2, p.31，CC BY 4.0。</figcaption></figure>
+<figure class="figure original"><a href="/lib/papers/self-teacher-context-design/table-12.webp"><img src="/lib/papers/self-teacher-context-design/table-12.webp" width="907" height="277" alt="Table 12：397B与8B生成资料后的最高分均值"></a><figcaption>Table 12 · 换资料生成模型也换了解码配置。Tian et al., v2, p.23，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-13.webp"><img src="/lib/papers/self-teacher-context-design/table-13.webp" width="1652" height="340" alt="Table 13：语义资料与前10%解答加答案的对照"></a><figcaption>Table 13 · 长度和答案可见性未同时控制。Tian et al., v2, p.23，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-6.webp"><img src="/lib/papers/self-teacher-context-design/table-6.webp" width="1652" height="287" alt="Table 6：资料本身与完整教师输入的token长度"></a><figcaption>Table 6 · 资料长度与完整输入长度是两个分母。Tian et al., v2, p.18，CC BY 4.0。</figcaption></figure>
+<p>同一个 397B 模型用两种提示审查 1,200 道题，两边不一致再做第三次裁决，不是人工一致性检查。直接答案泄漏为零，仍有“结论等价于答案”的泄漏：主生成器 L2 / L3 / L4 为 17/4/1 条，8B 为 50/31/2 条。字符串扫描不匹配不能保证无泄漏。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-4.webp"><img src="/lib/papers/self-teacher-context-design/figure-4.webp" width="1700" height="476" alt="Figure 4：资料长度分布和审查发现的等价答案泄漏"></a><figcaption>Figure 4 · 长度全量统计 29,434 题，泄漏只审查 1,200 题。Tian et al., v2, p.19，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-7.webp"><img src="/lib/papers/self-teacher-context-design/table-7.webp" width="1652" height="340" alt="Table 7：两种生成器的审查结果"></a><figcaption>Table 7 · 模型裁决后的泄漏与规则合规率。Tian et al., v2, p.19，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-8.webp"><img src="/lib/papers/self-teacher-context-design/table-8.webp" width="1652" height="379" alt="Table 8：两种模型审查提示的一致率"></a><figcaption>Table 8 · 同一模型的提示 A/B 一致率，不是人类标注者一致率。Tian et al., v2, p.20，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-audit-a.webp"><img src="/lib/papers/self-teacher-context-design/appendix-audit-a.webp" width="1624" height="211" alt="Appendix B.3：两个资料审查角色的提示原文"></a><figcaption>Appendix B.3 · 审查提示 A/B。Tian et al., v2, p.19，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/appendix-audit-b.webp"><img src="/lib/papers/self-teacher-context-design/appendix-audit-b.webp" width="1624" height="1267" alt="Appendix B.3：第三次裁决和泄漏合规性定义"></a><figcaption>Appendix B.3 · 第三次裁决与共享规则。Tian et al., v2, p.20，CC BY 4.0。</figcaption></figure>
+<p>初始化 KL 使用每规模 600 道训练题各两条 Base 回答，再固定前文计算未截断 KL。L1 的差异最大，却没有训出 4B / 8B 最好成绩。答案附近的子集排除很多未完成回答；四分位图的 Q4 是回答后四分之一，不是最终答案区。这些诊断不等于移动中的训练损失。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-2.webp"><img src="/lib/papers/self-teacher-context-design/figure-2.webp" width="1700" height="581" alt="Figure 2：初始化固定前文下的KL与答案附近窗口差异"></a><figcaption>Figure 2 · 95% 区间按问题重采样，测的是初始化、未截断 KL。Tian et al., v2, p.8，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/figure-7.webp"><img src="/lib/papers/self-teacher-context-design/figure-7.webp" width="1700" height="569" alt="Figure 7：回答四分位位置上的初始化KL"></a><figcaption>Figure 7 · Q4 不是答案窗口，生成长度截断仍会影响观察。Tian et al., v2, p.28，CC BY 4.0。</figcaption></figure>
+<p>按题选择的学习网络（<strong>learned router</strong>）在学生作答后提取 39 项特征，每十步训练一次两层分类器；另一组对五种资料额外计算教师概率，再按优势挑选。公开数据的 routed mixture 只是按行套所选提示外壳，不能称为这个学习网络。</p>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-21.webp"><img src="/lib/papers/self-teacher-context-design/table-21.webp" width="1218" height="343" alt="Table 21：四种按题选择教师资料的方法"></a><figcaption>Table 21 · 没有选择策略超过最佳固定资料的最高分；部分终点更好。Tian et al., v2, p.32，CC BY 4.0。</figcaption></figure>
+<figure class="figure original dense-original"><a href="/lib/papers/self-teacher-context-design/table-22.webp"><img src="/lib/papers/self-teacher-context-design/table-22.webp" width="1652" height="498" alt="Table 22：固定混合分配和逐资料外壳的结果"></a><figcaption>Table 22 · 混合条件的最高分与固定终点。Tian et al., v2, p.33，CC BY 4.0。</figcaption></figure>
+<p>混合与学习选择均未超过最好固定资料的最高分，若干终点更好。固定公开训练器没有释放上述学习选择实现和对应逐题数据，不能声称一条启动命令即可复现该表。</p>
+</details>
+<p>若把参考代码作为教师资料，可比较完整代码、从代码提取的具体策略和结构说明，并加等长截取、错误任务资料与隐藏答案控制。这个游戏方向是本文的应用推想，不是论文已验证结果。固定训练算法比较资料，再单独改算法，才知道收益来自哪一处。</p>
 
-<h2 id="实验：评测口径、种子波动与错误案例">4. Experiments：评测口径、种子波动与错误案例</h2>
-
-<p><strong>中间提示的优势在 4B、8B 上有跨种子的平均支持，但主表的最高分不能当作固定终点成绩。</strong>先看一个分数怎么算，再看检查点、随机种子和真实失败。</p>
-
-<h3>Avg@12 是十二次回答的平均正确率</h3>
-
-<p>AIME24、AIME25、HMMT25 每道题各采样 12 次，temperature 1.0、最多 38,912 tokens。评测取最终答案与标准答案比对。<strong>Avg@12＝正确回答总数÷(题数×12)</strong>，不是十二次中只要有一次正确就算通过的 Pass@12。比如一题 12 次里 9 次正确，对 Avg@12 的贡献是 75%；对 Pass@12 的贡献才是 100%。这个 9/12 是解释指标的自拟数字，不是论文某题的记录。</p>
-
-<p>主表为每组实验在第 25、50……200 步的八个检查点中，分别选 AIME24、AIME25、HMMT25 的最高 Avg@12，再把三项平均。三个最高分可能出自三个不同模型检查点。固定同一个检查点的均值、八个检查点的均值与固定第 200 步成绩，都回答不同的问题。</p>
-
-<figure class="figure"><a href="/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg" target="_blank" rel="noopener"><img src="/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg" width="1000" height="472" alt="4B 五种提示的逐测试集最高分、同一检查点最高均值和固定第200步成绩对比；主表L3最高，单一检查点则L4最高"></a><figcaption>按 Table 1、Table 14 重绘，均为主配置 seed 42 的 4B 结果，单位是百分比。L3 的 64.81 不是一个检查点同时取得的三测试集均值；L4 的 64.63 则在第 125 步同时取得。</figcaption></figure>
-
-<div class="table-scroll"><table><thead><tr><th>模型</th><th>L1 完整解答</th><th>L2 策略</th><th>L3 方向</th><th>L4 题型</th><th>L5 答案</th></tr></thead><tbody><tr><td>1.7B</td><td><strong>43.89</strong></td><td>40.83</td><td>42.78</td><td>43.61</td><td>42.13</td></tr><tr><td>4B</td><td>63.43</td><td>64.07</td><td><strong>64.81</strong></td><td>64.63</td><td>63.61</td></tr><tr><td>8B</td><td>66.67</td><td><strong>68.24</strong></td><td>66.85</td><td>67.22</td><td>66.76</td></tr></tbody></table></div>
-
-<p>上表是 Table 1 的逐测试集最高分均值，不是固定终点。4B 的 L3 相对 L1 提高 1.39 个百分点，8B 的 L2 提高 1.57；1.7B 的 L1 仍领先。只给答案的 L5 在 4B、8B 也接近 L1，说明“完整推导不可缺少”并不符合这组结果。</p>
-
-<p>换成一个共同检查点，4B 的 L1/L2/L3/L4 分别为 62.31/63.43/63.24/64.63，最高变成 L4。固定第 200 步，4B 的 L1 为 60.93，L2、L4 均为 62.59；8B 的 L3 相对 L1 只有 65.37−65.28＝0.09 个百分点。最高潜力与固定终点要并排读。</p>
-
-<h3>跨随机种子支持的是平均趋势</h3>
-
-<p>作者只对 L1、L3、L4 补了 seeds 42、43、44，没有为五种提示都做三种子复现。Table 3 将同一种子下的中间提示减去 L1，再报告三个差值的平均值和样本标准差。这里的 ± 是种子之间的波动，不是置信区间。</p>
-
-<div class="table-scroll"><table><thead><tr><th>固定第 200 步的比较</th><th>相对 L1，均值±样本标准差</th><th>三个种子中严格为正</th></tr></thead><tbody><tr><td>4B：L3</td><td>+1.67±0.73</td><td>3/3</td></tr><tr><td>4B：L4</td><td>+1.05±1.32</td><td>2/3</td></tr><tr><td>8B：L3</td><td>+0.28±0.32</td><td>3/3</td></tr><tr><td>8B：L4</td><td>+0.22±1.05</td><td>1/3</td></tr><tr><td>1.7B：L3 / L4</td><td>−0.83±2.33 / −1.33±2.04</td><td>均为 1/3</td></tr></tbody></table></div>
-
-<p>4B、8B 的 L3、L4 在四种汇总规则下的<strong>平均差值</strong>都为正，但不能改写为“每个随机种子都提高”。尤其 8B 的 L4 在固定终点只有一个种子提高。L2 在 8B 的主配置拿到最高分，也没有相同三种子表支持它必然最稳。</p>
-
-<h3>真实对照：多检查几遍，仍可能把条件理解错</h3>
-
-<p>迁移测试使用固定第 200 步模型：MT-AIME 是同一批 30 道 AIME 题的七语言翻译，按语言等权平均 Avg@12；AutoLogi 的 1,575 题由可执行验证器判定，每题一次；GPQA-Diamond 的 198 题每题十次；ZebraLogic 的 1,000 道逻辑格题要求<strong>整个答案表正确</strong>，单元格准确率另报。每种规模都有三种不同提示分别赢得四项测试，没有通用冠军。</p>
-
-<p>附录 D.1 给出 ZebraLogic 的真实题 <code>lgp-test-4x6-25</code>：四栋房子、六类属性。第六条线索说摄影爱好者与喜欢海滩度假的人之间隔着两栋房子，因此位置差必须为 3。</p>
-
-<div class="case"><h4>同一线索，两种推理结果</h4><p>L3 的 8B 模型第一次读线索就写出 beach＝photography±3。四栋房子中只剩两种端点安排，模型继续按其余线索排除，最终整表正确；轨迹长 33,912 字符。</p><p>L1 的模型把位置差误读成 2，接受 photography 在第 2 栋、beach 在第 4 栋。它反复自查，但每次都沿用错误理解；最后 mountain 与 cruise 还有两种可行安排，它凭“题目应该只有一个解”选了其中一种，整表错误。轨迹长 67,938 字符，包含更多检查和重推。</p><p>一次正确、一次错误的判据是最终整表与标准解是否相同，不能因为 L1 写得更长或更多次出现“contradiction”就算推理更可靠。论文事先从成功率反差集合里选例，仍然只是解释性对照，不能凭一个案例证明所有收益都来自更好的条件理解。完整题表和这两段逐项生成日志在本次固定代码版本中未公开，本文不补造它们。</p></div>
-
-<p>迁移也有负结果：C-Eval 的 52 学科均值中，L1 至 L4 在任何规模都没超过未训练 Base；只有 4B 的答案提示 L5 比 Base 高 0.07。所有训练条件的答案提取失败率都升高，评测将失败计为错误。数学训练并未普遍提高中文知识问答。</p>
-
-<h2 id="控制实验与下一步验证">5. Discussion：控制实验与下一步验证</h2>
-
-<p><strong>“中间提示有用”不只依赖原版衔接措辞，但论文仍没把语义、长度和答案可见性完全分离。</strong>以下控制比泛泛地说“抽象优于细节”更值得读。</p>
-
-<div class="table-scroll"><table><thead><tr><th>控制</th><th>实际改变与结果</th><th>能说明什么，不能说明什么</th></tr></thead><tbody><tr><td>统一提示外壳，Table 20</td><td>4B 的标签、分隔符、衔接指令全部统一，只换资料；L2/L3/L4 最高分均值为 64.54/63.98/65.28，L1 为 62.96</td><td>中间提示优势不只来自原外壳措辞。仍没有控制资料长度和内容</td></tr><tr><td>参考解答前 10%＋答案，Table 13</td><td>4B 为 63.89，低于 L3 的 64.81，也高于 L1 的 63.43</td><td>简单缩短并不能复制最好的结果；该组与 L3 既不等长，也不具有相同答案可见性</td></tr><tr><td>更长训练回答，Table 14</td><td>1,024→2,048 tokens 后中间提示的最高分优势保留；L2 固定终点反而 62.59→58.61</td><td>不是只因短生成上限才有优势；最高分稳定不等于终点稳定</td></tr><tr><td>换摘要模型，Table 12</td><td>Qwen3-8B 生成资料后，1.7B 偏完整解答、4B/8B 偏中间提示的最高分趋势保留，具体冠军变化</td><td>趋势不只存在于 397B 摘要。模型和解码配置同时改变，且不能证明无需高质量参考解答</td></tr><tr><td>混合提示与按题选择，Tables 20–22</td><td>没有一组超过最佳固定提示的最高分均值；若干组固定终点较好</td><td>按题动态选择并未成为已验证的更优方法，只显示可能降低对停止位置的敏感性</td></tr></tbody></table></div>
-
-<p>“按题选择”有两种不同操作。资料集里的 routed mixture 只是按行确定使用哪一种提示及对应外壳，不是学出来的选择器。另一组真正的 learned router 则在 student 作答后提取 39 项特征，每十步训练两层网络预测提示选择；还有一组需要对五种资料额外计算 teacher 概率，按相对优势选择。它们有额外开销，而且并未赢得最高分比较。</p>
-
-<p>作者对 1,200 道题的每种摘要做两遍模型审查，不一致时第三遍裁决，审查仍用 Qwen3.5-397B-A17B，不是人类标注。主摘要的直接答案泄漏为 0，等价答案泄漏为 L2 17/1,200、L3 4/1,200、L4 1/1,200；Qwen3-8B 生成资料相应为 50/31/2。字符串扫描无匹配与模型判为无泄漏，都不能保证提示完全没泄漏。</p>
-
-<p>长度成本也要分清：L1 平均存储 657.3 hint tokens，L2/L3/L4 为 38.9/25.2/17.7，减少约 16.9 到 37.1 倍；包含固定外壳的完整 teacher 提示则从 835 降到 225.5/212.7/203.3，只减少约 3.7 到 4.1 倍。这没有计入获得参考解答、生成摘要、student 作答与训练反向传播的成本。</p>
-
-<p>若想延伸到游戏 query→code，本文最直接的启发是<strong>比较“完整参考代码”和“从代码提取、可供 teacher 理解的少量信息”</strong>。可先固定同一个提示外壳，加入等长截取、错误任务资料、隐藏最终答案等控制。当前程序运行后产生的错误与截图则是另一种资料来源，要另设实验组，不能当作本文已经验证的结果。游戏方向不是这篇论文的实验对象。</p>
-
-<h2 id="结论与公开代码的复现边界">6. Conclusion：结论与公开代码的复现边界</h2>
-
-<p><strong>值得保留的是一组可检验的资料设计变量，不是“提示越抽象越好”的结论。</strong>本文把五种资料、三个规模、三项数学测试和多种检查点规则放在一起比较，也给出了负例、迁移失败和提示外壳控制。结果最清楚地支持：完整解答不是默认最优，选择资料必须结合 student 与任务。</p>
-
-<p>机制解释仍有限。初始化时 teacher 与 student 的未截断 KL 最大，不代表后续训练最好；这项 KL 是额外诊断，不是代码实际优化的截断损失。更长回答、更多回溯、更多自查也没有一致对应收益。真实 ZebraLogic 案例揭示了“自查错误条件”的失败，却不足以说明整套收益来自同一种能力。</p>
-
-<p>本文代码核查固定到 <code>76ba7f2346fb7f2c965e4160989fbc701db6f1e6</code>：公开了 29,434 行对齐资料、离线生成提示和程序、OPSD 训练分支、启动配置、评测配置与紧凑 CSV；README 明确没有公开模型检查点、完整训练日志、逐题生成、审查注释和集群启动脚本。可以检查数据如何进训练、损失怎样算，不能独立重建每一题的行为分析。本文未运行完整 GPU 训练。</p>
-
-<p>另一个版本边界：仓库自带 PDF 的 README 声明它比 arXiv 手稿更新，两份 PDF 的文件哈希也不同。本解读的数值和图表以 <strong>arXiv v2</strong> 为准，代码行为另按上述固定版本说明，不把仓库 PDF 中的新内容混进 v2 结论。最早公开日期取 arXiv v1 记录，不取 PDF 内的构建日期。</p>
-
-<p>个人兴趣程度 9.5/10，仅表示博客作者的兴趣。建议先读 OPSD 的基本训练过程，再看本文的 Table 3、14、20：它们分别说明种子波动、停止位置和措辞控制，最能约束只看主表容易得到的过强结论。</p>
-
-<p class="source-note">本次核查范围：arXiv v2 全文、附录与全部 33 页渲染；公开数据的 sample_id=1；固定代码版本的资料生成、collator、训练损失、启动与发布范围。算术示例仅检查该公开训练题，不等于复现训练或 benchmark。图为根据标明位置重绘的事实示意，不复制未确认授权的原图。</p>
+<h2 id="结论与公开代码的复现边界">6. Conclusion：完整解答是基线，不是默认最优</h2>
+<p><strong>最可靠的结论是比较资料设计，而不是宣称越抽象越好。</strong>4B / 8B 的中间提示有跨种子平均收益，1.7B、知识迁移和固定终点提醒我们：哪档资料好、何时停，仍是实验问题。逻辑题的自查错误也说明，可见检查次数不能代替最终正确性。</p>
+<p>固定仓库 <code>76ba7f2</code> 提供对齐资料、生成脚本、训练分支、评测器和紧凑 CSV，未提供 checkpoint、完整日志、逐题生成、模型审查标注与学习选择器。本文核验完整题池指纹、实际评分和损失函数，不能重建论文所有行为分析或模型分数。</p>
+<p>数值和原图全部以 <strong>arXiv v2</strong> 为准；仓库 PDF 明确是更新手稿，与 v2 哈希不同，不能混用。论文 CC BY 4.0 也不覆盖数据和整个代码仓库：训练器有 Apache 2.0 文件头，其余许可按 <code>NOTICE.md</code> 与上游条款分别核实。</p>
 
 </div>

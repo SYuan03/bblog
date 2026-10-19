@@ -5,7 +5,9 @@
     "kind": "research",
     "primary_source_ids": [
       "paper"
-    ]
+    ],
+    "earliest_public_date": "2026-09-22",
+    "results_version": "arXiv v2; newer repository manuscript is a separate source not used for result numbers"
   },
   "artifacts": {
     "article": "content/_posts/080-self-teacher-context-design.md",
@@ -19,24 +21,60 @@
       "title": "What Should a Self-Teacher See? Privileged Context Design for On-Policy Self-Distillation",
       "url": "https://arxiv.org/pdf/2609.25623v2",
       "revision": "v2",
+      "sha256": "ef4ff105c55617edc3f3e5c71d30156531da4289bf2f2189ffd2c7e1cc1024d9",
       "used_for": [
-        "problem",
-        "method",
-        "results",
-        "limitations"
+        "complete primary paper including appendices, figures, tables, generation rules, cases, scientific results"
       ]
+    },
+    {
+      "id": "arxiv-entry",
+      "kind": "metadata",
+      "title": "arXiv v1 public date, v2 history and licence",
+      "url": "https://arxiv.org/abs/2609.25623",
+      "revision": "v2 entry checked 2026-10-19",
+      "used_for": [
+        "2026-09-22 earliest public date",
+        "CC BY 4.0 permission"
+      ],
+      "current_availability_check": {
+        "date": "2026-10-19",
+        "result": "Fresh public arXiv entry retained in context-arxiv-20261019.html; verified metadata and CC BY 4.0."
+      }
     },
     {
       "id": "code",
       "kind": "code",
-      "title": "Context Design official repository",
-      "url": "https://github.com/tiankanghui/Self-Teacher-Context-Design",
+      "title": "Self-Teacher-Context-Design official code and aligned data",
+      "url": "https://github.com/tiankanghui/Self-Teacher-Context-Design/tree/76ba7f2346fb7f2c965e4160989fbc701db6f1e6",
       "revision": "76ba7f2346fb7f2c965e4160989fbc701db6f1e6",
       "used_for": [
-        "implementation",
-        "artifact completeness",
-        "reproduction"
-      ]
+        "aligned 29434 rows",
+        "offline generation",
+        "frozen teacher and LoRA student",
+        "actual full-vocabulary clipped loss",
+        "evaluation parsers and scorers",
+        "compact seed CSV",
+        "release and licence boundaries"
+      ],
+      "current_availability_check": {
+        "date": "2026-10-19",
+        "result": "Fresh GitHub metadata; fixed repository inspected; repository PDF SHA differs and explicitly newer."
+      }
+    },
+    {
+      "id": "zebra-data",
+      "kind": "dataset",
+      "title": "WildEval/ZebraLogic grid_mode test data",
+      "url": "https://huggingface.co/datasets/WildEval/ZebraLogic/tree/0a473f5a0054835754ed156d5a79c6ce27178bb1",
+      "revision": "0a473f5a0054835754ed156d5a79c6ce27178bb1",
+      "used_for": [
+        "real lgp-test-4x6-25 gold values and 15 clues",
+        "1000-row canonical content fingerprint matches official release manifest"
+      ],
+      "current_availability_check": {
+        "date": "2026-10-19",
+        "result": "HF origin timed out; public fixed data read via hf-mirror. Canonical fingerprint 36bf6b9f26ec2e0108fc7a415abe4ad8bf5918e904420686adccd24706fb1e25 matches. Dataset licence not verified; full corpus not republished."
+      }
     }
   ],
   "paper_reading": {
@@ -51,40 +89,196 @@
         "end": 33
       }
     ],
-    "source_visuals_expected": 34,
+    "source_visuals_expected": 41,
     "visual_inventory_complete": true,
     "current_revision_review": {
-      "date": "2026-10-13",
+      "date": "2026-10-19",
       "main_agent": "/root",
-      "complete_text_and_rendered_read_confirmed_by_parent": true,
-      "manifest_support_agent": "/root/revise_games_and_evaluation",
-      "scope": "Parent main agent completed the current complete primary-paper text and rendered-page reading. This child updated evidence mappings and inspected relevant primary captions/sections, not a new substitute complete read."
+      "scope": "Main agent in continuing root turn completed all extracted text and all 33 individually rendered v2 pages, then targeted reread of sections, original crops, fixed generation/collator/trainer/evaluation/data/CSV and source licence. Reread rewritten prose and all 16 slides. CPU data/scorer/loss/arithmetic checks only; no GPU training or model-score reproduction.",
+      "evidence": "tmp/collection-refresh-20261018/context-evidence-20261019.md",
+      "cpu_verifiers": [
+        "tmp/collection-refresh-20261018/verify-context-case.py",
+        "tmp/collection-refresh-20261018/verify-context-loss.py"
+      ]
     }
   },
   "note_sections": [
     {
       "role": "problem",
-      "locator": "1. Motivation：教师应该多看哪种解题材料"
+      "locator": "1. Motivation：完整解答是否最适合指导学生"
     },
     {
       "role": "related-work",
-      "locator": "2. Related Work：与已有自蒸馏方法的区别"
+      "locator": "2. Related Work：从给多少参考解答，到给什么信息"
     },
     {
       "role": "method",
-      "locator": "3. Method：五类教师提示与一次训练更新"
+      "locator": "3. Method：资料怎样生成，又怎样进训练"
     },
     {
       "role": "experiments",
-      "locator": "4. Experiments：评测口径、种子波动与错误案例"
+      "locator": "4. Experiments：最高分、固定终点与真实错误"
     },
     {
       "role": "future-work",
-      "locator": "5. Discussion：控制实验与下一步验证"
+      "locator": "5. Discussion：哪些解释已有支持，哪些仍缺控制"
     },
     {
       "role": "summary",
-      "locator": "6. Conclusion：结论与公开代码的复现边界"
+      "locator": "6. Conclusion：完整解答是基线，不是默认最优"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "On-Policy Self-Distillation (OPSD)",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2 / Appendix A.1 / opsd/opsd_trainer.py 639–776"
+        },
+        {
+          "source_id": "code",
+          "locator": "§3.2 / Appendix A.1 / opsd/opsd_trainer.py 639–776"
+        }
+      ],
+      "article_quote": "学生每轮用当前参数作答，再由同一基础模型的冻结版本提供下一步概率，这个训练过程叫 <strong>On-Policy Self-Distillation（OPSD）</strong>。"
+    },
+    {
+      "term": "privileged context",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1"
+        }
+      ],
+      "article_quote": "只给负责指导的教师、不给正在作答的学生的额外资料，论文称为 <strong>privileged context</strong>。"
+    },
+    {
+      "term": "prefix",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2"
+        }
+      ],
+      "article_quote": "学生已经写出的前文叫 <strong>prefix</strong>；教师必须在同一段前文上给概率。"
+    },
+    {
+      "term": "LoRA",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A.1 / trainer teacher disable_adapter"
+        },
+        {
+          "source_id": "code",
+          "locator": "Appendix A.1 / trainer teacher disable_adapter"
+        }
+      ],
+      "article_quote": "学生实际更新的是加在基础模型上的低秩参数 <strong>LoRA</strong>；教师关闭它，保留初始基础模型。"
+    },
+    {
+      "term": "compiler",
+      "kind": "model-call",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.1 / hint_generation/dim1_abstraction_level_v2.py"
+        },
+        {
+          "source_id": "code",
+          "locator": "B.1 / hint_generation/dim1_abstraction_level_v2.py"
+        }
+      ],
+      "article_quote": "作者称它为 compiler，这里指生成提示的模型流程。"
+    },
+    {
+      "term": "bridge",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix B.2"
+        }
+      ],
+      "article_quote": "把题目、资料和“如何使用资料”的指令拼成教师输入的提示外壳，作者称为 <strong>bridge</strong>。"
+    },
+    {
+      "term": "forward KL",
+      "kind": "loss",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.1 / opsd/opsd_trainer.py 395–492"
+        },
+        {
+          "source_id": "code",
+          "locator": "A.1 / opsd/opsd_trainer.py 395–492"
+        }
+      ],
+      "article_quote": "没有 min 时，词表求和是教师到学生的 forward KL，即用教师概率加权来衡量两份概率分布的差异。"
+    },
+    {
+      "term": "Avg@12",
+      "kind": "metric",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.2 / eval/evaluate_math.py"
+        },
+        {
+          "source_id": "code",
+          "locator": "A.2 / eval/evaluate_math.py"
+        }
+      ],
+      "article_quote": "<strong>Avg@12＝正确回答数÷(30×12)</strong>；不是 12 次只要中一次就算对的 Pass@12。"
+    },
+    {
+      "term": "learned router",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix E / Table 21"
+        }
+      ],
+      "article_quote": "按题选择的学习网络（<strong>learned router</strong>）在学生作答后提取 39 项特征，每十步训练一次两层分类器；"
     }
   ],
   "coverage": [
@@ -97,18 +291,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3–4; Tables 1–3"
+          "locator": "§1–4 / Tables 1–3"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "完整解答没有一直赢，只给方法、思考方向或题型有时更好，但结果取决于模型规模、任务和选用哪个训练检查点。"
+          "quote": "完整推导没有一直赢，只给方法、思考方向或题型有时更好；结论随模型规模、任务和选取的训练时刻变化。"
+        },
+        {
+          "artifact": "article",
+          "quote": "本文研究教师资料的形式，训练方法沿用 OPSD。"
         }
       ]
     },
     {
-      "id": "method-contract",
+      "id": "related-work-comparison",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -116,87 +314,22 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "§3.2–3.3; Appendix A.1 and B.1"
+          "locator": "§2"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "先离线生成每题的五种资料，再让 student 作答，冻结 teacher 重评这份回答，最后只更新 student 的 LoRA。"
-        }
-      ]
-    },
-    {
-      "id": "main-result",
-      "claim_type": "author-claim",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Table 1; Table 3; Table 14"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "4B 的 L3 相对 L1 提高 1.39 个百分点，8B 的 L2 提高 1.57；1.7B 的 L1 仍领先。"
+          "quote": "三档语义改写不提供具体推导与最终答案；另设答案提示"
         },
         {
           "artifact": "article",
-          "quote": "尤其 8B 的 L4 在固定终点只有一个种子提高。"
+          "quote": "将解答整理为问题状态之间的转换及所选路径"
         }
       ]
     },
     {
-      "id": "limitations",
-      "claim_type": "interpretation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "Tables 7–8, 11–14, 20–22; Appendix D.1–D.2"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "简单缩短并不能复制最好的结果；该组与 L3 既不等长，也不具有相同答案可见性"
-        },
-        {
-          "artifact": "article",
-          "quote": "数学训练并未普遍提高中文知识问答。"
-        }
-      ]
-    },
-    {
-      "id": "code-audit",
-      "claim_type": "inspected-implementation",
-      "source_ids": [
-        "code"
-      ],
-      "source_locators": [
-        {
-          "source_id": "code",
-          "locator": "opsd_trainer.py:455–487; README.md @76ba7f2346fb7f2c965e4160989fbc701db6f1e6"
-        }
-      ],
-      "evidence": [
-        {
-          "artifact": "article",
-          "quote": "jsd.clamp(max=token_clip) 只设上限，不设负方向的下限。"
-        },
-        {
-          "artifact": "article",
-          "quote": "README 明确没有公开模型检查点、完整训练日志、逐题生成、审查注释和集群启动脚本。"
-        }
-      ]
-    },
-    {
-      "id": "real-case-and-data-provenance",
+      "id": "data-provenance-and-compilation",
       "claim_type": "inspected-implementation",
       "source_ids": [
         "paper",
@@ -205,26 +338,30 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Appendix B.1 worked example"
+          "locator": "B.1 pp15–17"
         },
         {
           "source_id": "code",
-          "locator": "data/privileged_contexts_l1_l5.jsonl, sample_id=1 @76ba7f2"
+          "locator": "data/README.md; aligned JSONL; hint_generation/dim1_abstraction_level_v2.py; proof_answer_overrides.py"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "data/privileged_contexts_l1_l5.jsonl 的 sample_id=1 来自 olympiads ，与附录 B.1 的例题一致"
+          "quote": "L2 至 L4 由 Qwen3.5-397B-A17B 离线生成，不是人工标注。"
         },
         {
           "artifact": "article",
-          "quote": "原始 L1 有一处措辞写成 “same base”，但展示的计算实际上是统一 指数 ，不是统一底数。"
+          "quote": "每题分三次调用，顺序 L4→L3→L2：都能看题目和截到 4,000 字符的参考解答"
+        },
+        {
+          "artifact": "article",
+          "quote": "L5 提取答案，对七条证明类样本做代码规则覆盖。"
         }
       ]
     },
     {
-      "id": "teacher-update-and-loss-boundary",
+      "id": "one-update-visibility",
       "claim_type": "inspected-implementation",
       "source_ids": [
         "paper",
@@ -233,26 +370,195 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Appendix A.1"
+          "locator": "§3.2 / A.1"
         },
         {
           "source_id": "code",
-          "locator": "opsd_trainer.py:455–487, teacher adapter disabling @76ba7f2"
+          "locator": "opsd/opsd_trainer.py 639–776,1301–1475; data collator and launch settings"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "teacher 始终关闭 LoRA，因此保持初始基础模型。"
+          "quote": "教师不生成替代答案，资料不进入学生输入。"
         },
         {
           "artifact": "article",
-          "quote": "先截掉大的正贡献后，总和可能为负；不能把它当作始终非负的精确 KL。"
+          "quote": "实现对整段回答做批量计算，不是每个字发一个 API 请求。"
+        },
+        {
+          "artifact": "article",
+          "quote": "只更新学生 LoRA，下一轮学生重新作答。"
         }
       ]
     },
     {
-      "id": "checkpoint-and-seed-aggregation",
+      "id": "actual-loss-and-cpu-check",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.1 p14"
+        },
+        {
+          "source_id": "code",
+          "locator": "opsd/opsd_trainer.py 395–492"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "先截每个词表项的正贡献，再求和"
+        },
+        {
+          "artifact": "article",
+          "quote": "普通 KL 是 1.7578。设 τ＝0.05，截后 0.05−0.2197＝−0.1697。"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开实现在本地 batch 内合并有效 token 取平均，长回答权重更大"
+        }
+      ]
+    },
+    {
+      "id": "real-training-case",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.1 pp15–16"
+        },
+        {
+          "source_id": "code",
+          "locator": "data/privileged_contexts_l1_l5.jsonl sample_id=1/source=olympiads"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "答案 D 是 r＜p＜q。"
+        },
+        {
+          "artifact": "article",
+          "quote": "把三项改成 8<sup>1003</sup>、9<sup>1003</sup>、5<sup>1003</sup>，比较底数。"
+        },
+        {
+          "artifact": "article",
+          "quote": "L1 首句却写“same base”，实际统一的是<strong>指数</strong>。"
+        }
+      ]
+    },
+    {
+      "id": "metrics-and-checkpoint-selection",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.2 / Tables 1,3,14–17"
+        },
+        {
+          "source_id": "code",
+          "locator": "eval/evaluate_math.py; results/id_run_summary.csv; seed aggregation CSV"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "<strong>Avg@12＝正确回答数÷(30×12)</strong>"
+        },
+        {
+          "artifact": "article",
+          "quote": "4B / L3 的三项最高分分别来自第 100、50、125 步"
+        },
+        {
+          "artifact": "article",
+          "quote": "分数一致、步数不同；没有完整逐 checkpoint 日志，不能断言是并列最优。"
+        }
+      ]
+    },
+    {
+      "id": "main-results-and-seeds",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Tables 1,3,15"
+        },
+        {
+          "source_id": "code",
+          "locator": "results/id_run_summary.csv and paired-seed summaries"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "提高 1.39 点；8B 的 L2 是 68.24 对 66.67，提高 1.57 点。"
+        },
+        {
+          "artifact": "article",
+          "quote": "4B L3 终点差为 <strong>+1.67±0.73，3/3 提高</strong>；8B L4 为 +0.22±1.05，仅 1/3 提高。"
+        }
+      ]
+    },
+    {
+      "id": "real-zebra-case-and-judge",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code",
+        "zebra-data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "D.2 pp29–31 / Figure 8"
+        },
+        {
+          "source_id": "code",
+          "locator": "eval/evaluate_zebralogic.py extract_solution,normalize_cell,score_solution; manifests benchmark fingerprint"
+        },
+        {
+          "source_id": "zebra-data",
+          "locator": "grid_mode/test lgp-test-4x6-25; fixed 1000-row canonical fingerprint"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "整题 PASS＝24/24 个标准格都正确"
+        },
+        {
+          "artifact": "article",
+          "quote": "返回 23/24＝95.83% 单格正确率，但整题 FAIL。"
+        },
+        {
+          "artifact": "article",
+          "quote": "评分路径比较标准格，不独立执行 15 条线索，也不检查推理是否成立。"
+        },
+        {
+          "artifact": "article",
+          "quote": "总提升 (48−31)/1,000＝1.70 点，不是 35.3%。"
+        }
+      ]
+    },
+    {
+      "id": "controls-and-transfer-negatives",
       "claim_type": "author-claim",
       "source_ids": [
         "paper"
@@ -260,41 +566,93 @@
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "Tables 1, 3, 14–17"
+          "locator": "Tables 9–14,20–22 / Figure11 / Appendix E"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "三个最高分可能出自三个不同模型检查点。"
+          "quote": "L1 至 L4 在任何规模都没超过 Base"
         },
         {
           "artifact": "article",
-          "quote": "作者只对 L1、L3、L4 补了 seeds 42、43、44，没有为五种提示都做三种子复现。"
+          "quote": "这组既不等长，又可见最终答案，不能单独证明语义比长度更重要。"
+        },
+        {
+          "artifact": "article",
+          "quote": "L2 固定终点却从 62.59 降到 58.61。"
+        },
+        {
+          "artifact": "article",
+          "quote": "混合与学习选择均未超过最好固定资料的最高分"
         }
       ]
     },
     {
-      "id": "paper-code-version-boundary",
-      "claim_type": "inspected-implementation",
+      "id": "audit-and-cost-boundary",
+      "claim_type": "author-claim",
       "source_ids": [
-        "paper",
-        "code"
+        "paper"
       ],
       "source_locators": [
         {
           "source_id": "paper",
-          "locator": "arXiv 2609.25623v2"
-        },
-        {
-          "source_id": "code",
-          "locator": "README.md repository-PDF version notice @76ba7f2"
+          "locator": "B.3 / Tables 6–8 / Figures 2,4,7 / D.1"
         }
       ],
       "evidence": [
         {
           "artifact": "article",
-          "quote": "本解读的数值和图表以 arXiv v2 为准，代码行为另按上述固定版本说明，不把仓库 PDF 中的新内容混进 v2 结论。"
+          "quote": "同一个 397B 模型用两种提示审查 1,200 道题，两边不一致再做第三次裁决，不是人工一致性检查。"
+        },
+        {
+          "artifact": "article",
+          "quote": "主生成器 L2 / L3 / L4 为 17/4/1 条，8B 为 50/31/2 条。"
+        },
+        {
+          "artifact": "article",
+          "quote": "只短约 3.7 至 4.1 倍。参考解答、离线生成与训练反向传播的成本未计入这个比值。"
+        }
+      ]
+    },
+    {
+      "id": "limitations-and-release",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "code",
+        "zebra-data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5 / limitations and D.2"
+        },
+        {
+          "source_id": "code",
+          "locator": "README.md / NOTICE.md / data README; repository newer PDF; absent learned-router artifacts"
+        },
+        {
+          "source_id": "zebra-data",
+          "locator": "fixed dataset card metadata licence check"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "两份完整生成未公开，不能补造 L1 最终的全部格子。"
+        },
+        {
+          "artifact": "article",
+          "quote": "未提供 checkpoint、完整日志、逐题生成、模型审查标注与学习选择器。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文 CC BY 4.0 也不覆盖数据和整个代码仓库"
+        },
+        {
+          "artifact": "article",
+          "quote": "本文实际运行数据、算术、损失与评分函数的 CPU 检查，未运行 GPU 训练或复现模型成绩。"
         }
       ]
     }
@@ -305,20 +663,34 @@
       "kind": "figure",
       "label": "Figure 1",
       "source_id": "paper",
-      "source_locator": "§3.2–3.3; Figure 1",
-      "status": "redrawn",
-      "rationale": "保留离线L4→L3→L2与在线冻结教师两条链；强调生成资料的模型不是在线teacher，峰值另由结果图呈现。",
+      "source_locator": "p.2, Figure 1",
+      "status": "reused",
+      "rationale": "主线保留离线资料生成、冻结教师/学生训练及跨规模结果关系；deck拆成标明裁切的训练和生成两阶段，完整图留正文。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "按论文 §3、附录 A.1/B.1 与公开代码重绘"
+          "locator": "Figure 1 · 左边生成资料，中间才是训练，右边是数学测试最高分相对 L1 的差值。教师与离线资料生成模型不是同一个角色。Tian et al., v2, p.2，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "教师应该多看多少参考资料？"
+        },
+        {
+          "artifact": "deck",
+          "locator": "同一段前文，两张下一步概率表"
+        },
+        {
+          "artifact": "deck",
+          "locator": "每题三次调用：L4 → L3 → L2"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 figure-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 1, CC BY 4.0",
       "asset_paths": [
-        "/lib/papers/self-teacher-context-design/training-and-context.svg"
+        "/lib/papers/self-teacher-context-design/figure-1.webp",
+        "/lib/papers/self-teacher-context-design/figure-1-training-detail.webp",
+        "/lib/papers/self-teacher-context-design/figure-1-compiler-detail.webp"
       ]
     },
     {
@@ -326,165 +698,243 @@
       "kind": "figure",
       "label": "Figure 2",
       "source_id": "paper",
-      "source_locator": "Appendix D.1; Figure 2",
-      "status": "omitted",
-      "rationale": "完整初始化KL柱图与boxed答案窗口未绘；正文仅保留未截断全词表诊断不等于实际训练目标的限定。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.8, Figure 2",
+      "status": "reused",
+      "rationale": "折叠保留初始化未截断KL与答案窗口诊断，明确不是训练目标，避免将分布差异大小当作收益。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 2 · 95% 区间按问题重采样，测的是初始化、未截断 KL。Tian et al., v2, p.8，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 2, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-2.webp"
+      ]
     },
     {
       "id": "figure-3",
       "kind": "figure",
       "label": "Figure 3",
       "source_id": "paper",
-      "source_locator": "§4.4; Figure 3",
-      "status": "omitted",
-      "rationale": "按L1难度分桶的逐生成变化未重绘；文中规模差异不等于呈现各难度桶的所有点。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.9, Figure 3",
+      "status": "reused",
+      "rationale": "折叠保留按L1题难度分组的准确率增减，并说明分组的向均值回归影响。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 3 · 不同题难度的收益和损失。Tian et al., v2, p.9，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 3, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-3.webp"
+      ]
     },
     {
       "id": "figure-4",
       "kind": "figure",
       "label": "Figure 4",
       "source_id": "paper",
-      "source_locator": "Appendix B.3; Figure 4",
-      "status": "omitted",
-      "rationale": "log长度分布与泄漏柱图未复制；正文采用明确1,200题审查计数，避免把模型审查说成人工标注。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.19, Figure 4",
+      "status": "reused",
+      "rationale": "保留全量资料长度分布与1200题模型审查区别，置于泄漏控制补充。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 4 · 长度全量统计 29,434 题，泄漏只审查 1,200 题。Tian et al., v2, p.19，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 4, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-4.webp"
+      ]
     },
     {
       "id": "figure-5",
       "kind": "figure",
       "label": "Figure 5",
       "source_id": "paper",
-      "source_locator": "Appendix C.4; Figure 5",
-      "status": "omitted",
-      "rationale": "不同条件优化不同教师目标，日志曲线高度不可作能力排名，未保留移动平均曲线。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.25, Figure 5",
+      "status": "reused",
+      "rationale": "保留五组实际截断损失曲线，不把不同目标的损失纵轴作为教师有效性排名。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 5 · 各组教师目标、学生生成都不同，纵轴不能用于判定“哪种资料教得最好”。Tian et al., v2, p.25，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 5, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-5.webp"
+      ]
     },
     {
       "id": "figure-6",
       "kind": "figure",
       "label": "Figure 6",
       "source_id": "paper",
-      "source_locator": "Appendix C.4; Figure 6",
-      "status": "omitted",
-      "rationale": "八检查点全部曲线未绘；结果SVG只展peak/common/@200三种聚合，不声称完整展示时间曲线。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.26, Figure 6",
+      "status": "reused",
+      "rationale": "完整保留跨规模/跨测试八个时刻的曲线；主线区分最高值、共同模型与固定终点。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 6 · 最高分与终点经常不同；虚线是第 200 步。Tian et al., v2, p.26，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 6, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-6.webp"
+      ]
     },
     {
       "id": "figure-7",
       "kind": "figure",
       "label": "Figure 7",
       "source_id": "paper",
-      "source_locator": "Appendix D.1; Figure 7",
-      "status": "omitted",
-      "rationale": "回答四分位KL图未展示；Q4不是答案段，不将它改写成最终答案区域的监督强度。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.28, Figure 7",
+      "status": "reused",
+      "rationale": "保留生成序列四分位诊断，Q4与最终答案窗口明确分开。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 7 · Q4 不是答案窗口，生成长度截断仍会影响观察。Tian et al., v2, p.28，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 7, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-7.webp"
+      ]
     },
     {
       "id": "figure-8",
       "kind": "figure",
       "label": "Figure 8",
       "source_id": "paper",
-      "source_locator": "Appendix D.2; Figure 8",
-      "status": "omitted",
-      "rationale": "ZebraLogic rescue/regression计数图未展示；真实线索误读例用于讲判据，不能取代总体能力覆盖图。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.29, Figure 8",
+      "status": "reused",
+      "rationale": "主线保留实际ZebraLogic救回和丢题计数；case后的净17/1000与1.7B负结果共同解释收益。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 8 · 救回题与丢失题必须一起算。8B 救回 48，但原来会做的题丢了 31，净增 17；1.7B 净丢 7。Tian et al., v2, p.29，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "救回 48 题，但也丢了 31 题"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 8, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-8.webp"
+      ]
     },
     {
       "id": "figure-9",
       "kind": "figure",
       "label": "Figure 9",
       "source_id": "paper",
-      "source_locator": "Appendix D.2; Figure 9",
-      "status": "omitted",
-      "rationale": "多语言Avg@12/Pass@12二维坐标未绘，正文只定义两种分母与无通用赢家。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.30, Figure 9",
+      "status": "reused",
+      "rationale": "折叠保留Avg@12与Pass@12异向变化，提醒逐次正确率和至少一次命中覆盖率不能互换。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 9 · 横轴 Pass@12 覆盖率变化，纵轴 Avg@12 变化，两者可不同向。Tian et al., v2, p.30，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 9, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-9.webp"
+      ]
     },
     {
       "id": "figure-10",
       "kind": "figure",
       "label": "Figure 10",
       "source_id": "paper",
-      "source_locator": "Appendix D.2; Figure 10",
-      "status": "omitted",
-      "rationale": "模型评审的pooled行为增量图未展示，正文保留更多检查不等于正确以及不能推出每规模行为一致。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.30, Figure 10",
+      "status": "reused",
+      "rationale": "折叠保留跨规模合并模型行为标注，明确问题重采样区间、非人工标签及按规模不一致的结果。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 10 · 区间按问题重采样，不是三个训练种子的波动。Tian et al., v2, p.30，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 10, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-10.webp"
+      ]
     },
     {
       "id": "figure-11",
       "kind": "figure",
       "label": "Figure 11",
       "source_id": "paper",
-      "source_locator": "Appendix E.3; Figure 11",
-      "status": "redrawn",
-      "rationale": "提示外壳与mixtures图改成Q5控制表，保留同外壳仍有平均优势但混合不赢固定peak的限定。",
+      "source_locator": "p.33, Figure 11",
+      "status": "reused",
+      "rationale": "折叠保留统一外壳与混合资料的控制；主线和deck解释保留优势却改变赢家。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "统一提示外壳，Table 20"
+          "locator": "Figure 11 · 中间提示对 L1 的优势保留，具体赢家仍变。Tian et al., v2, p.33，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "统一外壳仍有优势，长度尚未控制完"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 figure-11 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 11, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/figure-11.webp"
+      ]
     },
     {
       "id": "table-1",
       "kind": "table",
       "label": "Table 1",
       "source_id": "paper",
-      "source_locator": "Table 1; §4.2",
-      "status": "redrawn",
-      "rationale": "三个规模peakmean重排，保留seed42与不同测试可选不同checkpoint，4B三种聚合再在SVG并列。",
+      "source_locator": "p.6, Table 1",
+      "status": "reused",
+      "rationale": "三规模全主结果保留，deck采用完整4B块原始裁切，主线解释不同训练模型的峰值平均。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "上表是 Table 1 的逐测试集最高分均值"
+          "locator": "Table 1 · seed 42，分别取各测试集最高 Avg@12。4B 最好为 L3，8B 为 L2，1.7B 为 L1；数值差按未四舍五入值计算。Tian et al., v2, p.6，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "数学最高分：中间提示在 4B / 8B 领先"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-1 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 1, CC BY 4.0",
       "asset_paths": [
-        "/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg"
+        "/lib/papers/self-teacher-context-design/table-1.webp",
+        "/lib/papers/self-teacher-context-design/table-1-4b-detail.webp"
       ]
     },
     {
@@ -492,208 +942,280 @@
       "kind": "table",
       "label": "Table 2",
       "source_id": "paper",
-      "source_locator": "Table 2; §4.3",
-      "status": "omitted",
-      "rationale": "逐规模四项迁移冠军及全差值未逐行展示，仅保留每规模三种提示分别赢得四测试的概括。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.6, Table 2",
+      "status": "reused",
+      "rationale": "四项迁移赢家保留；与完整迁移表分开，主线明确不存在一档通吃。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 2 · 四项迁移的赢家。Tian et al., v2, p.6，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 2, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-2.webp"
+      ]
     },
     {
       "id": "table-3",
       "kind": "table",
       "label": "Table 3",
       "source_id": "paper",
-      "source_locator": "Table 3; Appendix C.3",
-      "status": "redrawn",
-      "rationale": "选择固定200步配对差值重排，sampleSD与严格为正n/3一起展示，不能把平均提高改成每种子提高。",
+      "source_locator": "p.7, Table 3",
+      "status": "reused",
+      "rationale": "主线保留相同seed差值和四种读分规则；±为样本标准差，不能写成置信区间。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "固定第 200 步的比较"
+          "locator": "Table 3 · 括号是三个种子中差值严格为正的数量。中间提示的平均方向比具体冠军稳定。Tian et al., v2, p.7，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "三个最高分，可能出自三个模型"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-3 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 3, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-3.webp"
+      ]
     },
     {
       "id": "table-4",
       "kind": "table",
       "label": "Table 4",
       "source_id": "paper",
-      "source_locator": "Appendix A.1; Table 4",
-      "status": "redrawn",
-      "rationale": "跨规模batch/clamp和共享LoRA、采样、学习率配置重排，区别生成topk与全词表损失。",
+      "source_locator": "p.14, Table 4",
+      "status": "reused",
+      "rationale": "折叠保留三规模训练配置，跨规模batch/贡献上限不相同。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "有效 batch，单位为题"
+          "locator": "Table 4 · 同一规模内各资料条件一致；跨规模 batch 和贡献上限不同。Tian et al., v2, p.14，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-4 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 4, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-4.webp"
+      ]
     },
     {
       "id": "table-5",
       "kind": "table",
       "label": "Table 5",
       "source_id": "paper",
-      "source_locator": "Appendix B.2; Table 5",
-      "status": "omitted",
-      "rationale": "全intro labels和Begin/End分隔符未复制，正文明确原提示外壳有区别，另讲统一外壳控制。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.17, Table 5",
+      "status": "reused",
+      "rationale": "保留五档标签和分隔符，在提示外壳补充中解释。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 5 · 标签和分隔符。Tian et al., v2, p.17，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 5, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-5.webp"
+      ]
     },
     {
       "id": "table-6",
       "kind": "table",
       "label": "Table 6",
       "source_id": "paper",
-      "source_locator": "Appendix B.3; Table 6",
-      "status": "omitted",
-      "rationale": "median/P10/P90全表未绘，正文仅引用hint均值与完整teacherprompt均值，两个成本缩短比例不混合。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.18, Table 6",
+      "status": "reused",
+      "rationale": "保留资料本身与完整教师输入长度，限定成本换算分母。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 6 · 资料长度与完整输入长度是两个分母。Tian et al., v2, p.18，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 6, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-6.webp"
+      ]
     },
     {
       "id": "table-7",
       "kind": "table",
       "label": "Table 7",
       "source_id": "paper",
-      "source_locator": "Appendix B.3; Table 7",
-      "status": "omitted",
-      "rationale": "直接/等价泄漏与边界合格率全矩阵未绘；正文给逐级1,200题计数与模型审查过程，不声称证明完全无泄漏。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.19, Table 7",
+      "status": "reused",
+      "rationale": "保留两生成器的模型审查、等价泄漏及规则合规率，deck解释非人工一致性。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 7 · 模型裁决后的泄漏与规则合规率。Tian et al., v2, p.19，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "不直接写答案，也可能泄漏等价答案"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 7, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-7.webp"
+      ]
     },
     {
       "id": "table-8",
       "kind": "table",
       "label": "Table 8",
       "source_id": "paper",
-      "source_locator": "Appendix B.3; Table 8",
-      "status": "omitted",
-      "rationale": "两审查prompt一致率与kappa全表未展示；不以模型一致性替代人工标注质量或置信保证。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.20, Table 8",
+      "status": "reused",
+      "rationale": "保留同一模型不同审查提示的一致率，不能视为人类标注者一致性。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 8 · 同一模型的提示 A/B 一致率，不是人类标注者一致率。Tian et al., v2, p.20，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 8, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-8.webp"
+      ]
     },
     {
       "id": "table-9",
       "kind": "table",
       "label": "Table 9",
       "source_id": "paper",
-      "source_locator": "Appendix C.1; Table 9",
-      "status": "omitted",
-      "rationale": "固定200全迁移矩阵未逐格绘，正文说明四套评分分母及无通用赢家，避免混入IDpeak。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.21, Table 9",
+      "status": "reused",
+      "rationale": "完整迁移数值按规模保留，固定第200步不重选模型。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 9 · 固定第 200 步，不为迁移重新选模型。Tian et al., v2, p.21，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 9, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-9.webp"
+      ]
     },
     {
       "id": "table-10",
       "kind": "table",
       "label": "Table 10",
       "source_id": "paper",
-      "source_locator": "Appendix C.1; Table 10",
-      "status": "omitted",
-      "rationale": "Puzzle/Cell/Hard/XL矩阵未绘，正文突出exactgrid和真实线索错例，不把cell分当整题成功。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.22, Table 10",
+      "status": "reused",
+      "rationale": "保留ZebraLogic整题、单格和困难表子集，严格成功和单格准确率分开。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 10 · 单格正确不等于整题成功。Tian et al., v2, p.22，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 10, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-10.webp"
+      ]
     },
     {
       "id": "table-11",
       "kind": "table",
       "label": "Table 11",
       "source_id": "paper",
-      "source_locator": "Appendix C.1; Table 11",
-      "status": "omitted",
-      "rationale": "C-Evalmacro/micro/hard矩阵未绘；正文保留52学科负结果和提取失败计错，未隐去迁移下降。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.22, Table 11",
+      "status": "reused",
+      "rationale": "保留C-Eval知识分数和提取失败率，主线突出L1–L4不胜Base。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 11 · C-Eval 的 32,768-token 上限；提取失败计错。Tian et al., v2, p.22，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 11, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-11.webp"
+      ]
     },
     {
       "id": "table-12",
       "kind": "table",
       "label": "Table 12",
       "source_id": "paper",
-      "source_locator": "Appendix C.2; Table 12",
-      "status": "redrawn",
-      "rationale": "compilerreplication进入Q5控制表，既換模型又换解码，具体赢家变化且L1共享不新增训练。",
+      "source_locator": "p.23, Table 12",
+      "status": "reused",
+      "rationale": "保留不同离线生成模型的最高分；模型和thinking/解码同时变化限定归因。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "换摘要模型，Table 12"
+          "locator": "Table 12 · 换资料生成模型也换了解码配置。Tian et al., v2, p.23，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-12 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 12, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-12.webp"
+      ]
     },
     {
       "id": "table-13",
       "kind": "table",
       "label": "Table 13",
       "source_id": "paper",
-      "source_locator": "Appendix C.2; Table 13",
-      "status": "redrawn",
-      "rationale": "前10%加答案控制重排，保留63.89和与L3不等长/不等答案可见性，避免纯长度因果结论。",
+      "source_locator": "p.23, Table 13",
+      "status": "reused",
+      "rationale": "保留语义资料对10%前缀加答案的对照，长度和答案可见性未同控。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "参考解答前 10%＋答案，Table 13"
+          "locator": "Table 13 · 长度和答案可见性未同时控制。Tian et al., v2, p.23，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-13 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 13, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-13.webp"
+      ]
     },
     {
       "id": "table-14",
       "kind": "table",
       "label": "Table 14",
       "source_id": "paper",
-      "source_locator": "Appendix C.2; Table 14",
-      "status": "redrawn",
-      "rationale": "4Bpeak/common/@200重绘，长生成上限进入Q5；未复制所有early/latetruncation行。",
+      "source_locator": "p.23, Table 14",
+      "status": "reused",
+      "rationale": "保留1024/2048生成上限与共同模型、峰值/终点，注明125vs50步数记载差异。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "按 Table 1、Table 14 重绘"
+          "locator": "Table 14 · 最高分、共同 checkpoint 与终点。Tian et al., v2, p.23，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-14 重绘事实，未复制原版排版",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 14, CC BY 4.0",
       "asset_paths": [
-        "/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg"
+        "/lib/papers/self-teacher-context-design/table-14.webp"
       ]
     },
     {
@@ -701,189 +1223,1368 @@
       "kind": "table",
       "label": "Table 15",
       "source_id": "paper",
-      "source_locator": "Appendix C.3; Table 15",
-      "status": "omitted",
-      "rationale": "三种子绝对分未绘，改用Table3配对差值与n/3，保留复现仅覆盖L1/L3/L4。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.24, Table 15",
+      "status": "reused",
+      "rationale": "保留三seed绝对值以支持成对差值复算，单次与三seed结果不拼接。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 15 · 完整三种子结果。Tian et al., v2, p.24，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 15, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-15.webp"
+      ]
     },
     {
       "id": "table-16",
       "kind": "table",
       "label": "Table 16",
       "source_id": "paper",
-      "source_locator": "Appendix C.4; Table 16",
-      "status": "omitted",
-      "rationale": "选峰步全矩阵未绘，正文只给L4共用125步例，不伪称所有峰值来自一个模型。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.25, Table 16",
+      "status": "reused",
+      "rationale": "保留各测试最高值对应保存步数，用4B L3的100/50/125解释模型拼接。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 16 · 每项测试选中的步数。Tian et al., v2, p.25，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 16, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-16.webp"
+      ]
     },
     {
       "id": "table-17",
       "kind": "table",
       "label": "Table 17",
       "source_id": "paper",
-      "source_locator": "Appendix C.4; Table 17",
-      "status": "omitted",
-      "rationale": "peak-to200缺口全表未复制，common与endpoint真实数字用于解释，未呈现所有稳定性数据。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.26, Table 17",
+      "status": "reused",
+      "rationale": "保留峰值与固定终点差距，不将任意停止时刻等同最佳潜力。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 17 · 最高分与终点之差。Tian et al., v2, p.26，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 17, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-17.webp"
+      ]
     },
     {
       "id": "table-18",
       "kind": "table",
       "label": "Table 18",
       "source_id": "paper",
-      "source_locator": "Appendix D.2; Table 18",
-      "status": "omitted",
-      "rationale": "newsolve与medium/easy逐生成变化表未绘；覆盖和每次回答可靠性分开定义。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.29, Table 18",
+      "status": "reused",
+      "rationale": "保留按L1成绩划分题难度的完整收益/损失与分组样本分母。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 18 · 用 L1 自己的成绩分组，存在向均值回归的影响，不能全归因于能力转移。Tian et al., v2, p.29，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 18, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-18.webp"
+      ]
     },
     {
       "id": "table-19",
       "kind": "table",
       "label": "Table 19",
       "source_id": "paper",
-      "source_locator": "Appendix D.2; Table 19",
-      "status": "omitted",
-      "rationale": "行为30题分层子样本与准确率360回答的分母不同，未绘全部行为率，正文只保留非单一机制限定。",
-      "placements": [],
-      "permission_status": "not-applicable",
-      "permission_basis": "",
-      "credit": "",
-      "asset_paths": []
+      "source_locator": "p.30, Table 19",
+      "status": "reused",
+      "rationale": "保留各规模AIME24模型行为标签比例，与正确率判分区分。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 19 · 行为比例与实际正确率使用的样本数不同。Tian et al., v2, p.30，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 19, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-19.webp"
+      ]
     },
     {
       "id": "table-20",
       "kind": "table",
       "label": "Table 20",
       "source_id": "paper",
-      "source_locator": "Appendix E.1–E.2; Table 20",
-      "status": "redrawn",
-      "rationale": "共用外壳L1–L4峰值进入Q5控制表；mixtures没有超过固定peak，未复制全部迁移列。",
+      "source_locator": "p.31, Table 20",
+      "status": "reused",
+      "rationale": "保留统一提示外壳、固定混合与最高/终点结果，主线说明外壳影响。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "统一提示外壳，Table 20"
+          "locator": "Table 20 · 每题只分配一种提示，不拼接全部资料。Tian et al., v2, p.31，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-20 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 20, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-20.webp"
+      ]
     },
     {
       "id": "table-21",
       "kind": "table",
       "label": "Table 21",
       "source_id": "paper",
-      "source_locator": "Appendix E.2; Table 21",
-      "status": "redrawn",
-      "rationale": "自适应选择结果进入Q5并解释额外调用与特征router；无策略赢最佳固定peak，不能宣传动态选择已最优。",
+      "source_locator": "p.32, Table 21",
+      "status": "reused",
+      "rationale": "保留按题选择方法的结果与额外计算，学习网络未公开不说直接可复现。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "混合提示与按题选择，Tables 20–22"
+          "locator": "Table 21 · 没有选择策略超过最佳固定资料的最高分；部分终点更好。Tian et al., v2, p.32，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-21 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 21, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-21.webp"
+      ]
     },
     {
       "id": "table-22",
       "kind": "table",
       "label": "Table 22",
       "source_id": "paper",
-      "source_locator": "Appendix E.3; Table 22",
-      "status": "redrawn",
-      "rationale": "levelconditionedmixtures进入Q5控制行，终点改善与peak不赢分开；不把各列独立选level的envelope当部署模型。",
+      "source_locator": "p.33, Table 22",
+      "status": "reused",
+      "rationale": "保留固定混合和逐资料外壳控制，峰值与终点不同结论并列。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "混合提示与按题选择，Tables 20–22"
+          "locator": "Table 22 · 混合条件的最高分与固定终点。Tian et al., v2, p.33，CC BY 4.0。"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Independent SVG/HTML facts redraw; source-image reuse not claimed.",
-      "credit": "根据原论文 table-22 重绘事实，未复制原版排版",
-      "asset_paths": []
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 22, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/table-22.webp"
+      ]
     },
     {
-      "id": "appendix-b1-worked-example",
+      "id": "b1-worked-case",
       "kind": "appendix-visual",
-      "label": "Appendix B.1 boxed worked example",
+      "label": "Appendix B.1 worked example",
       "source_id": "paper",
-      "source_locator": "Appendix B.1 boxed five-context example; JSONL sample_id=1 @76ba7f2",
-      "status": "redrawn",
-      "rationale": "未编号五资料例题是重要附录visual；重绘统一指数的计算与可见信息，保留samebase文字瑕疵，非模型输出日志。",
+      "source_locator": "p.15–16, Appendix B.1 worked example / B.1",
+      "status": "reused",
+      "rationale": "保留真实幂排序题五种资料及原文same base瑕疵；deck将步骤和方法独立裁切，完整两页资料在正文。",
       "placements": [
         {
           "artifact": "article",
-          "locator": "根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘"
+          "locator": "Appendix B.1 原文第一部分 · L1 给出指数 1003、底数 8/9/5 和答案 D；L2 只说明用幂的乘方规则与指数最大公约数，L3 只提出改写成统一形式。Tian et al., v2, p.15，CC BY 4.0。"
+        },
+        {
+          "artifact": "article",
+          "locator": "Appendix B.1 续 · L4 无方法与答案，L5 只给答案。Tian et al., v2, p.16，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "L1 给步骤和结果，L5 只给结果"
+        },
+        {
+          "artifact": "deck",
+          "locator": "L2 指定规则，L3 给方向，L4 给类别"
         }
       ],
-      "permission_status": "not-applicable",
-      "permission_basis": "Facts independently diagrammed, not source image reuse.",
-      "credit": "根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘",
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 worked example, CC BY 4.0",
       "asset_paths": [
-        "/lib/papers/self-teacher-context-design/exponent-real-case.svg"
+        "/lib/papers/self-teacher-context-design/appendix-math-case-a.webp",
+        "/lib/papers/self-teacher-context-design/appendix-math-case-b.webp",
+        "/lib/papers/self-teacher-context-design/appendix-math-l1-detail.webp",
+        "/lib/papers/self-teacher-context-design/appendix-math-l2-l3-detail.webp"
+      ]
+    },
+    {
+      "id": "b1-generation-contracts",
+      "kind": "appendix-visual",
+      "label": "Appendix B.1 generation rules",
+      "source_id": "paper",
+      "source_locator": "p.16–17, Appendix B.1 generation rules / B.1",
+      "status": "reused",
+      "rationale": "保留三次离线生成约束，禁止实际步骤、数值与答案的区别可逐字检查。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix B.1 · L4 / L3 生成约束。Tian et al., v2, p.16，CC BY 4.0。"
+        },
+        {
+          "artifact": "article",
+          "locator": "Appendix B.1 · L2 生成约束。Tian et al., v2, p.17，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 generation rules, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-generation-a.webp",
+        "/lib/papers/self-teacher-context-design/appendix-generation-b.webp"
+      ]
+    },
+    {
+      "id": "b2-interfaces",
+      "kind": "appendix-visual",
+      "label": "Appendix B.2 interfaces",
+      "source_id": "paper",
+      "source_locator": "p.17, Appendix B.2 interfaces / B.2",
+      "status": "reused",
+      "rationale": "保留教师和学生的原始输入外壳，能看到hint仅在教师侧。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix B.2 · 学生输入没有 hint。Tian et al., v2, p.17，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.2 interfaces, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-interfaces.webp"
+      ]
+    },
+    {
+      "id": "b2-transitions",
+      "kind": "appendix-visual",
+      "label": "Appendix B.2 transitions",
+      "source_id": "paper",
+      "source_locator": "p.18, Appendix B.2 transitions / B.2",
+      "status": "reused",
+      "rationale": "保留五种衔接句，注明v2 L1与固定公开collator措辞不一致，不擅自判断结果生产版本。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix B.2 · 五种衔接句。固定代码的 L1 使用“derive the same final answer”，此 v2 印为“arrive at the correct final answer”；这里只分别报告，不断言哪段产生论文结果。Tian et al., v2, p.18，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.2 transitions, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-transitions.webp"
+      ]
+    },
+    {
+      "id": "b3-audit-prompts",
+      "kind": "appendix-visual",
+      "label": "Appendix B.3 audit prompts",
+      "source_id": "paper",
+      "source_locator": "p.19–20, Appendix B.3 audit prompts / B.3",
+      "status": "reused",
+      "rationale": "保留同一模型提示A/B、第三次裁决和泄漏/合规规则，不将自动审查冒充人工标注。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix B.3 · 审查提示 A/B。Tian et al., v2, p.19，CC BY 4.0。"
+        },
+        {
+          "artifact": "article",
+          "locator": "Appendix B.3 · 第三次裁决与共享规则。Tian et al., v2, p.20，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.3 audit prompts, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-audit-a.webp",
+        "/lib/papers/self-teacher-context-design/appendix-audit-b.webp"
+      ]
+    },
+    {
+      "id": "d2-behavior-judge",
+      "kind": "appendix-visual",
+      "label": "Appendix D.2 behavior judge",
+      "source_id": "paper",
+      "source_locator": "p.28–29, Appendix D.2 behavior judge / D.2",
+      "status": "reused",
+      "rationale": "完整保留行为标签judge字段和规则，与最终答案正确性评分分开。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix D.2 · 行为 judge 的提示第一部分。Tian et al., v2, p.28，CC BY 4.0。"
+        },
+        {
+          "artifact": "article",
+          "locator": "Appendix D.2 · 行为 judge 的续页。Tian et al., v2, p.29，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix D.2 behavior judge, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-judge-a.webp",
+        "/lib/papers/self-teacher-context-design/appendix-judge-b.webp"
+      ]
+    },
+    {
+      "id": "d2-zebra-excerpt",
+      "kind": "appendix-visual",
+      "label": "Appendix D.2 ZebraLogic failed-answer excerpt",
+      "source_id": "paper",
+      "source_locator": "p.31, Appendix D.2 ZebraLogic failed-answer excerpt / D.2",
+      "status": "reused",
+      "rationale": "保留论文发布的L1未解出两个度假格而猜测的原文；主线先走真实线索误读与严格判分，不虚构完整轨迹。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix D.2 · 作者公开的失败回答摘录，保留原文。样例按成功反差预选，不是随机代表题。Tian et al., v2, p.31，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix D.2 ZebraLogic failed-answer excerpt, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-zebra-case.webp"
+      ]
+    },
+    {
+      "id": "e-shared-bridge",
+      "kind": "appendix-visual",
+      "label": "Appendix E shared bridge",
+      "source_id": "paper",
+      "source_locator": "p.31, Appendix E shared bridge / E",
+      "status": "reused",
+      "rationale": "保留统一提示外壳原文，以Table20区分资料形式与标签/措辞。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Appendix E · 统一教师外壳。Tian et al., v2, p.31，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops.",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix E shared bridge, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/self-teacher-context-design/appendix-shared-bridge.webp"
       ]
     }
   ],
   "figures": [
     {
-      "path": "/lib/papers/self-teacher-context-design/training-and-context.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/self-teacher-context-design/figure-1.webp",
+      "origin": "paper-original",
       "source_visual_id": "figure-1",
       "source_id": "paper",
-      "source_locator": "Figure 1; §3.2–3.3; Appendix A.1/B.1",
-      "credit": "按论文 §3、附录 A.1/B.1 与公开代码重绘",
+      "source_locator": "p.2, Figure 1",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 1, CC BY 4.0",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
     },
     {
-      "path": "/lib/papers/self-teacher-context-design/exponent-real-case.svg",
-      "origin": "author-redrawn",
-      "source_visual_id": "appendix-b1-worked-example",
+      "path": "/lib/papers/self-teacher-context-design/figure-1-training-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
       "source_id": "paper",
-      "source_locator": "Appendix B.1; public JSONL sample_id=1 @76ba7f2",
-      "credit": "根据附录 B.1 和公开 JSONL 的 sample_id=1 重绘",
+      "source_locator": "p.2, Figure 1; labelled detail crop",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 1, CC BY 4.0",
+      "used_in": [
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-1-compiler-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 1; labelled detail crop",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 1, CC BY 4.0",
+      "used_in": [
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.8, Figure 2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 2, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 3",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 3, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.19, Figure 4",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 4, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.25, Figure 5",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 5, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p.26, Figure 6",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 6, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "p.28, Figure 7",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 7, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-8",
+      "source_id": "paper",
+      "source_locator": "p.29, Figure 8",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 8, CC BY 4.0",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
     },
     {
-      "path": "/lib/papers/self-teacher-context-design/peak-and-checkpoint.svg",
-      "origin": "author-redrawn",
+      "path": "/lib/papers/self-teacher-context-design/figure-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "p.30, Figure 9",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 9, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-10.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-10",
+      "source_id": "paper",
+      "source_locator": "p.30, Figure 10",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 10, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/figure-11.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "p.33, Figure 11",
+      "credit": "Tian et al., arXiv:2609.25623v2, Figure 11, CC BY 4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-1.webp",
+      "origin": "paper-original",
       "source_visual_id": "table-1",
       "source_id": "paper",
-      "source_locator": "Table 1; Table 14, 4B seed42 1024token rows",
-      "credit": "按 Table 1、Table 14 重绘",
+      "source_locator": "p.6, Table 1",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 1, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-1-4b-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.6, Table 1; labelled detail crop",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 1, CC BY 4.0",
+      "used_in": [
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p.6, Table 2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 2, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 3",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 3, CC BY 4.0",
       "used_in": [
         "article",
         "deck"
-      ]
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "p.14, Table 4",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 4, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-5",
+      "source_id": "paper",
+      "source_locator": "p.17, Table 5",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 5, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p.18, Table 6",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 6, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-7",
+      "source_id": "paper",
+      "source_locator": "p.19, Table 7",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 7, CC BY 4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-8",
+      "source_id": "paper",
+      "source_locator": "p.20, Table 8",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 8, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-9",
+      "source_id": "paper",
+      "source_locator": "p.21, Table 9",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 9, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-10.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-10",
+      "source_id": "paper",
+      "source_locator": "p.22, Table 10",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 10, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-11.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-11",
+      "source_id": "paper",
+      "source_locator": "p.22, Table 11",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 11, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-12.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-12",
+      "source_id": "paper",
+      "source_locator": "p.23, Table 12",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 12, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-13.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-13",
+      "source_id": "paper",
+      "source_locator": "p.23, Table 13",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 13, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-14.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-14",
+      "source_id": "paper",
+      "source_locator": "p.23, Table 14",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 14, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-15.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-15",
+      "source_id": "paper",
+      "source_locator": "p.24, Table 15",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 15, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-16.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-16",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 16",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 16, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-17.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-17",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 17",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 17, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-18.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-18",
+      "source_id": "paper",
+      "source_locator": "p.29, Table 18",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 18, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-19.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-19",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 19",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 19, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-20.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-20",
+      "source_id": "paper",
+      "source_locator": "p.31, Table 20",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 20, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-21.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-21",
+      "source_id": "paper",
+      "source_locator": "p.32, Table 21",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 21, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/table-22.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-22",
+      "source_id": "paper",
+      "source_locator": "p.33, Table 22",
+      "credit": "Tian et al., arXiv:2609.25623v2, Table 22, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-math-case-a.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b1-worked-case",
+      "source_id": "paper",
+      "source_locator": "p.15–16, Appendix B.1 worked example / B.1",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 worked example, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-math-case-b.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b1-worked-case",
+      "source_id": "paper",
+      "source_locator": "p.15–16, Appendix B.1 worked example / B.1",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 worked example, CC BY 4.0",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-math-l1-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b1-worked-case",
+      "source_id": "paper",
+      "source_locator": "p.15–16, Appendix B.1 worked example / B.1; labelled detail crop",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 worked example, CC BY 4.0",
+      "used_in": [
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-math-l2-l3-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b1-worked-case",
+      "source_id": "paper",
+      "source_locator": "p.15–16, Appendix B.1 worked example / B.1; labelled detail crop",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 worked example, CC BY 4.0",
+      "used_in": [
+        "deck"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-generation-a.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b1-generation-contracts",
+      "source_id": "paper",
+      "source_locator": "p.16–17, Appendix B.1 generation rules / B.1",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 generation rules, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-generation-b.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b1-generation-contracts",
+      "source_id": "paper",
+      "source_locator": "p.16–17, Appendix B.1 generation rules / B.1",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.1 generation rules, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-interfaces.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b2-interfaces",
+      "source_id": "paper",
+      "source_locator": "p.17, Appendix B.2 interfaces / B.2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.2 interfaces, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-transitions.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b2-transitions",
+      "source_id": "paper",
+      "source_locator": "p.18, Appendix B.2 transitions / B.2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.2 transitions, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-audit-a.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b3-audit-prompts",
+      "source_id": "paper",
+      "source_locator": "p.19–20, Appendix B.3 audit prompts / B.3",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.3 audit prompts, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-audit-b.webp",
+      "origin": "paper-original",
+      "source_visual_id": "b3-audit-prompts",
+      "source_id": "paper",
+      "source_locator": "p.19–20, Appendix B.3 audit prompts / B.3",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix B.3 audit prompts, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-judge-a.webp",
+      "origin": "paper-original",
+      "source_visual_id": "d2-behavior-judge",
+      "source_id": "paper",
+      "source_locator": "p.28–29, Appendix D.2 behavior judge / D.2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix D.2 behavior judge, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-judge-b.webp",
+      "origin": "paper-original",
+      "source_visual_id": "d2-behavior-judge",
+      "source_id": "paper",
+      "source_locator": "p.28–29, Appendix D.2 behavior judge / D.2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix D.2 behavior judge, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-zebra-case.webp",
+      "origin": "paper-original",
+      "source_visual_id": "d2-zebra-excerpt",
+      "source_id": "paper",
+      "source_locator": "p.31, Appendix D.2 ZebraLogic failed-answer excerpt / D.2",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix D.2 ZebraLogic failed-answer excerpt, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
+    },
+    {
+      "path": "/lib/papers/self-teacher-context-design/appendix-shared-bridge.webp",
+      "origin": "paper-original",
+      "source_visual_id": "e-shared-bridge",
+      "source_id": "paper",
+      "source_locator": "p.31, Appendix E shared bridge / E",
+      "credit": "Tian et al., arXiv:2609.25623v2, Appendix E shared bridge, CC BY 4.0",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "Fresh arXiv v2 entry https://arxiv.org/abs/2609.25623 links Rights to this article to https://creativecommons.org/licenses/by/4.0/ (checked 2026-10-19). Originals from exact v2; captions credit authors/licence and label crops."
     }
   ],
   "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false,
+      "original_section_anchors_preserved": true,
+      "default_reading": [
+        {
+          "viewport": {
+            "width": 1600,
+            "height": 1000
+          },
+          "characters": 5937,
+          "height": 8058,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 1512,
+            "height": 982
+          },
+          "characters": 5937,
+          "height": 8058,
+          "width": 900
+        },
+        {
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "characters": 5937,
+          "height": 12150,
+          "width": 350
+        }
+      ]
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reader_reconstruction": "Existing sample1 data -> independent L4/L3/L2 calls -> fixed self-teacher scores current student prefix -> full-vocabulary upper-clipped valid-token mean -> LoRA update. Real ZebraLogic distance3 vs distance2 and official released 24/24 strict verdict; extra keys blind spot and no full output reconstruction. Avg@12 vs Pass@12, independent peaks vs common checkpoint vs endpoint and paired seed SD. Shared bridge, L5 and C-Eval negatives limit abstraction claim."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true,
+      "code_copy_exact": true,
+      "all_original_image_fit_clear_zoom_drag_close_and_focus": true,
+      "mobile_actual_vertical_and_horizontal_scroll": true,
+      "nested_exit_scope": "Headless DOM FullscreenAPI, image viewer and article focus verified. Native macOS window fullscreen not tested."
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "status": "completed-current-rebuilt-artifacts",
+    "browser_mode": "isolated-task-owned-headless",
+    "browser_evidence": {
+      "layout": "output/playwright/old-paper-refresh-20261018/context-layout-20261019.json",
+      "interactions": "output/playwright/old-paper-refresh-20261018/context-interactions-20261019.json",
+      "visual_review": "Main agent individually inspected all restored table/figure/appendix crops and actual-display screenshots of the complete main reading path, all slides and dense panels. Normal view plus enlarged fit and mobile scroll checked.",
+      "native_window_tested": false
+    },
+    "current_artifact_hashes": [
+      {
+        "file": "content/_posts/080-self-teacher-context-design.md",
+        "sha256": "3a96664ca30fda52fed62783cf5d800f9aeae3e127154e248653ead71137879a"
+      },
+      {
+        "file": "lib/decks/self-teacher-context-design-visual-guide.html",
+        "sha256": "d804e6728a9cedc9e94f0178e8810f2abd44adf3813173924833f8f336d9e77a"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/cover.svg",
+        "sha256": "86698a4d743b5878b19f7f1ad2045decad490a75079276e49324b655944c2cd5"
+      },
+      {
+        "file": "dist/posts/论文解读/self-teacher-context-design.html",
+        "sha256": "6661f9788a96c2dc21307d6c55c3d37ec10780ed914aced0340881922844bd96"
+      },
+      {
+        "file": "dist/css/tide.css",
+        "sha256": "003914951d3c8cb75e9cc816bb98a7b316cde0f6b5357ed532adeeb14b4fe21b"
+      },
+      {
+        "file": "dist/js/tide.js",
+        "sha256": "0d9604ee2077fbf83a3c7a5f461b58446a1f973198e4ce31bc439523b816a089"
+      },
+      {
+        "file": "dist/styles/paper-editorial.css",
+        "sha256": "739bfdb45c63e3320d5a05f6687bf0c7f37f4a654ae9f1fa10075a6666a37690"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-1.webp",
+        "sha256": "e6e1603924e3a1838a53558b2af092c408c5ee7d170c7cbd35226b40139664c7"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-1-training-detail.webp",
+        "sha256": "67ce5bbb92581deed8a30ca28a7d8e56b52dc329750b880224e0b93ce1234b5d"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-1-compiler-detail.webp",
+        "sha256": "7c88b9ea3770860400c4c8fbd5960bc35a7385887a12106b4317bfb99be266e0"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-2.webp",
+        "sha256": "1857897e4b55a1a7b51005b243c3e5c14027c08e6e7fcd35cbcf3e44d8f16dda"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-3.webp",
+        "sha256": "a1e79c11b872847e2ddb31b449baf0df9611fd2d21fde6481642318b34d00e20"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-4.webp",
+        "sha256": "f0ee0d468317ad081fedeed1187f2021bf0e038bfa1b0693e0b328dd1161a4f0"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-5.webp",
+        "sha256": "2866c4e2e3b18c6b33f838aa76d5da6e6dee4f8a9cfd9d78807f363a907c4551"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-6.webp",
+        "sha256": "3b3aa9b0728be3fa13c3f32c3e0ff2cc5dac8b0a9a48788448f16771c1082d4f"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-7.webp",
+        "sha256": "35a719fe21c1a039c27e478ac2c8d989e6b02134a2213402235a97846d419820"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-8.webp",
+        "sha256": "2853b7a66e8758e522b5449d00134917ecdd614406a9d12b0faa1343b5d4fa91"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-9.webp",
+        "sha256": "a5a9e05eaf7664e0852588cc3c393e77a21c41370f4b5829b3cf29566a5764cf"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-10.webp",
+        "sha256": "a705aa29a1b611b7a5512ad216ba30484d61ca5adc3b4125febe991e13b381d1"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/figure-11.webp",
+        "sha256": "979f34f4b314c66e95f3ed9906988778778c75c7eeb3be7172a8d8f353bb88a8"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-1.webp",
+        "sha256": "3d384209fd2083a9d13191bd5e4bcae3e93a4aa528a9c37d0b3cb8ffc1488a6d"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-1-4b-detail.webp",
+        "sha256": "d1df9e62452f2c7f0131500abb157d47e0d910ba56033ae81855e30613d2144e"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-2.webp",
+        "sha256": "f39161e6a34631a04c9e31ff0b8f2baa80ad7c66625f57f4d314fbc823cab24a"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-3.webp",
+        "sha256": "ff804351b51351d2390eace14594bcd91835cbb8dba1b17fb47d908c30634b3f"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-4.webp",
+        "sha256": "dd7ecdeb27b1124edbb4ae6ec7af324ff057c2376a2e88a394f252e26beba25e"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-5.webp",
+        "sha256": "74e564e2939de18bd89b1cee94b08a2a61dd1b6ee5d1fcb7fc58ed6c893ee192"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-6.webp",
+        "sha256": "655820622d7bbb88c4fad8332ad2dbe30d44217e8fd33c062b2492fcd0a26d92"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-7.webp",
+        "sha256": "03e0b4445f65290f46329c59a003aa431b7ced0c3a51787329338052c6663b17"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-8.webp",
+        "sha256": "ad8511d79959d67a7ec105ddf792a5f627557330479e1ba17f9ae7354906561c"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-9.webp",
+        "sha256": "122ae14b75e837e26be15007b784fb80384ef12db709d0e95768aebcb6f393e9"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-10.webp",
+        "sha256": "f75187e08a595e8d2e1dc5535966eefba1b9dcc1ee1c54b5cc2514b6e81ce938"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-11.webp",
+        "sha256": "e0aa5e9058cf8a86815518040850e54566fd25e94f3e496fcdaddc546b375d8d"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-12.webp",
+        "sha256": "c453d4df2025fc8c43638fb9825bf58e0102a51d45059d4c4cd7cb69d6d879b0"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-13.webp",
+        "sha256": "d4d1a1433f3727648af3cfb87aaff71a1e8f410445eec00d1646c1a666f9f364"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-14.webp",
+        "sha256": "94b7664a4b01281e9feae12468ceb5cb77ccad1da4a30c74b377bcf0ada1fca1"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-15.webp",
+        "sha256": "5eef16bd4d56843349508da2b3d314b0f2d5185105e727f821bd170851f069f6"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-16.webp",
+        "sha256": "8a1b19b140072076ee796eed3e76d25cc6d830db0f32b003e73b920bead58978"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-17.webp",
+        "sha256": "e114508b88bad1f9949b3cc6e16df7312a1e9e868a5b1a99ab376d2bf19969fa"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-18.webp",
+        "sha256": "4c48727ffebbf244a8e7c148171ce2cb19eff816734b0cf00e24d30f487543a5"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-19.webp",
+        "sha256": "93cafba316cb7b28fe9b2e3fa392dfbe95f92da23766a4c17f5d130641e90cc5"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-20.webp",
+        "sha256": "e9e88b6c01b389286acee56eacba07481012fb231a008d6ae5fa4223b48530a7"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-21.webp",
+        "sha256": "8b1058f9a0ded0bf558090e8633e832a7c0ab73cac7df3be6728c3f41543f5e3"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/table-22.webp",
+        "sha256": "3c1be5f63aa64476891e1819c00b5007ae974b6a6acd2fdee94ebbd414845369"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-math-case-a.webp",
+        "sha256": "04b32dc0380f0cf29ff9b4785bb552af159107e3a705b253419c8571b07a7ec9"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-math-case-b.webp",
+        "sha256": "ab0d2f146c5c74e22de91f37d9f13921fa4ad4eea239baa459ab35ffe059f502"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-math-l1-detail.webp",
+        "sha256": "176fe3796612b263c53e54e0125ed1a4ec1f873597d2f3671826d8d713d4beea"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-math-l2-l3-detail.webp",
+        "sha256": "9a4b71de36e2389a9240af95ab880592af15359dc9a6be8e4f27fb4bdcff9bc3"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-generation-a.webp",
+        "sha256": "4abb3dac77f2c536df78b651c2007ff5ff9f405d9d26ce481b38d7f60bfc5542"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-generation-b.webp",
+        "sha256": "98334f230e02aa2cbe125e9584c7d04ffe00d1ca26b75256dd16aabb132afea4"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-interfaces.webp",
+        "sha256": "09d062f806259988f697f2eb0e19cd12e6e7f9443d9a376aefdaf755f087723d"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-transitions.webp",
+        "sha256": "22bb791aa682b76962ee385c3dd8dc8a51f680d4e745d0398c2b91a3e33ab7e0"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-audit-a.webp",
+        "sha256": "6519a06d43a949b9ba0c964dc2c2e32cee4a3b5e630c64167558575e3a0aaded"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-audit-b.webp",
+        "sha256": "9ba57dab06a56b2509a155ebcfd1f6556c9d6d874f8f29e1e87ef8f7164456ed"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-judge-a.webp",
+        "sha256": "c99174375541a4605e932bb15860d54b343c8f905cfed016dd62fe11e9b560d7"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-judge-b.webp",
+        "sha256": "28bf20f83f105d084bf591d839518692a199981b51f297a7c7b4803a5f403566"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-zebra-case.webp",
+        "sha256": "c65101e0239e8684f4156846a13549d19252a31c5f30ca68ccda9fe79d9a02c4"
+      },
+      {
+        "file": "lib/papers/self-teacher-context-design/appendix-shared-bridge.webp",
+        "sha256": "6c3afd546f4fe8f9b096da2c6db282753a40afdc024884ada033105e5f5c0c60"
+      }
+    ],
+    "external_service_boundary": {
+      "raw_errors": [],
+      "comments": "Twikoo form loaded at all three widths; no comments submitted. Publication QA separate."
+    },
+    "limitations": [
+      "No GPU training or inference, no reproduction of paper model scores.",
+      "Paper v2 L1 transition and compact CSV selected-step discrepancy retained as unresolved source boundaries.",
+      "Dataset/repository-wide licence unverified, no full upstream dataset redistribution.",
+      "Native macOS window fullscreen not tested."
+    ]
+  },
+  "qa_history_previous": {
     "status": "completed-current-artifacts; external-service-history-retained",
     "reading_layout": {
       "deck_first": true,
@@ -1014,161 +2715,26 @@
     },
     "notes": "Full primary text/appendix and all rendered pages reviewed separately in paper_reading. Main agent completed current note/all-slide editorial reconstruction, current rebuilt-byte article QA and matching deck/shared interaction QA. Raw reports/screenshots retained in the workspace; no native-window fullscreen certification."
   },
-  "terminology": [
-    {
-      "term": "student",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 1(b)"
-        }
-      ],
-      "article_quote": "student 只看题目，先写自己的回答；teacher 额外看参考资料，判断 student 接下来该怎样写。"
-    },
-    {
-      "term": "teacher",
-      "kind": "actor",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Figure 1(b)"
-        }
-      ],
-      "article_quote": "student 只看题目，先写自己的回答；teacher 额外看参考资料，判断 student 接下来该怎样写。"
-    },
-    {
-      "term": "On-Policy Self-Distillation（OPSD）",
-      "kind": "operation",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Appendix A.1"
-        }
-      ],
-      "article_quote": "本文的 On-Policy Self-Distillation（OPSD） 指：student 每轮用当前参数生成回答，再由同一基础模型的冻结版本指导这份回答。"
-    },
-    {
-      "term": "privileged context",
-      "kind": "prompt-context",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.1–3.2; Eq. 3"
-        }
-      ],
-      "article_quote": "只给 teacher 的额外参考资料叫 privileged context 。"
-    },
-    {
-      "term": "prefix",
-      "kind": "state",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.2; Eq. 3–4"
-        }
-      ],
-      "article_quote": "token 是模型处理的文本单位，可能是字、词片段或符号；已写出的前文叫 prefix。"
-    },
-    {
-      "term": "compiler",
-      "kind": "model-call",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§3.3; Appendix B.1; Figure 1(a)"
-        }
-      ],
-      "article_quote": "作者把生成资料的程序称为 compiler，这里它是一个模型提示流程，不是编译游戏代码的编译器。"
-    },
-    {
-      "term": "Avg@12",
-      "kind": "metric",
-      "source_ids": [
-        "paper"
-      ],
-      "source_locators": [
-        {
-          "source_id": "paper",
-          "locator": "§4.2; Table 1; Appendix A.2"
-        }
-      ],
-      "article_quote": "Avg@12＝正确回答总数÷(题数×12) ，不是十二次中只要有一次正确就算通过的 Pass@12。"
-    }
-  ],
-  "legacy_qa": {
-    "reading_layout": {
-      "deck_first": true,
-      "toc_h2_only": true,
-      "surface": "neutral-light",
-      "body_font": "sans-serif",
-      "body_font_px": 16.5,
-      "line_height": 1.75,
-      "figures_centered": true,
-      "internal_scroll_for_tables_and_code": true,
-      "page_horizontal_overflow": false
-    },
-    "viewports": [
+  "reading_history_previous": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 33,
+    "rendered_page_ranges": [
       {
-        "width": 1600,
-        "height": 1000,
-        "passed": true
-      },
-      {
-        "width": 1512,
-        "height": 982,
-        "passed": true
-      },
-      {
-        "width": 390,
-        "height": 844,
-        "passed": true
+        "start": 1,
+        "end": 33
       }
     ],
-    "tested_surfaces": {
-      "article_body": true,
-      "embedded_deck": true,
-      "standalone_deck": true
-    },
-    "language_review": {
-      "technical_terms_contextualized": true,
-      "actors_disambiguated": true,
-      "read_aloud_complete": true,
-      "facts_rechecked_after_rewrite": true
-    },
-    "interactions": {
-      "buttons": true,
-      "keyboard": true,
-      "hash_navigation": true,
-      "fullscreen": true,
-      "escape": true,
-      "standalone_return_to_article": true,
-      "immersive_mode_exit": true,
-      "usable_state_after_exit": true
-    },
-    "inspected_slides": [
-      "opening",
-      "densest",
-      "largest-table-or-code",
-      "final"
-    ]
+    "source_visuals_expected": 34,
+    "visual_inventory_complete": true,
+    "current_revision_review": {
+      "date": "2026-10-13",
+      "main_agent": "/root",
+      "complete_text_and_rendered_read_confirmed_by_parent": true,
+      "manifest_support_agent": "/root/revise_games_and_evaluation",
+      "scope": "Parent main agent completed the current complete primary-paper text and rendered-page reading. This child updated evidence mappings and inspected relevant primary captions/sections, not a new substitute complete read."
+    }
   }
 }
