@@ -2,9 +2,9 @@
 title: "[2026-08-26] V-Rubrics: Visual Faithfulness via Rubric-Based Reinforcement Learning"
 permalink: "/posts/论文解读/v-rubrics.html"
 date: "2026-10-06T10:00:00+08:00"
-updated: "2026-10-14T08:00:00+08:00"
+updated: "2026-10-20T04:44:52+08:00"
 cover: "/lib/papers/v-rubrics/cover.svg"
-description: "只看最终选项，会奖励看错图却猜对答案的回答。V-Rubrics 分别检查视觉事实、推理和输出要求，再让每项训练信号覆盖从回答开头到相关句子的文字。本文用公开潮汐题计算奖励，核对判分输入、训练与代码差异。"
+description: "答对选项也可能看错图。V-Rubrics 把视觉事实、推理和输出要求分开判分，再将每项训练信号分配给回答的相应前缀。本文用公开潮汐题复算奖励，核对原论文图表与代码边界。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -36,7 +36,7 @@ tags:
   <div class="deck-head"><strong>12 页交互图解 · 数据构建、真实评分案例、前缀归因与实验边界</strong><a href="/lib/decks/v-rubrics-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/v-rubrics-visual-guide.html" title="V-Rubrics 论文图解，共 12 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可点左下角返回文章</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端建议横屏阅读；独立打开后可点左下角返回文章</span></p>
   </div>
 </section>
 
@@ -60,17 +60,6 @@ tags:
   <div class="metric"><strong>+0.51</strong><span>视觉推理平均分相对只看答案的 GRPO</span></div>
 </div>
 
-<aside class="keypoints">
-  <h3>先记住四个结论</h3>
-  <ul>
-    <li><strong>V-Rubrics 的贡献是训练权重归因，不是一个新的评测基准。</strong>50K 数据用于 GRPO 训练；GRPO 指按同一道题的多次回答做相对比较，再更新模型。最终成绩来自 10 组已有的视觉与知识评测。</li>
-    <li><strong>评分项判分模型不看原图。</strong>它只读取模型回答和一条本身包含判断所需信息的文字标准。</li>
-    <li>相对只看最终答案的 GRPO，通用与知识类总体平均分提高 <strong>1.79 个百分点</strong>，视觉推理类提高 <strong>0.51 个百分点</strong>。单独知识类的提升为 2.53；这些统计不能混用，若干单项还下降了。</li>
-    <li><strong>公开代码很有价值，但不能只运行默认配置就声称复现论文消融实验。</strong>启动脚本的奖励权重、学习率与批大小默认值需要单独核对。</li>
-  </ul>
-</aside>
-
-
 <h2 id="动机：答对选项不代表看对了图">1. Motivation：答对选项不代表看对了图</h2>
 
 **一条答案可以包含多个局部判断，最终正确与这些判断全部正确不是一回事。**
@@ -78,11 +67,6 @@ tags:
 图表题里，模型可能读错一个柱子的高度，却通过其他线索猜对选项；几何题里，模型可能识别出形状，却使用不成立的关系完成推导。只看最终答案的 GRPO 把这些情况都压成一个数值。对于同一问题的多次生成结果，模型只知道哪次答对，不知道哪条视觉陈述值得保留。
 
 V-Rubrics 先把参考答案拆成“每条只表达一个事实或推理”的判断项，再让判分模型分别输出是或否。正权重评分项提供部分得分。负权重的 **PITFALL** 条目写的是“应避免某个错误”，判为 1 是成功避免，判为 0 才是确认违反。违反后取消答案与正评分项的语义奖励，但代码中的格式奖励仍独立保留；判分服务失败不等于违反。
-
-<figure class="figure wide">
-  <a href="/lib/papers/v-rubrics/body-method.svg" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/body-method.svg" width="1000" height="960" alt="V-Rubrics 从视觉问答数据、逐项判分到组内相对训练的流程"></a>
-  <figcaption>根据论文图 1-3 与第 3.2-3.5 节重绘。最后一栏标出判分模型的输入边界：训练判分只读取已生成的文字标准与回答；生成标准的 Gemini 模型曾看图。</figcaption>
-</figure>
 
 <h2 id="相邻工作：评分粒度与训练权重的范围">2. Related Work：评分粒度与训练权重的范围</h2>
 
@@ -106,6 +90,11 @@ V-Rubrics 先把参考答案拆成“每条只表达一个事实或推理”的�
 
 **数据构建与训练时判分是两个阶段，使用的模型也不同。**
 
+<figure class="figure wide">
+  <a href="/lib/papers/v-rubrics/source-figure-2.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-figure-2.png" width="1828" height="844" alt="原论文 Figure 2：50K 数据构建与逐项前缀奖励训练的完整流程"></a>
+  <figcaption>原论文 Figure 2。左半是筛选题目并用 Gemini-3-Pro 看图生成评分项；右半是当前模型生成多条回答、Qwen3-VL-235B-A22B 逐项判分后更新策略。图中的小字可点开放大。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption>
+</figure>
+
 作者先在 OpenMMReasoner-SFT-874K 上做监督微调（SFT），得到固定的 `πSFT` 模型。这个模型存档用来反复生成候选回答并按正确性筛选，也分别初始化可训练的策略模型和固定不更新的参考模型；后者用于计算 KL 距离，也就是衡量训练后的回答分布偏离起点有多远。
 
 随后，17 个视觉数据源经过基于规则的过滤。`πSFT` 对每个候选问题生成 8 次回答：
@@ -119,9 +108,20 @@ V-Rubrics 先把参考答案拆成“每条只表达一个事实或推理”的�
 
 最终得到 18,121 个困难样本、25,306 个中等样本和 6,821 个简单样本。Gemini-3-Pro 根据图像、问题指令与参考回答，为每条样本生成 JSON 格式的评分项。总计 352,938 条，其中 VF 209,436、RC 101,369、IF 42,133。论文没有报告人工逐条审计或标注者一致性。
 
-<figure class="figure wide"><a href="/lib/papers/v-rubrics/body-case.svg" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/body-case.svg" width="1000" height="1020" alt="V-Rubrics 把 AI2D 潮汐图回答拆成六条独立评分项的真实数据行"></a><figcaption>真实数据行 <code>original_id=2501</code>。一张潮汐图的回答被拆成六条 rubric item，判分模型逐项检查文字回答，但不直接看到原图。</figcaption></figure>
+<details><summary>展开原论文 Figure 3 与 Table 4：数据来源和类别占比</summary>
+<figure class="figure wide"><a href="/lib/papers/v-rubrics/source-figure-3.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-figure-3.png" width="884" height="596" alt="原论文 Figure 3：50,248 个样本的十七个来源及 VF、RC、IF 评分项比例"></a><figcaption>原论文 Figure 3。内圈显示三类评分项的占比，外圈显示各数据源占比；<code>VF 59.3%</code> 是评分项占比，不是样本正确率。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+<figure class="figure wide"><a href="/lib/papers/v-rubrics/source-table-4.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-table-4.png" width="740" height="844" style="width:auto;max-width:100%;height:auto;max-height:820px" alt="原论文 Table 4：十七个数据源各自进入训练集的样本数与比例，合计 50,248"></a><figcaption>原论文附录 Table 4，列出全部 17 个数据源及训练样本数，总数 50,248。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
+
+<details><summary>展开原论文 Table 5：生成评分项时使用的完整提示词</summary>
+<figure class="figure wide"><a href="/lib/papers/v-rubrics/source-table-5.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-table-5.png" width="1240" height="1624" style="width:auto;max-width:100%;height:auto;max-height:820px" alt="原论文 Table 5：Gemini-3-Pro 生成视觉忠实度、推理一致性与指令遵循评分项的完整提示词"></a><figcaption>原论文附录 Table 5。这是作者交给评分项生成模型的提示词，其中要求每条标准独立判断，并给出类型与权重；不是训练时判分模型接收的输入。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
 
 <h3 id="真实案例：AI2D-潮汐图">3.1 真实案例：AI2D 潮汐图</h3>
+
+论文 Figure 1 把潮汐图与六条标准并排展示。下面再用公开数据行核对图中选项编号、各项权重及一个可复算的奖励。
+
+<figure class="figure wide"><a href="/lib/papers/v-rubrics/source-figure-1.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-figure-1.png" width="896" height="1200" style="width:auto;max-width:100%;height:auto;max-height:820px" alt="原论文 Figure 1：AI2D 潮汐图、四个选项和六条评分标准"></a><figcaption>原论文 Figure 1，潮汐题及六条标准的完整原图；题图源自 AI2D，论文中的组合与标注由作者制作。<code>(3) spring tide</code> 是从零编号的第四个选项。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">论文 CC BY 4.0</a>。</figcaption></figure>
 
 <div class="case">
 <h4>公开数据中的 spring tide 问题</h4>
@@ -156,6 +156,10 @@ V-Rubrics 先把参考答案拆成“每条只表达一个事实或推理”的�
 
 之后只更新 policy；来自同一 SFT 起点的独立参考模型冻结，用于 KL 正则。Table 6 的 KL 系数为 0.01，学习率 <code>2e−6</code>，最大回答 8,192 token，每题 12 次、最多遍历数据五次（五 epoch）。Rubric 组训练 batch 为 192，answer-only 为 480，mini-batch 也不同。因此虽然两组用同一数据和起点，不能把它说成所有训练条件完全相同。
 
+<details><summary>展开原论文 Table 6：完整训练设置</summary>
+<figure class="figure wide"><div style="max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch"><a href="/lib/papers/v-rubrics/source-table-6.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-table-6.png" width="1828" height="1276" style="width:780px;max-width:none;height:auto" alt="原论文 Table 6：SFT、GRPO、奖励判分与并行训练的全部报告设置"></a></div><figcaption>原论文附录 Table 6。它给出了 batch、学习率、每题回答数、判分模型等条件；与公开启动脚本默认值的差别需要逐项核对。手机端可在图内横滑或点开放大。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
+
 
 <div class="note red"><p><strong>这个数据行还有一个分类问题：</strong>数据把“选择大潮”标成 IF。这个判断更接近答案正确性，不是典型的格式或指令约束，说明 VF、RC、IF 标签并不总能把三类能力分得很干净。</p></div>
 
@@ -163,25 +167,23 @@ V-Rubrics 先把参考答案拆成“每条只表达一个事实或推理”的�
 
 **相对只看答案的 GRPO，通用与知识类总体平均分提高 1.79 个百分点，视觉推理类提高 0.51 个百分点。**
 
-<figure class="figure wide">
-  <a href="/lib/papers/v-rubrics/body-results.svg" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/body-results.svg" width="1000" height="785" alt="V-Rubrics 相对 SFT 和 answer-only GRPO 的结果"></a>
-  <figcaption>根据论文表 1-3 重绘。<code>Overall Avg.</code>（总体平均分）指论文所列指标的简单平均，每项权重相同。</figcaption>
-</figure>
-
-<div class="table-scroll">
-<table>
-  <thead><tr><th>模型阶段</th><th>通用与知识类平均分</th><th>视觉推理类平均分</th></tr></thead>
-  <tbody><tr><td>SFT</td><td>64.93</td><td>58.45</td></tr><tr><td>只看答案的 GRPO</td><td>66.25</td><td>61.94</td></tr><tr><td>评分项 GRPO</td><td>68.04</td><td>62.45</td></tr></tbody>
-</table>
-</div>
+<figure class="figure wide"><div style="max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch"><a href="/lib/papers/v-rubrics/source-table-1.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-table-1.png" width="1816" height="916" style="width:780px;max-width:none;height:auto" alt="原论文 Table 1：通用视觉与知识推理基线、SFT、答案奖励 GRPO 和评分项 GRPO 的全部分数"></a></div><figcaption>原论文 Table 1，保留全部模型、训练数据列和单项结果。阅读本文时重点看最后三行：共同 SFT 起点为 64.93，只看答案的 GRPO 为 66.25，评分项 GRPO 为 68.04；这些数是四项的 <code>Overall Avg.</code>。手机端可在图内横滑或点开放大。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
 
 Table 1 的总体平均分把 MMBench-Dev、MMMU Val、MMMU-Pro 和 MMMU-Pro V 四个指标等权平均。表中的单独知识类平均分只平均后三项：<code>59.35→61.88</code>，提高 <code>2.53</code> 个百分点；不要把它与总体平均的 <code>66.25→68.04</code> 混为一项。
 
 评分项模型并非每项都更高。它在 MMBench-Dev 上比只看答案的模型低 0.43 个百分点，在 MathVerse V/O 上低 2.79，在 CharXiv 推理项上低 0.40；MathVision、DynaMath、WeMath 与 LogicVista 则上升。作者认为，多步视觉事实和推理若能被评分项覆盖，方法更容易奏效；对于要求符号答案完全准确或带有数据集特定规范的任务，评分项和最终评测指标可能并不一致。
 
+<figure class="figure wide"><div style="max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch"><a href="/lib/papers/v-rubrics/source-table-2.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-table-2.png" width="1816" height="988" style="width:780px;max-width:none;height:auto" alt="原论文 Table 2：视觉数学、图表与逻辑推理基线和三种训练阶段的全部单项分数"></a></div><figcaption>原论文 Table 2，保留视觉推理各项与 <code>Overall Avg.</code>：61.94→62.45 是该表整体均分，不代表每个任务都提高；MathVerse V/O 与 CharXiv Reasoning 是反例。手机端可在图内横滑或点开放大。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+
+<details><summary>展开原论文 Figure 4：两条定性回答的逐步差异</summary>
+<figure class="figure wide"><a href="/lib/papers/v-rubrics/source-figure-4.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-figure-4.png" width="884" height="1456" style="width:auto;max-width:100%;height:auto;max-height:820px" alt="原论文 Figure 4：历史人物计数与分段函数两道题中，答案奖励模型和评分项模型的回答比较"></a><figcaption>原论文 Figure 4。作者展示了人物计数和分段函数两个成功案例：只看最终答案的模型沿错误中间判断得到错答，评分项训练模型纠正了过程。这是定性样例，不能替代 Table 1/2 的总体统计。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
+</details>
+
 <h3 id="表-3-能否证明前缀定位有效？">4.1 表 3 能否证明前缀定位有效？</h3>
 
 论文的三档结果是：只看答案为 66.25；把评分项作用于整段回答为 67.74；逐项标准化并作用于前缀为 68.04。最后 0.30 个百分点同时包含“每项分别标准化”和“前缀定位”两处变化，论文自己也没有把两者拆开。
+
+<figure class="figure wide"><a href="/lib/papers/v-rubrics/source-table-3.png" target="_blank" rel="noopener"><img src="/lib/papers/v-rubrics/source-table-3.png" width="832" height="216" alt="原论文 Table 3：答案奖励、整段评分项奖励、逐项前缀奖励三组消融结果 66.25、67.74、68.04"></a><figcaption>原论文 Table 3。<code>Component + prefix</code> 同时改变评分项标准化和奖励作用范围；67.74→68.04 的差额不能单独归给前缀定位。Shulin Tian 等，<a href="https://arxiv.org/pdf/2608.25580v1">原论文</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。</figcaption></figure>
 
 公开仓库还带来另一层复现风险。版本 `6515819` 的同一个官方启动脚本提供两种模式，默认使用不同的奖励权重：
 
@@ -208,15 +210,8 @@ Table 1 的总体平均分把 MMBench-Dev、MMMU Val、MMMU-Pro 和 MMMU-Pro V �
 
 **它给出了完整、可运行的细粒度视觉强化学习流程；目前的证据更支持“评分项奖励有增益”，还不足以单独证明前缀定位是主要原因。**
 
-<div class="limit-grid">
-  <div><b>论文已经支持</b><span>从共同的 SFT 起点出发，只看答案和使用评分项的 GRPO 都有提升；评分项模型在两组总体平均分上略高。</span></div>
-  <div><b>公开实现的价值</b><span>数据集、奖励模块、开源强化学习训练框架 VERL 的修改补丁、评测程序与测试均已公开，代码边界比多数奖励论文清楚。</span></div>
-  <div><b>最强限制</b><span>评分项全部自动生成，判分模型不看图，论文也没有人工标注审计；若评分项写错，奖励会稳定地强化错误标准。</span></div>
-  <div><b>复现注意</b><span>论文表 6 与仓库启动脚本默认值在学习率、批大小和奖励权重上存在差别，复现时需要保存全部参数覆盖项。</span></div>
-</div>
+公开的数据集、奖励模块、VERL 修改补丁、评测程序与测试，让后续研究者可以检查训练信号怎样落到 token 上。最值得复用的是逐项核查视觉事实和推理的办法；最需要补证据的是自动生成标准的准确性，以及在相同权重、batch 和学习率下前缀定位本身的作用。
 
-这篇适合关心多模态强化学习、大语言模型判分与细粒度训练权重归因的读者。最可迁移的部分是“把一条回答拆成几条可独立判断的陈述”；最不该跳过的部分是评分项由谁生成、判分模型看得到什么，以及消融实验有没有同时修改其他变量。
-
-<p class="source-note">主要来源：论文 v1 全文与附录、V-Rubrics 官方仓库版本 6515819、V-Rubrics 50K 公开数据行 <code>chart_02501_3c2e6864</code>。代码与数据检查日期：2026-10-06。</p>
+<p class="source-note">主要来源：论文 v1 全文与附录、V-Rubrics 官方仓库版本 6515819、V-Rubrics 50K 公开数据行 <code>chart_02501_3c2e6864</code>。代码与数据检查日期：2026-10-06；论文与图表复读日期：2026-10-20。</p>
 
 </div>
