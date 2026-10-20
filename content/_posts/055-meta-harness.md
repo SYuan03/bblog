@@ -2,7 +2,7 @@
 title: "[2026-03-30] Meta-Harness: End-to-End Optimization of Model Harnesses"
 permalink: "/posts/论文解读/meta-harness.html"
 date: "2026-09-29T22:20:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T10:00:00+08:00"
 cover: "/generated-covers/055-meta-harness.webp"
 description: "让 Claude Code 读取历次候选的代码、分数与执行记录，改进包在模型外的运行程序。本文说明搜索过程、真实样例的判分，以及分类、数学和终端实验各自能证明什么。"
 wide_content: true
@@ -35,6 +35,7 @@ html:not([data-theme="dark"]) body:has(.metah-reading){--paper:#fff;--paper-elev
 .metah-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.metah-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.metah-reading .note p{margin:.34em 0}.metah-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .9rem/1.6 var(--mono);overflow-x:auto}.metah-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.metah-reading .limit-grid>div{padding:17px;background:#fff}.metah-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.metah-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.metah-reading .metrics{grid-template-columns:1fr 1fr}.metah-reading .metric:nth-child(2){border-right:0}.metah-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.metah-reading .flow{grid-template-columns:1fr 1fr}.metah-reading .roles{grid-template-columns:1fr}.metah-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.metah-reading .flow,.metah-reading .verdict,.metah-reading .limit-grid{grid-template-columns:1fr}.metah-reading .part0,.metah-reading .case{padding:17px 15px}.metah-reading .deck-head,.metah-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.metah-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}.metah-reading .pan-original::before{content:"原图可左右滑动，也可点按放大";display:block;margin-bottom:6px;color:var(--soft);font-size:.76rem}.metah-reading .pan-original>a{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.metah-reading .pan-original img{width:760px!important;max-width:none!important;max-height:none!important;margin:0!important}.metah-reading .pan-original:has(img[src$="figure-2-loop.svg"]) img{width:900px!important}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -95,7 +96,7 @@ Proposer 只写候选代码；外层循环决定代码能否导入、运行哪�
 
 论文估算，所列文本优化器一次产物评测可产生约 100 到 30,000 tokens 的反馈；最重的 harness 评测一次可产生约 1,000 万 tokens。**这是可供诊断的材料量，不是一次实际模型输入的长度，也不是各方法按相同预算测得的值。** Meta-Harness 把源码、分数、模型回复、工具调用和状态更新存到文件系统，让代码 Agent 用 `grep`、`cat`、脚本和局部读取选择相关证据。
 
-<figure class="figure">
+<figure class="figure pan-original">
   <a href="/lib/papers/meta-harness/figure-2-loop.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/meta-harness/figure-2-loop.svg" alt="Meta-Harness 的 proposer、evaluator 与文件系统闭环" width="4080" height="1455"></a>
   <figcaption>原论文 Figure 2（CC BY 4.0）。第 1 步由 proposer 读历史并写候选；第 2 步由外层 evaluator 跑任务；第 3 步才把代码、分数和执行记录写回历史。</figcaption>
 </figure>
@@ -186,7 +187,7 @@ except Exception:
 
 作者认为，提前提供环境信息可减少 2 到 4 轮 `ls`、`which python3` 等探索调用，尤其帮助依赖生物信息学库、渲染程序、棋类引擎或密码学工具的任务。<strong>公开材料没有给出逐任务调用数的受控对照，不能把节省轮数当成独立验证的因果结果。</strong>论文报告，相比 Terminus-KIRA，89 个任务中有 7 个的通过表现改善，最大改善出现在 `protein-assembly` 与 `path-tracing`；“7 个任务有增益”不等于“新增解出 7 道整题”。
 
-<figure class="figure">
+<figure class="figure pan-original">
   <a href="/lib/papers/meta-harness/figure-9-tbench-harness.webp" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/meta-harness/figure-9-tbench-harness.webp" alt="加入预先环境查询的 TerminalBench-2 harness" width="1260" height="1148"></a>
   <figcaption>原论文 Figure 9（CC BY 4.0）。绿色部分继承自 Terminus-KIRA；红色环境预先查询模块是 Meta-Harness 搜索得到的主要新增模块。</figcaption>
 </figure>
@@ -225,14 +226,14 @@ except Exception:
 
 成本较低的 Draft Verification 先检索 5 条最相似的带标签样例，让模型给出草稿标签；再根据这个标签检索 5 条同标签例子和 5 条不同标签例子，让同一个模型决定保留还是改答案。这里的 confirmers / challengers 是**检索出的数据行，不是十个额外模型**。历史不足 5 条时，它退回一次普通带示例调用。Table 9 中，这个程序平均准确率 40.1%，额外输入约 5.4K 字符。
 
-<figure class="figure">
+<figure class="figure pan-original">
   <a href="/lib/papers/meta-harness/figure-5-draft-verification.webp" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/meta-harness/figure-5-draft-verification.webp" alt="两次分类调用：先从五个近邻预测草稿，再用同标签与异标签样例复核" width="1260" height="860"></a>
   <figcaption>原论文 Figure 5（CC BY 4.0）。第二次检索依赖当前问题和草稿标签，因此能找出针对这次判断的反例。</figcaption>
 </figure>
 
 主结果用的是准确率较高的 Label-Primed Query：一次较长调用里先列出全部合法标签，再为每个已知标签放一条与当前问题最相关的历史例子，最后把相似但标签不同的局部例子成对排列。程序用 TF-IDF（一种按词项统计计算文本相似度的方法）选取例子。模型同时看到答案范围、各类代表和容易混淆的区别。
 
-<figure class="figure">
+<figure class="figure pan-original">
   <a href="/lib/papers/meta-harness/figure-6-label-primed.webp" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/meta-harness/figure-6-label-primed.webp" alt="一次分类提示包含合法标签、每个标签的相关代表样例和局部异标签对照" width="1300" height="1060"></a>
   <figcaption>原论文 Figure 6（CC BY 4.0）。它与上一种程序分别代表高准确率、低输入成本的选择，不是同一程序的连续阶段。</figcaption>
 </figure>
@@ -247,7 +248,7 @@ except Exception:
 
 数学搜索用 GPT-OSS-20B 在 250 道奥赛难度题上跑 40 轮，产生 109 个候选。最终程序先按关键词和正则表达式把当前题分到组合、几何、数论、代数／其他之一，只运行被选中的一路，不汇总四路答案。BM25 是按词项匹配程度排序的文本检索方法；这里还保留 LaTeX 片段作为词项。
 
-<figure class="figure">
+<figure class="figure pan-original">
   <a href="/lib/papers/meta-harness/figure-8-math-router.webp" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/meta-harness/figure-8-math-router.webp" alt="四路 math retrieval harness" width="1320" height="1060"></a>
   <figcaption>原论文 Figure 8（CC BY 4.0）。四种题型共用 BM25 检索器，但选择、重排和示例数不同。</figcaption>
 </figure>
