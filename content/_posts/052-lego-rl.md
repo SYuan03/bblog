@@ -2,7 +2,7 @@
 title: "[2026-08-18] LEGO-RL: Harness-Native Reinforcement Learning for Coding Agents"
 permalink: "/posts/论文解读/lego-rl.html"
 date: "2026-09-29T13:30:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T12:45:00+08:00"
 cover: "/generated-covers/052-lego-rl.webp"
 description: "LEGO-RL 保留 Claude Code 等编码助手原有的执行流程，记录模型实际生成的内容，再按隐藏测试结果训练模型。用真实进度条修复任务讲清生成记录、任务筛选、评分和训练更新，并区分验证集最高分与最后一次验证。"
 wide_content: true
@@ -36,6 +36,7 @@ html:not([data-theme="dark"]) body:has(.lego-reading){--paper:#fff;--paper-eleva
 .lego-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.lego-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.lego-reading .note p{margin:.34em 0}.lego-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .9rem/1.6 var(--mono);overflow-x:auto}.lego-reading .judge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:22px 0;background:var(--line-local)}.lego-reading .judge-grid>div{padding:16px;background:#fff}.lego-reading .judge-grid b{display:block;color:var(--blue);font-size:.93rem}.lego-reading .judge-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.82rem;line-height:1.5}.lego-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.lego-reading .limit-grid>div{padding:17px;background:#fff}.lego-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.lego-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.lego-reading .metrics{grid-template-columns:1fr 1fr}.lego-reading .metric:nth-child(2){border-right:0}.lego-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.lego-reading .flow{grid-template-columns:1fr 1fr}.lego-reading .roles,.lego-reading .judge-grid{grid-template-columns:1fr}.lego-reading .figure-grid{grid-template-columns:1fr}.lego-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.lego-reading .flow,.lego-reading .verdict,.lego-reading .limit-grid{grid-template-columns:1fr}.lego-reading .part0,.lego-reading .case{padding:17px 15px}.lego-reading .deck-head,.lego-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.lego-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -55,7 +56,7 @@ html:not([data-theme="dark"]) body:has(.lego-reading){--paper:#fff;--paper-eleva
   <div class="deck-head"><strong>20 页交互图解 · 从实际修复到测试和训练</strong><a href="/lib/decks/lego-rl-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/lego-rl-visual-guide.html" title="LEGO-RL 论文图解，共 20 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
 

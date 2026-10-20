@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>LEGO-RL · 论文图解</title>
-<link rel="icon" href="data:,">
+<link rel="icon" href="/MyImgs/icon1.svg" type="image/svg+xml">
 <style>
 :root{--paper:#f8f5ee;--ink:#171b20;--text:#3f4853;--muted:#7b8490;--line:#cfd2d2;--blue:#2869ad;--blue2:#dce9f6;--orange:#d76536;--orange2:#f6e2d7;--green:#28705d;--green2:#dcebe5;--red:#a94842;--red2:#f3dfdc;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans CJK SC",Arial,sans-serif;--serif:"Songti SC",STSong,"Noto Serif CJK SC",serif}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#11161c;color:var(--ink);font-family:var(--sans)}button,a{font:inherit}a{color:inherit}.deck{position:absolute;width:1600px;height:900px;transform-origin:top left;background:var(--paper)}.slide{position:absolute;inset:0;display:none;padding:42px 58px 50px;background:var(--paper)}.slide.active{display:flex;flex-direction:column}.top{display:flex;align-items:center;justify-content:space-between;gap:28px;height:24px;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--muted);font:700 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase}.top b{color:var(--blue)}h1,h2,h3,p{margin-top:0}h1{max-width:1260px;margin:30px 0 14px;font:700 58px/1.08 var(--serif);letter-spacing:-.025em}h2{max-width:1370px;margin:25px 0 10px;font:700 42px/1.16 var(--serif);letter-spacing:-.018em}h3{margin-bottom:8px;font-size:22px;line-height:1.25}.lead{max-width:1260px;margin:0 0 22px;color:var(--text);font-size:23px;line-height:1.48}.body{display:flex;flex:1;min-height:0;align-items:center}.foot{display:flex;align-items:center;justify-content:space-between;gap:20px;height:24px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.25}.foot a{text-decoration:underline;text-underline-offset:2px}.pg{font:700 12px/1 var(--mono);white-space:nowrap}code,.mono{font-family:var(--mono)}strong{font-weight:760}.blue{color:var(--blue)}.orange{color:var(--orange)}.green{color:var(--green)}.red{color:var(--red)}
@@ -46,6 +46,56 @@ html,body{background:#edf1f5}
 .hero .metric:nth-child(-n+2){border-bottom:1px solid var(--line)}
 .hero .metric b{font-family:var(--mono);font-size:24px;white-space:nowrap}
 .hero .metric span{font-size:14px;line-height:1.4}
+
+/* Portrait reading layout: prose reflows; licensed originals can be panned at legible size. */
+@media screen and (max-width:700px){
+  html,body{height:auto;min-height:100%;overflow:auto;background:var(--paper)}
+  #deck{position:static!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;transform:none!important}
+  .slide{position:relative;inset:auto;min-height:100vh;height:auto;padding:20px 16px 90px;overflow:visible}
+  .slide.active{display:flex;flex-direction:column;gap:14px}
+  .top{height:auto;min-height:0;align-items:flex-start;flex-direction:column;gap:6px;padding-bottom:9px;font-size:10px;line-height:1.4}
+  .top b{font-size:11px;line-height:1.3;letter-spacing:.04em}
+  .slide>h1,.slide>h2{max-width:100%;margin:0;font:700 25px/1.27 var(--sans)}
+  .lead{max-width:100%;margin:0;color:var(--text);font-size:15px;line-height:1.55}
+  .body{display:block;flex:none;width:100%;min-width:0;min-height:0;height:auto;padding:0}
+  .body>div{max-width:100%}
+  .foot{height:auto;min-height:0;align-items:flex-start;gap:10px;margin-top:12px;padding-top:10px;font-size:11px;line-height:1.5}
+  .foot span:first-child{min-width:0}
+  .hero,.two,.three,.problem-grid,.fixed-changing,.roles,.timeline,.state-pair,.schema,.judges,.bench,.image-note,.case-grid,.limits,.funnel,.formula-grid,.gallery2,.gallery3,.progress-case{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;width:100%;height:auto}
+  .hero{align-items:start}.hero-copy{padding-right:0}.hero h1{margin:0 0 12px;font:700 27px/1.25 var(--sans)}
+  .hero .dek{font-size:15px;line-height:1.55}.eyebrow{font-size:10px;margin-bottom:8px;line-height:1.4}
+  .thesis{margin-top:12px;padding:12px 14px;font-size:14px;line-height:1.55}
+  .hero .metrics,.metrics{grid-template-columns:1fr 1fr;margin-top:10px}.hero .metric,.metric{padding:10px}
+  .hero .metric b,.metric b{font-size:18px}.hero .metric span,.metric span{font-size:11px}
+  .panel,.brief,.risk,.role,.state,.judge,.bench>div,.limit,.funnel>div,.progress-verdict{min-width:0;min-height:0;padding:13px 14px}
+  .panel h3,.brief h3,.role h3,.state h3,.judge h3,.bench h3,.limit strong,.progress-verdict h3{font:700 18px/1.32 var(--sans)}
+  .panel p,.panel li,.brief p,.brief li,.role li,.state li,.judge li,.bench p,.limit span,.risk span,.step p,.progress-verdict p{font-size:14px;line-height:1.5}
+  .risk{grid-template-columns:45px 1fr;gap:8px}.risk b{font-size:18px}.risk strong{font-size:15px}
+  .stack{gap:7px}.stack div{padding:10px 12px}.stack b{font-size:15px}.stack span{font-size:13px}
+  .arrow{font-size:24px}.column-title{font-size:11px;margin-bottom:7px}
+  .equation,.advantage{min-height:0;padding:12px;overflow-x:auto;font-size:12px;line-height:1.6;text-align:left}
+  .equation small,.advantage small{font-size:11px}
+  .role .num{width:34px;height:34px;margin-bottom:8px;font-size:15px}.role ul,.state ul,.judge ul{margin-top:8px}
+  .step{min-height:0;padding:12px 14px;border:1px solid var(--line)}.step:not(:last-child)::after{display:none}.step h3{margin:7px 0;font-size:16px}
+  .wall b{font-size:24px}.wall span{font-size:11px}
+  .codebox,.progress-case .codebox{width:100%;max-width:100%;padding:12px;overflow-x:auto;font-size:11px;line-height:1.55;white-space:pre}
+  .trace{grid-template-columns:minmax(0,1fr)}.trace div{padding:12px}.trace p{font-size:13px}
+  .callouts{gap:8px}.callout,.progress-case .callout{padding:11px 13px;margin-top:0}.callout b{font-size:15px}.callout span,.progress-case .callout span{font-size:13px;line-height:1.5}
+  .progress-verdict h3{margin-bottom:6px}.progress-verdict .state-number{font-size:20px;margin-bottom:6px}
+  .result-note{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:10px;background:none;border:0}.result-note div{padding:11px 13px;border:1px solid var(--line)}
+  .group{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.rollout{padding:8px 2px;font-size:10px}
+  .formula-grid[style],.two.wide-left{grid-template-columns:minmax(0,1fr)!important}
+  .body:has(.compare),.body:has(.results-table){overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .body:has(.compare)::before,.body:has(.results-table)::before{content:"表格可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}
+  .compare,.results-table{min-width:720px;font-size:13px}.compare th,.compare td,.results-table th,.results-table td{padding:8px 9px}
+  .paper-figure,.hero-figure,.image-note>div:first-child,.problem-grid>div:has(img),.gallery2 figure,.gallery3 figure,.atlas figure{display:block;width:100%;height:auto;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .paper-figure::before,.hero-figure::before,.image-note>div:first-child::before,.gallery2 figure::before,.gallery3 figure::before,.atlas figure::before{content:"原图可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}
+  .paper-figure img,.hero-figure img,.image-note img,.problem-grid img,.gallery2 img,.gallery3 img,.atlas img{display:block;width:850px;max-width:none;max-height:none;height:auto;object-fit:contain}
+  .caption,.gallery2 figcaption,.gallery3 figcaption,.atlas figcaption{position:static;padding:7px 0;background:none;color:var(--muted);font-size:11px;line-height:1.45}
+  .atlas{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:none;gap:12px;height:auto}.atlas figure.wide{grid-column:auto}.atlas img{max-height:none}
+  .statusline{flex-wrap:wrap}.statusline span{font-size:11px}
+  #controls{max-width:calc(100vw - 12px)}
+}
 </style>
 </head>
 <body>
@@ -173,7 +223,7 @@ html,body{background:#edf1f5}
   if(window.self===window.top)returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
   function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
-  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · LEGO-RL`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · LEGO-RL`;if(updateHash)history.replaceState(null,'',`#${index+1}`);if(innerWidth<=700)scrollTo(0,0)}
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
   function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
   async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
