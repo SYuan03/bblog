@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <link rel="icon" href="data:,">
+  <link rel="icon" href="/MyImgs/icon1.svg" type="image/svg+xml">
   <base target="_blank">
   <title>GameLogicBench 论文图解</title>
   <style>
@@ -31,6 +31,41 @@ html,body{background:#edf1f5}
 .overview-card{background:#fff;color:var(--ink)}
 .slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
 #controls button,#controls a{white-space:nowrap;flex-shrink:0}
+
+/* Portrait reading layout: reflow explanations and retain scrollable originals. */
+@media screen and (max-width:700px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto;background:var(--paper)}
+  #viewport{position:static;inset:auto;overflow:visible;width:100%;height:auto}
+  #deck{position:static!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;transform:none!important;box-shadow:none}
+  .slide{position:relative;inset:auto;min-height:100vh;height:auto;overflow:visible;padding:20px 16px 86px;background:var(--paper)}
+  .slide.active{display:flex;flex-direction:column;gap:12px}
+  .top{height:auto;min-height:0;display:flex;align-items:flex-start;flex-direction:column;gap:4px;padding-bottom:8px;font-size:10px;line-height:1.4;letter-spacing:.03em}
+  .top b{font-size:11px}
+  .slide h1,.slide h2{max-width:100%;margin:0;font:700 25px/1.27 var(--sans);letter-spacing:-.01em}
+  .slide h3{font-size:17px;line-height:1.32}
+  .body{display:block;width:100%;height:auto;min-height:0;flex:none;padding:0;margin:0}
+  .body>*{max-width:100%;min-width:0}
+  .foot{height:auto;min-height:0;display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding-top:9px;font-size:10px;line-height:1.45;letter-spacing:0}
+  .foot span:first-child{min-width:0}
+  .body :is(.cover,.cards,.bad-good,.tiers,.boundary,.case-grid,.code-side,.split,.timeline,.callouts,.cal,.ablation,.judge,.limits,.flow,.roles,.requirements,.two-paper,.trajectory,.evidence,.isolation,.eval,.methods,.stages,.metrics,.annotation,.annotations,.stack,.case-body,.case-result){display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%;height:auto;min-height:0}
+  .body :is(.card,.case,.case-step,.cal-item,.tier,.limit,.flow-step,.metric,.rule-block,.stage,.annotation,.req,.ev,.method,.code-side>div){min-width:0;min-height:0;height:auto;padding:12px 14px}
+  .body :is(p,li){font-size:14px;line-height:1.55}
+  .body :is(.lead,.big-claim){font-size:15px;line-height:1.55}
+  .body :is(.eyebrow,.name,.label){font-size:11px}
+  .body .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0;margin-top:12px}
+  .body .metric strong{font-size:19px}
+  .body :is(.arrow,.stage-arrow,.iso-arrow,.trace-arrow,.versus){font-size:20px;line-height:1;text-align:center}
+  .body :is(.code,pre){max-width:100%;overflow-x:auto;white-space:pre;font-size:11px;line-height:1.55;padding:12px}
+  .body:has(.matrix),.body:has(.roles){overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .body .matrix{grid-template-columns:180px repeat(4,150px)!important;width:max-content;min-width:780px;font-size:12px}
+  .body .roles{grid-template-columns:140px 180px 180px 220px!important;width:max-content;min-width:720px;font-size:12px}
+  .body .paper-frame,.body .cover-art{display:block;width:100%;height:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px;background:#fff}
+  .body .paper-frame::before,.body .cover-art:has(img)::before{content:"原图可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}
+  .body .paper-frame img,.body .cover-art img{display:block;width:850px;max-width:none;max-height:none;height:auto;object-fit:contain}
+  .body .paper-caption{position:static;margin:7px 0;font-size:11px;line-height:1.45;text-align:left}
+  #controls{max-width:calc(100vw - 12px)}
+}
+@media screen and (max-width:700px){.body .scene-tree,.body .case{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%;height:auto}.body .tree{max-width:100%;overflow-x:auto;padding:12px;font-size:13px;line-height:1.55}.body .tree .child{padding-left:14px}.body .tree .child2{padding-left:28px}.body .case-title,.body .case-body{min-width:0;max-width:100%}}
 </style>
 </head>
 <body>
@@ -250,7 +285,7 @@ func <span class="t">take_damage</span>(amount: int):
       deck.style.left=`${(innerWidth-1600*scale)/2}px`;
       deck.style.top=`${(availableHeight-900*scale)/2}px`;
     }
-    function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameLogicBench`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+    function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameLogicBench`;if(updateHash)history.replaceState(null,'',`#${index+1}`);if(innerWidth<=700)scrollTo(0,0);}
     function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}function syncFullscreenButton(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出全屏':'全屏'}
     document.getElementById('prev').addEventListener('click',()=>show(index-1));document.getElementById('next').addEventListener('click',()=>show(index+1));document.getElementById('toc').addEventListener('click',openOverview);document.getElementById('close-overview').addEventListener('click',closeOverview);overview.addEventListener('click',event=>{if(event.target===overview)closeOverview()});fullButton.addEventListener('click',()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen());document.addEventListener('fullscreenchange',syncFullscreenButton);syncFullscreenButton();
     addEventListener('keydown',event=>{if(!overview.hidden){if(event.key==='Escape')closeOverview();return}if(event.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(index-1)}if(event.key==='Home'){event.preventDefault();show(0)}if(event.key==='End'){event.preventDefault();show(slides.length-1)}if(event.key.toLowerCase()==='f')fullButton.click();if(event.key.toLowerCase()==='o')openOverview()});

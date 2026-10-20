@@ -2,7 +2,7 @@
 title: "[2026-09-18] GameASG-Bench: Benchmarking Autonomous Software Generation for Game Development"
 permalink: "/posts/论文解读/gameasg-bench.html"
 date: "2026-09-21T21:31:01+08:00"
-updated: "2026-10-13T19:10:00+08:00"
+updated: "2026-10-20T14:00:00+08:00"
 cover: "/generated-covers/046-gameasg-bench.webp"
 description: "47 个浏览器游戏怎样验收：谁写测试、编码模型系统看见哪些材料、真实拖拽如何判失败，以及为什么运行检查平均通过率 93.2% 只对应 26/47 个完整成功任务。"
 wide_content: true
@@ -41,6 +41,7 @@ html:not([data-theme="dark"]) body:has(.gb-reading){--paper:#fff;--paper-elevate
 @media(max-width:760px){.article-shell-deck .article-header{max-width:100%}.gb-reading .gb-metrics{grid-template-columns:1fr 1fr}.gb-reading .gb-metric:nth-child(2){border-right:0}.gb-reading .gb-metric:nth-child(-n+2){border-bottom:1px solid var(--gb-line)}.gb-reading .gb-flow{grid-template-columns:1fr 1fr}.gb-reading .gb-flow li:last-child{grid-column:1/-1}.gb-reading .gb-deck>summary{align-items:flex-start}.gb-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.gb-reading .gb-flow{grid-template-columns:1fr}.gb-reading .gb-flow li:last-child{grid-column:auto}.gb-reading .gb-deck>summary{display:grid}.gb-reading .gb-deck-action{justify-self:start}.gb-reading .gb-metric{min-height:94px;padding:14px 11px}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,920px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+@media(max-width:700px){.gb-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="gb-reading">
@@ -64,7 +65,7 @@ html:not([data-theme="dark"]) body:has(.gb-reading){--paper:#fff;--paper-elevate
       <div class="post-deck-embed-frame">
         <iframe src="/lib/decks/gameasg-bench-visual-guide.html" title="GameASG-Bench 论文图解，共 26 页" allow="fullscreen" allowfullscreen loading="eager"></iframe>
       </div>
-      <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端建议横屏阅读</span></p>
+      <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动，原图可左右滑动</span></p>
     </div>
     <div class="gb-deck-links"><a href="/lib/decks/gameasg-bench-visual-guide.html">沉浸模式 ↗</a></div>
   </div>

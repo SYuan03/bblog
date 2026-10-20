@@ -2,7 +2,7 @@
 title: "[2026-09-01] Harness-of-Harness: Multi-Day Autonomous Software Development with Continual Improvement"
 permalink: "/posts/论文解读/harness-of-harness.html"
 date: "2026-09-29T07:30:00+08:00"
-updated: "2026-10-14T16:00:00+08:00"
+updated: "2026-10-20T13:00:00+08:00"
 cover: "/generated-covers/051-harness-of-harness.webp"
 description: "让现成编码助手反复规划、开发和独立测试同一个项目，保留代码与对应版本的验证记录。结合真实第 70 轮失败记录，核对方法、评分、成本，以及论文设计与公开实现的差别。"
 wide_content: true
@@ -35,6 +35,7 @@ html:not([data-theme="dark"]) body:has(.hoh-reading){--paper:#fff;--paper-elevat
 .hoh-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.hoh-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.hoh-reading .note p{margin:.34em 0}.hoh-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .9rem/1.6 var(--mono);overflow-x:auto}.hoh-reading .judge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:22px 0;background:var(--line-local)}.hoh-reading .judge-grid>div{padding:16px;background:#fff}.hoh-reading .judge-grid b{display:block;color:var(--blue);font-size:.93rem}.hoh-reading .judge-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.82rem;line-height:1.5}.hoh-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.hoh-reading .limit-grid>div{padding:17px;background:#fff}.hoh-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.hoh-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.hoh-reading .metrics{grid-template-columns:1fr 1fr}.hoh-reading .metric:nth-child(2){border-right:0}.hoh-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.hoh-reading .flow{grid-template-columns:1fr 1fr}.hoh-reading .roles,.hoh-reading .judge-grid{grid-template-columns:1fr}.hoh-reading .figure-grid{grid-template-columns:1fr}.hoh-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.hoh-reading .flow,.hoh-reading .verdict,.hoh-reading .limit-grid{grid-template-columns:1fr}.hoh-reading .part0,.hoh-reading .case{padding:17px 15px}.hoh-reading .deck-head,.hoh-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.hoh-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -53,7 +54,7 @@ html:not([data-theme="dark"]) body:has(.hoh-reading){--paper:#fff;--paper-elevat
   <div class="deck-head"><strong>22 页交互图解 · 从角色权限到 Loop 70 真实 QA</strong><a href="/lib/decks/harness-of-harness-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/harness-of-harness-visual-guide.html" title="Harness-of-Harness 论文图解，共 22 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
 

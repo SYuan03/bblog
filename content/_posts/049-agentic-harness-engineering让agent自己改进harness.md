@@ -2,7 +2,7 @@
 title: "[2026-04-28] Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses"
 permalink: "/posts/论文解读/agentic-harness-engineering.html"
 date: "2026-09-28T21:30:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T14:00:00+08:00"
 cover: "/generated-covers/049-agentic-harness-engineering.webp"
 description: "固定模型，自动读取失败记录，修改提示、工具代码、运行时检查和经验文件，再用下一轮测试验收。本文沿着误删图片、未完成采样两条实际失败记录，解释修改流程、计分和组件冲突。"
 wide_content: true
@@ -39,6 +39,7 @@ html:not([data-theme="dark"]) body:has(.ahe-reading){--paper:#fff;--paper-elevat
 @media(max-width:760px){.ahe-reading .metrics{grid-template-columns:1fr 1fr}.ahe-reading .metric:nth-child(2){border-right:0}.ahe-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--ahe-line)}.ahe-reading .flow{grid-template-columns:1fr 1fr}.ahe-reading .pillars{grid-template-columns:1fr}.ahe-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.ahe-reading .bar{grid-template-columns:120px 1fr 52px}}
 @media(max-width:460px){.ahe-reading .flow,.ahe-reading .verdict{grid-template-columns:1fr}.ahe-reading .part0,.ahe-reading .case{padding:17px 15px}.ahe-reading .deck-head,.ahe-reading .interest{align-items:flex-start;flex-direction:column}.ahe-reading .bar{grid-template-columns:100px 1fr 48px;font-size:.75rem}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,960px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+@media(max-width:700px){.ahe-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="ahe-reading">
@@ -54,7 +55,7 @@ html:not([data-theme="dark"]) body:has(.ahe-reading){--paper:#fff;--paper-elevat
   <div class="deck-head"><strong>14 页交互图解 · 从失败轨迹到可回滚的 harness 修改</strong><a href="/lib/decks/agentic-harness-engineering-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/agentic-harness-engineering-visual-guide.html" title="Agentic Harness Engineering 论文图解，共 14 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
 

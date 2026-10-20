@@ -2,7 +2,7 @@
 title: "[2026-09-18] GameLogicBench: Evaluating Coding Agents on Runtime Game Logic with Tick-Level State Assertions"
 permalink: "/posts/论文解读/gamelogicbench.html"
 date: "2026-09-22T13:30:00+08:00"
-updated: "2026-10-13T18:00:00+08:00"
+updated: "2026-10-20T14:00:00+08:00"
 cover: "/generated-covers/047-gamelogicbench.webp"
 description: "在给定 Godot 项目里补好玩法逻辑，怎样确认它每一步都守规则？从引擎与代码示例讲起，逐项拆解任务构建、真实案例、隐藏判分和实验分母。"
 wide_content: true
@@ -40,6 +40,7 @@ html:not([data-theme="dark"]) body:has(.glb-reading){--paper:#fff;--paper-elevat
 @media(max-width:760px){.article-shell-deck .article-header{max-width:100%}.glb-reading .glb-metrics{grid-template-columns:1fr 1fr}.glb-reading .glb-metric:nth-child(2){border-right:0}.glb-reading .glb-metric:nth-child(-n+2){border-bottom:1px solid var(--glb-line)}.glb-reading .glb-flow,.glb-reading .glb-trace{grid-template-columns:1fr 1fr}.glb-reading .glb-flow li:last-child,.glb-reading .glb-trace>div:last-child{grid-column:1/-1}.glb-reading .glb-deck>summary{align-items:flex-start}.glb-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.glb-reading .glb-gallery{grid-template-columns:1fr}.glb-reading .glb-verdict{grid-template-columns:1fr}}
 @media(max-width:460px){.glb-reading .glb-flow,.glb-reading .glb-trace,.glb-reading .glb-concept-grid{grid-template-columns:1fr}.glb-reading .glb-flow li:last-child,.glb-reading .glb-trace>div:last-child{grid-column:auto}.glb-reading .glb-deck>summary{display:grid}.glb-reading .glb-deck-action{justify-self:start}.glb-reading .glb-metric{min-height:94px;padding:14px 11px}.glb-reading .glb-part0{padding:18px 16px}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,940px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+@media(max-width:700px){.glb-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="glb-reading">
@@ -63,7 +64,7 @@ html:not([data-theme="dark"]) body:has(.glb-reading){--paper:#fff;--paper-elevat
       <div class="post-deck-embed-frame">
         <iframe src="/lib/decks/gamelogicbench-visual-guide.html" title="GameLogicBench 论文图解，共 26 页" allow="fullscreen" loading="eager"></iframe>
       </div>
-      <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端建议横屏阅读</span></p>
+      <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动，原图可左右滑动</span></p>
     </div>
     <div class="glb-deck-links"><a href="/lib/decks/gamelogicbench-visual-guide.html">沉浸模式 ↗</a></div>
   </div>

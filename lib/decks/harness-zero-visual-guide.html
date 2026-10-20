@@ -30,6 +30,39 @@ html,body{background:#edf1f5}
 .overview-card{background:#fff;color:var(--ink)}
 .slide h1,.slide h2{font-family:var(--sans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif)}
 #controls button,#controls a{white-space:nowrap;flex-shrink:0}
+
+/* Portrait reading: keep text readable and let paper originals pan at their native detail. */
+@media screen and (max-width:700px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto;background:var(--paper)}
+  #deck{position:static!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;transform:none!important;box-shadow:none}
+  .slide{position:relative;inset:auto;min-height:100vh;height:auto;overflow:visible;padding:20px 16px 85px;background:var(--paper)}
+  .slide.active{display:flex;flex-direction:column;gap:12px}
+  .top{height:auto;min-height:0;display:flex;align-items:flex-start;flex-direction:column;gap:4px;padding-bottom:8px;font-size:10px;line-height:1.4;letter-spacing:.03em}
+  .top b{font-size:11px}
+  .slide h1,.slide h2{max-width:100%;margin:0;font:700 25px/1.27 var(--sans);letter-spacing:-.01em}
+  .slide h3{font-size:17px;line-height:1.32}
+  .body{display:block;width:100%;height:auto;min-height:0;flex:none;padding:0;margin:0}
+  .body>*{max-width:100%;min-width:0}
+  .foot{height:auto;min-height:0;display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding-top:9px;font-size:10px;line-height:1.45;letter-spacing:0}
+  .foot span:first-child{min-width:0}
+  .body :is(.hero,.problem,.three,.pillars,.flow,.layers,.file-grid,.evidence,.case-grid,.verdicts,.results,.costs,.limits,.objects,.loop,.case-flow,.code-grid,.notes,.data,.train,.recover,.adapters,.bench,.timeline,.schema,.mini-metrics,.numbers,.bars,.chart,.result-notes){display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%;height:auto;min-height:0}
+  .body :is(.panel,.card,.pillar,.step,.limit,.number,.case-card,.verdict,.brief,.state,.control,.adapter,.judge,.object,.domain,.pattern,.cell){min-width:0;min-height:0;height:auto;padding:12px 14px}
+  .body :is(p,li){font-size:14px;line-height:1.55}
+  .body :is(.statement,.thesis,.lead){font-size:15px;line-height:1.55}
+  .body :is(.tag,.k,.s,.head){font-size:11px}
+  .body :is(.number b,.big-number,.score strong){font-size:22px}
+  .body :is(.arrow,.stage-arrow){font-size:22px;line-height:1;text-align:center}
+  .body :is(.code,pre,.formula){max-width:100%;overflow-x:auto;white-space:pre;font-size:11px;line-height:1.55;padding:12px}
+  .body :is(.table-wrap,.matrix,.results-table){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .body .table{min-width:680px;font-size:12px}
+  .body .matrix{display:table;min-width:680px;font-size:12px}
+  .body .paper-figure,.body .figure-page{display:block;width:100%;height:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .body .paper-figure::before,.body .figure-page::before{content:"原图可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}
+  .body .paper-figure img,.body .figure-page img{display:block;width:850px;max-width:none;max-height:none;height:auto;object-fit:contain}
+  .body .caption{position:static;padding:7px 0;font-size:11px;line-height:1.45}
+  #controls{max-width:calc(100vw - 12px)}
+}
+@media screen and (max-width:700px){.body .bar{display:grid;grid-template-columns:minmax(0,1fr) auto!important;gap:6px;width:100%;min-width:0;font-size:14px}.body .bar span{grid-column:1;grid-row:1}.body .bar strong{grid-column:2;grid-row:1;font-size:15px}.body .bar .track{grid-column:1/-1;grid-row:2;height:16px}}
 </style>
 </head>
 <body>
@@ -185,7 +218,7 @@ raise SystemExit(bool(changed))</pre><div class="notes"><div class="note"><b>为
     currentTitle.textContent=slides[index].dataset.title;
     progress.style.width=`${((index+1)/slides.length)*100}%`;
     document.title=`${slides[index].dataset.title} · Harness-Zero`;
-    if(updateHash) history.replaceState(null,'',`#${index+1}`);
+    if(updateHash) history.replaceState(null,'',`#${index+1}`);;if(innerWidth<=700)scrollTo(0,0);
   }
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
   function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}

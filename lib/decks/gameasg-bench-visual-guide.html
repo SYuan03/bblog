@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <link rel="icon" href="data:,">
+  <link rel="icon" href="/MyImgs/icon1.svg" type="image/svg+xml">
   <base target="_blank">
   <title>GameASG-Bench 论文图解</title>
   <style>
@@ -47,6 +47,42 @@ html,body{background:#edf1f5}
 #controls button,#controls a{white-space:nowrap;flex-shrink:0}
 .cover-art{gap:34px}
 .cover-step:after{bottom:-29px;font-size:24px;line-height:1}
+
+/* Portrait reading layout: reflow explanations and retain scrollable originals. */
+@media screen and (max-width:700px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto;background:var(--paper)}
+  #viewport{position:static;inset:auto;overflow:visible;width:100%;height:auto}
+  #deck{position:static!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;transform:none!important;box-shadow:none}
+  .slide{position:relative;inset:auto;min-height:100vh;height:auto;overflow:visible;padding:20px 16px 86px;background:var(--paper)}
+  .slide.active{display:flex;flex-direction:column;gap:12px}
+  .top{height:auto;min-height:0;display:flex;align-items:flex-start;flex-direction:column;gap:4px;padding-bottom:8px;font-size:10px;line-height:1.4;letter-spacing:.03em}
+  .top b{font-size:11px}
+  .slide h1,.slide h2{max-width:100%;margin:0;font:700 25px/1.27 var(--sans);letter-spacing:-.01em}
+  .slide h3{font-size:17px;line-height:1.32}
+  .body{display:block;width:100%;height:auto;min-height:0;flex:none;padding:0;margin:0}
+  .body>*{max-width:100%;min-width:0}
+  .foot{height:auto;min-height:0;display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding-top:9px;font-size:10px;line-height:1.45;letter-spacing:0}
+  .foot span:first-child{min-width:0}
+  .body :is(.cover,.cards,.bad-good,.tiers,.boundary,.case-grid,.code-side,.split,.timeline,.callouts,.cal,.ablation,.judge,.limits,.flow,.roles,.requirements,.two-paper,.trajectory,.evidence,.isolation,.eval,.methods,.stages,.metrics,.annotation,.annotations,.stack,.case-body,.case-result){display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%;height:auto;min-height:0}
+  .body :is(.card,.case,.case-step,.cal-item,.tier,.limit,.flow-step,.metric,.rule-block,.stage,.annotation,.req,.ev,.method,.code-side>div){min-width:0;min-height:0;height:auto;padding:12px 14px}
+  .body :is(p,li){font-size:14px;line-height:1.55}
+  .body :is(.lead,.big-claim){font-size:15px;line-height:1.55}
+  .body :is(.eyebrow,.name,.label){font-size:11px}
+  .body .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0;margin-top:12px}
+  .body .metric strong{font-size:19px}
+  .body :is(.arrow,.stage-arrow,.iso-arrow,.trace-arrow,.versus){font-size:20px;line-height:1;text-align:center}
+  .body :is(.code,pre){max-width:100%;overflow-x:auto;white-space:pre;font-size:11px;line-height:1.55;padding:12px}
+  .body:has(.matrix),.body:has(.roles){overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .body .matrix{grid-template-columns:180px repeat(4,150px)!important;width:max-content;min-width:780px;font-size:12px}
+  .body .roles{grid-template-columns:140px 180px 180px 220px!important;width:max-content;min-width:720px;font-size:12px}
+  .body .paper-frame,.body .cover-art{display:block;width:100%;height:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px;background:#fff}
+  .body .paper-frame::before,.body .cover-art:has(img)::before{content:"原图可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}
+  .body .paper-frame img,.body .cover-art img{display:block;width:850px;max-width:none;max-height:none;height:auto;object-fit:contain}
+  .body .paper-caption{position:static;margin:7px 0;font-size:11px;line-height:1.45;text-align:left}
+  #controls{max-width:calc(100vw - 12px)}
+}
+@media screen and (max-width:700px){.body .api,.body .logic,.body .method{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%;height:auto}.body .flow-step:after{display:none}.body .method code{font-size:13px}.body .logic-block{min-width:0;max-width:100%;padding:12px 14px}.body .logic-block code{max-width:100%;overflow-x:auto;font-size:11px;white-space:pre}.body .api>*,.body .logic>*{min-width:0;max-width:100%}}
+@media screen and (max-width:700px){.body .balance,.body .prepare,.body .scoring,.body .formula{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%;height:auto}.body .extreme,.body .priority,.body .traj{min-height:0;height:auto;padding:13px 14px}.body .extreme ul{margin-top:10px;font-size:14px;line-height:1.55}.body .middle-mark{font-size:24px;line-height:1;transform:rotate(90deg)}.body .stage-arrow,.body .trace-arrow{transform:rotate(90deg)}.body .formula code{display:block;max-width:100%;overflow-wrap:anywhere;font-size:14px;line-height:1.55}.body .two-paper figure{display:block;width:100%;height:auto;min-height:0;padding:8px;overflow:visible}.body .two-paper .table-image-pan{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.body .two-paper .table-image-pan::before{content:"原表可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}.body .two-paper img{display:block;width:960px;max-width:none;height:auto;max-height:none;object-fit:contain}.body .two-paper figcaption{margin-top:8px;font-size:11px;line-height:1.45;text-align:left}}
 </style>
 </head>
 <body>
@@ -272,13 +308,13 @@ if (!plateauAfterRelease)
 
   <section class="slide" data-title="工具与轮数消融">
     <div class="top"><b>23 · ORIGINAL TABLES 5 AND 6</b><span>DeepSeek-V4-Flash · Claude Code</span></div><h2>完整工具提高整题成功；低轮数时完成评测的任务集合不同</h2>
-    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg" alt="根据论文 Table 5 数据重绘的工具消融表" width="1162" height="461"><figcaption>根据 Table 5 数据重绘。无工具 / 文件 / 文件+语法 / 完整工具：7 / 6 / 9 / 18，均除以 47。文件+语法的 P1 反而低于文件条件。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg" alt="根据论文 Table 6 数据重绘的轮次预算表" width="1092" height="412"><figcaption>根据 Table 6 数据重绘。轮数上限为 30/60/120 时，分别只有 10/32/47 个任务完成评测。</figcaption></figure></div></div>
+    <div class="body"><div class="two-paper"><figure><div class="table-image-pan"><img src="/lib/papers/gameasg-bench/table-5-tool-ablation-redrawn.svg" alt="根据论文 Table 5 数据重绘的工具消融表" width="1162" height="461"></div><figcaption>根据 Table 5 数据重绘。无工具 / 文件 / 文件+语法 / 完整工具：7 / 6 / 9 / 18，均除以 47。文件+语法的 P1 反而低于文件条件。</figcaption></figure><figure><div class="table-image-pan"><img src="/lib/papers/gameasg-bench/table-6-turn-budget-redrawn.svg" alt="根据论文 Table 6 数据重绘的轮次预算表" width="1092" height="412"></div><figcaption>根据 Table 6 数据重绘。轮数上限为 30/60/120 时，分别只有 10/32/47 个任务完成评测。</figcaption></figure></div></div>
     <div class="foot"><span class="src">Tables 5–6 重绘。30 轮 7/10、60 轮 13/32、120 轮 18/47 是不同完成子集；主指标始终除以 47，不能据条件分数下降推断多轮更差。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="推理与 Harness">
     <div class="top"><b>24 · ORIGINAL TABLES 7 AND 8</b><span>同样是 18/47，成功的题目却不一样</span></div><h2>High 比 Max 多成功 1 题；两个执行框架各成功 18 题，但共同成功的只有 10 题</h2>
-    <div class="body"><div class="two-paper"><figure><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg" alt="根据论文 Table 7 数据重绘的推理强度表" width="1107" height="418"><figcaption>根据 Table 7 数据重绘。High：19/47；Max：18/47。High 使用的 reasoning tokens（推理 token）比 Max 少 26.9%。</figcaption></figure><figure><img src="/lib/papers/gameasg-bench/table-8-harness-redrawn.svg" alt="根据论文 Table 8 数据重绘的 harness 比较表" width="1112" height="375"><figcaption>根据 Table 8 数据重绘。两种 harness（模型上下文与工具环境）各成功 18/47，但只有 10 题重合，各有 8 题独有成功、21 题都失败。</figcaption></figure></div></div>
+    <div class="body"><div class="two-paper"><figure><div class="table-image-pan"><img src="/lib/papers/gameasg-bench/table-7-reasoning-effort-redrawn.svg" alt="根据论文 Table 7 数据重绘的推理强度表" width="1107" height="418"></div><figcaption>根据 Table 7 数据重绘。High：19/47；Max：18/47。High 使用的 reasoning tokens（推理 token）比 Max 少 26.9%。</figcaption></figure><figure><div class="table-image-pan"><img src="/lib/papers/gameasg-bench/table-8-harness-redrawn.svg" alt="根据论文 Table 8 数据重绘的 harness 比较表" width="1112" height="375"></div><figcaption>根据 Table 8 数据重绘。两种 harness（模型上下文与工具环境）各成功 18/47，但只有 10 题重合，各有 8 题独有成功、21 题都失败。</figcaption></figure></div></div>
     <div class="foot"><span class="src">根据原论文 Tables 7、8 数据重绘。结果来自单次运行，不能据此建立稳定的绝对排名。</span><span class="pg"></span></div>
   </section>
 
@@ -342,7 +378,7 @@ if (!plateauAfterRelease)
       deck.style.left=`${(innerWidth-1600*scale)/2}px`;
       deck.style.top=`${(availableHeight-900*scale)/2}px`;
     }
-    function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameASG-Bench`;if(updateHash)history.replaceState(null,'',`#${index+1}`);}
+    function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · GameASG-Bench`;if(updateHash)history.replaceState(null,'',`#${index+1}`);;if(innerWidth<=700)scrollTo(0,0);}
     function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
     function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
     function syncFullscreenButton(){const active=Boolean(document.fullscreenElement);fullButton.setAttribute('aria-label',active?'退出全屏':'全屏');fullButton.querySelector('.utility-label').textContent=active?'退出全屏':'全屏';}

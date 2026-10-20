@@ -2,7 +2,7 @@
 title: "[2026-08-03] LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks"
 permalink: "/posts/论文解读/longhorizon-harness.html"
 date: "2026-09-28T22:30:00+08:00"
-updated: "2026-10-14T16:00:00+08:00"
+updated: "2026-10-20T14:00:00+08:00"
 cover: "/generated-covers/050-longhorizon-harness.webp"
 description: "拆解 LongHorizon-Harness 如何单独保存任务进度、每轮重新启动执行会话并独立核验结果；结合真实失败案例，说明评分、成本与实验限制。"
 wide_content: true
@@ -40,6 +40,7 @@ html:not([data-theme="dark"]) body:has(.lh-reading){--paper:#fff;--paper-elevate
 @media(max-width:760px){.lh-reading .metrics{grid-template-columns:1fr 1fr}.lh-reading .metric:nth-child(2){border-right:0}.lh-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--lh-line)}.lh-reading .flow{grid-template-columns:1fr 1fr}.lh-reading .roles,.lh-reading .tri-judge{grid-template-columns:1fr}.lh-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.lh-reading .bar{grid-template-columns:120px 1fr 52px}}
 @media(max-width:460px){.lh-reading .flow,.lh-reading .verdict{grid-template-columns:1fr}.lh-reading .part0,.lh-reading .case{padding:17px 15px}.lh-reading .deck-head,.lh-reading .interest{align-items:flex-start;flex-direction:column}.lh-reading .bar{grid-template-columns:100px 1fr 48px;font-size:.75rem}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,960px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+@media(max-width:700px){.lh-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="lh-reading">
@@ -56,7 +57,7 @@ html:not([data-theme="dark"]) body:has(.lh-reading){--paper:#fff;--paper-elevate
   <div class="deck-head"><strong>16 页交互图解 · 保存进度、分轮执行、独立核验</strong><a href="/lib/decks/longhorizon-harness-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/longhorizon-harness-visual-guide.html" title="LongHorizon-Harness 论文图解，共 16 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
 

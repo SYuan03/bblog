@@ -2,7 +2,7 @@
 title: "[2026-09-21] Harness-Zero: Harness Distillation via Agent-as-Harness"
 permalink: "/posts/论文解读/harness-zero.html"
 date: "2026-09-28T20:30:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T14:00:00+08:00"
 cover: "/generated-covers/048-harness-zero.webp"
 description: "训练时先审查模型准备执行的下一步，把专用工具与检查规则改写成普通 Bash 动作，再用执行记录微调模型。本文解释审查流程、表格案例、三个领域的评分与蒸馏失败的原因。"
 wide_content: true
@@ -39,6 +39,7 @@ html:not([data-theme="dark"]) body:has(.hz-reading){--paper:#fff;--paper-elevate
 @media(max-width:760px){.hz-reading .hz-metrics{grid-template-columns:1fr 1fr}.hz-reading .hz-metric:nth-child(2){border-right:0}.hz-reading .hz-metric:nth-child(-n+2){border-bottom:1px solid var(--hz-line)}.hz-reading .hz-flow{grid-template-columns:1fr 1fr}.hz-reading .hz-objects{grid-template-columns:1fr}.hz-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.hz-reading .hz-bar{grid-template-columns:120px 1fr 52px}}
 @media(max-width:460px){.hz-reading .hz-flow,.hz-reading .hz-boundary,.hz-reading .hz-verdict{grid-template-columns:1fr}.hz-reading .hz-part0,.hz-reading .hz-case{padding:17px 15px}.hz-reading .hz-deck-head{align-items:flex-start;flex-direction:column}.hz-reading .hz-bar{grid-template-columns:100px 1fr 48px;font-size:.75rem}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,960px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+@media(max-width:700px){.hz-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="hz-reading">
@@ -57,7 +58,7 @@ html:not([data-theme="dark"]) body:has(.hz-reading){--paper:#fff;--paper-elevate
     <div class="post-deck-embed-frame">
       <iframe src="/lib/decks/harness-zero-visual-guide.html" title="Harness-Zero 论文图解，共 14 页" allow="fullscreen" loading="eager"></iframe>
     </div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
 
