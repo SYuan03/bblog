@@ -1,0 +1,1215 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "Scene-Designer: Learning Design Intelligence for Agentic 3D Scene Generation",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/093-scene-designer.md",
+    "deck": "lib/decks/scene-designer.html",
+    "embed_src": "/lib/decks/scene-designer.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Scene-Designer: Learning Design Intelligence for Agentic 3D Scene Generation",
+      "url": "https://arxiv.org/pdf/2610.23121v1",
+      "revision": "v1 (2026-10-16)",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "official-code",
+      "kind": "repository",
+      "title": "ZJU-OmniAI/Scene-Designer",
+      "url": "https://github.com/ZJU-OmniAI/Scene-Designer",
+      "revision": "a0565e50ed7d32c0e09132b9311c0b9b91165405",
+      "used_for": [
+        "implementation",
+        "harness",
+        "reproduction-boundary"
+      ]
+    },
+    {
+      "id": "scenesmith",
+      "kind": "repository",
+      "title": "nepfaff/scenesmith",
+      "url": "https://github.com/nepfaff/scenesmith",
+      "revision": "e888297a8b0a2f3acbb8634edf9def59cceab836",
+      "used_for": [
+        "harness-background"
+      ]
+    },
+    {
+      "id": "arxiv-record",
+      "kind": "metadata",
+      "title": "arXiv v1 entry",
+      "url": "https://arxiv.org/abs/2610.23121v1",
+      "revision": "v1",
+      "used_for": [
+        "publication-date",
+        "license"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 39,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 39
+      }
+    ],
+    "source_visuals_expected": 38,
+    "visual_inventory_complete": true,
+    "notes": "Main agent reviewed 39-page extracted text and rendered contact sheets including appendices; source image crops separately inspected."
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：会摆物体，还不等于会设计与改错"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：与静态布局、SceneSmith 和普通 GRPO 的边界"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：从工具轨迹到 Scene-GRPO"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：提升在哪里，证据有多强"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：可以借鉴的设计，以及下一步该测什么"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：记住方法，也记住证据边界"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "GRPO",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Appendix C"
+        }
+      ],
+      "article_quote": "GRPO 把同一输入下采样的一组回答按奖励相互比较，计算组内优势，再更新生成策略。"
+    },
+    {
+      "term": "Critic",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1–3.2"
+        }
+      ],
+      "article_quote": "是从场景比较样本学会排序的视觉语言模型：它看渲染图，判断哪个设计更好。"
+    },
+    {
+      "term": "harness",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix F"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "USAGE.md; src/tool_server.py"
+        }
+      ],
+      "article_quote": "是模型之外负责提示词、工具调用、场景状态、渲染、反馈和继续执行的程序。"
+    },
+    {
+      "term": "Scene-OTA-35K",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Appendix D.2"
+        }
+      ],
+      "article_quote": "是 1,000 个场景中的约 35,000 个“观察—思考—动作”步骤。"
+    },
+    {
+      "term": "Scene-OTC-15K",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Appendix D.3"
+        }
+      ],
+      "article_quote": "从优质场景制造不同严重程度的布局、功能与物理扰动，让模型学习多图排序及理由。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1; §3; Figure 4–5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Scene-Designer 的主张是：让模型积累逐步编辑的经验，也学会比较场景优劣，再用这些判断改善下一次编辑。"
+        }
+      ]
+    },
+    {
+      "id": "scene-grpo-rollout",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; Figure 5; Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "在同一父场景的一个家具编辑点，policy 采样 K=4 个候选动作"
+        }
+      ]
+    },
+    {
+      "id": "local-rewards",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.1, Eq. 8–13"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "格式 + 兄弟分支名次 + 父子场景改善"
+        }
+      ]
+    },
+    {
+      "id": "global-rewards",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.2–C.3, Eq. 14–21"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "长度 25 步以内给满分，45 步及以上给 0"
+        }
+      ]
+    },
+    {
+      "id": "worked-reward",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.1–C.2, Eq. 8–18"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "局部奖励依次为 2.5、2.0、0.5、0.5"
+        }
+      ]
+    },
+    {
+      "id": "grpo-objective",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "src/grpo_objective.py lines 5–21; src/train_grpo.py lines 515–578"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这里的“改 GRPO”主要发生在 rollout 和 reward 层。"
+        }
+      ]
+    },
+    {
+      "id": "harness",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "USAGE.md lines 32–58; Designer/agent_rollout.py lines 79–156; src/tool_server.py lines 300–415"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "执行底座是 SceneSmith，加作者自己的 Python 适配层。"
+        }
+      ]
+    },
+    {
+      "id": "harness-base",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix F"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文 Appendix F 明说采用"
+        }
+      ]
+    },
+    {
+      "id": "sft-data",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; Appendix D.2–D.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "约 15,000 个比较样本用于 Critic 学习"
+        }
+      ]
+    },
+    {
+      "id": "main-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1–2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "卧室功能 9.2→9.5"
+        }
+      ]
+    },
+    {
+      "id": "strongest-counterexample",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "SceneWeaver 基线在卧室功能已有 9.8"
+        }
+      ]
+    },
+    {
+      "id": "critic-evaluation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 10–11"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Critic 自身的 Scene-OTC 测试集上，联合 OTA+OTC 微调达到二图比较"
+        },
+        {
+          "artifact": "article",
+          "quote": "作者改变图像与标签顺序五次后的平均是 90.00±2.07% 和 75.64±6.88%；这里的 ± 是五次顺序扰动的波动"
+        }
+      ]
+    },
+    {
+      "id": "reward-ablation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "去掉分支排名时平均布局分数 8.9→8.3"
+        }
+      ]
+    },
+    {
+      "id": "inference-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Appendix E.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "名为 Scene-Designer w/ Critic 的变体在推理时每步又试四个候选，让 Critic 排序后继续。"
+        }
+      ]
+    },
+    {
+      "id": "paper-code-gap",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "USAGE.md lines 191–207; src/train_grpo.py CLI defaults"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "当前公开 CLI 默认却是 20/38、3/8"
+        }
+      ]
+    },
+    {
+      "id": "cost-unknown",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4; Appendix E.2; Table 1–2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文未量化总时间、GPU 开销或每场景成本。"
+        }
+      ]
+    },
+    {
+      "id": "coding-assistant-unknown",
+      "claim_type": "unknown",
+      "source_ids": [
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "README.md; USAGE.md; repository documentation at fixed revision"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者写仓库代码时是否使用过编码助手，公开材料也未披露。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 1",
+      "status": "omitted",
+      "rationale": "概念性总览；正文开头已用设计动作和评价能力的关系解释，具体训练流程保留 Figure 4。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p.3, Figure 2",
+      "status": "omitted",
+      "rationale": "100 场景的错误类别与修复步数；正文提取交互朝向、窗户阻挡的条件比例，图表轴过密。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 3",
+      "status": "omitted",
+      "rationale": "Critic 判断任务与 GPT-5.2 比较的概览；正文保留更直接的测试集 Figure 10 数字。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p.5, Figure 4",
+      "status": "reused",
+      "rationale": "两类 SFT 数据和 policy/Critic 关系是理解模型来源的必需流程，保留完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 4：两类经验怎样进入 SFT。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 4, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/scene-designer/figure-4.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p.7, Figure 5",
+      "status": "reused",
+      "rationale": "同父场景四分支、Critic 排名与奖励流是 Scene-GRPO 的核心机制，保留完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5：蓝色 policy 更新，Critic 冻结"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 5, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/scene-designer/figure-5.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 6",
+      "status": "omitted",
+      "rationale": "三类纠错效率分布；正文列出 21%→5%、40%→7%、50%→23% 并解释分母。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 7",
+      "status": "omitted",
+      "rationale": "各错误类别的纠错步数分布；与 Figure 6 传达同一效率问题，正文保留关键条件比例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p.10, Figure 8",
+      "status": "omitted",
+      "rationale": "训练期奖励曲线；文章聚焦奖励定义与消融，曲线不能单独建立最终质量改进。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p.10, Figure 9",
+      "status": "reused",
+      "rationale": "四种奖励项的消融和多指标变化直接检验机制，保留原图与轴单位提醒。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 9：四种奖励消融"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 9, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/scene-designer/figure-9.webp"
+      ]
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p.10, Figure 10",
+      "status": "omitted",
+      "rationale": "Critic 二图/四图准确率；正文保留样本数和 Scene-Builder/GPT-5.2 数字。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "p.11, Figure 11",
+      "status": "omitted",
+      "rationale": "图像与标签顺序鲁棒性；正文保留五次顺序扰动均值与波动，说明不是训练种子。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "p.11, Figure 12",
+      "status": "omitted",
+      "rationale": "联合监督与单一监督的场景实例；正文解释联合 SFT，核心训练机制由 Figure 4 承载。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "p.19, Figure 13",
+      "status": "omitted",
+      "rationale": "原始 GPT-5.2 场景纠错原因分布；正文仅引用与研究动机相关的类别。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "p.20, Figure 14",
+      "status": "omitted",
+      "rationale": "构建错误返工的图例；篇幅优先给完整 Scene-Designer 轨迹 Figure 23。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "p.20, Figure 15",
+      "status": "omitted",
+      "rationale": "其它返工实例；与 Figure 14 类似，文章用 Figure 23 的对照轨迹解释结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-16",
+      "kind": "figure",
+      "label": "Figure 16",
+      "source_id": "paper",
+      "source_locator": "p.21, Figure 16",
+      "status": "omitted",
+      "rationale": "100 条轨迹按错误类型的出现概率；正文没有把此诊断误写成总体成功率。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-17",
+      "kind": "figure",
+      "label": "Figure 17",
+      "source_id": "paper",
+      "source_locator": "p.21, Figure 17",
+      "status": "omitted",
+      "rationale": "细分错误所需纠正步数；正文以 Figure 6 的条件比例概述最相关结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-18",
+      "kind": "figure",
+      "label": "Figure 18",
+      "source_id": "paper",
+      "source_locator": "p.22, Figure 18",
+      "status": "omitted",
+      "rationale": "GPT-5.2 生成场景的资产级编辑轨迹；文章用 Figure 23 展示训练后对照。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-19",
+      "kind": "figure",
+      "label": "Figure 19",
+      "source_id": "paper",
+      "source_locator": "p.22, Figure 19",
+      "status": "omitted",
+      "rationale": "原始 GPT-5.2 资产编辑次数统计；Figure 23 底排呈现三种模型的对应分布。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-20",
+      "kind": "figure",
+      "label": "Figure 20",
+      "source_id": "paper",
+      "source_locator": "p.25, Figure 20",
+      "status": "omitted",
+      "rationale": "因果轨迹压缩效果；正文保留回放验证和约 110→30 步，不用单个图替代程序说明。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-21",
+      "kind": "figure",
+      "label": "Figure 21",
+      "source_id": "paper",
+      "source_locator": "p.27, Figure 21",
+      "status": "omitted",
+      "rationale": "Scene-OTA 的一条详细轨迹；文章在 3.1 概述数据处理，重点例子放在 Figure 23。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-22",
+      "kind": "figure",
+      "label": "Figure 22",
+      "source_id": "paper",
+      "source_locator": "p.28, Figure 22",
+      "status": "omitted",
+      "rationale": "Scene-OTC 扰动策略示例；正文说明扰动严重度与人工标注边界。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-23",
+      "kind": "figure",
+      "label": "Figure 23",
+      "source_id": "paper",
+      "source_locator": "p.29, Figure 23",
+      "status": "reused",
+      "rationale": "同一卧室需求下 SFT/RL/RL+Critic 的结果、编辑轨迹和 100 场景分布，保留完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 23 全部九个面板。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 23, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/scene-designer/figure-23.webp"
+      ]
+    },
+    {
+      "id": "figure-24",
+      "kind": "figure",
+      "label": "Figure 24",
+      "source_id": "paper",
+      "source_locator": "p.30, Figure 24",
+      "status": "omitted",
+      "rationale": "另一类房间的场景例子；Figure 23 已提供完整且可逐步比较的主例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-25",
+      "kind": "figure",
+      "label": "Figure 25",
+      "source_id": "paper",
+      "source_locator": "p.30, Figure 25",
+      "status": "omitted",
+      "rationale": "家庭客厅实例；文章保留客厅 Table 1 数值，避免只依赖定性样例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-26",
+      "kind": "figure",
+      "label": "Figure 26",
+      "source_id": "paper",
+      "source_locator": "p.31, Figure 26",
+      "status": "omitted",
+      "rationale": "浴室设计实例；正文提到浴室 Table 2 结果，不把单张场景当一般结论。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-27",
+      "kind": "figure",
+      "label": "Figure 27",
+      "source_id": "paper",
+      "source_locator": "p.32, Figure 27",
+      "status": "omitted",
+      "rationale": "推理时 Critic 四分支指导流程；正文 3.6 单独区分普通推理和额外搜索。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-28",
+      "kind": "figure",
+      "label": "Figure 28",
+      "source_id": "paper",
+      "source_locator": "p.34, Figure 28",
+      "status": "omitted",
+      "rationale": "GPT-5.2 作推理 Critic 的失败样例；正文不将其扩展成总体失败率，篇幅优先给主结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-29",
+      "kind": "figure",
+      "label": "Figure 29",
+      "source_id": "paper",
+      "source_locator": "p.33, Figure 29",
+      "status": "omitted",
+      "rationale": "与其它场景生成方法的视觉对照；正文用 Table 1 和 SceneWeaver 反例做可核数比较。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-30",
+      "kind": "figure",
+      "label": "Figure 30",
+      "source_id": "paper",
+      "source_locator": "p.36, Figure 30",
+      "status": "omitted",
+      "rationale": "系统提示词模板；文章解释四阶段提示词分工，完整模板可在附录查阅。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-31",
+      "kind": "figure",
+      "label": "Figure 31",
+      "source_id": "paper",
+      "source_locator": "p.36, Figure 31",
+      "status": "omitted",
+      "rationale": "统一记忆快照模板；正文说明结构化记忆与分支恢复，不复制提示词截图。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-32",
+      "kind": "figure",
+      "label": "Figure 32",
+      "source_id": "paper",
+      "source_locator": "p.37, Figure 32",
+      "status": "omitted",
+      "rationale": "纠正效果评估提示词模板；正文区分 Critic 奖励和 GPT-4 评测，模板不是结论证据。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 1",
+      "status": "reused",
+      "rationale": "卧室和客厅完整定量比较包含最强反例 SceneWeaver，保留英文标签与所有数值。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 1，卧室和客厅完整表"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "credit": "Liu et al., arXiv:2610.23121v1, Table 1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/scene-designer/table-1.webp"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 2",
+      "status": "omitted",
+      "rationale": "浴室和办公室定量结果；正文记录评测口径并指出同类提升，不额外铺满第二张宽表。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p.16, Table 3",
+      "status": "omitted",
+      "rationale": "已有生成方法的特征比较；Related Work 以静态布局、SceneSmith、GRPO 三条路线重组解释。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 4",
+      "status": "omitted",
+      "rationale": "Scene-OTC 扰动类别概览；正文列出布局、功能和物理扰动的训练用途。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p.27, Table 5",
+      "status": "omitted",
+      "rationale": "Scene-OTC 详细扰动策略；正文说明自动排序与人工影响标注的边界。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p.38, Table 6",
+      "status": "omitted",
+      "rationale": "可达性与空间组织量化；正文引用 FR@0.3 的 0.72→0.83→1.0，指出样本量缺口。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未在文章或图解中复用原图。",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/scene-designer/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.5, Figure 4",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 4, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/scene-designer/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.7, Figure 5",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 5, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/scene-designer/figure-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "p.10, Figure 9",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 9, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/scene-designer/figure-23.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-23",
+      "source_id": "paper",
+      "source_locator": "p.29, Figure 23",
+      "credit": "Liu et al., arXiv:2610.23121v1, Figure 23, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/scene-designer/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 1",
+      "credit": "Liu et al., arXiv:2610.23121v1, Table 1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 https://arxiv.org/abs/2610.23121v1 states CC BY 4.0, https://creativecommons.org/licenses/by/4.0/; checked 2026-10-20. Attribution and original figure/table numbers appear beside each cropped source image.",
+      "used_in": [
+        "article"
+      ]
+    }
+  ],
+  "qa": {
+    "status": "completed-current-artifacts",
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reviewer": "main agent",
+      "date": "2026-10-20",
+      "reader_reconstruction": "One K=4 editable parent state, format + ranking + improvement reward; educational scores 2.5/2.0/0.5/0.5, mean 1.375, population SD 0.893, A advantage 1.26. Length 30 and objects 20 give global 0.75+0.667. Compared SFT and SceneWeaver counterexample. Paper/code defaults and inference search kept separate."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "evidence": {
+      "browser": "Isolated headless Playwright session on fresh npm run build, 2026-10-20; article, embedded and standalone deck at 1600x1000, 1512x982, 390x844. All six sections scrolled; five local images loaded; no page horizontal overflow. Ten slides checked at all three viewports. Buttons, keyboard, hash, fullscreen, Escape, stable return, focus mode, dark refresh, wide/tall image fit and focus restoration exercised. Twikoo comments loaded. Only console error was local /favicon.ico 404, outside new article assets.",
+      "screenshots": "work/scene-designer/article-{1600,1512,390}.png, standalone-{1600,1512,390}.png, embedded-slide-{3,5}.png; local QA files are not part of published site."
+    }
+  }
+}
