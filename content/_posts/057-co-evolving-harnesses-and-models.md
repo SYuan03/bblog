@@ -2,7 +2,7 @@
 title: "[2026-09-08] Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails"
 permalink: "/posts/论文解读/co-evolving-harnesses-and-models.html"
 date: "2026-09-29T17:02:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T08:30:00+08:00"
 cover: "/generated-covers/057-co-evolving-harnesses-and-models.webp"
 description: "先为弱模型调整提示、工具和运行时检查，再让它完整模仿强模型，成绩反而下降。本文沿着两条真实失败记录，解释为何改用学生自己的执行记录，只修错误发生的那一轮，并核对数据和实验限制。"
 wide_content: true
@@ -38,6 +38,25 @@ html:not([data-theme="dark"]) body:has(.opc-reading){--paper:#fff;--paper-elevat
 @media(max-width:760px){.article-shell-deck .article-header{width:100%;max-width:100%;min-width:0}.article-shell-deck .article-header h1{max-width:100%;font-size:clamp(1.9rem,8.4vw,2.38rem);overflow-wrap:anywhere;text-wrap:pretty}.article-shell-deck .article-deck,.article-shell-deck .article-deck>p,.opc-reading,.opc-reading .source-links{min-width:0}.article-shell-deck .article-deck>p,.opc-reading .source-links a{overflow-wrap:anywhere}.opc-reading .deck-wrap{max-width:100%;overflow:hidden}.opc-reading .metrics{grid-template-columns:1fr 1fr}.opc-reading .metric:nth-child(2){border-right:0}.opc-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.opc-reading .process{grid-template-columns:1fr 1fr}.opc-reading .roles{grid-template-columns:1fr}.opc-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.opc-reading .process,.opc-reading .verdict,.opc-reading .limit-grid{grid-template-columns:1fr}.opc-reading .part0,.opc-reading .case{padding:17px 15px}.opc-reading .deck-head,.opc-reading .interest{align-items:flex-start;flex-direction:column}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+.opc-reading .supplement{margin:20px 0;border:1px solid var(--line-local);background:var(--surface)}
+.opc-reading .supplement>summary{cursor:pointer;padding:12px 16px;color:var(--blue);font-weight:700;list-style:revert}
+.opc-reading .supplement>.table-scroll,.opc-reading .supplement>.figure{margin:0 15px 17px;width:calc(100% - 30px)}
+.opc-reading .source-crops{display:none}
+.opc-reading .source-crop{margin:12px 0;padding:12px;border:1px solid var(--line-local);background:#fff}
+.opc-reading .source-crop b{display:block;margin-bottom:8px;color:#38546a;font-size:.85rem}
+.opc-reading .source-crop a{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.opc-reading .source-crop img{display:block;width:auto;max-width:none;max-height:none;height:auto;margin:0;border:0}
+.opc-reading .source-crop .paper-figure-expand{display:none}
+.opc-reading .original-link{display:none;font-size:.83rem}
+@media(max-width:760px){
+  .opc-reading .figure.has-mobile-crops>a:first-child{display:none}
+  .opc-reading .source-crops{display:block}
+  .opc-reading .source-crop.narrow img{width:min(100%,440px)}
+  .opc-reading .source-crop.wide img{width:720px;max-width:none}
+  .opc-reading .source-crop.wide b::after{content:" · 左右滑动看全图";color:var(--soft);font-weight:500}
+  .opc-reading .original-link{display:inline-block;margin:4px 0 8px}
+}
+@media(max-width:700px){.opc-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="opc-reading">
@@ -102,9 +121,15 @@ Full-trajectory imitation（完整轨迹模仿）训练专家自己的执行步�
 
 Gemini 在 Qwen 的 `h*` 下达到 93.6%，比 Qwen 的 78.0% 高 15.6 个百分点。但 `h*` 的提示、工具、调用处理与执行顺序，是根据 Qwen 的失败记录逐步改出来的。完整模仿改变了 Qwen 常走的步骤、检查时机与提交时机；外层规则没变，模型却未必按这些规则原先预期的节奏执行。
 
-<figure class="figure">
-  <a href="/lib/papers/on-policy-correction/figure-1-coevolution.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/figure-1-coevolution.png" alt="论文 Figure 1：harness-model co-evolution 与两种模型更新路径" width="1270" height="720"></a>
-  <figcaption>原论文 Figure 1，依据 arXiv 页面标明的 CC0 1.0 授权直接引用。红色路径用专家完整记录更新学生；绿色路径从学生失败记录中只修一次回复。</figcaption>
+<figure class="figure has-mobile-crops">
+  <a href="/lib/papers/on-policy-correction/figure-1-content-crop.webp" target="_blank" rel="noopener" aria-label="打开去除空白边的原图"><img src="/lib/papers/on-policy-correction/figure-1-content-crop.webp" alt="论文 Figure 1：执行程序演化、完整专家模仿与学生记录局部修正，去除空白边" width="1220" height="520"></a>
+  <div class="source-crops" aria-label="原论文 Figure 1 的手机分段阅读版">
+    <div class="source-crop figure narrow"><b>1. 围绕弱模型演化执行程序 · 原论文局部裁切</b><a href="/lib/papers/on-policy-correction/figure-1-harness-crop.webp" target="_blank" rel="noopener" aria-label="放大执行程序演化局部图"><img src="/lib/papers/on-policy-correction/figure-1-harness-crop.webp" alt="Figure 1 左侧：弱模型执行任务，收到验收与执行反馈，再由修改者提出并选择程序改动" width="390" height="490" loading="lazy"></a></div>
+    <div class="source-crop figure wide"><b>2. 完整专家模仿打乱原有配合 · 原论文局部裁切</b><a href="/lib/papers/on-policy-correction/figure-1-imitation-crop.webp" target="_blank" rel="noopener" aria-label="放大完整模仿局部图"><img src="/lib/papers/on-policy-correction/figure-1-imitation-crop.webp" alt="Figure 1 右上：专家完整执行记录使模型规划方式变化，与演化后程序的配合受损" width="825" height="285" loading="lazy"></a></div>
+    <div class="source-crop figure wide"><b>3. 在学生失败记录上只修一轮 · 原论文局部裁切</b><a href="/lib/papers/on-policy-correction/figure-1-correction-crop.webp" target="_blank" rel="noopener" aria-label="放大局部修正图"><img src="/lib/papers/on-policy-correction/figure-1-correction-crop.webp" alt="Figure 1 右下：定位学生失败的一轮，由专家修正后继续使用原执行程序" width="825" height="235" loading="lazy"></a></div>
+  </div>
+  <a class="original-link" href="/lib/papers/on-policy-correction/figure-1-coevolution.png" target="_blank" rel="noopener">查看 Figure 1 完整原图</a>
+  <figcaption>原论文 Figure 1，CC0 1.0。桌面图仅去除空白边；手机端按程序演化、完整模仿和局部修正分段裁切。红色路径用专家完整记录更新学生；绿色路径从学生失败记录中只修一次回复。</figcaption>
 </figure>
 
 论文用一个必要的对照支持这个解释：同样的完整专家模仿方案放回未演化的 `h0` 后，Qwen 从 29.2% 升到 35.5%。专家记录在普通执行程序下有正收益；它与已经适配 Qwen 的 `h*` 组合时，才出现明显退化。
@@ -113,6 +138,7 @@ Gemini 在 Qwen 的 `h*` 下达到 93.6%，比 Qwen 的 78.0% 高 15.6 个百分
 
 **这篇论文研究的是“先演化 harness、再更新模型”时，模型与 harness 能否继续配合。** 它不移除演化后的执行程序，也不证明修正模型能换用另一套工具；部署仍是修正后的 Qwen 加上原来的 `h*`。
 
+<details class="supplement"><summary>展开：相关路线的逐项对照</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>训练时改变什么</th><th>部署时保留什么</th><th>与本文的边界</th></tr></thead>
@@ -125,6 +151,7 @@ Gemini 在 Qwen 的 `h*` 下达到 93.6%，比 Qwen 的 78.0% 高 15.6 个百分
   </tbody>
 </table>
 </div>
+</details>
 
 论文给出的关键反例是：**教师更强、记录全部成功且格式正确，学生仍可能因为执行计划改变而退化。** 这比笼统地说“on-policy 比 off-policy 好”更有信息量。
 
@@ -238,17 +265,21 @@ Gemini 的平均分提高，不代表每项都不退步：Attendance 从 97.4 �
 
 问题出现在权重更新。Qwen 在 `h*` 下做完整模仿后降到 63.1±0.81，七项任务全部下降，范围是 −4.2 到 −29.9 个百分点。On-policy correction 则达到 79.7±0.67：五项上升，Attendance 与 Budget 分别 −0.4、−0.6，作者将其视为接近饱和条件下的噪声范围。
 
+<details class="supplement"><summary>展开：七项任务逐项变化</summary>
 <figure class="figure">
   <a href="/lib/papers/on-policy-correction/task-deltas.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/task-deltas.svg" alt="完整模仿与 on-policy correction 在七项任务上的变化" width="1400" height="760"></a>
   <figcaption>根据原论文 Table 1 重绘。图中是相对同一 Qwen + <code>h*</code> 基线的百分点变化；论文没有给出逐任务显著性检验。</figcaption>
 </figure>
+</details>
 
 <h3 id="4-2-机制证据：计算规则学会了，执行节奏却变差">4.2 机制证据：计算规则学会了，执行节奏却变差</h3>
 
+<details class="supplement"><summary>展开：失败记录分类图</summary>
 <figure class="figure">
   <a href="/lib/papers/on-policy-correction/failure-analysis.svg" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/on-policy-correction/failure-analysis.svg" alt="完整模仿和局部修正的 planning 与 knowledge failure 占比" width="1400" height="720"></a>
 <figcaption>根据原论文 Table 3 重绘。模型分类器将得分为 0 的失败记录分成六类；图里只显示变化最大的知识与规划两类。</figcaption>
 </figure>
+</details>
 
 完整模仿后，部门计算规则的使用率从 30.8% 升到 76.1%。Table 3 的分母则是**各条件下得 0 分的失败记录**：其中知识不足占比从 46.2% 降到 44.5%，规划失败占比从 1.1% 跳到 14.6%。局部修正组相应为 43.2% 与 1.8%。这些比例描述失败组成，不能读成全部任务的失败概率。
 
@@ -291,6 +322,6 @@ Gemini 的平均分提高，不代表每项都不退步：Attendance 从 97.4 �
 
 我的判断是：**这篇论文应该和 Harness-Zero、Multi-Harness RL 一起读。** Harness-Zero 问怎样把行为带离原专用程序，Multi-Harness RL 说明混合多个 harness 不会自动产生可换接口的能力，而本文指出即使继续使用同一个演化后程序，粗暴的完整轨迹模仿也会破坏兼容性。三篇合起来，把“数据在哪套执行程序里产生、来自学生还是专家实际遇到的状态、部署还保留哪套程序”三个问题分开了。
 
-<div class="note"><p>论文为 arXiv:2609.09134v1，arXiv 页面标注 CC0 1.0。本文直接引用 Figure 1 并注明来源，其余图表均根据 Tables 1-3 与 Appendix D 数据重绘。2026-10-14 重查 arXiv 条目与原文，仍无本工作官方代码或修正数据的发布链接；这不等于证明作者没有在其他位置发布未链接的材料。</p></div>
+<div class="note"><p>论文为 arXiv:2609.09134v1，arXiv 页面标注 CC0 1.0。本文直接引用 Figure 1 并注明来源，其余图表均根据 Tables 1-3 与 Appendix D 数据重绘。2026-10-20 重查 arXiv 条目与原文，仍无本工作官方代码或修正数据的发布链接；这不等于证明作者没有在其他位置发布未链接的材料。</p></div>
 
 </div>
