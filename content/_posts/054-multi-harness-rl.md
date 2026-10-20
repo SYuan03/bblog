@@ -2,7 +2,7 @@
 title: "[2026-09-03] Multi-Harness Reinforcement Learning for Coding Agents: Training Gains and Harness Dependence"
 permalink: "/posts/论文解读/multi-harness-rl.html"
 date: "2026-09-29T20:10:00+08:00"
-updated: "2026-10-14T18:00:00+08:00"
+updated: "2026-10-20T10:30:00+08:00"
 cover: "/generated-covers/054-multi-harness-rl.webp"
 description: "同一批编程执行记录，按接口分别比较成绩，或把同题不同接口的成绩合起来比较：两种训练都只有小幅提升，评测接口带来的差异更大；换到未见接口后，谁更好仍没有稳定证据。"
 wide_content: true
@@ -35,6 +35,7 @@ html:not([data-theme="dark"]) body:has(.mh-reading){--paper:#fff;--paper-elevate
 .mh-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.mh-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.mh-reading .note p{margin:.34em 0}.mh-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .9rem/1.6 var(--mono);overflow-x:auto}.mh-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.mh-reading .limit-grid>div{padding:17px;background:#fff}.mh-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.mh-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.mh-reading .metrics{grid-template-columns:1fr 1fr}.mh-reading .metric:nth-child(2){border-right:0}.mh-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.mh-reading .flow{grid-template-columns:1fr 1fr}.mh-reading .roles{grid-template-columns:1fr}.mh-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.mh-reading .flow,.mh-reading .verdict,.mh-reading .limit-grid{grid-template-columns:1fr}.mh-reading .part0,.mh-reading .case{padding:17px 15px}.mh-reading .deck-head,.mh-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.mh-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -52,9 +53,13 @@ html:not([data-theme="dark"]) body:has(.mh-reading){--paper:#fff;--paper-elevate
   <div class="deck-head"><strong>18 页交互图解 · 怎样分组、隐藏测试、能否换接口</strong><a href="/lib/decks/multi-harness-rl-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/multi-harness-rl-visual-guide.html" title="Multi-Harness Reinforcement Learning 论文图解，共 18 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
+
+<details class="reading-evidence"><summary>查看论文原图与完整表格</summary>
+<p>arXiv 页面标注的是 non-exclusive distribution license。本站用重新绘制的图解释数据；完整原图请在论文中查看：<a href="https://arxiv.org/pdf/2609.04518v2#page=3">Figure 1 · 实验流程</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=6">Figure 2 · 原接口矩阵</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=7">Figure 3 · 未见接口与身份诊断</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=8">Figure 4 · 动作组成</a>。完整数值表见 <a href="https://arxiv.org/pdf/2609.04518v2#page=15">Tables 1–2</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=17">Table 3</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=18">Tables 4–6</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=19">Tables 7–8</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=21">Table 9</a>、<a href="https://arxiv.org/pdf/2609.04518v2#page=22">Table 10</a>。</p>
+</details>
 
 <p class="lead">把同一批编程执行记录拿来训练，模型能涨多少分？涨分能否带到另一套工具和交互规则里？作者让 Qwen3-8B 通过四套负责提示构造、工具执行和历史管理的程序（harness）采集数据，固定模型起点、数据和更新预算，比较两种分数分组方式。两种方式在原接口上都只有小幅提升；换一个评测接口带来的成绩差异明显更大。未见接口的实验也没有确定谁更好。</p>
 
