@@ -2,7 +2,7 @@
 title: "[2026-08-23] Learning Generalizable Behaviors for Terminal Agents"
 permalink: "/posts/论文解读/learning-generalizable-behaviors-for-terminal-agents.html"
 date: "2026-09-29T16:24:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T09:00:00+08:00"
 cover: "/generated-covers/056-learning-generalizable-behaviors-for-terminal-agents.webp"
 description: "RIVER 先检查任务说明、容器和测试程序是否一致，再让强模型各试两次，从原训练集筛出约 3.5K 个环境。两条真实误判记录说明答案泄漏和脆弱测试怎样带偏训练，以及重复操作的扣分加在何处。"
 wide_content: true
@@ -35,6 +35,7 @@ html:not([data-theme="dark"]) body:has(.river-reading){--paper:#fff;--paper-elev
 .river-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.river-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.river-reading .note p{margin:.34em 0}.river-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .9rem/1.6 var(--mono);overflow-x:auto}.river-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.river-reading .limit-grid>div{padding:17px;background:#fff}.river-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.river-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.article-shell-deck .article-header{width:100%;max-width:100%;min-width:0}.article-shell-deck .article-header h1{max-width:100%;font-size:clamp(2rem,9.2vw,2.45rem);overflow-wrap:anywhere;text-wrap:pretty}.article-shell-deck .article-deck,.article-shell-deck .article-deck>p,.river-reading,.river-reading .source-links{min-width:0}.article-shell-deck .article-deck>p,.river-reading .source-links a{overflow-wrap:anywhere}.river-reading .deck-wrap{max-width:100%;overflow:hidden}.river-reading .metrics{grid-template-columns:1fr 1fr}.river-reading .metric:nth-child(2){border-right:0}.river-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.river-reading .flow{grid-template-columns:1fr 1fr}.river-reading .roles{grid-template-columns:1fr}.river-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.river-reading .flow,.river-reading .verdict,.river-reading .limit-grid{grid-template-columns:1fr}.river-reading .part0,.river-reading .case{padding:17px 15px}.river-reading .deck-head,.river-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.river-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -179,7 +180,7 @@ RIVER 从 TMax 的 14,399 个训练环境开始。每个环境的核心是任务
 
 <h3 id="3-4-重复操作怎样影响这一轮的训练优势？">3.4 重复操作怎样影响这一轮的训练优势？</h3>
 
-<div class="formula">A<sub>i,t</sub> = (r<sub>i</sub> − mean(r)) / (std(r) + ε) &nbsp;&nbsp;·&nbsp;&nbsp; Ã<sub>i,t</sub> = A<sub>i,t</sub> + s<sub>i,t</sub></div>
+<div class="formula">A<sub>i,t</sub> = (r<sub>i</sub> − mean(r)) / (std(r) + ε) &nbsp;&nbsp;·&nbsp;&nbsp; Ã<sub>i,t</sub> = A<sub>i,t</sub> + s<sub>i,t</sub></div>
 
 GRPO 先给整条执行记录一个组内标准化优势，再在重复 turn（一次模型回复与对应环境观察）上加 <code>s_(i,t)</code>。命令和观察都与早前某轮的 Jaccard 相似度大于 0.8 时，该轮**全部回复 token 的优势各扣 0.05**。Jaccard 是两个集合交集大小除以并集大小；论文没有充分交代文本怎样切成集合。
 
@@ -288,7 +289,7 @@ River-8B 从 Qwen3-8B 出发，先用约 78K OpenThoughts 执行记录做监督�
 
 <div class="limit-grid">
   <div><b>Audit 不是逐条人工确认的标准</b><span>14,399 个环境由 GPT-5.4 判主类别；Claude 只复判 120 个分层样本，CLEAN 条件一致率为 40%。</span></div>
-  <div><b>官方训练材料未公开</b><span>2026-10-14 重查项目网页仓库 revision <code>6da2749</code>，仍没有训练代码、3.5K 清单、模型权重或完整逐任务日志。上游 TMax 数据公开，但不等于 RIVER 筛选集。</span></div>
+  <div><b>官方训练材料未公开</b><span>2026-10-20 重查项目网页仓库 revision <code>6da2749</code>，仍没有训练代码、3.5K 清单、模型权重或完整逐任务日志。上游 TMax 数据公开，但不等于 RIVER 筛选集。</span></div>
   <div><b>主表同时更换模型与执行程序</b><span>River、OpenThinker 与 TMax 使用不同原生 harness。2B-27B 的 TMax 对照更干净，但作者也因资源限制改成本地 Docker。</span></div>
   <div><b>机制证据主要是相关性</b><span>行为 AUC、RSA 表示结构分析与跨领域迁移符合作者假设，但未证明全部增益都来自这 12 种行为。</span></div>
   <div><b>外部评测的隐藏文件范围未逐项披露</b><span>论文采用四个 benchmark 的默认评测程序，没有逐个公开验收可见范围与数据重叠检查。</span></div>
@@ -297,6 +298,6 @@ River-8B 从 Qwen3-8B 出发，先用约 78K OpenThoughts 执行记录做监督�
 
 我的最终判断是：**RIVER 要求先审计验收分数，再决定是否扩大训练环境。** 它的 3.5K 环境未公开，限制了完全复核；但两类真实验收错误、明确区分的筛选阶段，以及行为奖励的正负消融，已经给终端 Agent 强化学习提供了一套很实用的实验框架。
 
-<div class="note"><p>论文为 arXiv non-exclusive distribution license，项目仓库未声明 license。本文没有复用原图像素，图表根据 arXiv:2608.22631v3 与作者整理的案例重绘，具体 Figure、Table 和 Algorithm 编号见图注。项目页与仓库于 2026-10-14 重查，固定 revision 为 <code>6da2749578df2779b8a7e134ccb8d063d84693aa</code>；公开案例摘要不等于完整可重放的轨迹和验收代码。</p></div>
+<div class="note"><p>论文为 arXiv non-exclusive distribution license，项目仓库未声明 license。本文没有复用原图像素，图表根据 arXiv:2608.22631v3 与作者整理的案例重绘，具体 Figure、Table 和 Algorithm 编号见图注。项目页与仓库于 2026-10-20 重查，固定 revision 为 <code>6da2749578df2779b8a7e134ccb8d063d84693aa</code>；公开案例摘要不等于完整可重放的轨迹和验收代码。</p></div>
 
 </div>
