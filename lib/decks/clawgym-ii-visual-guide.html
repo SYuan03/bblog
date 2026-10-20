@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/MyImgs/icon1.svg" type="image/svg+xml">
 <title>ClawGym II · 论文图解</title>
 <style>
 :root{--paper:#f8f5ee;--ink:#20252b;--muted:#66717b;--line:#cfd4da;--blue:#285d9b;--orange:#ad5735;--green:#2b7562;--red:#a0443d;--dark:#20262d;--sans:Arial,"PingFang SC","Microsoft YaHei",sans-serif;--serif:Georgia,"Songti SC",serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -30,6 +31,63 @@ html,body{background:#edf1f5}
 #controls button,#controls a{white-space:nowrap;flex-shrink:0}
 .counter{white-space:nowrap;flex:0 0 auto;min-width:52px;text-align:center}
 .cover-body{flex-direction:column;justify-content:center;gap:30px}.hero{flex:0;align-items:center;grid-template-columns:1.15fr .85fr;gap:48px;width:100%}.hero .question{font:750 54px/1.14 var(--sans)}.cover-results{display:grid;gap:18px}.cover-results .panel{padding:25px 27px}.cover-results .metric{font-size:42px;white-space:nowrap}.cover-results p{font-size:21px}.cover-flow .step{min-height:155px}.cover-flow .step strong{font-size:23px}.cover-flow .step span{font-size:20px}.checker-detail .grid2{grid-template-columns:1.05fr .95fr}.checker-detail .code{font-size:20px;line-height:1.6}.checker-detail .callout span{font-size:22px;line-height:1.5}.checker-detail .callout b{font-size:25px}.closing-detail .limits{gap:18px;background:none}.closing-detail .limit{min-height:240px;padding:25px;border:1px solid var(--line)}.closing-detail .limit strong{font-size:26px}.closing-detail .limit span{font-size:22px;line-height:1.5}
+.mobile-digest{display:none}
+@media screen and (max-width:700px){
+  html,body{height:auto;min-height:100%;overflow:auto;background:var(--paper)}
+  #deck{position:static!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;transform:none!important}
+  .slide{position:relative;inset:auto;min-height:100vh;height:auto;padding:20px 16px 90px;overflow:visible}
+  .slide.active{display:flex;flex-direction:column;gap:16px}
+  .top{height:auto;min-height:0;align-items:flex-start;justify-content:flex-start;flex-direction:column;gap:7px;padding-bottom:9px;font-size:10px;line-height:1.4}
+  .top b{font-size:11px;line-height:1.3;letter-spacing:.04em}
+  .slide>h1,.slide>h2{max-width:100%;margin:0;font:700 25px/1.27 var(--sans)}
+  .lead{font-size:15px;line-height:1.56}
+  .body,.body.figure{display:block;flex:none;width:100%;min-width:0;min-height:0;height:auto;padding:0}
+  .foot{height:auto;min-height:0;align-items:flex-start;gap:12px;margin-top:12px;padding-top:10px;font-size:11px;line-height:1.5}
+  .foot span:first-child{min-width:0}
+  .cover-body{display:grid;gap:14px}
+  .hero,.grid2,.grid3,.grid4,.image-side,.limits,.checker-detail .grid2{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;height:auto}
+  .hero .question{font:700 26px/1.25 var(--sans)}
+  .hero .lead{margin-top:11px!important}
+  .cover-results{gap:8px}.cover-results .panel{padding:13px 14px}.cover-results .metric{font-size:27px}.cover-results p{font-size:13px}
+  .cover-results .caption{font-size:11px}
+  .panel,.limit{min-width:0;min-height:0;padding:14px 15px}
+  .tag,.limit b{margin-bottom:8px;font-size:11px}
+  .panel h3,.limit strong{font:700 18px/1.3 var(--sans)}
+  .panel p,.panel li,.limit span{font-size:14px;line-height:1.52}
+  .metric{font-size:29px}.metric small{font-size:12px}
+  .stack{gap:10px;min-width:0}
+  .callout{padding:12px 14px}.callout b,.checker-detail .callout b{font-size:15px}.callout span,.checker-detail .callout span{font-size:14px;line-height:1.5}
+  .flow{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .step,.cover-flow .step{min-width:0;min-height:0;padding:13px 14px}
+  .step+.step{margin-left:0}.step+.step:before,.step+.step:after{display:none}
+  .step b{font-size:11px}.step strong,.cover-flow .step strong{font-size:18px}.step span,.cover-flow .step span{font-size:14px;line-height:1.5}
+  .formula{padding:14px 10px;font-size:clamp(11px,3.1vw,14px);line-height:1.65;overflow-x:auto;white-space:nowrap}
+  .formula small{font-size:12px;line-height:1.5;white-space:normal}
+  .lane{grid-template-columns:minmax(0,1fr);gap:5px}.lane+.lane{margin-top:16px}.lane>strong{font-size:11px}
+  .nodes{flex-wrap:wrap;gap:6px}.node{padding:9px 10px;font-size:12px}.node:after{display:none}
+  .code,.checker-detail .code{width:100%;max-width:100%;font-size:12px;line-height:1.55;white-space:pre;overflow-x:auto}
+  .table{display:block;background:none;font-size:13px;line-height:1.46}
+  .table thead{display:none}.table tbody{display:grid;gap:10px}
+  .table tr{display:block;padding:10px 12px;border:1px solid var(--line);background:#fff}
+  .table td{display:block;padding:5px 0;border:0}.table td+td{border-top:1px solid var(--line)}
+  .table td:first-child{font-size:16px;color:var(--blue)}
+  .table td:nth-child(2)::before{content:"原生 harness · ";font-weight:700}
+  .table td:nth-child(3)::before{content:"训练信号 · ";font-weight:700}
+  .table td:nth-child(4)::before{content:"比较边界 · ";font-weight:700}
+  .mobile-digest{display:grid;gap:8px}
+  .mobile-digest div{padding:11px 13px;border-left:4px solid var(--blue);background:#f1f6fb;color:var(--ink);font-size:13px;line-height:1.5}
+  .mobile-digest div:nth-child(even){border-left-color:var(--orange);background:#fff6f0}
+  .mobile-digest b{display:block;margin-bottom:4px;color:var(--blue);font-size:14px}
+  .mobile-digest div:nth-child(even) b{color:var(--orange)}
+  .body.figure,.image-side>div:first-child{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .body.figure::before,.image-side>div:first-child::before{content:"图解可左右滑动";display:block;margin:0 0 6px;color:var(--muted);font-size:11px}
+  .body.figure img,.image-side img{display:block;width:850px;max-width:none;max-height:none;height:auto;object-fit:contain}
+  .closing-detail .limits{gap:10px}.closing-detail .limit{min-height:0;padding:14px 15px}.closing-detail .limit strong{font-size:18px}.closing-detail .limit span{font-size:14px;line-height:1.5}
+  #controls{width:calc(100% - 16px);bottom:max(6px,env(safe-area-inset-bottom));justify-content:center;gap:4px;padding:6px}
+  #controls button,#controls a{height:36px;min-width:36px;padding:0 8px}
+  #overview-panel{padding:16px;overflow:auto}.overview-card{max-height:none;padding:15px}
+  .overview-grid{grid-template-columns:1fr 1fr}.overview-grid button{padding:9px;font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -54,12 +112,14 @@ html,body{background:#edf1f5}
 
   <section class="slide" data-title="完整训练流水线">
     <div class="top"><b>04 · PIPELINE</b><span>任务 → 原部署程序 → 模型代理 → 分支树 → 验收 → 更新</span></div><h2>一次完整执行的数据怎样进入训练</h2>
+    <div class="mobile-digest"><div><b>执行</b>每次任务在独立 sandbox 中运行。OpenClaw 或 Claude Code 原样负责工具、重试与历史管理；模型请求经过代理，留下原始 token 和生成概率。</div><div><b>更新</b>任务结束后，验收器评估最终工作区。训练器把模型调用恢复为前缀树，过滤无效分支，再用 PPO 或 GRPO 更新同一个策略模型。</div></div>
     <div class="body figure"><img src="/lib/papers/clawgym-ii/pipeline.svg" alt="ClawGym II black-box RL pipeline" width="1600" height="900"></div>
     <div class="foot"><span>根据论文 Figure 1 与 §3.1–§3.3 重绘。未取得原图复用许可，使用独立重绘。</span><span class="pg"></span></div>
   </section>
 
   <section class="slide" data-title="为什么需要 Prefix Tree">
     <div class="top"><b>05 · PREFIX TREE</b><span>多次模型调用不一定属于一条连续记录</span></div><h2>重试、历史压缩和子 Agent 会把一次任务记录分成多分支</h2>
+    <div class="mobile-digest"><div><b>接起调用</b>按输入历史的最长共同前缀把调用接到树上；后续请求中的工具结果补回两次模型生成之间的环境内容。</div><div><b>保留与排除</b>每个压缩段保留最长有效延续，丢弃被重试替代的短分支；摘要与子 Agent 调用不接受主任务分数。有效路径的共享前缀只计一次。</div></div>
     <div class="body figure"><img src="/lib/papers/clawgym-ii/prefix-tree.svg" alt="Prefix tree reconstruction and filtering" width="1600" height="900"></div>
     <div class="foot"><span>来源：论文 §3.2.1–§3.2.3；图为解释性重绘。</span><span class="pg"></span></div>
   </section>
@@ -96,7 +156,7 @@ html,body{background:#edf1f5}
 
   <section class="slide" data-title="13.5K 训练任务从哪来">
     <div class="top"><b>11 · CLAWGYM-SYNDATA</b><span>用户角色路线 + 技能路线</span></div><h2>GPT-5 生成任务与 workspace，GPT-5.4 做质量复核</h2>
-    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">PERSONA ROUTE</span><h3>9 大类、43 个子类</h3><p>GPT-5 根据 用户角色与 7 类、26 种基础操作 生成任务，再生成 模拟工作区、Python 检查器和评分规则。</p></div><div class="panel orange"><span class="tag">SKILL ROUTE</span><h3>约 30K 技能描述 → 约 16K</h3><p>MiniMax-M2.5 先标注 ClawHub 技能描述。每题选 1 个主要技能，最多搭配 3 个辅助技能，再由 GPT-5 生成任务。</p></div><div class="panel green"><span class="tag">MODEL REVIEW</span><h3>GPT-5.4 四项检查</h3><p>任务是否合理、有难度、测试是否对题，以及评分规则是否只补程序难判断的维度。</p></div><div class="panel"><span class="tag">HUMAN SAMPLE</span><h3>50 题人工抽样</h3><p>前作：合理性4.46、可执行性3.50、资源一致性4.36、评分质量3.92（满分5）。没有全量人工复核或标注者一致性。</p></div></div></div>
+    <div class="body"><div class="grid2"><div class="panel blue"><span class="tag">PERSONA ROUTE</span><h3>9 大类、43 个子类</h3><p>GPT-5 根据用户角色与 7 类、26 种基础操作生成任务，再生成模拟工作区、Python 检查器和评分规则。</p></div><div class="panel orange"><span class="tag">SKILL ROUTE</span><h3>约 30K 技能描述 → 约 16K</h3><p>MiniMax-M2.5 先标注 ClawHub 技能描述。每题选 1 个主要技能，最多搭配 3 个辅助技能，再由 GPT-5 生成任务。</p></div><div class="panel green"><span class="tag">MODEL REVIEW</span><h3>GPT-5.4 四项检查</h3><p>任务是否合理、有难度、测试是否对题，以及评分规则是否只补程序难判断的维度。</p></div><div class="panel"><span class="tag">HUMAN SAMPLE</span><h3>50 题人工抽样</h3><p>前作：合理性4.46、可执行性3.50、资源一致性4.36、评分质量3.92（满分5）。没有全量人工复核或标注者一致性。</p></div></div></div>
     <div class="foot"><span>来源：ClawGym 原论文 §2 与 ClawGym-SynData revision 98d0478。</span><span class="pg"></span></div>
   </section>
 
@@ -134,7 +194,8 @@ announcement_path = (
   </section>
 
   <section class="slide" data-title="真实 case：最终分数">
-    <div class="top"><b>15 · HYBRID JUDGE</b><span>程序检查 + GPT-5.4 按规则评分</span></div><h2>程序检查客观约束；模型评判语气，以及行动建议是否明确可执行</h2>
+    <div class="top"><b>15 · HYBRID JUDGE</b><span>程序检查 + GPT-5.4 按规则评分</span></div><h2>程序检查文件与格式；模型评判语气，以及行动建议是否明确可执行</h2>
+    <div class="mobile-digest"><div><b>本文重放的公开程序检查</b>构造完整周报时 15/15；只颠倒三条更新的顺序时 14/15。公开检查器还会把只有 <code>passed</code> 的提交日志当作测试通过。</div><div><b>论文评分与公开默认值</b>混合题在论文中用 0.7 × 程序分 + 0.3 × 模型分；公开 CLI 默认 0.5/0.5，须显式设权重。这里没有运行 GPT-5.4 评分，也没有论文模型日志。</div></div>
     <div class="body figure"><img src="/lib/papers/clawgym-ii/judge-case.svg" alt="Real benchmark case scoring" width="1600" height="900"></div>
     <div class="foot"><span>来源：官方 Bench 的 reward.py、judge.py、runner.py 与 case line 1。论文 Appendix A 的 prompt 比公开实现多 transcript 与 changed files。</span><span class="pg"></span></div>
   </section>
@@ -147,6 +208,7 @@ announcement_path = (
 
   <section class="slide" data-title="主结果">
     <div class="top"><b>17 · MAIN RESULTS</b><span>Qwen3-30A3B family · Table 1</span></div><h2>在对应 harness 内训练后，ClawGym-Bench 与 PinchBench 都提高</h2>
+    <div class="mobile-digest"><div><b>OpenClaw，从 ClawII-Cold 出发</b>ClawGym-Bench 52.64 → 62.62（+9.98 分）；PinchBench 75.61 → 87.32（+11.71 分）。</div><div><b>Claude Code，从原始 Qwen3 出发</b>ClawGym-Bench 37.06 → 51.87（+14.81 分）；PinchBench 54.14 → 71.42（+17.28 分）。两边起点不同，不能直接比较增益。</div></div>
     <div class="body figure"><img src="/lib/papers/clawgym-ii/results.svg" alt="Main benchmark results" width="1600" height="900"></div>
     <div class="foot"><span>根据论文 Table 1 重绘。OpenClaw baseline 是 ClawII-Cold-30A3B；Claude Code baseline 是 Qwen3-30A3B。</span><span class="pg"></span></div>
   </section>
@@ -165,7 +227,7 @@ announcement_path = (
 
   <section class="slide closing-detail" data-title="结论与研究入口">
     <div class="top"><b>20 · TAKEAWAYS</b><span>对 Claude Code / Codex harness 研究最值得带走的点</span></div><h2>它提供了训练桥接算法，尚未证明模型能通用多种执行接口</h2>
-    <div class="body"><div class="limits"><div class="limit"><b>接入方式</b><strong>模型 API 可作为训练接入处</strong><span>原程序执行工具，代理记录模型实际生成，结束后获取任务分。</span></div><div class="limit"><b>核心算法</b><strong>分叉执行记录需要树结构</strong><span>共享前缀去重；按压缩点分段，排除重试短分支和辅助生成。</span></div><div class="limit"><b>任务评分</b><strong>任务分数是连续完成度</strong><span>公开 runner 对 final_score 求平均；论文称 Pass@1，二者表述并不完全一致。</span></div><div class="limit"><b>实验范围</b><strong>训练方差未知</strong><span>没有重复训练或置信区间；混合训练也缺完整数值表。</span></div><div class="limit"><b>复现缺口</b><strong>核心训练代码尚未公开</strong><span>2026-10-14 检查论文代码仓库为空，调用树和训练实现无法核验。</span></div><div class="limit"><b>下一步对照</b><strong>跨 harness 因果实验</strong><span>固定任务、原始权重、执行次数与生成额度，再做训练程序×测试程序的配对实验。</span></div></div></div>
+    <div class="body"><div class="limits"><div class="limit"><b>接入方式</b><strong>模型 API 可作为训练接入处</strong><span>原程序执行工具，代理记录模型实际生成，结束后获取任务分。</span></div><div class="limit"><b>核心算法</b><strong>分叉执行记录需要树结构</strong><span>共享前缀去重；按压缩点分段，排除重试短分支和辅助生成。</span></div><div class="limit"><b>任务评分</b><strong>任务分数是连续完成度</strong><span>公开 runner 对 final_score 求平均；论文称 Pass@1，二者表述并不完全一致。</span></div><div class="limit"><b>实验范围</b><strong>训练方差未知</strong><span>没有重复训练或置信区间；混合训练也缺完整数值表。</span></div><div class="limit"><b>复现缺口</b><strong>核心训练代码尚未公开</strong><span>2026-10-20 检查论文代码仓库为空，调用树和训练实现无法核验。</span></div><div class="limit"><b>下一步对照</b><strong>跨 harness 因果实验</strong><span>固定任务、原始权重、执行次数与生成额度，再做训练程序×测试程序的配对实验。</span></div></div></div>
     <div class="foot"><span><a href="/posts/论文解读/clawgym-ii.html" target="_top">返回文章</a> · <a href="https://arxiv.org/abs/2608.16798">原论文</a> · <a href="https://github.com/SsmallSong/ClawGym-II">官方代码页</a></span><span class="pg"></span></div>
   </section>
 </main>
@@ -183,8 +245,8 @@ announcement_path = (
   const slides=[...document.querySelectorAll('#deck .slide')],deck=document.getElementById('deck'),counter=document.getElementById('counter'),currentTitle=document.getElementById('current-title'),progress=document.getElementById('progress'),overview=document.getElementById('overview-panel'),overviewGrid=document.getElementById('overview-grid'),returnLink=document.getElementById('return-to-article'),fullButton=document.getElementById('full');
   if(window.self===window.top)returnLink.hidden=false;
   let index=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
-  function scaleDeck(){const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
-  function show(next,updateHash=true){index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · ClawGym II`;if(updateHash)history.replaceState(null,'',`#${index+1}`)}
+  function scaleDeck(){if(matchMedia('(max-width:700px)').matches){deck.style.transform='';deck.style.left='';deck.style.top='';return}const controls=document.getElementById('controls').getBoundingClientRect();const bottomGap=Math.max(0,innerHeight-controls.bottom);const availableHeight=Math.max(1,innerHeight-controls.height-bottomGap-12);const scale=Math.min(innerWidth/1600,availableHeight/900);deck.style.transform='scale('+scale+')';deck.style.left=((innerWidth-1600*scale)/2)+'px';deck.style.top=((availableHeight-900*scale)/2)+'px'}
+  function show(next,updateHash=true){const changed=next!==index;index=Math.max(0,Math.min(slides.length-1,next));slides.forEach((slide,i)=>slide.classList.toggle('active',i===index));[...overviewGrid.children].forEach((button,i)=>button.setAttribute('aria-current',i===index?'true':'false'));counter.textContent=`${index+1} / ${slides.length}`;currentTitle.textContent=slides[index].dataset.title;progress.style.width=`${((index+1)/slides.length)*100}%`;document.title=`${slides[index].dataset.title} · ClawGym II`;if(updateHash)history.replaceState(null,'',`#${index+1}`);if(changed&&matchMedia('(max-width:700px)').matches)scrollTo(0,0)}
   function openOverview(){overview.hidden=false;document.getElementById('close-overview').focus()}
   function closeOverview(){overview.hidden=true;document.getElementById('toc').focus()}
   async function toggleFullscreen(){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}

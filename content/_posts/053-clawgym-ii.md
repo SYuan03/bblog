@@ -2,7 +2,7 @@
 title: "[2026-08-17] ClawGym II: Exploring Black-Box RL on Agent Harness"
 permalink: "/posts/论文解读/clawgym-ii.html"
 date: "2026-09-29T18:30:00+08:00"
-updated: "2026-10-14T03:10:00+08:00"
+updated: "2026-10-20T11:00:00+08:00"
 cover: "/generated-covers/053-clawgym-ii.webp"
 description: "ClawGym II 保留 Claude Code 和 OpenClaw 的工具执行流程，通过模型调用记录和任务评分训练模型。本文解释分支怎样恢复、哪些生成不参与训练，并实际运行公开周报任务的检查程序，核对评分与实验边界。"
 wide_content: true
@@ -36,6 +36,7 @@ html:not([data-theme="dark"]) body:has(.claw-reading){--paper:#fff;--paper-eleva
 .claw-reading .note{margin:22px 0;padding:15px 18px;border-left:4px solid var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))}.claw-reading .note.blue{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))}.claw-reading .note p{margin:.34em 0}.claw-reading .formula{margin:21px 0;padding:15px 18px;text-align:center;border-block:1px solid var(--line-local);font:600 .9rem/1.6 var(--mono);overflow-x:auto}.claw-reading .judge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:22px 0;background:var(--line-local)}.claw-reading .judge-grid>div{padding:16px;background:#fff}.claw-reading .judge-grid b{display:block;color:var(--blue);font-size:.93rem}.claw-reading .judge-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.82rem;line-height:1.5}.claw-reading .limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:22px 0;background:var(--line-local)}.claw-reading .limit-grid>div{padding:17px;background:#fff}.claw-reading .limit-grid b{display:block;color:var(--orange);font-size:.9rem}.claw-reading .limit-grid span{display:block;margin-top:7px;color:var(--soft);font-size:.84rem;line-height:1.55}
 @media(max-width:760px){.claw-reading .metrics{grid-template-columns:1fr 1fr}.claw-reading .metric:nth-child(2){border-right:0}.claw-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.claw-reading .flow{grid-template-columns:1fr 1fr}.claw-reading .roles,.claw-reading .judge-grid{grid-template-columns:1fr}.claw-reading .figure-grid{grid-template-columns:1fr}.claw-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}}
 @media(max-width:460px){.claw-reading .flow,.claw-reading .verdict,.claw-reading .limit-grid{grid-template-columns:1fr}.claw-reading .part0,.claw-reading .case{padding:17px 15px}.claw-reading .deck-head,.claw-reading .interest{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){.claw-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
 </style>
 
@@ -54,9 +55,13 @@ html:not([data-theme="dark"]) body:has(.claw-reading){--paper:#fff;--paper-eleva
   <div class="deck-head"><strong>20 页交互图解 · 调用分支、真实评分与跨执行程序结果</strong><a href="/lib/decks/clawgym-ii-visual-guide.html">大屏阅读 ↗</a></div>
   <div class="post-deck-embed">
     <div class="post-deck-embed-frame"><iframe src="/lib/decks/clawgym-ii-visual-guide.html" title="ClawGym II 论文图解，共 20 页" allow="fullscreen" loading="eager"></iframe></div>
-    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>独立打开后可随时点“返回文章”</span></p>
+    <p class="post-deck-embed-note"><span>使用按钮或 ← → 翻页，F 进入或退出全屏</span><span>手机端可在图解内上下滑动；独立打开后可点“返回文章”</span></p>
   </div>
 </section>
+
+<details class="reading-evidence"><summary>查看论文原图、结果曲线与完整表格</summary>
+<p>arXiv 标注的是 non-exclusive distribution license。本站用重新绘制的图解释方法和数值；原图及完整证据请在论文中查看：<a href="https://arxiv.org/pdf/2608.16798v1#page=6">Figure 1 · 框架总览</a>，<a href="https://arxiv.org/pdf/2608.16798v1#page=12">Figures 2–3 · OpenClaw / Claude Code 训练曲线</a>，<a href="https://arxiv.org/pdf/2608.16798v1#page=13">Figure 4 · 混合训练</a>，<a href="https://arxiv.org/pdf/2608.16798v1#page=14">Figures 5–6 · JobBench / OfficeQA</a>，<a href="https://arxiv.org/pdf/2608.16798v1#page=15">Figure 7 · 初始化对照</a>，<a href="https://arxiv.org/pdf/2608.16798v1#page=16">Figure 8 · white-box 训练曲线</a>。完整数值见 <a href="https://arxiv.org/pdf/2608.16798v1#page=11">Table 1 · 主结果</a> 与 <a href="https://arxiv.org/pdf/2608.16798v1#page=15">Table 2 · 跨执行程序矩阵</a>；<a href="https://arxiv.org/pdf/2608.16798v1#page=20">Appendix A · 模型评分提示</a>。</p>
+</details>
 
 <p class="lead">ClawGym II 希望训练模型在 Claude Code 或 OpenClaw 里工作，同时保留这些程序原有的工具调用、历史压缩和错误恢复逻辑。训练系统记录模型请求与回复，任务结束后检查产出的文件，再根据得分更新模型。关键步骤是恢复调用之间的关系：重试留下的旧回复要排除，生成历史摘要与执行子任务的调用也不能直接接受主任务分数。</p>
 
@@ -111,7 +116,7 @@ ClawGym II 里的 black-box 指 harness 对训练器是黑盒，不是模型参�
 
 <h2 id="与-ClawGym、POLAR-和-LEGO-RL-的区别">2. Related Work：与 ClawGym、POLAR 和 LEGO-RL 的区别</h2>
 
-**ClawGym II 的区别是把零散模型调用接成前缀树（prefix tree），再让 PPO／GRPO 按分支结构训练。** 前缀树用共同历史作共享节点，重试或并行调用形成不同分支；它不是第一次把现成 Agent 接入 RL。 与它同期的多项工作也把模型 API 当作接入点。比较时要把任务来源、harness 控制权、记录怎样连接、验收文件怎样隔离分开看。
+**ClawGym II 的区别是把零散模型调用接成前缀树（prefix tree），再让 PPO／GRPO 按分支结构训练。** 前缀树用共同历史作共享节点，重试或并行调用形成不同分支。与它同期的多项工作也把模型 API 当作接入点；比较时要看任务来源、harness 控制权、记录怎样连接，以及验收文件怎样隔离。
 
 <div class="table-scroll">
 <table>
@@ -178,7 +183,7 @@ GRPO 以同一“任务 × harness”的 `n` 次完整执行为一组。先完�
 
 <h3 id="3-5-混合训练：同题在不同执行程序里分别比较">3.5 混合训练：同题在不同执行程序里分别比较</h3>
 
-同一道任务在 OpenClaw 与 Claude Code 中可能呈现不同工具协议、上下文管理和任务分分布。ClawGym II 会把 `(task, OpenClaw)` 与 `(task, Claude Code)` 当成两个组，分别计算组内相对表现，再共同更新一个模型。这样不会把“这套执行程序本来更易得分”误当成某条生成更好。
+同一道任务在 OpenClaw 与 Claude Code 中可能呈现不同工具协议、上下文管理和得分分布。ClawGym II 会把 `(task, OpenClaw)` 与 `(task, Claude Code)` 当成两个组，分别计算组内相对表现，再共同更新一个模型。这样不会把“这套执行程序本来更易得分”误当成某条生成更好。
 
 <h3 id="3-6-数据生成、人工复核与基准筛选">3.6 数据生成、人工复核与基准筛选</h3>
 
