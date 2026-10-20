@@ -2,7 +2,7 @@
 title: "[2026-09-22] Grow the Harness, Not the Context: From Strategy-Free Scaffolds to Reusable Specialist Agents"
 permalink: "/posts/论文解读/grow-the-harness-not-the-context.html"
 date: "2026-09-29T18:20:00+08:00"
-updated: "2026-10-12T16:00:00+08:00"
+updated: "2026-10-20T08:30:00+08:00"
 cover: "/generated-covers/058-grow-the-harness-not-the-context.webp"
 description: "从空程序起步，把失败任务暴露出的重复处理步骤写进代码，供后续任务复用。用论文的 Repair 31 案例说明怎样找出错误、修改函数和验收，并核对成功率与成本的计算范围。"
 wide_content: true
@@ -37,6 +37,30 @@ html:not([data-theme="dark"]) body:has(.gth-reading){--paper:#fff;--paper-elevat
 @media(max-width:760px){.article-shell-deck .article-header{width:100%;max-width:100%;min-width:0}.article-shell-deck .article-header h1{max-width:100%;font-size:clamp(1.9rem,8.4vw,2.38rem);overflow-wrap:anywhere;text-wrap:pretty}.article-shell-deck .article-deck,.article-shell-deck .article-deck>p,.gth-reading,.gth-reading .source-links{min-width:0}.article-shell-deck .article-deck>p,.gth-reading .source-links a{overflow-wrap:anywhere}.gth-reading .deck-wrap{max-width:100%;overflow:hidden}.gth-reading .metrics{grid-template-columns:1fr 1fr}.gth-reading .metric:nth-child(2){border-right:0}.gth-reading .metric:nth-child(-n+2){border-bottom:1px solid var(--line-local)}.gth-reading .process{grid-template-columns:1fr 1fr}.gth-reading .roles{grid-template-columns:1fr}.gth-reading .post-deck-embed-note{align-items:flex-start;flex-direction:column}.gth-reading .figure.wide img{max-width:100%;margin-left:auto;transform:none}}
 @media(max-width:460px){.gth-reading .process,.gth-reading .verdict,.gth-reading .limit-grid{grid-template-columns:1fr}.gth-reading .part0,.gth-reading .case{padding:17px 15px}.gth-reading .deck-head,.gth-reading .interest{align-items:flex-start;flex-direction:column}}
 @media(min-width:1360px) and (max-width:1519.98px){.article-shell-wide.article-shell-wide-toc.article-shell-deck{--shell:min(1360px,calc(100vw - 32px))}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-grid{grid-template-columns:minmax(170px,1fr) minmax(0,980px) minmax(170px,1fr);gap:24px}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-rail{display:block}.article-shell-wide.article-shell-wide-toc.article-shell-deck .rail-sticky{width:min(100%,200px);margin-left:auto}.article-shell-wide.article-shell-wide-toc.article-shell-deck .article-toc-mobile{display:none}}
+
+.gth-reading .supplement{margin:20px 0;border:1px solid var(--line-local);background:var(--surface)}
+.gth-reading .supplement>summary{cursor:pointer;padding:12px 16px;color:var(--green);font-weight:700;list-style:revert}
+.gth-reading .supplement>.table-scroll,.gth-reading .supplement>.figure{margin:0 15px 17px;width:calc(100% - 30px)}
+.gth-reading .supplement>p{margin:0 16px 16px}
+.gth-reading .source-crops{display:none}
+.gth-reading .source-crop{margin:12px 0;padding:12px;border:1px solid var(--line-local);background:#fff}
+.gth-reading .source-crop b{display:block;margin-bottom:8px;color:#38546a;font-size:.85rem}
+.gth-reading .source-crop a{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gth-reading .source-crop img{display:block;width:auto;max-width:none;max-height:none;height:auto;margin:0;border:0}
+.gth-reading .source-crop .paper-figure-expand{display:none}
+.gth-reading .original-link{display:none;font-size:.83rem}
+@media(max-width:760px){
+  .gth-reading .figure.has-mobile-crops>a:first-child{display:none}
+  .gth-reading .source-crops{display:block}
+  .gth-reading .source-crop img{height:auto;max-height:none}
+  .gth-reading .source-crop.narrow img{width:min(100%,440px)}
+  .gth-reading .source-crop.medium img{width:520px}
+  .gth-reading .source-crop.wide img{width:720px;max-width:none}
+  .gth-reading .source-crop.wide b::after{content:" · 左右滑动看全图";color:var(--soft);font-weight:500}
+  .gth-reading .source-crop img[src*="figure-2-gate-"],.gth-reading .source-crop img[src*="figure-5-"],.gth-reading .source-crop img[src*="figure-6-"]{width:100%;max-width:100%}
+  .gth-reading .original-link{display:inline-block;margin:4px 0 8px}
+}
+@media(max-width:700px){.gth-reading .post-deck-embed-frame{height:min(75vh,640px);aspect-ratio:auto}}
 </style>
 
 <div class="gth-reading">
@@ -114,6 +138,7 @@ def main(task: str, max_llm_calls: int) -&gt; dict:
 
 **最清楚的比较轴是：训练后到底留下什么，以及部署时还要让 LLM 做多少控制。**
 
+<details class="supplement"><summary>展开：相关路线的逐项对照</summary>
 <div class="table-scroll">
 <table>
   <thead><tr><th>路线</th><th>持续积累的对象</th><th>部署时怎样运行</th><th>与 Growing Harness 的边界</th></tr></thead>
@@ -127,6 +152,7 @@ def main(task: str, max_llm_calls: int) -&gt; dict:
   </tbody>
 </table>
 </div>
+</details>
 
 它和 Meta-Harness 最接近，但解决的问题更窄、更具体：如何让一份不断变大的程序继续从失败中局部修复，同时防止新补丁破坏旧能力。论文没有训练模型权重，也没有尝试跨任务基准共用一套控制程序。
 
@@ -134,9 +160,16 @@ def main(task: str, max_llm_calls: int) -&gt; dict:
 
 **完整路径是：运行当前程序，记录函数级执行过程，把多条失败放进窗口，局部修改代码，重跑失败，再按间隔用单独留出的 gate 任务验收。** 以下按 §3.5–3.6 与设置表说明；Algorithm 1 的不同写法另行标出。
 
-<figure class="figure wide">
-  <a href="/lib/papers/growing-harness/figure-2-overview.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/growing-harness/figure-2-overview.png" alt="原论文 Figure 2：Growing Harness 的训练循环和 Repair 31" width="1980" height="1530"></a>
-  <figcaption>原论文 Figure 2，CC BY 4.0。左边是空起始程序，中间展示怎样定位参与失败的函数并修改，右边是重新执行、gate 与累积后的程序。</figcaption>
+<figure class="figure wide has-mobile-crops">
+  <a href="/lib/papers/growing-harness/figure-2-content-crop.webp" target="_blank" rel="noopener" aria-label="打开去除空白边的原图"><img src="/lib/papers/growing-harness/figure-2-content-crop.webp" alt="原论文 Figure 2：Growing Harness 的训练循环和 Repair 31，去除空白边" width="1705" height="800"></a>
+<div class="source-crops" aria-label="原论文图的手机分段阅读版">
+  <div class="source-crop figure narrow"><b>1. 空起始程序与 Task 819 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-2-scaffold-crop.webp" target="_blank" rel="noopener" aria-label="放大1. 空起始程序与 Task 819"><img src="/lib/papers/growing-harness/figure-2-scaffold-crop.webp" alt="Figure 2 左侧：空起始程序、Task 819 问题与原程序空答案" width="375" height="800" loading="lazy"></a></div>
+  <div class="source-crop figure wide"><b>2. 执行记录定位错误 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-2-diagnosis-crop.webp" target="_blank" rel="noopener" aria-label="放大2. 执行记录定位错误"><img src="/lib/papers/growing-harness/figure-2-diagnosis-crop.webp" alt="Figure 2 中上：检索已找到答案，提示压缩删掉答案" width="855" height="430" loading="lazy"></a></div>
+  <div class="source-crop figure wide"><b>3. 函数修复与重新执行 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-2-repair-crop.webp" target="_blank" rel="noopener" aria-label="放大3. 函数修复与重新执行"><img src="/lib/papers/growing-harness/figure-2-repair-crop.webp" alt="Figure 2 中下：把保留证据、增加轮次和预留最终调用写进代码" width="855" height="370" loading="lazy"></a></div>
+  <div class="source-crop figure medium"><b>4. 验证与积累 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-2-gate-crop.webp" target="_blank" rel="noopener" aria-label="放大4. 验证与积累"><img src="/lib/papers/growing-harness/figure-2-gate-crop.webp" alt="Figure 2 右侧：重跑失败题、保留题验证和代码积累；其 Q 写法与正文冲突" width="440" height="800" loading="lazy"></a></div>
+</div>
+  <a class="original-link" href="/lib/papers/growing-harness/figure-2-overview.png" target="_blank" rel="noopener">查看 Figure 2 完整原图</a>
+  <figcaption>原论文 Figure 2，CC BY 4.0。手机端按空程序、诊断、修复和验收分段裁切；完整原图可放大查看。图中的 Q 门槛写法与正文 §3.6 不一致。</figcaption>
 </figure>
 
 <h3 id="3-1-用实际调用的函数限定修改范围">3.1 用实际调用的函数限定修改范围</h3>
@@ -189,9 +222,14 @@ def main(task: str, max_llm_calls: int) -&gt; dict:
 
 这个案例也说明为什么要按执行记录定位：任务的 0/1 分数只能告诉你失败了；调用图与中间输入输出才能区分检索失败、证据丢失和最终回答失败。
 
-<figure class="figure wide">
+<figure class="figure wide has-mobile-crops">
   <a href="/lib/papers/growing-harness/figure-6-structures.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/growing-harness/figure-6-structures.png" alt="原论文 Figure 6：两个 benchmark 最终学到的 harness 结构" width="1171" height="978"></a>
-  <figcaption>原论文 Figure 6，CC BY 4.0。这是作者在训练后对最终代码结构的归纳，不是训练前写好的架构。BrowseComp 形成共享检索与证据验证流程；WebArena 形成规则解析、站点专用操作、通用浏览器后备路径与完成状态检查。</figcaption>
+<div class="source-crops" aria-label="原论文图的手机分段阅读版">
+  <div class="source-crop figure medium"><b>BrowseComp 检索与证据验证 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-6-retrieval-crop.webp" target="_blank" rel="noopener" aria-label="放大BrowseComp 检索与证据验证"><img src="/lib/papers/growing-harness/figure-6-retrieval-crop.webp" alt="Figure 6 左侧：BrowseComp 的检索、证据读取与答案验证程序" width="632" height="967" loading="lazy"></a></div>
+  <div class="source-crop figure medium"><b>WebArena 分层网页控制 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-6-browser-crop.webp" target="_blank" rel="noopener" aria-label="放大WebArena 分层网页控制"><img src="/lib/papers/growing-harness/figure-6-browser-crop.webp" alt="Figure 6 右侧：WebArena 的规则解析、站点例程、浏览器后备与完成检查" width="518" height="967" loading="lazy"></a></div>
+</div>
+  <a class="original-link" href="/lib/papers/growing-harness/figure-6-structures.png" target="_blank" rel="noopener">查看 Figure 6 完整原图</a>
+  <figcaption>原论文 Figure 6，CC BY 4.0。手机端分开展示两个结构；这是作者在训练后的归纳，不是训练前写好的架构。</figcaption>
 </figure>
 
 <h2 id="两套基准的评分、主结果与成本">4. Experiments：两套基准的评分、主结果与成本</h2>
@@ -240,13 +278,22 @@ WebArena-Verified 是经过审计和修正的多步网页操作基准。本文�
 
 WebArena 的结果尤其醒目：模型从 120B 缩到 4B，Growing Harness 仍在 44.7% 至 45.3%；Tool-Calling 则从 30.0% 降到 6.7%。这与“代码承担重复网页操作，小模型保留语义判断”的解释一致。这项实验没有进行跨模型训练：每套基准的执行程序由指定模型训练，再换三种部署模型评测。
 
-<figure class="figure wide">
+<details class="supplement"><summary>展开：逐题 context、费用与 token 分布</summary>
+<figure class="figure wide has-mobile-crops">
   <a href="/lib/papers/growing-harness/figure-5-efficiency.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/growing-harness/figure-5-efficiency.png" alt="原论文 Figure 5：逐任务调用次数、context、成本与 token 对比" width="1874" height="1010"></a>
-  <figcaption>原论文 Figure 5，CC BY 4.0。以 gpt-oss-20b 为例，逐题对比 Tool-Calling 与 Growing Harness；费用与 token 均不含评分。</figcaption>
+<div class="source-crops" aria-label="原论文图的手机分段阅读版">
+  <div class="source-crop figure medium"><b>最大输入上下文 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-5-context-crop.webp" target="_blank" rel="noopener" aria-label="放大最大输入上下文"><img src="/lib/papers/growing-harness/figure-5-context-crop.webp" alt="Figure 5 左列：最大输入上下文随模型调用次数变化" width="650" height="940" loading="lazy"></a></div>
+  <div class="source-crop figure medium"><b>单题在线费用 · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-5-cost-crop.webp" target="_blank" rel="noopener" aria-label="放大单题在线费用"><img src="/lib/papers/growing-harness/figure-5-cost-crop.webp" alt="Figure 5 中列：单题在线费用随模型调用次数变化" width="640" height="940" loading="lazy"></a></div>
+  <div class="source-crop figure medium"><b>单题总 token · 原论文局部裁切</b><a href="/lib/papers/growing-harness/figure-5-tokens-crop.webp" target="_blank" rel="noopener" aria-label="放大单题总 token"><img src="/lib/papers/growing-harness/figure-5-tokens-crop.webp" alt="Figure 5 右列：总 token 随模型调用次数变化" width="564" height="940" loading="lazy"></a></div>
+</div>
+  <a class="original-link" href="/lib/papers/growing-harness/figure-5-efficiency.png" target="_blank" rel="noopener">查看 Figure 5 完整原图</a>
+  <figcaption>原论文 Figure 5，CC BY 4.0。橙点为 Growing Harness，灰点为 Tool-Calling；上行为 BrowseComp，下行为 WebArena。手机端按指标分段裁切；费用与 token 均不含评分。</figcaption>
 </figure>
+</details>
 
 <h3 id="4-4-三项组件消融：方向一致，重复次数不足">4.4 三项组件消融：方向一致，重复次数不足</h3>
 
+<details class="supplement"><summary>展开：原论文的训练曲线和消融曲线</summary>
 <figure class="figure wide">
   <a href="/lib/papers/growing-harness/figure-3-convergence.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/growing-harness/figure-3-convergence.png" alt="原论文 Figure 3：两个 benchmark 上的 gate success 训练曲线" width="623" height="334"></a>
   <figcaption>原论文 Figure 3，CC BY 4.0。每个点是一次 gate 验收；两套程序的训练超参数不同，不能直接用曲线比较任务难度。</figcaption>
@@ -256,6 +303,7 @@ WebArena 的结果尤其醒目：模型从 120B 缩到 4B，Growing Harness 仍�
   <a href="/lib/papers/growing-harness/figure-4-ablation.png" target="_blank" rel="noopener" aria-label="打开原尺寸图"><img src="/lib/papers/growing-harness/figure-4-ablation.png" alt="原论文 Figure 4：三项核心机制的消融曲线" width="1188" height="603"></a>
   <figcaption>原论文 Figure 4，CC BY 4.0。去掉 gate 后，gate 成功率一度到 30%，随后退到 16%；完整方法则会保留最佳已接受检查点。</figcaption>
 </figure>
+</details>
 
 BrowseComp-Plus + gpt-oss-20b 的单次消融结果是：完整方法 36%，去掉失败窗口 28%，去掉 gate 验收 22%，去掉函数级修改指引 18%。每种方案只优化一次，共 10 步，没有重复运行的误差条，因此可以说明组件与这一次训练结果相关，不能当成稳定的效应量。
 
