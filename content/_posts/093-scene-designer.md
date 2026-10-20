@@ -2,9 +2,9 @@
 title: "[2026-10-16] Scene-Designer: Learning Design Intelligence for Agentic 3D Scene Generation"
 permalink: "/posts/论文解读/scene-designer.html"
 date: "2026-10-20T15:20:00+08:00"
-updated: "2026-10-20T15:20:00+08:00"
+updated: "2026-10-20T16:11:00+08:00"
 cover: "/generated-covers/093-scene-designer.webp"
-description: "逐步拆开 Scene-GRPO：同一场景生成四个编辑分支，冻结的场景 Critic 比较分支和修改前后，再把局部与整条轨迹的奖励送入标准 GRPO；同时核对它基于 SceneSmith 的执行环境和公开代码边界。"
+description: "Scene-GRPO 在同一家具编辑点试跑四条候选输出，用 Critic 比较候选结果及各结果相对编辑前的变化，再把局部和整条轨迹的奖励送入 GRPO；本文也核对 SceneSmith 执行环境与公开代码。"
 wide_content: true
 wide_toc: true
 toc_depth: 2
@@ -38,11 +38,12 @@ tags:
 <p class="lead">给出“设计一间安静的卧室”，生成器要决定房间结构、摆床、让床头柜和阅读灯配套，还要发现挡门、碰撞与动线问题。Scene-Designer 的主张是：让模型积累逐步编辑的经验，也学会比较场景优劣，再用这些判断改善下一次编辑。本文重点追两件事：Scene-GRPO 相对普通 GRPO 具体改了什么；模型调用的场景工具究竟由谁提供。</p>
 
 <aside class="part0"><h3 id="part-0">Part 0：先分清 GRPO、Critic 和 harness</h3>
-<p>GRPO 把同一输入下采样的一组回答按奖励相互比较，计算组内优势，再更新生成策略。这里的回答是一段带推理与工具调用的<strong>场景编辑动作</strong>，不是整篇代码。论文里的 <strong>Critic</strong> 是从场景比较样本学会排序的视觉语言模型：它看渲染图，判断哪个设计更好。<strong>harness</strong> 是模型之外负责提示词、工具调用、场景状态、渲染、反馈和继续执行的程序。</p>
-<p>普通训练更新的是生成动作的 policy；Critic 在 Scene-GRPO 阶段冻结。推理时可以只用训练后的 policy，也可以额外打开 Critic，让它从多个候选编辑中选一条。两种推理配置的计算量和结果都不同。来源：论文 §3.2、Appendix B–C、§4.1。</p></aside>
+<p>普通 GRPO 会针对同一输入采样多条模型输出，给各条输出打分，再用组内相对优势更新模型。在本文的家具编辑阶段，一条候选输出包含 <code>&lt;think&gt;</code> 中的推理文本和带参数的 <code>&lt;tool_call&gt;</code>；例如调用 <code>move_furniture_tool</code> 请求移动家具。公开代码允许一次输出包含多个工具调用。外部程序执行调用后才会产生新的场景；完成一间房间需要连续执行许多步。</p>
+<p>作者把提出工具调用的视觉语言模型称为 <strong>policy</strong>，把负责评价场景的另一个视觉语言模型称为 <strong>Critic</strong>。作者用已标注优劣顺序的场景图像组训练 Critic。训练后，Critic 根据渲染视图给候选场景排序，还能判断一次编辑后是否比编辑前更好。<strong>harness</strong> 是模型外部的执行程序：组装阶段提示词和场景记忆，调用 SceneSmith 工具，保存或恢复场景状态，并把渲染图、工具反馈交还给模型。</p>
+<p>Scene-GRPO 训练时更新 policy，Critic 参数冻结。推理时可以直接执行 policy 输出中的工具调用；也可以在家具编辑点额外采样多个候选，让 Critic 比较执行后的场景，再选一个继续。后一种配置需要更多生成、场景执行和评价调用。来源：论文 §3.2、Appendix B–C、§4.1。</p></aside>
 
 <aside class="keypoints"><ul>
-<li><strong>Scene-GRPO 没换掉 GRPO 的剪切优化目标。</strong>它换了采样对象和奖励：每个编辑状态试四条分支；冻结 Critic 给“兄弟分支排名”和“子场景是否优于父场景”两个局部信号，再加轨迹长度与物体完整度的全局信号。</li>
+<li><strong>Scene-GRPO 沿用 GRPO 的剪切优化目标。</strong>它在同一家具编辑点试跑四条候选输出。局部奖励包括调用格式、<em>branch-ranking reward</em>（候选场景排名）和 <em>improvement reward</em>（相对编辑前的改善）；全局奖励再看整条轨迹的步数与物体数。</li>
 <li><strong>执行底座是 SceneSmith，加作者自己的 Python 适配层。</strong>公开路径是分阶段提示词 → Qwen3-VL-8B 场景工具调用 → SceneSmith 几何与资产服务 → 渲染/物理反馈。没有证据显示用 Codex 当场景生成 harness；作者写仓库代码时是否使用过编码助手，公开材料也未披露。</li>
 <li>卧室的功能评分从 Scene-Builder 的 <strong>9.2 到 9.5</strong>，布局从 <strong>8.4 到 8.8</strong>；额外推理期 Critic 分支选择到 9.8 / 9.2。每类房间 10 个场景，这些分数由 GPT-4 按 0–10 打分；论文没有报告推理期四分支的成本或延迟。</li>
 </ul></aside>
@@ -66,21 +67,21 @@ tags:
 <figure class="figure original scene-dense"><a href="/lib/papers/scene-designer/figure-4.webp"><img src="/lib/papers/scene-designer/figure-4.webp" width="6000" height="3023" loading="lazy" alt="论文 Figure 4：左侧 Scene-OTA 轨迹、中央设计和评价能力、右侧 Scene-OTC 扰动与偏好数据"></a><figcaption>原论文 Figure 4：两类经验怎样进入 SFT。Liu et al., arXiv:2610.23121v1, p.5，CC BY 4.0；保留原英文标注与数据，点击可放大。</figcaption></figure>
 
 <h3 id="scene-grpo">3.2 Scene-GRPO 到底在 GRPO 上改了什么</h3>
-<p><strong>改的是环境内采样与奖励归因，不是另起一套策略梯度公式。</strong>在同一父场景的一个家具编辑点，policy 采样 K=4 个候选动作；harness 每次恢复相同父状态，分别执行工具、渲染子场景。能渲染的分支交给冻结 Critic 排序，排首位的一条继续构建。非编辑的检查类调用不一定扩成四支。训练有局部四分支组；同一个提示还产生 G=4 条完整轨迹，供全局奖励相互比较。论文报告最多 80 步，学习率 1×10⁻⁶。来源：论文 §3.2、§4、Appendix C。</p>
+<p><strong>Scene-GRPO 改的是采样过程和奖励，沿用 GRPO 的策略更新目标。</strong>把这一步开始时的状态称为“父场景”，某个候选工具调用执行后的结果称为“子场景”。在一个家具编辑点，policy 基于同一父场景生成 K=4 条不同的候选输出。harness 让四条候选分别从相同的场景与记忆快照执行，再渲染四个结果；冻结的 Critic 对可渲染的子场景排序，选排名最高的一条继续构建。检查类工具调用不一定扩成四支。此外，同一个任务提示还产生 G=4 条完整轨迹，供全局奖励相互比较。论文报告每条轨迹最多 80 步，学习率 1×10⁻⁶。来源：论文 §3.2、§4、Appendix C。</p>
 <figure class="figure original scene-dense"><a href="/lib/papers/scene-designer/figure-5.webp"><img src="/lib/papers/scene-designer/figure-5.webp" width="5034" height="2791" loading="lazy" alt="论文 Figure 5：同一父场景生成四个编辑分支，冻结 Critic 对分支排序并比较修改前后，再加全局奖励"></a><figcaption>原论文 Figure 5：蓝色 policy 更新，Critic 冻结；中间是同父场景四个候选，右边是局部与全局奖励。Liu et al., v1, p.7，CC BY 4.0。</figcaption></figure>
 <div class="table-scroll"><table><thead><tr><th>环节</th><th>标准 GRPO 的骨架</th><th>Scene-GRPO 的场景化做法</th></tr></thead><tbody>
 <tr><td>一组样本</td><td>同一输入的多个完成</td><td>同一父场景的 4 个可执行编辑分支；另以同一指令的 4 条完整轨迹算全局组</td></tr>
-<tr><td>奖励</td><td>给每个完成一个标量</td><td>格式 + 兄弟分支名次 + 父子场景改善；整条轨迹另看长度与物体数量</td></tr>
+<tr><td>奖励</td><td>给每个完成一个标量</td><td>格式 + 候选场景排名（branch-ranking）+ 相对编辑前的改善（improvement）；整条轨迹另看长度与物体数量</td></tr>
 <tr><td>优势</td><td>组内奖励减均值、除标准差</td><td>局部组和完整轨迹组分别标准化，再相加；全局项广播到该轨迹中的编辑步</td></tr>
 <tr><td>策略目标</td><td>对生成 token 做剪切更新并约束参考策略</td><td>沿用标准 GRPO 目标；发布代码是 token 级 clipped surrogate 加冻结参考模型的采样 KL</td></tr>
 </tbody></table></div>
 
 <h3 id="reward">3.3 奖励不是只问“这四个谁最好”</h3>
-<p>第一个局部信号是 <strong>branch-ranking reward</strong>：可渲染的 L 个分支按 Critic 名次从 1 线性降到 0；不可渲染分支给 −0.5。第二个是 <strong>improvement reward</strong>：Critic 将子场景排在父场景之前给 +0.5，反之 −0.5，不可渲染给 0。工具调用格式正确还给 +1。这样，“这一步胜过别的候选”和“这一步确实比修改前好”由不同对比提供。来源：Appendix C.1，式 8–13。</p>
+<p><strong>branch-ranking reward</strong>（候选排名奖励）只比较从同一父场景出发的候选结果：可渲染的 L 个子场景由 Critic 排序，奖励按名次从 1 线性降到 0；不可渲染的候选给 −0.5。<strong>improvement reward</strong>（编辑改善奖励）逐一比较每个子场景与编辑前的父场景：子场景更好给 +0.5，更差给 −0.5，不可渲染给 0。工具调用格式正确另给 +1。两个比较分别回答“几个候选中哪个好”和“这一步是否真的改好了”。来源：Appendix C.1，式 8–13。</p>
 <div class="formula">r_local = r_format + r_rank + r_improve；A_local = (r_local − 同父场景四支均值) / (四支标准差 + ε)</div>
 <p>按公式造一个<strong>教学算例，不是论文日志</strong>：四支 A、B、C、D 中前三支能渲染，Critic 排名 A &gt; B &gt; C，D 不能渲染；A、B 优于父场景，C 劣于父场景。四支格式均有效，则局部奖励依次为 <strong>2.5、2.0、0.5、0.5</strong>。均值为 1.375、总体标准差约 0.893，A 的局部优势约 1.26。D 的工具调用可以格式正确，却因场景不可渲染而得低分；“格式正确”不等于“设计正确”。</p>
 <p>全局信号另看整条轨迹：长度 25 步以内给满分，45 步及以上给 0；最终物体数 25 件及以上给满分，10 件及以下给 0，中间线性插值。假设一条轨迹用 30 步、放了 20 件物体，则长度奖励 (45−30)/(45−25)=0.75，物体奖励 (20−10)/(25−10)≈0.667，合计约 1.417。它还要与同指令的另外三条轨迹相互标准化；论文最终将该全局优势加到轨迹中的每个编辑分支，权重 η=1。来源：Appendix C.2–C.3，式 14–21。</p>
-<p>物体数只是<strong>防止太早停</strong>的代理指标，不保证每件家具都有用；长度奖励也可能鼓励草率结束，所以两项需要一起看。论文的 Figure 9 消融显示，去掉分支排名时平均布局分数 8.9→8.3、物体数 21.1→19.7；去掉其它奖励也有下降，但这些是作者报告的消融，不证明每个环境都需要相同阈值。</p>
+<p>物体数只是<strong>防止太早停</strong>的代理指标，不保证每件家具都有用；长度奖励也可能鼓励草率结束，所以两项需要一起看。论文的 Figure 9 消融显示，去掉 branch-ranking reward（候选排名奖励）后，平均布局分数 8.9→8.3、物体数 21.1→19.7；去掉其它奖励也有下降，但这些是作者报告的消融，不证明每个环境都需要相同阈值。</p>
 <figure class="figure original scene-dense"><a href="/lib/papers/scene-designer/figure-9.webp"><img src="/lib/papers/scene-designer/figure-9.webp" width="1659" height="490" loading="lazy" alt="论文 Figure 9：分别去掉改善、分支排序、长度与完整度奖励后，物体数、真实感、功能、布局、完整性指标的变化"></a><figcaption>原论文 Figure 9：四种奖励消融，红线为完整配置、蓝线为去掉相应项，Bedroom / Living Room / Bathroom / Office 的平均。不同轴单位不同，不能只看雷达面积。Liu et al., v1, p.10，CC BY 4.0。</figcaption></figure>
 
 <h3 id="objective">3.4 公开实现怎样更新参数，以及论文与代码的差别</h3>
@@ -110,11 +111,11 @@ tags:
 <p>另外，论文 Figure 6 报告“某类错误需五步以上修复”的占比：窗户可达性阻挡从 21% 降到 5%，交互朝向错误从 40% 降到 7%，尺寸不匹配从 50% 降到 23%。这是相关错误类别的条件比例，而非整套任务成功率。Appendix G 的几何可达性指标为另一个证据：全可达率 FR@0.3 为 0.72→0.83→1.0（SFT→RL→RL+Critic），但样本量与不确定性没有在该表单独交代。来源：论文 Figure 6、Table 6。</p>
 
 <h2 id="discussion">5. Discussion：可以借鉴的设计，以及下一步该测什么</h2>
-<p><strong>最值得迁移的是奖励的两个对照轴。</strong>候选之间比较能选出相对好的动作，父子之间比较能排除“这四个都比原来更糟”的局面；完整轨迹再检验是否走得太久或太早停。这个分解适用于有可回滚状态、可执行工具和可比较中间产物的 Agent 环境。关键前提是 Critic 的排序可信、环境分支能公平地从同一状态执行。</p>
+<p><strong>最值得迁移的是奖励的两个对照轴。</strong>候选之间比较能选出相对好的调用；再与编辑前的场景比较，才能发现“四个候选都让房间变差”的局面。完整轨迹奖励检验是否走得太久或太早停。这个分解适用于有可回滚状态、可执行工具和可比较中间产物的 Agent 环境。关键前提是 Critic 的排序可信，四个候选都能从同一状态公平试跑。</p>
 <p>若要把结果外推到真实设计工作，应该补三类实验：一是独立人工设计师对功能与动线的盲评，核对 GPT-4 分数；二是固定总执行与模型调用预算，对比“多分支搜索”和“单次更强 policy”；三是在相同物体数条件下考察布局质量，排除“奖励更多物体”带来的表面提升。公开代码还需要对齐论文阈值、四阶段训练范围与历史 checkpoint，才能检验表格的可复现性。</p>
 
 <h2 id="conclusion">6. Conclusion：记住方法，也记住证据边界</h2>
-<p>Scene-Designer 先从 SceneSmith 工具轨迹学习怎样造场景和改错，再从扰动比较学习怎样评场景。Scene-GRPO 在四个同状态候选上同时奖励<strong>相对最好</strong>与<strong>确实改善父场景</strong>，并用完整轨迹奖励约束步数与物体数；最终仍通过 GRPO 更新生成策略。推理时多试四支并用 Critic 选优，是另一项可选能力。</p>
+<p>Scene-Designer 先从 SceneSmith 工具轨迹学习怎样造场景和改错，再从扰动比较学习怎样评场景。Scene-GRPO 在同一起点的四个候选上奖励<strong>候选之间排名靠前</strong>和<strong>执行后比编辑前更好</strong>，并用完整轨迹奖励约束步数与物体数；最终仍通过 GRPO 更新生成策略。推理时多试四支并用 Critic 选优，是另一项可选能力。</p>
 <p>对 harness 的回答也很明确：这是<strong>依托 SceneSmith、由作者扩展的场景工具执行栈</strong>，不是 Codex 式文件编辑/终端编码 Agent。论文的“代码”主要是公开的训练和工具服务程序；生成器交付的是可执行场景工具动作及最终 3D 场景。当前仓库只公开 Scene-Builder 的 SFT 权重和部分数据/处理流程，发布说明明确没有重跑修订后的 RL 代码来复现论文表格，因此应把论文数字和现行代码默认值分开读。</p>
 <p class="source-note">取证范围：arXiv v1 全 39 页（含附录），项目官方页面、Scene-Designer 代码 commit a0565e50、SceneSmith commit e888297a。本文没有重训模型或复现 3D 场景。所用论文原图来自作者在 arXiv 以 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> 发布的版本；图题、英文标签和原始数值保留，按版面裁切的表格与图标明原编号。论文与发布代码不一致处分别标注。</p>
 </div>

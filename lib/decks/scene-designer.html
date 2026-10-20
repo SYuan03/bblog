@@ -26,6 +26,7 @@ p,li{font-size:19px;line-height:1.58}ul,ol{margin:0;padding-left:24px}li+li{marg
 .stack{display:grid;gap:13px}.stack>div{padding:12px 15px;border-left:3px solid var(--green);background:var(--soft)}.stack b{display:block;font-size:19px}.stack span{display:block;margin-top:5px;color:var(--muted);font-size:16px;line-height:1.45}
 .controls{height:54px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 11px;border-top:1px solid var(--line);background:white}.control-group{display:flex;align-items:center;gap:7px;min-width:0}.controls button,.controls select,.controls a{min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:4px;background:white;color:var(--ink);font-size:13px;line-height:1.4;text-decoration:none}.controls a,.controls [data-fullscreen]{color:var(--green)}.controls select{max-width:185px}.counter{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:640px){.viewport{padding:0;align-items:stretch}.canvas{width:100%;height:100%;transform:none!important;box-shadow:none}.slide{padding:15px 17px;gap:12px;overflow-y:auto;overscroll-behavior:contain}.meta{font-size:11px}h1{font-size:25px}h2{font-size:22px}h3{font-size:17px}p,li,.lead,.big{font-size:15px;line-height:1.75}.small{font-size:13px}.tiny{font-size:12px}.content{flex:none;min-height:0;justify-content:flex-start;gap:15px}.source{font-size:11px;line-height:1.55;margin-top:18px;flex-wrap:wrap}.split,.split.wide-left,.split.wide-right{grid-template-columns:1fr;gap:15px}.cards,.cards.two{grid-template-columns:1fr;gap:10px}.card{min-height:0;padding:12px}.card p{font-size:14px}.flow{grid-template-columns:1fr 1fr;gap:9px}.flow>div{min-height:0;padding:9px}.flow>div:after{display:none}.flow b{font-size:15px;margin-bottom:4px}.flow span{font-size:12px}.comparison{font-size:12px}.comparison th,.comparison td{padding:7px 6px}.formula{font-size:12px;overflow-x:auto}.score{grid-template-columns:70px repeat(3,1fr) 74px;font-size:11px}.score>*{padding:5px 3px}.score .head{font-size:10px}.image-link img{max-height:none}.image-caption{font-size:11px}.stat-row{grid-template-columns:1fr;gap:7px}.stat{padding:9px}.stat b{font-size:24px}.stat span{font-size:12px}.stack>div{padding:9px}.stack b{font-size:14px}.stack span{font-size:12px}.controls{padding:6px 7px}.control-group{gap:4px}.controls button,.controls a,.controls select{padding:6px;font-size:11px}.controls select{max-width:76px}.counter{font-size:11px}}
+@media(max-width:640px){.comparison thead{display:none}.comparison tbody,.comparison tr,.comparison td{display:block;width:100%}.comparison tr{padding:7px 0;border-bottom:1px solid var(--line)}.comparison td{border:0;padding:3px 0}.comparison td:first-child{color:var(--green)}.comparison td:nth-child(2)::before{content:"普通 GRPO：";font-weight:700}.comparison td:nth-child(3)::before{content:"Scene-GRPO：";font-weight:700}}
 @media print{html,body{height:auto;background:white}.viewport{height:auto;display:block;overflow:visible;padding:0}.canvas{width:1200px;height:auto;transform:none!important;box-shadow:none}.slide,.slide[hidden]{position:relative;display:flex;height:675px;break-after:page}.controls{display:none}@page{size:landscape;margin:8mm}}
 </style>
 </head>
@@ -37,7 +38,7 @@ p,li{font-size:19px;line-height:1.58}ul,ol{margin:0;padding-left:24px}li+li{marg
 <h1>把家具放进去，为什么还不等于“设计好房间”？</h1>
 <div class="content">
 <p class="lead">一间卧室可以物体齐全，却挡住门、阅读灯离座位太远；修复时又反复搬同一件家具。</p>
-<div class="flow"><div><b>文字需求</b><span>安静的卧室、双床头柜、阅读灯、梳妆柜</span></div><div><b>编辑动作</b><span>逐步建房、放家具、调整方向与关系</span></div><div><b>观察反馈</b><span>渲染图、工具结果、碰撞与可达性</span></div><div><b>设计判断</b><span>哪个修改更好？是否比改前更好？</span></div></div>
+<div class="flow"><div><b>文字需求</b><span>安静的卧室、双床头柜、阅读灯、梳妆柜</span></div><div><b>模型工具调用</b><span>逐步建房、放家具、调整方向与关系</span></div><div><b>执行反馈</b><span>渲染图、工具结果、碰撞与可达性</span></div><div><b>设计判断</b><span>哪个修改更好？是否比改前更好？</span></div></div>
 <div class="rule big"><span class="label">本文的答案：</span>先学“怎么改”和“怎么看”，再把场景比较变成 GRPO 的训练信号。</div>
 </div>
 <p class="source"><span>论文 §1，Figure 1–3</span><a href="https://arxiv.org/abs/2610.23121">原论文 ↗</a></p>
@@ -48,7 +49,7 @@ p,li{font-size:19px;line-height:1.58}ul,ol{margin:0;padding-left:24px}li+li{marg
 <h2>模型写的主要是工具调用，不是 Blender/Python 文件</h2>
 <div class="content">
 <div class="flow"><div><b>Floor plan</b><span>房间尺寸、门窗和材料；文本阶段</span></div><div><b>Furniture</b><span>摆床、柜子、桌椅；场景可分支</span></div><div><b>Wall</b><span>挂画、墙灯等墙面物体</span></div><div><b>Ceiling</b><span>吊灯等天花板物体</span></div></div>
-<div class="split"><p>Qwen3-VL policy 读当前场景、任务、记忆和反馈，产出带参数的 <strong>&lt;tool_call&gt;</strong>。harness 调用场景工具，执行后重新渲染。</p><p>视觉阶段的观察是 <strong>俯视 + 南/东/西/北四张图</strong>。一组 Critic 候选图则代表不同场景，不能误认成五个相机角度。</p></div>
+<div class="split"><p>Qwen3-VL policy 读当前场景、任务、记忆和反馈，输出 <strong>&lt;think&gt; 推理 + &lt;tool_call&gt; 工具调用</strong>；例如用 move_furniture_tool 请求移动家具。公开代码允许一次输出含多个调用；harness 执行后重新渲染。</p><p>视觉阶段的观察是 <strong>俯视 + 南/东/西/北四张图</strong>。Critic 比较的候选则是不同的场景，不能误认成五个相机角度。</p></div>
 <p class="small subtle">公开版本四阶段；SceneSmith 原框架的 manipuland 阶段未包含在本 release。</p>
 </div>
 <p class="source"><span>论文 Appendix F；官方 USAGE.md “Observation contract”</span><a href="/posts/论文解读/scene-designer.html#harness" target="_top">正文：harness ↗</a></p>
@@ -69,31 +70,31 @@ p,li{font-size:19px;line-height:1.58}ul,ol{margin:0;padding-left:24px}li+li{marg
 <h2>Scene-GRPO 改 rollout 与奖励，沿用 GRPO 更新目标</h2>
 <div class="content">
 <table class="comparison"><thead><tr><th>环节</th><th>普通 GRPO 骨架</th><th>Scene-GRPO</th></tr></thead><tbody>
-<tr><td>一组样本</td><td>同一输入的多个回答</td><td>同一父场景、同一步的 <strong>4 个候选编辑</strong></td></tr>
-<tr><td>奖励</td><td>每个回答一个分数</td><td>格式 + 兄弟名次 + 父子改善；完整轨迹再看步数和物体数</td></tr>
+<tr><td>一组样本</td><td>同一输入的多个回答</td><td>同一编辑前场景、同一步的 <strong>4 条候选输出</strong></td></tr>
+<tr><td>奖励</td><td>每个回答一个分数</td><td>格式 + branch-ranking reward（候选排名）+ improvement reward（编辑前后改善）；整条轨迹再看步数和物体数</td></tr>
 <tr><td>优势</td><td>组内标准化</td><td>局部 4 支、同指令 4 条完整轨迹分别标准化，再相加</td></tr>
 <tr><td>参数更新</td><td>剪切的策略目标 + 参考约束</td><td>仍是 GRPO；公开代码做完成 token 级 clipping 和采样 KL</td></tr>
 </tbody></table>
-<p class="small subtle">两个不同的“4”：K=4 是同父场景编辑分支，G=4 是同一指令生成的完整轨迹。</p>
+<p class="small subtle">两个不同的“4”：K=4 是同一编辑前场景试出的候选结果，G=4 是同一任务指令下的完整轨迹。</p>
 </div>
 <p class="source"><span>论文 §3.2、Appendix C；代码 src/grpo_objective.py</span><a href="/posts/论文解读/scene-designer.html#scene-grpo" target="_top">正文与公式 ↗</a></p>
 </section>
 
-<section class="slide" data-title="同父场景分支" hidden aria-label="第5页：分支采样">
+<section class="slide" data-title="同起点试跑" hidden aria-label="第5页：分支采样">
 <p class="meta"><span>Method · 一次编辑迭代</span><span>05 / 10</span></p>
-<h2>四个候选从同一父状态试跑，再选一条继续</h2>
+<h2>四个候选从同一编辑前场景试跑，再选一个继续</h2>
 <div class="content split wide-left">
 <div><a class="image-link" href="/lib/papers/scene-designer/figure-5.webp" target="_blank"><img src="/lib/papers/scene-designer/figure-5.webp" alt="Figure 5 原图，四个场景编辑分支和奖励"></a><p class="image-caption">原论文 Figure 5 · p.7 · CC BY 4.0；英文标注与图中的四个场景完整保留。</p></div>
-<div class="stack"><div><b>1. 恢复父场景</b><span>四次都从相同场景和记忆快照起跑。</span></div><div><b>2. 执行并渲染</b><span>Critic 只给能渲染的候选排序；坏分支另受罚。</span></div><div><b>3. 继续一支</b><span>选中分支的状态直接恢复，不能再执行一次造成双重修改。</span></div></div>
+<div class="stack"><div><b>1. 恢复同一起点</b><span>四次都从相同场景和记忆快照起跑。</span></div><div><b>2. 执行并渲染</b><span>Critic 给可渲染的候选场景排序；不可渲染的候选受罚。</span></div><div><b>3. 选一个继续</b><span>直接恢复被选中的结果；不能重复执行工具造成双重修改。</span></div></div>
 </div>
 <p class="source"><span>论文 Figure 5；公开代码 grpo_rollout.py、tool_server.py</span><a href="https://github.com/ZJU-OmniAI/Scene-Designer/blob/a0565e50ed7d32c0e09132b9311c0b9b91165405/src/tool_server.py#L300-L415">分支代码 ↗</a></p>
 </section>
 
 <section class="slide" data-title="局部奖励算例" hidden aria-label="第6页：局部奖励算例">
 <p class="meta"><span>Method · Appendix C.1 · 教学算例</span><span>06 / 10</span></p>
-<h2>“比兄弟好”和“比改前好”是两次比较</h2>
+<h2>先排候选名次，再比较编辑前后</h2>
 <div class="content">
-<div class="score"><div class="head">分支</div><div class="head">格式</div><div class="head">名次</div><div class="head">父子改善</div><div class="head">局部奖励</div>
+<div class="score"><div class="head">候选</div><div class="head">格式</div><div class="head">候选名次</div><div class="head">比编辑前</div><div class="head">局部奖励</div>
 <div>A：第一</div><div>+1</div><div>+1</div><div>+0.5</div><strong>2.5</strong>
 <div>B：第二</div><div>+1</div><div>+0.5</div><div>+0.5</div><strong>2.0</strong>
 <div>C：第三</div><div>+1</div><div>0</div><div>−0.5</div><strong>0.5</strong>
@@ -142,7 +143,7 @@ p,li{font-size:19px;line-height:1.58}ul,ol{margin:0;padding-left:24px}li+li{marg
 <p class="meta"><span>Results · 把结论放回实验条件</span><span>10 / 10</span></p>
 <h2>奖励分解有效，但复现和成本仍有缺口</h2>
 <div class="content">
-<div class="stat-row"><div class="stat"><b>89% / 76%</b><span>Critic 二图 / 四图测试：94 / 55 题；GPT-5.2 为 72% / 15%</span></div><div class="stat"><b>8.9 → 8.3</b><span>移除分支排名奖励后，四类房间平均布局评分下降</span></div><div class="stat"><b>40% → 7%</b><span>交互朝向错误中，需五步以上纠正的案例占比下降</span></div></div>
+<div class="stat-row"><div class="stat"><b>89% / 76%</b><span>Critic 二图 / 四图测试：94 / 55 题；GPT-5.2 为 72% / 15%</span></div><div class="stat"><b>8.9 → 8.3</b><span>移除 branch-ranking reward（候选排名奖励）后，四类房间平均布局评分下降</span></div><div class="stat"><b>40% → 7%</b><span>交互朝向错误中，需五步以上纠正的案例占比下降</span></div></div>
 <div class="cards two"><div class="card blue-border"><h3>解释边界</h3><p>卧室 SceneWeaver 功能分数 9.8，高于无推理 Critic 的 9.5；不能说每项都领先。</p></div><div class="card orange-border"><h3>代码边界</h3><p>论文奖励阈值与发布 CLI 默认不同；作者说明修订 RL 代码后未重跑历史表格。</p></div></div>
 <p class="small">下一步应报告推理成本、用独立人工设计师核对评分，并公开与论文配置一致的完整训练材料。</p>
 </div>
