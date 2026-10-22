@@ -1,0 +1,1153 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "PrismaCoder: Pushing the Boundaries of Open Multimodal Code Intelligence through Decomposed Rubric Synthesis",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/094-prismacoder.md",
+    "deck": "lib/decks/prismacoder.html",
+    "embed_src": "/lib/decks/prismacoder.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "PrismaCoder: Pushing the Boundaries of Open Multimodal Code Intelligence through Decomposed Rubric Synthesis",
+      "url": "https://arxiv.org/html/2610.20538v1",
+      "revision": "v1, 2026-10-14",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "repo",
+      "kind": "code",
+      "title": "PrismaCoder official repository",
+      "url": "https://github.com/QiushiSun/PrismaCoder",
+      "revision": "666ab0cfb49ad3508e4e5575e29960dada090724",
+      "used_for": [
+        "release-status"
+      ]
+    },
+    {
+      "id": "dataset",
+      "kind": "dataset",
+      "title": "PrismaCoder-2M official dataset page",
+      "url": "https://huggingface.co/datasets/QiushiSun/PrismaCoder-2M",
+      "revision": "main page inspected 2026-10-22; immutable dataset commit not captured",
+      "used_for": [
+        "release-status"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 38,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 38
+      }
+    ],
+    "source_visuals_expected": 41,
+    "visual_inventory_complete": true,
+    "review_notes": "Full HTML and PDF text plus all 38 rendered pages in four contact sheets; dense Table 4 additionally inspected at 180 dpi."
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：代码能运行，画面仍可能错"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：与已有视觉代码数据和固定判分的边界"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：一条训练样本怎样被造出来"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：哪些数字支持这套方法"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：最值得补做的实验"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：如何给这篇论文下准确判断"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "seed",
+      "kind": "retrieved-example",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Appendix B"
+        }
+      ],
+      "article_quote": "这里的 seed 是后续改写任务的来源材料，不等于最终入选的训练样本。"
+    },
+    {
+      "term": "curation model",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2; §5.1"
+        }
+      ],
+      "article_quote": "论文 §5.1 指定这个 curation model 为 Claude Opus 4.6。"
+    },
+    {
+      "term": "rubric generator",
+      "kind": "model-call",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; §5.1"
+        }
+      ],
+      "article_quote": "作者先按任务难度决定检查项数量，再让 rubric generator 为当前指令写两套带权重的是非题"
+    },
+    {
+      "term": "judge",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2; §5.1"
+        }
+      ],
+      "article_quote": "Gemini 3 Flash 作为独立的 judge 逐项判分。"
+    },
+    {
+      "term": "rubric",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1"
+        }
+      ],
+      "article_quote": "论文把逐题生成的检查项称作 rubric ：一部分查代码里有没有要求的内容，另一部分看渲染图是否真的摆对。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1; §3–4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "PrismaCoder 关心的是这类“程序能运行，但结果不对”的问题"
+        }
+      ]
+    },
+    {
+      "id": "seed-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Appendix A–B; Table 4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者从绘图数据集、GitHub 绘图脚本、arXiv 论文图片、WebCode2M / MCD 网页、PubChem 化学结构和 3Blue1Brown 的 Manim 视频代码等收集种子。"
+        }
+      ]
+    },
+    {
+      "id": "execution-gate",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2; Appendix A.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "执行成功只表示有产物，不能保证产物符合任务。"
+        }
+      ]
+    },
+    {
+      "id": "rubric-formula",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1 Eq. 1–3; Appendix C Table 6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "0.8 ÷ (1.0 + 0.8 + 0.9 + 0.9 + 0.8) = 0.182"
+        }
+      ]
+    },
+    {
+      "id": "teacher-model",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5.1; Appendix F"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Claude Opus 4.6 负责部分代码的补全、重生成和扩增"
+        }
+      ]
+    },
+    {
+      "id": "teacher-fraction-unknown",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.2; §5.1; Appendix B"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文没有给出最终 Claude 占比。"
+        }
+      ]
+    },
+    {
+      "id": "rl-sampling",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; §4.3; Appendix F"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "正式 RL 时每题采样 8 个回答"
+        }
+      ]
+    },
+    {
+      "id": "rl-counterfactual",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix D"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "完整 GRPO 的 rubric 与直接打分对照因约 808K 次判分请求未做"
+        }
+      ]
+    },
+    {
+      "id": "human-agreement",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§6.3; Appendix H.2; Table 20"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Krippendorff α 从整体打分的 0.303–0.514，提高到 rubric 打分的 0.861–0.918"
+        }
+      ]
+    },
+    {
+      "id": "release-status",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo",
+        "dataset"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "README at 666ab0c; official dataset page"
+        },
+        {
+          "source_id": "dataset",
+          "locator": "README at 666ab0c; official dataset page"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "完整 PrismaForge 合成筛选及 SFT/RL 训练脚本仍列为后续发布"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 1",
+      "status": "omitted",
+      "rationale": "任务与格式的总览，正文以具体样本及 Table 1 数字解释覆盖范围。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 2",
+      "status": "reused",
+      "rationale": "执行、rubric 与筛选/奖励共享流程，是本文方法主图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 2：上方从候选代码到执行"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原论文 Figure 2 · p.4"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 2, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/prismacoder/figure-2.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p.5, Figure 3",
+      "status": "reused",
+      "rationale": "网页遮挡实例直接展示代码检查与视觉检查的区别。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 3：左为参考页面"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原论文 Figure 3，p.5"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 3, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/prismacoder/figure-3-reference.webp",
+        "/lib/papers/prismacoder/figure-3-synthesized.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p.7, Figure 4",
+      "status": "omitted",
+      "rationale": "最终 2M 任务类型饼图；正文用 Table 1 精确数字解释，饼图不利于读细分占比。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p.11, Figure 5",
+      "status": "reused",
+      "rationale": "等量 SFT 数据筛选实验的完整八项分数，是分离数据过滤收益与 RL 收益的直接证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5：只比较等量 SFT 样本的筛选方式"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 5, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/prismacoder/figure-5.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p.11, Figure 6",
+      "status": "reused",
+      "rationale": "两个额外基座的 SFT/RL 阶段曲线，用于限定迁移结论。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 6：两种额外基座"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 6, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/prismacoder/figure-6.webp"
+      ]
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p.12, Figure 7",
+      "status": "reused",
+      "rationale": "三种 judge 与人类一致性图，用于说明分项评分的证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 7：空心点为直接打分"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 7, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/prismacoder/figure-7.webp"
+      ]
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p.21, Figure 8",
+      "status": "omitted",
+      "rationale": "WebUI 代码 rubric 的提示词模板；正文解释两类检查与按难度定数量，未复印长提示词。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p.22, Figure 9",
+      "status": "omitted",
+      "rationale": "WebUI 视觉 rubric 的提示词模板；正文讲可见证据边界，未复印长提示词。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p.32, Figure 10",
+      "status": "omitted",
+      "rationale": "Gemma 上训练阶段哑铃图；Figure 6 已承载跨基座主结论，正文另给 Table 19 的反例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "p.33, Figure 11",
+      "status": "omitted",
+      "rationale": "HTML 柱状图案例；正文选 Figure 3 的可计算遮挡案例作为贯穿样本。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "p.34, Figure 12",
+      "status": "omitted",
+      "rationale": "Python 热图案例；其执行成功但视觉错误的要点已由 Figure 3 讲清。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "p.34, Figure 13",
+      "status": "omitted",
+      "rationale": "LaTeX 堆叠条形图实例；正文聚焦数据生成与逐题评分主线。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "p.34, Figure 14",
+      "status": "omitted",
+      "rationale": "SVG 饼图实例；正文聚焦数据生成与逐题评分主线。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "p.35, Figure 15",
+      "status": "omitted",
+      "rationale": "Mermaid 时序图实例；正文聚焦数据生成与逐题评分主线。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-16",
+      "kind": "figure",
+      "label": "Figure 16",
+      "source_id": "paper",
+      "source_locator": "p.35, Figure 16",
+      "status": "omitted",
+      "rationale": "ChartMimic 阶段案例；正文用 Table 2 的同基座分数给量化结果。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-17",
+      "kind": "figure",
+      "label": "Figure 17",
+      "source_id": "paper",
+      "source_locator": "p.35, Figure 17",
+      "status": "omitted",
+      "rationale": "ChartMimic 与外部模型的视觉例子；正文未用个例推断整体排名。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-18",
+      "kind": "figure",
+      "label": "Figure 18",
+      "source_id": "paper",
+      "source_locator": "p.36, Figure 18",
+      "status": "omitted",
+      "rationale": "Design2Code 网页生成例子；Figure 3 已作更可计算的网页例子。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-19",
+      "kind": "figure",
+      "label": "Figure 19",
+      "source_id": "paper",
+      "source_locator": "p.37, Figure 19",
+      "status": "omitted",
+      "rationale": "另一 Design2Code 网页例子；正文未重复铺陈前端外观案例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-20",
+      "kind": "figure",
+      "label": "Figure 20",
+      "source_id": "paper",
+      "source_locator": "p.37, Figure 20",
+      "status": "omitted",
+      "rationale": "DesignBench 编辑案例；正文保持一次代码完成与多轮 agent 区分。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-21",
+      "kind": "figure",
+      "label": "Figure 21",
+      "source_id": "paper",
+      "source_locator": "p.38, Figure 21",
+      "status": "omitted",
+      "rationale": "第二个 DesignBench 编辑案例；正文未用个例扩大对所有网页编辑任务的判断。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原图。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 1",
+      "status": "omitted",
+      "rationale": "最终 2M 样本按任务类型的精确数量；正文摘取 WebUI 与 Chart-to-Code，避免把来源阶段计数当最终分布。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p.9, Table 2",
+      "status": "omitted",
+      "rationale": "视觉任务主结果；正文引用 ChartMimic 同基座变化。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p.10, Table 3",
+      "status": "omitted",
+      "rationale": "文本任务主结果；正文聚焦数据构建问题，未复制全部模型行。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p.19, Table 4",
+      "status": "reused",
+      "rationale": "13 种来源的种子、重生成、合成阶段计数，是区分原始数据与教师合成的重要证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Appendix B, Table 4，p.19。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "原论文 Table 4 · p.19"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "credit": "Sun et al., arXiv:2610.20538v1, Table 4, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/prismacoder/table-4.webp"
+      ]
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p.20, Table 5",
+      "status": "omitted",
+      "rationale": "先前开放工作在格式上的覆盖表；正文说明比较轴，不复制整个矩阵。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p.22, Table 6",
+      "status": "omitted",
+      "rationale": "Figure 3 各检查项的权重、通过与失败；正文复算视觉分 0.182。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p.24, Table 7",
+      "status": "omitted",
+      "rationale": "不同 RL 任务的代码/视觉/整体权重；正文解释类别差异和失败归零。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 8",
+      "status": "omitted",
+      "rationale": "ChartMimic 完整结果；正文使用主表 Table 2 的基座比较。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 9",
+      "status": "omitted",
+      "rationale": "PandasPlotBench 指标；正文没有用其数值，避免前文与表格数字冲突。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "p.27, Table 10",
+      "status": "omitted",
+      "rationale": "WebCode2M 相关细分结果；正文没有展开每个页面长度。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "p.27, Table 11",
+      "status": "omitted",
+      "rationale": "UniSVG 细分指标；正文只说明格式覆盖与判分框架。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-12",
+      "kind": "table",
+      "label": "Table 12",
+      "source_id": "paper",
+      "source_locator": "p.27, Table 12",
+      "status": "omitted",
+      "rationale": "VisPlotBench 每种语言指标；正文给 Figure 5 的过滤对照范围。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-13",
+      "kind": "table",
+      "label": "Table 13",
+      "source_id": "paper",
+      "source_locator": "p.28, Table 13",
+      "status": "omitted",
+      "rationale": "ChemDraw 完整指标；正文没有围绕化学任务逐项展开。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-14",
+      "kind": "table",
+      "label": "Table 14",
+      "source_id": "paper",
+      "source_locator": "p.29, Table 14",
+      "status": "omitted",
+      "rationale": "WebCode2M 按长度分组结果；未用它推断整体网页鲁棒性。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-15",
+      "kind": "table",
+      "label": "Table 15",
+      "source_id": "paper",
+      "source_locator": "p.29, Table 15",
+      "status": "omitted",
+      "rationale": "DesignBench / Design2Code 细分结果；正文采用论文主表作代表。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-16",
+      "kind": "table",
+      "label": "Table 16",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 16",
+      "status": "omitted",
+      "rationale": "另一个 Design2Code 分组表；网页生成案例已由 Figure 3 说明。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-17",
+      "kind": "table",
+      "label": "Table 17",
+      "source_id": "paper",
+      "source_locator": "p.30, Table 17",
+      "status": "omitted",
+      "rationale": "ArtifactsBench 与 InteractScience 总分；正文聚焦用户关心的数据合成。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-18",
+      "kind": "table",
+      "label": "Table 18",
+      "source_id": "paper",
+      "source_locator": "p.31, Table 18",
+      "status": "omitted",
+      "rationale": "人工一致性指标的详细表；正文引用 Table 20 更直接的三判分器数值。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-19",
+      "kind": "table",
+      "label": "Table 19",
+      "source_id": "paper",
+      "source_locator": "p.32, Table 19",
+      "status": "omitted",
+      "rationale": "Gemma 不同 judge 对 HTML/Python 的阶段评分，正文点出 GPT-5.5 的 HTML 反例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-20",
+      "kind": "table",
+      "label": "Table 20",
+      "source_id": "paper",
+      "source_locator": "p.33, Table 20",
+      "status": "omitted",
+      "rationale": "三 judge 对 100 个人工评分样本的 α 与 τ，正文引用精确范围。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "未复用该原表。",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/prismacoder/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 2",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 2, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/prismacoder/figure-3-reference.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p.5, Figure 3",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 3, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/prismacoder/figure-3-synthesized.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p.5, Figure 3",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 3, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/prismacoder/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p.11, Figure 6",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 6, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/prismacoder/figure-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "p.12, Figure 7",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 7, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/prismacoder/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "p.19, Table 4",
+      "credit": "Sun et al., arXiv:2610.20538v1, Table 4, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/prismacoder/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.11, Figure 5",
+      "credit": "Sun et al., arXiv:2610.20538v1, Figure 5, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 metadata lists CC BY 4.0: https://arxiv.org/abs/2610.20538v1 and https://creativecommons.org/licenses/by/4.0/; checked 2026-10-22.",
+      "used_in": [
+        "article"
+      ]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true,
+      "reader_reconstruction": "Figure 3 source and rendering: code 5/5, vision 1/5; 0.8/4.4=0.182, not total reward. Figure 5 equal-size SFT filter comparison; Appendix D full RL reward comparison absent; Table 19 GPT-5.5 counterexample."
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "status": "completed-current-artifacts",
+    "evidence": {
+      "browser": "Isolated headless Playwright CLI named session prismacoder-qa, fresh npm run build, 2026-10-22. Article and embedded/standalone deck inspected at 1600x1000, 1512x982, 390x844. All six H2 sections and seven paper images loaded; no horizontal overflow. All nine deck slides checked for desktop clipping and mobile controls/overflow. Buttons, ArrowLeft, hash navigation, browser fullscreen/F, Escape, stable return link, article focus mode entry/exit, and dark theme after refresh exercised. Only local /favicon.ico 404 occurred in standalone deck; article had no console errors.",
+      "screenshots": "work/prisma-coder/article-1600-fixed.png, article-1600-full-fixed.png, article-1512.png, article-390.png, deck-390-3-fixed2.png, deck-390-6-fixed2.png, deck-390-7.png, deck-390-9.png, embedded-390-final.png, case-390-final.png, article-dark.png; QA files outside blog."
+    }
+  }
+}
