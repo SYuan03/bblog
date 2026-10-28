@@ -1,0 +1,1288 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "CodeCap-Bench: Can Code Serve as a Good Video Caption?",
+    "kind": "benchmark",
+    "primary_source_ids": [
+      "paper"
+    ],
+    "arxiv_id": "2610.37341",
+    "earliest_public_date": "2026-10-27",
+    "version": "v1"
+  },
+  "artifacts": {
+    "article": "content/_posts/095-codecap-bench.md",
+    "deck": "lib/decks/codecap-bench.html",
+    "embed_src": "/lib/decks/codecap-bench.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "CodeCap-Bench: Can Code Serve as a Good Video Caption?",
+      "url": "https://arxiv.org/html/2610.37341v1",
+      "revision": "arXiv v1",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "metadata",
+      "kind": "paper",
+      "title": "arXiv abstract and license metadata",
+      "url": "https://arxiv.org/abs/2610.37341",
+      "revision": "v1",
+      "used_for": [
+        "date",
+        "license"
+      ]
+    },
+    {
+      "id": "official-checker-availability",
+      "kind": "checker",
+      "title": "Official project release page: evaluator and dataset not yet linked",
+      "url": "https://codecap-bench.github.io/",
+      "revision": "",
+      "availability": "not-released",
+      "checked_on": "2026-10-28",
+      "revision_gap": "Code/Dataset buttons disabled and data-url empty; no code revision can be obtained. This records availability, not inspected evaluator code.",
+      "used_for": [
+        "release-boundary"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 21,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 21
+      }
+    ],
+    "source_visuals_expected": 22,
+    "visual_inventory_complete": true,
+    "text_path": "work/codecap-bench/pdf-text.txt",
+    "rendered_path": "work/codecap-bench/pages/",
+    "pdf_sha256": "9af21bf5217b053b4c3030433ca1cbe4d81a42ce752d379ddba38055ad7dc7ab"
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：让空间和时间变成能执行的规则"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：视频重建已有工作，这里扩大了内容与评分层次"
+    },
+    {
+      "role": "method",
+      "locator": "3. Benchmark / Protocol：从标注视频到一个可解释的分数"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：动态难，Agent 的质量收益并不稳定"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：对视频理解与 coding Agent 研究的启发"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：代码表示有潜力，忠实生成仍是瓶颈"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "code caption",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1 and Appendix C.1"
+        }
+      ],
+      "article_quote": "通常的 video caption 是对视频内容的文字描述。本文的 code caption 是生成画面并控制它随时间变化的可执行程序。评测让模型用 HTML、CSS、JavaScript 重建视频，输出单个 index.html 。它应能在任何指定时刻画出对应状态；引用原视频或截图来播放不算完成。论文评测已有模型，没有进行 SFT、RL 或蒸馏训练。"
+    },
+    {
+      "term": "focal point",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "作者给每段视频两类标签。一类是 focal point ，即带文字描述和原片时间范围的关键内容，例如几何区域的比例，或球发射时与三角门、红带的协同运动。另一类记录关键对象的可见区间和逐帧包围框。空间标签借助代表帧的框与正负点提示，引导视频分割；全部标签经过人工复核和修正，检查描述、时间定位、对象身份与边界。§3.3 没有明确交代关键点文字初稿由谁生成，也没有报告标注者人数或标注者间一致性。"
+    },
+    {
+      "term": "harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1 and Appendix A"
+        }
+      ],
+      "article_quote": "Agent 通过 Pi Agent、Codex 或 Claude Code 运行在隔离容器中。它可以读原视频，自选时间抽帧，使用 ffmpeg/ffprobe、Python、Node、Chromium 和 Playwright 分析、写代码、渲染和比较，再修改。这里的 harness 是运行编码模型并提供文件与工具操作的环境，论文用的是完整编程代理栈。作者没有给模型训练新策略；这些是测试时的观察和修复步骤。"
+    },
+    {
+      "term": "seek(seconds)",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A and C.1"
+        }
+      ],
+      "article_quote": "最后只交一个自包含 index.html ，在仅含该文件的隔离环境中运行。页面暴露 seek(seconds) ，即暂停播放并把画面重画到共享时间线上的指定秒数；重复调用同一时刻、先看晚时刻再看早时刻，都应可靠。外部渲染过程在每 1/24 秒调用这个接口、截图，编码为 24 fps 的成品视频。生成限时每视频 3600 秒；Qwen3.8-max 的 xhigh 放宽到 7200 秒；单次渲染另限 900 秒。"
+    },
+    {
+      "term": "Visual similarity",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2"
+        }
+      ],
+      "article_quote": "Visual similarity 是原视频与成品视频的整体特征余弦相似度：相同时间采样和预处理，经 V-JEPA 2.1 ViT-Gigantic-384 提取视频表示，再计算相似度。它覆盖外观与运动的整体特征，高分仍可能掩盖局部事件或指针时间的错误。"
+    },
+    {
+      "term": "Object-level spatio-temporal IoU",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2"
+        }
+      ],
+      "article_quote": "Object-level spatio-temporal IoU 检查对象逐帧的框是否对齐。GPT-6-sol 对每个参考对象寻找成品中的对应对象、可见时间和代表帧，给出框与正负点提示；SAM 3.1 据此分割，提取逐帧框，再与参考标注比较。框的 IoU 是交集面积除以并集面积。对象分在“原视频或成品至少一方可见”的帧上平均；成品完全缺失对象得 0。然后先平均当前视频的对象分，再平均全部视频，避免对象多的视频自动权重更大。"
+    },
+    {
+      "term": "Fine-grained visual information retention",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2 and Appendix C.3"
+        }
+      ],
+      "article_quote": "Fine-grained visual information retention 是评测模型对每个关键内容的忠实程度评分。GPT-6-sol 收到原片对应片段、关键点文字和 完整成品视频 ，逐关键点输出整数 0 至 5。静态点查内容、外观、布局和关系；动态点查起态、中间步骤、顺序、节奏、时长、协同及结果。分数先在视频内平均，再在视频间平均；静态和动态另报。Table 1 用 0 至 100 尺度展示保留分，但 §3.2 未显式写出 0 至 5 到展示尺度的转换式。Overall 也不能由两列简单平均，关键点数量不同。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1 and §4.3.6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "但写得出函数并不保证函数符合原片。作者因而把两件事分开验证：§4.3.6 比较“代码或文字作为视频描述是否有用”，323 段 CodeCap-Bench 则检验“当前模型能否生成忠实的代码”。不能从下游管线较好直接推断模型已完全理解视频。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3–3.4, pp.4–5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者从 Bilibili、YouTube、Behance、Vimeo 收集候选视频，按场景几何、外观复杂度和运动结构筛选。入选内容主要由 2D 布局、形状、文字和显式对象轨迹构成；复杂 3D 视角、细密纹理、密集粒子或像素变化被排除。五类分别是桌面/应用界面、2D 游戏、视觉设计/媒体动画、数据/科学可视化、图标/抽象动态图形。来源：§3.3。"
+        },
+        {
+          "artifact": "article",
+          "quote": "全 323 段的平均时长 19.0 秒，median 17.0；平均每段 16.8 个标注对象、8.6 个静态加动态关键点。关键点时间范围平均 3.3 秒，median 1.8。 公开来源不自动排除预训练见过视频的风险。 论文没有给出完整候选池大小、筛选淘汰率、训练/测试切分或系统去污染结果；不能把这些未知写成已保证的独立测试。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3, p.5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者给每段视频两类标签。一类是 focal point ，即带文字描述和原片时间范围的关键内容，例如几何区域的比例，或球发射时与三角门、红带的协同运动。另一类记录关键对象的可见区间和逐帧包围框。空间标签借助代表帧的框与正负点提示，引导视频分割；全部标签经过人工复核和修正，检查描述、时间定位、对象身份与边界。§3.3 没有明确交代关键点文字初稿由谁生成，也没有报告标注者人数或标注者间一致性。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C.1–C.2, pp.17–18"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "生成提示词要求所有视觉内容用 DOM/CSS、Canvas、内联 SVG 或程序化 WebGL 画出。参考视频和抽帧 仅供观察 ；不能把截图、视频、下载图像、外部字体、Base64、像素数组或自动描摹结果作为成品素材。模型可以用系统字体，并需从真实字符串渲染文字。直接联网与安装新依赖不可用。人类关键点和对象标签用于判分，未列入生成提示词的可见输入。来源：Appendix C.1。"
+        },
+        {
+          "artifact": "article",
+          "quote": "最后只交一个自包含 index.html ，在仅含该文件的隔离环境中运行。页面暴露 seek(seconds) ，即暂停播放并把画面重画到共享时间线上的指定秒数；重复调用同一时刻、先看晚时刻再看早时刻，都应可靠。外部渲染过程在每 1/24 秒调用这个接口、截图，编码为 24 fps 的成品视频。生成限时每视频 3600 秒；Qwen3.8-max 的 xhigh 放宽到 7200 秒；单次渲染另限 900 秒。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2, p.4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "例如三个并集可见帧的 IoU 分别为 1、0.5、0，第三帧只在参考视频可见，则对象分是 (1 + 0.5 + 0) / 3 = 0.5 。若把缺失帧删掉会错误变成 0.75。这是本文按规则写的算例，未运行官方分割或评测代码。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Fine-grained visual information retention 是评测模型对每个关键内容的忠实程度评分。GPT-6-sol 收到原片对应片段、关键点文字和 完整成品视频 ，逐关键点输出整数 0 至 5。静态点查内容、外观、布局和关系；动态点查起态、中间步骤、顺序、节奏、时长、协同及结果。分数先在视频内平均，再在视频间平均；静态和动态另报。Table 1 用 0 至 100 尺度展示保留分，但 §3.2 未显式写出 0 至 5 到展示尺度的转换式。Overall 也不能由两列简单平均，关键点数量不同。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "unknown",
+      "source_ids": [
+        "official-checker-availability",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-checker-availability",
+          "locator": "Official resource row Code/Dataset; Appendix C.3; Figure 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "2026-10-28 检查官方项目页，Code 与 Dataset 按钮仍为未启用状态，页面写着“Links coming soon”。因此能核实的是公开提示词、公式描述与 Figure 9 轨迹， 官方 checker、逐题数据和资源禁用的实际执行代码尚不可检查 。下文没有将本文算例冒充官方评测器。"
+        },
+        {
+          "artifact": "article",
+          "quote": "首次渲染后，Agent 在 10 秒处比较对应帧，发现滑块比原片快了一年，把 1986 左移回 1985，并验证播放。这里能直接确认的是一次具体观察、实现和修正。 论文没有给出该 case 的完整代码、逐对象框或关键点官方得分 ；“修正后验证播放”不能写成获得全部评测满分。假如年份切换与气泡运动仍明显不同步，按 C.3 的规则会限制相关动态点得分，但本文未把这一推导当成实际判分日志。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1–4.2, Table 1, p.6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 1 全部配置为 medium thinking effort，评测 7 个模型的 Agent 或单次生成设置。GPT-6-astra + Codex 的整体保留 73.24、对象 IoU 75.37，较 Opus-5 + Pi 的保留 58.84 高 14.40 点。GPT-6-sol + Codex 虽 323 段全部产出视频，保留却为 51.34。动态点在每种配置下都低于静态点：Astra + Codex 是 68.61 对 80.72，GPT-6-sol + Codex 是 43.92 对 64.04。"
+        },
+        {
+          "artifact": "article",
+          "quote": "多轮工具主要稳定提高视频产出成功率，质量收益因模型而异。Qwen + Pi 的成功率从单次生成 82.0% 到 93.2%，整体保留 44.67 到 48.83；GPT-6-sol 的单次保留为 53.08，却高于 Codex 的 51.34 和 Pi 的 47.53。GPT-5.6-sol 单次 50.05，也高于 Pi 44.02、Codex 42.98。 这组反例限制了“只要加视觉反馈就更忠实”的说法。 输入帧和预算的差别前面已说明，论文也未报告多次随机种子的均值、方差或置信区间；小分差需谨慎解释。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2 and references [11,14,19,22,36,46]"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "CodeCap-Bench 延续了从视觉输入生成程序的路线。其区别是跨五类结构化 2D 视频，除了整体相似度，还检查对象的空间与时间对齐，以及人类指出的关键内容。下面按论文 §2 对邻近工作的介绍比较；各工作的精确分母和隐藏检查协议仍须查其原文，本文不据此宣称统一条件下胜出。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3, §4.3.4, §4.3.6, Appendix C; official release page"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "适用范围受内容筛选限制，下游对照也未控制所有模态、生成器和预算。官方数据与 checker 尚未提供可用链接；本文能核实完整论文、公开提示词和案例，不声称独立复现了模型榜单。"
+        },
+        {
+          "artifact": "article",
+          "quote": "评测也应补上更短的事件检测与独立 judge：2 fps 观察可能遗漏短变化，视频级高相关不能替代逐事件核验；由模型找对象再分割，身份和可见时间的错误还可能传到 IoU。完整数据来源、标注过程与可执行评测器公开后，才能检查去污染、评分稳定性、无素材要求是否真正执行，以及失败判零的具体实现。"
+        }
+      ]
+    },
+    {
+      "id": "judge-calibration",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.3.4, Figure 8, p.9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "50 个参考视频每类取 10 个，比较四个 Pi Agent 模型的生成视频。人类使用同样的 0 至 5 关键点评分，聚合成视频级分后，与 GPT-6-sol 的对应分数得到 Pearson r = 0.942 。它支持视频级排序与人类判断较一致，未证明每个短事件或每个对象都判对。另一个双 judge 比较只覆盖 GPT-6-sol、DeepSeek-v4.1-flash 两种生成模型；GPT-6-sol 与 Gemini-3.1-pro-preview 排序相同但绝对分数不同，输入方式也有差别，不能据此宣称整个榜单完全无 judge 偏差。来源：§4.3.4。"
+        }
+      ]
+    },
+    {
+      "id": "downstream-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.3.6, Table 2–3, pp.10–11"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者从 DVBench、VideoMathQA、GUI-World 随机取 100 个有问答标注的视频，由 GPT-5.6-sol、Opus-5、Qwen3.8-max 各生成代码与自然语言描述。Gemini-3.8-flash 用 代码渲染视频 或 描述文本 作答，对照原数据的真实答案；看原视频得 83.96%。这里 100 是视频数，精确问题总数与准确率聚合细节未交代。"
+        },
+        {
+          "artifact": "article",
+          "quote": "三模型每项都是代码管线较高。例如 Opus 的 AS 0.9148 对 0.6932，KSS 0.8165 对 0.5958，MPS 0.5572 对 0.5150，后者差值明显较小。对照同时改变了表示方式和重建系统；描述长度、生成费用和时间的匹配未披露。因此实验支持这些视频上代码直接渲染的优势，不能证明任何视频、任何同等成本条件下代码都优于文字描述。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "Figure 1, p.2",
+      "status": "reused",
+      "rationale": "原论文 Figure 1，p.2。同一选座片段的文字描述、代码片段和三种表示优势。代码中的位置、时间与条件都可以直接计算。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 1，p.2。同一选座片段的文字描述、代码片段和三种表示优势。代码中的位置、时间与条件都可以直接计算。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-1.webp"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "Figure 2, p.4",
+      "status": "reused",
+      "rationale": "原论文 Figure 2，p.4。数据收集、筛选和标注复核三个阶段。右上是带时间范围的静态/动态描述，右下是对象可见区间及分割提示。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 2，p.4。数据收集、筛选和标注复核三个阶段。右上是带时间范围的静态/动态描述，右下是对象可见区间及分割提示。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2，p.4 左侧细节裁切"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2，p.4 右侧细节裁切"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-2.webp",
+        "/lib/papers/codecap-bench/figure-2-filter.webp",
+        "/lib/papers/codecap-bench/figure-2-annotate.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "Figure 3, p.5",
+      "status": "reused",
+      "rationale": "原论文 Figure 3，p.5。五类比例、时长、对象数和关键点数。图中的总平均关键点为 8.63，正文四舍五入为 8.6。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 3，p.5。五类比例、时长、对象数和关键点数。图中的总平均关键点为 8.63，正文四舍五入为 8.6。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 3，p.5"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-3.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "Figure 4, p.7",
+      "status": "reused",
+      "rationale": "原论文 Figure 4，p.7。四模型在五类别的平均分。它们的数据/科学可视化对象 IoU 最高，界面和科学类的内容保留通常高于设计与抽象动画。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 4，p.7。四模型在五类别的平均分。它们的数据/科学可视化对象 IoU 最高，界面和科学类的内容保留通常高于设计与抽象动画。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-4.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "Figure 5, p.8",
+      "status": "reused",
+      "rationale": "原论文 Figure 5，p.8。蓝绿线是质量，橙色右轴是每任务平均美元成本；两模型从更高思考得到的收益并不相同。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 5，p.8。蓝绿线是质量，橙色右轴是每任务平均美元成本；两模型从更高思考得到的收益并不相同。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 5，p.8"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-5.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "Figure 6, p.8",
+      "status": "reused",
+      "rationale": "原论文 Figure 6，p.8。费用、输入/输出 tokens、模型响应轮次和耗时。低费用不一定低耗时。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 6，p.8。费用、输入/输出 tokens、模型响应轮次和耗时。低费用不一定低耗时。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-6.webp"
+      ]
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "Figure 7, p.9",
+      "status": "reused",
+      "rationale": "原论文 Figure 7，p.9。七模型的工具类型分配与平均调用数；次数多不能直接推出质量高。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 7，p.9。七模型的工具类型分配与平均调用数；次数多不能直接推出质量高。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-7.webp"
+      ]
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "Figure 8, p.9",
+      "status": "reused",
+      "rationale": "原论文 Figure 8，p.9。左侧只有两个生成模型的 judge 对照；右侧为 50 原视频、四模型输出的人类相关检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 8，p.9。左侧只有两个生成模型的 judge 对照；右侧为 50 原视频、四模型输出的人类相关检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-8.webp"
+      ]
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "Figure 9, p.10",
+      "status": "reused",
+      "rationale": "原论文 Figure 9，p.10。上方观察，左下测量，右侧生成和同刻修正。原图明确标出 10 秒处参考滑块在 1985，首次渲染在 1986。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 9，p.10。上方观察，左下测量，右侧生成和同刻修正。原图明确标出 10 秒处参考滑块在 1985，首次渲染在 1986。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 9，p.10 左下细节裁切"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-9.webp",
+        "/lib/papers/codecap-bench/figure-9-measure.webp",
+        "/lib/papers/codecap-bench/figure-9-correct.webp"
+      ]
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "Figure 10, p.16",
+      "status": "reused",
+      "rationale": "原论文 Figure 10，p.16。七个 Pi 配置共 67 次失败；所有模型合计失败率 2.96%，分母是 7 × 323 个模型任务，不是 323 段不同视频。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 10，p.16。七个 Pi 配置共 67 次失败；所有模型合计失败率 2.96%，分母是 7 × 323 个模型任务，不是 323 段不同视频。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-10.webp"
+      ]
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "Figure 11, p.19",
+      "status": "reused",
+      "rationale": "原论文 Figure 11，p.19。工作区界面；时间为 3.0、5.0、11.5、16.0 秒，包含日历、导航和模板预览。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 11，p.19。工作区界面；时间为 3.0、5.0、11.5、16.0 秒，包含日历、导航和模板预览。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-11.webp"
+      ]
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "Figure 12, p.20",
+      "status": "reused",
+      "rationale": "原论文 Figure 12，p.20。游戏发射、碰撞和结构倒塌。同一列是同一时刻，观察过程比只看最后一帧更能发现偏差。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 12，p.20。游戏发射、碰撞和结构倒塌。同一列是同一时刻，观察过程比只看最后一帧更能发现偏差。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-12.webp"
+      ]
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "Figure 13, p.20",
+      "status": "reused",
+      "rationale": "原论文 Figure 13，p.20。人物与场景动画；时间为 7.7、9.6、13.3、15.6 秒。对象画得像和转场对齐是不同检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 13，p.20。人物与场景动画；时间为 7.7、9.6、13.3、15.6 秒。对象画得像和转场对齐是不同检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-13.webp"
+      ]
+    },
+    {
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "Figure 14, p.21",
+      "status": "reused",
+      "rationale": "原论文 Figure 14，p.21。科学可视化；时间为 0.5、4.3、26.5、27.3 秒，包含能量转换结构与图形变换。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 14，p.21。科学可视化；时间为 0.5、4.3、26.5、27.3 秒，包含能量转换结构与图形变换。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-14.webp"
+      ]
+    },
+    {
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "Figure 15, p.21",
+      "status": "reused",
+      "rationale": "原论文 Figure 15，p.21。图标集合；时间为 3.0、15.3、17.5、23.0 秒，保留形状、颜色和排列的对照。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Figure 15，p.21。图标集合；时间为 3.0、15.3、17.5、23.0 秒，保留形状、颜色和排列的对照。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/figure-15.webp"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "Table 1, p.6",
+      "status": "reused",
+      "rationale": "原论文 Table 1，p.6。完整 medium 主结果：成功率、整体相似度、对象 IoU、动态/静态/整体保留，失败成品各项记零。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 1，p.6。完整 medium 主结果：成功率、整体相似度、对象 IoU、动态/静态/整体保留，失败成品各项记零。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/table-1.webp"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "Table 2, p.10",
+      "status": "reused",
+      "rationale": "原论文 Table 2，p.10。完整下游问答准确率，原视频基线为 83.96%。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 2，p.10。完整下游问答准确率，原视频基线为 83.96%。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 2，p.10"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/table-2.webp"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "Table 3, p.11",
+      "status": "reused",
+      "rationale": "原论文 Table 3，p.11。三模型在 AS、MPS、KSS 上的完整重建结果。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 3，p.11。三模型在 AS、MPS、KSS 上的完整重建结果。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 3，p.11"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/table-3.webp"
+      ]
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "Table 4, p.16",
+      "status": "reused",
+      "rationale": "原论文 Table 4，p.16。Pi Agent 1.1.0、Codex CLI 0.155.1、Claude Code 2.1.296；代码生成和渲染分别计时。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文 Table 4，p.16。Pi Agent 1.1.0、Codex CLI 0.155.1、Claude Code 2.1.296；代码生成和渲染分别计时。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 CC BY 4.0 license link",
+      "credit": "Tang et al. · CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/codecap-bench/table-4.webp"
+      ]
+    },
+    {
+      "id": "prompt-agent",
+      "kind": "appendix-visual",
+      "label": "Agentic Code Generation Prompt",
+      "source_id": "paper",
+      "source_locator": "Appendix C.1, p.17",
+      "status": "omitted",
+      "rationale": "原始完整提示词链接保留；正文解释观察、素材限制、工具和单文件协议，避免重复长英文提示词",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": ""
+    },
+    {
+      "id": "prompt-single",
+      "kind": "appendix-visual",
+      "label": "Non-Agentic Code Generation Prompt",
+      "source_id": "paper",
+      "source_locator": "Appendix C.2, pp.17–18",
+      "status": "omitted",
+      "rationale": "两页提示词的输入帧和单次输出差别在补充中解释；完整英文原件通过论文链接可读",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": ""
+    },
+    {
+      "id": "prompt-judge",
+      "kind": "appendix-visual",
+      "label": "Video Scoring Prompt",
+      "source_id": "paper",
+      "source_locator": "Appendix C.3, p.18",
+      "status": "omitted",
+      "rationale": "正文保留关键0至5定义、静态终态为零和时序偏差上限；完整提示词留在论文，避免图像化长文字",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": ""
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/codecap-bench/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "Figure 1, p.2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 1，p.2。同一选座片段的文字描述、代码片段和三种表示优势。代码中的位置、时间与条件都可以直接计算。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 2, p.4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 2，p.4。数据收集、筛选和标注复核三个阶段。右上是带时间范围的静态/动态描述，右下是对象可见区间及分割提示。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "Figure 3, p.5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 3，p.5。五类比例、时长、对象数和关键点数。图中的总平均关键点为 8.63，正文四舍五入为 8.6。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "Figure 4, p.7",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 4，p.7。四模型在五类别的平均分。它们的数据/科学可视化对象 IoU 最高，界面和科学类的内容保留通常高于设计与抽象动画。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "Figure 5, p.8",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 5，p.8。蓝绿线是质量，橙色右轴是每任务平均美元成本；两模型从更高思考得到的收益并不相同。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "Figure 6, p.8",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 6，p.8。费用、输入/输出 tokens、模型响应轮次和耗时。低费用不一定低耗时。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "Figure 7, p.9",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 7，p.9。七模型的工具类型分配与平均调用数；次数多不能直接推出质量高。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-8",
+      "source_id": "paper",
+      "source_locator": "Figure 8, p.9",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 8，p.9。左侧只有两个生成模型的 judge 对照；右侧为 50 原视频、四模型输出的人类相关检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-9-measure.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "Figure 9, p.10 measure detail",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "Tang et al., Figure 9 细节裁切 · CC BY 4.0",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-9-correct.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "Figure 9, p.10 correct detail",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "Tang et al., Figure 9 细节裁切 · CC BY 4.0",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "Figure 9, p.10",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 9，p.10。上方观察，左下测量，右侧生成和同刻修正。原图明确标出 10 秒处参考滑块在 1985，首次渲染在 1986。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-10.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-10",
+      "source_id": "paper",
+      "source_locator": "Figure 10, p.16",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 10，p.16。七个 Pi 配置共 67 次失败；所有模型合计失败率 2.96%，分母是 7 × 323 个模型任务，不是 323 段不同视频。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-11.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-11",
+      "source_id": "paper",
+      "source_locator": "Figure 11, p.19",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 11，p.19。工作区界面；时间为 3.0、5.0、11.5、16.0 秒，包含日历、导航和模板预览。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-12.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-12",
+      "source_id": "paper",
+      "source_locator": "Figure 12, p.20",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 12，p.20。游戏发射、碰撞和结构倒塌。同一列是同一时刻，观察过程比只看最后一帧更能发现偏差。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-13.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-13",
+      "source_id": "paper",
+      "source_locator": "Figure 13, p.20",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 13，p.20。人物与场景动画；时间为 7.7、9.6、13.3、15.6 秒。对象画得像和转场对齐是不同检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-14.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-14",
+      "source_id": "paper",
+      "source_locator": "Figure 14, p.21",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 14，p.21。科学可视化；时间为 0.5、4.3、26.5、27.3 秒，包含能量转换结构与图形变换。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-15.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-15",
+      "source_id": "paper",
+      "source_locator": "Figure 15, p.21",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Figure 15，p.21。图标集合；时间为 3.0、15.3、17.5、23.0 秒，保留形状、颜色和排列的对照。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "Table 1, p.6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Table 1，p.6。完整 medium 主结果：成功率、整体相似度、对象 IoU、动态/静态/整体保留，失败成品各项记零。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "Table 2, p.10",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Table 2，p.10。完整下游问答准确率，原视频基线为 83.96%。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "Table 3, p.11",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Table 3，p.11。三模型在 AS、MPS、KSS 上的完整重建结果。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "Table 4, p.16",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "原论文 Table 4，p.16。Pi Agent 1.1.0、Codex CLI 0.155.1、Claude Code 2.1.296；代码生成和渲染分别计时。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-2-filter.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 2, p.4 收集与筛选，左侧细节裁切",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "Tang et al., Figure 2 收集与筛选，左侧细节裁切 · CC BY 4.0",
+      "used_in": [
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/codecap-bench/figure-2-annotate.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "Figure 2, p.4 标注与复核，右侧细节裁切",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 license link explicitly CC BY 4.0",
+      "credit": "Tang et al., Figure 2 标注与复核，右侧细节裁切 · CC BY 4.0",
+      "used_in": [
+        "deck"
+      ]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final",
+      "all-15-embedded-and-standalone"
+    ],
+    "evidence_paths": [
+      "work/codecap-bench/qa-report.json",
+      "work/codecap-bench/qa-extra.json",
+      "work/codecap-bench/qa-embedded-*.png",
+      "work/codecap-bench/qa-figure-*.png",
+      "work/codecap-bench/qa-body-*.jpg"
+    ],
+    "interaction_scope": "Isolated headless Chromium DOM fullscreen; no native desktop/window fullscreen claim."
+  }
+}
