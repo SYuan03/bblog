@@ -2,7 +2,7 @@
 title: "[2026-10-27] CodeCap-Bench: Can Code Serve as a Good Video Caption?"
 permalink: "/posts/论文解读/codecap-bench.html"
 date: "2026-10-28T16:00:00+08:00"
-updated: "2026-10-28T16:00:00+08:00"
+updated: "2026-10-29T13:59:51+08:00"
 cover: "/generated-covers/095-codecap-bench.webp"
 description: "把视频里的布局、轨迹和状态变化写成程序，再渲染检查保留了什么。精读 323 段视频的构建、评分和真实修正案例，核对代码与文字描述的对照边界。"
 wide_content: true
@@ -22,11 +22,12 @@ tags:
 
 <style>
 .ccap-reading .figure>a{display:block;overflow-x:auto}.ccap-reading .ccap-formula{padding:14px 18px;background:#f4f7f8;border-left:3px solid #3974a0;overflow-x:auto;font:14px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}.ccap-reading .ccap-table{max-width:900px}.ccap-reading .ccap-table a{display:block;overflow-x:auto}.ccap-reading .ccap-table img{width:100%;height:auto}.ccap-reading .small-table{overflow-x:auto}.ccap-reading table{min-width:740px;width:100%;border-collapse:collapse;font-size:14px}.ccap-reading td,.ccap-reading th{padding:10px 12px;border-bottom:1px solid #ccd5da;text-align:left;vertical-align:top}.ccap-reading th{background:#f1f5f7}.ccap-reading td:first-child{white-space:nowrap}.ccap-reading details{margin:22px 0;padding:14px 18px;border:1px solid #d7dfe2;background:#fafbfb}.ccap-reading summary{cursor:pointer;color:#305b74;font-weight:600}.ccap-reading .narrow{max-width:540px;margin:auto}@media(max-width:640px){.ccap-reading #figure-1 img,.ccap-reading #figure-2 img,.ccap-reading #figure-9 img{min-width:800px;max-width:none}.ccap-reading #figure-3 img,.ccap-reading #figure-8 img,.ccap-reading #figure-4 img,.ccap-reading #figure-5 img,.ccap-reading #figure-6 img,.ccap-reading #figure-7 img{min-width:700px;max-width:none}.ccap-reading .ccap-table img{min-width:790px;max-width:none}.ccap-reading .ccap-table.narrow img{min-width:460px}.ccap-reading details{padding:12px}.ccap-reading .figure>a{display:block;overflow-x:auto}.ccap-reading .ccap-formula{font-size:13px}}
+.ccap-reading .task-demo-frame{display:block;width:100%;height:1300px;border:1px solid #d7dfe2;border-radius:10px;background:#f4f6fa}.ccap-reading .task-demo-links{display:flex;flex-wrap:wrap;gap:10px 20px}.ccap-reading .task-video{display:block;width:100%;height:auto;aspect-ratio:3/1;background:#fff;margin:14px 0}@media(max-width:640px){.ccap-reading .task-demo-frame{height:3000px}}
 </style>
 <div class="paper-reading ccap-reading">
 <section class="deck-wrap" aria-label="CodeCap-Bench 论文图解"><div class="deck-head"><strong>15 页图解 · 代码怎样描述时间、模型怎样写、评测怎样打分</strong><a href="/lib/decks/codecap-bench.html">独立阅读 ↗</a></div><div class="post-deck-embed"><div class="post-deck-embed-frame"><iframe src="/lib/decks/codecap-bench.html" title="CodeCap-Bench 论文图解，共 15 页" allow="fullscreen" loading="eager"></iframe></div><p class="post-deck-embed-note"><span>按钮或方向键翻页 · F 全屏 · Esc 退出</span><span>手机端可逐页滚动，正文原图支持放大</span></p></div></section>
 <p class="paper-meta">Jiafu Tang、Yifan Xu、Eric Tang 等 · arXiv v1，2026-10-27</p>
-<div class="source-links"><a href="https://arxiv.org/abs/2610.37341">arXiv 条目</a><a href="https://arxiv.org/html/2610.37341v1">论文 HTML</a><a href="https://arxiv.org/pdf/2610.37341v1">论文 PDF</a><a href="https://codecap-bench.github.io/">官方项目页</a></div>
+<div class="source-links"><a href="https://arxiv.org/abs/2610.37341">arXiv 条目</a><a href="https://arxiv.org/html/2610.37341v1">论文 HTML</a><a href="https://arxiv.org/pdf/2610.37341v1">论文 PDF</a><a href="https://codecap-bench.github.io/">官方项目页</a><a href="#hands-on">实跑一题：视频、HTML 与 MP4 ↓</a></div>
 
 
 <p>一段选座视频里，座位如何排列、地图在什么时候滚动、哪一个座位在什么时候变色，都能写成程序。浏览器执行程序后，又得到可以按时间定位的视频。CodeCap-Bench 就用这种方式检查模型对画面和变化的理解：它写出的程序到底保留了哪些内容？论文同时比较代码与文字描述对下游问答、重建的帮助；这两个问题要分别读。</p>
@@ -140,6 +141,25 @@ tags:
 <figure id="figure-8" class="figure original"><a href="/lib/papers/codecap-bench/figure-8.webp"><img src="/lib/papers/codecap-bench/figure-8.webp" width="1572" height="542" loading="lazy" alt="左侧只有两个生成模型的 judge 对照；右侧为 50 原视频、四模型输出的人类相关检查。"></a><figcaption>原论文 Figure 8，p.9。左侧只有两个生成模型的 judge 对照；右侧为 50 原视频、四模型输出的人类相关检查。 Tang et al., arXiv:2610.37341v1，CC BY 4.0；点击或使用放大查看完整原图。</figcaption></figure>
 
 </details>
+
+<h3 id="hands-on">3.6 实际跑一题：参考视频 → 单文件网页 → 渲染视频</h3>
+
+<p><strong>下面三栏展示同一道题的输入、代码画面与实际渲染成品。</strong>本文选取 Swfung8 的公开视频 <a href="https://commons.wikimedia.org/wiki/File:Bubble-sort-example-300px.gif">Bubble-sort-example-300px.gif</a> 的前 24 秒，转码为 300×180、24 fps 的参考 MP4。目标是按原时间线重建八个数字、红框、三次交换、框的移动、闪烁和停顿。官方 Code/Dataset 链接截至 2026-10-29 仍待开放，因此这是按论文协议做的自选题；它不属于已确认的官方 323 个样本，也未运行官方 judge。</p>
+
+<iframe id="codecap-task-demo" class="task-demo-frame" src="/lib/demos/codecap-bench-task/compare.html" title="CodeCap-Bench 自选题：参考视频、单文件 HTML 与渲染 MP4 同步对照" loading="eager"></iframe>
+<script src="/lib/demos/codecap-bench-task/embed.js" defer></script>
+<p class="task-demo-links"><a href="/lib/demos/codecap-bench-task/compare.html" target="_blank" rel="noopener">独立打开三栏对照 ↗</a><a href="/lib/demos/codecap-bench-task/index.html" target="_blank" rel="noopener">打开单文件 HTML ↗</a><a href="/lib/demos/codecap-bench-task/comparison.mp4">直接播放并排视频 ↗</a><a href="/lib/demos/codecap-bench-task/files.zip" download>下载完整文件与脚本</a></p>
+
+<p>这次由本文的 Codex 编码环境读取参考视频信息、抽帧观察、写代码，再对照截图修正。交付的 <code>index.html</code> 只包含 Canvas 文字、矩形和按时间计算的状态，没有嵌入原片、截图或外部字体。<code>compare.html</code> 是便于观看的辅助页，会加载两段视频；它不进入提交画面。上述播放、暂停和关键帧按钮可检查同一时刻，而不是只看动画最终状态。</p>
+
+<p>制作 MP4 时，本文编写的 <code>render.mjs</code> 将提交 HTML 单独复制到临时目录，以 300×180 的 Chromium 页面打开，依次调用 <code>videoCompare.seek(i/24)</code>（i=0…575），保存 <strong>576 张浏览器截图</strong>，再由 FFmpeg 按 24 fps 编码成 24 秒的 H.264 视频。这实现了 Appendix A、C.1 描述的渲染方式；随附脚本是本文实现，运行环境为 Node.js 22、Playwright/Chromium 与 FFmpeg，作者原始渲染脚本尚未公开。</p>
+
+<details class="supplement"><summary>直接播放原片与重建片的并排 MP4</summary>
+<video class="task-video" controls playsinline preload="metadata" width="1200" height="400" poster="/lib/demos/codecap-bench-task/poster.webp"><source src="/lib/demos/codecap-bench-task/comparison.mp4" type="video/mp4">可通过上方链接打开 MP4。</video>
+<p>左侧为参考输入，右侧为 HTML 截图编码的结果。此处是已生成的视频，可使用浏览器播放器直接播放；三栏中的 HTML 则是在浏览器里实时画出的。</p>
+</details>
+
+<p>原动画作者 Swfung8，2011-04-18，来自 Wikimedia Commons，许可为 <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>。输入的改动为截取前 24 秒并转码；重建与对照画面按同许可提供。重建保留了时长、尺寸、动作顺序和关键时刻，数字字体、抗锯齿与若干细微位置仍有近似；这里展示的是实际产物，不据此报告官方 benchmark 成绩。</p>
 
 <h2 id="experiments">4. Experiments：动态难，Agent 的质量收益并不稳定</h2>
 

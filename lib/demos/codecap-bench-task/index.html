@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Code caption — bubble sort</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff}body{display:grid;place-items:center}canvas{display:block;width:min(100vw,166.666667vh);height:auto;aspect-ratio:5/3}
+</style>
+</head>
+<body>
+<canvas id="scene" width="300" height="180" aria-label="Reconstruction of a bubble-sort animation"></canvas>
+<script>
+/* Code-only reconstruction of the first 24 seconds of Bubble-sort-example-300px.gif
+   by Swfung8, Wikimedia Commons, CC BY-SA 3.0.
+   Adaptation: manually rebuilt text, rectangular highlights and timed movement.
+   No reference imagery, media, textures, digit outlines or external dependencies. */
+(() => {
+  'use strict';
+  const width=300,height=180,duration=24;
+  const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d');
+  const original=[6,5,3,1,8,7,2,4];
+  const centers=[31,65,99,133,167,201,235,269];
+  // Transition frame numbers measured from the supplied 24 fps reference clip.
+  const swaps=[{frames:[149,151,154,156,158,161],pair:0},{frames:[322,324,326,329,331,334],pair:1},{frames:[494,497,499,502,504,506],pair:2}];
+  const shifts=[{frames:[209,211,214,216,218,221],from:0},{frames:[382,384,386,389,391,394],from:1},{frames:[554,557,559,562,564,566],from:2}];
+  let playing=true,time=0,origin=performance.now();
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  // Preserve the source's six movement steps, including its held states.
+  function progress(n,frames){return frames.filter(f=>n>=f).length/6;}
+  function stateAt(t){
+    const n=Math.min(575,Math.floor(t*24+1e-7)),values=original.slice();let motion=null;
+    for(const s of swaps){
+      if(n>=s.frames[5]){[values[s.pair],values[s.pair+1]]=[values[s.pair+1],values[s.pair]];}
+      else if(n>=s.frames[0]){motion={...s,q:progress(n,s.frames)};break;}
+    }
+    let pair=n<221?0:n<394?1:n<566?2:3;
+    let shift=null;for(const s of shifts)if(n>=s.frames[0]&&n<s.frames[5]){shift={...s,q:progress(n,s.frames)};break;}
+    const show=n>=48&&!(n>=96&&n<101)&&!(n>=269&&n<274)&&!(n>=442&&n<446);
+    return {values,motion,pair,shift,show};
+  }
+  function box(cx){ctx.strokeStyle='#ff0000';ctx.lineWidth=3;ctx.strokeRect(cx-16.5,67.5,32,32);}
+  function draw(t){
+    time=clamp(t,0,duration);const s=stateAt(time),positions=centers.slice();
+    if(s.motion){const k=s.motion.pair;positions[k]+=34*s.motion.q;positions[k+1]-=34*s.motion.q;}
+    ctx.clearRect(0,0,width,height);ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
+    if(s.show){
+      if(s.motion){box(positions[s.motion.pair]);box(positions[s.motion.pair+1]);}
+      else if(s.shift){box(centers[s.shift.from]+34*s.shift.q);box(centers[s.shift.from+1]+34*s.shift.q);}
+      else{box(centers[s.pair]);box(centers[s.pair+1]);}
+    }
+    ctx.fillStyle='#000';ctx.font='22px Arial, sans-serif';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    const opticalOffsets={1:1.5,2:1.5,3:1,4:2,5:0,6:0,7:1,8:0};
+    for(let i=0;i<s.values.length;i++)ctx.fillText(String(s.values[i]),positions[i]+opticalOffsets[s.values[i]],([6,5,3,7].includes(s.values[i])?92:91));
+    window.reconstructionState={time,values:s.values.slice(),positions,highlightVisible:s.show,pair:s.pair,playing};
+  }
+  function seek(seconds){const v=Number(seconds);if(!Number.isFinite(v))throw new TypeError('A finite timestamp is required');playing=false;draw(v);}
+  function play(){if(time>=duration)time=0;origin=performance.now()-time*1000;playing=true;draw(time);}
+  window.videoCompare={duration,width,height,seek,play};
+  function frame(now){if(playing){const t=(now-origin)/1000;if(t>=duration)playing=false;draw(Math.min(t,duration));}requestAnimationFrame(frame);}
+  draw(0);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

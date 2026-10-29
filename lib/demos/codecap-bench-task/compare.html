@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>一题视频到代码：输入、页面与渲染视频</title>
+<style>
+:root{color-scheme:light;--ink:#202532;--muted:#647087;--line:#dce1eb;--accent:#4260d1}*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}main{max-width:1560px;margin:30px auto;padding:0 24px}h1{font-size:26px;line-height:1.4;margin:0 0 8px}p{margin:6px 0 16px}.intro{color:var(--muted);max-width:1050px}a{color:var(--accent);text-underline-offset:3px}.facts{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}.facts span{background:#e9edf8;color:#506188;border-radius:6px;padding:5px 10px;font-size:12px}.panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.panel{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}.panel header{padding:16px 18px;border-bottom:1px solid var(--line)}.label{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}.panel h2{font-size:18px;margin:0;line-height:1.5}.surface{aspect-ratio:5/3;position:relative;overflow:hidden;background:#fff}.surface video,.surface iframe{display:block;position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain}.panel footer{border-top:1px solid var(--line);padding:12px 18px;color:var(--muted);font-size:12px}.controls{padding:16px 20px;background:white;border:1px solid var(--line);border-radius:10px;margin:18px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}button{font:inherit;border:1px solid #cdd4e4;background:white;color:var(--accent);border-radius:6px;padding:8px 13px;cursor:pointer}button.primary{background:var(--accent);border-color:var(--accent);color:white}button:disabled{opacity:.5;cursor:wait}button:focus-visible,input:focus-visible{outline:3px solid #97aaed;outline-offset:3px}input{accent-color:var(--accent);flex:1;min-width:180px}output{font:13px ui-monospace,SFMono-Regular,monospace;color:var(--muted)}.checkpoints{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}.checkpoints button{font-size:12px}.process{border:1px solid var(--line);border-radius:12px;background:#fff;padding:22px;margin-top:24px}.process h2{font-size:19px;margin:0 0 12px}.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}.step{border-left:3px solid #91a2de;padding:0 12px}.step strong{display:block;font-size:14px;margin-bottom:4px}.step p{font-size:13px;color:var(--muted);margin:0}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5fa;padding:16px;border-radius:8px;line-height:1.7;font-size:12px}code{font:12px/1.7 ui-monospace,SFMono-Regular,monospace}.files{display:flex;flex-wrap:wrap;gap:16px;font-size:13px}.notes{font-size:12px;color:var(--muted);margin-top:22px}.status{font-size:12px;color:var(--muted)}@media(max-width:720px){.panels{grid-template-columns:1fr}.surface{max-height:none}main{max-width:740px}.steps{grid-template-columns:1fr 1fr}}@media(max-width:520px){main{padding:0 14px;margin:20px auto}h1{font-size:22px}.steps{grid-template-columns:1fr}.controls{padding:14px;gap:9px}input{flex-basis:100%;order:2}.process{padding:17px}}
+</style></head><body><main>
+<h1>把一段参考视频写成代码，再渲染回视频</h1>
+<p class="intro">这是按 CodeCap-Bench 协议完成的一道自选题。左边是实际输入视频，中间是独立 HTML 实时绘制的画面，右边是逐帧截图后编码得到的 MP4。三者使用同一时间轴。</p>
+<div class="facts"><span>24 秒完整参考片段</span><span>原尺寸 300 × 180</span><span>24 fps · 576 张浏览器截图</span><span>提交文件只有 index.html</span></div>
+<section class="panels" aria-label="三种产物同步对照">
+<article class="panel"><header><span class="label">① 模型看到的输入</span><h2>参考视频</h2></header><div class="surface"><video id="reference" muted playsinline preload="auto" aria-label="参考视频"></video></div><footer>公开排序动画的前 24 秒，转为 MP4；保持原布局与画面。</footer></article>
+<article class="panel"><header><span class="label">② 模型交付的代码</span><h2>单文件 HTML</h2></header><div class="surface"><iframe id="live" src="index.html" title="纯代码重建页面"></iframe></div><footer>仅用 Canvas 画文字和红框，根据时间计算位置；不读取参考视频。</footer></article>
+<article class="panel"><header><span class="label">③ 浏览器渲染后的成品</span><h2>代码生成的视频</h2></header><div class="surface"><video id="rendered" muted playsinline preload="auto" aria-label="代码渲染视频"></video></div><footer>调用 seek(i / 24)，截图 576 帧，再由 FFmpeg 编码。</footer></article>
+</section>
+<section class="controls" aria-label="同步播放控制"><button class="primary" id="play" disabled>同步播放</button><button id="previous" disabled>上一帧</button><button id="next" disabled>下一帧</button><input id="timeline" type="range" min="0" max="575" step="1" value="0" aria-label="定位视频帧"><output id="clock">00.000 s · 帧 0 / 575</output></section>
+<div class="checkpoints"><button data-frame="0">开始</button><button data-frame="48">红框出现 · 2 s</button><button data-frame="154">第一次交换中点</button><button data-frame="326">第二次交换中点</button><button data-frame="499">第三次交换中点</button><button data-frame="575">片段末帧</button></div>
+<p id="status" class="status" role="status">正在载入三个画面…</p>
+<section class="process"><h2>这次实际执行的制作方式</h2><div class="steps">
+<div class="step"><strong>1. 看输入视频</strong><p>ffprobe 检查时长与尺寸，FFmpeg 抽帧，核对数字、红框位置、交换和停顿时刻。</p></div>
+<div class="step"><strong>2. 写 index.html</strong><p>用真实数字字符串和矩形绘图指令重建画面；提供 duration、width、height、seek(t)。</p></div>
+<div class="step"><strong>3. 浏览器采帧</strong><p>把 index.html 单独复制到临时目录。Chromium 以 300×180 打开；每次定位后截取一帧。</p></div>
+<div class="step"><strong>4. 编码成 MP4</strong><p>576 张 PNG 按 24 fps 编成 H.264 视频。视频每一帧来自这个 HTML 的浏览器截图。</p></div></div>
+<pre><code>// render.mjs 中实际运行的采帧逻辑
+for (let i = 0; i &lt; 576; i++) {
+  await page.evaluate(t =&gt; videoCompare.seek(t), i / 24);
+  await page.screenshot({ path: framePath(i) });
+}
+
+// 执行命令（在本目录运行）
+node capture.mjs index.html 6.416666667 frame.png
+node render.mjs index.html reconstructed.mp4
+
+// 渲染脚本调用的编码方式
+ffmpeg -framerate 24 -start_number 0 -i frames/%06d.png \
+  -frames:v 576 -an -c:v libx264 -crf 12 -pix_fmt yuv420p reconstructed.mp4</code></pre>
+<div class="files"><a href="index.html" target="_blank">打开独立提交页面</a><a href="index.html" download>下载 HTML</a><a href="input/reference.mp4" download>下载输入视频</a><a href="reconstructed.mp4" download>下载渲染视频</a><a href="comparison.mp4" download>下载并排对照视频</a><a href="render.mjs" download>下载渲染脚本</a><a href="README.md" target="_blank">查看复现说明</a><a href="files.zip" download>下载完整文件包</a></div>
+</section>
+<p class="notes">官方项目页截至 2026-10-29 未开放 Dataset，故此处使用公开视频自选题，不声称它属于官方 323 个样本，也不报告官方 benchmark 分数。原动画：<a href="https://commons.wikimedia.org/wiki/File:Bubble-sort-example-300px.gif" target="_blank" rel="noreferrer">Swfung8 · Bubble-sort-example-300px.gif</a>，<a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer">CC BY-SA 3.0</a>。输入改动仅为截取前 24 秒并转码；代码重建另有字体与细微位置近似。协议依据：<a href="https://arxiv.org/html/2610.37341v1" target="_blank" rel="noreferrer">CodeCap-Bench Appendix A、C.1</a>。</p>
+</main><script>
+(() => {
+  const $=id=>document.getElementById(id),ref=$('reference'),out=$('rendered'),iframe=$('live');
+  let ready=false,playing=false,current=0,generation=0,referenceFrame=-1,renderedFrame=-1;
+  const api=()=>iframe.contentWindow.videoCompare;
+  const frameAt=t=>Math.min(575,Math.max(0,Math.floor(t*24+1e-6)));
+  // Decoded timestamps can be rounded to microseconds; map each PTS to its nearest frame.
+  const decodedFrameAt=t=>Math.min(575,Math.max(0,Math.round(t*24)));
+  function display(t){current=frameAt(t);api()?.seek(current/24);$('timeline').value=current;$('clock').textContent=(current/24).toFixed(3).padStart(6,'0')+' s · 帧 '+current+' / 575';}
+  function pause(){playing=false;ref.pause();out.pause();$('play').textContent='同步播放';}
+  function seekVideo(video,t){return new Promise(resolve=>{const target=t+0.5/24;if(Math.abs(video.currentTime-target)<1e-6&&video.readyState>=2){resolve();return;}video.addEventListener('seeked',resolve,{once:true});video.currentTime=target;});}
+  async function locate(frame){if(!ready)return;const id=++generation;pause();frame=Math.max(0,Math.min(575,frame));display(frame/24);await Promise.all([seekVideo(ref,frame/24),seekVideo(out,frame/24)]);if(id===generation)display(frame/24);}
+  function metadata(video){return video.readyState>=1?Promise.resolve():new Promise((resolve,reject)=>{video.addEventListener('loadedmetadata',resolve,{once:true});video.addEventListener('error',()=>reject(Error('视频加载失败')),{once:true});});}
+  // Blob URLs permit accurate seeking even when the preview server has no HTTP Range support.
+  async function loadVideo(video,file){const response=await fetch(file);if(!response.ok)throw Error('视频加载失败：'+file);video.src=URL.createObjectURL(await response.blob());await metadata(video);}
+  const loaded=()=>new Promise(resolve=>{const timer=setInterval(()=>{if(api()){clearInterval(timer);resolve();}},20);});
+  Promise.all([loadVideo(ref,'input/reference.mp4'),loadVideo(out,'reconstructed.mp4'),loaded()]).then(async()=>{
+    ready=true;await locate(0);document.querySelectorAll('button').forEach(b=>b.disabled=false);
+    $('status').textContent='三个画面已就绪。播放时一起推进；暂停后可逐帧检查。原尺寸均为 300×180，页面仅放大显示。';
+  }).catch(e=>{$('status').textContent=e.message;});
+  $('play').addEventListener('click',async()=>{if(playing){pause();await locate(current);return;}if(current>=575)await locate(0);playing=true;$('play').textContent='暂停';try{await Promise.all([ref.play(),out.play()]);}catch(e){pause();$('status').textContent=e.message;}});
+  $('timeline').addEventListener('input',()=>locate(Number($('timeline').value)));$('previous').addEventListener('click',()=>locate(current-1));$('next').addEventListener('click',()=>locate(current+1));document.querySelectorAll('[data-frame]').forEach(b=>b.addEventListener('click',()=>locate(Number(b.dataset.frame))));
+  ref.addEventListener('ended',()=>{pause();display(575/24);});
+  function videoFrame(now,metadata){referenceFrame=decodedFrameAt(metadata.mediaTime);if(playing){display(referenceFrame/24);if(Math.abs(out.currentTime-ref.currentTime)>.075)out.currentTime=ref.currentTime;}ref.requestVideoFrameCallback(videoFrame);}
+  function outputFrame(now,metadata){renderedFrame=decodedFrameAt(metadata.mediaTime);out.requestVideoFrameCallback(outputFrame);}
+  if(ref.requestVideoFrameCallback){ref.requestVideoFrameCallback(videoFrame);out.requestVideoFrameCallback(outputFrame);}else{const tick=()=>{if(playing)display(ref.currentTime);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
+  window.comparisonControls={locate,pause,get state(){return {ready,playing,frame:current,referenceFrame,renderedFrame,referenceTime:ref.currentTime,renderedTime:out.currentTime,htmlTime:api()?.duration?iframe.contentWindow.reconstructionState.time:null};}};
+})();
+</script>
+<script>
+(() => {
+  if (parent === window) return;
+  const main = document.querySelector('main');
+  let lastHeight = 0;
+  function measure(force = false) {
+    const style = getComputedStyle(main);
+    const height = Math.ceil(main.getBoundingClientRect().height +
+      parseFloat(style.marginTop) + parseFloat(style.marginBottom));
+    if (force || height !== lastHeight) {
+      lastHeight = height;
+      parent.postMessage({type: 'codecap-demo-height', height}, location.origin);
+    }
+  }
+  new ResizeObserver(() => measure()).observe(main);
+  addEventListener('message', event => {
+    if (event.origin === location.origin && event.source === parent &&
+        event.data?.type === 'codecap-demo-measure') measure(true);
+  });
+  addEventListener('load', () => measure(true));
+  document.fonts.ready.then(() => measure(true));
+})();
+</script>
+</body></html>
