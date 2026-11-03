@@ -59,6 +59,8 @@ tags:
 
 <h2 id="method">3. Method：从受限工具编排到 Qwen 的一次真实编辑</h2>
 
+<p><strong>Astra输出分析和权重修改，由作者的受限沙箱执行；Qwen修复是带反馈的多轮过程。</strong>先看这层编排，再沿实际日志追踪一次修改。</p>
+
 <h3 id="harness">3.1 模型看到什么、输出什么、由谁执行</h3>
 
 <p>这里的 <strong>harness</strong> 是作者组织提示、执行模型回复并送回结果的程序。官方 README 指明 Astra 对应 <code>gpt-6-astra</code>，经 <code>codex exec</code> 与 resume 调用；终端、文件编辑、网页、图像、插件与子代理等 Codex 内置工具关闭。有工具的实验让 Astra 回复一个 Python 代码块，由作者沙箱执行，把打印结果作为下一轮消息。需要运行目标网络时，再提交专门格式的前向请求。</p>
