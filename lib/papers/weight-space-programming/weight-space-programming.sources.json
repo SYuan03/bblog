@@ -1,0 +1,998 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+    "kind": "research",
+    "primary_source_ids": [
+      "original",
+      "logs"
+    ],
+    "source_form": "Author research blog post, not a found arXiv/PDF paper",
+    "earliest_public_date": "2026-11-02",
+    "date_basis": "Author Published label, citation_publication_date, BibTeX note={Blog post}"
+  },
+  "artifacts": {
+    "article": "content/_posts/096-weight-space-programming.md",
+    "deck": "lib/decks/weight-space-programming.html",
+    "embed_src": "/lib/decks/weight-space-programming.html"
+  },
+  "sources": [
+    {
+      "id": "original",
+      "kind": "web",
+      "title": "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+      "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+      "revision": "published 2026-11-02; fetched 2026-11-03; HTML SHA256 60e015f47e4c011297229519a93e36f845883303d80912f48328d8b00de33df9",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "logs",
+      "kind": "code",
+      "title": "Official complete experiment logs and evaluation code",
+      "url": "https://github.com/RikiyaT/lm_understand-logs/tree/4d09ba6d6a7e891dd8063974dfe81b3d78e3494f",
+      "revision": "4d09ba6d6a7e891dd8063974dfe81b3d78e3494f",
+      "used_for": [
+        "harness",
+        "training",
+        "edits",
+        "evaluation",
+        "results",
+        "negative-results",
+        "licensing"
+      ]
+    },
+    {
+      "id": "weight-oracles",
+      "kind": "paper",
+      "title": "Weight Oracles: Reading Neural Network Weights with Language Models",
+      "url": "https://arxiv.org/abs/2610.07334",
+      "used_for": [
+        "related-work; primary abstract only"
+      ]
+    },
+    {
+      "id": "hypertuning",
+      "kind": "paper",
+      "title": "HyperTuning: Toward Adapting Large Language Models without Back-propagation",
+      "url": "https://proceedings.mlr.press/v202/phang23a.html",
+      "used_for": [
+        "related-work; primary abstract only"
+      ]
+    },
+    {
+      "id": "neurogen",
+      "kind": "paper",
+      "title": "NeuroGen: Neural Network Parameter Generation via Large Language Models",
+      "url": "https://arxiv.org/abs/2505.12470",
+      "used_for": [
+        "related-work; primary abstract only"
+      ]
+    },
+    {
+      "id": "adderboard",
+      "kind": "web",
+      "title": "AdderBoard: Trained and Hand-coded categories",
+      "url": "https://github.com/anadim/AdderBoard",
+      "revision": "README fetched 2026-11-03",
+      "used_for": [
+        "related-work"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 19,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 19
+      }
+    ],
+    "source_visuals_expected": 16,
+    "visual_inventory_complete": true,
+    "page_count_basis": "19-page print snapshot produced locally from author HTML, not an author-released paper PDF",
+    "scope": "All main text, expanded setup and prompt/reply panels, footnotes, all 28 references; screenshots and print pages inspected"
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：让行为诊断直接变成参数修改"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：直接读写权重已有先例，区别在编辑者与规模"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：从受限工具编排到 Qwen 的一次真实编辑"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：八组实验的结果、判分与反例"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：先验证修复收益，再讨论替代训练"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：通用模型已能操作权重，但证据边界很具体"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "Weight-Space Programming",
+      "kind": "operation",
+      "source_ids": [
+        "original"
+      ],
+      "source_locators": [
+        {
+          "source_id": "original",
+          "locator": "Weight-Space Programming"
+        }
+      ],
+      "article_quote": "作者把这种围绕自然语言目标直接读写权重的做法称为"
+    },
+    {
+      "term": "harness",
+      "kind": "prompt-context",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "README.md; harness/codex_config.toml"
+        }
+      ],
+      "article_quote": "这里的 harness 是作者组织提示、执行模型回复并送回结果的程序。"
+    },
+    {
+      "term": "forward pass",
+      "kind": "model-call",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/README.md"
+        }
+      ],
+      "article_quote": "作者把一次提交给专门前向服务的批量请求叫作一个"
+    },
+    {
+      "term": "teacher-forced",
+      "kind": "operation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/runs/p50c/turns/t001/prompt.txt"
+        }
+      ],
+      "article_quote": "请求让目标模型读取给定文本，并返回指定位置的内部量"
+    },
+    {
+      "term": "copying head",
+      "kind": "operation",
+      "source_ids": [
+        "original"
+      ],
+      "source_locators": [
+        {
+          "source_id": "original",
+          "locator": "Experiment 3; Figure 1"
+        }
+      ],
+      "article_quote": "是根据前文重复片段寻找后继字符的注意力头"
+    },
+    {
+      "term": "down_proj",
+      "kind": "operation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/runs/p50c/work_notes/final_report.md"
+        }
+      ],
+      "article_quote": "把 MLP 的3584维中间激活写回1024维残差流"
+    },
+    {
+      "term": "strict prompt-level",
+      "kind": "metric",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/code/evaluate.py:105-123"
+        }
+      ],
+      "article_quote": "要求一条回答满足该提示中的全部指令"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "original"
+      ],
+      "source_locators": [
+        {
+          "source_id": "original",
+          "locator": "Weight-Space Programming"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者把这种围绕自然语言目标直接读写权重的做法称为"
+        }
+      ]
+    },
+    {
+      "id": "training-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "harness/sandbox.py; exp8_math/runs/p50c/turns/t001/prompt.txt"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者禁止的是编辑阶段用训练或拟合来更新权重"
+        }
+      ]
+    },
+    {
+      "id": "harness",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "README.md; harness/codex_config.toml"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "终端、文件编辑、网页、图像、插件与子代理等 Codex 内置工具关闭"
+        }
+      ]
+    },
+    {
+      "id": "read-failures",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "original"
+      ],
+      "source_locators": [
+        {
+          "source_id": "original",
+          "locator": "Experiments 2, 7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "类别全部认对，却把三者都画成轮廓，遗漏填充"
+        }
+      ]
+    },
+    {
+      "id": "car",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp4_fix_car/README.md"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "1024个独立测试episode全部成功"
+        }
+      ]
+    },
+    {
+      "id": "minatar",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp5_write_from_scratch/README.md"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者提供规则、源代码、六个语义通道与动作定义，不给数据或提交前环境反馈"
+        }
+      ]
+    },
+    {
+      "id": "go-budget",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp6_go_from_scratch/README.md"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "一次最多128场完整对弈或256个局面"
+        }
+      ]
+    },
+    {
+      "id": "sycophancy",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp7_sycophancy/README.md, Figure 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "四轮只看权重的实验均未可靠识别"
+        }
+      ]
+    },
+    {
+      "id": "qwen-edit",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/runs/p50c/work_notes/final_report.md; edit/manifest.json"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "W′ = W₀ − 6 · outer(u, mask₆₄ ⊙ (uᵀ W₀))"
+        }
+      ]
+    },
+    {
+      "id": "selection",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/runs/p50c/work_notes/submission_evidence.json"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "原本正常结束的114题准确率净提升0；原本截断的1038题提升55.30个百分点"
+        }
+      ]
+    },
+    {
+      "id": "qwen-results",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/eval/{unedited,p50c}/merged.json"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "962个正确样本 / 2000个样本 = 48.1%"
+        }
+      ]
+    },
+    {
+      "id": "scoring",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/code/evaluate.py:105-123,178-201; merge.py"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "数学样本可以同时“截断”和“正确”，两者不是互斥标签"
+        }
+      ]
+    },
+    {
+      "id": "gemma-control",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/gemma_followup/README.md"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "没有建立明确提升。作者看到更多普通算术与代数错误"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "original"
+      ],
+      "source_locators": [
+        {
+          "source_id": "original",
+          "locator": "Additional experiment; What Comes Next?"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这些是展望，不是八组实验已经完成的结果"
+        }
+      ]
+    },
+    {
+      "id": "score-recount",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "logs"
+      ],
+      "source_locators": [
+        {
+          "source_id": "logs",
+          "locator": "exp8_math/eval/p50c/parts/math500_s[0-9]of10/{scores.json,math500_per_problem.json}"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "962个正确样本 / 2000个样本 = 48.1%"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "visual-00",
+      "kind": "appendix-visual",
+      "label": "Teaser read/fix/improve",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 0; Teaser read/fix/improve",
+      "status": "omitted",
+      "rationale": "开篇视觉重复三个实验主结果；本篇图解给出含负面结果的自制总览。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-01",
+      "kind": "appendix-visual",
+      "label": "Experiment 1 grid games and weight inspection",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 1; Experiment 1 grid games and weight inspection",
+      "status": "omitted",
+      "rationale": "未确认网页动画许可；正文保留四游戏、输入与识别依据，链接原文可看动画。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-02",
+      "kind": "appendix-visual",
+      "label": "Experiment 2 DDPM images and outlines",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 2; Experiment 2 DDPM images and outlines",
+      "status": "omitted",
+      "rationale": "未确认网页图像许可；保留圆方三角与遗漏填充的关键错误，原始视觉可在原文查看。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-03",
+      "kind": "table",
+      "label": "Experiment 3 language/confidence table",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 3; Experiment 3 language/confidence table",
+      "status": "omitted",
+      "rationale": "置信度不是统一校准指标；正文保留两轮识别、网络设置与全部复制头位置，原表可查。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-04",
+      "kind": "figure",
+      "label": "Figure 1 copying head maps",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 4; Figure 1 copying head maps",
+      "status": "redrawn",
+      "rationale": "按日志的全部三语言、Astra与Measured头位置重绘，不复制网页图形。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 1重绘，保留全部三语言"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": [
+        "/lib/papers/weight-space-programming/copying-heads.svg"
+      ]
+    },
+    {
+      "id": "visual-05",
+      "kind": "appendix-visual",
+      "label": "Experiment 3 expandable setup and traces",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 5; Experiment 3 expandable setup and traces",
+      "status": "omitted",
+      "rationale": "完整提示与回复在固定日志中；正文展示限制与方法，不复制整段轨迹面板。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-06",
+      "kind": "appendix-visual",
+      "label": "Experiment 4 car animation and trace",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 6; Experiment 4 car animation and trace",
+      "status": "redrawn",
+      "rationale": "以官方实际控制阈值重绘修复路径，保留参数占比、一次回复、独立测试分母。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "基于实验4实际回复与官方README重绘"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": [
+        "/lib/papers/weight-space-programming/car.svg"
+      ]
+    },
+    {
+      "id": "visual-07",
+      "kind": "table",
+      "label": "Experiment 5 MinAtar result table",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 7; Experiment 5 MinAtar result table",
+      "status": "redrawn",
+      "rationale": "正文HTML表保留全部三游戏与三种策略的数值。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Game"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-08",
+      "kind": "appendix-visual",
+      "label": "Experiment 5 playable games and edit traces",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 8; Experiment 5 playable games and edit traces",
+      "status": "omitted",
+      "rationale": "本篇不重托管游戏与作者网页代码；保留规则输入、构造机制、解析器修正和评测协议。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-09",
+      "kind": "appendix-visual",
+      "label": "Experiment 6 Go budget chart and trace",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 9; Experiment 6 Go budget chart and trace",
+      "status": "redrawn",
+      "rationale": "保留全部隐藏小PPO结果、同规模已报告结果及缺失的10/25同规模项。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "实验6结果重绘"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": [
+        "/lib/papers/weight-space-programming/go-results.svg"
+      ]
+    },
+    {
+      "id": "visual-10",
+      "kind": "appendix-visual",
+      "label": "Experiment 7 sycophancy QA example and trace",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 10; Experiment 7 sycophancy QA example and trace",
+      "status": "omitted",
+      "rationale": "原始事实问答属数据材料；正文保留训练构造、失败尝试、探针可见性与结果。",
+      "placements": [],
+      "permission_status": "unverified",
+      "permission_basis": "Original webpage media reuse permission not verified; link original instead",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-11",
+      "kind": "figure",
+      "label": "Figure 2 head 10.2 attention",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 11; Figure 2 head 10.2 attention",
+      "status": "redrawn",
+      "rationale": "按日志重绘全部四比例并显式补画其余token区域，注明8探针平均与因果边界。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 2重绘，保留全部四个比例"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": [
+        "/lib/papers/weight-space-programming/attention.svg"
+      ]
+    },
+    {
+      "id": "visual-12",
+      "kind": "appendix-visual",
+      "label": "Experiment 8 17 edits and practice trace",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 12; Experiment 8 17 edits and practice trace",
+      "status": "redrawn",
+      "rationale": "从实际日志重绘最终方向干预与分组确认两个阶段；全文候选细节在固定日志，不复制网页动画。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "重绘submission_evidence.json的分组结果"
+        },
+        {
+          "artifact": "article",
+          "locator": "依据p50c的final_report与edit manifest绘制"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": [
+        "/lib/papers/weight-space-programming/practice-control.svg",
+        "/lib/papers/weight-space-programming/sparse-edit.svg"
+      ]
+    },
+    {
+      "id": "visual-13",
+      "kind": "table",
+      "label": "Experiment 8 Qwen headline table",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 13; Experiment 8 Qwen headline table",
+      "status": "redrawn",
+      "rationale": "正文保留全部预算主指标和截断率，解释独立运行而非同编辑学习曲线。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Qwen3.5-0.8B"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": []
+    },
+    {
+      "id": "visual-14",
+      "kind": "appendix-visual",
+      "label": "Experiment 8 eight-benchmark interactive chart",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 14; Experiment 8 eight-benchmark interactive chart",
+      "status": "redrawn",
+      "rationale": "重绘全部8项base/50结果，正文完整表保留10/25；GPQA核对完整198题。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "官方完整merged结果重绘"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": [
+        "/lib/papers/weight-space-programming/qwen-results.svg"
+      ]
+    },
+    {
+      "id": "visual-15",
+      "kind": "table",
+      "label": "Additional experiment Gemma result table",
+      "source_id": "original",
+      "source_locator": "HTML rendered figure container 15; Additional experiment Gemma result table",
+      "status": "redrawn",
+      "rationale": "正文保留全部5个宽松分数与严格评分对照，解释关键反例。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "5/10/25/50预算为7.0/7.6/7.7/7.0%"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Official logs LICENSE: data CC BY 4.0; independently redrawn factual relationships, no copied webpage SVG/CSS",
+      "credit": "Takehi, Teoh, Zhang, Khattab; official log data CC BY 4.0; redrawn by blog author",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/weight-space-programming/attention.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-11",
+      "source_id": "logs",
+      "source_locator": "HTML rendered figure container 11; Figure 2 head 10.2 attention",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/car.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-06",
+      "source_id": "logs",
+      "source_locator": "HTML rendered figure container 6; Experiment 4 car animation and trace",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/copying-heads.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-04",
+      "source_id": "logs",
+      "source_locator": "HTML rendered figure container 4; Figure 1 copying head maps",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/go-results.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-09",
+      "source_id": "logs",
+      "source_locator": "HTML rendered figure container 9; Experiment 6 Go budget chart and trace",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/harness.svg",
+      "origin": "generated",
+      "source_visual_id": null,
+      "source_id": "logs",
+      "source_locator": "README.md; harness/codex_config.toml; exp8_math/runs/p50c/turns/t001/prompt.txt",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/practice-control.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-12",
+      "source_id": "logs",
+      "source_locator": "exp8_math/runs/p50c/work_notes/submission_evidence.json",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/qwen-results.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-14",
+      "source_id": "logs",
+      "source_locator": "HTML rendered figure container 14; Experiment 8 eight-benchmark interactive chart",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/weight-space-programming/sparse-edit.svg",
+      "origin": "author-redrawn",
+      "source_visual_id": "visual-12",
+      "source_id": "logs",
+      "source_locator": "exp8_math/runs/p50c/work_notes/final_report.md; edit/manifest.json",
+      "license_status": "verified-allowed",
+      "license_basis": "Official logs LICENSE data CC BY 4.0; independent explanatory redraw",
+      "credit": "Takehi et al.，日志数据CC BY 4.0；本文重绘。",
+      "used_in": [
+        "article"
+      ]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final",
+      "all-15-embedded-and-standalone-at-three-widths"
+    ],
+    "evidence_paths": [
+      "work/weight-space-programming/qa-report.json",
+      "work/weight-space-programming/body-390-contact.jpg",
+      "work/weight-space-programming/deck-contact.jpg",
+      "work/weight-space-programming/qa-figure-*.png",
+      "work/weight-space-programming/qa-dark-*.png",
+      "work/weight-space-programming/score-recount.json",
+      "work/weight-space-programming/qa-extra.json"
+    ],
+    "interaction_scope": "Isolated headless Chromium DOM fullscreen only; no native desktop fullscreen claim",
+    "tested_artifact_sha256": {
+      "content/_posts/096-weight-space-programming.md": "e1759241b781797b31c67048267a80dd5a021767e5d8467a2752978c6a5f2a19",
+      "lib/decks/weight-space-programming.html": "0a3be0539e330342cc56df410be75a70d5fbe434892d962d25eee37baed5f9a1",
+      "lib/papers/weight-space-programming/reading.css": "1c51b9dcd03a6d041928e3296b77c1b1fe63c333ae8e9c39cba2605d9dae83d0"
+    },
+    "comment_status": "Twikoo form auto-loaded at all three widths; no console errors or failed requests; no comment sent.",
+    "mobile_readability": "16px serif article; 760px diagrams in internal horizontal scroll containers and enlargement dialog; deck prose reflows and tables/figures scroll internally.",
+    "embedded_vertical_scroll": "All 15 embedded mobile pages scrolled to source footer; controls do not cover bottom text."
+  },
+  "verification_boundary": "Inspected released code/logs and recalculated score counts; did not run complete target model evaluation. Original webpage image/animation reuse permission unverified, none copied.",
+  "score_recount": {
+    "run": "p50c",
+    "math500_problems": 500,
+    "samples_per_problem": 4,
+    "correct": 962,
+    "total": 2000,
+    "accuracy": 0.481,
+    "source": "all 10 scores.json and per_problem lists at fixed revision"
+  }
+}
