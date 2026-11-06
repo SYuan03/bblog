@@ -1,0 +1,1591 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "WebUniverse: Scaling Verified Training Data for Agentic Web Development",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ],
+    "arxiv_id": "2610.33149",
+    "earliest_public_date": "2026-10-23",
+    "version": "v1"
+  },
+  "artifacts": {
+    "article": "content/_posts/097-webuniverse.md",
+    "deck": "lib/decks/webuniverse.html",
+    "embed_src": "/lib/decks/webuniverse.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "WebUniverse: Scaling Verified Training Data for Agentic Web Development",
+      "url": "https://arxiv.org/pdf/2610.33149v1",
+      "revision": "v1",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "metadata",
+      "kind": "paper",
+      "title": "arXiv v1 submission date and license",
+      "url": "https://arxiv.org/abs/2610.33149",
+      "revision": "v1",
+      "used_for": [
+        "date",
+        "license"
+      ]
+    },
+    {
+      "id": "mix",
+      "kind": "dataset",
+      "title": "WebUniverse-Mix public card and file tree",
+      "url": "https://huggingface.co/datasets/WebUniverse-NSL/WebUniverse-Mix",
+      "revision": "f3f0bfd16cb1fec65b40ee50ef93c0162c01bac8",
+      "used_for": [
+        "messages",
+        "loss masks",
+        "task counts",
+        "release-access"
+      ],
+      "access": "public card and tree read; artifact content HTTP 401 without license agreement"
+    },
+    {
+      "id": "env",
+      "kind": "dataset",
+      "title": "WebUniverse-Env public card and file tree",
+      "url": "https://huggingface.co/datasets/WebUniverse-NSL/WebUniverse-Env",
+      "revision": "73fb5c769e43d91720a913828f655e6d95fa553f",
+      "used_for": [
+        "packaging",
+        "release-access"
+      ],
+      "access": "public card read; raw helper scripts not read"
+    },
+    {
+      "id": "model",
+      "kind": "website",
+      "title": "Qwen3.5-WebUniverse model card",
+      "url": "https://huggingface.co/WebUniverse-NSL/Qwen3.5-WebUniverse",
+      "revision": "d1fb2c9a56ba2914eee9e14f0e70caa07feffb17",
+      "used_for": [
+        "public-model"
+      ]
+    },
+    {
+      "id": "project",
+      "kind": "website",
+      "title": "Official project page and released Task 000020 model outputs",
+      "url": "https://webuniverse-nsl.github.io/",
+      "checked_on": "2026-11-06",
+      "used_for": [
+        "case",
+        "public-artifacts"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 27,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 27
+      }
+    ],
+    "source_visuals_expected": 21,
+    "visual_inventory_complete": true,
+    "pdf_sha256": "ee3a8e57de0700a7942f5d2347fcc60ee10a4f77a119d8706ea0adc1dd49bd98",
+    "text_paths": [
+      "work/webuniverse/paper-raw.txt",
+      "work/webuniverse/paper-layout.txt"
+    ],
+    "rendered_path": "work/webuniverse/page-01.png through page-27.png"
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：训练数据要展示开发过程与检查证据"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：从静态代码对扩展到可重用的开发任务"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：怎样生成、验证并训练一条开发轨迹"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：哪些能力改善，哪些比较不能扩大解释"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：哪些经验可复用，哪些研究还要另做"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：验证过的多步演示有效，但训练仍是SFT"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "WebUniverse-Mix",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.5"
+        }
+      ],
+      "article_quote": "作者发布的 WebUniverse-Mix 是15,000条已通过检查的开发对话记录。"
+    },
+    {
+      "term": "WebUniverse-Env",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.7"
+        }
+      ],
+      "article_quote": "WebUniverse-Env 保存与这些轨迹对应的起始工作区、任务输入和检查条件"
+    },
+    {
+      "term": "harness",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.4"
+        }
+      ],
+      "article_quote": "这里的 harness 是给模型提供读写文件、终端和浏览器操作的编码环境。"
+    },
+    {
+      "term": "trajectory refinement",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2"
+        }
+      ],
+      "article_quote": "作者继续失败或中断的尝试，让模型修复已有实现，称为 trajectory refinement。"
+    },
+    {
+      "term": "visual judge",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "作者用看图模型对照成品截图与参考截图，称为 visual judge。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1, §3, §4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者因此把任务、起始项目和验证条件一起保存，让模型在可执行环境中完成应用，再保留开发记录。这既提供模仿对象，也让后续研究可以从同样的状态重新采样。中心贡献是可扩展的数据构建与发布，本文不是新RL算法，也不是新提出的排行榜。来源：§1、§3、Figure 1。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; A.1–A.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "文字任务从2022年以后创建、许可明确的GitHub仓库中人工选择。GPT-5.5读代码和文档，排除第三方库、压缩代码与二进制后，总结功能、用户动作和界面变化。例如jKanban种子记录添加卡片、在看板列之间拖动卡片。任务生成模型更换应用场景，保留这些交互机制；这不是把原仓库直接作为待修复项目。"
+        },
+        {
+          "artifact": "article",
+          "quote": "视觉任务从FineWeb候选URL出发，经CrUX列表、元数据、可访问性与robots检查筛选，2026-07-17至09-13爬取。作者触发延迟加载、冻结动画、去除广告与同意浮层，保存整页截图、图片、字体和来源记录；超过8,000像素高或缺可见图片的页面被拒绝，再做人审。多页组含3至7页并记录导航，多视口组使用1920×1080、1024×768、375×812。任务由固定模板生成， 这个步骤不调用模型合成需求 。视觉任务只做独立开发，没有中间改版状态的截图序列。来源：§3.1、A.2。"
+        }
+      ]
+    },
+    {
+      "id": "sampling-refinement",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2; A.5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "独立采样每次新开对话，从指定起始工作区开发，不导入其他尝试的对话或反馈。连续变更任务在当前任务通过后保存代码，作为下一步起点；若当前任务没有通过的尝试，序列结束。最后只保留从首任务开始、至少三步的连续通过前缀，减少初期任务过多的偏差。"
+        },
+        {
+          "artifact": "article",
+          "quote": "作者继续失败或中断的尝试，让模型修复已有实现，称为 trajectory refinement。 workspace handover 把失败代码与已有验证反馈交给新对话； conversation continuation 还保留旧对话。遇到持续重复工具调用时，作者中断并保存状态，接续前压缩连续重复消息。 旧模型的assistant内容和工具调用只作上下文，不计入训练损失；只监督接续后的部分。 最终验证通过的修复段，仍可包含错误、再改、再检查的过程。来源：§3.2、A.5。"
+        }
+      ]
+    },
+    {
+      "id": "teacher-roles",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "A.5; B.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "保留轨迹的教师池为GPT-5.6 Sol（75.3%）、Qwen3.8-27B（8.4%）、GPT-5.5（6.9%）、MiniMax-M3（4.3%）、GPT-5.4（4.2%），以及Qwen3.5-35B-A3B直接通过的初始尝试（1.0%）。比例分别四舍五入。任务生成、开发演示、验证模型的角色不同，不能把整个数据集都归因于一个教师。来源：A.5、B.1。"
+        }
+      ]
+    },
+    {
+      "id": "training-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; Appendix D.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "§4.1与D.1给出的训练是：从Qwen3.5-35B-A3B开始，使用Megatron-LM与ms-swift，冻结vision tower，微调其余参数，两轮训练，对assistant输出施加损失。8张H100 NVL，global batch 16、micro batch 1，学习率2×10⁻⁵，10%warmup后cosine降到0；3%验证切分，106,496长度上限，98,304 token打包。Adam参数、并行设置等完整值见下方原表。"
+        },
+        {
+          "artifact": "article",
+          "quote": "论文未报告PPO、GRPO、优势估计、奖励加权策略损失或在线采样更新。 验证通过才保留数据，可以称为基于筛选的轨迹监督学习；有测试、有分数、有失败重试，仍不自动成为RL。大部分数据来自强模型演示，因此也有广义的轨迹蒸馏意义；作者没有报告教师logits、KL蒸馏目标、on-policy distillation或OPSD算法。不能把基座1.0%的直接成功尝试写成在线自蒸馏证据。"
+        }
+      ]
+    },
+    {
+      "id": "continuation-masks",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "mix",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "mix",
+          "locator": "Mix public card messages.role/content/loss; §3.2; A.5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "通常的SFT负对数似然可写成 L = − Σ mₜ log pθ(yₜ | context, y<t) ，其中掩码只选需要监督的输出；这只是本文说明，没有声称原文报告了精确归一化公式。官方Mix说明将 messages 按 role / content / loss 存储， loss:false 排除该消息， loss:null 采用框架默认，导出必须保留掩码。这与正文的接续前缀处理一致。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3–3.4; A.5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "详细任务的测试在求解前生成。GPT-5.4、5.5或5.6 Sol依据需求提取检查项与通过条件，不读参考答案，再生成源码检查或Playwright浏览器脚本。若测试失败，作者用模型复核该测试是否加了需求未规定的假设；有问题便重写测试，并在 未改动的应用 上重跑。这个步骤校正检查器的错误，并不能替应用补齐功能。"
+        },
+        {
+          "artifact": "article",
+          "quote": "高层任务和部分详细任务用GUI agent验证。GPT-5.6 Sol只操作浏览器，不读源码，按需求探索并记录每项pass、fail或blocked与观察证据。作者用看图模型对照成品截图与参考截图，称为 visual judge。视觉验证同样用GPT-5.6 Sol，逐目标页面、逐指定视口使用六级rubric；多页按给定路由或路径访问，不可达记0。"
+        }
+      ]
+    },
+    {
+      "id": "verification-filter",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.4; A.7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "脚本与GUI验证必须 全部测试通过 ，脚本复核也必须完成且无未解决问题。视觉要求每个页面与视口比较至少达到good match（0.75），不能用好页面的高分抵消一个差页面。记录必须完整、验证正常结束、最终求解对话正常结束，图像引用与训练格式检查也要通过。分数和证据用于筛选；可用失败反馈进入后续修复。来源：§3.3、§3.4。"
+        }
+      ]
+    },
+    {
+      "id": "verifier-audit",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "B.2; Table 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "一位作者人工审计600次采集尝试，每种验证器各抽100个接受、100个拒绝样本。脚本准确率94.5%，GUI为95.5%，视觉为85.0%。以脚本为例，98个接受被人工认可、2个误接受；91个拒绝被认可、9个误拒绝，故准确率(98+91)/200=94.5%，precision为98/100=98.0%。这是本文按Table 9重算。 只有一位标注者，且按机器结论平衡抽样 ，没有标注者间一致性，不能直接推出自然数据分布上的错误比例。"
+        }
+      ]
+    },
+    {
+      "id": "real-training-case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C; Figure 6"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Appendix C给出园地规划器PlotPatch。需求要求用户从调色板选作物，点击网格绘制；Bed Fill填充原材料相同的连通区域；Clear Cell清单格，Clear Plot确认后清全图，Suggest Layout换建议布局。作物占用面积要随网格更新，用户可按名字保存并重新打开计划。这是论文的数据示例，具体源仓库及该样本全部外部验证记录未在本段公开。"
+        },
+        {
+          "artifact": "article",
+          "quote": "开发模型先读 /app ，发现只有 .git ，自行选择React与Vite。实现中，绘制动作只更新选中格；填充用队列遍历上下左右相邻且原材料相同的格；作物计数根据更新后的网格重新计算；打开保存计划恢复其网格。随后生产构建成功，但类型检查报TS7016、缺React声明，lint也发现导出和标识生成问题。模型修正导出、用计数器替换标识生成，并安装React类型声明。第二轮build、typecheck和lint通过，再启动服务请求localhost得到HTTP 200，最后报告完成。来源：Figure 6、Appendix C。"
+        }
+      ]
+    },
+    {
+      "id": "case-evidence-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C / Figure 6; §3.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这些记录证明了开发中发生过修复，HTTP 200只证明服务响应。 它没有单独证明保存、重开、填充和计数均符合需求。对高层任务，外部GUI验证器应按需求在浏览器执行行为检查；脚本则用于更详细的任务。本文没有拿到PlotPatch完整验证日志，所以不把自拟动作当作作者已执行的检查。例如保存“春季”，改动网格，再重开“春季”应恢复旧网格；若只恢复名字而不恢复格子，按需求应失败。这是依据公开要求构造的说明性失败过程，非论文模型日志。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "D.3; Table 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "WebGen-Bench总体准确率是 100 × Σ检查项得分 / 全部检查项数量 ，没有可用验证结果的应用，其检查仍在分母里计0； 63.9%不是101个应用中63.9%全部通过 。论文未提供这里全部检查项的总数，不能还原一个整数“成功应用数”。Web-Bench则引用官方计分程序，没有在本文给出完整公式；例如主表均值(13.9+23.1)/2=18.5%，只核实算术均值，不等于独立重跑官方pass@k。"
+        }
+      ]
+    },
+    {
+      "id": "real-evaluation-case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "project"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 5; project Task 000020"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Figure 5的电话运营商Task 000020是一个具体检查案例。模型生成套餐、客服与账户界面，评测侧记录套餐详情、支持聊天、账户更新、导航和指定颜色五项。基础模型前三项Fail、后两项Pass，共2/5；微调后五项都Pass，为5/5。这份个例可说明交互改善；原始操作参数和完整judge日志没有取得。官方项目另提供两个输出HTML，可以查看成品，但本文未独立重现五项判决。"
+        }
+      ]
+    },
+    {
+      "id": "matched-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "D.2; Table 2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "最有辨别力的基线是Qwen3.5-StepFun：同Qwen起点、同超参数、同15K样本。StepFun-Mix由公开Step-3.5-Flash-SFT抽13,500个网页生成对和1,500条软件工程轨迹，后者占10%样本、37.9%tokens。网页输出要求完整单文件HTML且至少2,000字符，再清理、去重、去污染。该基线总体功能成绩31.5%低于原模型34.5%；WebUniverse则63.9%。这支持任务对齐的开发演示有效， 没有单独隔离“验证筛选”这一组件 ：数据长度、模态、工具过程与题型也不同。样本预算相同，不代表token、采集调用或训练计算相同。来源：Table 2、D.2。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2; §4.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "WebUniverse微调后，Vision2Web平均51.7→68.3，WebGen-Bench总体34.5%→63.9%，Web-Bench pass@2为12.2%→23.1%。其中WebGen-Bench功能检查22.3%→51.3%，说明改善不限于漂亮的静态页面。微调模型在部分指标超过几个大模型，但Web-Bench pass@2仍低于主表四个参考强模型，也没有超过GPT-5.6 Sol的视觉平均75.8或WebGen-Bench总体64.5%。"
+        }
+      ]
+    },
+    {
+      "id": "modality-ablation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 3; §4.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "单独训练文字子集，功能开发总体升至56.1%，视觉仅54.1%。单独训练视觉，视觉升至63.9%，功能却降到12.1%，Web-Bench pass@2也从12.2%降至6.8%。完整混合在全部已报告指标上最好。这同时支持互补覆盖，也否定“加视觉轨迹自然改善所有编码能力”的解释；两个子集样本量为10,500与4,500，不是等量或等token的纯模态实验。来源：Table 3。"
+        }
+      ]
+    },
+    {
+      "id": "scaling",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 4; §4.3; D.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "保持家族比例，用严格嵌套的5K、10K、15K子集训练，三项成绩持续上升。WebGen-Bench为49.1→58.2→63.9；视觉63.9→66.2→68.3；Web-Bench均值14.9→17.7→18.5。所有运行固定两轮，增加数据也增加训练量；曲线不能单独证明同计算量的数据质量收益。原图三个y轴都非零起点，不能只看斜率的视觉大小。来源：§4.3、Figure 4、D.1。"
+        }
+      ]
+    },
+    {
+      "id": "counterexamples",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "D.4; Table 10"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Vision2Web Level 2要求按图和文字构建多页交互前端，共66任务，每模型跑三次，各指标分别取中位数。视觉32.7→37.6，功能48.3→48.5，综合40.3→42.5。综合先在每轮求视觉与功能的平均，再跨轮取中位， 不能用两个已发布中位数直接算综合分 ：例如(37.6+48.5)/2=43.05，并不是表中的42.5。复杂交互的功能收益很小。来源：D.4、Table 10。"
+        },
+        {
+          "artifact": "article",
+          "quote": "微调后仍有明显失败习惯。 Web-Bench第二次尝试中，微调模型23/72（31.9%）没有记录到实现修改，全部失败；基础模型仅2/83（2.4%）。另有微调轨迹查询同一图片尺寸1,311次，或搜索不存在的测试604次。它们限制了“多检查就等于更会修复”的解释。"
+        }
+      ]
+    },
+    {
+      "id": "behavior-caveat",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "F.1; Table 11"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "补充行为分析发现，WebGen-Bench编辑后验证从50.5%升到95.0%，错误后“改实现再检查”从45.5%升到73.3%。但定义允许“重新读改过的文件”算验证，后一次检查也不要求通过。Web-Bench绝大多数验证只是重读代码，真正执行检查仅2.5%与4.3%；这些观察不能写成所有模型都学会看成品截图。行为分析的微调记录来自补充运行，Web-Bench的275/305次尝试还覆盖不同任务阶段、并不配对。来源：F.1、Table 11。"
+        }
+      ]
+    },
+    {
+      "id": "failure-analysis",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "F.4; Table 13"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "在一个Level 2补充运行中，18/66个任务视觉与功能均为0：13个浏览器白屏、4个端口不符、1个执行循环。13个白屏全做过HTTP检查，10个还做了build，但全部未记录查看成品截图。holyoke遗漏icon导入，build和HTTP成功，浏览器运行仍报错；uk_ixl知道3000无响应、5173可用，却没改要求的端口；anomali重复建目录2,459次用完两小时。这是该轮失败分析，不把18/66当作三轮共同失败率。来源：F.4、Table 13。"
+        }
+      ]
+    },
+    {
+      "id": "release-access",
+      "claim_type": "unknown",
+      "source_ids": [
+        "mix",
+        "env"
+      ],
+      "source_locators": [
+        {
+          "source_id": "mix",
+          "locator": "public card/tree at fixed revision; HTTP 401 artifact-access attempts"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "2026-11-06核对的 Mix发布版本 和 Env发布版本 可读取公开说明与文件树；原始parquet、导出脚本、环境程序等未认证请求返回401，需登录同意许可。本次没有读取这些程序正文或重跑训练。Env标为RL Environment表示可以拿它构建RL任务，不是作者已做RL的实验记录。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "env",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "env",
+          "locator": "Env public card; A.7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Env公开说明列出Harbor任务描述、运行配置、初始工作区、参考资源、测试、参考实现与SHA-256清单；论文A.7描述原始任务包的 spec.json 、 start/ 、 verifier/task.json 等结构。两者是不同发布/转换层次，不能擅自当成同一目录布局。参考答案不会放入开发模型的求解工作区；验证条件可供研究者重用，不意味着每个隐藏检查文件都对求解模型可见。作者称重建后测试过的参考解全部通过，但没有在正文报告测试数量。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2; Table 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "与本文最接近的公开网页训练资源，主要覆盖文字需求的独立开发。WebGen-Bench报告600条训练轨迹，WebGen-Agent约700条；FullStack-Agent也收集开发轨迹，但作者比较时未发现其公开轨迹。WebUniverse扩大到视觉参考与连续变更，并附上每条样本的验证记录。以下沿论文§2与Table 1比较资源形态，不能把表中的“未建立”当成某工作永远不支持这项能力。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Limitations; F.4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "前端视觉任务仍靠选定视口的静态截图，动画、过渡与随时间变化的交互没有完整监督。功能任务也只覆盖所写的要求。作者把移动应用、3D和游戏列为扩展方向；本文的15K前端结果不能直接证明这些领域的环境构建、验证可靠性或训练收益。即使已有build和HTTP证据，仍要明确检查浏览器是否运行、交互状态是否改变、截图是否符合要求。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p.1, Figure 1",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 1, p.1。数据来源、环境与轨迹构建，以及WebGen-Bench上的模型比较。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 1, p.1。数据来源、环境与轨迹构建，以及WebGen-Bench上的模型比较。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 1"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-1.webp"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 2",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 2, p.4。输入、工作区、开发模型、验证与失败修复之间的完整关系；两种发布产物从流程不同位置得到。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 2, p.4。输入、工作区、开发模型、验证与失败修复之间的完整关系；两种发布产物从流程不同位置得到。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-2.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p.6, Figure 3",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 3, p.6。内圈为任务家族、中圈为任务变体，最外圈区分独立采样与修复。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 3, p.6。内圈为任务家族、中圈为任务变体，最外圈区分独立采样与修复。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-3.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 4",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 4, p.9。0点为原模型；5K、10K、15K训练子集严格嵌套，纵轴范围各不相同。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 4, p.9。0点为原模型；5K、10K、15K训练子集严格嵌套，纵轴范围各不相同。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 4"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-4.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 5",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 5, p.9。上半为tefcu视觉复现的对应区域，下半为电话运营商Task 000020与五项已记录判决。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 5, p.9。上半为tefcu视觉复现的对应区域，下半为电话运营商Task 000020与五项已记录判决。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-5.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "pp.17–21, Figure 6",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-6-1.webp",
+        "/lib/papers/webuniverse/figure-6-2.webp",
+        "/lib/papers/webuniverse/figure-6-3.webp",
+        "/lib/papers/webuniverse/figure-6-4.webp",
+        "/lib/papers/webuniverse/figure-6-5.webp"
+      ]
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p.24, Figure 7",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 7, p.24。完整tefcu桌面参考与两模型输出；原始长宽比保留。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 7, p.24。完整tefcu桌面参考与两模型输出；原始长宽比保留。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/figure-7.webp"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p.3, Table 1",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 1, p.3。Pair为代码监督对，AT为代理轨迹，ENV为可执行任务环境；圆点表示原论文核对到的覆盖情况。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 1, p.3。Pair为代码监督对，AT为代理轨迹，ENV为可执行任务环境；圆点表示原论文核对到的覆盖情况。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-1.webp"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 2",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 2, p.8。主实验全部模型、视口、检查类别与连续任务成绩；PA为pass。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 2, p.8。主实验全部模型、视口、检查类别与连续任务成绩；PA为pass。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 2"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-2.webp"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 3",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 3, p.8。文字单训、视觉单训与混合的全部数据组成消融。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 3, p.8。文字单训、视觉单训与混合的全部数据组成消融。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 3"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-3.webp"
+      ]
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p.15, Table 4",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 4, p.15。详细任务的15种脚手架，包括框架、语言、状态管理、样式与打包工具。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 4, p.15。详细任务的15种脚手架，包括框架、语言、状态管理、样式与打包工具。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-4.webp"
+      ]
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p.15, Table 5",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 5, p.15。原论文任务包的全部文件与含义；公开Harbor导出结构另见Env说明。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 5, p.15。原论文任务包的全部文件与含义；公开Harbor导出结构另见Env说明。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-5.webp"
+      ]
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p.16, Table 6",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 6, p.16。初始环境与最终轨迹观察到的框架分别统计，不能将空目录当作实现语言。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 6, p.16。初始环境与最终轨迹观察到的框架分别统计，不能将空目录当作实现语言。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-6.webp"
+      ]
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p.16, Table 7",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 7, p.16。各任务家族工具调用次数的分布。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 7, p.16。各任务家族工具调用次数的分布。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-7.webp"
+      ]
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p.17, Table 8",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 8, p.17。文字需求详细程度与独立/迭代设置的四类计数。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 8, p.17。文字需求详细程度与独立/迭代设置的四类计数。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-8.webp"
+      ]
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p.17, Table 9",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 9, p.17。三种验证器全部准确率、精确率、召回率与F1；每行分母为200次尝试。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 9, p.17。三种验证器全部准确率、精确率、召回率与F1；每行分母为200次尝试。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 9"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-9.webp"
+      ]
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "p.23, Table 10",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 10, p.23。Level 2三个指标分别取三次运行的中位数。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 10, p.23。Level 2三个指标分别取三次运行的中位数。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-10.webp"
+      ]
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 11",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 11, p.25。行为频率、各自分母及定义见F.1；微调轨迹来自补充运行。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 11, p.25。行为频率、各自分母及定义见F.1；微调轨迹来自补充运行。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-11.webp"
+      ]
+    },
+    {
+      "id": "table-12",
+      "kind": "table",
+      "label": "Table 12",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 12",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 12, p.26。区域总数基础模型2,709、微调2,739，各自归一化，非任务成功率。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 12, p.26。区域总数基础模型2,709、微调2,739，各自归一化，非任务成功率。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-12.webp"
+      ]
+    },
+    {
+      "id": "table-13",
+      "kind": "table",
+      "label": "Table 13",
+      "source_id": "paper",
+      "source_locator": "p.27, Table 13",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 13, p.27。三类失败的分母为该轮18个双零分任务，整体任务数为66。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 13, p.27。三类失败的分母为该轮18个双零分任务，整体任务数为66。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/table-13.webp"
+      ]
+    },
+    {
+      "id": "training-config",
+      "kind": "table",
+      "label": "Appendix D.1 training configuration",
+      "source_id": "paper",
+      "source_locator": "p.21, Appendix D.1 training configuration",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Appendix D.1 完整训练配置，p.21。冻结视觉塔、assistant监督、优化器、并行、长度与验证切分的全部设置。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Appendix D.1 完整训练配置，p.21。冻结视觉塔、assistant监督、优化器、并行、长度与验证切分的全部设置。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "Ding et al., arXiv:2610.33149v1; CC BY-NC-ND 4.0",
+      "asset_paths": [
+        "/lib/papers/webuniverse/training-config.webp"
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/webuniverse/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p.1, Figure 1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 1, p.1。数据来源、环境与轨迹构建，以及WebGen-Bench上的模型比较。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 2, p.4。输入、工作区、开发模型、验证与失败修复之间的完整关系；两种发布产物从流程不同位置得到。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p.6, Figure 3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 3, p.6。内圈为任务家族、中圈为任务变体，最外圈区分独立采样与修复。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 4, p.9。0点为原模型；5K、10K、15K训练子集严格嵌套，纵轴范围各不相同。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 5, p.9。上半为tefcu视觉复现的对应区域，下半为电话运营商Task 000020与五项已记录判决。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-6-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "pp.17–21, Figure 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-6-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "pp.17–21, Figure 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-6-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "pp.17–21, Figure 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-6-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "pp.17–21, Figure 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-6-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "pp.17–21, Figure 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 6，连续第1部分，p.17。PlotPatch需求与开发对话的连续原始片段。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/figure-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "p.24, Figure 7",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 7, p.24。完整tefcu桌面参考与两模型输出；原始长宽比保留。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.3, Table 1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 1, p.3。Pair为代码监督对，AT为代理轨迹，ENV为可执行任务环境；圆点表示原论文核对到的覆盖情况。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 2, p.8。主实验全部模型、视口、检查类别与连续任务成绩；PA为pass。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p.8, Table 3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 3, p.8。文字单训、视觉单训与混合的全部数据组成消融。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "p.15, Table 4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 4, p.15。详细任务的15种脚手架，包括框架、语言、状态管理、样式与打包工具。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-5",
+      "source_id": "paper",
+      "source_locator": "p.15, Table 5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 5, p.15。原论文任务包的全部文件与含义；公开Harbor导出结构另见Env说明。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p.16, Table 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 6, p.16。初始环境与最终轨迹观察到的框架分别统计，不能将空目录当作实现语言。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-7",
+      "source_id": "paper",
+      "source_locator": "p.16, Table 7",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 7, p.16。各任务家族工具调用次数的分布。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-8",
+      "source_id": "paper",
+      "source_locator": "p.17, Table 8",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 8, p.17。文字需求详细程度与独立/迭代设置的四类计数。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-9",
+      "source_id": "paper",
+      "source_locator": "p.17, Table 9",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 9, p.17。三种验证器全部准确率、精确率、召回率与F1；每行分母为200次尝试。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-10.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-10",
+      "source_id": "paper",
+      "source_locator": "p.23, Table 10",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 10, p.23。Level 2三个指标分别取三次运行的中位数。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-11.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-11",
+      "source_id": "paper",
+      "source_locator": "p.25, Table 11",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 11, p.25。行为频率、各自分母及定义见F.1；微调轨迹来自补充运行。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-12.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-12",
+      "source_id": "paper",
+      "source_locator": "p.26, Table 12",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 12, p.26。区域总数基础模型2,709、微调2,739，各自归一化，非任务成功率。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/table-13.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-13",
+      "source_id": "paper",
+      "source_locator": "p.27, Table 13",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 13, p.27。三类失败的分母为该轮18个双零分任务，整体任务数为66。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/training-config.webp",
+      "origin": "paper-original",
+      "source_visual_id": "training-config",
+      "source_id": "paper",
+      "source_locator": "p.21, Appendix D.1 training configuration",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 entry explicitly links CC BY-NC-ND 4.0; unmodified complete figures/tables reproduced for noncommercial explanatory blog with credit and source; Chinese explanation and supplemental diagrams are separate.",
+      "credit": "手机可横向滑动或放大。 原论文 Appendix D.1 完整训练配置，p.21。冻结视觉塔、assistant监督、优化器、并行、长度与验证切分的全部设置。 Ding et al., arXiv:2610.33149v1，CC BY-NC-ND 4.0；完整内容未改动。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/webuniverse/sft-flow.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§3.2–3.4; §4.1; D.1",
+      "credit": "本文根据论文绘制；网格为说明性示意，公式为SFT说明",
+      "used_in": [
+        "article"
+      ],
+      "deck_usage": "same SVG embedded inline, no external path"
+    },
+    {
+      "path": "/lib/papers/webuniverse/continuation-loss.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§3.2; A.5",
+      "credit": "本文根据论文绘制；网格为说明性示意，公式为SFT说明",
+      "used_in": [
+        "article"
+      ],
+      "deck_usage": "same SVG embedded inline, no external path"
+    },
+    {
+      "path": "/lib/papers/webuniverse/plotpatch-case.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "Appendix C; Figure 6",
+      "credit": "本文根据论文绘制；网格为说明性示意，公式为SFT说明",
+      "used_in": [
+        "article"
+      ],
+      "deck_usage": "same SVG embedded inline, no external path"
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.78,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "evidence_paths": [
+      "work/webuniverse/qa-report.json",
+      "work/webuniverse/qa-*.png",
+      "work/webuniverse/qa-body-*.jpg"
+    ]
+  }
+}
