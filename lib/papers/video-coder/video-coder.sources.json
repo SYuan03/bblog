@@ -1,0 +1,1620 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "Video-Coder: Reinforcing Agentic Coding for Video Generation",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ],
+    "arxiv_id": "2611.09894",
+    "version": "v1",
+    "earliest_public_date": "2026-11-06"
+  },
+  "artifacts": {
+    "article": "content/_posts/098-video-coder.md",
+    "deck": "lib/decks/video-coder.html",
+    "embed_src": "/lib/decks/video-coder.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Video-Coder: Reinforcing Agentic Coding for Video Generation",
+      "url": "https://arxiv.org/pdf/2611.09894v1",
+      "revision": "v1",
+      "used_for": [
+        "method",
+        "results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "metadata",
+      "kind": "paper",
+      "title": "arXiv v1 submission date and license",
+      "url": "https://arxiv.org/abs/2611.09894",
+      "revision": "v1",
+      "used_for": [
+        "date",
+        "license"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "Official Video-Coder SFT/RL/harness/reward/inference source",
+      "url": "https://github.com/CYWang735/Video-Coder",
+      "revision": "cbc3d975b3fb709c0bab668b2316988ceaa43f72",
+      "used_for": [
+        "training",
+        "reward",
+        "harness",
+        "inference"
+      ]
+    },
+    {
+      "id": "data",
+      "kind": "dataset",
+      "title": "Official Train-Data full SFT/RL JSON and GT archive central directory",
+      "url": "https://huggingface.co/datasets/Video-Coder/Train-Data",
+      "revision": "c60da610e502f3d55e7bd3776e830770e92caa9a",
+      "used_for": [
+        "counts",
+        "real-case",
+        "reference-synthesis"
+      ]
+    },
+    {
+      "id": "project",
+      "kind": "website",
+      "title": "Official project page and draft/final qualitative videos",
+      "url": "https://cywang735.github.io/Video-Coder/",
+      "checked_on": "2026-11-09",
+      "used_for": [
+        "public-demos"
+      ]
+    },
+    {
+      "id": "model",
+      "kind": "website",
+      "title": "Video-Coder-9B public model card and file tree",
+      "url": "https://huggingface.co/Video-Coder/Video-Coder-9B",
+      "revision": "d54ffa251e73b6e602f981414aa223ebb65b1217",
+      "used_for": [
+        "release"
+      ]
+    },
+    {
+      "id": "sft-model",
+      "kind": "website",
+      "title": "SFT model saved arguments and trainer state",
+      "url": "https://huggingface.co/Video-Coder/Video-Coder-SFT-9B",
+      "revision": "f247d2d4ece656c2330baf6dd35f96d71f4135da",
+      "used_for": [
+        "SFT-state"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 16,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 16
+      }
+    ],
+    "source_visuals_expected": 12,
+    "visual_inventory_complete": true,
+    "pdf_sha256": "1111598b2efe60d0fcf8d2eeb334bee2af877158dfa3e1495c314756ce202100",
+    "text_paths": [
+      "work/video-coder/paper-layout.txt",
+      "work/video-coder/paper-raw.txt"
+    ],
+    "rendered_path": "work/video-coder/page-01.png through page-16.png"
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：把对象与运动先写成可执行场景"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：从固定编程流程到可训练的多轮代理"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method：从教师演示到执行与视频双奖励"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：增益、消融与最强反例"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：怎样区分程序正确、生成器改写和judge判断"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：这篇做了什么，结论能到哪里"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "SFT",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "作者先用教师演示做监督微调（SFT），教Qwen3.5-9B规划、写代码、调用工具与修复；随后用新尝试的执行和视频评分做强化学习（RL）。"
+    },
+    {
+      "term": "RL",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "作者先用教师演示做监督微调（SFT），教Qwen3.5-9B规划、写代码、调用工具与修复；随后用新尝试的执行和视频评分做强化学习（RL）。"
+    },
+    {
+      "term": "Draft Video",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2"
+        }
+      ],
+      "article_quote": "Blender执行编码模型写出的Python脚本，生成灰色、无纹理的三维动画MP4，论文称它为Draft Video。"
+    },
+    {
+      "term": "harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2 AppendixA"
+        }
+      ],
+      "article_quote": "作者提供的Video-Coder Harness负责准备任务目录、执行命令、检查产物并返回反馈，harness在这里就是包住编码模型的任务执行环境。"
+    },
+    {
+      "term": "rollout",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3"
+        }
+      ],
+      "article_quote": "RL时，编码模型对同一场景采样8条完整尝试；每条从写代码、调用工具到提交的交互轨迹称为rollout。"
+    },
+    {
+      "term": "faithfulness",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixB"
+        }
+      ],
+      "article_quote": "judge先从场景文字抽取3至6条可见硬约束，再分别判断四项：faithfulness检查候选视频是否表现文字要求的对象、数量、动作与关系；layout比较候选与参考的相对位置、朝向和大小；motion比较运动方向、路径、顺序与时间；camera比较视角、取景和相机运动。"
+    },
+    {
+      "term": "GRPO",
+      "kind": "loss",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3 Eq4–5"
+        }
+      ],
+      "article_quote": "论文采用GRPO：将同题各轨迹的奖励减去组均值，再除以组内标准差，得到各条轨迹相对其他尝试的优势。"
+    },
+    {
+      "term": "GSPO",
+      "kind": "loss",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "core_algos.py:1545–1620"
+        }
+      ],
+      "article_quote": "公开入口的ADV_ESTIMATOR=grpo负责组内优势，LOSS_MODE=gspo则选择GSPO策略损失：先对模型输出token的log概率比求序列平均、指数化，再裁剪这个序列比值。"
+    },
+    {
+      "term": "motion_na",
+      "kind": "state",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixB Fig9;video_reward.py:414–417"
+        }
+      ],
+      "article_quote": "只有文字不要求动作、参考也没有有意义的对象运动时，judge才可输出motion_na=true，表示motion不适用。"
+    },
+    {
+      "term": "PhyGenBench",
+      "kind": "metric",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1"
+        }
+      ],
+      "article_quote": "PhyGenBench按Mechanics、Optics、Thermal、Material四类检查物理常识，论文沿官方协议使用GPT-4o作为judge，报告各类[0,1]分数及平均值。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; SFT/RL entrypoints"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Video-Coder研究怎样用可执行程序控制视频中的对象、位置、动作和相机。作者先用教师演示做监督微调（SFT），教Qwen3.5-9B规划、写代码、调用工具与修复；随后用新尝试的执行和视频评分做强化学习（RL）。 论文明确报告SFT后做RL，官方也发布了实际RL训练实现。 论文公式与当前公开代码的优化目标存在差异，具体见3.5。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "与它最接近的工作包括GPT4Motion与Video-CoCo：前者用Blender脚本描述物理运动，再引导视频扩散；后者把代码作为视频生成的中间推理表示。Video-Coder在相关工作中将这些方法概括为依赖冻结模型或固定提示流程。本文对这两篇的比较依据Video-Coder的§2.2，未将它们各自的完整实验作为本次独立复核结果。"
+        }
+      ]
+    },
+    {
+      "id": "outputs-frozen-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; README inference"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本次训练更新Qwen3.5-9B编码模型，MiniMax-H3保持固定。编码模型直接写出的产物是Blender Python脚本；推理程序还导出草稿视频、脚本和供下游批量生成的清单，视频生成器最终导出MP4。这篇使用三维场景编程，与此前CodeCap-Bench中的HTML动画任务不同。"
+        }
+      ]
+    },
+    {
+      "id": "real-paper-case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Figure 1的实际要求是：一颗球滚下长斜坡，撞到斜坡底部叠放的三个方块，把它们撞倒；相机从左侧慢慢绕场景90°。这包含相互依赖的约束：三个方块必须先存在并叠好，球要沿斜坡到达它们，方块在接触后倒下，整个过程还要在移动镜头里可见。编码模型需要把这些要求转成几何、时间和相机参数，Blender负责执行。"
+        }
+      ]
+    },
+    {
+      "id": "paper-case-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文给出该例的直接生成与代码引导关键帧对比，但没有公开与Figure 1逐一对应的完整脚本、工具日志和judge逐项分数。因此，这张图能说明作者希望控制什么，也提供定性展示，不能当成一个已公开完整判分的RL样本。后面用实际下载到的SFT轨迹解释运行与修复，用独立标注的说明性数字解释奖励。"
+        }
+      ]
+    },
+    {
+      "id": "harness",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "agent.py:47–89; teacher.yaml:97–190"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者提供的Video-Coder Harness负责准备任务目录、执行命令、检查产物并返回反馈，harness在这里就是包住编码模型的任务执行环境。编码模型通过一个bash函数工具写文件；check_script与run_blender是这个shell里的两个专用命令。当前实现由mini-swe-agent相关组件和Apptainer沙箱承载，不需要把它理解为在完整Codex产品里运行。来源：§3.2、Appendix A、agent.py与teacher.yaml。"
+        }
+      ]
+    },
+    {
+      "id": "submission",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "run_agent.py:95–128; generate.py:357–366; inference run script"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "模型完成后调用独立命令echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT。环境结束交互，把最终脚本复制到干净目录，重新执行、渲染和检查；通过后才accept并导出灰模。公开推理入口将每题的草稿与main.py保存下来，再写h3_manifest.jsonl交给MiniMax-H3批量生成最终视频。当前入口还允许失败题最多重试3次并续跑；这是公开推理默认行为，论文没有据此给出主表每题实际尝试次数。"
+        }
+      ]
+    },
+    {
+      "id": "execution-check-scope",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "static_check.py:54–105; blender_exec.py:134–150"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "运行验收的能力有明确边界。源码用抽样灰度方差检测多数空白帧，用相邻抽样帧平均差检测静止，用mesh原点与相机范围判断完全出镜。这些粗检查能发现无效输出，却不识别画面里是否真有三辆车，也不验证接触、能量守恒或碰撞规律。脚本中的运动可以由关键帧、约束或物理模拟产生，执行成功不能自动建立物理正确性。"
+        }
+      ]
+    },
+    {
+      "id": "format-errors-paper-code",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "run_agent.py:103–119"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "执行奖励的严格程度也有实现差异：论文定义要求所有工具调用格式正确，公开run_agent.py的accept条件则是Submitted、静态检查通过、最终重跑通过且无终止错误；它另行记录n_format_errors，但没有在accept表达式中要求该计数等于0。因此，已恢复的早期格式错误不应直接按论文那句定义推断必然使整条失败。"
+        }
+      ]
+    },
+    {
+      "id": "real-trajectory",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "data",
+          "locator": "full sft_data.json row0, messages1–30"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公开sft_data.json的第一条记录给教师的场景文字只有“a man standing in front of a machine.”，同时附有完整脚本与渲染要求。教师自行设计了人伸手按按钮、机器压头与齿轮启动的动画。按按钮及机器启动是教师的设计选择，不是这句文字明确指定的任务条件。该条有31条messages：system、user、10条assistant消息、10次工具调用、9次工具返回；三次渲染各返回8帧。"
+        }
+      ]
+    },
+    {
+      "id": "case-fixes",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "data",
+          "locator": "sft_data.json row0 messages11/20/21/29"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "第一次返回RUN OK后，教师指出人体躯干与腿脱节，脚、骨盆、头等部件的原点在部分抽样帧出镜。它检查父子关系，认为把世界坐标直接用作父对象下的局部坐标，导致多层偏移重复叠加，随后重写。第二次依然RUN OK，但教师发现Press_Head的世界z坐标为2.51等异常，再次调整人物与机器部件的局部偏移。"
+        }
+      ]
+    },
+    {
+      "id": "case-score-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "data",
+          "locator": "row0 ends in submit toolcall; no final accept report or RL scores"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这条公开记录具体展示了渲染反馈如何引起两轮修复，也说明RUN OK比“场景语义已正确”弱。这里报告的是教师在记录中的观测与判断，本次没有独立重渲染这些脚本；数据最后停在提交工具调用，没有附上最终独立验收报告、候选最终视频的四项judge分数或RL总奖励。不能为这条SFT演示补造奖励。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者的数据管线分四步。首先从InternVid、OpenVid-1M、MiraData的caption收集候选文字，用LLM改写成对象数、布局、动作和相机明确的场景描述，过滤主要依赖细致外观、面部表情等难以用几何构造的内容。其次，Gemini 3.8 Flash在harness里写、执行和修复Blender脚本，记录推理、代码、工具调用、反馈与渲染观测。来源：§3.1。"
+        }
+      ]
+    },
+    {
+      "id": "synthetic-reference",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1; GTsidecar first-row request"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "第三步把教师草稿与文字交给MiniMax-H3，得到用于训练的合成参考视频。论文称它为ground truth，但它是由教师程序和视频生成器共同产生的参考，不是原始数据集视频，也不是人工认证的物理真值。公开RL文件的第一条gt_video配有生成请求sidecar，包含MiniMaxAI/MiniMax-H3、Ref2VA任务、6秒、短边480、seed 42与50步设置，直接印证了合成来源。"
+        }
+      ]
+    },
+    {
+      "id": "data-filter",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "第四步过滤从未成功渲染、超预算、工具调用无效的轨迹，过滤近乎静态、空白、主体出镜与退化视角的草稿，再用Seed2.0检查草稿是否体现对象、数量、空间关系与运动。正文没有给一致性阈值、各阶段保留率、人工抽查误判率或完整去重流程。论文说SFT与RL子集互不重叠，公开SFT行却没有任务id或教师来源字段，本次未独立重建两集语义去重结果。"
+        }
+      ]
+    },
+    {
+      "id": "data-count-disagreement",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "data",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "data",
+          "locator": "full JSON counts/LFS sha; archive directory; §3.1/4.1/Conclusion"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "数据数量存在无法合并的版本差异：摘要、§3.1/3.3、Figure 2和项目页写SFT-6k/RL-2k；§4.1、Conclusion及HF说明写SFT-10k/RL-4k。完整下载的公开文件实际为5,609条SFT、1,678条RL；SFT文件723,624,929 bytes，SHA-256吻合HF LFS标记。GT压缩包中央目录有1,678个MP4与1,678个JSON sidecar。公开文件计数是可核对事实，仍不能决定主表究竟使用了哪个训练集版本。"
+        }
+      ]
+    },
+    {
+      "id": "qualitative-case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "project"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure3; official project"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Figure 3展示四组文字、灰模与最终帧：三辆车、TV studio里拿文件夹的男子、三艘船和用勺吃饭的女子。以三辆车为例，草稿负责规定三辆车在道路中的布局与移动，最终视频再生成白色车身、道路和日落外观。对象数量与运动是这套方法的主要约束，日落颜色不会成为后面结构视频奖励的硬约束。 官方项目页 另有可播放的灰模与最终视频对照；这些展示没有配套完整编码日志或RL评分。"
+        }
+      ]
+    },
+    {
+      "id": "sft-recipe",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "sft-model",
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "sft-model",
+          "locator": "saved args/trainer_state; full SFT script24–61"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "SFT从Qwen3.5-9B初始化，模仿完整教师多轮交互。公开入口使用ms-swift的full fine-tuning、两轮epoch、学习率1×10 −5 、131,072上下文和sequence parallel 4；保存的SFT训练状态结束于epoch 2、global_step 456。当前脚本的loss_scale是ignore_think_prefix，保存args则为ignore_think_prefix+ignore_empty_think。它们支持实际监督训练的存在，但这份配置差异仍应保留，不能只从教师数据路径推断教师比例或把think块全部描述为统一mask。"
+        }
+      ]
+    },
+    {
+      "id": "rl-information-boundary",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.3; task.py:74–151; video_reward.py:609–640"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "RL时，编码模型对同一场景采样8条完整尝试；每条从写代码、调用工具到提交的交互轨迹称为rollout。每条轨迹先由harness验收。§3.3定义执行奖励R exe 为1：工具调用格式正确、最终程序运行成功且通过环境检查，否则0。对accepted草稿，固定MiniMax-H3接收文字与草稿生成候选最终视频；Qwen3.8-omni-flash再看场景文字、合成参考视频和候选最终视频，返回视频奖励。参考不会传给编码策略。来源：§3.3、task.py、video_reward.py。"
+        }
+      ]
+    },
+    {
+      "id": "judge-rubric",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixB Figures8–9; video_reward.py:113–199,384–411"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "judge先从场景文字抽取3至6条可见硬约束，再分别判断四项：faithfulness检查候选视频是否表现文字要求的对象、数量、动作与关系；layout比较候选与参考的相对位置、朝向和大小；motion比较运动方向、路径、顺序与时间；camera比较视角、取景和相机运动。每项要求取{0,0.25,0.5,0.75,1}，有疑问时取低一档，输出JSON和5至10句观察理由。源码解析器会把数值截到[0,1]，没有强制检查它一定落在这五个档位。"
+        }
+      ]
+    },
+    {
+      "id": "ignored-appearance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "AppendixB Figures8–9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Appendix B明确要求忽略纹理、颜色、材质、光照、背景与渲染风格、脸和衣服细节、音频、画质与美观；参考也不是唯一有效答案。出镜、遮挡或小到无法识别的必需对象视为缺失，约半秒以内的时间偏移可忽略，空白或坏视频四项归零。因此，论文中“video quality reward”的实际含义应收窄到结构、动作与相机的符合程度。"
+        }
+      ]
+    },
+    {
+      "id": "weighted-score",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "video_reward.py:414–417"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "正文只说明R video 归一化到[0,1]，具体汇总由公开代码补足：默认权重为faithfulness 0.25、layout 0.25、motion 0.30、camera 0.20。只有文字不要求动作、参考也没有有意义的对象运动时，judge才可输出motion_na=true，表示motion不适用。此时prompt要求motion输出0.5，但代码删除这项，再将其余权重除以0.70。"
+        }
+      ]
+    },
+    {
+      "id": "total-reward-gate-errors",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "Eq3; video_reward.py:321–373"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "第二行是论文Eq.3，steps为当前全局训练步，T为总训练步数，α取0.5。这里的T与§3.2表示最终交互轮的T处在不同公式中，不能混用。公开实现还加一道正文没写进Eq.3的条件：当faithfulness≤0时，整条总奖励归零，执行项也取消；MiniMax或judge异常默认raise并丢弃rollout，不是自动按0分纳入所有失败。"
+        }
+      ]
+    },
+    {
+      "id": "worked-score",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq3; structured_video_reward / combine_reward"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "算一个说明性例子：设F=0.75、L=0.5、M=0.25、C=1，且执行成功，则R video =0.1875+0.125+0.075+0.20=0.5875。step=0时R=1+0.5×0.5875=1.29375；step=T时R=exp(−1)+0.29375≈0.66163。这些输入是本文为解释公式设定的数值，不是任何公开case的实测分数。总奖励显然不限制在[0,1]；该区间只约束视频奖励。"
+        }
+      ]
+    },
+    {
+      "id": "annealing-counterexample",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq3–4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "退火也没有把执行系数降为0：末步仍是e −1 ≈0.3679。视频系数0.5只在steps/T>ln2≈0.693后超过执行系数，末步也要R video >0.7358，视频项贡献才大于成功执行项。此外，同题一组轨迹如果全都执行成功，执行常数在减去组均值时抵消。作者“后期视频奖励主导”的解释有直觉基础，却不能只由两个系数直接推出每次更新由哪一项主导。"
+        }
+      ]
+    },
+    {
+      "id": "grpo-paper",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Eq4–5"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "论文采用GRPO：将同题各轨迹的奖励减去组均值，再除以组内标准差，得到各条轨迹相对其他尝试的优势。Eq.4为A i =(R i −mean(R))/std(R)。Eq.5再用新旧策略概率比乘优势，裁剪过大的策略变化，并写有与参考策略的KL项。奖励较高的轨迹得到正优势，奖励较低的得到负优势；当一组没有奖励差异时，不能凭空产生有区分度的结果信号。"
+        }
+      ]
+    },
+    {
+      "id": "gspo-release-default",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "train_video_coder_rl.sh55–69; train_qwen3p5_fsdp.sh30–37; core_algos.py1545–1620"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公开入口的ADV_ESTIMATOR=grpo负责组内优势，LOSS_MODE=gspo则选择GSPO策略损失：先对模型输出token的log概率比求序列平均、指数化，再裁剪这个序列比值。默认clip上下各4×10 −4 ，loss按token-mean聚合；实际接入的train_qwen3p5_fsdp.sh默认USE_KL_IN_REWARD与USE_KL_LOSS均为False、系数均0，未启用正文Eq.5写出的KL约束。因此，“代码也用GRPO”只能准确描述优势估计，不能覆盖实际策略损失。源码用torch.std的默认样本标准差并加1×10 −6 避免除零，正文没有明确标准差约定或零方差处理。"
+        }
+      ]
+    },
+    {
+      "id": "token-mask",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "continuous_token.py365–417; framework.py1187–1240; core_algos.py268–332"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "训练mask也分两层。工具返回、图像和插入的上下文token提供观测，不参与策略损失；编码模型生成的assistant消息和工具调用token参与损失。未完成episode的整条生成mask置0，但0奖励仍放入组内奖励计算，影响其他已完成轨迹的基线。默认token-mean让较长生成轨迹在聚合中占更多权重，不能直接等同于按每条轨迹等权平均。来源：continuous_token.py:365–417、framework.py:1187–1240、core_algos.py:268–332/1545–1620。"
+        }
+      ]
+    },
+    {
+      "id": "exact-run-unknown",
+      "claim_type": "unknown",
+      "source_ids": [
+        "code",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "public default vs missing matching RL-state/logs"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这些是固定revision下的实现事实。本次未获取能把当前默认配置、RL训练日志与论文主表一一对应的完整运行记录，也未独立训练；因此文章同时保留“论文报告GRPO”和“发布默认GRPO优势+GSPO损失”，不替作者消除版本差异。"
+        }
+      ]
+    },
+    {
+      "id": "cost-budget",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; README training"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "主表支持代码引导与SFT后RL的配方改善物理评测，收益范围和成本需要一起看。 论文§4.1报告编码训练使用8张H100，RL另用16张H100部署MiniMax-H3生成rollout视频，完整过程约3天。SFT与RL学习率分别1×10 −5 和1×10 −6 ，batch 8、group 8、最多100轮、上下文120K。公开SFT启动脚本则配置4卡与128K上下文；RL README仍说明8张编码卡、四个各4卡的视频服务。论文不是8卡总成本，渲染与视频生成也不能从预算中省略。"
+        }
+      ]
+    },
+    {
+      "id": "metrics",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "PhyGenBench按Mechanics、Optics、Thermal、Material四类检查物理常识，论文沿官方协议使用GPT-4o作为judge，报告各类[0,1]分数及平均值。VBench-2.0本身评估更广的内在符合程度，这篇只取Mechanics、Thermotics、Material三个物理维度，报告百分比。训练视频judge是Qwen3.8-omni-flash，PhyGenBench评测judge是GPT-4o，两者用途不同。"
+        }
+      ]
+    },
+    {
+      "id": "average-rounding",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "表里的Average按所报类别分数做均值理解，精确计算仍应使用未四舍五入的原始分数。例如MiniMax的Table 1显示(.61+.73+.52+.55)/4=.6025，表中Average写.61；这是展示值与未公开原始聚合之间的小差异，不能用已舍入类别值覆盖作者平均列。本文主增益按Average列重算，并完整保留原表。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-denominator",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4.1; release README inference/evaluation"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Video-Coder没有在文中充分列出两套主实验实际题数、每模型每题的seed与重复次数、失败或丢弃视频是否仍计入分母、误差条或置信区间。它说遵循官方协议，当前仓库展示的评测路线主要是生成草稿与最终视频，尚不足以独立恢复主表所有评分与分母细节。下面的结论对应作者报告，不能当成本文重新跑出的排行榜。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 1最直接的对照是MiniMax-H3单独生成与加Video-Coder：Average 0.61→0.67，即+0.06，按0至100换算为6个百分点。四类分别从0.61/0.73/0.52/0.55升到0.68/0.79/0.60/0.61。完整方法在这张表四类和平均列均最高；摘要与引言写“约7 points”，本文采用主表可直接计算的6个百分点。"
+        }
+      ]
+    },
+    {
+      "id": "transfer-claim-conflict",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table1; §4.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "换到未用于RL rollout的OmniWeaving，平均0.48→0.51，只有+0.03，即3个百分点。§4.2同时声称这是“16.28 points”，与表格不一致，也没有另一组数字解释该口径。该对照提供跨生成器迁移的正面证据，但幅度比MiniMax小，不能照搬正文的16.28。"
+        }
+      ]
+    },
+    {
+      "id": "vbench-scope-results",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 2中MiniMax的三个物理维度平均54.58%→78.19%，提高23.61个百分点；Mechanics提高21.08、Thermotics提高23.66、Material提高26.08个百分点。相对于最强其他平均基线CogVideoX-1.5的77.04%，完整方法只高1.15个百分点。"
+        }
+      ]
+    },
+    {
+      "id": "strong-counterexample",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table2; §4.2"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "材料维度是最清楚的反例：Video-Coder的75.02%低于CogVideoX-1.5的83.19%。 作者认为材料反应依赖精细外观，而灰模有意只编码结构与运动。这是对反例的合理解释方向，不是经过单独消融验证的原因。它也提醒我们，热与材料行为未必都能由简单几何和关键帧充分约束，平均第一不意味着每类最好。"
+        }
+      ]
+    },
+    {
+      "id": "ablation",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Table 3固定使用MiniMax-H3、比较PhyGenBench平均列：无编码代理0.61，只有SFT编码代理0.63，SFT后完整RL为0.67。SFT增加0.02，随后RL再增加0.04。无退火固定双奖励为0.65，无视频奖励为0.64，无执行奖励为0.63；完整配方在六种报告条件中最好。"
+        }
+      ]
+    },
+    {
+      "id": "ablation-causal-boundary",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table3; §4.3"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这支持RL阶段及两类反馈在本配方中有用。它没有等计算预算的更长SFT、更多教师演示或冻结编码模型多采样对照，也没有误差条、每种配置执行成功率、平均修复轮数、按动作类型的改善统计。因此，表格不能证明RL不可替代，也不能唯一证明“执行项造成保守程序”就是无退火变差的原因。后者是作者对0.65结果的机制解释。"
+        }
+      ]
+    },
+    {
+      "id": "alpha",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure4; §4.4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Figure 4比较α=0.4/0.5/0.6/0.7，0.5与0.6表现相近较好，0.4和0.7稍低。图没有直接标每根柱的精确分数，本文不从像素编造更多小数。它支持作者在这个窄范围内选择0.5，没有建立其他任务、生成器或更宽α范围下的稳定性。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "code",
+        "data"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "paper/release disagreements and missing run linkage"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "复现方面，公开资源已经比只有概念图更具体：有完整SFT轨迹、RL文字与合成参考、实际harness、奖励代码、SFT与RL启动入口以及模型权重文件列表。但应先统一训练集版本和优化配置，记录每题失败、重试和丢弃的分母，再提交重复seed与训练行为统计。公开文件实际条数、GRPO/GSPO和SFT运行设置的差异，都影响把主表改进归因到哪份可复现训练。"
+        }
+      ]
+    },
+    {
+      "id": "future-work",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Discussion inferred from ablation and checks"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "对这条路线的研究，首先可在固定任务、固定编码采样数和总计算下比较更长SFT、当前RL与只做结果筛选的训练，检验RL增益来自策略优化还是更多尝试与预算。其次，把对象数量、接触顺序、相机范围等可读程序状态做成独立检查，分别记录灰模通过率与最终视频保真率，再换不同视频生成器。这样能定位编码失败和生成器破坏约束的比例，而不是只看最后平均分。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 1",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 1，p.2。完整总览：文字要求、直接生成与代码草稿引导后的关键帧对照。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 1，p.2。完整总览：文字要求、直接生成与代码草稿引导后的关键帧对照。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 1"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-1.webp"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 2",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 2，p.4。完整四步管线；图上6k/2k标签与实验章节10k/4k不同。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 2，p.4。完整四步管线；图上6k/2k标签与实验章节10k/4k不同。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Figure 2"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-2.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p.8, Figure 3",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 3，p.8。完整四组定性结果：三车、男子拿文件夹、三船、女子吃饭；左为文字，中为灰模，右为最终帧。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 3，p.8。完整四组定性结果：三车、男子拿文件夹、三船、女子吃饭；左为文字，中为灰模，右为最终帧。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-3.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 4",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 4，p.9。α敏感性分析，保留全部坐标与柱；原图未标精确柱值。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 4，p.9。α敏感性分析，保留全部坐标与柱；原图未标精确柱值。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-4.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p.12, Figure 5",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 5，p.12。脚本、几何、动画、相机与统一白模渲染要求。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 5，p.12。脚本、几何、动画、相机与统一白模渲染要求。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-5.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p.13, Figure 6",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 6，p.13。工具、错误与视觉反馈、写运行修复流程，含条件分支。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 6，p.13。工具、错误与视觉反馈、写运行修复流程，含条件分支。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-6.webp"
+      ]
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p.14, Figure 7",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 7，p.14。最终提交、独立重跑与命令规则；并保留静态检查分支。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 7，p.14。最终提交、独立重跑与命令规则；并保留静态检查分支。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-7.webp"
+      ]
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p.15, Figure 8",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 8，p.15。视频judge输入、忽略范围、文字约束、faithfulness与layout完整规则。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 8，p.15。视频judge输入、忽略范围、文字约束、faithfulness与layout完整规则。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-8.webp"
+      ]
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p.16, Figure 9",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Figure 9，p.16。motion、camera、空视频归零与JSON输出完整规则。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Figure 9，p.16。motion、camera、空视频归零与JSON输出完整规则。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/figure-9.webp"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 1",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 1，p.7。PhyGenBench完整模型与四类结果；正文按Average列重算增益。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 1，p.7。PhyGenBench完整模型与四类结果；正文按Average列重算增益。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/table-1.webp"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 2",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 2，p.7。VBench-2.0三个物理维度完整结果；Material最优为CogVideoX-1.5。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 2，p.7。VBench-2.0三个物理维度完整结果；Material最优为CogVideoX-1.5。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 2"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/table-2.webp"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p.9, Table 3",
+      "status": "reused",
+      "rationale": "手机可横向滑动或放大。 原论文 Table 3，p.9。六种训练条件全部消融结果，完整保留SFT-only和双奖励各项。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "手机可横向滑动或放大。 原论文 Table 3，p.9。六种训练条件全部消融结果，完整保留SFT-only和双奖励各项。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Table 3"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "Wang et al., arXiv:2611.09894v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/video-coder/table-3.webp"
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/video-coder/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p.2, Figure 1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 1，p.2。完整总览：文字要求、直接生成与代码草稿引导后的关键帧对照。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p.4, Figure 2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 2，p.4。完整四步管线；图上6k/2k标签与实验章节10k/4k不同。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p.8, Figure 3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 3，p.8。完整四组定性结果：三车、男子拿文件夹、三船、女子吃饭；左为文字，中为灰模，右为最终帧。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p.9, Figure 4",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 4，p.9。α敏感性分析，保留全部坐标与柱；原图未标精确柱值。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p.12, Figure 5",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 5，p.12。脚本、几何、动画、相机与统一白模渲染要求。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-6",
+      "source_id": "paper",
+      "source_locator": "p.13, Figure 6",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 6，p.13。工具、错误与视觉反馈、写运行修复流程，含条件分支。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "p.14, Figure 7",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 7，p.14。最终提交、独立重跑与命令规则；并保留静态检查分支。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-8",
+      "source_id": "paper",
+      "source_locator": "p.15, Figure 8",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 8，p.15。视频judge输入、忽略范围、文字约束、faithfulness与layout完整规则。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/figure-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-9",
+      "source_id": "paper",
+      "source_locator": "p.16, Figure 9",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Figure 9，p.16。motion、camera、空视频归零与JSON输出完整规则。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 1",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 1，p.7。PhyGenBench完整模型与四类结果；正文按Average列重算增益。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p.7, Table 2",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 2，p.7。VBench-2.0三个物理维度完整结果；Material最优为CogVideoX-1.5。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p.9, Table 3",
+      "license_status": "verified-allowed",
+      "license_basis": "arXiv v1 explicitly links CC BY 4.0; figures/tables reproduced with attribution, source link and license; crops remove external whitespace, preserve all visual content; detail crop labeled separately.",
+      "credit": "手机可横向滑动或放大。 原论文 Table 3，p.9。六种训练条件全部消融结果，完整保留SFT-only和双奖励各项。 Wang et al., arXiv:2611.09894v1，CC BY 4.0。",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/video-coder/training-flow.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§3.2–3.3; official task/reward source",
+      "credit": "本文根据论文与官方实现绘制职责与数据流",
+      "used_in": [
+        "article"
+      ],
+      "deck_usage": "same SVG embedded inline"
+    },
+    {
+      "path": "/lib/papers/video-coder/rl-feedback.svg",
+      "origin": "generated",
+      "source_id": "paper",
+      "source_locator": "§3.2–3.3; official task/reward source",
+      "credit": "本文根据论文与官方实现绘制职责与数据流",
+      "used_in": [
+        "article"
+      ],
+      "deck_usage": "same SVG embedded inline"
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.78,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "evidence_paths": [
+      "work/video-coder/qa-report.json",
+      "work/video-coder/qa-*.png",
+      "work/video-coder/qa-body-*.jpg"
+    ],
+    "scope": "Isolated headless Chromium; DOM fullscreen exercised; native desktop window not tested"
+  }
+}
