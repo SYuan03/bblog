@@ -1,0 +1,1174 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "IdeaEval: Impact-Oriented Evaluation of Scientific Hypothesis Generation",
+    "kind": "benchmark",
+    "primary_source_ids": [
+      "blog",
+      "repo",
+      "calibration",
+      "bench"
+    ],
+    "publication_type": "author-project-retrospective",
+    "bibliographic_note": "No published paper or arXiv full text is supplied by the author. Original HTML first published metadata 2026-10-16, updated 2026-11-11; retain English title without pretending this date is arXiv v1."
+  },
+  "artifacts": {
+    "article": "content/_posts/100-ideaeval.md",
+    "deck": "lib/decks/ideaeval.html",
+    "embed_src": "/lib/decks/ideaeval.html"
+  },
+  "sources": [
+    {
+      "id": "blog",
+      "kind": "web",
+      "title": "Author original Chinese project retrospective",
+      "url": "https://02hyc.github.io/Blog/posts/ideaeval-zh/",
+      "revision": "2026-11-11 updated; captured 2026-11-12; sha256 ce4218f51257e975928c9ae37b42edeb53aeb42ec92003b21a2150603c1d10c3",
+      "used_for": [
+        "problem",
+        "method",
+        "historical-results",
+        "limitations"
+      ]
+    },
+    {
+      "id": "repo",
+      "kind": "code",
+      "title": "02hyc/IdeaEval",
+      "url": "https://github.com/02hyc/IdeaEval",
+      "revision": "e0d9a5a87b3ec90efa25df8150ca74b8dcdf5c0c",
+      "used_for": [
+        "construction",
+        "judge",
+        "scoring",
+        "baselines",
+        "figures",
+        "license"
+      ]
+    },
+    {
+      "id": "calibration",
+      "kind": "dataset",
+      "title": "IdeaEval-Calibration",
+      "url": "https://huggingface.co/datasets/Yukino13/IdeaEval-Calibration",
+      "revision": "c721955fad10e5e68e7b6c2663c3574cb7016c49",
+      "used_for": [
+        "released-results",
+        "cases",
+        "annotations",
+        "selection-bias"
+      ]
+    },
+    {
+      "id": "bench",
+      "kind": "dataset",
+      "title": "IdeaEval-Bench",
+      "url": "https://huggingface.co/datasets/Yukino13/IdeaEval-Bench",
+      "revision": "6177e9f96d51e752bc2da23419ebb7f203020176",
+      "used_for": [
+        "task-provenance",
+        "visible-inputs",
+        "cohort-counts"
+      ]
+    },
+    {
+      "id": "corpus",
+      "kind": "dataset",
+      "title": "IdeaEval-Corpus",
+      "url": "https://huggingface.co/datasets/Yukino13/IdeaEval-Corpus",
+      "revision": "c7a761ff762440ce68bf8c4bcf47dcc7a09637e9",
+      "used_for": [
+        "corpus",
+        "citation-snapshot"
+      ]
+    },
+    {
+      "id": "csa",
+      "kind": "web",
+      "title": "Original blog embedded CSA proposal",
+      "url": "https://02hyc.github.io/Blog/figures/ideaeval/08-proposal.html",
+      "revision": "Captured 2026-11-12; sha256 323c1a2b20258de40dd42a3c57efee7e228ea5a1cb54cfb5d7216fc5e9c88f18",
+      "used_for": [
+        "concrete-case",
+        "causal-boundary",
+        "formula-inconsistency"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 17,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 17
+      }
+    ],
+    "source_visuals_expected": 25,
+    "visual_inventory_complete": true,
+    "document_format": "HTML author retrospective; page_count is its task-created print archive, not an author PDF",
+    "full_read_scope": "Entire original HTML including all references, 18 img/table visuals and the embedded CSA proposal; original print pages1–17 rendered and inspected. No separate paper or appendix exists at supplied sources. Selected official code and data independently inspected.",
+    "text_artifacts": [
+      "work/ideaeval/explainer.txt",
+      "work/ideaeval/print-text.txt",
+      "work/ideaeval/blog-credit-proposal.txt"
+    ],
+    "visual_artifacts": [
+      "work/ideaeval/source-contact-1.jpg through source-contact-5.jpg",
+      "work/ideaeval/print-contact-1.jpg through print-contact-5.jpg"
+    ]
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation：先判断研究计划是否值得做"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work：不同标签回答不同问题"
+    },
+    {
+      "role": "method",
+      "locator": "3. Benchmark / Protocol：构造同期提案，再校准评判器"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments：先取得高分，再发现高分不依赖方法内容"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion：把综合判断拆成能查错的实验"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion：先验收评判器，再使用提案胜率"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "proposal",
+      "kind": "state",
+      "source_ids": [
+        "blog"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "Rewinding papers into proposals"
+        }
+      ],
+      "article_quote": "系统要在研究开始前判断：两个研究计划，哪个更值得投入？作者把包含假设、方法、实验设计和成功标准的完整研究计划称为 proposal。"
+    },
+    {
+      "term": "pairwise ranker",
+      "kind": "actor",
+      "source_ids": [
+        "blog"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "Compare proposals only against their contemporaries"
+        }
+      ],
+      "article_quote": "接收两份计划、给出相对优劣的评判器是 pairwise ranker。"
+    },
+    {
+      "term": "research taste",
+      "kind": "operation",
+      "source_ids": [
+        "blog"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "Judging an idea against its time"
+        }
+      ],
+      "article_quote": "作者希望模拟研究者的事前判断能力，称为 research taste：在完整实验之前，估计一个假设能给领域增加多少有用知识。"
+    },
+    {
+      "term": "cohort",
+      "kind": "state",
+      "source_ids": [
+        "blog"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "Carving the literature into cohorts"
+        }
+      ],
+      "article_quote": "作者把相近时间公开的论文组成 cohort，即同一主题、31 天内的一组论文。"
+    },
+    {
+      "term": "cutoff",
+      "kind": "prompt-context",
+      "source_ids": [
+        "bench"
+      ],
+      "source_locators": [
+        {
+          "source_id": "bench",
+          "locator": "README How the cohorts were built steps4–5"
+        }
+      ],
+      "article_quote": "cutoff 是限制可用文献的时间 t，取该组最早论文公开日期前一天。"
+    },
+    {
+      "term": "rubric",
+      "kind": "prompt-context",
+      "source_ids": [
+        "blog"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "A three-stage ranker with a non-compensatory rubric"
+        }
+      ],
+      "article_quote": "作者原设计的 rubric 是提示中的评判规则，包含七个因素"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "blog",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "TL;DR / Afterword"
+        },
+        {
+          "source_id": "repo",
+          "locator": "README Status"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "项目最后卡在第一个前提。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo",
+        "bench"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "benchmark/docs/PIPELINE.md §1–4"
+        },
+        {
+          "source_id": "bench",
+          "locator": "cohorts.parquet HF rows:91 rows; members1394 unique1330"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "91 个 cohort、40 个 topic、1,330 篇独立论文，合计 1,394 个组内席位"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "repo",
+        "calibration"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "benchmark/docs/PIPELINE.md §4 step4"
+        },
+        {
+          "source_id": "calibration",
+          "locator": "humanAI/manifest.json annotation; dataset README no cross-check"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "三个 GPT-5.4 judge 根据 DeepSeek-V4-Flash 摘要检查主题匹配、有无实验与论文类型"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "baselines/README.md Search tools / simple setup"
+        },
+        {
+          "source_id": "repo",
+          "locator": "evaluator/runtime/rank_runner.py:799–900; label metadata remains outside judge workspace"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "生成时不接收要与它比较的人类提案或引用胜负标签。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo",
+        "calibration"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "evaluator/scripts/run_literature_archive_judge_manifest.py:249–261,410–417,501–502"
+        },
+        {
+          "source_id": "calibration",
+          "locator": "results_160.json GPT5.4 95/152"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "异常重试后仍失败的 pair 单列 failed，不进入 accuracy 分母。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "repo",
+        "calibration"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "evaluator/runtime/pair_manifest.py:81–140; run_literature_archive_judge_manifest.py:249–261"
+        },
+        {
+          "source_id": "calibration",
+          "locator": "humanAI/manifest.json pair hva_v1_glm5_1_claude_code__l1_009_06_03_w1__2509.09754"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "按 seed42，代码会交换显示顺序，让 A＝AI SGA、B＝人类 LAVa。"
+        },
+        {
+          "artifact": "article",
+          "quote": "公开资料没有该 pair 的逐次 judge 判决，本文没有冒充复现模型实际输出。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "blog",
+        "calibration"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "The first calibration / humanAI / Nothing helped"
+        },
+        {
+          "source_id": "calibration",
+          "locator": "README Reference results; results_160.json"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Agentic + LR 共多判对 11 对：A 多 2，B 少 2，C 多 14，humanAI 少 3。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "blog"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "Ways to evaluate a research idea four signal categories"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "下表按原文讨论整理其边界；它是问题地图，不是对这些工作的独立复现实验。"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "unknown",
+      "source_ids": [
+        "repo",
+        "calibration"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "docs/search_backend.md; benchmark/docs/PIPELINE.md steps1b,4"
+        },
+        {
+          "source_id": "calibration",
+          "locator": "README Relation to old sets / license omissions"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "内部日期检索后端未公开，cohort 清洗与合并有步骤只有规则说明"
+        }
+      ]
+    },
+    {
+      "id": "concrete-math-counterexample",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "calibration"
+      ],
+      "source_locators": [
+        {
+          "source_id": "calibration",
+          "locator": "humanAI/proposals/hva_v1_glm5_1_claude_code__l1_009_06_03_w1__2509.09754/ai_proposal.md:60–82; manifest fatal annotation"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "后者更低，已经反驳“该闭式公式最优”。"
+        }
+      ]
+    },
+    {
+      "id": "csa-self-limitation",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "csa"
+      ],
+      "source_locators": [
+        {
+          "source_id": "csa",
+          "locator": "Methods Core observation: within-group counterfactuals"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "原提案其实承认这一点：Methods 写明 not strictly comparable as counterfactuals in a causal sense"
+        }
+      ]
+    },
+    {
+      "id": "csa-formula-inconsistency",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "csa"
+      ],
+      "source_locators": [
+        {
+          "source_id": "csa",
+          "locator": "Methods combined advantage; Experiments Design Baselines λ1 ablation"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公式 A＝Aᴱ＋λAˢ 在 λ＝1 时仍包含 Aᴱ，而实验消融却把 λ＝1 称为纯逐步信号。"
+        }
+      ]
+    },
+    {
+      "id": "version-boundary",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "repo",
+          "locator": "evaluator/runtime/rank_runner.py:799–900; agents/agenthub/judge_agent.py _build_user_prompt"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "_run_judge 不把 report_a／report_b 写入 judge 输入工作区"
+        }
+      ]
+    },
+    {
+      "id": "bibliographic-status",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "blog",
+        "repo"
+      ],
+      "source_locators": [
+        {
+          "source_id": "blog",
+          "locator": "Header first published Oct16 updatedNov11; Afterword paper incomplete"
+        },
+        {
+          "source_id": "repo",
+          "locator": "README/CITATION.cff blog URL"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它是项目复盘，作者明确说未能完成可信的评测，未提供已发表论文或 arXiv 正文。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "blog-visual-1",
+      "kind": "figure",
+      "label": "FARS pipeline: research direction, ideation, planning, experiment, writing, paper; all stages share one workspace",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #1; https://02hyc.github.io/Blog/posts/ideaeval/figures/01-fars.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "FARS pipeline is motivation background; its ideation bottleneck is retained in Motivation without republishing this unlicensed drawing."
+    },
+    {
+      "id": "blog-visual-2",
+      "kind": "figure",
+      "label": "Evaluation signals on an idea’s timeline. When the idea is proposed, before any experiment: expert ratings [9][10] and novelty checks [14]. After experiments: experimental outcomes [15] and hypothesis verification [16][17]. At publication: matching the published paper [5–8] and acceptance or reviews [11–13]. Months to years later: citations and awards [18][19]. Earlier signals are noisy or partial; complete signals arrive only after the fact. Research taste means predicting, at the moment an idea is proposed, what the community will say later",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #2; https://02hyc.github.io/Blog/posts/ideaeval/figures/16-signal-timeline.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Signal timeline is represented by the related-work comparison organized by input/output/label; image is not independently licensed."
+    },
+    {
+      "id": "blog-visual-3",
+      "kind": "figure",
+      "label": "Envisioned ideation loop: a Seeder generates proposals, a Filter removes invalid ones, a pairwise Ranker updates Elo scores in the candidate pool, an Evolver revises the top proposals, and the best one is delivered",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #3; https://02hyc.github.io/Blog/posts/ideaeval/figures/02-evolution.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Seeder/Filter/Elo/Evolver is an envisioned future loop, not an executed mechanism or reported gain; retain the project scope rather than making it the main method."
+    },
+    {
+      "id": "blog-visual-4",
+      "kind": "figure",
+      "label": "K_t is the work on one research question published before cutoff t. Human proposals from the next 31 days build on the same K_t, and an AI proposal generated at t can only draw on K_t. A pairwise ranker compares two human proposals and is checked against later citations (calibration), then compares the AI proposal with every human proposal in the cohort (ideation)",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #4; https://02hyc.github.io/Blog/posts/ideaeval/figures/03-comparison.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Use licensed repository overview to teach cohort generation and separate calibration/ideation; do not copy the blog-specific drawing."
+    },
+    {
+      "id": "blog-visual-5",
+      "kind": "figure",
+      "label": "Left: the corpus of 35,505 papers splits level by level until every leaf holds 10 to 50 papers. Research-question granularity is set by size: the highest node whose subtree holds at most 150 papers is a topic, itself a broader research question, and each leaf is a finer one. Right: one topic on a timeline cut into 31-day windows; each window is a cohort. Each leaf alone is sparse within a window, while the topic as a whole gives enough papers",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #5; https://02hyc.github.io/Blog/posts/ideaeval/figures/04-taxonomy.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Use licensed repository taxonomy plus explicit actual counts; the blog figure adds cohort timeline now taught in §3.1."
+    },
+    {
+      "id": "blog-visual-6",
+      "kind": "figure",
+      "label": "Paper to proposal: a paper’s content is sorted into plan, prior knowledge, and results; results are removed, findings are rewritten as hypotheses, and the rest goes into a seven-section proposal template with results marked TBD",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #6; https://02hyc.github.io/Blog/posts/ideaeval/figures/06-paper-proposal.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Paper-to-proposal information boundary and all seven sections are taught in §3.2; no need to republish animation artwork."
+    },
+    {
+      "id": "blog-visual-7",
+      "kind": "table",
+      "label": "Filtering rule\tCoverage\tAgreement with 12-month ranking\tRanking flip rate\nAbsolute gap only, \n𝑑\n≥\n4\nd≥4\t37.9%\t",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #7; Filtering rule\tCoverage\tAgreement with 12-month ranking\tRanking flip rate\nAbsolu",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Filtering rule"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-8",
+      "kind": "table",
+      "label": "Observation window\tPairs selected\tCoverage\tAgreement with 12-month ranking\tRanking flip rate\n4 months\t2,910\t37",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #8; Observation window\tPairs selected\tCoverage\tAgreement with 12-month ranking\tRanki",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Observation window"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-9",
+      "kind": "table",
+      "label": "\tCalibration benchmark\tIdeation benchmark\nPurpose\tCalibrate the ranker\tEvaluate ideation systems\nUnit\tPaper pa",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #9; \tCalibration benchmark\tIdeation benchmark\nPurpose\tCalibrate the ranker\tEvaluate ",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "共享时间背景"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-10",
+      "kind": "figure",
+      "label": "The Literature Review Agent builds a shared literature review from before t; two analysis agents examine proposals A and B against it; the Judge reads the review, both reports, and both proposals, and outputs which proposal is better",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #10; https://02hyc.github.io/Blog/posts/ideaeval/figures/07-ranker.svg",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Use the licensed repository ranker drawing, with current code/old design discrepancy next to it."
+    },
+    {
+      "id": "blog-visual-11",
+      "kind": "table",
+      "label": "Setting\tData\tAccuracy\nRandom\tdev\t50.0%\nAlways predict A < B\tdev\t55.0%\nRanker (GPT-5.4)\tdev\t78.3%\nRanker (GPT-5",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #11; Setting\tData\tAccuracy\nRandom\tdev\t50.0%\nAlways predict A < B\tdev\t55.0%\nRanker (GP",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原文 The first calibration"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-12",
+      "kind": "table",
+      "label": "Citation gap\t0–10\t11–19\t20–49\t50+\nPairs\t42\t77\t66\t15\nAccuracy\t76.2%\t67.5%\t78.8%\t100%",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #12; Citation gap\t0–10\t11–19\t20–49\t50+\nPairs\t42\t77\t66\t15\nAccuracy\t76.2%\t67.5%\t78.8%\t1",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原文引用差距分桶"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-13",
+      "kind": "table",
+      "label": "Configuration\tAccuracy\nThree-stage ranker + GPT-5.4\t75.5%\nJudge Agent only + GPT-5.4\t76.0%\nJudge Agent only + ",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #13; Configuration\tAccuracy\nThree-stage ranker + GPT-5.4\t75.5%\nJudge Agent only + GPT",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Three-stage ranker + GPT-5.4"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-14",
+      "kind": "table",
+      "label": "Input\tGPT-5.4\tOpus 4.6\nRandom\t50.8%\t50.8%\nCore hypothesis + method + experiments\t79.2%\t82.0%\nCore hypothesis +",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #14; Input\tGPT-5.4\tOpus 4.6\nRandom\t50.8%\t50.8%\nCore hypothesis + method + experiments",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Input (250-pair test)"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-15",
+      "kind": "table",
+      "label": "Input\tGPT-5.4\tOpus 4.6\nRandom\t50.8%\t50.8%\nTitles only\t72.8%\t74.0%",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #15; Input\tGPT-5.4\tOpus 4.6\nRandom\t50.8%\t50.8%\nTitles only\t72.8%\t74.0%",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Titles only"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-16",
+      "kind": "table",
+      "label": "Ideation system\tWin rate vs. human proposals\nGLM-5.1 + Claude Code\t78.8%\nOpus 4.6 + Claude Code\t75.5%\nDeepSeek",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #16; Ideation system\tWin rate vs. human proposals\nGLM-5.1 + Claude Code\t78.8%\nOpus 4.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Win rate vs. human proposals"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-17",
+      "kind": "table",
+      "label": "Label\tPairs\tAccuracy\nAI proposal better\t18\t83%\nHuman proposal better\t57\t39%\nOverall\t75\t49.3%",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #17; Label\tPairs\tAccuracy\nAI proposal better\t18\t83%\nHuman proposal better\t57\t39%\nOver",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原 75 对人工标注"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-visual-18",
+      "kind": "table",
+      "label": "Judge Agent\tOverall accuracy\tAI-better subset\tHuman-better subset\nGPT-5.4 (original rubric)\t49.3%\t83%\t39%\nGPT-",
+      "source_id": "blog",
+      "source_locator": "Original article body visual #18; Judge Agent\tOverall accuracy\tAI-better subset\tHuman-better subset\nGPT-5.4 (origi",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Judge Agent (old 75 pairs)"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "按作者原文完整数值重排",
+      "status": "redrawn",
+      "rationale": "Retain every numerical cell or protocol fact as an editable comparison table / explicitly reconstructed score next to the relevant explanation; no copy of source artwork."
+    },
+    {
+      "id": "blog-iframe-csa",
+      "kind": "figure",
+      "label": "Embedded original CSA proposal card",
+      "source_id": "csa",
+      "source_locator": "08-proposal.html entire scrollable proposal",
+      "status": "omitted",
+      "rationale": "The original proposal is linked and its actual method, causal disclaimer and lambda inconsistency are discussed. A screenshot would hide much of the scrollable method; use an article-authored state example.",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": ""
+    },
+    {
+      "id": "repo-overview",
+      "kind": "figure",
+      "label": "Official docs/figures/overview.svg",
+      "source_id": "repo",
+      "source_locator": "docs/figures/overview.svg @ e0d9a5a",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "官方总览原图：论文组成同期研究组，改写成人类提案，AI按同一研究方向生成提案；ranker本身另外校准。英文标签保留。来源：IdeaEval docs/figures/overview.svg（e0d9a5a），Apache 2.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "官方 overview.svg 原图"
+        }
+      ],
+      "asset_paths": [
+        "/lib/papers/ideaeval/overview.svg"
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Repository-level Apache-2.0 LICENSE covers these source documentation SVG assets; no file-level exception found. Verbatim SVGs retained; LICENSE-IdeaEval.txt supplied. README names the code license Apache2.0; underlying papers/data not covered.",
+      "credit": "官方总览原图：论文组成同期研究组，改写成人类提案，AI按同一研究方向生成提案；ranker本身另外校准。英文标签保留。来源：IdeaEval docs/figures/overview.svg（e0d9a5a），Apache 2.0。",
+      "status": "reused",
+      "rationale": "Official source diagram teaches the task / taxonomy / original ranker beside the corresponding causal walkthrough; preserve English labels and all original shapes."
+    },
+    {
+      "id": "repo-taxonomy",
+      "kind": "figure",
+      "label": "Official docs/figures/taxonomy.svg",
+      "source_id": "repo",
+      "source_locator": "docs/figures/taxonomy.svg @ e0d9a5a",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "官方主题树原图：叶子是较细研究问题，topic是最多150篇的子树。图内分支计数是示意数值；实际语料结果为6层、1,799叶。来源：docs/figures/taxonomy.svg，Apache 2.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "taxonomy.svg 原图"
+        }
+      ],
+      "asset_paths": [
+        "/lib/papers/ideaeval/taxonomy.svg"
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Repository-level Apache-2.0 LICENSE covers these source documentation SVG assets; no file-level exception found. Verbatim SVGs retained; LICENSE-IdeaEval.txt supplied. README names the code license Apache2.0; underlying papers/data not covered.",
+      "credit": "官方主题树原图：叶子是较细研究问题，topic是最多150篇的子树。图内分支计数是示意数值；实际语料结果为6层、1,799叶。来源：docs/figures/taxonomy.svg，Apache 2.0。",
+      "status": "reused",
+      "rationale": "Official source diagram teaches the task / taxonomy / original ranker beside the corresponding causal walkthrough; preserve English labels and all original shapes."
+    },
+    {
+      "id": "repo-ranker",
+      "kind": "figure",
+      "label": "Official docs/figures/ranker.svg",
+      "source_id": "repo",
+      "source_locator": "docs/figures/ranker.svg @ e0d9a5a",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "官方三阶段设计原图：共同文献综述、两次分析、最终Judge。它表示原设计，当前v23 judge-only走直接阅读文献与两案的路径。来源：docs/figures/ranker.svg，Apache 2.0。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "ranker.svg 原图"
+        }
+      ],
+      "asset_paths": [
+        "/lib/papers/ideaeval/ranker.svg"
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "Repository-level Apache-2.0 LICENSE covers these source documentation SVG assets; no file-level exception found. Verbatim SVGs retained; LICENSE-IdeaEval.txt supplied. README names the code license Apache2.0; underlying papers/data not covered.",
+      "credit": "官方三阶段设计原图：共同文献综述、两次分析、最终Judge。它表示原设计，当前v23 judge-only走直接阅读文献与两案的路径。来源：docs/figures/ranker.svg，Apache 2.0。",
+      "status": "reused",
+      "rationale": "Official source diagram teaches the task / taxonomy / original ranker beside the corresponding causal walkthrough; preserve English labels and all original shapes."
+    },
+    {
+      "id": "repo-benchmark-pipeline",
+      "kind": "figure",
+      "label": "Official docs/figures/benchmark-pipeline.svg",
+      "source_id": "repo",
+      "source_locator": "docs/figures/benchmark-pipeline.svg @ e0d9a5a",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Construction steps and unavailable stages are spelled out in §3.1; complete pipeline would duplicate the selected taxonomy and walkthrough."
+    },
+    {
+      "id": "repo-baselines-flow",
+      "kind": "figure",
+      "label": "Official docs/figures/baselines-flow.svg",
+      "source_id": "repo",
+      "source_locator": "docs/figures/baselines-flow.svg @ e0d9a5a",
+      "placements": [],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "status": "omitted",
+      "rationale": "Baseline output and dated tools are explained in §3.2; the new reviewer harness differs from original simple runs so keep that version distinction in prose."
+    },
+    {
+      "id": "hf-reference-results",
+      "kind": "table",
+      "label": "Released160 Reference results",
+      "source_id": "calibration",
+      "source_locator": "README Reference results / results_160.json",
+      "status": "redrawn",
+      "rationale": "Retain all three settings and exact scored denominators; visualize per-subset net gains instead of mistaking pooled performance for humanAI ability.",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Judge (v23, seed42)"
+        }
+      ],
+      "asset_paths": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "公开 results_160.json 完整参考结果"
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/ideaeval/overview.svg",
+      "origin": "paper-original",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "repo",
+      "source_locator": "docs/figures/overview.svg",
+      "credit": "官方总览原图：论文组成同期研究组，改写成人类提案，AI按同一研究方向生成提案；ranker本身另外校准。英文标签保留。来源：IdeaEval docs/figures/overview.svg（e0d9a5a），Apache 2.0。",
+      "source_visual_id": "repo-overview",
+      "license_status": "verified-allowed",
+      "license_basis": "Repository-level Apache-2.0 LICENSE covers these source documentation SVG assets; no file-level exception found. Verbatim SVGs retained; LICENSE-IdeaEval.txt supplied. README names the code license Apache2.0; underlying papers/data not covered."
+    },
+    {
+      "path": "/lib/papers/ideaeval/taxonomy.svg",
+      "origin": "paper-original",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "repo",
+      "source_locator": "docs/figures/taxonomy.svg",
+      "credit": "官方主题树原图：叶子是较细研究问题，topic是最多150篇的子树。图内分支计数是示意数值；实际语料结果为6层、1,799叶。来源：docs/figures/taxonomy.svg，Apache 2.0。",
+      "source_visual_id": "repo-taxonomy",
+      "license_status": "verified-allowed",
+      "license_basis": "Repository-level Apache-2.0 LICENSE covers these source documentation SVG assets; no file-level exception found. Verbatim SVGs retained; LICENSE-IdeaEval.txt supplied. README names the code license Apache2.0; underlying papers/data not covered."
+    },
+    {
+      "path": "/lib/papers/ideaeval/ranker.svg",
+      "origin": "paper-original",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "repo",
+      "source_locator": "docs/figures/ranker.svg",
+      "credit": "官方三阶段设计原图：共同文献综述、两次分析、最终Judge。它表示原设计，当前v23 judge-only走直接阅读文献与两案的路径。来源：docs/figures/ranker.svg，Apache 2.0。",
+      "source_visual_id": "repo-ranker",
+      "license_status": "verified-allowed",
+      "license_basis": "Repository-level Apache-2.0 LICENSE covers these source documentation SVG assets; no file-level exception found. Verbatim SVGs retained; LICENSE-IdeaEval.txt supplied. README names the code license Apache2.0; underlying papers/data not covered."
+    },
+    {
+      "path": "/lib/papers/ideaeval/allocation-case.svg",
+      "origin": "generated",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "calibration",
+      "source_locator": "humanAI Methods Step2 / results_160.json / blog HumanAI",
+      "credit": "根据公开SGA Methods Step 2绘制的本文算例。每格代表一个预算token；同样总预算7，替代分配使提案目标从2.8降到2.5。只验证数学最优性，不是模型或压缩实验结果。"
+    },
+    {
+      "path": "/lib/papers/ideaeval/human-ai-evidence.svg",
+      "origin": "generated",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "blog",
+      "source_locator": "humanAI Methods Step2 / results_160.json / blog HumanAI",
+      "credit": "按原博客75对和公开新版40对分别绘制。旧37/75按分组百分数还原，新27/40来自results_160；灰条是各自的始终选人类基线。不能把两集合当成同集前后对照。"
+    },
+    {
+      "path": "/lib/papers/ideaeval/release-gains.svg",
+      "origin": "generated",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "calibration",
+      "source_locator": "humanAI Methods Step2 / results_160.json / blog HumanAI",
+      "credit": "根据公开results_160.json重绘净正确数变化。四组各40对；Agentic+LR相对同模型单次读提案净增11对，Set C增14对，其余合计减3对。"
+    },
+    {
+      "path": "/lib/papers/ideaeval/counterfactual-boundary.svg",
+      "origin": "generated",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "source_id": "csa",
+      "source_locator": "Methods",
+      "credit": "根据原博客CSA提案绘制的说明性状态，并非作者实际rollout日志。相同步数不能消除不同历史；原提案承认这一对比不是严格因果反事实。"
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "source_review": {
+      "license_gap": "Original blog artwork license not verified; not copied. Licensed repository illustrations selected separately.",
+      "reader_reconstruction": "Case inputs, mathematical verdict, canonical-vs-display score, nearest comparison, strongest negative result and version gap verified in prose.",
+      "no_model_reproduction": true,
+      "source_visual_inventory": "18 original body visuals + embedded case + 5 repository diagrams + released results table = 25"
+    },
+    "browser_evidence": {
+      "report": "work/ideaeval/qa-report.json",
+      "report_sha256": "fc76c9f6fde15ae37ea2e4ba2f7216e00ef81fa7da76df1b2d0e332b64610a42",
+      "errors": [],
+      "failed_requests": [],
+      "http_errors": [],
+      "fullscreen_scope": "Isolated headless Chromium; DOM fullscreen; no native desktop-window claim",
+      "code_copy_bytes": 666,
+      "default_reading_height": [
+        {
+          "width": 1600,
+          "height": 14231
+        },
+        {
+          "width": 1512,
+          "height": 14227
+        },
+        {
+          "width": 390,
+          "height": 24109
+        }
+      ],
+      "visual_review": "Full desktop/mobile body contact sheets, all14 slides composition; dense taxonomy, allocation case and released-results slide separately viewed at rendered size. Final changed paragraphs revisited after rebuild.",
+      "editorial_review": "work/ideaeval/editorial-review.md"
+    }
+  }
+}
