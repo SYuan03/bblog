@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>AgentRoboCritic · 机器人每一步做到了吗</title>
+<style>
+:root { --paper:#f8f6ef; --white:#fffefa; --ink:#172a2c; --muted:#435b58; --teal:#146861; --tint:#e1efea; --rust:#a7422e; --rose:#f7e6df; --line:#c9d6d0; }
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; }
+body { display:grid; grid-template-rows:minmax(0,1fr) auto; background:var(--paper); color:var(--ink); font:16px/1.53 "Source Sans 3", "PingFang SC", "Hiragino Sans GB", sans-serif; }
+.viewport { min-width:0; overflow:auto; overscroll-behavior:contain; }
+.slide { display:flex; flex-direction:column; gap:12px; min-height:100%; width:min(100%,1200px); margin:auto; padding:clamp(18px,3.3vw,44px) clamp(18px,4.2vw,60px) 16px; }
+.slide[hidden] { display:none; }
+.meta { display:flex; justify-content:space-between; gap:12px; border-top:1px solid var(--line); padding-top:8px; color:var(--teal); font-size:13px; font-weight:700; }
+p, h1, h2 { margin:0; }
+h1, h2 { font:700 clamp(26px,4vw,48px)/1.17 "Source Serif 4", "Songti SC", "Iowan Old Style", Georgia, serif; }
+.lead { color:var(--muted); font-size:clamp(14px,1.7vw,19px); }
+.content { display:grid; align-content:center; gap:12px; flex:1; min-width:0; }
+.duo { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
+.trio { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.panel { border:1px solid var(--line); border-top:3px solid var(--teal); background:var(--white); padding:12px 15px; }
+.panel.warm { border-top-color:var(--rust); }
+.panel b { display:block; margin-bottom:5px; }
+.metric { font:700 clamp(22px,3vw,37px)/1.12 ui-monospace, monospace; color:var(--teal); letter-spacing:-.04em; }
+.warm .metric { color:var(--rust); }
+figure { margin:0; min-width:0; }
+.diagram { overflow-x:auto; overscroll-behavior-x:contain; }
+.diagram img { display:block; width:100%; height:auto; max-width:920px; margin:auto; }
+.note { font-size:14px; background:var(--tint); padding:8px 12px; }
+.note.warm { background:var(--rose); }
+.source { margin-top:auto; border-top:1px solid var(--line); padding-top:7px; color:var(--muted); font-size:12px; }
+a { color:var(--teal); text-underline-offset:2px; }
+table { width:100%; border-collapse:collapse; font-size:15px; }
+th, td { padding:7px 10px; border-bottom:1px solid var(--line); text-align:left; }
+th { background:var(--tint); }
+.number { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.table-scroll { max-width:100%; overflow-x:auto; }
+.table-scroll table { min-width:460px; }
+code { font:0.88em ui-monospace,monospace; overflow-wrap:anywhere; }
+.controls { z-index:1; border-top:1px solid var(--line); background:var(--white); display:flex; align-items:center; justify-content:center; gap:8px; padding:7px 12px; }
+.controls button, .controls select, .controls a { line-height:1.2; min-height:38px; padding:5px 10px; border:1px solid var(--line); background:var(--white); color:var(--ink); font:inherit; font-size:14px; border-radius:4px; }
+.controls button { cursor:pointer; }
+.controls button:disabled { color:#62706e; cursor:default; opacity:.68; }
+.controls select { min-width:0; }
+.counter { white-space:nowrap; font-variant-numeric:tabular-nums; font-size:13px; }
+.controls a { display:inline-flex; align-items:center; white-space:nowrap; }
+.controls a[hidden] { display:none; }
+@media (min-width:641px) and (max-height:640px) {
+  .slide { gap:9px; padding-top:20px; padding-bottom:12px; }
+  .diagram img { max-width:760px; }
+}
+@media (max-width:640px) {
+  body { font-size:14px; }
+  .slide { gap:10px; padding:14px 15px 12px; }
+  .meta { font-size:11px; }
+  h1,h2 { font-size:27px; }
+  .duo,.trio { grid-template-columns:1fr; gap:8px; }
+  .panel { padding:8px 10px; }
+  .diagram img { min-width:510px; }
+  .controls { gap:4px; padding:5px; }
+  .controls button,.controls select,.controls a { padding:4px 6px; font-size:12px; }
+  .controls select { flex:0 1 90px; }
+  .counter { font-size:12px; }
+}
+@media print {
+  html, body { height:auto; background:white; display:block; }
+  .viewport { overflow:visible; }
+  .slide, .slide[hidden] { display:flex; width:100%; min-height:174mm; break-after:page; padding:10mm; }
+  .controls { display:none; }
+  @page { size:landscape; margin:7mm; }
+}
+</style>
+</head>
+<body>
+<main class="viewport" id="viewport" tabindex="-1" aria-label="AgentRoboCritic 图解">
+<section class="slide" data-title="研究问题" aria-labelledby="slide1-title">
+  <p class="meta"><span>AgentRoboCritic · arXiv:2611.26613</span><span>01 / 09</span></p>
+  <h1 id="slide1-title">夹爪抬起来了，物体跟上了吗？</h1>
+  <p class="lead">一段机器人操作只记成功或失败，会丢掉哪里出了问题，以及后来怎样补救。</p>
+  <div class="content">
+    <div class="duo">
+      <div class="panel"><b>控制模型在发命令时写下本步目标</b><p>例如先把夹爪降到物体旁，或闭合后试提。整题是把物体放进架子，两步都有自己的成功条件。</p></div>
+      <div class="panel warm"><b>事后看动作前后，核对承诺的效果</b><p>命令可以如期执行，物体也可能在抬升时滑落。判断依据是画面里的物体和夹爪。</p></div>
+    </div>
+    <div class="trio">
+      <div class="panel"><b class="metric">12 套</b><p>既有操作基准，分析 Astra 轨迹</p></div>
+      <div class="panel"><b class="metric">400 条</b><p>人工给动作定标签，检验判分模型</p></div>
+      <div class="panel"><b class="metric">12,844 条</b><p>用 Astra 标签监督训练判分模型</p></div>
+    </div>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1">论文 v1</a> · §1、§3、§5、Appendix F</p>
+</section>
+
+<section class="slide" data-title="控制与判分" aria-labelledby="slide2-title" hidden>
+  <p class="meta"><span>方法 · 观测流向</span><span>02 / 09</span></p>
+  <h2 id="slide2-title">一次调用提交动作和局部意图</h2>
+  <p class="lead">模型给出末端位姿、关节目标或一段低层控制量，并用 <code>note</code> 写明这次要看到什么效果。</p>
+  <div class="content">
+    <figure class="diagram" tabindex="0"><img src="/lib/papers/agentrobocritic/action-loop.webp" width="1230" height="455" alt="控制模型提交命令和 note，执行程序返回观测给下一次决策。事后 critic 独立读取动作和证据窗。"></figure>
+    <p class="note">图 2 的投币例要求夹住硬币上沿。后续试提仍没把硬币带起来，critic 与人都标 Failed / Grasp。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1#S2.F2">Figure 2</a> · 本文重绘 · <a href="https://github.com/cxcscmu/AgentRoboCritic/blob/d2f2708cabdc8cf9dcddc3a31c856b025d9d68b7/efe/README.md">EFE 采集工具</a></p>
+</section>
+
+<section class="slide" data-title="测试集实录" aria-labelledby="slide3-title" hidden>
+  <p class="meta"><span>公开样本 · Meta-World+ shelf-place i00</span><span>03 / 09</span></p>
+  <h2 id="slide3-title">指令执行完了，试提却失手</h2>
+  <p class="lead">这步要把蓝色物体提离桌面并确认抓稳。仿真执行 108 行 <code>ee_delta</code>，无裁剪。</p>
+  <div class="content">
+    <figure class="diagram" tabindex="0"><img src="/lib/papers/agentrobocritic/lift-case.webp" width="1230" height="458" alt="公开样本的示意复画。夹爪合拢，尝试抬升，最后蓝色物体回到桌面。人标结果 M1/S7。"></figure>
+    <p class="note">动作末尾能看到空夹爪已抬起，蓝色物体仍在台面。人工将这次记为抓取未保持，细类是初次抬升滑落。</p>
+  </div>
+  <p class="source"><a href="https://huggingface.co/datasets/cx-cmu/AgentRoboCritic-Bench/viewer/default/test?row=0">测试集第 0 行</a> · <code>ARC-v0.3-f61a1c684a95fc33043ee2b7</code> · 示意图按标签和观测绘制</p>
+</section>
+
+<section class="slide" data-title="评分规则" aria-labelledby="slide4-title" hidden>
+  <p class="meta"><span>判分 · 对照人工标签</span><span>04 / 09</span></p>
+  <h2 id="slide4-title">猜对失败，还要说对哪类失败</h2>
+  <p class="lead">模型只见动作请求和图像。评分脚本用样本 ID 取出模型没看到的人工标签。</p>
+  <div class="content">
+    <div class="table-scroll" tabindex="0" aria-label="同一动作的示例打分">
+      <table><thead><tr><th scope="col">针对抬升案例的示例回答</th><th scope="col">成败</th><th scope="col">失败类型</th><th scope="col">联合</th></tr></thead><tbody>
+        <tr><td>Failed / M1 / S7，带原因</td><td>✓</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Failed / M1 / S2，带原因</td><td>✓</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Failed / M2，带原因</td><td>✓</td><td>0</td><td>0</td></tr>
+        <tr><td>Failed / M1 / S7，缺原因</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody></table>
+    </div>
+    <p class="note">成败和联合分母都是 400 条，失败类型只看人标失败的 264 条。S7 和诊断文本须符合格式，具体内容不计入这三项分数。</p>
+  </div>
+  <p class="source"><a href="https://github.com/cxcscmu/AgentRoboCritic/blob/d2f2708cabdc8cf9dcddc3a31c856b025d9d68b7/src/agentrobocritic/scoring.py#L20-L100">公开评分代码</a> · 上表是代入人工标签的计算</p>
+</section>
+
+<section class="slide" data-title="监督微调" aria-labelledby="slide5-title" hidden>
+  <p class="meta"><span>训练 · 将动作诊断教给 30B</span><span>05 / 09</span></p>
+  <h2 id="slide5-title">Astra 写标签，Muse-Glimmer 学判分</h2>
+  <p class="lead">GPT-6 Astra 生成动作标签与原因，Muse-Glimmer-30B 用 LoRA 学写同样的四字段 JSON。控制策略权重保持固定。</p>
+  <div class="content">
+    <figure class="diagram" tabindex="0"><img src="/lib/papers/agentrobocritic/critic-sft.webp" width="1230" height="401" alt="Muse-Glimmer-30B 微调前后：成败 52.50% 到 76.25%，失败类型 32.58% 到 74.24%，联合 34.75% 到 67.75%。"></figure>
+    <p class="note">失败类型答对 196/264，Astra 是 213/264。同一个 400 条评测里，Astra 拿掉局部意图后仅 66/264 答对类型。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1#S5.T1">Table 1</a> · 本文据表作图 · <a href="https://huggingface.co/cx-cmu/AgentRoboCritic-Muse-Glimmer-30B/tree/1de0a3f6a52c17417446d17346979a298c777a51">已合并权重</a></p>
+</section>
+
+<section class="slide" data-title="恢复怎么算" aria-labelledby="slide6-title" hidden>
+  <p class="meta"><span>控制轨迹 · 逐条寻找恢复证据</span><span>06 / 09</span></p>
+  <h2 id="slide6-title">重新抓住紫色积木，才算恢复</h2>
+  <p class="lead">RoboDojo 实例先夹空，再开夹爪、后移、重新闭合。看到紫块随手抬起时，才确认这次修复。</p>
+  <div class="content">
+    <figure class="diagram" tabindex="0"><img src="/lib/papers/agentrobocritic/recoveries.webp" width="1230" height="407" alt="12,163 个失败动作中，4,734 个在后 10 个动作内恢复，7,024 个在回合结束前恢复。"></figure>
+    <p class="note">6,435 次直接修复，589 次换路绕过。49.8% 的成功回合经历过失败动作，这一比例用的是成功回合作分母。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1#S4.F5">Figure 5(c)</a> · Appendix C、Figure 12 · 本文据文中计数作图</p>
+</section>
+
+<section class="slide" data-title="物理瓶颈" aria-labelledby="slide7-title" hidden>
+  <p class="meta"><span>恢复 · 按失败类型拆开</span><span>07 / 09</span></p>
+  <h2 id="slide7-title">抓取比对齐更容易补救</h2>
+  <p class="lead">只给图像的 UniVTAC / OpenViTac 中，对齐分别占已归类失败的 75% / 86%。</p>
+  <div class="content">
+    <figure class="diagram" tabindex="0"><img src="/lib/papers/agentrobocritic/recovery-modes.webp" width="1230" height="424" alt="动作恢复率：Incomplete motion 68.2%，Grasp 63.7%，Interference 59.1%，Alignment 35.7%，Effect 29.6%。"></figure>
+    <p class="note warm">Choice 只看是否照自己的 note 选对。题目要按 3，note 写 7，模型也按了 7，这条可以局部达成。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1#S4.F7">Figure 7(a)</a> · Figure 4、Appendix J · 本文据文中计数作图</p>
+</section>
+
+<section class="slide" data-title="零样本与延迟" aria-labelledby="slide8-title" hidden>
+  <p class="meta"><span>对照 · 同一任务，比较代价</span><span>08 / 09</span></p>
+  <h2 id="slide8-title">零样本成功率高，下一步等得更久</h2>
+  <p class="lead">这些比较均未在目标任务上微调或给演示。专用模型充分适配后能做到多少，实验没有测。</p>
+  <div class="content">
+    <div class="table-scroll" tabindex="0" aria-label="原文零样本对照">
+      <table><thead><tr><th scope="col">任务套件</th><th scope="col">GPT-6 Astra</th><th scope="col">π0.5</th><th scope="col">InternW0-Δ</th></tr></thead><tbody>
+        <tr><td>RoboTwin 2.0</td><td>91%</td><td>6%</td><td>0%</td></tr>
+        <tr><td>YAMLab</td><td>90%</td><td>0%</td><td>0%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="duo">
+      <div class="panel"><b class="metric">31.9 s</b><p>Astra · 决策间隔中位数</p></div>
+      <div class="panel warm"><b class="metric">0.110 s</b><p>π0.5 · 同 74 个匹配任务的量法</p></div>
+    </div>
+    <p class="note">先为每次运行取中位数，再在任务间取中位数。计时从观察请求结束到下一次已执行命令的提交。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1#S4.F6">Figure 6</a> · Appendix H.3–H.4、Table 12</p>
+</section>
+
+<section class="slide" data-title="诊断怎么用" aria-labelledby="slide9-title" hidden>
+  <p class="meta"><span>附录实验 · 同一浇花任务重试</span><span>09 / 09</span></p>
+  <h2 id="slide9-title">把诊断带进下一次尝试</h2>
+  <p class="lead">两个重试都读到上次失败通知与三条意图。反馈组还看到上次各动作的诊断，例如瓶子转完后喷嘴仍朝外。</p>
+  <div class="content">
+    <div class="duo">
+      <div class="panel warm"><b class="metric">0 · 对照重试</b><p>喷嘴朝外时扣动扳机。12 次模拟器调用，575 个控制步。</p></div>
+      <div class="panel"><b class="metric">1 · 反馈重试</b><p>把瓶颈推向植物，使喷嘴进入目标区。164 次调用，12,536 个控制步。</p></div>
+    </div>
+    <p class="note">回放诊断本身可以先独立评测。要估计它给控制带来的收益，还需要多个初态、相同预算和实时反馈实验。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.26613v1#A8.SS1">Appendix H.1</a> · Table 11、Figures 14–15</p>
+</section>
+</main>
+
+<nav class="controls" aria-label="图解翻页">
+  <button type="button" data-prev aria-label="上一页">‹ 上页</button>
+  <span class="counter" data-counter aria-live="polite">1 / 9</span>
+  <select data-select aria-label="跳到指定页"></select>
+  <button type="button" data-next aria-label="下一页">下页 ›</button>
+  <button type="button" data-fullscreen>全屏</button>
+  <a href="/posts/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/agentrobocritic.html" data-return>回正文</a>
+</nav>
+<script>
+const viewport = document.querySelector('.viewport');
+const slides = Array.from(document.querySelectorAll('.slide'));
+const prev = document.querySelector('[data-prev]');
+const next = document.querySelector('[data-next]');
+const selector = document.querySelector('[data-select]');
+const counter = document.querySelector('[data-counter]');
+const fullscreen = document.querySelector('[data-fullscreen]');
+const embedded = window.parent !== window;
+document.querySelector('[data-return]').hidden = embedded;
+if (!document.fullscreenEnabled) fullscreen.hidden = true;
+
+slides.forEach((slide, i) => selector.add(new Option(slide.dataset.title, i)));
+let current = 0;
+
+function show(index, updateHash = false) {
+  current = Math.max(0, Math.min(index, slides.length - 1));
+  slides.forEach((slide, i) => { slide.hidden = i !== current; });
+  counter.textContent = (current + 1) + ' / ' + slides.length;
+  selector.value = current;
+  prev.disabled = current === 0;
+  next.disabled = current === slides.length - 1;
+  viewport.scrollTop = 0;
+  viewport.scrollLeft = 0;
+  if (updateHash) history.replaceState(null, '', '#slide-' + (current + 1));
+}
+
+function readHash() {
+  const match = location.hash.match(/^#slide-(\d+)$/);
+  show(match ? Number(match[1]) - 1 : 0);
+}
+
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (document.fullscreenEnabled) await document.documentElement.requestFullscreen();
+  } catch (error) {
+    if (error.name !== 'TypeError' && error.name !== 'NotAllowedError') throw error;
+  }
+}
+
+prev.addEventListener('click', () => show(current - 1, true));
+next.addEventListener('click', () => show(current + 1, true));
+selector.addEventListener('change', () => show(Number(selector.value), true));
+fullscreen.addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', () => {
+  fullscreen.textContent = document.fullscreenElement ? '退出全屏' : '全屏';
+});
+window.addEventListener('hashchange', readHash);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (embedded) window.parent.postMessage({type:'paper-deck-escape'}, location.origin);
+    return;
+  }
+  if (event.altKey || event.metaKey || event.ctrlKey ||
+      event.target.closest('button, select, a, .diagram, .table-scroll')) return;
+  const key = event.key;
+  if (key.toLowerCase() === 'f') {
+    event.preventDefault();
+    toggleFullscreen();
+  } else if (['ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', ' ', 'Home', 'End'].includes(key)) {
+    event.preventDefault();
+    const index = key === 'Home' ? 0 : key === 'End' ? slides.length - 1 :
+      current + (['ArrowLeft', 'PageUp'].includes(key) ? -1 : 1);
+    show(index, true);
+  }
+});
+readHash();
+</script>
+</body>
+</html>

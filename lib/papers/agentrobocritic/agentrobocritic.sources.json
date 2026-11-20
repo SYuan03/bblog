@@ -1,0 +1,1199 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "AgentRoboCritic: Understanding the Capability of Frontier Agents on Direct Robot Control",
+    "kind": "benchmark",
+    "primary_source_ids": [
+      "paper",
+      "official-code",
+      "bench"
+    ]
+  },
+  "artifacts": {
+    "article": "content/_posts/101-agentrobocritic.md",
+    "deck": "lib/decks/agentrobocritic.html",
+    "embed_src": "/lib/decks/agentrobocritic.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "AgentRoboCritic: Understanding the Capability of Frontier Agents on Direct Robot Control",
+      "url": "https://arxiv.org/html/2611.26613v1",
+      "revision": "arXiv:2611.26613v1 (2026-11-19)",
+      "used_for": [
+        "method",
+        "experiments",
+        "appendices",
+        "limitations",
+        "visual inventory"
+      ]
+    },
+    {
+      "id": "arxiv-metadata",
+      "kind": "metadata",
+      "title": "arXiv v1 metadata and rights",
+      "url": "https://arxiv.org/abs/2611.26613v1",
+      "revision": "v1",
+      "used_for": [
+        "title",
+        "DOI",
+        "earliest date",
+        "license"
+      ]
+    },
+    {
+      "id": "project",
+      "kind": "project",
+      "title": "AgentRoboCritic authors’ project page",
+      "url": "https://adu2021.github.io/blog/AgentRoboCritic/",
+      "revision": "retrieved 2026-11-20 CST",
+      "used_for": [
+        "official release links",
+        "cross-checking figures"
+      ]
+    },
+    {
+      "id": "official-code",
+      "kind": "checker",
+      "title": "AgentRoboCritic scoring and EFE instrumentation",
+      "url": "https://github.com/cxcscmu/AgentRoboCritic/tree/d2f2708cabdc8cf9dcddc3a31c856b025d9d68b7",
+      "revision": "d2f2708cabdc8cf9dcddc3a31c856b025d9d68b7",
+      "used_for": [
+        "strict output",
+        "metrics",
+        "episode collection and conversion"
+      ]
+    },
+    {
+      "id": "bench",
+      "kind": "dataset",
+      "title": "AgentRoboCritic-Bench",
+      "url": "https://huggingface.co/datasets/cx-cmu/AgentRoboCritic-Bench/tree/96ae1b4df10b9f3646e546af2e1f98536caa3091",
+      "revision": "96ae1b4df10b9f3646e546af2e1f98536caa3091",
+      "used_for": [
+        "held-out human labels",
+        "published real lift case",
+        "data fields",
+        "licenses"
+      ]
+    },
+    {
+      "id": "training",
+      "kind": "dataset",
+      "title": "AgentRoboCritic-Dataset",
+      "url": "https://huggingface.co/datasets/cx-cmu/AgentRoboCritic-Dataset/tree/45c95b3c39d5372bab002256467345638e8e4a5f",
+      "revision": "45c95b3c39d5372bab002256467345638e8e4a5f",
+      "used_for": [
+        "published training and validation splits",
+        "teacher"
+      ]
+    },
+    {
+      "id": "model",
+      "kind": "model",
+      "title": "AgentRoboCritic-Muse-Glimmer-30B",
+      "url": "https://huggingface.co/cx-cmu/AgentRoboCritic-Muse-Glimmer-30B/tree/1de0a3f6a52c17417446d17346979a298c777a51",
+      "revision": "1de0a3f6a52c17417446d17346979a298c777a51",
+      "used_for": [
+        "merged checkpoint",
+        "training and inference settings"
+      ]
+    },
+    {
+      "id": "efe",
+      "kind": "code",
+      "title": "Embodied First Exam (upstream)",
+      "url": "https://github.com/mll-lab-nu/embodied-first-exam/tree/487ba34ef5586a68762aeeae6142da0a67268e5e",
+      "revision": "487ba34ef5586a68762aeeae6142da0a67268e5e",
+      "used_for": [
+        "Standard environment",
+        "compare episode grading"
+      ]
+    },
+    {
+      "id": "aha",
+      "kind": "project",
+      "title": "AHA",
+      "url": "https://aha-vlm.github.io/",
+      "used_for": [
+        "procedural failure generation and feedback"
+      ]
+    },
+    {
+      "id": "failbench",
+      "kind": "paper",
+      "title": "FailBench",
+      "url": "https://arxiv.org/abs/2609.03611",
+      "used_for": [
+        "whole-attempt failure detection"
+      ]
+    },
+    {
+      "id": "robocoliseum",
+      "kind": "paper",
+      "title": "Agent2Act / RoboColiseum",
+      "url": "https://arxiv.org/abs/2610.27865",
+      "used_for": [
+        "shared harness and control evaluation"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 28,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 28
+      }
+    ],
+    "source_visuals_expected": 31,
+    "visual_inventory_complete": true
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation　一个回合分数说不清哪一步出了问题"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work　控制能力和动作诊断可以分开测"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method　从工具调用到可以核对的动作判决"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments　模型怎样纠错，评审又判得多准"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion　回放能指出失手，反馈能否改变下一次"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion　更便宜地定位操作轨迹中的失手"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "policy",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1, p. 3"
+        }
+      ],
+      "article_quote": "控制模型，也叫 **policy**，把任务、图像和已有交互记录变成下一段机器人动作。"
+    },
+    {
+      "term": "direct robot control",
+      "kind": "operation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1, Eq. 1, p. 3"
+        }
+      ],
+      "article_quote": "**直接控制（direct robot control）**指模型在工具调用中填入数值，例如调整夹爪位置、关节角或开合程度。"
+    },
+    {
+      "term": "local intent",
+      "kind": "prompt-context",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2 and Figure 2, pp. 3–4"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "efe/README.md lines 24–36"
+        }
+      ],
+      "article_quote": "控制模型还要在同次调用的 <code>note</code> 里写下本步想看到的变化，这个前瞻性的目标叫 **局部意图（local intent）**。"
+    },
+    {
+      "term": "critic",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.2, Eq. 3 and Appendix B"
+        }
+      ],
+      "article_quote": "**动作评审模型（critic）拿到该动作的任务、局部意图和画面，检查本步有没有做到，再给失败分类。**"
+    },
+    {
+      "term": "SFT",
+      "kind": "loss",
+      "source_ids": [
+        "paper",
+        "model"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix F, Table 10, pp. 19, 22"
+        },
+        {
+          "source_id": "model",
+          "locator": "Model card, Training"
+        }
+      ],
+      "article_quote": "这是用教师回答做的监督微调（SFT），目标是让学生模型给出动作判断。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "central-claim",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1 and §3.1–3.2, pp. 1–4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者要求模型在执行前留下一个能靠观测核对的目标。下压、试探和正式插入于是可以有不同的判据。"
+        }
+      ]
+    },
+    {
+      "id": "task-provenance",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "training"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§4, Appendix B Table 3 and Appendix F Table 9"
+        },
+        {
+          "source_id": "training",
+          "locator": "Train and validation counts, dataset card"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者重新采集了 ContactBench 1.0、LIBERO-MAX、Meta-World+、DexJoCo、RoboWits、RoboTwin 2.0、YAMLab，另外接入 RoboDojo、StationeryBench、Astranomy、UniVTAC、OpenViTac 已发布的 Astra 轨迹。"
+        },
+        {
+          "artifact": "article",
+          "quote": "按回合划分数据，防止一个回合的相邻画面同时出现在训练与测试里。"
+        }
+      ]
+    },
+    {
+      "id": "annotation-and-check-construction",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "bench"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§5, Appendices B and E, Figure 11"
+        },
+        {
+          "source_id": "bench",
+          "locator": "README test split and human_label schema"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "网页标注工具展示任务、原 note 和经来源时间对齐的相机画面。人工决定成败、失败类型，Grasp 还写细类。"
+        }
+      ]
+    },
+    {
+      "id": "public-vs-hidden-inputs",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "official-code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix B, pp. 14–17"
+        },
+        {
+          "source_id": "official-code",
+          "locator": "data.py:50–89, runner.py:73–78"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "评审和人工标注者都看不到该回合的官方终局判分。"
+        },
+        {
+          "artifact": "article",
+          "quote": "评审推理只读 <code>messages</code> 和 <code>images</code>，脚本在推理后按样本 ID 取出独立的 <code>human_label</code>。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "official-code",
+        "bench"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "scoring.py:20–40, 53–100"
+        },
+        {
+          "source_id": "bench",
+          "locator": "README Metrics"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "| Failure-mode accuracy | 在人标失败中，报为失败且 M 类正确 | 264 |"
+        },
+        {
+          "artifact": "article",
+          "quote": "| Overall accuracy | 成败和 M 类同时正确，成功的 M 类应为空 | 400 |"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "official-code",
+        "bench",
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "official-code",
+          "locator": "scoring.py:20–40 and 63–100"
+        },
+        {
+          "source_id": "bench",
+          "locator": "test row 0, ARC-v0.3-f61a1c684a95fc33043ee2b7"
+        },
+        {
+          "source_id": "paper",
+          "locator": "Appendix J, M1 and S7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "标注者把它判为 <code>not_achieved / M1 / S7</code>，即「未达成 / 抓取未保持 / 初次抬升滑落」。"
+        },
+        {
+          "artifact": "article",
+          "quote": "填了合法的 S2，即使细类不等于 S7，联合分也仍然正确。原因内容和 S 细类没有准确率指标，只有格式约束。"
+        }
+      ]
+    },
+    {
+      "id": "model-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "model"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 1, Figure 6, Appendix H Table 12"
+        },
+        {
+          "source_id": "model",
+          "locator": "Evaluation"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "在原始人工标签上，GPT-6 Astra 判对 317/400 条动作成败，213/264 条失败类型，联合正确 285/400。"
+        },
+        {
+          "artifact": "article",
+          "quote": "失败类型从答对 86 条变成 196 条，分母是人工判失败的 264 条。"
+        },
+        {
+          "artifact": "article",
+          "quote": "Astra 是 **31.9 秒**，π0.5 是 **0.110 秒**，相差约 290 倍。"
+        }
+      ]
+    },
+    {
+      "id": "related-work-comparison",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper",
+        "aha",
+        "failbench",
+        "efe",
+        "robocoliseum"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2"
+        },
+        {
+          "source_id": "aha",
+          "locator": "Abstract and FailGen"
+        },
+        {
+          "source_id": "failbench",
+          "locator": "Abstract"
+        },
+        {
+          "source_id": "efe",
+          "locator": "README: task setup"
+        },
+        {
+          "source_id": "robocoliseum",
+          "locator": "Abstract"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "对照该步的人工成败与失败类型，原基准的回合评分另用于分析"
+        }
+      ]
+    },
+    {
+      "id": "limitations",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix C, Appendix H.1, Appendix I and codebook M7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "假如任务要求按 3，note 写的是按 7，模型实际也按了 7，那么这一步可以局部达成，任务仍然理解错了。"
+        },
+        {
+          "artifact": "article",
+          "quote": "所有控制轨迹仍来自 Astra，作者没有用多策略互相评分去隔离自偏好。"
+        }
+      ]
+    },
+    {
+      "id": "training-and-feedback",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "training",
+        "model"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix F and Appendix H.1; Tables 9–11"
+        },
+        {
+          "source_id": "training",
+          "locator": "Dataset card"
+        },
+        {
+          "source_id": "model",
+          "locator": "Model card, Training"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "作者冻结 Muse-Glimmer-30B 底座，只训练 rank 32 的 LoRA 参数。"
+        },
+        {
+          "artifact": "article",
+          "quote": "两个重试使用同一冻结的 Astra、同一初态和种子，都给上一次失败的通知和三条历史意图。"
+        }
+      ]
+    },
+    {
+      "id": "recovery-count",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Figure 5(c), Appendix C pp. 17–19"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "回合结束前有 7,024 条，即 7,024 ÷ 12,163 ≈ 57.7%。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "PDF p. 2, Figure 1",
+      "status": "omitted",
+      "rationale": "总览并列展示框架、行为和评审；图解第 1 页用各自分母重新引入，避免重复相同总览。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "PDF p. 4, Figure 2",
+      "status": "redrawn",
+      "rationale": "保留控制模型、动作、反馈和离线评审的流向，正文另用投币动作说明试提证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "依据 Figure 2 和 §3.2 重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "一次调用提交动作和局部意图"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 2",
+      "asset_paths": [
+        "/lib/papers/agentrobocritic/action-loop.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "PDF p. 4, Figure 3",
+      "status": "omitted",
+      "rationale": "原图六个相机例子保留在源文；正文用带标签的公开动作并定义 M1/2/3/6/7。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "PDF p. 5, Figure 4",
+      "status": "omitted",
+      "rationale": "按任务讨论视觉对齐、碰撞和抓取差异，完整堆叠分布供读者在原文查阅。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "PDF p. 6, Figure 5",
+      "status": "redrawn",
+      "rationale": "重画 5(c) 的两个累计时点，5(a/b/d) 的结果和分母用邻近正文补足。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "按 Figure 5(c) 和 Appendix C 的计数重绘"
+        },
+        {
+          "artifact": "deck",
+          "locator": "重新抓住紫色积木，才算恢复"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 5",
+      "asset_paths": [
+        "/lib/papers/agentrobocritic/recoveries.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "PDF p. 7, Figure 6",
+      "status": "redrawn",
+      "rationale": "图解以可滚动表格重排定量项；同初态输出帧保留官方链接。",
+      "placements": [
+        {
+          "artifact": "deck",
+          "locator": "零样本成功率高，下一步等得更久"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 6",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "PDF p. 7, Figure 7",
+      "status": "redrawn",
+      "rationale": "用五类的比率和分母重绘面板 a；正文保留面板 b 的三个关键数字以及原图入口。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "按 Figure 7(a) 与 Appendix C 重绘主要五类"
+        },
+        {
+          "artifact": "deck",
+          "locator": "抓取比对齐更容易补救"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 7",
+      "asset_paths": [
+        "/lib/papers/agentrobocritic/recovery-modes.webp"
+      ]
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "PDF p. 16, Figure 8",
+      "status": "omitted",
+      "rationale": "完整系统提示保留在原文和模型卡；解释四输出字段和视觉证据边界足以复述调用。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "PDF p. 17, Figure 9",
+      "status": "omitted",
+      "rationale": "不复制长输入模板；改用同类型的真实发布行解释多视角、控制单位和前后帧。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "PDF p. 18, Figure 10",
+      "status": "omitted",
+      "rationale": "失败类别的恢复曲线供原文查询；正文保留对齐在三十动作后接近平台。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-11",
+      "kind": "figure",
+      "label": "Figure 11",
+      "source_id": "paper",
+      "source_locator": "PDF p. 21, Figure 11",
+      "status": "omitted",
+      "rationale": "原 UI 的标注操作用文字说明；不重复发布含源基准图像的截图。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-12",
+      "kind": "figure",
+      "label": "Figure 12",
+      "source_id": "paper",
+      "source_locator": "PDF p. 22, Figure 12",
+      "status": "omitted",
+      "rationale": "正文讲明紫色积木重抓全过程，按键例说明见 §5.2；原时间线继续由论文提供。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-13",
+      "kind": "figure",
+      "label": "Figure 13",
+      "source_id": "paper",
+      "source_locator": "PDF p. 23, Figure 13",
+      "status": "omitted",
+      "rationale": "三段原始图像保留在论文；真实发布的滑落案例独立供核对。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-14",
+      "kind": "figure",
+      "label": "Figure 14",
+      "source_id": "paper",
+      "source_locator": "PDF p. 24, Figure 14",
+      "status": "omitted",
+      "rationale": "把两组重试共同看见的文本及额外的喷嘴诊断写成叙事；完整旧提示留给原文。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-15",
+      "kind": "figure",
+      "label": "Figure 15",
+      "source_id": "paper",
+      "source_locator": "PDF p. 24, Figure 15",
+      "status": "omitted",
+      "rationale": "保留两次尝试的喷嘴状态、最终操作、grader 分数；相机图由原文展示。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-16",
+      "kind": "figure",
+      "label": "Figure 16",
+      "source_id": "paper",
+      "source_locator": "PDF p. 25, Figure 16",
+      "status": "omitted",
+      "rationale": "正文保留五套合并 89% / 4%；逐任务图与未标出精确分母的原图可查。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "PDF p. 8, Table 1",
+      "status": "redrawn",
+      "rationale": "完整数值重排进正文折叠表；将 Muse 三项准确率作成对照图。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "全部动作评审模型、κ 与花费"
+        },
+        {
+          "artifact": "deck",
+          "locator": "Astra 写标签，Muse-Glimmer 学判分"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Table 1",
+      "asset_paths": [
+        "/lib/papers/agentrobocritic/critic-sft.webp"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "PDF p. 15, Table 2",
+      "status": "omitted",
+      "rationale": "完整抓取细类名称集中在原文；正文保留最常见两项和用于案例的 S7。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "PDF p. 15, Table 3",
+      "status": "redrawn",
+      "rationale": "重排全部 12 套计数与成功率，增加作者表格计数求和的注释。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "12 套基准有多少回合、多少动作"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Table 3",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "PDF p. 18, Table 4",
+      "status": "omitted",
+      "rationale": "逐套恢复和任务成功原表继续链接；保留整体、RoboDojo 的权重和跨任务相关口径。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "PDF p. 19, Table 5",
+      "status": "omitted",
+      "rationale": "使用 sample-wise 和 benchmark-wise 的主要数字，避免逐套重复正文已给出的观察。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "PDF p. 20, Table 6",
+      "status": "omitted",
+      "rationale": "部分、不可验证及不适用标签已定义；各套件类别占比供原表查询。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "PDF p. 20, Table 7",
+      "status": "omitted",
+      "rationale": "保留最能展示对齐和动作完成瓶颈的三套数值，原表保留全分布。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "PDF p. 21, Table 8",
+      "status": "omitted",
+      "rationale": "没有将逐套阶段比例全部搬入正文，主要阶段通过 Figure 7 和文本描述。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "PDF p. 21, Table 9",
+      "status": "omitted",
+      "rationale": "正文保留 train / validation / test pool 的总量与 episode 隔离；训练库卡片有公开拆分。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "PDF p. 22, Table 10",
+      "status": "redrawn",
+      "rationale": "把完整训练主要参数重排为折叠补充设置说明。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "训练与推理设置（Table 10）"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Table 10",
+      "asset_paths": []
+    },
+    {
+      "id": "table-11",
+      "kind": "table",
+      "label": "Table 11",
+      "source_id": "paper",
+      "source_locator": "PDF p. 24, Table 11",
+      "status": "redrawn",
+      "rationale": "正文复制三个运行的数值并翻译终局说明，供比对预算差。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "运行 原生分数 结束状态 模拟器调用 控制步"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "Du et al., arXiv:2611.26613v1, Table 11",
+      "asset_paths": []
+    },
+    {
+      "id": "table-12",
+      "kind": "table",
+      "label": "Table 12",
+      "source_id": "paper",
+      "source_locator": "PDF p. 25, Table 12",
+      "status": "omitted",
+      "rationale": "正文留总体延迟的定义、74 个匹配任务、两个中位数；逐任务 IQR 由原表提供。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-13",
+      "kind": "table",
+      "label": "Table 13",
+      "source_id": "paper",
+      "source_locator": "PDF p. 25, Table 13",
+      "status": "omitted",
+      "rationale": "正文使用最直接的 Astra 与跨家族 Fable 对照，完整误报表链接至 Appendix I。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-14",
+      "kind": "table",
+      "label": "Table 14",
+      "source_id": "paper",
+      "source_locator": "PDF p. 28, Table 14",
+      "status": "omitted",
+      "rationale": "正文解释 M1/2/3/6/7 和 S7；附录提供 M/S 完整双列映射。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "appendix-j-codebook-box",
+      "kind": "appendix-visual",
+      "label": "Appendix J boxed codebook",
+      "source_id": "paper",
+      "source_locator": "PDF pp. 26–27, boxed codebook before Table 14",
+      "status": "omitted",
+      "rationale": "原框长达两页，重点采纳 M7 的边界及 M1/S7 要求；其余阅读链接由附录提供。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "arXiv non-exclusive distribution. Public GitHub MIT covers code. HF CC BY 4.0 applies to annotations, with original frames subject to their upstream license.",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/agentrobocritic/action-loop.webp",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "PDF p. 4, Figure 2",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 2",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/agentrobocritic/recoveries.webp",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "PDF p. 6, Figure 5",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 5",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/agentrobocritic/recovery-modes.webp",
+      "origin": "author-redrawn",
+      "source_visual_id": "figure-7",
+      "source_id": "paper",
+      "source_locator": "PDF p. 7, Figure 7",
+      "credit": "Du et al., arXiv:2611.26613v1, Figure 7",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/agentrobocritic/critic-sft.webp",
+      "origin": "author-redrawn",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "PDF p. 8, Table 1",
+      "credit": "Du et al., arXiv:2611.26613v1, Table 1",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    },
+    {
+      "path": "/lib/papers/agentrobocritic/lift-case.webp",
+      "origin": "generated",
+      "source_id": "bench",
+      "source_locator": "test row 0 ARC-v0.3-f61a1c684a95fc33043ee2b7",
+      "credit": "Schematic from the released observation and human label by Du et al.; no original pixels copied.",
+      "used_in": [
+        "article",
+        "deck"
+      ]
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ],
+    "qa_scope": "Chromium headless with article, embedded and standalone. Fullscreen checks used the DOM API and simulated key input.",
+    "checked_notes": "Real benchmark row and illustrative test of open scorer verified. All 31 visuals inventoried. Main article and deck prose read through and figures visually checked."
+  },
+  "article_cover": {
+    "path": "/generated-covers/101-agentrobocritic.webp",
+    "origin": "generated",
+    "credit": "Original schematic designed for the article."
+  }
+}
