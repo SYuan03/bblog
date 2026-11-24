@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Harness-S · 换框架后学到的行为</title>
+<style>
+:root { --paper:#f8f6ef; --white:#fffef9; --ink:#252235; --muted:#4f485d; --teal:#4c488e; --tint:#ede9f5; --rust:#8d4833; --rose:#f6e8df; --line:#d9d2e1; }
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; }
+body { display:grid; grid-template-rows:minmax(0,1fr) auto; background:var(--paper); color:var(--ink); font:16px/1.53 "Source Sans 3", "PingFang SC", "Hiragino Sans GB", sans-serif; }
+.viewport { min-width:0; overflow:auto; overscroll-behavior:contain; }
+.slide { display:flex; flex-direction:column; gap:12px; min-height:100%; width:min(100%,1200px); margin:auto; padding:clamp(18px,3.3vw,44px) clamp(18px,4.2vw,60px) 16px; }
+.slide[hidden] { display:none; }
+.meta { display:flex; justify-content:space-between; gap:12px; border-top:1px solid var(--line); padding-top:8px; color:var(--teal); font-size:13px; font-weight:700; }
+p, h1, h2 { margin:0; }
+h1, h2 { font:700 clamp(26px,4vw,48px)/1.17 "Source Serif 4", "Songti SC", "Iowan Old Style", Georgia, serif; }
+.lead { color:var(--muted); font-size:clamp(14px,1.7vw,19px); }
+.content { display:grid; align-content:center; gap:12px; flex:1; min-width:0; }
+.duo { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
+.trio { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.panel { border:1px solid var(--line); border-top:3px solid var(--teal); background:var(--white); padding:12px 15px; }
+.panel.warm { border-top-color:var(--rust); }
+.panel b { display:block; margin-bottom:5px; }
+.metric { font:700 clamp(22px,3vw,37px)/1.12 ui-monospace, monospace; color:var(--teal); letter-spacing:-.04em; }
+.warm .metric { color:var(--rust); }
+figure { margin:0; min-width:0; }
+.diagram { overflow-x:auto; overscroll-behavior-x:contain; }
+.diagram img { display:block; width:100%; height:auto; max-width:920px; margin:auto; }
+.note { font-size:14px; background:var(--tint); padding:8px 12px; }
+.note.warm { background:var(--rose); }
+.source { margin-top:auto; border-top:1px solid var(--line); padding-top:7px; color:var(--muted); font-size:12px; }
+a { color:var(--teal); text-underline-offset:2px; }
+table { width:100%; border-collapse:collapse; font-size:15px; }
+th, td { padding:7px 10px; border-bottom:1px solid var(--line); text-align:left; }
+th { background:var(--tint); }
+.number { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.table-scroll { max-width:100%; overflow-x:auto; }
+.table-scroll table { min-width:460px; }
+code { font:0.88em ui-monospace,monospace; overflow-wrap:anywhere; }
+.controls { z-index:1; border-top:1px solid var(--line); background:var(--white); display:flex; align-items:center; justify-content:center; gap:8px; padding:7px 12px; }
+.controls button, .controls select, .controls a { line-height:1.2; min-height:38px; padding:5px 10px; border:1px solid var(--line); background:var(--white); color:var(--ink); font:inherit; font-size:14px; border-radius:4px; }
+.controls button { cursor:pointer; }
+.controls button:disabled { color:#62706e; cursor:default; opacity:.68; }
+.controls select { min-width:0; }
+.counter { white-space:nowrap; font-variant-numeric:tabular-nums; font-size:13px; }
+.controls a { display:inline-flex; align-items:center; white-space:nowrap; }
+.controls a[hidden] { display:none; }
+@media (min-width:641px) and (max-height:640px) {
+  .slide { gap:9px; padding-top:20px; padding-bottom:12px; }
+  .diagram img { max-width:760px; }
+}
+@media (max-width:640px) {
+  body { font-size:14px; }
+  .slide { gap:10px; padding:14px 15px 12px; }
+  .meta { font-size:11px; }
+  h1,h2 { font-size:27px; }
+  .duo,.trio { grid-template-columns:1fr; gap:8px; }
+  .panel { padding:8px 10px; }
+  .diagram img { min-width:510px; }
+  .controls { gap:4px; padding:5px; }
+  .controls button,.controls select,.controls a { padding:4px 6px; font-size:12px; }
+  .controls select { flex:0 1 90px; }
+  .counter { font-size:12px; }
+}
+@media print {
+  html, body { height:auto; background:white; display:block; }
+  .viewport { overflow:visible; }
+  .slide, .slide[hidden] { display:flex; width:100%; min-height:174mm; break-after:page; padding:10mm; }
+  .controls { display:none; }
+  @page { size:landscape; margin:7mm; }
+}
+
+.slide { gap:10px; }
+h1,h2 { font-family:"Instrument Serif","Songti SC","Iowan Old Style",Georgia,serif; }
+.content { align-content:center; }
+.source { margin-top:4px; }
+.verdict { display:flex; gap:20px; align-items:center; padding:15px 0; border-block:1px solid var(--line); }
+.verdict strong { font:700 clamp(26px,4vw,50px)/1.13 ui-monospace,monospace; color:var(--teal); white-space:nowrap; }
+.verdict span { color:var(--muted); }
+.trio.compact p { font-size:14px; }
+th[scope=row] { white-space:nowrap; }
+.case-columns .panel p { font-size:16px; }
+.steps { display:grid; gap:6px; padding:0; margin:0; list-style:none; counter-reset:sequence; }
+.steps li { position:relative; padding:7px 10px 7px 44px; border-top:1px solid var(--line); }
+.steps li::before { counter-increment:sequence; content:counter(sequence); position:absolute; top:9px; left:8px; width:24px; height:24px; display:grid; place-items:center; color:#fff; background:var(--teal); font-size:13px; }
+.steps p { color:var(--muted); }
+.tokens { font:700 clamp(18px,2.5vw,29px)/1.25 ui-monospace,monospace; margin:8px 0; white-space:nowrap; color:var(--teal); }
+.branch { display:grid; align-content:center; gap:10px; }
+.branch p { border-left:2px solid var(--teal); padding:5px 10px; }
+.branch p:nth-child(2) { border-color:var(--rust); }
+.diagram img { border:1px solid var(--line); }
+.wide-image img { width:auto; max-height:min(32vh,345px); max-width:100%; object-fit:contain; }
+.external-image img { width:auto; max-height:min(30vh,280px); max-width:100%; object-fit:contain; }
+.rescue { grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); align-items:center; }
+.rescue .diagram img { width:100%; max-height:340px; object-fit:contain; }
+@media (min-width:641px) and (max-height:640px) {
+ .slide { gap:7px; padding-top:15px; padding-bottom:13px; }
+ h1,h2 { font-size:clamp(26px,3.3vw,38px); }
+ .lead { font-size:15px; }
+ .content { gap:8px; }
+ .panel { padding:8px 12px; }
+ .steps li { padding-block:4px; }
+ .wide-image img { max-height:37vh; }
+ .external-image img { max-height:34vh; }
+ .rescue .diagram img { max-height:51vh; }
+}
+@media (max-width:640px) {
+ .verdict { display:grid; gap:5px; padding:9px 0; }
+ .case-columns .panel p { font-size:14px; }
+ .wide-image img,.external-image img { width:550px; height:auto; max-height:none; max-width:none; min-width:0; }
+ .rescue { grid-template-columns:1fr; }
+ .rescue .diagram img { width:100%; min-width:0; max-height:none; }
+}
+@media print {
+ .wide-image img,.external-image img { max-height:86mm; min-width:0; }
+ .rescue .diagram img { max-height:80mm; }
+}
+</style>
+</head>
+<body>
+<main class="viewport" id="viewport" tabindex="-1" aria-label="Harness-S 图解">
+<section class="slide" data-title="留在模型里的做法" aria-labelledby="slide1-title">
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>01 / 12</span></p>
+  <h1 id="slide1-title">换个框架做对以后，换回来呢？</h1>
+  <p class="lead">同一个 AppWorld 任务里，模型要把既点过喜欢、又在曲库或歌单里的歌发出去。</p>
+  <div class="content">
+    <div class="duo">
+      <div class="panel warm"><b>普通 GRPO 训练后</b><p>收集所有来源的歌曲取并集，多发了不满足条件的歌。</p></div>
+      <div class="panel"><b>Harness-S 训练后</b><p>在新题里取交集，更新草稿再发送。此时运行的是原来的框架。</p></div>
+    </div>
+    <div class="verdict"><strong>48.98% → 56.87%</strong><span>AppWorld · Qwen3.5-4B · 两个模型都在原框架里评测<br>每题运行三次，比较单次尝试的平均成功率</span></div>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S4.T4">Table 4 · 歌曲案例</a> · <a href="https://arxiv.org/html/2611.04277v1#S3.T1">Table 1 · 主实验</a></p>
+</section>
+
+<section class="slide" data-title="一套底座，多种执行支持" aria-labelledby="slide2-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>02 / 12</span></p>
+  <h2 id="slide2-title">同一个模型能换哪些零件？</h2>
+  <p class="lead">执行框架（harness）把指令和工具结果交给模型，再把模型的调用送去执行。论文的原框架 H₀ 基于 DeepSeek Harness。</p>
+  <div class="content">
+    <div class="duo">
+      <div class="panel"><b>每次重跑共用的东西</b><p>任务与初态、环境接口、终局判题程序，以及当时的同一组模型权重。</p></div>
+      <div class="panel"><b>各变体可改的支持</b><p>提示词、技能、上下文、记忆、在特定事件触发的提醒、工具呈现方式。</p></div>
+    </div>
+    <div class="note warm"><strong>发布配置中的分页提醒</strong><br>工具返回分页信息后，框架提醒模型继续翻页，等空页、短页或可信总数来确认已经读完。工具仍由模型调用。</div>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#A4.T7">Table 7</a> · <a href="https://github.com/DeepExperience/Harness-S/blob/93f5d8a81ad8bfaa0c50b9f9710c49b693c7f2a0/harness_pool/appworld/pool-62f4d3bd6fc300ab/state.json#L62-L69">公开分页配置</a></p>
+</section>
+
+<section class="slide" data-title="为什么要留多个框架" aria-labelledby="slide3-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>03 / 12</span></p>
+  <h2 id="slide3-title">修好一些题，也可能丢掉做对过的题</h2>
+  <div class="content">
+    <figure class="diagram wide-image" tabindex="0"><img src="/lib/papers/harness-s/figure-1.webp" width="2098" height="635" alt="Figure 1 三幅图分别给出修好和退步的任务、不同重试数下的题目覆盖率、不同训练时点相对基础框架的差异。"></figure>
+    <div class="trio compact">
+      <div class="panel"><b>26 修好，11 退步</b><p>H₁ 在同一批 AppWorld 题上的两边差额。</p></div>
+      <div class="panel"><b>65.65% 对 44.66%</b><p>4 个变体各试一次后取成功并集，比较 H₀ 重试 4 次。</p></div>
+      <div class="panel warm"><b>+15 变成 −4</b><p>H₁ 到第 20 步时，相对正在训练的 H₀ 净少解出 4 道。</p></div>
+    </div>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S1.F1">原论文 Figure 1</a> · Zhang et al. · CC BY 4.0。并集要先跑出结果才能计算。</p>
+</section>
+
+<section class="slide" data-title="怎样生成一池框架" aria-labelledby="slide4-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>04 / 12</span></p>
+  <h2 id="slide4-title">看失败轨迹，按具体原因分支修改</h2>
+  <p class="lead">AppWorld 搜索阶段冻结 Qwen3.5-4B。GLM-5.3 作编辑器，根据已有运行记录改框架。</p>
+  <div class="content">
+    <ol class="steps">
+      <li><strong>用训练题找失败原因</strong><p>某次调用猜了字段，某次漏了后面的数据页。每个改版针对 2–3 个有关联的原因。</p></li>
+      <li><strong>用执行结果验证改动</strong><p>局部最多 30 题，其中最多 10 道原本做对的控制题。每个候选可修改一次。</p></li>
+      <li><strong>验证集决定下一轮从哪里继续</strong><p>最多选 4 个父框架。同一题只算一次，优化成功题的并集。每个通过协议检查的候选都可入库。</p></li>
+    </ol>
+    <p class="note">三轮提案上限 7 / 8 / 8。论文路由池共 20 套，含 H₀。进入模型训练后，池中实现冻结。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S3.SS2">§3.2</a> · <a href="https://arxiv.org/html/2611.04277v1#A6.T8">Table 8</a> · Appendix C</p>
+</section>
+
+<section class="slide" data-title="八次失败后的第二组" aria-labelledby="slide5-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>05 / 12</span></p>
+  <h2 id="slide5-title">八次全败，才让八套框架各重跑一次</h2>
+  <div class="content">
+    <div class="duo rescue">
+      <div><figure class="diagram" tabindex="0"><img src="/lib/papers/harness-s/figure-2-rescue-detail.webp" width="1164" height="675" alt="Figure 2b 上半，H0 有成功就直接更新，全失败走路由器，八种框架的救援组替换初始组。"></figure></div>
+      <div class="branch">
+        <p><strong>有一次成功</strong><br>保留原来 8 条，包含做对和做错的尝试。</p>
+        <p><strong>8 次都失败</strong><br>选出 8 套不同的变体，从初态另跑 8 次。只把新组交给优化器。</p>
+      </div>
+    </div>
+    <p class="note">每条输出仍由同一个当前模型采样。救援组全败也会替换，组内优势此时仍是零。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S1.F2">Figure 2b 上半部裁切</a> · Zhang et al. · CC BY 4.0 · <a href="https://arxiv.org/html/2611.04277v1#alg1">Algorithm 1</a></p>
+</section>
+
+<section class="slide" data-title="GRPO 究竟学哪几个 token" aria-labelledby="slide6-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>06 / 12</span></p>
+  <h2 id="slide6-title">同一道题里出现成败差异，才有组内信号</h2>
+  <p class="lead">以下用两条成功、六条失败演算。论文歌曲案例只确认至少一条救援成功。</p>
+  <div class="content">
+    <div class="duo">
+      <div class="panel warm"><b>原组八条全失败</b><p class="tokens" aria-label="8 个零">0 0 0 0 0 0 0 0</p><p>均值 0。每条奖励减均值后仍是 0。</p></div>
+      <div class="panel"><b>救援示例有两条成功</b><p class="tokens" aria-label="2 个一和 6 个零">1 1 0 0 0 0 0 0</p><p>均值 0.25，总体标准差约 0.433。成、败的初始优势分别约 +1.73、−0.58。</p></div>
+    </div>
+    <p class="note">使用每条轨迹当时真实的框架上下文来计算概率，只对策略生成的 token 求损失。工具返回和框架插入的提示是条件输入。优化目标是带截断概率比的 GRPO。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/pdf/2611.04277v1#page=5">公式 (5)–(7)</a> · <a href="https://arxiv.org/html/2611.04277v1#A2">Appendix B</a></p>
+</section>
+
+<section class="slide" data-title="路由器看哪些证据" aria-labelledby="slide7-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>07 / 12</span></p>
+  <h2 id="slide7-title">验证集上比过，才知道该让哪套框架上</h2>
+  <p class="lead">冻结当前模型，让 H₀ 和变体做同一道验证题。画像记下何时更容易做好，以及那一回合怎么做。</p>
+  <div class="content">
+    <div class="duo">
+      <div class="panel"><b>画像的一条记录</b><p><strong>When</strong>　找本月退回的办公桌。</p><p><strong>Behavior</strong>　按商品名和退回日期一起筛。</p></div>
+      <div class="panel"><b>投票的输入</b><p>当前题面、画像、验证集成功率和近邻题结果。每票排 4 个候选，依次加 1、0.75、0.5、0.25 分。</p></div>
+    </div>
+    <p class="note">AppWorld 4B 在训练前、每 10 次更新与最终点重算验证证据。路由依据随模型变化，池中框架代码保持固定。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S3.SS4">§3.4</a> · <a href="https://arxiv.org/html/2611.04277v1#A4.T7">Table 7</a> · Appendix C</p>
+</section>
+
+<section class="slide" data-title="真实训练与留出题" aria-labelledby="slide8-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>08 / 12</span></p>
+  <h2 id="slide8-title">第 10 次更新见过歌曲交集，留出题换了歌曲</h2>
+  <div class="content">
+    <div class="trio case-columns">
+      <div class="panel"><b>训练题</b><p>H₀ 的 8 次都失败。变体 H₂ 的一次成功轨迹取交集，更新草稿并发送，进入第 10 次更新。</p></div>
+      <div class="panel warm"><b>留出题，普通 GRPO + H₀</b><p>喜欢的歌曲和其他来源取并集，发送的清单范围过大，失败。</p></div>
+      <div class="panel"><b>留出题，Harness-S + H₀</b><p>对新的一组歌曲保留同一个交集约束，发送正确邮件，成功。</p></div>
+    </div>
+    <p class="note">应发送的集合是「喜欢的歌 ∩（曲库里的歌 ∪ 歌单里的歌）」。论文给出观测摘要和判决。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S4.T4">Table 4 · Case 1</a> · AppWorld 终局检查见正文</p>
+</section>
+
+<section class="slide" data-title="切回原框架的分数" aria-labelledby="slide9-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>09 / 12</span></p>
+  <h2 id="slide9-title">切回 H₀，三个基准都还保留增益</h2>
+  <p class="lead">下表均用原框架。每题执行三次，Avg@3 是三次尝试的平均成功率。</p>
+  <div class="content">
+    <div class="table-scroll" tabindex="0" aria-label="原框架下的平均成功率">
+      <table><thead><tr><th>基准</th><th>4B GRPO</th><th>4B Harness-S</th><th>9B GRPO</th><th>9B Harness-S</th></tr></thead><tbody>
+      <tr><th scope="row">AppWorld</th><td>48.98</td><td><strong>56.87</strong></td><td>53.31</td><td><strong>62.34</strong></td></tr>
+      <tr><th scope="row">SWE-Gym</th><td>22.50</td><td><strong>28.75</strong></td><td>25.63</td><td><strong>32.50</strong></td></tr>
+      <tr><th scope="row">DBBench</th><td>64.00</td><td><strong>71.00</strong></td><td>67.00</td><td><strong>73.44</strong></td></tr>
+      </tbody></table>
+    </div>
+    <p class="note">测试分母依次为 262、160、300 题。表中单位是 %，先按每次运行计分，再取三次独立随机运行的平均。Pass@3 则按三次中是否至少成功一次来算。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S3.T1">Table 1</a> · <a href="https://arxiv.org/html/2611.04277v1#A1.T6">Table 6 · 分母</a></p>
+</section>
+
+<section class="slide" data-title="多试几次，还是换框架" aria-labelledby="slide10-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>10 / 12</span></p>
+  <h2 id="slide10-title">同样有补考，换框架的组更常出现成败差异</h2>
+  <div class="content">
+    <figure class="diagram wide-image" tabindex="0"><img src="/lib/papers/harness-s/figure-3.webp" width="2116" height="847" alt="Figure 3 分阶段比较有成败差异的任务组占比、相关 token 占比和原框架验证成功率。"></figure>
+    <div class="trio compact">
+      <div class="panel"><b>64.69%</b><p>普通 GRPO · 2,560 次训练执行</p></div>
+      <div class="panel warm"><b>70.94%</b><p>只在 H₀ 补考 · 3,616 次</p></div>
+      <div class="panel"><b>79.38%</b><p>换框架补考 · 3,032 次</p></div>
+    </div>
+    <p class="note">百分比的分母是保留的任务组。执行数包括被替换的初始失败，三者都做 40 次更新。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S4.F3">原论文 Figure 3</a> · Zhang et al. · CC BY 4.0 · <a href="https://arxiv.org/html/2611.04277v1#A7.T9">Table 9</a></p>
+</section>
+
+<section class="slide" data-title="推理路由与外部框架" aria-labelledby="slide11-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>11 / 12</span></p>
+  <h2 id="slide11-title">单题路由和跨框架测试，分别回答两个问题</h2>
+  <div class="content">
+    <div class="duo">
+      <div class="panel"><b>推理时给同一模型选框架</b><p>Rank-1 在执行前选一次，三次尝试用同一套。AppWorld 4B 训练后，Pass@3 只比 H₀ 高 0.76 点，Avg@3 高 4.58 点。</p></div>
+      <div class="panel"><b>同一权重搬到外部框架</b><p>另外在 Claude Code、OpenClaw 上做 AppWorld 和 SWE-Gym。仍高于各自的 GRPO 基线，绝对分低于在 DSH H₀ 上的同一模型。</p></div>
+    </div>
+    <figure class="diagram external-image" tabindex="0"><img src="/lib/papers/harness-s/figure-4.webp" width="1517" height="887" alt="Figure 4 比较 4B 模型在 DeepSeek Harness、Claude Code 和 OpenClaw 上的两套任务成绩。"></figure>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S4.T5">Table 5</a> · <a href="https://arxiv.org/html/2611.04277v1#S4.F4">原论文 Figure 4</a> · Zhang et al. · CC BY 4.0</p>
+</section>
+
+<section class="slide" data-title="公开代码能核到哪里" aria-labelledby="slide12-title" hidden>
+  <p class="meta"><span>Harness-S · 2611.04277</span><span>12 / 12</span></p>
+  <h2 id="slide12-title">论文的自适应投票，发布版把它做成可选项</h2>
+  <div class="content">
+    <div class="duo">
+      <div class="panel"><b>论文实验</b><p>验证对照生成画像，多个 LLM 给任务投票。2026 年 11 月 3 日公开的 v1 报告三套基准。</p></div>
+      <div class="panel"><b>当前公开配方</b><p>只提供 AppWorld。默认用 TF-IDF 找至多 5 道近邻验证题并排序。画像和模型投票可手动启用。</p></div>
+    </div>
+    <p class="note">训练过程中更新当前策略和路由证据。运行所用的候选实现、判题程序、优化规则固定。项目文档记录便携版的 GPU 端到端训练仍待验证。</p>
+  </div>
+  <p class="source"><a href="https://arxiv.org/html/2611.04277v1#S2.SS3">论文 §2.3</a> · <a href="https://github.com/DeepExperience/Harness-S/blob/93f5d8a81ad8bfaa0c50b9f9710c49b693c7f2a0/docs/reproduction.md">固定版本复现说明</a></p>
+</section>
+</main>
+
+<nav class="controls" aria-label="图解翻页">
+  <button type="button" data-prev aria-label="上一页">‹ 上页</button>
+  <span class="counter" data-counter aria-live="polite">1 / 12</span>
+  <select data-select aria-label="跳到指定页"></select>
+  <button type="button" data-next aria-label="下一页">下页 ›</button>
+  <button type="button" data-fullscreen>全屏</button>
+  <a href="/posts/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/harness-s.html" data-return>回正文</a>
+</nav>
+<script>
+const viewport = document.querySelector('.viewport');
+const slides = Array.from(document.querySelectorAll('.slide'));
+const prev = document.querySelector('[data-prev]');
+const next = document.querySelector('[data-next]');
+const selector = document.querySelector('[data-select]');
+const counter = document.querySelector('[data-counter]');
+const fullscreen = document.querySelector('[data-fullscreen]');
+const embedded = window.parent !== window;
+document.querySelector('[data-return]').hidden = embedded;
+if (!document.fullscreenEnabled) fullscreen.hidden = true;
+
+slides.forEach((slide, i) => selector.add(new Option(slide.dataset.title, i)));
+let current = 0;
+
+function show(index, updateHash = false) {
+  current = Math.max(0, Math.min(index, slides.length - 1));
+  slides.forEach((slide, i) => { slide.hidden = i !== current; });
+  counter.textContent = (current + 1) + ' / ' + slides.length;
+  selector.value = current;
+  prev.disabled = current === 0;
+  next.disabled = current === slides.length - 1;
+  viewport.scrollTop = 0;
+  viewport.scrollLeft = 0;
+  if (updateHash) history.replaceState(null, '', '#slide-' + (current + 1));
+}
+
+function readHash() {
+  const match = location.hash.match(/^#slide-(\d+)$/);
+  show(match ? Number(match[1]) - 1 : 0);
+}
+
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (document.fullscreenEnabled) await document.documentElement.requestFullscreen();
+  } catch (error) {
+    if (error.name !== 'TypeError' && error.name !== 'NotAllowedError') throw error;
+  }
+}
+
+prev.addEventListener('click', () => show(current - 1, true));
+next.addEventListener('click', () => show(current + 1, true));
+selector.addEventListener('change', () => show(Number(selector.value), true));
+fullscreen.addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', () => {
+  fullscreen.textContent = document.fullscreenElement ? '退出全屏' : '全屏';
+});
+window.addEventListener('hashchange', readHash);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (embedded) window.parent.postMessage({type:'paper-deck-escape'}, location.origin);
+    return;
+  }
+  if (event.altKey || event.metaKey || event.ctrlKey ||
+      event.target.closest('button, select, a, .diagram, .table-scroll')) return;
+  const key = event.key;
+  if (key.toLowerCase() === 'f') {
+    event.preventDefault();
+    toggleFullscreen();
+  } else if (['ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', ' ', 'Home', 'End'].includes(key)) {
+    event.preventDefault();
+    const index = key === 'Home' ? 0 : key === 'End' ? slides.length - 1 :
+      current + (['ArrowLeft', 'PageUp'].includes(key) ? -1 : 1);
+    show(index, true);
+  }
+});
+readHash();
+</script>
+</body>
+</html>

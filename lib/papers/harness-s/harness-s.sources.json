@@ -1,0 +1,1227 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "Harness-S: Learning from Sibling Harnesses for Generalizable Agent Training",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper",
+      "code"
+    ],
+    "version": "v1",
+    "first_published": "2026-11-03",
+    "doi": "10.48550/arXiv.2611.04277"
+  },
+  "artifacts": {
+    "article": "content/_posts/102-harness-s.md",
+    "deck": "lib/decks/harness-s.html",
+    "embed_src": "/lib/decks/harness-s.html"
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "Harness-S: Learning from Sibling Harnesses for Generalizable Agent Training",
+      "url": "https://arxiv.org/html/2611.04277v1",
+      "revision": "arXiv:2611.04277v1",
+      "used_for": [
+        "research question",
+        "directional edits",
+        "GRPO and evaluation",
+        "full visual inventory"
+      ]
+    },
+    {
+      "id": "arxiv",
+      "kind": "paper",
+      "title": "arXiv abstract, first release metadata, and license",
+      "url": "https://arxiv.org/abs/2611.04277v1",
+      "revision": "v1",
+      "used_for": [
+        "title/date",
+        "DOI",
+        "license"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "DeepExperience/Harness-S official AppWorld release",
+      "url": "https://github.com/DeepExperience/Harness-S/tree/93f5d8a81ad8bfaa0c50b9f9710c49b693c7f2a0",
+      "revision": "93f5d8a81ad8bfaa0c50b9f9710c49b693c7f2a0",
+      "used_for": [
+        "release scope",
+        "benchmarks and checks",
+        "binary rewards",
+        "policy-group replacement",
+        "default rule router",
+        "paper figure source"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 24,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 24
+      }
+    ],
+    "source_visuals_expected": 16,
+    "visual_inventory_complete": true
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation　为什么留下一批各有用处的框架"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work　优化框架与训练模型用的是哪批轨迹"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method　八次全失败后才换框架"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments　先比较都回到 H₀ 的成绩"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion　如何判断模型学走了什么"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion　公开代码明确了哪些复现条件"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "harness",
+      "kind": "actor",
+      "article_quote": "执行框架（harness）把指令和工具结果交给模型，再执行模型发出的调用。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 4 §3.1"
+        }
+      ]
+    },
+    {
+      "term": "policy",
+      "kind": "actor",
+      "article_quote": "策略（policy）是负责生成下一段文本和工具调用的模型。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 4 §3.1"
+        }
+      ]
+    },
+    {
+      "term": "rollout",
+      "kind": "operation",
+      "article_quote": "是模型从题目初始状态到提交、终止或用完预算的一次完整尝试。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 4 §3.1; p. 5 Eq. (5)"
+        }
+      ]
+    },
+    {
+      "term": "Complementary Harness Rescue Training",
+      "kind": "operation",
+      "article_quote": "救援训练（Complementary Harness Rescue Training）只给在 H₀ 八次都失败的题换框架重跑。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 §3.3; p. 6 Algorithm 1"
+        }
+      ]
+    },
+    {
+      "term": "GRPO",
+      "kind": "loss",
+      "article_quote": "GRPO 先在同一道题内用终局奖励计算每条轨迹的相对优势。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 Eq. (6)–(7); p. 17 Appendix B"
+        }
+      ]
+    },
+    {
+      "term": "Harness Behavior Profile",
+      "kind": "prompt-context",
+      "article_quote": "行为画像（Harness Behavior Profile）记录某个变体在哪类题上会带出哪种行为。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 §3.4; p. 19 Table 7"
+        }
+      ]
+    },
+    {
+      "term": "Pass@3 / Avg@3",
+      "kind": "metric",
+      "article_quote": "Pass@3 数至少做对一次的题占多少。Avg@3 数全部尝试中有多少成功。",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 7 Table 1 and §4.1; p. 17 Appendix C"
+        }
+      ]
+    },
+    {
+      "term": "Effective Group",
+      "kind": "metric",
+      "article_quote": "有效组（Effective Group）是同时有成功和失败的保留组",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 8 §4.3 and Figure 3"
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "id": "failure-and-complementarity",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 2 Figure 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "AppWorld 里 H₁ 相对 H₀ 修好 26 题，同时丢掉 11 道原来做对的题。"
+        }
+      ]
+    },
+    {
+      "id": "directional-search",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "pp. 4–5 §3.2 and Eqs. (2)–(4); p. 21 Table 8"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "每个候选改版针对 2–3 个相关原因，每个原因至少有两个失败题支持。"
+        }
+      ]
+    },
+    {
+      "id": "all-failure-replacement",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 Eq. (5); p. 6 Algorithm 1"
+        },
+        {
+          "source_id": "code",
+          "locator": "src/harness_s/rescue.py:27–55; verified with synthetic rewards via the released function"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "代码为救援清掉旧 session 和轨迹父节点，保留题目与组的标识，并使用另一路采样随机种子。"
+        }
+      ]
+    },
+    {
+      "id": "group-advantage-reconstruction",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 Eq. (6); p. 17 Appendix B"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "两条成功的初始优势各约 +1.73，六条失败的各约 −0.58。"
+        }
+      ]
+    },
+    {
+      "id": "same-context-ratio",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 Eq. (7); p. 17 Appendix B Eqs. (13)–(16)"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "更新时，优化器用每个 token 当初生成时实际看到的框架上下文，计算新旧策略的概率比。"
+        }
+      ]
+    },
+    {
+      "id": "model-roles",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 5 §3.3–3.4; p. 21 Table 8"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "GLM-5.3 的角色是离线框架编辑器，路由 LLM 给框架排序。训练奖励来自任务判题程序。"
+        }
+      ]
+    },
+    {
+      "id": "update-router-profiles",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "pp. 5–6 Eqs. (8)–(11); p. 18 Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "AppWorld 4B 在训练前、每十步更新和最终点重新配对采集验证记录。"
+        }
+      ]
+    },
+    {
+      "id": "checker-code-and-cases",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 10 Table 4, Case 1 and Case 2"
+        },
+        {
+          "source_id": "code",
+          "locator": "runtime/appworld/mcp_server.py:382–418; src/harness_s/rescue.py:9–24"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "更新并发送草稿。这次成功执行被用于第 10 次更新。"
+        },
+        {
+          "artifact": "article",
+          "quote": "宿主端重播动作后调用 AppWorld 的 <code>world.evaluate()</code>，读任务专有检查的终局成败。"
+        }
+      ]
+    },
+    {
+      "id": "case-data-boundary",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 10 Table 4, published summaries and binary verdicts"
+        },
+        {
+          "source_id": "code",
+          "locator": "data/appworld/manifest.json and three split lists do not map Table 4 case names to task IDs"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "歌曲案例的具体 ID、完整执行记录和专有断言在两处资料中都未给出。"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-formulas",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 7 Table 1 and §4.1; p. 17 Table 6 and Appendix C"
+        },
+        {
+          "source_id": "code",
+          "locator": "src/harness_s/backend.py:137–144"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "例如一题的结果为 1、0、0，对两个指标分别贡献 1 和 1/3。"
+        }
+      ]
+    },
+    {
+      "id": "split-families",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "data/appworld/manifest.json: family_counts and evaluation_family_coverage"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "测试集的 174 个任务族中，109 个在训练里有其他实例，65 个没在训练里出现。"
+        }
+      ]
+    },
+    {
+      "id": "same-harness-main-results",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 7 Table 1; p. 21 Table 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Avg@3 是 51.91% 对 56.87%，换框架组的执行次数更少。"
+        },
+        {
+          "artifact": "article",
+          "quote": "例如 SWE-Gym 4B 从普通 GRPO 的 24.38% 升到 38.75%，H₀ rescue 为 25.63%。"
+        }
+      ]
+    },
+    {
+      "id": "inference-router",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 6 Eq. (12); p. 10 Table 5; p. 18 Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Rank-1 测试在模型执行前只选一次，候选包含 H₀，接下来三次尝试都用选中的框架。"
+        }
+      ]
+    },
+    {
+      "id": "cost-recomputation",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 21 Tables 9–10; Eq. (5) and Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "这组费用表分别对应 59 次换框架救援、132 次同框架救援。"
+        }
+      ]
+    },
+    {
+      "id": "fixed-mix-control",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 7 Table 1; p. 8 §4.3; p. 18 Appendix C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "最后在 H₀ 上的 Avg@3 为 46.69% 和 47.84%，均低于普通 GRPO 的 48.98%。"
+        }
+      ]
+    },
+    {
+      "id": "transfer-scopes",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 10 Table 4–5; p. 11 Figure 4 and §4.7"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "AppWorld 和 SWE-Gym 仍比各自框架中的 GRPO 强，绝对成绩低于 DeepSeek Harness H₀。"
+        }
+      ]
+    },
+    {
+      "id": "self-improvement-boundary",
+      "claim_type": "interpretation",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 4 §2.3; p. 6 Algorithm 1"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "池里的代码在训练开始前就产出了，终局判题程序和优化规则也固定。"
+        }
+      ]
+    },
+    {
+      "id": "release-differences",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "configs/appworld/harness_s_4b.json; src/harness_s/router.py:91–123; docs/reproduction.md:37–87"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "默认配置关闭行为画像和 LLM 投票，可以分别启用。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 2, Figure 1 (#S1.F1)",
+      "status": "reused",
+      "rationale": "局部修复、不同框架的成功题并集，以及效果随训练步数的变化。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "局部修复、不同框架的成功题并集，以及效果随训练步数的变化。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "修好一些题，也可能丢掉做对过的题"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/figure-1.webp"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2 (#S1.F2); unmodified author artwork at docs/figures/method_framework_text.png",
+      "status": "reused",
+      "rationale": "离线构建框架池，训练时重跑失败组，最后分别用 H₀ 和路由评估。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "离线构建框架池，训练时重跑失败组，最后分别用 H₀ 和路由评估。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "八次全败，才让八套框架各重跑一次"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license and the authors release the legible artwork in the fixed Apache-2.0 repository revision.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/figure-2.webp",
+        "/lib/papers/harness-s/figure-2-rescue-detail.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 3 (#S4.F3)",
+      "status": "reused",
+      "rationale": "各训练阶段有效组比例、有效组承载的 token 比例和 H₀ 验证成功率。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "各训练阶段有效组比例、有效组承载的 token 比例和 H₀ 验证成功率。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "同样有补考，换框架的组更常出现成败差异"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/figure-3.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 4 (#S4.F4)",
+      "status": "reused",
+      "rationale": "AppWorld 和 SWE-Gym 在 DeepSeek Harness、Claude Code 和 OpenClaw 下的 Pass@3。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "AppWorld 和 SWE-Gym 在 DeepSeek Harness、Claude Code 和 OpenClaw 下的 Pass@3。"
+        },
+        {
+          "artifact": "deck",
+          "locator": "单题路由和跨框架测试，分别回答两个问题"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/figure-4.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 20, Figure 5 (#A5.F5)",
+      "status": "reused",
+      "rationale": "九个辅助框架修复集合的有向重叠矩阵。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "九个辅助框架修复集合的有向重叠矩阵。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/figure-5.webp"
+      ]
+    },
+    {
+      "id": "algorithm-1",
+      "kind": "algorithm",
+      "label": "Algorithm 1",
+      "source_id": "paper",
+      "source_locator": "p. 6, Algorithm 1 (#alg1)",
+      "status": "reused",
+      "rationale": "原论文的救援采样、保留分组、GRPO 与画像更新顺序。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "原论文的救援采样、保留分组、GRPO 与画像更新顺序。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/algorithm-1.webp"
+      ]
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 1 (#S3.T1)",
+      "status": "reused",
+      "rationale": "三套基准中完整的模型与框架对照，含 Pass@3 和 Avg@3。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "三套基准中完整的模型与框架对照，含 Pass@3 和 Avg@3。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-1.webp"
+      ]
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 2 (#S4.T2)",
+      "status": "reused",
+      "rationale": "随机、规则、固定画像和更新画像的救援成功率与最终分数。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "随机、规则、固定画像和更新画像的救援成功率与最终分数。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-2.webp"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 3 (#S4.T3)",
+      "status": "reused",
+      "rationale": "回到 H₀ 后的 AppWorld 与 SWE-Gym 行为频率。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "回到 H₀ 后的 AppWorld 与 SWE-Gym 行为频率。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-3.webp"
+      ]
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 4 (#S4.T4)",
+      "status": "reused",
+      "rationale": "歌曲筛选与帐号恢复的训练救援和留出实例。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "歌曲筛选与帐号恢复的训练救援和留出实例。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-4.webp"
+      ]
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 5 (#S4.T5)",
+      "status": "reused",
+      "rationale": "训练前后路由名次、成功率与 H₀ 入选比例。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "训练前后路由名次、成功率与 H₀ 入选比例。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-5.webp"
+      ]
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 17, Table 6 (#A1.T6)",
+      "status": "reused",
+      "rationale": "三套评测的训练、验证和测试任务数。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "三套评测的训练、验证和测试任务数。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-6.webp"
+      ]
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p. 19, Table 7 (#A4.T7)",
+      "status": "reused",
+      "rationale": "续翻分页、取交集和保留最后提交步的完整配置节选。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "续翻分页、取交集和保留最后提交步的完整配置节选。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-7.webp"
+      ]
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 8 (#A6.T8)",
+      "status": "reused",
+      "rationale": "三轮搜索、编辑模型和单次执行预算。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "三轮搜索、编辑模型和单次执行预算。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-8.webp"
+      ]
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 9 (#A7.T9)",
+      "status": "reused",
+      "rationale": "五种设置的训练执行次数、GPU 小时与最终成绩。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "五种设置的训练执行次数、GPU 小时与最终成绩。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-9.webp"
+      ]
+    },
+    {
+      "id": "table-10",
+      "kind": "table",
+      "label": "Table 10",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 10 (#A7.T10)",
+      "status": "reused",
+      "rationale": "四种方法的离线搜索和训练总开销。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "四种方法的离线搜索和训练总开销。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license.",
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/harness-s/table-10.webp"
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/harness-s/figure-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p. 2, Figure 1 (#S1.F1)",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/figure-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2 (#S1.F2); unmodified author artwork at docs/figures/method_framework_text.png",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license and the authors release the legible artwork in the fixed Apache-2.0 repository revision."
+    },
+    {
+      "path": "/lib/papers/harness-s/figure-2-rescue-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p. 3, Figure 2 (#S1.F2); unmodified author artwork at docs/figures/method_framework_text.png, inset showing upper part of panel (b)",
+      "used_in": [
+        "deck"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license and the authors release the legible artwork in the fixed Apache-2.0 repository revision."
+    },
+    {
+      "path": "/lib/papers/harness-s/figure-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p. 8, Figure 3 (#S4.F3)",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/figure-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 4 (#S4.F4)",
+      "used_in": [
+        "article",
+        "deck"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/figure-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p. 20, Figure 5 (#A5.F5)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/algorithm-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "algorithm-1",
+      "source_id": "paper",
+      "source_locator": "p. 6, Algorithm 1 (#alg1)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-1.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-1",
+      "source_id": "paper",
+      "source_locator": "p. 7, Table 1 (#S3.T1)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-2.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 2 (#S4.T2)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-3.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-3",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 3 (#S4.T3)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-4.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-4",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 4 (#S4.T4)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-5.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-5",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 5 (#S4.T5)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-6.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p. 17, Table 6 (#A1.T6)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-7.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-7",
+      "source_id": "paper",
+      "source_locator": "p. 19, Table 7 (#A4.T7)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-8.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-8",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 8 (#A6.T8)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-9.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-9",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 9 (#A7.T9)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    },
+    {
+      "path": "/lib/papers/harness-s/table-10.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-10",
+      "source_id": "paper",
+      "source_locator": "p. 21, Table 10 (#A7.T10)",
+      "used_in": [
+        "article"
+      ],
+      "credit": "Kangning Zhang et al., Harness-S, arXiv:2611.04277v1, CC BY 4.0",
+      "license_status": "verified-allowed",
+      "license_basis": "https://arxiv.org/abs/2611.04277v1 links the CC BY 4.0 license."
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": true,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": true,
+      "standalone_deck": true
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": true,
+      "escape": true,
+      "standalone_return_to_article": true,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "inspected_slides": [
+      "opening",
+      "densest",
+      "largest-table-or-code",
+      "final"
+    ]
+  }
+}
