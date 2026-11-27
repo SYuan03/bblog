@@ -2,7 +2,7 @@
 title: "[2026-10-20] S-Agent 2.0: Spatial Reasoning with a General Coding Agent"
 permalink: "/posts/论文解读/s-agent-2-0.html"
 date: "2026-11-27T15:32:00+08:00"
-updated: "2026-11-27T15:32:00+08:00"
+updated: "2026-11-27T16:12:00+08:00"
 cover: "/generated-covers/103-s-agent-2-0.webp"
 description: "站在投影仪旁面向水槽，挂钟在哪一边？S-Agent 2.0 让通用编码智能体把题目里的观察者放进重建场景，再从这个人的视角量方向。文章追一条真实记录，拆解工具、判分和换框架实验。"
 categories:
@@ -22,7 +22,7 @@ paper_style: editorial
 
 ### Part 0　题目里的人可以有自己的坐标系
 
-同一个时钟，从门外走进屋的人看是在左前方，从走廊里的相机看却可以在右侧。说左或右之前，需要先给出视角的原点和朝向。下文的 **coding agent harness** 指 OpenHands、Codex、Claude Code 这类运行框架。模型通过它看图、操作文件和执行命令。S-Agent 2.0 用这些通用能力调查场景，论文的实验全部在推理阶段进行。
+说左或右之前，要先确定观察者站在哪、面朝哪。题里的人可以站在门口，拍摄画面的相机却在走廊深处，两者各有一套前后左右。下文的 **coding agent harness** 指 OpenHands、Codex、Claude Code 这类运行框架。模型通过它看图、操作文件和执行命令。S-Agent 2.0 用这些通用能力调查场景，论文的实验全部在推理阶段进行。
 
 ## 1. Motivation　测到了，为什么还会答错
 
@@ -47,7 +47,7 @@ paper_style: editorial
 
 模型拿到问题、存放在工作目录里的画面和一份固定教程。它自己挑要看的帧，可以写代码、打开分割图或俯视图，再决定下一条命令。命令调用由原有框架执行。感知后端固定使用 Depth Anything 3 估计深度和相机位姿、GeoCalib 估计重力、π³mos 估计像素运动区域、SAM 3 按文字提示分割物体。 [论文 §2.1–2.3、§3.1](https://arxiv.org/html/2610.28354v1#S2)
 
-工具把原始帧、重建结果和按名称索引的物体记录保留到这道题结束。论文称这份状态为 **scene memory**。`recon` 将各帧融合到以重力定上下方向的三维点云，并登记相机位姿和场景中心。`segment` 把指定帧或多帧的物体掩码投回点云，再注册成可查询的实例。实例有三维位置，还可以有物体覆盖的点和朝向。公开实现的索引写入每题单独的 `artifacts/scene_state.json`，大点图和掩码保存在各自的文件中。模型后续可以用 `list_instance` 重查索引，或者直接报名字让工具重新计算一项关系。论文未单测会话压缩对这套用法的影响。 [论文 §2.2](https://arxiv.org/html/2610.28354v1#S2.SS2) · [scene_store.py](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/gateway/scene_store.py#L1-L24)
+工具把原始帧、重建结果和按名称索引的物体记录保留到这道题结束。论文称这份状态为 **scene memory**。`recon` 将各帧融合到以重力定上下方向的三维点云，并登记相机位姿和场景中心。`segment` 把指定帧或多帧的物体掩码投回点云，再注册成可查询的实例。实例有三维位置，还可以有物体覆盖的点和朝向。公开实现的索引写入每题单独的 `artifacts/scene_state.json`，大点图和掩码保存在各自的文件中。模型后续可以用 `list_instance` 重查索引，或者直接报名字让工具重新计算一项关系。 [论文 §2.2](https://arxiv.org/html/2610.28354v1#S2.SS2) · [scene_store.py](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/gateway/scene_store.py#L1-L24)
 
 模型用 `add_instance` 告诉工具把一个新实例放在哪、朝向哪，新增实例随后也能用名字查询。位置可取自原图上的像素、俯视图上的像素或已有相机的位置。比如题目让人站在桌角旁，模型可以从一张图里点出桌角，再把假想的站立者放在俯视图上，并让他朝桌角。如果掩码圈错了东西，模型还可用 `drop` 移除错误实例。它能打开标有实例和方向箭头的俯视图，核对刚才登记的含义是否正确。 [论文 Figure 3、Appendix B](https://arxiv.org/html/2610.28354v1#A2) · [位置与朝向实现](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/gateway/perception_gateway.py#L6564-L6749)
 
@@ -78,13 +78,54 @@ paper_style: editorial
 </figure>
 </details>
 
+<h3 id="scene-memory-walkthrough">3.3 MMSI_134　模型怎么写入和读取场景记忆</h3>
+
+题目给四张室内照片，问「从室外开门走进来，挂钟在你的哪个方向？」这条公开轨迹用 Gemini-3.8-Flash 和 OpenHands。模型先用 shell 调感知工具，中间用框架的看图能力打开照片、掩码和地图。下面是实际感知命令的节选，脚本路径按论文附录的写法展开。 [作者轨迹 MMSI_134](https://ropedia.github.io/S-Agent-2.0/trajectories/cases/MMSI_134.js) · [论文 Appendix B](https://arxiv.org/html/2610.28354v1#A2)
+
+**先查场景里有哪些对象。** `recon` 用四张照片重建场景，登记四个相机。模型让工具按 `clock` 和 `door` 分割，发现好几扇玻璃门也被标成 `door`。它用 `bev` 生成俯视图，打开地图和分割图一起看，再用 `list_instance` 读当前登记表。命令返回 14 个实例，列出各自的名字、来源和是否有朝向。分割图上的 `f1:0` 对应入口 `door_4`，`f2:3` 对应挂钟 `clock`。后续命令可以直接用这些名称。 [论文 Figure 4](https://arxiv.org/html/2610.28354v1#S3.F4) · [list_instance 接口](https://arxiv.org/html/2610.28354v1#A2.T7)
+
+```bash
+python3 /app/perception.py recon
+python3 /app/perception.py segment --prompt "clock" --prompt "door"
+python3 /app/perception.py bev --frame 1
+python3 /app/perception.py list_instance
+```
+
+**把题里的人写进场景。** 模型用帧 `f1` 原图上的像素 `(316, 444)` 指定入口的站位。网关把这个像素转换成重建里的三维点，让观察者直立，面向走廊里相机 `camera:f1` 所在的位置。网关把站位和朝向一起写入 `entrant_front`。模型重新生成并打开俯视图，检查门口的绿菱形和朝向箭头。 [作者轨迹的 add_instance 调用](https://ropedia.github.io/S-Agent-2.0/trajectories/cases/MMSI_134.js) · [朝向实现](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/gateway/perception_gateway.py#L6390-L6424)
+
+```bash
+python3 /app/perception.py add_instance --name entrant_front \
+  --source "observer entering through front door" \
+  --view 1 --pixel 316,444 --facing camera:f1
+python3 /app/perception.py bev --frame 1
+```
+
+<figure class="figure original narrow" id="sa-figure-4-scene-memory">
+<img src="/lib/papers/s-agent-2-0/figure-4-scene-memory-map.webp" alt="写入观察者后的原始俯视图。左上方的绿菱形 entrant_front 在入口，camera f1 在走廊，右侧 f2:3 标记挂钟。" width="474" height="515" loading="lazy" decoding="async">
+<figcaption>写入观察者后的俯视图。左上角的绿菱形是新实例，右侧的 <code>f2:3 clock</code> 标出了挂钟。图片裁自 Figure 4 右上。 <a href="https://arxiv.org/html/2610.28354v1#S3.F4">Gong 等，Figure 4</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></figcaption>
+</figure>
+
+**对同一个挂钟发两次查询。** 每次 `side` 都从当前场景取出 `clock` 和这次指定的观察者，计算挂钟沿观察者前、右、上三根轴的偏移。第二条用相机视角复核。中间模型还调用 `distance`，量得两个观察位置相距 **8.22 米**。 [原始测量与提交](https://ropedia.github.io/S-Agent-2.0/trajectories/cases/MMSI_134.js) · [side 的计算](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/gateway/perception_gateway.py#L7342-L7368)
+
+```bash
+python3 /app/perception.py side --observer entrant_front --of clock
+python3 /app/perception.py side --view 1 --of clock
+```
+
+- **进门的人 `entrant_front`** 读到前 11.94 米、左 5.64 米，工具标为 `front-left`。
+- **走廊相机 `camera:f1`** 读到后 1.92 米、右 6.49 米，工具标为 `right`。
+
+题目问的是进门的人。模型选第一条读数对应的 **D（左前方）**，写进 `/app/answer.txt`，与标准答案一致。 [轨迹最后的提交](https://ropedia.github.io/S-Agent-2.0/trajectories/cases/MMSI_134.js)
+
+轨迹里，模型中途还试过直接打开 `/perception/scene.json`，那个路径不存在。它随后继续通过感知命令取数。公开实现由感知网关保存这份状态，处理查询时再加载。只压缩对话而保留本题工作目录的话，模型可以重新调用 `list_instance` 找回可查询的名字，再发测量命令。论文没有单独测过压缩后的恢复效果。 [作者轨迹中的文件读取](https://ropedia.github.io/S-Agent-2.0/trajectories/cases/MMSI_134.js) · [网关加载场景](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/gateway/perception_gateway.py#L5247-L5267)
+
 ## 4. Experiments　加工具、删接口、换框架分别测了什么
 
 ### 4.1 一题怎么变成一个分数
 
 MMSI-Bench 给同一场景的多张图，考察物体、相机和区域之间的关系。ReVSI 从一段室内视频抽帧，问物体的距离、方位和路线。其余三项分别考稀疏视图（MindCube）、多视图下的多种空间能力（SPAR-Bench）和长视频（MMSI-Video-Bench）。 [论文 §3.1](https://arxiv.org/html/2610.28354v1#S3.SS1)
 
-在公开代码里，ReVSI 的任务加载器给模型准备题面和按时间排序的图片文件，评测器单独读取数据集的标准答案。选择题核对最终的答案文件，答对得 1 分，答错或没写文件得 0 分。我把上面两条记录公布的最终字母交给发布版检查器，并用数据集给出的 C 作为标准答案。**C 得 1 分，B 得 0 分。** 这是对判分的核查。模型的工具轨迹来自论文 Figure 5。 [任务加载器](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/adapters/spatial/load_revsi.py) · [公开检查器](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/adapters/spatial/task_template/tests/test.sh)
+在公开代码里，ReVSI 的任务加载器给模型准备题面和按时间排序的图片文件，评测器单独读取数据集的标准答案。选择题核对最终的答案文件，答对得 1 分，答错或没写文件得 0 分。我把 ReVSI_5112 中两套系统公布的最终字母交给发布版检查器，并用数据集给出的 C 作为标准答案。**C 得 1 分，B 得 0 分。** 这是对判分的核查。模型的工具轨迹来自论文 Figure 5。 [任务加载器](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/adapters/spatial/load_revsi.py) · [公开检查器](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/adapters/spatial/task_template/tests/test.sh)
 
 ReVSI 的绝对距离、尺寸、数物体和房间面积是数值题。评测器按相对误差有多小给部分分，称作 **Mean Relative Accuracy（MRA）**。它检查误差是否落在 5%、10%、……、50% 的十个容差内，命中的比例就是这一题的分数。例如真值 10、预测 8.7，误差 13%，通过从 15% 到 50% 的八个档位，得 0.8 分。论文对 ReVSI 和 SPAR 先算各类题的均分，再给题型相同权重，其他三个基准报整体准确率。 [论文 §3.1、Table 2](https://arxiv.org/html/2610.28354v1#S3.SS1) · [数值评分代码](https://github.com/Ropedia/S-Agent-2.0/blob/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/adapters/spatial/task_template/tests/score_numeric.py#L64-L122)
 
@@ -110,7 +151,7 @@ ReVSI 的绝对距离、尺寸、数物体和房间面积是数值题。评测�
 
 ### 4.3 删除哪一部分最伤，换框架还能不能跑
 
-**去掉模型新增和移除实例的接口，分数掉得最多。** 对 Qwen3.8-27B，MMSI-Bench 和 ReVSI 分别下降 8.8、5.9 个百分点。去掉场景记录下降 3.5、2.5 点，去掉读数里的自然语言解释下降 1.3、1.2 点。作者还把同一组带解释的读数移植到 SpatialClaw 的内核，MMSI-Bench 从 62.6 到 62.9，ReVSI 从 74.5 到 75.5。这个对照给出了单独添加读数解释的效果，可与三项单独删除的结果一起看。 [论文 Table 6](https://arxiv.org/html/2610.28354v1#S3.T6.fig2) · [Appendix D](https://arxiv.org/html/2610.28354v1#A4.T9)
+**去掉模型新增和移除实例的接口，分数掉得最多。** 对 Qwen3.8-27B，MMSI-Bench 和 ReVSI 分别下降 8.8、5.9 个百分点。去掉 scene memory 时，作者改成让模型靠自己的对话上下文携带早先的读数，两项总分分别从 66.5 降到 63.0、从 82.3 降到 79.8。去掉读数里的自然语言解释则下降 1.3、1.2 点。作者还把带解释的读数移植到 SpatialClaw 的内核，MMSI-Bench 从 62.6 到 62.9，ReVSI 从 74.5 到 75.5。 [论文 Table 6](https://arxiv.org/html/2610.28354v1#S3.T6.fig2) · [Appendix D](https://arxiv.org/html/2610.28354v1#A4.T9)
 
 <figure class="figure" id="sa-table-6">
 <img src="/lib/papers/s-agent-2-0/table-6-interface.webp" alt="完整系统和去掉场景记录、读数解释、模型实例编辑三种变体的 MMSI 与 ReVSI 分数" width="1061" height="407" loading="lazy" decoding="async" style="max-width:min(100%,530px)">
@@ -134,7 +175,7 @@ Table 4 固定 Qwen3.8-27B、工作区和工具包，换三种框架各跑一遍
 <figcaption>Figure 4 右下局部，保留了原题、工具调用和两个错误答案。 <a href="https://arxiv.org/html/2610.28354v1#S3.F4">Gong 等，Figure 4</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></figcaption>
 </figure>
 
-成功的复核也可以具体看到。公开的 MMSI_134 轨迹里，工具把入口和几扇玻璃门都标成了门。模型打开分割图确认真正的入口，把 `entrant_front` 放在入口朝屋内。读取挂钟时，从进门的人看是左前方，从走廊相机看却是右侧。两次测量都来自同一个重建，换掉的是观察者。Appendix C 的三轮统计中，至少用过一次 `add_instance` 的题占 26% 到 48%，用过 `drop` 的占 21% 到 40%。这些比例说明操作用了多频繁，不能用来估计它每用一次就能救回多少题。 [MMSI_134 项目记录](https://ropedia.github.io/S-Agent-2.0/trajectories/cases/MMSI_134.js) · [Table 8](https://arxiv.org/html/2610.28354v1#A3.T8)
+Appendix C 的三轮统计中，至少用过一次 `add_instance` 的题占 26% 到 48%，用过 `drop` 的占 21% 到 40%。Table 8 统计的是命令使用频率。操作对总分的影响来自前面的接口消融。 [论文 Table 8](https://arxiv.org/html/2610.28354v1#A3.T8)
 
 <details><summary>完整定性比较（Figure 4）</summary>
 <figure class="figure" id="sa-figure-4">
