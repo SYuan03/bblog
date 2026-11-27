@@ -1,0 +1,1086 @@
+{
+  "schema_version": 3,
+  "paper": {
+    "title": "S-Agent 2.0: Spatial Reasoning with a General Coding Agent",
+    "kind": "research",
+    "primary_source_ids": [
+      "paper"
+    ],
+    "arxiv_v1_date": "2026-10-20"
+  },
+  "artifacts": {
+    "article": "content/_posts/103-s-agent-2-0.md",
+    "deck": null,
+    "embed_src": null,
+    "deck_scope": "本篇按用户要求省略文章开头的 HTML 演示。",
+    "cover": {
+      "path": "/generated-covers/103-s-agent-2-0.webp",
+      "source_visual_id": "figure-5",
+      "credit": "Gong et al., Figure 5 right-side image strip, CC BY 4.0. Panels cropped and recomposed.",
+      "sha256": "d60c0a83a2c4dab7b4c5a75e7ad5772675de31a20d3f9d2b6268fee4cff1d448"
+    }
+  },
+  "sources": [
+    {
+      "id": "paper",
+      "kind": "paper",
+      "title": "S-Agent 2.0: Spatial Reasoning with a General Coding Agent",
+      "url": "https://arxiv.org/html/2610.28354v1",
+      "revision": "arXiv:2610.28354v1",
+      "used_for": [
+        "problem",
+        "method",
+        "results",
+        "original figures"
+      ]
+    },
+    {
+      "id": "code",
+      "kind": "code",
+      "title": "S-Agent 2.0 official implementation",
+      "url": "https://github.com/Ropedia/S-Agent-2.0/tree/c99526846220534e02f1bfb7498c7f8e2201f3df",
+      "revision": "c99526846220534e02f1bfb7498c7f8e2201f3df",
+      "used_for": [
+        "scene store",
+        "tool registration",
+        "runner",
+        "licenses"
+      ]
+    },
+    {
+      "id": "checker",
+      "kind": "checker",
+      "title": "S-Agent 2.0 released spatial task verifiers",
+      "url": "https://github.com/Ropedia/S-Agent-2.0/tree/c99526846220534e02f1bfb7498c7f8e2201f3df/agent/adapters/spatial/task_template/tests",
+      "revision": "c99526846220534e02f1bfb7498c7f8e2201f3df",
+      "used_for": [
+        "numeric and option scoring"
+      ]
+    },
+    {
+      "id": "revsi",
+      "kind": "dataset",
+      "title": "ReVSI, 64 frame test",
+      "url": "https://huggingface.co/datasets/3dlg-hcvc/ReVSI/blob/345a811321e2c9ec2b91a2e8df13e3a124584fa8/64_frame/test-00000-of-00001.parquet",
+      "revision": "345a811321e2c9ec2b91a2e8df13e3a124584fa8",
+      "used_for": [
+        "case 5112",
+        "gold",
+        "release subset validation"
+      ]
+    },
+    {
+      "id": "project",
+      "kind": "project",
+      "title": "S-Agent 2.0 project trajectory viewer",
+      "url": "https://ropedia.github.io/S-Agent-2.0/#trajectories",
+      "revision": "manifest.js SHA-256 fcb923dd997f1e0c2d17f6e46e60a03b7388b02bc0b92ba41715aac5c54cb0bb",
+      "used_for": [
+        "MMSI_134",
+        "public run inventory"
+      ]
+    },
+    {
+      "id": "spatialclaw",
+      "kind": "paper",
+      "title": "SpatialClaw",
+      "url": "https://arxiv.org/abs/2606.13673",
+      "revision": "",
+      "used_for": [
+        "nearest baseline"
+      ]
+    },
+    {
+      "id": "s-agent",
+      "kind": "paper",
+      "title": "S-Agent",
+      "url": "https://arxiv.org/abs/2606.20515",
+      "revision": "",
+      "used_for": [
+        "previous version"
+      ]
+    }
+  ],
+  "paper_reading": {
+    "main_agent_complete_read": true,
+    "appendices_included": true,
+    "extracted_text_reviewed": true,
+    "rendered_pages_reviewed": true,
+    "page_count": 27,
+    "rendered_page_ranges": [
+      {
+        "start": 1,
+        "end": 27
+      }
+    ],
+    "source_visuals_expected": 21,
+    "visual_inventory_complete": true,
+    "pdf_sha256": "7f61d3f42da39df477a43d67ba67912de549d01cbb88e8cc1be1fce8fb55d249"
+  },
+  "note_sections": [
+    {
+      "role": "problem",
+      "locator": "1. Motivation　测到了，为什么还会答错"
+    },
+    {
+      "role": "related-work",
+      "locator": "2. Related Work　空间能力放在模型、执行循环还是工具里"
+    },
+    {
+      "role": "method",
+      "locator": "3. Method　把设想中的观察者放进重建场景"
+    },
+    {
+      "role": "experiments",
+      "locator": "4. Experiments　加工具、删接口、换框架分别测了什么"
+    },
+    {
+      "role": "future-work",
+      "locator": "5. Discussion　自动解释读数之后，还会量错什么"
+    },
+    {
+      "role": "summary",
+      "locator": "6. Conclusion　这些实验支持什么"
+    }
+  ],
+  "terminology": [
+    {
+      "term": "coding agent harness",
+      "kind": "actor",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1.1 and §2.1"
+        }
+      ],
+      "article_quote": "下文的 **coding agent harness** 指 OpenHands、Codex、Claude Code 这类运行框架。模型通过它看图、操作文件和执行命令。"
+    },
+    {
+      "term": "scene memory",
+      "kind": "state",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.2, Eq. 2"
+        },
+        {
+          "source_id": "code",
+          "locator": "agent/gateway/scene_store.py:1–24"
+        }
+      ],
+      "article_quote": "工具把原始帧、重建结果和按名称索引的物体记录保留到这道题结束。论文称这份状态为 **scene memory**。"
+    },
+    {
+      "term": "add_instance",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.3, Table 7"
+        },
+        {
+          "source_id": "code",
+          "locator": "agent/gateway/perception_gateway.py:6564–6749"
+        }
+      ],
+      "article_quote": "模型用 `add_instance` 告诉工具把一个新实例放在哪、朝向哪，新增实例随后也能用名字查询。"
+    },
+    {
+      "term": "interpreted readout",
+      "kind": "operation",
+      "source_ids": [
+        "paper",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§2.4, Eq. 4"
+        },
+        {
+          "source_id": "code",
+          "locator": "agent/gateway/perception_gateway.py:7327–7420"
+        }
+      ],
+      "article_quote": "工具同时把数字转成有参照物和单位的句子，这是论文所说的 **interpreted readout**。"
+    },
+    {
+      "term": "Mean Relative Accuracy",
+      "kind": "metric",
+      "source_ids": [
+        "paper",
+        "checker"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2"
+        },
+        {
+          "source_id": "checker",
+          "locator": "score_numeric.py:64–122"
+        }
+      ],
+      "article_quote": "评测器按相对误差有多小给部分分，称作 **Mean Relative Accuracy（MRA）**。"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "inference-only",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§1.1, §3.1, §4"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "负责决策的视觉语言模型沿用已有权重，论文没有进行 SFT、强化学习或蒸馏。"
+        }
+      ]
+    },
+    {
+      "id": "related-work",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "spatialclaw"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix A"
+        },
+        {
+          "source_id": "spatialclaw",
+          "locator": "Method"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "它让视觉语言模型在专用的「计划、行动、反思」循环中，向一个保留 Python 变量的内核发代码。"
+        }
+      ]
+    },
+    {
+      "id": "episode-state",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "code",
+          "locator": "agent/gateway/scene_store.py:1–24"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "公开实现的索引写入每题单独的 `artifacts/scene_state.json`，大点图和掩码保存在各自的文件中。"
+        }
+      ]
+    },
+    {
+      "id": "running-case",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper",
+        "revsi"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Appendix E Figure 5"
+        },
+        {
+          "source_id": "revsi",
+          "locator": "64_frame test parquet, row id 5112"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "模型把第 3 帧的像素 `(195, 361)` 投到重建场景"
+        },
+        {
+          "artifact": "article",
+          "quote": "**前 3.67 米、右 3.15 米、上 0.26 米**"
+        }
+      ]
+    },
+    {
+      "id": "grader-replay",
+      "claim_type": "reproduced-calculation",
+      "source_ids": [
+        "checker",
+        "revsi"
+      ],
+      "source_locators": [
+        {
+          "source_id": "checker",
+          "locator": "test.sh, score_erqa.py, score_numeric.py"
+        },
+        {
+          "source_id": "revsi",
+          "locator": "row id 5112, ground_truth C"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "**C 得 1 分，B 得 0 分。**"
+        },
+        {
+          "artifact": "article",
+          "quote": "通过从 15% 到 50% 的八个档位，得 0.8 分。"
+        }
+      ]
+    },
+    {
+      "id": "counts-and-aggregation",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "paper",
+        "code",
+        "revsi"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "§3.1 and Appendix C Table 8"
+        },
+        {
+          "source_id": "code",
+          "locator": "docs/SETUP.md §6, agent/configs/items/revsi.json"
+        },
+        {
+          "source_id": "revsi",
+          "locator": "complete 64-frame parquet"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "ReVSI 和 SPAR 先算各类题的均分，再给题型相同权重"
+        },
+        {
+          "artifact": "article",
+          "quote": "ReVSI 的 64 帧原始数据有 6,616 题，上面的 5112 在发布清单中。"
+        }
+      ]
+    },
+    {
+      "id": "same-agent-tools",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 5, tools vs. no tools"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "52.6 → 66.5（+13.9） | 61.8 → 82.3（+20.5）"
+        },
+        {
+          "artifact": "article",
+          "quote": "62.9 → 74.1（+11.2） | 80.9 → 90.5（+9.6）"
+        }
+      ]
+    },
+    {
+      "id": "component-drop-and-transfer",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 6 and Appendix D Table 9"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "MMSI-Bench 和 ReVSI 分别下降 8.8、5.9 个百分点。"
+        },
+        {
+          "artifact": "article",
+          "quote": "MMSI-Bench 从 62.6 到 62.9，ReVSI 从 74.5 到 75.5。"
+        }
+      ]
+    },
+    {
+      "id": "harness-swap",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 4, identical backbone, workspace and toolkit"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "ReVSI 相差最多，OpenHands 82.3，Codex 76.6，Claude Code 79.1。"
+        }
+      ]
+    },
+    {
+      "id": "negative-results",
+      "claim_type": "author-claim",
+      "source_ids": [
+        "paper"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "Table 2, absolute-distance column; Figure 4, bottom right"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "Qwen3.8-27B 的绝对距离分数是 76.7 对 SpatialClaw 的 79.5"
+        },
+        {
+          "artifact": "article",
+          "quote": "第一题给错了观察者的位置和朝向，第二题选错了要测的物理量。"
+        }
+      ]
+    },
+    {
+      "id": "crosscheck",
+      "claim_type": "inspected-implementation",
+      "source_ids": [
+        "project"
+      ],
+      "source_locators": [
+        {
+          "source_id": "project",
+          "locator": "MMSI_134.js entrant and camera side calls"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "从进门的人看是左前方，从走廊相机看却是右侧。"
+        }
+      ]
+    },
+    {
+      "id": "trajectory-release-scope",
+      "claim_type": "unknown",
+      "source_ids": [
+        "paper",
+        "project",
+        "code"
+      ],
+      "source_locators": [
+        {
+          "source_id": "paper",
+          "locator": "p. 11 Reproducibility statement"
+        },
+        {
+          "source_id": "project",
+          "locator": "trajectories/manifest.js, 11 cards; queried cases/ReVSI_5112.js returns HTTP 404"
+        },
+        {
+          "source_id": "code",
+          "locator": "README, docs/SETUP.md and agent/scripts/agent_runtimes/README.md"
+        }
+      ],
+      "evidence": [
+        {
+          "artifact": "article",
+          "quote": "本次在项目页核到的是 11 条精选轨迹，未找到五项评测的逐题日志或 Codex、Claude Code 的完整复现配方。"
+        }
+      ]
+    }
+  ],
+  "source_visuals": [
+    {
+      "id": "figure-1",
+      "kind": "figure",
+      "label": "Figure 1",
+      "source_id": "paper",
+      "source_locator": "p. 1, Figure 1 (#S0.F1)",
+      "status": "reused",
+      "rationale": "交代推理循环并给两个互补的场景测量例子，比分数先引出方法。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "左侧是模型的调查过程。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 1, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/figure-1-overview.webp"
+      ]
+    },
+    {
+      "id": "figure-2",
+      "kind": "figure",
+      "label": "Figure 2",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 2 (#S2.F2)",
+      "status": "reused",
+      "rationale": "保留任务输入、通用编码框架、文件区和感知工具三者的交互。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "中间的编码智能体组织命令和文件读取"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 2, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/figure-2-toolkit.webp"
+      ]
+    },
+    {
+      "id": "figure-3",
+      "kind": "figure",
+      "label": "Figure 3",
+      "source_id": "paper",
+      "source_locator": "p. 6, Figure 3 (#S2.F3)",
+      "status": "reused",
+      "rationale": "办公室路线题展示先用椅子约束选站位、再量电视和门的顺序。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "办公路线题里的命令顺序"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 3, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/figure-3-office-route.webp"
+      ]
+    },
+    {
+      "id": "figure-4",
+      "kind": "figure",
+      "label": "Figure 4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 4 (#S3.F4)",
+      "status": "reused",
+      "rationale": "正文展示右下失败局部以便阅读，折叠补充保存完整比较、成功复核和失败证据。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Figure 4 右下局部"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 4, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/figure-4-qualitative.webp",
+        "/lib/papers/s-agent-2-0/figure-4-grounding-detail.webp"
+      ]
+    },
+    {
+      "id": "figure-5",
+      "kind": "figure",
+      "label": "Figure 5",
+      "source_id": "paper",
+      "source_locator": "p. 22, Figure 5 (#A5.F5)",
+      "status": "reused",
+      "rationale": "主案例保留原题、两个系统的读数与答题结果，封面另使用右栏三块图像。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "文章封面也取自右栏的分割画面和俯视图。"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 5, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/figure-5-revsi-5112.webp"
+      ]
+    },
+    {
+      "id": "figure-6",
+      "kind": "figure",
+      "label": "Figure 6",
+      "source_id": "paper",
+      "source_locator": "p. 23, Figure 6 (#A5.F6)",
+      "status": "omitted",
+      "rationale": "站在书架旁背向开关给出了相同的左右约定错误，正文展开投影仪一例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-7",
+      "kind": "figure",
+      "label": "Figure 7",
+      "source_id": "paper",
+      "source_locator": "p. 24, Figure 7 (#A5.F7)",
+      "status": "omitted",
+      "rationale": "这题比较从各物体最近点量到吊装投影仪的距离，全文重点放在观察者的参考系。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-8",
+      "kind": "figure",
+      "label": "Figure 8",
+      "source_id": "paper",
+      "source_locator": "p. 25, Figure 8 (#A5.F8)",
+      "status": "omitted",
+      "rationale": "移动方向与相机变化的例子不同于正文的假想观察者，概览图已保留狗跨帧移动的例子。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-9",
+      "kind": "figure",
+      "label": "Figure 9",
+      "source_id": "paper",
+      "source_locator": "p. 26, Figure 9 (#A5.F9)",
+      "status": "omitted",
+      "rationale": "此例以第一帧相机方向判断自拍序列中的移动，正文以同样涉及参考系的挂钟例详解。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "figure-10",
+      "kind": "figure",
+      "label": "Figure 10",
+      "source_id": "paper",
+      "source_locator": "p. 27, Figure 10 (#A5.F10)",
+      "status": "omitted",
+      "rationale": "东墙西墙的罗盘锚点属另一测量类型，读者可沿附录链接查看完整原例。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-1",
+      "kind": "table",
+      "label": "Table 1",
+      "source_id": "paper",
+      "source_locator": "p. 8, Table 1 (#S3.T1)",
+      "status": "omitted",
+      "rationale": "完整 MMSI 各子类分数与主文的同框架对照分开，正文保留后者与关键总分。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-2",
+      "kind": "table",
+      "label": "Table 2",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 2 (#S3.T2)",
+      "status": "reused",
+      "rationale": "保留全表和帧数，回查绝对距离的两组同模型对照。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "完整 ReVSI 分题型结果"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Table 2, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/table-2-revsi.webp"
+      ]
+    },
+    {
+      "id": "table-3",
+      "kind": "table",
+      "label": "Table 3",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 3 (#S3.T4.fig1)",
+      "status": "omitted",
+      "rationale": "保留五套基准上超过 SpatialClaw 的结论及原表链接，未另排其他 Agent 基线。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-4",
+      "kind": "table",
+      "label": "Table 4",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 4 (#S3.T4.fig2)",
+      "status": "redrawn",
+      "rationale": "完整转录成正文表格，手机可以选择、复制并横向滚动。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "Table 4 固定 Qwen3.8-27B"
+        }
+      ],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "Gong et al., Table 4, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": []
+    },
+    {
+      "id": "table-5",
+      "kind": "table",
+      "label": "Table 5",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 5 (#S3.T6.fig1)",
+      "status": "omitted",
+      "rationale": "正文转述全部通用框架对照与关键 SpatialClaw 结果，全文数字可在原表查看。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-6",
+      "kind": "table",
+      "label": "Table 6",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 6 (#S3.T6.fig2)",
+      "status": "reused",
+      "rationale": "完整保留三项单独移除的消融，以便逐格核对差值。",
+      "placements": [
+        {
+          "artifact": "article",
+          "locator": "同一主模型下每次只删一项"
+        }
+      ],
+      "permission_status": "verified-allowed",
+      "permission_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Table 6, arXiv:2610.28354v1, CC BY 4.0",
+      "asset_paths": [
+        "/lib/papers/s-agent-2-0/table-6-interface.webp"
+      ]
+    },
+    {
+      "id": "table-7",
+      "kind": "table",
+      "label": "Table 7",
+      "source_id": "paper",
+      "source_locator": "p. 18, Appendix B Table 7 (#A2.T7)",
+      "status": "omitted",
+      "rationale": "正文按真实案例解释核心命令，全部完整命令参数由附录提供。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-8",
+      "kind": "table",
+      "label": "Table 8",
+      "source_id": "paper",
+      "source_locator": "p. 20, Appendix C Table 8 (#A3.T8)",
+      "status": "omitted",
+      "rationale": "正文引用每轮分母和两种实例操作的频率，逐命令统计留在原表。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "table-9",
+      "kind": "table",
+      "label": "Table 9",
+      "source_id": "paper",
+      "source_locator": "p. 20, Appendix D Table 9 (#A4.T9)",
+      "status": "omitted",
+      "rationale": "正文同段给出了移植前后分数，完整系统分数在主结果中可查。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "method-loop",
+      "kind": "appendix-visual",
+      "label": "Unnumbered evidence loop",
+      "source_id": "paper",
+      "source_locator": "p. 7, end of §2.4",
+      "status": "omitted",
+      "rationale": "箭头把读数反馈给模型；正文以投影仪例的命令参数和输出展开同一过程。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    },
+    {
+      "id": "side-json",
+      "kind": "appendix-visual",
+      "label": "Example side JSON response",
+      "source_id": "paper",
+      "source_locator": "p. 19, Appendix B, #A2.p4",
+      "status": "omitted",
+      "rationale": "保留另一真实案例的数值、结论和选项映射作为读数示例，避免两组观察者数据混用。",
+      "placements": [],
+      "permission_status": "not-applicable",
+      "permission_basis": "",
+      "credit": "",
+      "asset_paths": []
+    }
+  ],
+  "figures": [
+    {
+      "path": "/lib/papers/s-agent-2-0/figure-1-overview.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-1",
+      "source_id": "paper",
+      "source_locator": "p. 1, Figure 1 (#S0.F1)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 1, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 2001,
+        "height": 1067
+      },
+      "sha256": "f94ab694e6be6111dc3689d62745b3d546e6f751dd4fe4aa7722539d2c34a6f9"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/figure-2-toolkit.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-2",
+      "source_id": "paper",
+      "source_locator": "p. 5, Figure 2 (#S2.F2)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 2, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 2101,
+        "height": 1156
+      },
+      "sha256": "e56268c36b692eeb18c283ef922c38e9e330074cd1642a846ad7cfa39880dd06"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/figure-3-office-route.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-3",
+      "source_id": "paper",
+      "source_locator": "p. 6, Figure 3 (#S2.F3)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 3, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 2101,
+        "height": 768
+      },
+      "sha256": "1264123518903775cd4b5b1796f6129f4a12280197b9d4cb654fdd967b552291"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/figure-4-qualitative.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 4 (#S3.F4)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 4, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 2551,
+        "height": 1566
+      },
+      "sha256": "21f6a066e32dd9edd6add78cefe707b11d8ad953a049787c3595f0b83c0633be"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/figure-4-grounding-detail.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-4",
+      "source_id": "paper",
+      "source_locator": "p. 11, Figure 4 (#S3.F4)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 4, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 1470,
+        "height": 790
+      },
+      "sha256": "e7b99ee3e125bea32301acc209c6a20d34c6e76304414f100c426f9df91dc988"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/figure-5-revsi-5112.webp",
+      "origin": "paper-original",
+      "source_visual_id": "figure-5",
+      "source_id": "paper",
+      "source_locator": "p. 22, Figure 5 (#A5.F5)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Figure 5, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 2301,
+        "height": 2041
+      },
+      "sha256": "74fbfa8acc8b550e7a54e3aa3b004a7e1628a1939ae87ed29e57e9547c82ce5a"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/table-2-revsi.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-2",
+      "source_id": "paper",
+      "source_locator": "p. 9, Table 2 (#S3.T2)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Table 2, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 2201,
+        "height": 1672
+      },
+      "sha256": "8d9b3227bd700da0f472314f2c12a1a3bc61aa05351729c50ce6f2df205ce151"
+    },
+    {
+      "path": "/lib/papers/s-agent-2-0/table-6-interface.webp",
+      "origin": "paper-original",
+      "source_visual_id": "table-6",
+      "source_id": "paper",
+      "source_locator": "p. 10, Table 6 (#S3.T6.fig2)",
+      "used_in": [
+        "article"
+      ],
+      "license_status": "verified-allowed",
+      "license_basis": "CC BY 4.0 on the arXiv v1 abstract page (https://arxiv.org/abs/2610.28354v1)",
+      "credit": "Gong et al., Table 6, arXiv:2610.28354v1, CC BY 4.0",
+      "dimensions": {
+        "width": 1061,
+        "height": 407
+      },
+      "sha256": "a9857e6262b7472841349e5f6c2541b08f5989120e124096588a5dfb51dde750"
+    }
+  ],
+  "qa": {
+    "reading_layout": {
+      "deck_first": null,
+      "toc_h2_only": true,
+      "surface": "neutral-light",
+      "body_font": "serif",
+      "body_font_px": 16,
+      "line_height": 1.85,
+      "figures_centered": true,
+      "article_visuals_interleaved": true,
+      "internal_scroll_for_tables_and_code": true,
+      "page_horizontal_overflow": false
+    },
+    "viewports": [
+      {
+        "width": 1600,
+        "height": 1000,
+        "passed": true
+      },
+      {
+        "width": 1512,
+        "height": 982,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "passed": true
+      }
+    ],
+    "tested_surfaces": {
+      "article_body": true,
+      "embedded_deck": null,
+      "standalone_deck": null
+    },
+    "language_review": {
+      "technical_terms_contextualized": true,
+      "actors_disambiguated": true,
+      "read_aloud_complete": true,
+      "facts_rechecked_after_rewrite": true
+    },
+    "interactions": {
+      "buttons": true,
+      "keyboard": true,
+      "hash_navigation": true,
+      "fullscreen": null,
+      "escape": true,
+      "standalone_return_to_article": null,
+      "immersive_mode_exit": true,
+      "usable_state_after_exit": true
+    },
+    "article_checks": [
+      "Responsive cover and metadata",
+      "Six-section table of contents",
+      "Image sizing, layout and credits",
+      "Disclosures, figure zoom and Escape",
+      "Focus mode and restore",
+      "Dark mode after refresh",
+      "Twikoo"
+    ],
+    "inspected_slides": []
+  }
+}
